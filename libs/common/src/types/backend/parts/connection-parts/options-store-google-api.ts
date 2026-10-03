@@ -1,5 +1,20 @@
 import { z } from 'zod';
-import { zApiHeader } from '#common/types/backend/parts/connection-parts/api-header';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ApiHeader,
+  zApiHeader
+} from '#common/types/backend/parts/connection-parts/api-header';
+
+export type OptionsStoreGoogleApi = {
+  headers?: ApiHeader[];
+  baseUrl?: string;
+  googleAuthScopes?: string[];
+  serviceAccountCredentials?: any;
+  googleCloudProject?: string;
+  googleCloudClientEmail?: string;
+  googleAccessToken?: string;
+  googleAccessTokenExpiryDate?: number;
+};
 
 export let zOptionsStoreGoogleApi = z
   .object({
@@ -14,4 +29,6 @@ export let zOptionsStoreGoogleApi = z
   })
   .meta({ id: 'OptionsStoreGoogleApi' });
 
-export type OptionsStoreGoogleApi = z.infer<typeof zOptionsStoreGoogleApi>;
+assertTypesEqual<OptionsStoreGoogleApi, z.infer<typeof zOptionsStoreGoogleApi>>(
+  { value: true }
+);

@@ -1,5 +1,16 @@
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type ModelPart = {
+  structId: string;
+  modelId: string;
+  accessRoles: string[];
+  accessRolesCombined: AccessRoleCombined[];
+};
 
 export let zModelPart = z
   .object({
@@ -10,4 +21,4 @@ export let zModelPart = z
   })
   .meta({ id: 'ModelPart' });
 
-export type ModelPart = z.infer<typeof zModelPart>;
+assertTypesEqual<ModelPart, z.infer<typeof zModelPart>>({ value: true });

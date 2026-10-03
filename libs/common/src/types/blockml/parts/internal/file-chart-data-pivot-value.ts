@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FileChartDataPivotValue = {
+  field?: string;
+  field_line_num?: number;
+};
 
 export let zFileChartDataPivotValue = z
   .object({
@@ -7,4 +13,7 @@ export let zFileChartDataPivotValue = z
   })
   .meta({ id: 'FileChartDataPivotValue' });
 
-export type FileChartDataPivotValue = z.infer<typeof zFileChartDataPivotValue>;
+assertTypesEqual<
+  FileChartDataPivotValue,
+  z.infer<typeof zFileChartDataPivotValue>
+>({ value: true });

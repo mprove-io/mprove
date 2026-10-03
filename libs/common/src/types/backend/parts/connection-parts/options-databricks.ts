@@ -1,5 +1,19 @@
 import { z } from 'zod';
 import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type OptionsDatabricks = {
+  authType?: EnumValues<typeof DatabricksAuthTypeEnum>;
+  host?: string;
+  internalHost?: string;
+  path?: string;
+  token?: string;
+  oauthClientId?: string;
+  oauthClientSecret?: string;
+  defaultCatalog?: string;
+  defaultSchema?: string;
+};
 
 export let zOptionsDatabricks = z
   .object({
@@ -15,4 +29,6 @@ export let zOptionsDatabricks = z
   })
   .meta({ id: 'OptionsDatabricks' });
 
-export type OptionsDatabricks = z.infer<typeof zOptionsDatabricks>;
+assertTypesEqual<OptionsDatabricks, z.infer<typeof zOptionsDatabricks>>({
+  value: true
+});

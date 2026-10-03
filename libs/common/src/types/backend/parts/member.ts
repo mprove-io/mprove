@@ -1,4 +1,21 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type Member = {
+  projectId: string;
+  memberId: string;
+  email: string;
+  alias: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  avatarSmall: string;
+  roles: string[];
+  isAdmin: boolean;
+  isEditor: boolean;
+  isExplorer: boolean;
+  serverTs: number;
+};
 
 export let zMember = z
   .object({
@@ -18,4 +35,4 @@ export let zMember = z
   })
   .meta({ id: 'Member' });
 
-export type Member = z.infer<typeof zMember>;
+assertTypesEqual<Member, z.infer<typeof zMember>>({ value: true });

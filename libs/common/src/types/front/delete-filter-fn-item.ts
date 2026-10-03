@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type DeleteFilterFnItem = { filterFieldId: string; tileTitle: string };
 
 export let zDeleteFilterFnItem = z
   .object({
@@ -7,4 +10,6 @@ export let zDeleteFilterFnItem = z
   })
   .meta({ id: 'DeleteFilterFnItem' });
 
-export type DeleteFilterFnItem = z.infer<typeof zDeleteFilterFnItem>;
+assertTypesEqual<DeleteFilterFnItem, z.infer<typeof zDeleteFilterFnItem>>({
+  value: true
+});

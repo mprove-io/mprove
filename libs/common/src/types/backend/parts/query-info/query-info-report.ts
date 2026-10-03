@@ -1,5 +1,16 @@
 import { z } from 'zod';
-import { zQueryInfoRow } from '#common/types/backend/parts/query-info/query-info-row';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type QueryInfoRow,
+  zQueryInfoRow
+} from '#common/types/backend/parts/query-info/query-info-row';
+
+export type QueryInfoReport = {
+  title: string;
+  reportId: string;
+  url: string;
+  rows: QueryInfoRow[];
+};
 
 export let zQueryInfoReport = z
   .object({
@@ -10,4 +21,6 @@ export let zQueryInfoReport = z
   })
   .meta({ id: 'QueryInfoReport' });
 
-export type QueryInfoReport = z.infer<typeof zQueryInfoReport>;
+assertTypesEqual<QueryInfoReport, z.infer<typeof zQueryInfoReport>>({
+  value: true
+});

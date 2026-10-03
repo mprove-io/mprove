@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type OptionsSnowflake = {
+  account?: string;
+  warehouse?: string;
+  database?: string;
+  username?: string;
+  password?: string;
+};
 
 export let zOptionsSnowflake = z
   .object({
@@ -10,4 +19,6 @@ export let zOptionsSnowflake = z
   })
   .meta({ id: 'OptionsSnowflake' });
 
-export type OptionsSnowflake = z.infer<typeof zOptionsSnowflake>;
+assertTypesEqual<OptionsSnowflake, z.infer<typeof zOptionsSnowflake>>({
+  value: true
+});

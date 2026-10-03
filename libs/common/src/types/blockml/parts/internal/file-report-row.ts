@@ -1,6 +1,36 @@
 import { z } from 'zod';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { zFileReportRowParameter } from '#common/types/blockml/parts/internal/file-report-row-parameter';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FileReportRowParameter,
+  zFileReportRowParameter
+} from '#common/types/blockml/parts/internal/file-report-row-parameter';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FileReportRow = {
+  row_id?: string;
+  row_id_line_num?: number;
+  name?: string;
+  name_line_num?: number;
+  type?: EnumValues<typeof RowTypeEnum>;
+  type_line_num?: number;
+  metric?: string;
+  metric_line_num?: number;
+  parameters?: FileReportRowParameter[];
+  parameters_line_num?: number;
+  formula?: string;
+  formula_line_num?: number;
+  show_chart?: string;
+  show_chart_line_num?: number;
+  format_number?: string;
+  format_number_line_num?: number;
+  currency_prefix?: string;
+  currency_prefix_line_num?: number;
+  currency_suffix?: string;
+  currency_suffix_line_num?: number;
+  model?: string;
+  isStore?: boolean;
+};
 
 export let zFileReportRow = z
   .object({
@@ -29,4 +59,6 @@ export let zFileReportRow = z
   })
   .meta({ id: 'FileReportRow' });
 
-export type FileReportRow = z.infer<typeof zFileReportRow>;
+assertTypesEqual<FileReportRow, z.infer<typeof zFileReportRow>>({
+  value: true
+});

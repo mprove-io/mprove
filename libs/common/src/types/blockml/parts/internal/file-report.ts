@@ -1,9 +1,49 @@
 import { z } from 'zod';
-import { zFieldAny } from '#common/types/blockml/parts/internal/field-any';
-import { zFileBasic } from '#common/types/blockml/parts/internal/file-basic';
-import { zFileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
-import { zFileReportRow } from '#common/types/blockml/parts/internal/file-report-row';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FieldAny,
+  zFieldAny
+} from '#common/types/blockml/parts/internal/field-any';
+import {
+  type FileBasic,
+  zFileBasic
+} from '#common/types/blockml/parts/internal/file-basic';
+import {
+  type FileChartOptions,
+  zFileChartOptions
+} from '#common/types/blockml/parts/internal/file-chart-options';
+import {
+  type FileReportRow,
+  zFileReportRow
+} from '#common/types/blockml/parts/internal/file-report-row';
+import type { Extend } from '#common/types/extend';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type FileReport = Extend<
+  FileBasic,
+  {
+    report?: string;
+    report_line_num?: number;
+    title?: string;
+    title_line_num?: number;
+    space?: string;
+    access_roles?: string[];
+    access_roles_line_num?: number;
+    accessRolesCombined?: AccessRoleCombined[];
+    rows?: FileReportRow[];
+    rows_line_num?: number;
+    options?: FileChartOptions;
+    options_line_num?: number;
+    parameters?: FieldAny[];
+    parameters_line_num?: number;
+    fields?: FieldAny[];
+    fields_line_num?: number;
+    tiles?: { options?: FileChartOptions }[];
+  }
+>;
 
 export let zFileReport = zFileBasic
   .extend({
@@ -33,4 +73,4 @@ export let zFileReport = zFileBasic
   })
   .meta({ id: 'FileReport' });
 
-export type FileReport = z.infer<typeof zFileReport>;
+assertTypesEqual<FileReport, z.infer<typeof zFileReport>>({ value: true });

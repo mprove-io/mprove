@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type SpaceNode,
   zSpaceNode
@@ -7,22 +8,6 @@ import {
   type AccessRoleCombined,
   zAccessRoleCombined
 } from '#common/types/shared/access-role-combined';
-
-export let zSpaceFolder = z.object({
-  type: z.literal('spaceFolder'),
-  id: z.string(),
-  space: z.string(),
-  filePath: z.string(),
-  title: z.string(),
-  accessRoles: z.array(z.string()),
-  accessRolesCombined: z.array(zAccessRoleCombined),
-  isSynthetic: z.boolean(),
-  modelId: z.string().nullish(),
-  modelLabel: z.string().nullish(),
-  get children() {
-    return z.array(zSpaceNode);
-  }
-});
 
 export type SpaceFolder = {
   type: 'spaceFolder';
@@ -37,3 +22,21 @@ export type SpaceFolder = {
   modelLabel?: string;
   children: SpaceNode[];
 };
+
+export let zSpaceFolder = z.object({
+  type: z.literal('spaceFolder'),
+  id: z.string(),
+  space: z.string(),
+  filePath: z.string(),
+  title: z.string(),
+  accessRoles: z.array(z.string()),
+  accessRolesCombined: z.array(zAccessRoleCombined),
+  isSynthetic: z.boolean(),
+  modelId: z.string().nullish(),
+  modelLabel: z.string().nullish(),
+  get children(): z.ZodArray<z.ZodType<SpaceNode>> {
+    return z.array(zSpaceNode);
+  }
+});
+
+assertTypesEqual<SpaceFolder, z.infer<typeof zSpaceFolder>>({ value: true });

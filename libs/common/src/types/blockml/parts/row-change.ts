@@ -1,6 +1,24 @@
 import { z } from 'zod';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { zParameter } from '#common/types/blockml/parts/parameter';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type Parameter,
+  zParameter
+} from '#common/types/blockml/parts/parameter';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type RowChange = {
+  rowId?: string;
+  name?: string;
+  rowType?: EnumValues<typeof RowTypeEnum>;
+  metricId?: string;
+  formula?: string;
+  showChart?: boolean;
+  parameters?: Parameter[];
+  formatNumber?: string;
+  currencyPrefix?: string;
+  currencySuffix?: string;
+};
 
 export let zRowChange = z
   .object({
@@ -17,4 +35,4 @@ export let zRowChange = z
   })
   .meta({ id: 'RowChange' });
 
-export type RowChange = z.infer<typeof zRowChange>;
+assertTypesEqual<RowChange, z.infer<typeof zRowChange>>({ value: true });

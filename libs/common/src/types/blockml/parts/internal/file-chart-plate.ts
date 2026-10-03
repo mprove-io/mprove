@@ -1,4 +1,16 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FileChartPlate = {
+  plate_width?: string;
+  plate_width_line_num?: number;
+  plate_height?: string;
+  plate_height_line_num?: number;
+  plate_x?: string;
+  plate_x_line_num?: number;
+  plate_y?: string;
+  plate_y_line_num?: number;
+};
 
 export let zFileChartPlate = z
   .object({
@@ -13,4 +25,6 @@ export let zFileChartPlate = z
   })
   .meta({ id: 'FileChartPlate' });
 
-export type FileChartPlate = z.infer<typeof zFileChartPlate>;
+assertTypesEqual<FileChartPlate, z.infer<typeof zFileChartPlate>>({
+  value: true
+});

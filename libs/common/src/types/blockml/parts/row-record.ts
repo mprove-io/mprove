@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type RowRecord = {
+  id: number;
+  columnLabel: string;
+  key: number;
+  value: any;
+  error: any;
+};
 
 export let zRowRecord = z
   .object({
@@ -10,4 +19,4 @@ export let zRowRecord = z
   })
   .meta({ id: 'RowRecord' });
 
-export type RowRecord = z.infer<typeof zRowRecord>;
+assertTypesEqual<RowRecord, z.infer<typeof zRowRecord>>({ value: true });

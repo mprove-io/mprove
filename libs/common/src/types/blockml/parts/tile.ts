@@ -1,4 +1,21 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type Tile = {
+  modelId: string;
+  modelLabel: string;
+  modelFilePath: string;
+  mconfigId: string;
+  queryId: string;
+  trackChangeId: string;
+  listen: Record<string, string>;
+  deletedFilterFieldIds?: string[];
+  title: string;
+  plateWidth: number;
+  plateHeight: number;
+  plateX: number;
+  plateY: number;
+};
 
 export let zTile = z
   .object({
@@ -18,4 +35,4 @@ export let zTile = z
   })
   .meta({ id: 'Tile' });
 
-export type Tile = z.infer<typeof zTile>;
+assertTypesEqual<Tile, z.infer<typeof zTile>>({ value: true });

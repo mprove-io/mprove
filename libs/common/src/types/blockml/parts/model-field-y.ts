@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { zModelField } from '#common/types/blockml/parts/model-field';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ModelField,
+  zModelField
+} from '#common/types/blockml/parts/model-field';
+import type { Extend } from '#common/types/extend';
+
+export type ModelFieldY = Extend<ModelField, { partLabel: string }>;
 
 export let zModelFieldY = zModelField
   .extend({
@@ -7,4 +14,4 @@ export let zModelFieldY = zModelField
   })
   .meta({ id: 'ModelFieldY' });
 
-export type ModelFieldY = z.infer<typeof zModelFieldY>;
+assertTypesEqual<ModelFieldY, z.infer<typeof zModelFieldY>>({ value: true });

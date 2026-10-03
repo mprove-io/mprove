@@ -1,6 +1,16 @@
 import { z } from 'zod';
-import { zModelField } from '#common/types/blockml/parts/model-field';
-import { zSorting } from '#common/types/blockml/parts/sorting';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ModelField,
+  zModelField
+} from '#common/types/blockml/parts/model-field';
+import { type Sorting, zSorting } from '#common/types/blockml/parts/sorting';
+import type { Extend } from '#common/types/extend';
+
+export type MconfigField = Extend<
+  ModelField,
+  { sorting?: Sorting; sortingNumber: number }
+>;
 
 export let zMconfigField = zModelField
   .extend({
@@ -9,4 +19,4 @@ export let zMconfigField = zModelField
   })
   .meta({ id: 'MconfigField' });
 
-export type MconfigField = z.infer<typeof zMconfigField>;
+assertTypesEqual<MconfigField, z.infer<typeof zMconfigField>>({ value: true });

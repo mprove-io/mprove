@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type McliQueriesStats = {
+  started: number;
+  running: number;
+  completed: number;
+  error: number;
+  canceled: number;
+};
 
 export let zMcliQueriesStats = z
   .object({
@@ -10,4 +19,6 @@ export let zMcliQueriesStats = z
   })
   .meta({ id: 'McliQueriesStats' });
 
-export type McliQueriesStats = z.infer<typeof zMcliQueriesStats>;
+assertTypesEqual<McliQueriesStats, z.infer<typeof zMcliQueriesStats>>({
+  value: true
+});

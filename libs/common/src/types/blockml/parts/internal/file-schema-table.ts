@@ -1,5 +1,18 @@
 import { z } from 'zod';
-import { zFileSchemaColumn } from '#common/types/blockml/parts/internal/file-schema-column';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FileSchemaColumn,
+  zFileSchemaColumn
+} from '#common/types/blockml/parts/internal/file-schema-column';
+
+export type FileSchemaTable = {
+  table?: string;
+  table_line_num?: number;
+  description?: string;
+  description_line_num?: number;
+  columns?: FileSchemaColumn[];
+  columns_line_num?: number;
+};
 
 export let zFileSchemaTable = z
   .object({
@@ -12,4 +25,6 @@ export let zFileSchemaTable = z
   })
   .meta({ id: 'FileSchemaTable' });
 
-export type FileSchemaTable = z.infer<typeof zFileSchemaTable>;
+assertTypesEqual<FileSchemaTable, z.infer<typeof zFileSchemaTable>>({
+  value: true
+});

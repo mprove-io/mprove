@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type EventChartToggleYAxisElement = { yAxisIndex: number };
 
 export let zEventChartToggleYAxisElement = z
   .object({
@@ -6,6 +9,7 @@ export let zEventChartToggleYAxisElement = z
   })
   .meta({ id: 'EventChartToggleYAxisElement' });
 
-export type EventChartToggleYAxisElement = z.infer<
-  typeof zEventChartToggleYAxisElement
->;
+assertTypesEqual<
+  EventChartToggleYAxisElement,
+  z.infer<typeof zEventChartToggleYAxisElement>
+>({ value: true });

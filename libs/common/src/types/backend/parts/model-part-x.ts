@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { zModelPart } from '#common/types/backend/parts/model-part';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ModelPart,
+  zModelPart
+} from '#common/types/backend/parts/model-part';
+import type { Extend } from '#common/types/extend';
+
+export type ModelPartX = Extend<ModelPart, { hasAccess: boolean }>;
 
 export let zModelPartX = zModelPart
   .extend({
@@ -7,4 +14,4 @@ export let zModelPartX = zModelPart
   })
   .meta({ id: 'ModelPartX' });
 
-export type ModelPartX = z.infer<typeof zModelPartX>;
+assertTypesEqual<ModelPartX, z.infer<typeof zModelPartX>>({ value: true });

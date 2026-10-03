@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { ToBlockmlOperation } from '#common/types/blockml/request/to-blockml-operation';
 import type { ToBlockmlResponseBase } from '#common/types/blockml/response/to-blockml-response-base';

@@ -1,5 +1,16 @@
 import { z } from 'zod';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FileSchemaRelationship = {
+  to?: string;
+  to_line_num?: number;
+  to_schema?: string;
+  to_schema_line_num?: number;
+  type?: EnumValues<typeof RelationshipTypeEnum>;
+  type_line_num?: number;
+};
 
 export let zFileSchemaRelationship = z
   .object({
@@ -12,4 +23,7 @@ export let zFileSchemaRelationship = z
   })
   .meta({ id: 'FileSchemaRelationship' });
 
-export type FileSchemaRelationship = z.infer<typeof zFileSchemaRelationship>;
+assertTypesEqual<
+  FileSchemaRelationship,
+  z.infer<typeof zFileSchemaRelationship>
+>({ value: true });

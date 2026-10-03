@@ -1,5 +1,19 @@
 import { z } from 'zod';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FieldTime = {
+  hidden?: string;
+  hidden_line_num?: number;
+  group_label?: string;
+  group_label_line_num?: number;
+  group_description?: string;
+  group_description_line_num?: number;
+  name?: string;
+  name_line_num?: number;
+  fieldClass?: EnumValues<typeof FieldClassEnum>;
+};
 
 export let zFieldTime = z
   .object({
@@ -15,4 +29,4 @@ export let zFieldTime = z
   })
   .meta({ id: 'FieldTime' });
 
-export type FieldTime = z.infer<typeof zFieldTime>;
+assertTypesEqual<FieldTime, z.infer<typeof zFieldTime>>({ value: true });

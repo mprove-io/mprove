@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type ProjectChartLink = {
+  projectId: string;
+  chartId: string;
+  navTs?: number;
+};
 
 export let zProjectChartLink = z
   .object({
@@ -8,4 +15,6 @@ export let zProjectChartLink = z
   })
   .meta({ id: 'ProjectChartLink' });
 
-export type ProjectChartLink = z.infer<typeof zProjectChartLink>;
+assertTypesEqual<ProjectChartLink, z.infer<typeof zProjectChartLink>>({
+  value: true
+});

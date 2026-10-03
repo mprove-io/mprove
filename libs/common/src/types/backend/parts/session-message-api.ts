@@ -1,5 +1,13 @@
 import type { Message } from '@opencode-ai/sdk/v2';
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type SessionMessageApi = {
+  messageId: string;
+  sessionId: string;
+  role: string;
+  ocMessage: Message;
+};
 
 export let zSessionMessageApi = z
   .object({
@@ -10,4 +18,6 @@ export let zSessionMessageApi = z
   })
   .meta({ id: 'SessionMessageApi' });
 
-export type SessionMessageApi = z.infer<typeof zSessionMessageApi>;
+assertTypesEqual<SessionMessageApi, z.infer<typeof zSessionMessageApi>>({
+  value: true
+});

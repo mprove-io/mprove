@@ -1,6 +1,23 @@
 import { z } from 'zod';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { zTimezone } from '#common/types/shared/timezone/z-timezone';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+import {
+  type TimezoneString,
+  zTimezone
+} from '#common/types/shared/timezone/z-timezone';
+
+export type MproveConfig = {
+  mproveDirValue?: string;
+  caseSensitiveStringFilters?: boolean;
+  weekStart?: EnumValues<typeof ProjectWeekStartEnum>;
+  allowTimezones?: boolean;
+  defaultTimezone?: TimezoneString;
+  formatNumber?: string;
+  currencyPrefix?: string;
+  currencySuffix?: string;
+  thousandsSeparator?: string;
+};
 
 export let zMproveConfig = z
   .object({
@@ -16,4 +33,4 @@ export let zMproveConfig = z
   })
   .meta({ id: 'MproveConfig' });
 
-export type MproveConfig = z.infer<typeof zMproveConfig>;
+assertTypesEqual<MproveConfig, z.infer<typeof zMproveConfig>>({ value: true });

@@ -1,5 +1,15 @@
 import { z } from 'zod';
-import { zDiskFileLine } from '#common/types/disk/parts/disk-file-line';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type DiskFileLine,
+  zDiskFileLine
+} from '#common/types/disk/parts/disk-file-line';
+
+export type BmlError = {
+  title: string;
+  message: string;
+  lines: DiskFileLine[];
+};
 
 export let zBmlError = z
   .object({
@@ -9,4 +19,4 @@ export let zBmlError = z
   })
   .meta({ id: 'BmlError' });
 
-export type BmlError = z.infer<typeof zBmlError>;
+assertTypesEqual<BmlError, z.infer<typeof zBmlError>>({ value: true });

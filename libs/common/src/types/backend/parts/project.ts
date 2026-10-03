@@ -1,5 +1,19 @@
 import { z } from 'zod';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type Project = {
+  orgId: string;
+  projectId: string;
+  remoteType: EnumValues<typeof ProjectRemoteTypeEnum>;
+  name: string;
+  gitUrl?: string;
+  defaultBranch?: string;
+  publicKey?: string;
+  isE2bApiKeySet?: boolean;
+  serverTs?: number;
+};
 
 export let zProject = z
   .object({
@@ -15,4 +29,4 @@ export let zProject = z
   })
   .meta({ id: 'Project' });
 
-export type Project = z.infer<typeof zProject>;
+assertTypesEqual<Project, z.infer<typeof zProject>>({ value: true });

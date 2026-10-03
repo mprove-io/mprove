@@ -1,4 +1,20 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type ErrorData = {
+  message?: any;
+  description?: string;
+  leftButtonText?: string;
+  rightButtonText?: string;
+  leftOnClickFnBindThis?: () => any;
+  rightOnClickFnBindThis?: () => any;
+  originalError?: any;
+  reqUrl?: string;
+  reqHeaders?: any;
+  reqBody?: any;
+  response?: any;
+  skipLogToConsole?: boolean;
+};
 
 export let zErrorData = z
   .object({
@@ -17,4 +33,4 @@ export let zErrorData = z
   })
   .meta({ id: 'ErrorData' });
 
-export type ErrorData = z.infer<typeof zErrorData>;
+assertTypesEqual<ErrorData, z.infer<typeof zErrorData>>({ value: true });

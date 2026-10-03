@@ -1,4 +1,15 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type ProjectExplorerSessionLink = {
+  projectId: string;
+  sessionId: string;
+  repoId: string;
+  branchId: string;
+  envId: string;
+  tabId?: string;
+  navTs?: number;
+};
 
 export let zProjectExplorerSessionLink = z
   .object({
@@ -12,6 +23,7 @@ export let zProjectExplorerSessionLink = z
   })
   .meta({ id: 'ProjectExplorerSessionLink' });
 
-export type ProjectExplorerSessionLink = z.infer<
-  typeof zProjectExplorerSessionLink
->;
+assertTypesEqual<
+  ProjectExplorerSessionLink,
+  z.infer<typeof zProjectExplorerSessionLink>
+>({ value: true });

@@ -1,5 +1,15 @@
 import { z } from 'zod';
-import { zOptionsPrestoTrinoCommon } from '#common/types/backend/parts/connection-parts/options-presto-trino-common';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type OptionsPrestoTrinoCommon,
+  zOptionsPrestoTrinoCommon
+} from '#common/types/backend/parts/connection-parts/options-presto-trino-common';
+import type { Extend } from '#common/types/extend';
+
+export type OptionsPresto = Extend<
+  OptionsPrestoTrinoCommon,
+  { port?: number; internalPort?: number }
+>;
 
 export let zOptionsPresto = zOptionsPrestoTrinoCommon
   .extend({
@@ -8,4 +18,6 @@ export let zOptionsPresto = zOptionsPrestoTrinoCommon
   })
   .meta({ id: 'OptionsPresto' });
 
-export type OptionsPresto = z.infer<typeof zOptionsPresto>;
+assertTypesEqual<OptionsPresto, z.infer<typeof zOptionsPresto>>({
+  value: true
+});

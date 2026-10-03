@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { zSelectedGiven } from './selected-given';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type SelectedGiven, zSelectedGiven } from './selected-given';
+
+export type ProjectSelectedGivenLink = {
+  projectId: string;
+  givens: SelectedGiven[];
+  navTs?: number;
+};
 
 export let zProjectSelectedGivenLink = z
   .object({
@@ -9,6 +16,7 @@ export let zProjectSelectedGivenLink = z
   })
   .meta({ id: 'ProjectSelectedGivenLink' });
 
-export type ProjectSelectedGivenLink = z.infer<
-  typeof zProjectSelectedGivenLink
->;
+assertTypesEqual<
+  ProjectSelectedGivenLink,
+  z.infer<typeof zProjectSelectedGivenLink>
+>({ value: true });

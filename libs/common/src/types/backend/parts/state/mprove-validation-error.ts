@@ -1,5 +1,15 @@
 import { z } from 'zod';
-import { zMproveValidationErrorLine } from '#common/types/backend/parts/state/mprove-validation-error-line';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MproveValidationErrorLine,
+  zMproveValidationErrorLine
+} from '#common/types/backend/parts/state/mprove-validation-error-line';
+
+export type MproveValidationError = {
+  title: string;
+  message: string;
+  lines: MproveValidationErrorLine[];
+};
 
 export let zMproveValidationError = z
   .object({
@@ -9,4 +19,6 @@ export let zMproveValidationError = z
   })
   .meta({ id: 'MproveValidationError' });
 
-export type MproveValidationError = z.infer<typeof zMproveValidationError>;
+assertTypesEqual<MproveValidationError, z.infer<typeof zMproveValidationError>>(
+  { value: true }
+);

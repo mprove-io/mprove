@@ -2,6 +2,36 @@ import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { StoreMethodEnum } from '#common/enums/store-method.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type Query = {
+  projectId: string;
+  envId: string;
+  connectionId: string;
+  connectionType: EnumValues<typeof ConnectionTypeEnum>;
+  queryId: string;
+  reportId?: string;
+  reportStructId?: string;
+  sql?: string;
+  apiMethod?: EnumValues<typeof StoreMethodEnum>;
+  apiUrl?: string;
+  apiBody: any;
+  status: EnumValues<typeof QueryStatusEnum>;
+  data?: any;
+  lastRunBy?: string;
+  lastRunTs?: number;
+  lastCancelTs?: number;
+  lastCompleteTs?: number;
+  lastCompleteDuration?: number;
+  lastErrorMessage?: string;
+  lastErrorTs?: number;
+  queryJobId?: string;
+  bigqueryQueryJobId?: string;
+  bigqueryConsecutiveErrorsGetJob: number;
+  bigqueryConsecutiveErrorsGetResults: number;
+  serverTs: number;
+};
 
 export let zQuery = z
   .object({
@@ -33,4 +63,4 @@ export let zQuery = z
   })
   .meta({ id: 'Query' });
 
-export type Query = z.infer<typeof zQuery>;
+assertTypesEqual<Query, z.infer<typeof zQuery>>({ value: true });

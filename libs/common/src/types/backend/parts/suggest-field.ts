@@ -2,6 +2,19 @@ import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type SuggestField = {
+  modelFieldRef: string;
+  connectionType: EnumValues<typeof ConnectionTypeEnum>;
+  topLabel: string;
+  partNodeLabel: string;
+  partFieldLabel: string;
+  partLabel: string;
+  fieldClass: EnumValues<typeof FieldClassEnum>;
+  result: EnumValues<typeof FieldResultEnum>;
+};
 
 export let zSuggestField = z
   .object({
@@ -16,4 +29,4 @@ export let zSuggestField = z
   })
   .meta({ id: 'SuggestField' });
 
-export type SuggestField = z.infer<typeof zSuggestField>;
+assertTypesEqual<SuggestField, z.infer<typeof zSuggestField>>({ value: true });

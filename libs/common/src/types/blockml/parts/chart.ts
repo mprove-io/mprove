@@ -1,6 +1,29 @@
 import { z } from 'zod';
-import { zTile } from '#common/types/blockml/parts/tile';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Tile, zTile } from '#common/types/blockml/parts/tile';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type Chart = {
+  structId: string;
+  chartId: string;
+  draft: boolean;
+  isExplorer?: boolean;
+  sessionId?: string;
+  chartYaml?: string;
+  creatorId: string;
+  title: string;
+  modelId: string;
+  modelLabel: string;
+  filePath: string;
+  space?: string;
+  accessRoles: string[];
+  accessRolesCombined: AccessRoleCombined[];
+  tiles: Tile[];
+  serverTs: number;
+};
 
 export let zChart = z
   .object({
@@ -23,4 +46,4 @@ export let zChart = z
   })
   .meta({ id: 'Chart' });
 
-export type Chart = z.infer<typeof zChart>;
+assertTypesEqual<Chart, z.infer<typeof zChart>>({ value: true });

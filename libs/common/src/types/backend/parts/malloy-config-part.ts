@@ -1,5 +1,12 @@
 import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type MalloyConfigPart = {
+  malloyConnectionConfigEntry: ConnectionConfigEntry;
+  envs: Record<string, string>;
+  files: { path: string; data: string }[];
+};
 
 export let zMalloyConfigPart = z
   .object({
@@ -9,4 +16,6 @@ export let zMalloyConfigPart = z
   })
   .meta({ id: 'MalloyConfigPart' });
 
-export type MalloyConfigPart = z.infer<typeof zMalloyConfigPart>;
+assertTypesEqual<MalloyConfigPart, z.infer<typeof zMalloyConfigPart>>({
+  value: true
+});

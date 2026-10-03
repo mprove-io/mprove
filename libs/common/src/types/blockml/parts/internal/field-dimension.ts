@@ -1,6 +1,43 @@
 import { z } from 'zod';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FieldDimension = {
+  hidden?: string;
+  hidden_line_num?: number;
+  label?: string;
+  label_line_num?: number;
+  description?: string;
+  description_line_num?: number;
+  sql?: string;
+  sql_line_num?: number;
+  result?: EnumValues<typeof FieldResultEnum>;
+  result_line_num?: number;
+  suggest_model_dimension?: string;
+  suggest_model_dimension_line_num?: number;
+  unnest?: string;
+  unnest_line_num?: number;
+  format_number?: string;
+  format_number_line_num?: number;
+  currency_prefix?: string;
+  currency_prefix_line_num?: number;
+  currency_suffix?: string;
+  currency_suffix_line_num?: number;
+  group_label?: string;
+  group_label_line_num?: number;
+  group_description?: string;
+  group_description_line_num?: number;
+  groupId?: string;
+  name?: string;
+  name_line_num?: number;
+  fieldClass?: EnumValues<typeof FieldClassEnum>;
+  sqlReal?: string;
+  sqlTimestampReal?: string;
+  sqlTimestampName?: string;
+  sqlTimestamp?: string;
+};
 
 export let zFieldDimension = z
   .object({
@@ -39,4 +76,6 @@ export let zFieldDimension = z
   })
   .meta({ id: 'FieldDimension' });
 
-export type FieldDimension = z.infer<typeof zFieldDimension>;
+assertTypesEqual<FieldDimension, z.infer<typeof zFieldDimension>>({
+  value: true
+});

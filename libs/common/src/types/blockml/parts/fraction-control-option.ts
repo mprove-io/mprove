@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FractionControlOption = { value: string; label?: string };
 
 export let zFractionControlOption = z
   .object({
@@ -7,4 +10,6 @@ export let zFractionControlOption = z
   })
   .meta({ id: 'FractionControlOption' });
 
-export type FractionControlOption = z.infer<typeof zFractionControlOption>;
+assertTypesEqual<FractionControlOption, z.infer<typeof zFractionControlOption>>(
+  { value: true }
+);

@@ -1,6 +1,13 @@
 import { z } from 'zod';
-import { zModelMetricX } from '#common/types/backend/parts/model-metric-x';
-import { zStruct } from '#common/types/backend/parts/struct';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ModelMetricX,
+  zModelMetricX
+} from '#common/types/backend/parts/model-metric-x';
+import { type Struct, zStruct } from '#common/types/backend/parts/struct';
+import type { Extend } from '#common/types/extend';
+
+export type StructX = Extend<Struct, { metrics: ModelMetricX[] }>;
 
 export let zStructX = zStruct
   .extend({
@@ -8,4 +15,4 @@ export let zStructX = zStruct
   })
   .meta({ id: 'StructX' });
 
-export type StructX = z.infer<typeof zStructX>;
+assertTypesEqual<StructX, z.infer<typeof zStructX>>({ value: true });

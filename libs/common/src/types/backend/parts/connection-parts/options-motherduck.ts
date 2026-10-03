@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type OptionsMotherduck = {
+  motherduckToken?: string;
+  database?: string;
+  attachModeSingle?: boolean;
+  accessModeReadOnly?: boolean;
+};
 
 export let zOptionsMotherduck = z
   .object({
@@ -9,4 +17,6 @@ export let zOptionsMotherduck = z
   })
   .meta({ id: 'OptionsMotherduck' });
 
-export type OptionsMotherduck = z.infer<typeof zOptionsMotherduck>;
+assertTypesEqual<OptionsMotherduck, z.infer<typeof zOptionsMotherduck>>({
+  value: true
+});

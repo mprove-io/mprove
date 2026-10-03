@@ -1,5 +1,26 @@
 import { z } from 'zod';
-import { zFileChartDataPivotValue } from '#common/types/blockml/parts/internal/file-chart-data-pivot-value';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FileChartDataPivotValue,
+  zFileChartDataPivotValue
+} from '#common/types/blockml/parts/internal/file-chart-data-pivot-value';
+
+export type FileChartData = {
+  x_field?: string;
+  x_field_line_num?: number;
+  y_fields?: string[];
+  y_fields_line_num?: number;
+  size_field?: string;
+  size_field_line_num?: number;
+  multi_field?: string;
+  multi_field_line_num?: number;
+  pivot_rows?: string[];
+  pivot_rows_line_num?: number;
+  pivot_columns?: string[];
+  pivot_columns_line_num?: number;
+  pivot_values?: FileChartDataPivotValue[];
+  pivot_values_line_num?: number;
+};
 
 export let zFileChartData = z
   .object({
@@ -20,4 +41,6 @@ export let zFileChartData = z
   })
   .meta({ id: 'FileChartData' });
 
-export type FileChartData = z.infer<typeof zFileChartData>;
+assertTypesEqual<FileChartData, z.infer<typeof zFileChartData>>({
+  value: true
+});

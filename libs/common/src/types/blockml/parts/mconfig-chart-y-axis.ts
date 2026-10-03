@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type MconfigChartYAxis = { scale: boolean };
 
 export let zMconfigChartYAxis = z
   .object({
@@ -6,4 +9,6 @@ export let zMconfigChartYAxis = z
   })
   .meta({ id: 'MconfigChartYAxis' });
 
-export type MconfigChartYAxis = z.infer<typeof zMconfigChartYAxis>;
+assertTypesEqual<MconfigChartYAxis, z.infer<typeof zMconfigChartYAxis>>({
+  value: true
+});

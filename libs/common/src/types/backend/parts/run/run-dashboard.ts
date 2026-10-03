@@ -1,5 +1,16 @@
 import { z } from 'zod';
-import { zRunTile } from '#common/types/backend/parts/run/run-tile';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type RunTile,
+  zRunTile
+} from '#common/types/backend/parts/run/run-tile';
+
+export type RunDashboard = {
+  title: string;
+  dashboardId: string;
+  url: string;
+  tiles: RunTile[];
+};
 
 export let zRunDashboard = z
   .object({
@@ -10,4 +21,4 @@ export let zRunDashboard = z
   })
   .meta({ id: 'RunDashboard' });
 
-export type RunDashboard = z.infer<typeof zRunDashboard>;
+assertTypesEqual<RunDashboard, z.infer<typeof zRunDashboard>>({ value: true });

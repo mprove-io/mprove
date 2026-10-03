@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { zFraction } from '#common/types/blockml/parts/fraction';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
+
+export type Filter = { fieldId: string; fractions: Fraction[] };
 
 export let zFilter = z
   .object({
@@ -8,4 +11,4 @@ export let zFilter = z
   })
   .meta({ id: 'Filter' });
 
-export type Filter = z.infer<typeof zFilter>;
+assertTypesEqual<Filter, z.infer<typeof zFilter>>({ value: true });

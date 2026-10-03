@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type Timezone = { value: string; name: string };
 
 export let zTimezone = z
   .object({
@@ -7,4 +10,4 @@ export let zTimezone = z
   })
   .meta({ id: 'Timezone' });
 
-export type Timezone = z.infer<typeof zTimezone>;
+assertTypesEqual<Timezone, z.infer<typeof zTimezone>>({ value: true });

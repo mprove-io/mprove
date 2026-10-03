@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type SpaceFolder,
   zSpaceFolder
@@ -8,9 +9,11 @@ import {
   zSpaceUnit
 } from '#common/types/backend/parts/space-unit';
 
-export let zSpaceNode: z.ZodType<SpaceNode> = z.discriminatedUnion('type', [
+export type SpaceNode = SpaceFolder | SpaceUnit;
+
+export let zSpaceNode = z.discriminatedUnion('type', [
   zSpaceFolder,
   zSpaceUnit
 ]);
 
-export type SpaceNode = SpaceFolder | SpaceUnit;
+assertTypesEqual<SpaceNode, z.infer<typeof zSpaceNode>>({ value: true });

@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FileChartOptionsXAxisElement = {
+  scale: string;
+  scale_line_num?: number;
+};
 
 export let zFileChartOptionsXAxisElement = z
   .object({
@@ -7,6 +13,7 @@ export let zFileChartOptionsXAxisElement = z
   })
   .meta({ id: 'FileChartOptionsXAxisElement' });
 
-export type FileChartOptionsXAxisElement = z.infer<
-  typeof zFileChartOptionsXAxisElement
->;
+assertTypesEqual<
+  FileChartOptionsXAxisElement,
+  z.infer<typeof zFileChartOptionsXAxisElement>
+>({ value: true });

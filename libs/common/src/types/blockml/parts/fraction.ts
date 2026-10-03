@@ -12,8 +12,75 @@ import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-mom
 import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { FractionYesnoValueEnum } from '#common/enums/fraction/fraction-yesno-value.enum';
-import { zFractionControl } from '#common/types/blockml/parts/fraction-control';
-import { zFractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FractionControl,
+  zFractionControl
+} from '#common/types/blockml/parts/fraction-control';
+import {
+  type FractionSubTypeOption,
+  zFractionSubTypeOption
+} from '#common/types/blockml/parts/fraction-sub-type-option';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type Fraction = {
+  controls?: FractionControl[];
+  brick?: string;
+  parentBrick?: string;
+  operator?: EnumValues<typeof FractionOperatorEnum>;
+  logicGroup?: EnumValues<typeof FractionLogicEnum>;
+  type: EnumValues<typeof FractionTypeEnum>;
+  storeFractionSubTypeOptions?: FractionSubTypeOption[];
+  storeFractionSubType?: string;
+  storeFractionSubTypeLabel?: string;
+  storeFractionLogicGroupWithSubType?: string;
+  meta?: any;
+  storeResult?: string;
+  stringValue?: string;
+  numberValue1?: number;
+  numberValue2?: number;
+  numberValues?: string;
+  numberBetweenOption?: EnumValues<typeof FractionNumberBetweenOptionEnum>;
+  yesnoValue?: EnumValues<typeof FractionYesnoValueEnum>;
+  dayOfWeekValue?: EnumValues<typeof FractionDayOfWeekValueEnum>;
+  dayOfWeekIndexValues?: string;
+  monthNameValue?: EnumValues<typeof FractionMonthNameValueEnum>;
+  quarterOfYearValue?: EnumValues<typeof FractionQuarterOfYearValueEnum>;
+  tsDateYear?: number;
+  tsDateQuarter?: number;
+  tsDateMonth?: number;
+  tsDateDay?: number;
+  tsDateHour?: number;
+  tsDateMinute?: number;
+  tsDateToYear?: number;
+  tsDateToQuarter?: number;
+  tsDateToMonth?: number;
+  tsDateToDay?: number;
+  tsDateToHour?: number;
+  tsDateToMinute?: number;
+  tsForValue?: number;
+  tsForUnit?: EnumValues<typeof FractionTsUnitEnum>;
+  tsLastValue?: number;
+  tsLastUnit?: EnumValues<typeof FractionTsUnitEnum>;
+  tsLastCompleteOption?: EnumValues<typeof FractionTsLastCompleteOptionEnum>;
+  tsNextValue?: number;
+  tsNextUnit?: EnumValues<typeof FractionTsUnitEnum>;
+  tsMoment?: Moment;
+  tsMomentType?: EnumValues<typeof FractionTsMomentTypeEnum>;
+  tsMomentUnit?: EnumValues<typeof FractionTsMixUnitEnum>;
+  tsTimestampValue?: string;
+  tsMomentAgoFromNowQuantity?: number;
+  tsFromMoment?: Moment;
+  tsFromMomentType?: EnumValues<typeof FractionTsMomentTypeEnum>;
+  tsFromMomentUnit?: EnumValues<typeof FractionTsMixUnitEnum>;
+  tsFromTimestampValue?: string;
+  tsFromMomentAgoFromNowQuantity?: number;
+  tsToMoment?: Moment;
+  tsToMomentType?: EnumValues<typeof FractionTsMomentTypeEnum>;
+  tsToMomentUnit?: EnumValues<typeof FractionTsMixUnitEnum>;
+  tsToTimestampValue?: string;
+  tsToMomentAgoFromNowQuantity?: number;
+};
 
 export let zFraction = z
   .object({
@@ -88,4 +155,4 @@ export let zFraction = z
   })
   .meta({ id: 'Fraction' });
 
-export type Fraction = z.infer<typeof zFraction>;
+assertTypesEqual<Fraction, z.infer<typeof zFraction>>({ value: true });

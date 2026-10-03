@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type RefreshItem = { label: string; value: number };
 
 export let zRefreshItem = z
   .object({
@@ -7,4 +10,4 @@ export let zRefreshItem = z
   })
   .meta({ id: 'RefreshItem' });
 
-export type RefreshItem = z.infer<typeof zRefreshItem>;
+assertTypesEqual<RefreshItem, z.infer<typeof zRefreshItem>>({ value: true });

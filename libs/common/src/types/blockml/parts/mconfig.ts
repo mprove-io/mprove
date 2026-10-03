@@ -1,12 +1,52 @@
 import { z } from 'zod';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { zAppliedGivenValue } from '#common/types/blockml/parts/applied-given-value';
-import { zFilter } from '#common/types/blockml/parts/filter';
-import { zMconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import { zSorting } from '#common/types/blockml/parts/sorting';
-import { zStorePart } from '#common/types/blockml/parts/store-part';
-import { zTimezone } from '#common/types/shared/timezone/z-timezone';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type AppliedGivenValue,
+  zAppliedGivenValue
+} from '#common/types/blockml/parts/applied-given-value';
+import { type Filter, zFilter } from '#common/types/blockml/parts/filter';
+import {
+  type MconfigChart,
+  zMconfigChart
+} from '#common/types/blockml/parts/mconfig-chart';
+import { type Sorting, zSorting } from '#common/types/blockml/parts/sorting';
+import {
+  type StorePart,
+  zStorePart
+} from '#common/types/blockml/parts/store-part';
+import type { EnumValues } from '#common/types/enum-values';
+import {
+  type TimezoneString,
+  zTimezone
+} from '#common/types/shared/timezone/z-timezone';
+
+export type Mconfig = {
+  structId: string;
+  mconfigId: string;
+  queryId: string;
+  modelId: string;
+  modelType: EnumValues<typeof ModelTypeEnum>;
+  parentType: EnumValues<typeof MconfigParentTypeEnum>;
+  parentId?: string;
+  dateRangeIncludesRightSide?: boolean;
+  storePart?: StorePart;
+  modelLabel: string;
+  modelFilePath?: string;
+  malloyQueryStable?: string;
+  malloyQueryExtra?: string;
+  compiledQuery: any;
+  select: string[];
+  sortings: Sorting[];
+  sorts?: string;
+  timezone: TimezoneString;
+  limit: number;
+  filters: Filter[];
+  appliedGivens?: Record<string, AppliedGivenValue>;
+  chart: MconfigChart;
+  serverTs: number;
+};
 
 export let zMconfig = z
   .object({
@@ -36,4 +76,4 @@ export let zMconfig = z
   })
   .meta({ id: 'Mconfig' });
 
-export type Mconfig = z.infer<typeof zMconfig>;
+assertTypesEqual<Mconfig, z.infer<typeof zMconfig>>({ value: true });

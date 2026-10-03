@@ -1,4 +1,16 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type OptionsPostgres = {
+  host?: string;
+  internalHost?: string;
+  port?: number;
+  internalPort?: number;
+  database?: string;
+  username?: string;
+  password?: string;
+  isSSL?: boolean;
+};
 
 export let zOptionsPostgres = z
   .object({
@@ -13,4 +25,6 @@ export let zOptionsPostgres = z
   })
   .meta({ id: 'OptionsPostgres' });
 
-export type OptionsPostgres = z.infer<typeof zOptionsPostgres>;
+assertTypesEqual<OptionsPostgres, z.infer<typeof zOptionsPostgres>>({
+  value: true
+});

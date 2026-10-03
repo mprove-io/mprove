@@ -1,11 +1,59 @@
 import { z } from 'zod';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { zFilterBricksDictionary } from '#common/types/blockml/parts/filter-bricks-dictionary';
-import { zFraction } from '#common/types/blockml/parts/fraction';
-import { zFileChartData } from '#common/types/blockml/parts/internal/file-chart-data';
-import { zFileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
-import { zFileChartPlate } from '#common/types/blockml/parts/internal/file-chart-plate';
-import { zFileTileParameter } from '#common/types/blockml/parts/internal/file-tile-parameter';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FilterBricksDictionary,
+  zFilterBricksDictionary
+} from '#common/types/blockml/parts/filter-bricks-dictionary';
+import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
+import {
+  type FileChartData,
+  zFileChartData
+} from '#common/types/blockml/parts/internal/file-chart-data';
+import {
+  type FileChartOptions,
+  zFileChartOptions
+} from '#common/types/blockml/parts/internal/file-chart-options';
+import {
+  type FileChartPlate,
+  zFileChartPlate
+} from '#common/types/blockml/parts/internal/file-chart-plate';
+import {
+  type FileTileParameter,
+  zFileTileParameter
+} from '#common/types/blockml/parts/internal/file-tile-parameter';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FilePartTile = {
+  title?: string;
+  title_line_num?: number;
+  model?: string;
+  model_line_num?: number;
+  select?: string[];
+  select_line_num?: number;
+  sorts?: string;
+  sorts_line_num?: number;
+  limit?: string;
+  limit_line_num?: number;
+  type?: EnumValues<typeof ChartTypeEnum>;
+  type_line_num?: number;
+  data?: FileChartData;
+  data_line_num?: number;
+  options?: FileChartOptions;
+  options_line_num?: number;
+  plate?: FileChartPlate;
+  plate_line_num?: number;
+  parameters?: FileTileParameter[];
+  parameters_line_num?: number;
+  malloyQueryStable?: string;
+  malloyQueryExtra?: string;
+  compiledQuery?: any;
+  sql?: string[];
+  sortingsAry?: { fieldId?: string; desc?: boolean }[];
+  listen?: Record<string, string>;
+  combinedFilters?: FilterBricksDictionary;
+  filtersFractions?: Record<string, Fraction[]>;
+};
 
 export let zFilePartTile = z
   .object({
@@ -47,4 +95,4 @@ export let zFilePartTile = z
   })
   .meta({ id: 'FilePartTile' });
 
-export type FilePartTile = z.infer<typeof zFilePartTile>;
+assertTypesEqual<FilePartTile, z.infer<typeof zFilePartTile>>({ value: true });

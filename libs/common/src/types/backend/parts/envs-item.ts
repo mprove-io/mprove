@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type EnvsItem = { envId: string; projectId: string };
 
 export let zEnvsItem = z
   .object({
@@ -7,4 +10,4 @@ export let zEnvsItem = z
   })
   .meta({ id: 'EnvsItem' });
 
-export type EnvsItem = z.infer<typeof zEnvsItem>;
+assertTypesEqual<EnvsItem, z.infer<typeof zEnvsItem>>({ value: true });

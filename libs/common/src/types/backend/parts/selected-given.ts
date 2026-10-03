@@ -1,5 +1,14 @@
 import { z } from 'zod';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type SelectedGiven = {
+  givenId: string;
+  type: EnumValues<typeof GivenTypeEnum>;
+  isMultiple: boolean;
+  values: string[];
+};
 
 export let zSelectedGiven = z
   .object({
@@ -10,4 +19,6 @@ export let zSelectedGiven = z
   })
   .meta({ id: 'SelectedGiven' });
 
-export type SelectedGiven = z.infer<typeof zSelectedGiven>;
+assertTypesEqual<SelectedGiven, z.infer<typeof zSelectedGiven>>({
+  value: true
+});

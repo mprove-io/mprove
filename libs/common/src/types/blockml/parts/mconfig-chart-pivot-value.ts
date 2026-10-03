@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type MconfigChartPivotValue = { field: string };
 
 export let zMconfigChartPivotValue = z
   .object({
@@ -6,4 +9,7 @@ export let zMconfigChartPivotValue = z
   })
   .meta({ id: 'MconfigChartPivotValue' });
 
-export type MconfigChartPivotValue = z.infer<typeof zMconfigChartPivotValue>;
+assertTypesEqual<
+  MconfigChartPivotValue,
+  z.infer<typeof zMconfigChartPivotValue>
+>({ value: true });

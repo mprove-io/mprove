@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { zOrgUsersItem } from '#common/types/backend/parts/org-users/org-users-item';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type OrgUsersItem,
+  zOrgUsersItem
+} from '#common/types/backend/parts/org-users/org-users-item';
+import type { Extend } from '#common/types/extend';
+
+export type OrgUserItemExtended = Extend<OrgUsersItem, { initials: string }>;
 
 export let zOrgUserItemExtended = zOrgUsersItem
   .extend({
@@ -7,4 +14,6 @@ export let zOrgUserItemExtended = zOrgUsersItem
   })
   .meta({ id: 'OrgUserItemExtended' });
 
-export type OrgUserItemExtended = z.infer<typeof zOrgUserItemExtended>;
+assertTypesEqual<OrgUserItemExtended, z.infer<typeof zOrgUserItemExtended>>({
+  value: true
+});

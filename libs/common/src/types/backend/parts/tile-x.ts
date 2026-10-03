@@ -1,7 +1,17 @@
 import { z } from 'zod';
-import { zMconfigX } from '#common/types/backend/parts/mconfig-x';
-import { zQuery } from '#common/types/blockml/parts/query';
-import { zTile } from '#common/types/blockml/parts/tile';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MconfigX,
+  zMconfigX
+} from '#common/types/backend/parts/mconfig-x';
+import { type Query, zQuery } from '#common/types/blockml/parts/query';
+import { type Tile, zTile } from '#common/types/blockml/parts/tile';
+import type { Extend } from '#common/types/extend';
+
+export type TileX = Extend<
+  Tile,
+  { mconfig?: MconfigX; query?: Query; hasAccessToModel: boolean }
+>;
 
 export let zTileX = zTile
   .extend({
@@ -11,4 +21,4 @@ export let zTileX = zTile
   })
   .meta({ id: 'TileX' });
 
-export type TileX = z.infer<typeof zTileX>;
+assertTypesEqual<TileX, z.infer<typeof zTileX>>({ value: true });

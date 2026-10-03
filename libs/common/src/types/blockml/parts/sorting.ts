@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type Sorting = { fieldId: string; desc: boolean };
 
 export let zSorting = z
   .object({
@@ -7,4 +10,4 @@ export let zSorting = z
   })
   .meta({ id: 'Sorting' });
 
-export type Sorting = z.infer<typeof zSorting>;
+assertTypesEqual<Sorting, z.infer<typeof zSorting>>({ value: true });

@@ -1,5 +1,25 @@
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type ReportUnit = {
+  type: 'reportUnit';
+  id: string;
+  reportId: string;
+  title: string;
+  filePath?: string;
+  space?: string;
+  accessRoles: string[];
+  accessRolesCombined: AccessRoleCombined[];
+  author?: string;
+  canEditOrDeleteReport: boolean;
+  isFavorite: boolean;
+  draft: boolean;
+  spaceFullTitle: string;
+};
 
 export let zReportUnit = z
   .object({
@@ -19,4 +39,4 @@ export let zReportUnit = z
   })
   .meta({ id: 'ReportUnit' });
 
-export type ReportUnit = z.infer<typeof zReportUnit>;
+assertTypesEqual<ReportUnit, z.infer<typeof zReportUnit>>({ value: true });

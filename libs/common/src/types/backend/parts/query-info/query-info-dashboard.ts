@@ -1,5 +1,16 @@
 import { z } from 'zod';
-import { zQueryInfoTile } from '#common/types/backend/parts/query-info/query-info-tile';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type QueryInfoTile,
+  zQueryInfoTile
+} from '#common/types/backend/parts/query-info/query-info-tile';
+
+export type QueryInfoDashboard = {
+  title: string;
+  dashboardId: string;
+  url: string;
+  tiles: QueryInfoTile[];
+};
 
 export let zQueryInfoDashboard = z
   .object({
@@ -10,4 +21,6 @@ export let zQueryInfoDashboard = z
   })
   .meta({ id: 'QueryInfoDashboard' });
 
-export type QueryInfoDashboard = z.infer<typeof zQueryInfoDashboard>;
+assertTypesEqual<QueryInfoDashboard, z.infer<typeof zQueryInfoDashboard>>({
+  value: true
+});

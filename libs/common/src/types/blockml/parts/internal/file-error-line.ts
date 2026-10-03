@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FileErrorLine = { line: number; name: string; path: string };
 
 export let zFileErrorLine = z
   .object({
@@ -8,4 +11,6 @@ export let zFileErrorLine = z
   })
   .meta({ id: 'FileErrorLine' });
 
-export type FileErrorLine = z.infer<typeof zFileErrorLine>;
+assertTypesEqual<FileErrorLine, z.infer<typeof zFileErrorLine>>({
+  value: true
+});

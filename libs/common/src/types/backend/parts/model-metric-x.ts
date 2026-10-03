@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { zModelMetric } from '#common/types/blockml/parts/model-metric';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ModelMetric,
+  zModelMetric
+} from '#common/types/blockml/parts/model-metric';
+import type { Extend } from '#common/types/extend';
+
+export type ModelMetricX = Extend<ModelMetric, { hasAccessToModel: boolean }>;
 
 export let zModelMetricX = zModelMetric
   .extend({
@@ -7,4 +14,4 @@ export let zModelMetricX = zModelMetric
   })
   .meta({ id: 'ModelMetricX' });
 
-export type ModelMetricX = z.infer<typeof zModelMetricX>;
+assertTypesEqual<ModelMetricX, z.infer<typeof zModelMetricX>>({ value: true });

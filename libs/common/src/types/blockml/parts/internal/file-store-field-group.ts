@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FileStoreFieldGroup = {
+  group?: string;
+  group_line_num?: number;
+  label?: string;
+  label_line_num?: number;
+};
 
 export let zFileStoreFieldGroup = z
   .object({
@@ -9,4 +17,6 @@ export let zFileStoreFieldGroup = z
   })
   .meta({ id: 'FileStoreFieldGroup' });
 
-export type FileStoreFieldGroup = z.infer<typeof zFileStoreFieldGroup>;
+assertTypesEqual<FileStoreFieldGroup, z.infer<typeof zFileStoreFieldGroup>>({
+  value: true
+});

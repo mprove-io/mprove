@@ -1,9 +1,33 @@
 import { z } from 'zod';
-import { zMproveConfig } from '#common/types/backend/parts/mprove-config';
-import { zBmlError } from '#common/types/blockml/parts/bml-error';
-import { zModelMetric } from '#common/types/blockml/parts/model-metric';
-import { zPreset } from '#common/types/blockml/parts/preset';
-import { zSpace } from '#common/types/blockml/parts/space';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MproveConfig,
+  zMproveConfig
+} from '#common/types/backend/parts/mprove-config';
+import {
+  type BmlError,
+  zBmlError
+} from '#common/types/blockml/parts/bml-error';
+import {
+  type ModelMetric,
+  zModelMetric
+} from '#common/types/blockml/parts/model-metric';
+import { type Preset, zPreset } from '#common/types/blockml/parts/preset';
+import { type Space, zSpace } from '#common/types/blockml/parts/space';
+
+export type Struct = {
+  projectId: string;
+  structId: string;
+  errors: BmlError[];
+  modelFilePaths: string[];
+  metrics: ModelMetric[];
+  presets: Preset[];
+  spaces: Space[];
+  mproveConfig: MproveConfig;
+  mproveExplorer?: string;
+  mproveVersion: string;
+  serverTs: number;
+};
 
 export let zStruct = z
   .object({
@@ -21,4 +45,4 @@ export let zStruct = z
   })
   .meta({ id: 'Struct' });
 
-export type Struct = z.infer<typeof zStruct>;
+assertTypesEqual<Struct, z.infer<typeof zStruct>>({ value: true });

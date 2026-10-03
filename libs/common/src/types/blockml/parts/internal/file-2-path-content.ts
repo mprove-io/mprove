@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type File2PathContent = { path: string; content: string };
 
 export let zFile2PathContent = z
   .object({
@@ -7,4 +10,6 @@ export let zFile2PathContent = z
   })
   .meta({ id: 'File2PathContent' });
 
-export type File2PathContent = z.infer<typeof zFile2PathContent>;
+assertTypesEqual<File2PathContent, z.infer<typeof zFile2PathContent>>({
+  value: true
+});

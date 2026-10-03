@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { zMember } from '#common/types/backend/parts/member';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Member, zMember } from '#common/types/backend/parts/member';
+import type { Extend } from '#common/types/extend';
+
+export type MemberExtended = Extend<Member, { initials: string }>;
 
 export let zMemberExtended = zMember
   .extend({
@@ -7,4 +11,6 @@ export let zMemberExtended = zMember
   })
   .meta({ id: 'MemberExtended' });
 
-export type MemberExtended = z.infer<typeof zMemberExtended>;
+assertTypesEqual<MemberExtended, z.infer<typeof zMemberExtended>>({
+  value: true
+});

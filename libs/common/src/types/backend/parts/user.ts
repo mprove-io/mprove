@@ -1,5 +1,21 @@
 import { z } from 'zod';
-import { zUi } from '#common/types/backend/parts/ui';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Ui, zUi } from '#common/types/backend/parts/ui';
+
+export type User = {
+  userId: string;
+  email: string;
+  alias: string;
+  firstName: string;
+  lastName: string;
+  isEmailVerified: boolean;
+  ui: Ui;
+  apiKeyPrefix?: string;
+  isCodexAuthSet?: boolean;
+  codexAuthUpdateTs?: number;
+  codexAuthExpiresTs?: number;
+  serverTs: number;
+};
 
 export let zUser = z
   .object({
@@ -18,4 +34,4 @@ export let zUser = z
   })
   .meta({ id: 'User' });
 
-export type User = z.infer<typeof zUser>;
+assertTypesEqual<User, z.infer<typeof zUser>>({ value: true });

@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type EventChartToggleSeries = {
+  seriesDataRowId: string;
+  seriesDataField: string;
+};
 
 export let zEventChartToggleSeries = z
   .object({
@@ -7,4 +13,7 @@ export let zEventChartToggleSeries = z
   })
   .meta({ id: 'EventChartToggleSeries' });
 
-export type EventChartToggleSeries = z.infer<typeof zEventChartToggleSeries>;
+assertTypesEqual<
+  EventChartToggleSeries,
+  z.infer<typeof zEventChartToggleSeries>
+>({ value: true });

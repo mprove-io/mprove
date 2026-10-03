@@ -1,5 +1,15 @@
 import { z } from 'zod';
-import { zSessionApi } from '#common/types/backend/parts/session-api';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type SessionApi,
+  zSessionApi
+} from '#common/types/backend/parts/session-api';
+import type { Extend } from '#common/types/extend';
+
+export type SessionApiX = Extend<
+  SessionApi,
+  { displayTitle: string; providerLabel: string }
+>;
 
 export let zSessionApiX = zSessionApi
   .extend({
@@ -8,4 +18,4 @@ export let zSessionApiX = zSessionApi
   })
   .meta({ id: 'SessionApiX' });
 
-export type SessionApiX = z.infer<typeof zSessionApiX>;
+assertTypesEqual<SessionApiX, z.infer<typeof zSessionApiX>>({ value: true });

@@ -1,7 +1,26 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export let zfWrapResult = <T extends z.ZodType>(zT: T) =>
-  z
+export type WrapResult<T> = {
+  data: T;
+  durationMs: number;
+  error: any;
+  errorStr: string;
+};
+
+type WrapResultSchema<T extends z.ZodType> = z.ZodObject<{
+  data: T;
+  durationMs: z.ZodNumber;
+  error: z.ZodAny;
+  errorStr: z.ZodString;
+}>;
+
+export let zfWrapResult = <T extends z.ZodType>(item: {
+  zT: T;
+}): WrapResultSchema<T> => {
+  let { zT } = item;
+
+  let schema: WrapResultSchema<T> = z
     .object({
       data: zT,
       durationMs: z.number(),
@@ -10,12 +29,12 @@ export let zfWrapResult = <T extends z.ZodType>(zT: T) =>
     })
     .meta({ id: 'WrapResult' });
 
-// TODO: remove this type export once zod exposes a way to parameterize
-// generic schemas at the type level. Blockml needs `WrapResult<MalloyModel>`
-// and the `zfWrapResult` factory cannot express that without a type alias.
-export type WrapResult<T> = {
-  data: T;
-  durationMs: number;
-  error: any;
-  errorStr: string;
+  return schema;
 };
+
+// Zod's generic optional-key calculation cannot reduce until T is concrete.
+// Check an instantiated output without annotating it as the native type.
+assertTypesEqual<
+  WrapResult<string>,
+  z.infer<ReturnType<typeof zfWrapResult<z.ZodString>>>
+>({ value: true });

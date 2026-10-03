@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { ToDiskOperation } from '#common/types/disk/request/to-disk-operation';
 import type { ToDiskResponseBase } from '#common/types/disk/response/to-disk-response-base';

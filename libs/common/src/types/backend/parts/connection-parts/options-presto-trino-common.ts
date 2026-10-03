@@ -1,5 +1,6 @@
 import type { ConnectionOptions } from 'trino-client';
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 type OptionsPrestoTrinoCommonOwnKeys =
   | 'server'
@@ -9,6 +10,18 @@ type OptionsPrestoTrinoCommonOwnKeys =
   | 'user'
   | 'password'
   | 'extraConfig';
+
+export type OptionsPrestoTrinoCommon = {
+  server?: string;
+  internalServer?: string;
+  catalog?: string;
+  schema?: string;
+  user?: string;
+  password?: string;
+  extraConfig?: Partial<
+    Omit<ConnectionOptions, OptionsPrestoTrinoCommonOwnKeys>
+  >;
+};
 
 export let zOptionsPrestoTrinoCommon = z
   .object({
@@ -26,6 +39,7 @@ export let zOptionsPrestoTrinoCommon = z
   })
   .meta({ id: 'OptionsPrestoTrinoCommon' });
 
-export type OptionsPrestoTrinoCommon = z.infer<
-  typeof zOptionsPrestoTrinoCommon
->;
+assertTypesEqual<
+  OptionsPrestoTrinoCommon,
+  z.infer<typeof zOptionsPrestoTrinoCommon>
+>({ value: true });

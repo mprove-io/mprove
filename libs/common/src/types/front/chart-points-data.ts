@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type ChartPointsData = {
+  dataPoints: any;
+  newQueriesLength: number;
+  runningQueriesLength: number;
+};
 
 export let zChartPointsData = z
   .object({
@@ -8,4 +15,6 @@ export let zChartPointsData = z
   })
   .meta({ id: 'ChartPointsData' });
 
-export type ChartPointsData = z.infer<typeof zChartPointsData>;
+assertTypesEqual<ChartPointsData, z.infer<typeof zChartPointsData>>({
+  value: true
+});

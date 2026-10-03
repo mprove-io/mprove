@@ -1,6 +1,25 @@
 import { z } from 'zod';
-import { zTile } from '#common/types/blockml/parts/tile';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Tile, zTile } from '#common/types/blockml/parts/tile';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type DashboardPart = {
+  structId: string;
+  dashboardId: string;
+  draft: boolean;
+  creatorId: string;
+  title: string;
+  filePath: string;
+  space?: string;
+  accessRoles: string[];
+  accessRolesCombined: AccessRoleCombined[];
+  tiles: Tile[];
+  author?: string;
+  canEditOrDeleteDashboard: boolean;
+};
 
 export let zDashboardPart = z
   .object({
@@ -19,4 +38,6 @@ export let zDashboardPart = z
   })
   .meta({ id: 'DashboardPart' });
 
-export type DashboardPart = z.infer<typeof zDashboardPart>;
+assertTypesEqual<DashboardPart, z.infer<typeof zDashboardPart>>({
+  value: true
+});

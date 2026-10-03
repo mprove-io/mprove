@@ -1,5 +1,25 @@
 import { z } from 'zod';
 import { ControlClassEnum } from '#common/enums/control-class.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FileFractionControl = {
+  input?: string;
+  input_line_num?: number;
+  list_input?: string;
+  list_input_line_num?: number;
+  switch?: string;
+  switch_line_num?: number;
+  date_picker?: string;
+  date_picker_line_num?: number;
+  selector?: string;
+  selector_line_num?: number;
+  value?: string;
+  value_line_num?: number;
+  name?: string;
+  name_line_num?: number;
+  controlClass?: EnumValues<typeof ControlClassEnum>;
+};
 
 export let zFileFractionControl = z
   .object({
@@ -21,4 +41,6 @@ export let zFileFractionControl = z
   })
   .meta({ id: 'FileFractionControl' });
 
-export type FileFractionControl = z.infer<typeof zFileFractionControl>;
+assertTypesEqual<FileFractionControl, z.infer<typeof zFileFractionControl>>({
+  value: true
+});

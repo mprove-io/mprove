@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { zTimezone } from '#common/types/shared/timezone/timezone';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type Timezone,
+  zTimezone
+} from '#common/types/shared/timezone/timezone';
+
+export type TimezoneGroup = { group: string; zones: Timezone[] };
 
 export let zTimezoneGroup = z
   .object({
@@ -8,4 +14,6 @@ export let zTimezoneGroup = z
   })
   .meta({ id: 'TimezoneGroup' });
 
-export type TimezoneGroup = z.infer<typeof zTimezoneGroup>;
+assertTypesEqual<TimezoneGroup, z.infer<typeof zTimezoneGroup>>({
+  value: true
+});

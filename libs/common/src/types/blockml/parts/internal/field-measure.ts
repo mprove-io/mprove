@@ -2,6 +2,38 @@ import { z } from 'zod';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FieldTypeEnum } from '#common/enums/field-type.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FieldMeasure = {
+  hidden?: string;
+  hidden_line_num?: number;
+  label?: string;
+  label_line_num?: number;
+  description?: string;
+  description_line_num?: number;
+  sql?: string;
+  sql_line_num?: number;
+  type?: EnumValues<typeof FieldTypeEnum>;
+  type_line_num?: number;
+  result?: EnumValues<typeof FieldResultEnum>;
+  result_line_num?: number;
+  format_number?: string;
+  format_number_line_num?: number;
+  currency_prefix?: string;
+  currency_prefix_line_num?: number;
+  currency_suffix?: string;
+  currency_suffix_line_num?: number;
+  sql_key?: string;
+  sql_key_line_num?: number;
+  percentile?: string;
+  percentile_line_num?: number;
+  name?: string;
+  name_line_num?: number;
+  fieldClass?: EnumValues<typeof FieldClassEnum>;
+  sqlReal?: string;
+  sqlKeyReal?: string;
+};
 
 export let zFieldMeasure = z
   .object({
@@ -35,4 +67,4 @@ export let zFieldMeasure = z
   })
   .meta({ id: 'FieldMeasure' });
 
-export type FieldMeasure = z.infer<typeof zFieldMeasure>;
+assertTypesEqual<FieldMeasure, z.infer<typeof zFieldMeasure>>({ value: true });

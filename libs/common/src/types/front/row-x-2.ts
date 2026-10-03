@@ -1,6 +1,19 @@
 import { z } from 'zod';
-import { zModelField } from '#common/types/blockml/parts/model-field';
-import { zRow } from '#common/types/blockml/parts/row';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ModelField,
+  zModelField
+} from '#common/types/blockml/parts/model-field';
+import { type Row, zRow } from '#common/types/blockml/parts/row';
+import type { Extend } from '#common/types/extend';
+
+export type RowX2 = Extend<
+  Row,
+  {
+    modelFields?: Record<string, ModelField[]>;
+    mconfigListenSwap?: Record<string, string[]>;
+  }
+>;
 
 export let zRowX2 = zRow
   .extend({
@@ -9,4 +22,4 @@ export let zRowX2 = zRow
   })
   .meta({ id: 'RowX2' });
 
-export type RowX2 = z.infer<typeof zRowX2>;
+assertTypesEqual<RowX2, z.infer<typeof zRowX2>>({ value: true });

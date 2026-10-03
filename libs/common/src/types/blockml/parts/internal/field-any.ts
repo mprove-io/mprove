@@ -1,11 +1,48 @@
 import { z } from 'zod';
-import { zFieldDimension } from '#common/types/blockml/parts/internal/field-dimension';
-import { zFieldFilter } from '#common/types/blockml/parts/internal/field-filter';
-import { zFieldMeasure } from '#common/types/blockml/parts/internal/field-measure';
-import { zFieldStoreDimension } from '#common/types/blockml/parts/internal/field-store-dimension';
-import { zFieldStoreFilter } from '#common/types/blockml/parts/internal/field-store-filter';
-import { zFieldStoreMeasure } from '#common/types/blockml/parts/internal/field-store-measure';
-import { zFieldTime } from '#common/types/blockml/parts/internal/field-time';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FieldDimension,
+  zFieldDimension
+} from '#common/types/blockml/parts/internal/field-dimension';
+import {
+  type FieldFilter,
+  zFieldFilter
+} from '#common/types/blockml/parts/internal/field-filter';
+import {
+  type FieldMeasure,
+  zFieldMeasure
+} from '#common/types/blockml/parts/internal/field-measure';
+import {
+  type FieldStoreDimension,
+  zFieldStoreDimension
+} from '#common/types/blockml/parts/internal/field-store-dimension';
+import {
+  type FieldStoreFilter,
+  zFieldStoreFilter
+} from '#common/types/blockml/parts/internal/field-store-filter';
+import {
+  type FieldStoreMeasure,
+  zFieldStoreMeasure
+} from '#common/types/blockml/parts/internal/field-store-measure';
+import {
+  type FieldTime,
+  zFieldTime
+} from '#common/types/blockml/parts/internal/field-time';
+import type { Extend } from '#common/types/extend';
+
+export type FieldAny = Extend<
+  Extend<
+    Extend<
+      Extend<
+        Extend<Extend<FieldDimension, FieldStoreDimension>, FieldTime>,
+        FieldMeasure
+      >,
+      FieldStoreMeasure
+    >,
+    FieldFilter
+  >,
+  FieldStoreFilter
+>;
 
 export let zFieldAny = z
   .object({
@@ -19,4 +56,4 @@ export let zFieldAny = z
   })
   .meta({ id: 'FieldAny' });
 
-export type FieldAny = z.infer<typeof zFieldAny>;
+assertTypesEqual<FieldAny, z.infer<typeof zFieldAny>>({ value: true });

@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type OptionsBigquery = {
+  serviceAccountCredentials?: any;
+  googleCloudProject?: string;
+  googleCloudClientEmail?: string;
+  bigqueryQuerySizeLimitGb?: number;
+};
 
 export let zOptionsBigquery = z
   .object({
@@ -9,4 +17,6 @@ export let zOptionsBigquery = z
   })
   .meta({ id: 'OptionsBigquery' });
 
-export type OptionsBigquery = z.infer<typeof zOptionsBigquery>;
+assertTypesEqual<OptionsBigquery, z.infer<typeof zOptionsBigquery>>({
+  value: true
+});

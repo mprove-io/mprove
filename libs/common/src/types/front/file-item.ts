@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FileItem = {
+  fileName: string;
+  fileId: string;
+  fileNodeId: string;
+  parentPath: string;
+};
 
 export let zFileItem = z
   .object({
@@ -9,4 +17,4 @@ export let zFileItem = z
   })
   .meta({ id: 'FileItem' });
 
-export type FileItem = z.infer<typeof zFileItem>;
+assertTypesEqual<FileItem, z.infer<typeof zFileItem>>({ value: true });

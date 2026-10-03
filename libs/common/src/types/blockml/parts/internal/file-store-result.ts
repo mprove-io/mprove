@@ -1,5 +1,16 @@
 import { z } from 'zod';
-import { zFileStoreFractionType } from '#common/types/blockml/parts/internal/file-store-fraction-type';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FileStoreFractionType,
+  zFileStoreFractionType
+} from '#common/types/blockml/parts/internal/file-store-fraction-type';
+
+export type FileStoreResult = {
+  result?: string;
+  result_line_num?: number;
+  fraction_types?: FileStoreFractionType[];
+  fraction_types_line_num?: number;
+};
 
 export let zFileStoreResult = z
   .object({
@@ -10,4 +21,6 @@ export let zFileStoreResult = z
   })
   .meta({ id: 'FileStoreResult' });
 
-export type FileStoreResult = z.infer<typeof zFileStoreResult>;
+assertTypesEqual<FileStoreResult, z.infer<typeof zFileStoreResult>>({
+  value: true
+});

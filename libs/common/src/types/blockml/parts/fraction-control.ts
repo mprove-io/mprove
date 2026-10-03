@@ -1,6 +1,21 @@
 import { z } from 'zod';
 import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { zFractionControlOption } from '#common/types/blockml/parts/fraction-control-option';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FractionControlOption,
+  zFractionControlOption
+} from '#common/types/blockml/parts/fraction-control-option';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FractionControl = {
+  options?: FractionControlOption[];
+  value?: any;
+  label?: string;
+  required?: string;
+  name: string;
+  controlClass: EnumValues<typeof ControlClassEnum>;
+  isMetricsDate?: boolean;
+};
 
 export let zFractionControl = z
   .object({
@@ -14,4 +29,6 @@ export let zFractionControl = z
   })
   .meta({ id: 'FractionControl' });
 
-export type FractionControl = z.infer<typeof zFractionControl>;
+assertTypesEqual<FractionControl, z.infer<typeof zFractionControl>>({
+  value: true
+});

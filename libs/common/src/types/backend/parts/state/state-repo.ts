@@ -1,8 +1,32 @@
 import { z } from 'zod';
-import { zValidateFilesRepoConflict } from '#common/types/backend/parts/state/validate-files-repo-conflict';
-import { zDiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
-import { zRepoError } from '#common/types/disk/parts/repo-error';
-import { zRepoStatus } from '#common/types/disk/parts/repo-status';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ValidateFilesRepoConflict,
+  zValidateFilesRepoConflict
+} from '#common/types/backend/parts/state/validate-files-repo-conflict';
+import {
+  type DiskCatalogNode,
+  zDiskCatalogNode
+} from '#common/types/disk/parts/disk-catalog-node';
+import {
+  type RepoError,
+  zRepoError
+} from '#common/types/disk/parts/repo-error';
+import {
+  type RepoStatus,
+  zRepoStatus
+} from '#common/types/disk/parts/repo-status';
+
+export type StateRepo = {
+  orgId: string;
+  projectId: string;
+  repoId: string;
+  currentBranchId: string;
+  repoStatus: RepoStatus;
+  repoError?: RepoError;
+  conflicts: ValidateFilesRepoConflict[];
+  nodes: DiskCatalogNode[];
+};
 
 export let zStateRepo = z
   .object({
@@ -17,4 +41,4 @@ export let zStateRepo = z
   })
   .meta({ id: 'StateRepo' });
 
-export type StateRepo = z.infer<typeof zStateRepo>;
+assertTypesEqual<StateRepo, z.infer<typeof zStateRepo>>({ value: true });

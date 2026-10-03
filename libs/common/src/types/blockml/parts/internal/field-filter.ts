@@ -1,8 +1,41 @@
 import { z } from 'zod';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { zFraction } from '#common/types/blockml/parts/fraction';
-import { zFileFraction } from '#common/types/blockml/parts/internal/file-fraction';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
+import {
+  type FileFraction,
+  zFileFraction
+} from '#common/types/blockml/parts/internal/file-fraction';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FieldFilter = {
+  hidden?: string;
+  hidden_line_num?: number;
+  label?: string;
+  label_line_num?: number;
+  description?: string;
+  description_line_num?: number;
+  result?: EnumValues<typeof FieldResultEnum>;
+  result_line_num?: number;
+  store_model?: string;
+  store_model_line_num?: number;
+  store_result?: string;
+  store_result_line_num?: number;
+  store_filter?: string;
+  store_filter_line_num?: number;
+  suggest_model_dimension?: string;
+  suggest_model_dimension_line_num?: number;
+  conditions?: string[];
+  conditions_line_num?: number;
+  fractions?: FileFraction[];
+  fractions_line_num?: number;
+  apiFractions?: Fraction[];
+  filter?: string;
+  name?: string;
+  name_line_num?: number;
+  fieldClass?: EnumValues<typeof FieldClassEnum>;
+};
 
 export let zFieldFilter = z
   .object({
@@ -34,4 +67,4 @@ export let zFieldFilter = z
   })
   .meta({ id: 'FieldFilter' });
 
-export type FieldFilter = z.infer<typeof zFieldFilter>;
+assertTypesEqual<FieldFilter, z.infer<typeof zFieldFilter>>({ value: true });

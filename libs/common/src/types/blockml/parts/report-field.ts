@@ -1,6 +1,22 @@
 import { z } from 'zod';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { zFraction } from '#common/types/blockml/parts/fraction';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type ReportField = {
+  id: string;
+  hidden: boolean;
+  label: string;
+  description?: string;
+  fractions: Fraction[];
+  maxFractions?: number;
+  result?: EnumValues<typeof FieldResultEnum>;
+  suggestModelDimension?: string;
+  storeModel?: string;
+  storeResult?: string;
+  storeFilter?: string;
+};
 
 export let zReportField = z
   .object({
@@ -18,4 +34,4 @@ export let zReportField = z
   })
   .meta({ id: 'ReportField' });
 
-export type ReportField = z.infer<typeof zReportField>;
+assertTypesEqual<ReportField, z.infer<typeof zReportField>>({ value: true });

@@ -1,6 +1,20 @@
 import { z } from 'zod';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { zFilter } from '#common/types/blockml/parts/filter';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Filter, zFilter } from '#common/types/blockml/parts/filter';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type QueryOperation = {
+  type: EnumValues<typeof QueryOperationTypeEnum>;
+  timezone: string;
+  limit?: number;
+  fieldId?: string;
+  filters?: Filter[];
+  sortFieldId?: string;
+  desc?: boolean;
+  replaceWithFieldId?: string;
+  moveFieldIds?: string[];
+};
 
 export let zQueryOperation = z
   .object({
@@ -16,4 +30,6 @@ export let zQueryOperation = z
   })
   .meta({ id: 'QueryOperation' });
 
-export type QueryOperation = z.infer<typeof zQueryOperation>;
+assertTypesEqual<QueryOperation, z.infer<typeof zQueryOperation>>({
+  value: true
+});

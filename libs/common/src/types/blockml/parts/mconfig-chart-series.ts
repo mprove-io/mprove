@@ -1,5 +1,14 @@
 import { z } from 'zod';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type MconfigChartSeries = {
+  dataField?: string;
+  dataRowId?: string;
+  type?: EnumValues<typeof ChartTypeEnum>;
+  yAxisIndex?: number;
+};
 
 export let zMconfigChartSeries = z
   .object({
@@ -10,4 +19,6 @@ export let zMconfigChartSeries = z
   })
   .meta({ id: 'MconfigChartSeries' });
 
-export type MconfigChartSeries = z.infer<typeof zMconfigChartSeries>;
+assertTypesEqual<MconfigChartSeries, z.infer<typeof zMconfigChartSeries>>({
+  value: true
+});

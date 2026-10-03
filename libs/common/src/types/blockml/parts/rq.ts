@@ -1,6 +1,23 @@
 import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { zTimezone } from '#common/types/shared/timezone/z-timezone';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+import {
+  type TimezoneString,
+  zTimezone
+} from '#common/types/shared/timezone/z-timezone';
+
+export type Rq = {
+  fractionBrick: string;
+  timezone: TimezoneString;
+  timeSpec: EnumValues<typeof TimeSpecEnum>;
+  timeStartTs: number;
+  timeEndTs: number;
+  mconfigId: string;
+  queryId: string;
+  kitId: string;
+  lastCalculatedTs?: number;
+};
 
 export let zRq = z
   .object({
@@ -16,4 +33,4 @@ export let zRq = z
   })
   .meta({ id: 'Rq' });
 
-export type Rq = z.infer<typeof zRq>;
+assertTypesEqual<Rq, z.infer<typeof zRq>>({ value: true });

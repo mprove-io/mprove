@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type StorePart = {
+  reqTemplate: string;
+  reqFunction: string;
+  reqJsonParts: string;
+  reqBody: string;
+  reqUrlPath: string;
+};
 
 export let zStorePart = z
   .object({
@@ -10,4 +19,4 @@ export let zStorePart = z
   })
   .meta({ id: 'StorePart' });
 
-export type StorePart = z.infer<typeof zStorePart>;
+assertTypesEqual<StorePart, z.infer<typeof zStorePart>>({ value: true });

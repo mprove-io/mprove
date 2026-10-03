@@ -1,6 +1,25 @@
 import { z } from 'zod';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type ModelNode = {
+  id: string;
+  label: string;
+  description?: string;
+  nodeClass: EnumValues<typeof FieldClassEnum>;
+  viewName?: string;
+  isField: boolean;
+  fieldFileName?: string;
+  viewFilePath?: string;
+  fieldFilePath?: string;
+  fieldResult?: EnumValues<typeof FieldResultEnum>;
+  fieldLineNum?: number;
+  hidden: boolean;
+  required: boolean;
+  children?: ModelNode[];
+};
 
 export let zModelNode = z
   .object({
@@ -23,4 +42,4 @@ export let zModelNode = z
   })
   .meta({ id: 'ModelNode' });
 
-export type ModelNode = z.infer<typeof zModelNode>;
+assertTypesEqual<ModelNode, z.infer<typeof zModelNode>>({ value: true });

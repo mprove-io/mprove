@@ -1,4 +1,19 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type SeriesPart = {
+  seriesRowId: string;
+  seriesRowName: string;
+  seriesName: string;
+  isMetric: boolean;
+  showMetricsModelName: boolean;
+  showMetricsTimeFieldName: boolean;
+  partNodeLabel: string;
+  partFieldLabel: string;
+  timeNodeLabel: string;
+  timeFieldLabel: string;
+  topLabel: string;
+};
 
 export let zSeriesPart = z
   .object({
@@ -16,4 +31,4 @@ export let zSeriesPart = z
   })
   .meta({ id: 'SeriesPart' });
 
-export type SeriesPart = z.infer<typeof zSeriesPart>;
+assertTypesEqual<SeriesPart, z.infer<typeof zSeriesPart>>({ value: true });

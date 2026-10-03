@@ -1,6 +1,20 @@
 import { z } from 'zod';
-import { zFilterX } from '#common/types/backend/parts/filter-x';
-import { zReport } from '#common/types/blockml/parts/report';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type FilterX, zFilterX } from '#common/types/backend/parts/filter-x';
+import { type Report, zReport } from '#common/types/blockml/parts/report';
+import type { Extend } from '#common/types/extend';
+
+export type ReportX = Extend<
+  Report,
+  {
+    extendedFilters: FilterX[];
+    author: string;
+    canEditOrDeleteReport: boolean;
+    metricsStartDateYYYYMMDD: string;
+    metricsEndDateExcludedYYYYMMDD: string;
+    metricsEndDateIncludedYYYYMMDD: string;
+  }
+>;
 
 export let zReportX = zReport
   .extend({
@@ -13,4 +27,4 @@ export let zReportX = zReport
   })
   .meta({ id: 'ReportX' });
 
-export type ReportX = z.infer<typeof zReportX>;
+assertTypesEqual<ReportX, z.infer<typeof zReportX>>({ value: true });

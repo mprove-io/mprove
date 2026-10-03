@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type DataPoint = { columnId: number; columnLabel: string } & Record<
+  string,
+  any
+>;
 
 export let zDataPoint = z
   .intersection(
@@ -10,4 +16,4 @@ export let zDataPoint = z
   )
   .meta({ id: 'DataPoint' });
 
-export type DataPoint = z.infer<typeof zDataPoint>;
+assertTypesEqual<DataPoint, z.infer<typeof zDataPoint>>({ value: true });

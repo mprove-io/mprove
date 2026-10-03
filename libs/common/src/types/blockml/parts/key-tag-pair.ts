@@ -1,5 +1,8 @@
 import type { TagInterface } from '@malloydata/malloy-tag';
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type KeyTagPair = { key: string; tagInterface?: TagInterface };
 
 export let zKeyTagPair = z
   .object({
@@ -8,4 +11,4 @@ export let zKeyTagPair = z
   })
   .meta({ id: 'KeyTagPair' });
 
-export type KeyTagPair = z.infer<typeof zKeyTagPair>;
+assertTypesEqual<KeyTagPair, z.infer<typeof zKeyTagPair>>({ value: true });

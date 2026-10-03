@@ -1,5 +1,14 @@
 import { z } from 'zod';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FileBasic = {
+  fileName: string;
+  fileExt: EnumValues<typeof FileExtensionEnum>;
+  filePath: string;
+  name: string;
+};
 
 export let zFileBasic = z
   .object({
@@ -10,4 +19,4 @@ export let zFileBasic = z
   })
   .meta({ id: 'FileBasic' });
 
-export type FileBasic = z.infer<typeof zFileBasic>;
+assertTypesEqual<FileBasic, z.infer<typeof zFileBasic>>({ value: true });

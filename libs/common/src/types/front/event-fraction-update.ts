@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { zFraction } from '#common/types/blockml/parts/fraction';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
+
+export type EventFractionUpdate = { fraction: Fraction; fractionIndex: number };
 
 export let zEventFractionUpdate = z
   .object({
@@ -8,4 +11,6 @@ export let zEventFractionUpdate = z
   })
   .meta({ id: 'EventFractionUpdate' });
 
-export type EventFractionUpdate = z.infer<typeof zEventFractionUpdate>;
+assertTypesEqual<EventFractionUpdate, z.infer<typeof zEventFractionUpdate>>({
+  value: true
+});

@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { zFraction } from '#common/types/blockml/parts/fraction';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
+
+export type Parameter = {
+  apply_to: string;
+  listen: string;
+  fractions: Fraction[];
+};
 
 export let zParameter = z
   .object({
@@ -9,4 +16,4 @@ export let zParameter = z
   })
   .meta({ id: 'Parameter' });
 
-export type Parameter = z.infer<typeof zParameter>;
+assertTypesEqual<Parameter, z.infer<typeof zParameter>>({ value: true });

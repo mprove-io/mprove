@@ -1,6 +1,26 @@
 import { z } from 'zod';
-import { zFileBasic } from '#common/types/blockml/parts/internal/file-basic';
-import { zFileSchemaTable } from '#common/types/blockml/parts/internal/file-schema-table';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FileBasic,
+  zFileBasic
+} from '#common/types/blockml/parts/internal/file-basic';
+import {
+  type FileSchemaTable,
+  zFileSchemaTable
+} from '#common/types/blockml/parts/internal/file-schema-table';
+import type { Extend } from '#common/types/extend';
+
+export type FileSchema = Extend<
+  FileBasic,
+  {
+    schema?: string;
+    schema_line_num?: number;
+    description?: string;
+    description_line_num?: number;
+    tables?: FileSchemaTable[];
+    tables_line_num?: number;
+  }
+>;
 
 export let zFileSchema = zFileBasic
   .extend({
@@ -13,4 +33,4 @@ export let zFileSchema = zFileBasic
   })
   .meta({ id: 'FileSchema' });
 
-export type FileSchema = z.infer<typeof zFileSchema>;
+assertTypesEqual<FileSchema, z.infer<typeof zFileSchema>>({ value: true });

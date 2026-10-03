@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type BmlFile = {
+  name: string;
+  path: string;
+  pathRelativeToRepo?: string;
+  blockmlPath?: string;
+  content: string;
+};
 
 export let zBmlFile = z
   .object({
@@ -10,4 +19,4 @@ export let zBmlFile = z
   })
   .meta({ id: 'BmlFile' });
 
-export type BmlFile = z.infer<typeof zBmlFile>;
+assertTypesEqual<BmlFile, z.infer<typeof zBmlFile>>({ value: true });

@@ -1,7 +1,25 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { zConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
-import { zConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ConnectionOptions,
+  zConnectionOptions
+} from '#common/types/backend/parts/connection-parts/connection-options';
+import {
+  type ConnectionRawSchema,
+  zConnectionRawSchema
+} from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type ProjectConnection = {
+  projectId?: string;
+  connectionId?: string;
+  envId?: string;
+  type?: EnumValues<typeof ConnectionTypeEnum>;
+  options: ConnectionOptions;
+  rawSchema?: ConnectionRawSchema;
+  serverTs?: number;
+};
 
 // TODO: `options` is tightened (non-nullish) despite interface `@IsOptional()`.
 // Reason: makeMalloyConnections in libs/node-common dereferences
@@ -19,4 +37,6 @@ export let zProjectConnection = z
   })
   .meta({ id: 'ProjectConnection' });
 
-export type ProjectConnection = z.infer<typeof zProjectConnection>;
+assertTypesEqual<ProjectConnection, z.infer<typeof zProjectConnection>>({
+  value: true
+});

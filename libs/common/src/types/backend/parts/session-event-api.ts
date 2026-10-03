@@ -1,5 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { SessionStreamEvent } from './session-stream-event';
+
+export type SessionEventApi = {
+  eventId: string;
+  eventIndex: number;
+  eventType: string;
+  ocEvent: SessionStreamEvent;
+};
 
 export let zSessionEventApi = z
   .object({
@@ -10,4 +18,6 @@ export let zSessionEventApi = z
   })
   .meta({ id: 'SessionEventApi' });
 
-export type SessionEventApi = z.infer<typeof zSessionEventApi>;
+assertTypesEqual<SessionEventApi, z.infer<typeof zSessionEventApi>>({
+  value: true
+});

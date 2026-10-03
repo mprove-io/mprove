@@ -1,6 +1,31 @@
 import { z } from 'zod';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type ChartUnit = {
+  type: 'chartUnit';
+  id: string;
+  chartId: string;
+  modelId: string;
+  modelLabel: string;
+  chartType: EnumValues<typeof ChartTypeEnum>;
+  iconPath?: string;
+  draft: boolean;
+  title: string;
+  filePath?: string;
+  space?: string;
+  accessRoles: string[];
+  accessRolesCombined: AccessRoleCombined[];
+  author?: string;
+  canEditOrDeleteChart: boolean;
+  isFavorite: boolean;
+  spaceFullTitle: string;
+};
 
 export let zChartUnit = z
   .object({
@@ -24,4 +49,4 @@ export let zChartUnit = z
   })
   .meta({ id: 'ChartUnit' });
 
-export type ChartUnit = z.infer<typeof zChartUnit>;
+assertTypesEqual<ChartUnit, z.infer<typeof zChartUnit>>({ value: true });

@@ -1,6 +1,25 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type QueryInfoQuery = {
+  connectionId: string;
+  connectionType: EnumValues<typeof ConnectionTypeEnum>;
+  queryId: string;
+  status: EnumValues<typeof QueryStatusEnum>;
+  lastRunBy?: string;
+  lastRunTs?: number;
+  lastCancelTs?: number;
+  lastCompleteTs?: number;
+  lastCompleteDuration?: number;
+  lastErrorMessage?: string;
+  lastErrorTs?: number;
+  data?: any;
+  malloy?: string;
+  sql?: string;
+};
 
 export let zQueryInfoQuery = z
   .object({
@@ -21,4 +40,6 @@ export let zQueryInfoQuery = z
   })
   .meta({ id: 'QueryInfoQuery' });
 
-export type QueryInfoQuery = z.infer<typeof zQueryInfoQuery>;
+assertTypesEqual<QueryInfoQuery, z.infer<typeof zQueryInfoQuery>>({
+  value: true
+});

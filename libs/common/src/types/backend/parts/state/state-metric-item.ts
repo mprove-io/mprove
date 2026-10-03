@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type StateMetricItem = { metricId: string; name: string };
 
 export let zStateMetricItem = z
   .object({
@@ -7,4 +10,6 @@ export let zStateMetricItem = z
   })
   .meta({ id: 'StateMetricItem' });
 
-export type StateMetricItem = z.infer<typeof zStateMetricItem>;
+assertTypesEqual<StateMetricItem, z.infer<typeof zStateMetricItem>>({
+  value: true
+});

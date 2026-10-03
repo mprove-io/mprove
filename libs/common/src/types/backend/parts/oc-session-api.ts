@@ -5,6 +5,17 @@ import type {
   Todo
 } from '@opencode-ai/sdk/v2';
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type OcSessionApi = {
+  sessionId: string;
+  todos?: Todo[];
+  questions?: QuestionRequest[];
+  permissions?: PermissionRequest[];
+  ocSessionStatus?: SessionStatus;
+  lastSessionError?: Record<string, unknown>;
+  isLastErrorRecovered?: boolean;
+};
 
 export let zOcSessionApi = z
   .object({
@@ -18,4 +29,4 @@ export let zOcSessionApi = z
   })
   .meta({ id: 'OcSessionApi' });
 
-export type OcSessionApi = z.infer<typeof zOcSessionApi>;
+assertTypesEqual<OcSessionApi, z.infer<typeof zOcSessionApi>>({ value: true });

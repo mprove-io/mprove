@@ -1,11 +1,53 @@
 import { z } from 'zod';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { zMconfigX } from '#common/types/backend/parts/mconfig-x';
-import { zFilter } from '#common/types/blockml/parts/filter';
-import { zParameter } from '#common/types/blockml/parts/parameter';
-import { zQuery } from '#common/types/blockml/parts/query';
-import { zRowRecord } from '#common/types/blockml/parts/row-record';
-import { zRq } from '#common/types/blockml/parts/rq';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MconfigX,
+  zMconfigX
+} from '#common/types/backend/parts/mconfig-x';
+import { type Filter, zFilter } from '#common/types/blockml/parts/filter';
+import {
+  type Parameter,
+  zParameter
+} from '#common/types/blockml/parts/parameter';
+import { type Query, zQuery } from '#common/types/blockml/parts/query';
+import {
+  type RowRecord,
+  zRowRecord
+} from '#common/types/blockml/parts/row-record';
+import { type Rq, zRq } from '#common/types/blockml/parts/rq';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type Row = {
+  rowId: string;
+  name: string;
+  rowType: EnumValues<typeof RowTypeEnum>;
+  metricId: string;
+  modelId: string;
+  topLabel: string;
+  partNodeLabel: string;
+  partFieldLabel: string;
+  partLabel: string;
+  timeNodeLabel: string;
+  timeFieldLabel: string;
+  timeLabel: string;
+  formulaError?: string;
+  topQueryError?: string;
+  hasAccessToModel: boolean;
+  mconfig: MconfigX;
+  query: Query;
+  showChart: boolean;
+  rqs: Rq[];
+  records: RowRecord[];
+  formatNumber: string;
+  currencyPrefix: string;
+  currencySuffix: string;
+  parameters: Parameter[];
+  parametersFiltersWithExcludedTime: Filter[];
+  formula: string;
+  formulaDeps: string[];
+  deps: string[];
+};
 
 export let zRow = z
   .object({
@@ -40,4 +82,4 @@ export let zRow = z
   })
   .meta({ id: 'Row' });
 
-export type Row = z.infer<typeof zRow>;
+assertTypesEqual<Row, z.infer<typeof zRow>>({ value: true });

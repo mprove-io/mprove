@@ -1,7 +1,30 @@
 import { z } from 'zod';
-import { zDashboardField } from '#common/types/blockml/parts/dashboard-field';
-import { zTile } from '#common/types/blockml/parts/tile';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type DashboardField,
+  zDashboardField
+} from '#common/types/blockml/parts/dashboard-field';
+import { type Tile, zTile } from '#common/types/blockml/parts/tile';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type Dashboard = {
+  structId: string;
+  dashboardId: string;
+  draft: boolean;
+  creatorId: string;
+  title: string;
+  filePath: string;
+  space?: string;
+  accessRoles: string[];
+  accessRolesCombined: AccessRoleCombined[];
+  tiles: Tile[];
+  fields: DashboardField[];
+  content: any;
+  serverTs: number;
+};
 
 export let zDashboard = z
   .object({
@@ -21,4 +44,4 @@ export let zDashboard = z
   })
   .meta({ id: 'Dashboard' });
 
-export type Dashboard = z.infer<typeof zDashboard>;
+assertTypesEqual<Dashboard, z.infer<typeof zDashboard>>({ value: true });

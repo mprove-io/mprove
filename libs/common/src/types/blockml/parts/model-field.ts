@@ -3,7 +3,46 @@ import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FieldTypeEnum } from '#common/enums/field-type.enum';
-import { zKeyValuePair } from '#common/types/blockml/parts/key-value-pair';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type KeyValuePair,
+  zKeyValuePair
+} from '#common/types/blockml/parts/key-value-pair';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type ModelField = {
+  id: string;
+  malloyFieldName?: string;
+  malloyFieldPath?: string[];
+  malloyBaseFieldId?: string;
+  malloyTags?: KeyValuePair[];
+  mproveTags?: KeyValuePair[];
+  hidden: boolean;
+  required: boolean;
+  maxFractions?: number;
+  label: string;
+  fieldClass: EnumValues<typeof FieldClassEnum>;
+  fieldFileName?: string;
+  fieldFilePath?: string;
+  result?: EnumValues<typeof FieldResultEnum>;
+  fieldLineNum?: number;
+  suggestModelDimension?: string;
+  sqlName: string;
+  topId: string;
+  topLabel: string;
+  description?: string;
+  type?: EnumValues<typeof FieldTypeEnum>;
+  groupId?: string;
+  groupLabel?: string;
+  groupDescription?: string;
+  formatNumber?: string;
+  currencyPrefix?: string;
+  currencySuffix?: string;
+  buildMetrics?: boolean;
+  isTimeframeBase: boolean;
+  timeframe?: string;
+  detail?: EnumValues<typeof DetailUnitEnum>;
+};
 
 export let zModelField = z
   .object({
@@ -41,4 +80,4 @@ export let zModelField = z
   })
   .meta({ id: 'ModelField' });
 
-export type ModelField = z.infer<typeof zModelField>;
+assertTypesEqual<ModelField, z.infer<typeof zModelField>>({ value: true });

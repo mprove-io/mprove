@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type Listener = { rowId: string; applyTo: string; listen: string };
 
 export let zListener = z
   .object({
@@ -8,4 +11,4 @@ export let zListener = z
   })
   .meta({ id: 'Listener' });
 
-export type Listener = z.infer<typeof zListener>;
+assertTypesEqual<Listener, z.infer<typeof zListener>>({ value: true });

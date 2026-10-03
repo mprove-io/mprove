@@ -1,12 +1,53 @@
 import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { zColumn } from '#common/types/blockml/parts/column';
-import { zFraction } from '#common/types/blockml/parts/fraction';
-import { zMconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import { zReportField } from '#common/types/blockml/parts/report-field';
-import { zRow } from '#common/types/blockml/parts/row';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
-import { zTimezone } from '#common/types/shared/timezone/z-timezone';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Column, zColumn } from '#common/types/blockml/parts/column';
+import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
+import {
+  type MconfigChart,
+  zMconfigChart
+} from '#common/types/blockml/parts/mconfig-chart';
+import {
+  type ReportField,
+  zReportField
+} from '#common/types/blockml/parts/report-field';
+import { type Row, zRow } from '#common/types/blockml/parts/row';
+import type { EnumValues } from '#common/types/enum-values';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+import {
+  type TimezoneString,
+  zTimezone
+} from '#common/types/shared/timezone/z-timezone';
+
+export type Report = {
+  projectId: string;
+  structId: string;
+  reportId: string;
+  draft: boolean;
+  creatorId: string;
+  filePath: string;
+  space?: string;
+  fields: ReportField[];
+  accessRoles: string[];
+  accessRolesCombined: AccessRoleCombined[];
+  title: string;
+  timezone: TimezoneString;
+  timeSpec: EnumValues<typeof TimeSpecEnum>;
+  timeRangeFraction: Fraction;
+  rangeStart?: number;
+  rangeEnd?: number;
+  columns: Column[];
+  rows: Row[];
+  isTimeColumnsLimitExceeded: boolean;
+  timeColumnsLimit: number;
+  timeColumnsLength: number;
+  draftCreatedTs: number;
+  chart: MconfigChart;
+  serverTs: number;
+};
 
 export let zReport = z
   .object({
@@ -37,4 +78,4 @@ export let zReport = z
   })
   .meta({ id: 'Report' });
 
-export type Report = z.infer<typeof zReport>;
+assertTypesEqual<Report, z.infer<typeof zReport>>({ value: true });

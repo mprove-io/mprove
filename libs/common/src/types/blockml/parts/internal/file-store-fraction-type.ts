@@ -1,6 +1,23 @@
 import { z } from 'zod';
 import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { zFileStoreFractionControl } from '#common/types/blockml/parts/internal/file-store-fraction-control';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FileStoreFractionControl,
+  zFileStoreFractionControl
+} from '#common/types/blockml/parts/internal/file-store-fraction-control';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type FileStoreFractionType = {
+  type?: string;
+  type_line_num?: number;
+  label?: string;
+  label_line_num?: number;
+  meta?: any;
+  meta_line_num?: number;
+  controls?: FileStoreFractionControl[];
+  controls_line_num?: number;
+  logicGroup?: EnumValues<typeof FractionLogicEnum>;
+};
 
 export let zFileStoreFractionType = z
   .object({
@@ -16,4 +33,6 @@ export let zFileStoreFractionType = z
   })
   .meta({ id: 'FileStoreFractionType' });
 
-export type FileStoreFractionType = z.infer<typeof zFileStoreFractionType>;
+assertTypesEqual<FileStoreFractionType, z.infer<typeof zFileStoreFractionType>>(
+  { value: true }
+);

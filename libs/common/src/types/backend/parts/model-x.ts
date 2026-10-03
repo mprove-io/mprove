@@ -1,6 +1,20 @@
 import { z } from 'zod';
-import { zModel } from '#common/types/blockml/parts/model';
-import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { type Model, zModel } from '#common/types/blockml/parts/model';
+import type { Extend } from '#common/types/extend';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
+
+export type ModelX = Extend<
+  Model,
+  {
+    hasAccess: boolean;
+    spaceFullTitle: string;
+    accessRolesCombined: AccessRoleCombined[];
+  }
+>;
 
 export let zModelX = zModel
   .extend({
@@ -10,4 +24,4 @@ export let zModelX = zModel
   })
   .meta({ id: 'ModelX' });
 
-export type ModelX = z.infer<typeof zModelX>;
+assertTypesEqual<ModelX, z.infer<typeof zModelX>>({ value: true });

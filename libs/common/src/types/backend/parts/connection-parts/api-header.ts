@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type ApiHeader = { key: string; value: string };
 
 export let zApiHeader = z
   .object({
@@ -7,4 +10,4 @@ export let zApiHeader = z
   })
   .meta({ id: 'ApiHeader' });
 
-export type ApiHeader = z.infer<typeof zApiHeader>;
+assertTypesEqual<ApiHeader, z.infer<typeof zApiHeader>>({ value: true });

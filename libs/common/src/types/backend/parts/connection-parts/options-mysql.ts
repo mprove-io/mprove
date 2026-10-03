@@ -1,4 +1,15 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type OptionsMysql = {
+  host?: string;
+  internalHost?: string;
+  port?: number;
+  internalPort?: number;
+  database?: string;
+  user?: string;
+  password?: string;
+};
 
 export let zOptionsMysql = z
   .object({
@@ -12,4 +23,4 @@ export let zOptionsMysql = z
   })
   .meta({ id: 'OptionsMysql' });
 
-export type OptionsMysql = z.infer<typeof zOptionsMysql>;
+assertTypesEqual<OptionsMysql, z.infer<typeof zOptionsMysql>>({ value: true });

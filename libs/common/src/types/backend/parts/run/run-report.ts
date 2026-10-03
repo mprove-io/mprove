@@ -1,5 +1,16 @@
 import { z } from 'zod';
-import { zRunReportRow } from '#common/types/backend/parts/run/run-report-row';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type RunReportRow,
+  zRunReportRow
+} from '#common/types/backend/parts/run/run-report-row';
+
+export type RunReport = {
+  title: string;
+  reportId: string;
+  url: string;
+  rows: RunReportRow[];
+};
 
 export let zRunReport = z
   .object({
@@ -10,4 +21,4 @@ export let zRunReport = z
   })
   .meta({ id: 'RunReport' });
 
-export type RunReport = z.infer<typeof zRunReport>;
+assertTypesEqual<RunReport, z.infer<typeof zRunReport>>({ value: true });

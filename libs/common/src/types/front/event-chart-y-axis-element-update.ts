@@ -1,5 +1,14 @@
 import { z } from 'zod';
-import { zMconfigChartYAxis } from '#common/types/blockml/parts/mconfig-chart-y-axis';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MconfigChartYAxis,
+  zMconfigChartYAxis
+} from '#common/types/blockml/parts/mconfig-chart-y-axis';
+
+export type EventChartYAxisElementUpdate = {
+  yAxisIndex: number;
+  yAxisPart: MconfigChartYAxis;
+};
 
 export let zEventChartYAxisElementUpdate = z
   .object({
@@ -8,6 +17,7 @@ export let zEventChartYAxisElementUpdate = z
   })
   .meta({ id: 'EventChartYAxisElementUpdate' });
 
-export type EventChartYAxisElementUpdate = z.infer<
-  typeof zEventChartYAxisElementUpdate
->;
+assertTypesEqual<
+  EventChartYAxisElementUpdate,
+  z.infer<typeof zEventChartYAxisElementUpdate>
+>({ value: true });

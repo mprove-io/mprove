@@ -1,9 +1,43 @@
 import { z } from 'zod';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { zMconfigChartPivotValue } from '#common/types/blockml/parts/mconfig-chart-pivot-value';
-import { zMconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
-import { zMconfigChartXAxis } from '#common/types/blockml/parts/mconfig-chart-x-axis';
-import { zMconfigChartYAxis } from '#common/types/blockml/parts/mconfig-chart-y-axis';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MconfigChartPivotValue,
+  zMconfigChartPivotValue
+} from '#common/types/blockml/parts/mconfig-chart-pivot-value';
+import {
+  type MconfigChartSeries,
+  zMconfigChartSeries
+} from '#common/types/blockml/parts/mconfig-chart-series';
+import {
+  type MconfigChartXAxis,
+  zMconfigChartXAxis
+} from '#common/types/blockml/parts/mconfig-chart-x-axis';
+import {
+  type MconfigChartYAxis,
+  zMconfigChartYAxis
+} from '#common/types/blockml/parts/mconfig-chart-y-axis';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type MconfigChart = {
+  isValid: boolean;
+  type: EnumValues<typeof ChartTypeEnum>;
+  title?: string;
+  xField?: string;
+  yFields?: string[];
+  multiField?: string;
+  sizeField?: string;
+  pivotRows?: string[];
+  pivotColumns?: string[];
+  pivotValues?: MconfigChartPivotValue[];
+  format?: boolean;
+  pivotTheme?: string;
+  firstColumnWidth?: number;
+  valueColumnsWidth?: number;
+  xAxis: MconfigChartXAxis;
+  yAxis: MconfigChartYAxis[];
+  series: MconfigChartSeries[];
+};
 
 export let zMconfigChart = z
   .object({
@@ -27,4 +61,4 @@ export let zMconfigChart = z
   })
   .meta({ id: 'MconfigChart' });
 
-export type MconfigChart = z.infer<typeof zMconfigChart>;
+assertTypesEqual<MconfigChart, z.infer<typeof zMconfigChart>>({ value: true });

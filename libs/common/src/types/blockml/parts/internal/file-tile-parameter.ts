@@ -1,5 +1,20 @@
 import { z } from 'zod';
-import { zFileFraction } from '#common/types/blockml/parts/internal/file-fraction';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type FileFraction,
+  zFileFraction
+} from '#common/types/blockml/parts/internal/file-fraction';
+
+export type FileTileParameter = {
+  apply_to?: string;
+  apply_to_line_num?: number;
+  listen?: string;
+  listen_line_num?: number;
+  conditions?: string[];
+  conditions_line_num?: number;
+  fractions?: FileFraction[];
+  fractions_line_num?: number;
+};
 
 export let zFileTileParameter = z
   .object({
@@ -14,4 +29,6 @@ export let zFileTileParameter = z
   })
   .meta({ id: 'FileTileParameter' });
 
-export type FileTileParameter = z.infer<typeof zFileTileParameter>;
+assertTypesEqual<FileTileParameter, z.infer<typeof zFileTileParameter>>({
+  value: true
+});

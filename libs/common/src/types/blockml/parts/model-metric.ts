@@ -4,6 +4,37 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { MetricTypeEnum } from '#common/enums/metric-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { EnumValues } from '#common/types/enum-values';
+
+export type ModelMetric = {
+  modelId?: string;
+  modelType: EnumValues<typeof ModelTypeEnum>;
+  connectionType: EnumValues<typeof ConnectionTypeEnum>;
+  fieldId: string;
+  fieldClass: EnumValues<typeof FieldClassEnum>;
+  fieldResult?: EnumValues<typeof FieldResultEnum>;
+  timeFieldId: string;
+  structId: string;
+  filePath?: string;
+  fieldLineNum?: number;
+  type: EnumValues<typeof MetricTypeEnum>;
+  metricId: string;
+  topNode?: string;
+  label?: string;
+  topLabel?: string;
+  partNodeLabel?: string;
+  partFieldLabel?: string;
+  partLabel?: string;
+  timeNodeLabel?: string;
+  timeFieldLabel?: string;
+  timeLabel?: string;
+  description?: string;
+  formatNumber?: string;
+  currencyPrefix?: string;
+  currencySuffix?: string;
+  serverTs: number;
+};
 
 export let zModelMetric = z
   .object({
@@ -36,4 +67,4 @@ export let zModelMetric = z
   })
   .meta({ id: 'ModelMetric' });
 
-export type ModelMetric = z.infer<typeof zModelMetric>;
+assertTypesEqual<ModelMetric, z.infer<typeof zModelMetric>>({ value: true });

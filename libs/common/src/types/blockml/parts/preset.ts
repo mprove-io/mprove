@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type Preset = {
+  presetId: string;
+  label: string;
+  path: string;
+  parsedContent: any;
+};
 
 export let zPreset = z
   .object({
@@ -9,4 +17,4 @@ export let zPreset = z
   })
   .meta({ id: 'Preset' });
 
-export type Preset = z.infer<typeof zPreset>;
+assertTypesEqual<Preset, z.infer<typeof zPreset>>({ value: true });

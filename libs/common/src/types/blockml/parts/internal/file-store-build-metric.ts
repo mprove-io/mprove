@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type FileStoreBuildMetric = { time?: string; time_line_num?: number };
 
 export let zFileStoreBuildMetric = z
   .object({
@@ -7,4 +10,6 @@ export let zFileStoreBuildMetric = z
   })
   .meta({ id: 'FileStoreBuildMetric' });
 
-export type FileStoreBuildMetric = z.infer<typeof zFileStoreBuildMetric>;
+assertTypesEqual<FileStoreBuildMetric, z.infer<typeof zFileStoreBuildMetric>>({
+  value: true
+});
