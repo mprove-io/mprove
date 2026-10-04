@@ -343,6 +343,44 @@ Why: the apps run via `@swc-node/register/esm-register`, which does not elide
 value-style imports of names that turn out to be type-only. Native Node ESM
 resolution then fails because the source file exports the name only as a `type`.
 
+## Domain literal type checking
+
+When using a literal from an existing domain union in a place that does not
+check that union, add a type annotation or `satisfies`. Prefer checking the
+whole object against its contract when one exists; otherwise check the literal
+itself.
+
+`as` assertions and `as const` do not validate union membership. Already-typed
+contexts need no redundant checks. Import types with `import type`.
+
+```ts
+// correct
+JSON.stringify({
+  command: 'set-title' satisfies AiStreamCommand
+});
+
+// wrong: JSON.stringify does not check the domain type
+JSON.stringify({
+  command: 'set-title'
+});
+```
+
+## Domain literal interpolation
+
+In constructed strings, interpolate domain literals using `satisfies` with their
+existing string-literal union type, rather than embedding them as plain text.
+
+Import types with `import type`; do not use `as` assertions. Ordinary prose and
+already-typed expressions need no checks.
+
+```ts
+// correct
+message: `parameter "${'method' satisfies FileParameter}" is required`,
+
+// wrong: domain token has no compiler validation
+message: `parameter "method" is required`,
+```
+
 ## Zod optional fields — use `.nullish()`
 
 For optional fields in zod schemas, use `.nullish()` (not `.optional()`).
