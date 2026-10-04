@@ -29,6 +29,7 @@
 - rules/object-properties.md
 - rules/no-for-let-of-and-for-let-in.md
 - rules/type-only-imports.md
+- rules/domain-literal-unions.md
 - rules/domain-literal-type-checking.md
 - rules/domain-literal-interpolation.md
 - rules/zod-optional-fields-use-nullish.md

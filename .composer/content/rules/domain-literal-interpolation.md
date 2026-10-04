@@ -3,8 +3,7 @@
 In constructed strings, interpolate domain literals using `satisfies` with their
 existing string-literal union type, rather than embedding them as plain text.
 
-Import types with `import type`; do not use `as` assertions. Ordinary prose and
-already-typed expressions need no checks.
+Ordinary prose and already-typed expressions need no checks.
 
 ```ts
 // correct

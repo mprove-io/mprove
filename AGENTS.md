@@ -343,18 +343,42 @@ Why: the apps run via `@swc-node/register/esm-register`, which does not elide
 value-style imports of names that turn out to be type-only. Native Node ESM
 resolution then fails because the source file exports the name only as a `type`.
 
+## Domain literal unions
+
+Define each finite domain string union from one canonical `as const` tuple. Use
+that tuple for its type, schema when needed, and complete value lists. Export it
+when callers need the values; do not duplicate the complete set elsewhere.
+
+Separate collections must have a distinct purpose, such as a subset, display
+order, or UI metadata. Give them explicit domain type annotations.
+
+Use `as const` only for canonical tuples or when downstream types require exact
+literal values. In the latter case, use `as const satisfies` to check an
+existing contract. `as const` alone does not validate domain membership.
+
+```ts
+export const taskStatusValues = ['queued', 'running', 'done'] as const;
+
+export type TaskStatus = (typeof taskStatusValues)[number];
+
+export const activeTaskStatuses: TaskStatus[] = ['queued', 'running'];
+```
+
 ## Domain literal type checking
 
-When using a literal from an existing domain union in a place that does not
-check that union, add a type annotation or `satisfies`. Prefer checking the
-whole object against its contract when one exists; otherwise check the literal
-itself.
+Use explicit domain type annotations for named variables, collections, objects,
+parameters, and return types. Do not widen domain types to `string`.
 
-`as` assertions and `as const` do not validate union membership. Already-typed
-contexts need no redundant checks. Import types with `import type`.
+Use `satisfies` for inline expressions without a typed context. Check the whole
+object against an existing contract when available; otherwise check individual
+domain literals. Already-typed contexts need no redundant checks.
+
+Import types with `import type`. Do not use `as` assertions to bypass checking.
 
 ```ts
 // correct
+let command: AiStreamCommand = 'set-title';
+
 JSON.stringify({
   command: 'set-title' satisfies AiStreamCommand
 });
@@ -370,8 +394,7 @@ JSON.stringify({
 In constructed strings, interpolate domain literals using `satisfies` with their
 existing string-literal union type, rather than embedding them as plain text.
 
-Import types with `import type`; do not use `as` assertions. Ordinary prose and
-already-typed expressions need no checks.
+Ordinary prose and already-typed expressions need no checks.
 
 ```ts
 // correct
@@ -411,9 +434,8 @@ contract composition, not merely because a native type exists.
 
 Do not define the native type using `z.infer`.
 
-Exception: finite string literal sets may use a single module-local `const`
-tuple declared with `as const`, a native type `(typeof tuple)[number]`, and a
-schema `z.enum(tuple)`. Preserve the
+Exception: finite domain string unions use their canonical `as const` tuple, a
+native type `(typeof tuple)[number]`, and a schema `z.enum(tuple)`. Preserve the
 `assertTypesEqual<Type, z.infer<typeof schema>>` equality assertion.
 
 For every Zod `.extend()`, define the native type using `Extend` from
