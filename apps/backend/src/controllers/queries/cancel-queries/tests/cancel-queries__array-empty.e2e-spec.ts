@@ -13,18 +13,13 @@ import {
   UTC
 } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { ToBackendCancelQueriesRequest } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-request';
 import type { ToBackendCancelQueriesResponse } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-response';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { Query } from '#common/types/blockml/parts/query/query';
 
 let testId = 'backend-cancel-queries__array-empty';
 
@@ -41,7 +36,7 @@ let projectId = makeId();
 let projectName = testId;
 
 let connectionId = 'c1';
-let connectionType = ConnectionTypeEnum.PostgreSQL;
+let connectionType: ConnectionType = 'PostgreSQL';
 
 let queryId = makeId();
 let queryJobId = makeId();
@@ -61,8 +56,8 @@ test('1', async t => {
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: 'unk',
-      modelType: ModelTypeEnum.Malloy,
-      parentType: MconfigParentTypeEnum.Chart,
+      modelType: 'Malloy',
+      parentType: 'Chart',
       parentId: undefined,
       dateRangeIncludesRightSide: false,
       storePart: undefined,
@@ -95,7 +90,7 @@ test('1', async t => {
       apiUrl: undefined,
       apiBody: undefined,
       data: undefined,
-      status: QueryStatusEnum.Running,
+      status: 'Running',
       lastRunBy: userId,
       lastRunTs: 1,
       lastCancelTs: undefined,
@@ -140,7 +135,7 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -193,7 +188,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -214,7 +209,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

@@ -1,24 +1,22 @@
 import type { TemporalUnit } from '@malloydata/malloy-filter';
-import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
+import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
 
-export function getFractionTsUnits(
-  temporalUnit: TemporalUnit
-): FractionTsUnitEnum {
+export function getFractionTsUnits(temporalUnit: TemporalUnit): FractionTsUnit {
   return temporalUnit === 'year'
-    ? FractionTsUnitEnum.Years
+    ? 'years'
     : temporalUnit === 'quarter'
-      ? FractionTsUnitEnum.Quarters
+      ? 'quarters'
       : temporalUnit === 'month'
-        ? FractionTsUnitEnum.Months
+        ? 'months'
         : temporalUnit === 'week'
-          ? FractionTsUnitEnum.Weeks
+          ? 'weeks'
           : temporalUnit === 'day'
-            ? FractionTsUnitEnum.Days
+            ? 'days'
             : temporalUnit === 'hour'
-              ? FractionTsUnitEnum.Hours
+              ? 'hours'
               : temporalUnit === 'minute'
-                ? FractionTsUnitEnum.Minutes
+                ? 'minutes'
                 : temporalUnit === 'second'
-                  ? FractionTsUnitEnum.Seconds
+                  ? 'seconds'
                   : undefined;
 }

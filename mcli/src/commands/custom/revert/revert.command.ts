@@ -2,10 +2,6 @@ import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
@@ -13,15 +9,12 @@ import type { ToBackendRevertRepoToLastCommitOutput } from '#common/types/backen
 import type { ToBackendRevertRepoToLastCommitRequest } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
 import type { ToBackendRevertRepoToRemoteOutput } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
 import type { ToBackendRevertRepoToRemoteRequest } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
+import { zRepoType } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
-
-export enum ToEnum {
-  Remote = 'remote',
-  LastCommit = 'last-commit'
-}
+import { zTo } from './to';
 
 export class RevertCommand extends CustomCommand {
   static paths = [['revert']];
@@ -43,8 +36,8 @@ export class RevertCommand extends CustomCommand {
 
   to = Option.String('--to', {
     required: true,
-    validator: t.isEnum(ToEnum),
-    description: `(required, "${ToEnum.LastCommit}" or "${ToEnum.Remote}")`
+    validator: t.isEnum(zTo.options),
+    description: `(required, "last-commit" or "remote")`
   });
 
   projectId = Option.String('--project-id', {
@@ -53,8 +46,8 @@ export class RevertCommand extends CustomCommand {
 
   repoType = Option.String('--repo-type', {
     required: true,
-    validator: t.isEnum(RepoTypeEnum),
-    description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
+    validator: t.isEnum(zRepoType.options),
+    description: `(required, "dev", "production" or "session")`
   });
 
   branch = Option.String('--branch', {
@@ -91,7 +84,7 @@ export class RevertCommand extends CustomCommand {
 
     if (isUndefined(this.projectId)) {
       let serverError = new ServerError({
-        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
         originalError: null
       });
       throw serverError;
@@ -100,9 +93,9 @@ export class RevertCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repoType === RepoTypeEnum.Production
+      this.repoType === 'production'
         ? PROD_REPO_ID
-        : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+        : apiKey.startsWith(`SK-`)
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
@@ -110,7 +103,7 @@ export class RevertCommand extends CustomCommand {
       | ToBackendRevertRepoToLastCommitOutput
       | ToBackendRevertRepoToRemoteOutput;
 
-    if (this.to === ToEnum.LastCommit) {
+    if (this.to === 'last-commit') {
       let revertRepoToLastCommitReqPayload: ToBackendRevertRepoToLastCommitRequest['input'] =
         {
           projectId: this.projectId,
@@ -176,7 +169,7 @@ export class RevertCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       context: this.context,
       isJson: this.json
     });

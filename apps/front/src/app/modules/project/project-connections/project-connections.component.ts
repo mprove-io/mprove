@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { PROJECT_CONNECTIONS_PAGE_TITLE } from '#common/constants/page-titles';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -17,17 +17,7 @@ import { MyDialogService } from '#front/app/services/my-dialog.service';
   templateUrl: './project-connections.component.html'
 })
 export class ProjectConnectionsComponent implements OnInit {
-  typeSnowFlake = ConnectionTypeEnum.SnowFlake;
-  typeBigQuery = ConnectionTypeEnum.BigQuery;
   // typeClickHouse = ConnectionTypeEnum.ClickHouse;
-  typeMotherDuck = ConnectionTypeEnum.MotherDuck;
-  typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
-  typeMySQL = ConnectionTypeEnum.MySQL;
-  typeTrino = ConnectionTypeEnum.Trino;
-  typePresto = ConnectionTypeEnum.Presto;
-  typeDatabricks = ConnectionTypeEnum.Databricks;
-  typeGoogleApi = ConnectionTypeEnum.GoogleApi;
-  typeApi = ConnectionTypeEnum.Api;
 
   pageTitle = PROJECT_CONNECTIONS_PAGE_TITLE;
 

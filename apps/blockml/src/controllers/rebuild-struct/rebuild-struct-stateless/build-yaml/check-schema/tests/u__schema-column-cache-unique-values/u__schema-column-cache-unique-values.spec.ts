@@ -1,13 +1,12 @@
 import test from 'ava';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 
-let caller = CallerEnum.BuildYaml;
-let func = FuncEnum.CheckSchema;
+let caller: Caller = 'BuildYaml';
+let func: Func = 'build-yaml/check-schema';
 let testId = 'u__schema-column-cache-unique-values';
 
 test('1', async t => {
@@ -21,7 +20,7 @@ test('1', async t => {
   let connection: ProjectConnection = {
     connectionId: 'c1',
     options: {},
-    type: ConnectionTypeEnum.PostgreSQL
+    type: 'PostgreSQL'
   };
 
   let prep = await structService.rebuildStructFromDir({

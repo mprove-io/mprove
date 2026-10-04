@@ -28,7 +28,7 @@
         <div
           class="ml-1 truncate"
           [ngClass]="{
-            'text-yellow-700': item.operator === fractionOperatorEnum.And
+            'text-yellow-700': item.operator === 'And'
           }"
           >{{ item.label }}</div
         >
@@ -38,7 +38,7 @@
         <div
           class="flex flex-row"
           [ngClass]="{
-            'text-yellow-700': item.operator === fractionOperatorEnum.And
+            'text-yellow-700': item.operator === 'And'
           }"
         >
           <div class="ml-1">{{ item.operator | uppercase }} -</div>
@@ -52,16 +52,16 @@
     [formGroup]="fractionForm"
     class="flex flex-col"
     *ngIf="
-      fraction.type === fractionTypeEnum.StringIsEqualTo ||
-      fraction.type === fractionTypeEnum.StringStartsWith ||
-      fraction.type === fractionTypeEnum.StringEndsWith ||
-      fraction.type === fractionTypeEnum.StringContains ||
-      fraction.type === fractionTypeEnum.StringIsLike ||
-      fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
-      fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
-      fraction.type === fractionTypeEnum.StringDoesNotEndWith ||
-      fraction.type === fractionTypeEnum.StringDoesNotContain ||
-      fraction.type === fractionTypeEnum.StringIsNotLike
+      fraction.type === 'StringIsEqualTo' ||
+      fraction.type === 'StringStartsWith' ||
+      fraction.type === 'StringEndsWith' ||
+      fraction.type === 'StringContains' ||
+      fraction.type === 'StringIsLike' ||
+      fraction.type === 'StringIsNotEqualTo' ||
+      fraction.type === 'StringDoesNotStartWith' ||
+      fraction.type === 'StringDoesNotEndWith' ||
+      fraction.type === 'StringDoesNotContain' ||
+      fraction.type === 'StringIsNotLike'
     "
   >
     <!-- StringIsNull -->
@@ -77,8 +77,8 @@
         <ng-select
           *ngIf="
             !!suggestModelDimension &&
-            (fraction.type === fractionTypeEnum.StringIsEqualTo ||
-              fraction.type === fractionTypeEnum.StringIsNotEqualTo)
+            (fraction.type === 'StringIsEqualTo' ||
+              fraction.type === 'StringIsNotEqualTo')
           "
           #stringValueSelect
           [fixNgSelectBottom]="stringValueSelect"
@@ -120,8 +120,8 @@
         <input
           *ngIf="
             !suggestModelDimension ||
-            (fraction.type !== fractionTypeEnum.StringIsEqualTo &&
-              fraction.type !== fractionTypeEnum.StringIsNotEqualTo)
+            (fraction.type !== 'StringIsEqualTo' &&
+              fraction.type !== 'StringIsNotEqualTo')
           "
           autocomplete="off"
           spellcheck="false"

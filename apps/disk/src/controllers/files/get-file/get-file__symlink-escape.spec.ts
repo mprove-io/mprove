@@ -1,13 +1,10 @@
 import test from 'ava';
 import fse from 'fs-extra';
 import { BRANCH_MAIN } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BaseProject } from '#common/types/backend/parts/base-project';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToDiskGetFileRequest } from '#common/types/disk/routes/files/get-file/get-file-request';
 import type { ToDiskGetFileResponse } from '#common/types/disk/routes/files/get-file/get-file-response';
 import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
@@ -73,7 +70,7 @@ test('1', async t => {
     let baseProject: BaseProject = {
       orgId: orgId,
       projectId: projectId,
-      remoteType: ProjectRemoteTypeEnum.Managed,
+      remoteType: 'Managed',
       st: diskTabService.encrypt({ data: projectSt }),
       lt: diskTabService.encrypt({ data: projectLt })
     };
@@ -108,7 +105,7 @@ test('1', async t => {
         repoId: 'r1',
         branch: BRANCH_MAIN,
         fileNodeId: `${projectId}/leak.view`,
-        builderLeft: BuilderLeftEnum.Tree
+        builderLeft: 'Tree'
       }
     };
 
@@ -116,7 +113,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleDisk({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });
@@ -128,5 +125,5 @@ test('1', async t => {
     return;
   }
 
-  t.is(resp.error.code, ErEnum.FILE_IS_SYMLINK);
+  t.is(resp.error.code, 'FILE_IS_SYMLINK');
 });

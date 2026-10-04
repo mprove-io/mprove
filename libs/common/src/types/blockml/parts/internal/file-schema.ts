@@ -1,4 +1,4 @@
-import type { FileBasic } from '#common/types/blockml/parts/internal/file-basic';
+import type { FileBasic } from '#common/types/blockml/parts/internal/file/file-basic';
 import type { FileSchemaTable } from '#common/types/blockml/parts/internal/file-schema-table';
 import type { Extend } from '#common/types/extend';
 

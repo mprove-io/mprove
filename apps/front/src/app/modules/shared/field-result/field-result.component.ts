@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ALL_RESULT_VALUES } from '#common/constants/top';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 
 @Component({
   standalone: false,
@@ -9,33 +9,13 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
   templateUrl: './field-result.component.html'
 })
 export class FieldResultComponent {
-  fieldClassDimension = FieldClassEnum.Dimension;
-  fieldClassMeasure = FieldClassEnum.Measure;
-  fieldClassCalculation = FieldClassEnum.Calculation;
-  fieldClassFilter = FieldClassEnum.Filter;
-
-  fieldResultDayOfWeek = FieldResultEnum.DayOfWeek;
-  fieldResultDayOfWeekIndex = FieldResultEnum.DayOfWeekIndex;
-  fieldResultMonthName = FieldResultEnum.MonthName;
-  fieldResultQuarterOfYear = FieldResultEnum.QuarterOfYear;
-  fieldResultTs = FieldResultEnum.Ts;
-  fieldResultYesno = FieldResultEnum.Yesno;
-  fieldResultString = FieldResultEnum.String;
-  fieldResultNumber = FieldResultEnum.Number;
-  fieldResultDate = FieldResultEnum.Date;
-  fieldResultBoolean = FieldResultEnum.Boolean;
-  fieldResultArray = FieldResultEnum.Array;
-  fieldResultRecord = FieldResultEnum.Record;
-  fieldResultJson = FieldResultEnum.Json;
-  fieldResultSqlNative = FieldResultEnum.SqlNative;
-
   allResultValues = ALL_RESULT_VALUES;
 
   @Input()
-  fieldClass: FieldClassEnum;
+  fieldClass: FieldClass;
 
   @Input()
-  result: FieldResultEnum;
+  result: FieldResult;
 
   @Input()
   size: number;

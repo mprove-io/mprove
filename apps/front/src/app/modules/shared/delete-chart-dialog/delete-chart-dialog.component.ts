@@ -8,10 +8,10 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { ToBackendDeleteChartRequest } from '#common/types/backend/routes/charts/delete-chart/delete-chart-request';
 import type { ToBackendDeleteChartResponse } from '#common/types/backend/routes/charts/delete-chart/delete-chart-response';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -25,7 +25,7 @@ export interface DeleteChartDialogData {
   repoId: string;
   branchId: string;
   envId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
 }
 
 @Component({

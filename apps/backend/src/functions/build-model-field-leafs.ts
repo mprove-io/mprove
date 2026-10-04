@@ -3,9 +3,9 @@ import type {
   SourceDef as MalloySourceDef
 } from '@malloydata/malloy';
 import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 
 type MalloyFieldLeafInfo = {
   fieldPath: string[];
@@ -25,7 +25,7 @@ export function buildModelFieldLeafs(item: {
   models.forEach(model => {
     let malloyFieldLeafInfos: MalloyFieldLeafInfo[] = [];
 
-    if (model.type === ModelTypeEnum.Malloy) {
+    if (model.type === 'Malloy') {
       let malloyModelDef = model.malloyModelDef;
 
       let sourceName = model.source;

@@ -13,7 +13,7 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import type { ToBackendGetProjectRequest } from '#common/types/backend/routes/projects/get-project/get-project-request';
 import type { ToBackendGetProjectResponse } from '#common/types/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrg } from '../functions/check-nav-org';
@@ -72,7 +72,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
               projectName: project.name,
               projectDefaultBranch: project.defaultBranch,
               repoId: PROD_REPO_ID,
-              repoType: RepoTypeEnum.Production,
+              repoType: 'production',
               branchId: project.defaultBranch,
               envId: PROJECT_ENV_PROD
             });

@@ -2,7 +2,8 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
 import { buildSpaceAccessRoles } from './build-space-access-roles/build-space-access-roles';
@@ -15,7 +16,7 @@ export function buildSpace(item: {
   spaces: FileSpace[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FilePartSpace[], never> {
   return Result.pipe(

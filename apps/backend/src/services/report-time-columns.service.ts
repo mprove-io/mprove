@@ -31,15 +31,12 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { TIME_COLUMNS_LIMIT } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Column } from '#common/types/blockml/parts/column';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { Column } from '#common/types/blockml/parts/report/column';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 @Injectable()
@@ -52,9 +49,9 @@ export class ReportTimeColumnsService {
   async getTimeColumns(item: {
     traceId: string;
     timezone: string;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
-    projectWeekStart: ProjectWeekStartEnum;
+    projectWeekStart: ProjectWeekStart;
     caseSensitiveStringFilters: boolean;
   }) {
     let {
@@ -72,7 +69,7 @@ export class ReportTimeColumnsService {
 
     let p = bricksToFractions({
       filterBricks: [timeRangeFractionBrick],
-      result: FieldResultEnum.Ts,
+      result: 'ts',
       fractions: fractions,
       isGetTimeRange: true,
       timezone: timezone,
@@ -82,7 +79,7 @@ export class ReportTimeColumnsService {
 
     if (p.valid !== 1) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_TIME_RANGE
+        message: 'BACKEND_WRONG_TIME_RANGE'
       });
     }
 
@@ -96,24 +93,24 @@ export class ReportTimeColumnsService {
         ? undefined
         : isDefined(respRangeStart)
           ? respRangeStart
-          : timeSpec === TimeSpecEnum.Timestamps
+          : timeSpec === 'timestamps'
             ? undefined
             : getUnixTime(
                 sub(
                   fromUnixTime(respRangeEnd),
-                  timeSpec === TimeSpecEnum.Years
+                  timeSpec === 'years'
                     ? { years: timeColumnsLimit }
-                    : timeSpec === TimeSpecEnum.Quarters
+                    : timeSpec === 'quarters'
                       ? { months: timeColumnsLimit * 3 }
-                      : timeSpec === TimeSpecEnum.Months
+                      : timeSpec === 'months'
                         ? { months: timeColumnsLimit }
-                        : timeSpec === TimeSpecEnum.Weeks
+                        : timeSpec === 'weeks'
                           ? { days: timeColumnsLimit * 7 }
-                          : timeSpec === TimeSpecEnum.Days
+                          : timeSpec === 'days'
                             ? { days: timeColumnsLimit }
-                            : timeSpec === TimeSpecEnum.Hours
+                            : timeSpec === 'hours'
                               ? { hours: timeColumnsLimit }
-                              : timeSpec === TimeSpecEnum.Minutes
+                              : timeSpec === 'minutes'
                                 ? { minutes: timeColumnsLimit }
                                 : {}
                 )
@@ -124,24 +121,24 @@ export class ReportTimeColumnsService {
         ? undefined
         : isDefined(respRangeEnd)
           ? respRangeEnd
-          : timeSpec === TimeSpecEnum.Timestamps
+          : timeSpec === 'timestamps'
             ? undefined
             : getUnixTime(
                 add(
                   fromUnixTime(respRangeStart),
-                  timeSpec === TimeSpecEnum.Years
+                  timeSpec === 'years'
                     ? { years: timeColumnsLimit }
-                    : timeSpec === TimeSpecEnum.Quarters
+                    : timeSpec === 'quarters'
                       ? { months: timeColumnsLimit * 3 }
-                      : timeSpec === TimeSpecEnum.Months
+                      : timeSpec === 'months'
                         ? { months: timeColumnsLimit }
-                        : timeSpec === TimeSpecEnum.Weeks
+                        : timeSpec === 'weeks'
                           ? { days: timeColumnsLimit * 7 }
-                          : timeSpec === TimeSpecEnum.Days
+                          : timeSpec === 'days'
                             ? { days: timeColumnsLimit }
-                            : timeSpec === TimeSpecEnum.Hours
+                            : timeSpec === 'hours'
                               ? { hours: timeColumnsLimit }
-                              : timeSpec === TimeSpecEnum.Minutes
+                              : timeSpec === 'minutes'
                                 ? { minutes: timeColumnsLimit }
                                 : {}
                 )
@@ -154,21 +151,21 @@ export class ReportTimeColumnsService {
     let endDate = isDefined(rangeEnd) ? new Date(rangeEnd * 1000) : undefined;
 
     let diffColumnsLength =
-      timeSpec === TimeSpecEnum.Timestamps
+      timeSpec === 'timestamps'
         ? 0
-        : timeSpec === TimeSpecEnum.Years
+        : timeSpec === 'years'
           ? differenceInYears(endDate, startDate)
-          : timeSpec === TimeSpecEnum.Quarters
+          : timeSpec === 'quarters'
             ? differenceInQuarters(endDate, startDate)
-            : timeSpec === TimeSpecEnum.Months
+            : timeSpec === 'months'
               ? differenceInMonths(endDate, startDate)
-              : timeSpec === TimeSpecEnum.Weeks
+              : timeSpec === 'weeks'
                 ? differenceInWeeks(endDate, startDate)
-                : timeSpec === TimeSpecEnum.Days
+                : timeSpec === 'days'
                   ? differenceInDays(endDate, startDate)
-                  : timeSpec === TimeSpecEnum.Hours
+                  : timeSpec === 'hours'
                     ? differenceInHours(endDate, startDate)
-                    : timeSpec === TimeSpecEnum.Minutes
+                    : timeSpec === 'minutes'
                       ? differenceInMinutes(endDate, startDate)
                       : undefined;
 
@@ -179,44 +176,44 @@ export class ReportTimeColumnsService {
 
       if (
         [
-          FractionTypeEnum.TsIsBefore, // maybe no such case
-          FractionTypeEnum.TsIsThrough // maybe no such case
+          'TsIsBefore', // maybe no such case
+          'TsIsThrough' // maybe no such case
         ].indexOf(timeRangeFraction.type) > -1
       ) {
         startDate = sub(
           endDate,
-          timeSpec === TimeSpecEnum.Years
+          timeSpec === 'years'
             ? { years: timeColumnsLimit }
-            : timeSpec === TimeSpecEnum.Quarters
+            : timeSpec === 'quarters'
               ? { months: timeColumnsLimit * 3 }
-              : timeSpec === TimeSpecEnum.Months
+              : timeSpec === 'months'
                 ? { months: timeColumnsLimit }
-                : timeSpec === TimeSpecEnum.Weeks
+                : timeSpec === 'weeks'
                   ? { days: timeColumnsLimit * 7 }
-                  : timeSpec === TimeSpecEnum.Days
+                  : timeSpec === 'days'
                     ? { days: timeColumnsLimit }
-                    : timeSpec === TimeSpecEnum.Hours
+                    : timeSpec === 'hours'
                       ? { hours: timeColumnsLimit }
-                      : timeSpec === TimeSpecEnum.Minutes
+                      : timeSpec === 'minutes'
                         ? { minutes: timeColumnsLimit }
                         : {}
         );
       } else {
         endDate = add(
           startDate,
-          timeSpec === TimeSpecEnum.Years
+          timeSpec === 'years'
             ? { years: timeColumnsLimit }
-            : timeSpec === TimeSpecEnum.Quarters
+            : timeSpec === 'quarters'
               ? { months: timeColumnsLimit * 3 }
-              : timeSpec === TimeSpecEnum.Months
+              : timeSpec === 'months'
                 ? { months: timeColumnsLimit }
-                : timeSpec === TimeSpecEnum.Weeks
+                : timeSpec === 'weeks'
                   ? { days: timeColumnsLimit * 7 }
-                  : timeSpec === TimeSpecEnum.Days
+                  : timeSpec === 'days'
                     ? { days: timeColumnsLimit }
-                    : timeSpec === TimeSpecEnum.Hours
+                    : timeSpec === 'hours'
                       ? { hours: timeColumnsLimit }
-                      : timeSpec === TimeSpecEnum.Minutes
+                      : timeSpec === 'minutes'
                         ? { minutes: timeColumnsLimit }
                         : {}
         );
@@ -227,100 +224,87 @@ export class ReportTimeColumnsService {
       isDefined(startDate) &&
       isDefined(endDate) &&
       getUnixTime(startDate) === getUnixTime(endDate)
-        ? timeSpec === TimeSpecEnum.Timestamps
+        ? timeSpec === 'timestamps'
           ? [startDate]
-          : timeSpec === TimeSpecEnum.Years
+          : timeSpec === 'years'
             ? [startOfYear(startDate)]
-            : timeSpec === TimeSpecEnum.Quarters
+            : timeSpec === 'quarters'
               ? [startOfQuarter(startDate)]
-              : timeSpec === TimeSpecEnum.Months
+              : timeSpec === 'months'
                 ? [startOfMonth(startDate)]
-                : timeSpec === TimeSpecEnum.Weeks
+                : timeSpec === 'weeks'
                   ? [
                       startOfWeek(startDate, {
-                        weekStartsOn:
-                          projectWeekStart === ProjectWeekStartEnum.Sunday
-                            ? 0
-                            : 1
+                        weekStartsOn: projectWeekStart === 'Sunday' ? 0 : 1
                       })
                     ]
-                  : timeSpec === TimeSpecEnum.Days
+                  : timeSpec === 'days'
                     ? [startOfDay(startDate)]
-                    : timeSpec === TimeSpecEnum.Hours
+                    : timeSpec === 'hours'
                       ? [startOfHour(startDate)]
-                      : timeSpec === TimeSpecEnum.Minutes
+                      : timeSpec === 'minutes'
                         ? [startOfMinute(startDate)]
                         : undefined
-        : timeSpec === TimeSpecEnum.Years
+        : timeSpec === 'years'
           ? eachYearOfInterval({
               start: startDate,
               end: endDate
             })
-          : timeSpec === TimeSpecEnum.Quarters
+          : timeSpec === 'quarters'
             ? eachQuarterOfInterval({
                 start: startDate,
                 end: endDate
               })
-            : timeSpec === TimeSpecEnum.Months
+            : timeSpec === 'months'
               ? eachMonthOfInterval({
                   start: startDate,
                   end: endDate
                 })
-              : timeSpec === TimeSpecEnum.Weeks
+              : timeSpec === 'weeks'
                 ? eachWeekOfInterval(
                     {
                       start: startDate,
                       end: endDate
                     },
                     {
-                      weekStartsOn:
-                        projectWeekStart === ProjectWeekStartEnum.Sunday ? 0 : 1
+                      weekStartsOn: projectWeekStart === 'Sunday' ? 0 : 1
                     }
                   )
-                : timeSpec === TimeSpecEnum.Days
+                : timeSpec === 'days'
                   ? eachDayOfInterval({
                       start: startDate,
                       end: endDate
                     })
-                  : timeSpec === TimeSpecEnum.Hours
+                  : timeSpec === 'hours'
                     ? eachHourOfInterval({
                         start: startDate,
                         end: endDate
                       })
-                    : timeSpec === TimeSpecEnum.Minutes
+                    : timeSpec === 'minutes'
                       ? eachMinuteOfInterval({
                           start: startDate,
                           end: endDate
                         })
-                      : timeSpec === TimeSpecEnum.Timestamps &&
+                      : timeSpec === 'timestamps' &&
                           isDefined(startDate) &&
                           isDefined(endDate)
                         ? [startDate, endDate]
-                        : timeSpec === TimeSpecEnum.Timestamps &&
-                            isDefined(startDate)
+                        : timeSpec === 'timestamps' && isDefined(startDate)
                           ? [startDate]
-                          : timeSpec === TimeSpecEnum.Timestamps &&
-                              isDefined(endDate)
+                          : timeSpec === 'timestamps' && isDefined(endDate)
                             ? [endDate]
                             : undefined;
 
     if (
-      timeSpec !== TimeSpecEnum.Timestamps &&
+      timeSpec !== 'timestamps' &&
       timeColumns.length > 1 &&
       getUnixTime(timeColumns[timeColumns.length - 1]) === getUnixTime(endDate)
     ) {
       timeColumns.pop();
     }
 
-    if (
-      timeSpec !== TimeSpecEnum.Timestamps &&
-      timeColumns.length > timeColumnsLimit
-    ) {
-      if (
-        [FractionTypeEnum.TsIsBefore, FractionTypeEnum.TsIsThrough].indexOf(
-          timeRangeFraction.type
-        ) > -1
-      ) {
+    if (timeSpec !== 'timestamps' && timeColumns.length > timeColumnsLimit) {
+      if (['TsIsBefore', 'TsIsThrough'].indexOf(timeRangeFraction.type) > -1) {
         timeColumns.shift(); // detail "years" is before calendar day "2025-01-02"
       } else {
         timeColumns.pop(); // detail "years" is after calendar day "2025-01-02"

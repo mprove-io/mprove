@@ -4,26 +4,26 @@ import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkFilterConditions } from '#blockml/functions/check-filter-conditions/check-filter-conditions';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 
-let func = FuncEnum.CheckDashboardFilterConditions;
+let func: Func = 'build-dashboard/check-dashboard-filter-conditions';
 
 export function checkDashboardFilterConditions(item: {
   dashboards: FileDashboard[];
   errors: BmError[];
   structId: string;
   caseSensitiveStringFilters: boolean;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileDashboard[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId, caseSensitiveStringFilters } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newDashboards: FileDashboard[] = checkFilterConditions(
     {
@@ -36,9 +36,9 @@ export function checkDashboardFilterConditions(item: {
     cs
   );
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Ds, newDashboards);
+  log(cs, caller, func, structId, 'out_dashboards.log', newDashboards);
 
   return Result.succeed(newDashboards);
 }

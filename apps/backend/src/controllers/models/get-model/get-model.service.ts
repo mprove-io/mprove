@@ -9,8 +9,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import type { Member } from '#common/types/backend/parts/member';
-import type { ModelX } from '#common/types/backend/parts/model-x';
-import type { StructX } from '#common/types/backend/parts/struct-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
+import type { StructX } from '#common/types/backend/parts/struct/struct-x';
 import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
 
 @Injectable()

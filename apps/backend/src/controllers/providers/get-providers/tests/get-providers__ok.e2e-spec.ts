@@ -7,12 +7,10 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import type { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
 import type { ToBackendGetProvidersRequest } from '#common/types/backend/routes/providers/get-providers/get-providers-request';
 import type { ToBackendGetProvidersResponse } from '#common/types/backend/routes/providers/get-providers/get-providers-response';
@@ -73,7 +71,7 @@ test('1', async t => {
               orgId: orgId,
               projectId: projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -91,7 +89,7 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: 'zeta',
-              type: ProviderTypeEnum.OpenAICompatible,
+              type: 'OpenAICompatible',
               name: 'Zeta',
               isEnabled: false,
               models: [
@@ -111,7 +109,7 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: 'alpha',
-              type: ProviderTypeEnum.OpenAICompatible,
+              type: 'OpenAICompatible',
               name: 'Alpha',
               isEnabled: true,
               models: [
@@ -157,7 +155,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -183,11 +181,11 @@ test('1', async t => {
 
     let alphaProvider: Provider = output.providers[0];
 
-    assert.equal(alphaProvider.type, ProviderTypeEnum.OpenAICompatible);
+    assert.equal(alphaProvider.type, 'OpenAICompatible');
 
     assert.equal(alphaProvider.name, 'Alpha');
 
-    if (alphaProvider.type !== ProviderTypeEnum.OpenAICompatible) {
+    if (alphaProvider.type !== 'OpenAICompatible') {
       throw new Error('Expected an OpenAI-compatible provider');
     }
 
@@ -209,7 +207,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

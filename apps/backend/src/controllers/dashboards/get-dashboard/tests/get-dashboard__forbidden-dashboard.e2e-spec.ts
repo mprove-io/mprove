@@ -11,10 +11,7 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
 import type { ToBackendGetDashboardResponse } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-response';
@@ -73,7 +70,7 @@ test('1', async t => {
               seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.Managed
+              remoteType: 'Managed'
             }
           ],
           members: [
@@ -91,7 +88,7 @@ test('1', async t => {
               projectId: projectId,
               connectionId: 'c7',
               envId: PROJECT_ENV_PROD,
-              type: ConnectionTypeEnum.GoogleApi,
+              type: 'GoogleApi',
               options: {
                 storeGoogleApi: EMPTY_STORE_GOOGLE_API_OPTIONS
               }
@@ -126,7 +123,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -136,13 +133,13 @@ test('1', async t => {
     }
 
     assert.ok(resp.type === 'Failure');
-    assert.equal(resp.error.code, ErEnum.BACKEND_FORBIDDEN_DASHBOARD);
+    assert.equal(resp.error.code, 'BACKEND_FORBIDDEN_DASHBOARD');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

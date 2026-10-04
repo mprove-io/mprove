@@ -5,30 +5,26 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartData } from '#common/types/blockml/parts/internal/file-chart-data';
 
-let func = FuncEnum.CheckChartData;
+let func: Func = 'build-mconfig-chart/check-chart-data';
 
 export function checkChartData<T extends dcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -41,17 +37,17 @@ export function checkChartData<T extends dcType>(item: {
       }
 
       let allowedParameters =
-        tile.type === ChartTypeEnum.PivotTable
+        tile.type === 'pivot_table'
           ? [
-              ParameterEnum.PivotRows.toString(),
-              ParameterEnum.PivotColumns.toString(),
-              ParameterEnum.PivotValues.toString()
+              'pivot_rows'.toString(),
+              'pivot_columns'.toString(),
+              'pivot_values'.toString()
             ]
           : [
-              ParameterEnum.XField.toString(),
-              ParameterEnum.YFields.toString(),
-              ParameterEnum.SizeField.toString(),
-              ParameterEnum.MultiField.toString()
+              'x_field'.toString(),
+              'y_fields'.toString(),
+              'size_field'.toString(),
+              'multi_field'.toString()
             ];
 
       Object.keys(tile.data)
@@ -60,7 +56,7 @@ export function checkChartData<T extends dcType>(item: {
           if (allowedParameters.indexOf(parameter) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_UNKNOWN_PARAMETER,
+                title: 'TILE_DATA_UNKNOWN_PARAMETER',
                 message:
                   `parameter "${parameter}" cannot be used ` +
                   'inside Tile Data',
@@ -81,15 +77,15 @@ export function checkChartData<T extends dcType>(item: {
           if (
             Array.isArray(tile.data[parameter as keyof FileChartData] as any) &&
             [
-              ParameterEnum.YFields.toString(),
-              ParameterEnum.PivotRows.toString(),
-              ParameterEnum.PivotColumns.toString(),
-              ParameterEnum.PivotValues.toString()
+              'y_fields'.toString(),
+              'pivot_rows'.toString(),
+              'pivot_columns'.toString(),
+              'pivot_values'.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_UNEXPECTED_LIST,
+                title: 'TILE_DATA_UNEXPECTED_LIST',
                 message: `parameter "${parameter}" cannot be a List`,
                 lines: [
                   {
@@ -111,7 +107,7 @@ export function checkChartData<T extends dcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_UNEXPECTED_DICTIONARY,
+                title: 'TILE_DATA_UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" cannot be a Dictionary`,
                 lines: [
                   {
@@ -134,9 +130,9 @@ export function checkChartData<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

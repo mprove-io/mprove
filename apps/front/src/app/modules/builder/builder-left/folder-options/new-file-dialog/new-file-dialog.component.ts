@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import type { ToBackendCreateFileRequest } from '#common/types/backend/routes/files/create-file/create-file-request';
 import type { ToBackendCreateFileResponse } from '#common/types/backend/routes/files/create-file/create-file-response';
@@ -174,7 +174,7 @@ export class NewFileDialogComponent implements OnInit {
               let fileId = encodeFilePath({ filePath: filePath });
 
               this.navigateService.navigateToFileLine({
-                builderLeft: BuilderLeftEnum.Tree,
+                builderLeft: 'Tree',
                 encodedFileId: fileId
               });
             }

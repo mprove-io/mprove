@@ -11,12 +11,7 @@ import type { Prep } from '#backend/interfaces/prep';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
@@ -79,7 +74,7 @@ test('1', async t => {
               seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.Managed
+              remoteType: 'Managed'
             }
           ],
           members: [
@@ -106,11 +101,11 @@ test('1', async t => {
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
           rowIds: undefined,
-          changeType: ChangeTypeEnum.AddEmpty,
+          changeType: 'AddEmpty',
           fromReportId: 'new',
-          rowChange: { rowType: RowTypeEnum.Empty, showChart: false },
+          rowChange: { rowType: 'empty', showChart: false },
           timeRangeFractionBrick: 'f`last 5 months`',
-          timeSpec: TimeSpecEnum.Months,
+          timeSpec: 'months',
           timezone: 'UTC',
           newReportFields: [],
           chart: makeCopy(DEFAULT_CHART)
@@ -141,7 +136,7 @@ test('1', async t => {
           space: undefined,
           accessRoles: [],
           timezone: 'UTC',
-          timeSpec: TimeSpecEnum.Months,
+          timeSpec: 'months',
           timeRangeFractionBrick: 'f`last 5 months`',
           newReportFields: [],
           chart: makeCopy(DEFAULT_CHART)
@@ -169,11 +164,11 @@ test('1', async t => {
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
           rowIds: undefined,
-          changeType: ChangeTypeEnum.AddEmpty,
+          changeType: 'AddEmpty',
           fromReportId: saveCreateReportId,
-          rowChange: { rowType: RowTypeEnum.Empty, showChart: false },
+          rowChange: { rowType: 'empty', showChart: false },
           timeRangeFractionBrick: 'f`last 5 months`',
-          timeSpec: TimeSpecEnum.Months,
+          timeSpec: 'months',
           timezone: 'UTC',
           newReportFields: [],
           chart: makeCopy(DEFAULT_CHART)
@@ -216,7 +211,7 @@ test('1', async t => {
           space: 's1',
           accessRoles: [],
           timezone: 'UTC',
-          timeSpec: TimeSpecEnum.Months,
+          timeSpec: 'months',
           timeRangeFractionBrick: 'f`last 5 months`',
           newReportFields: [],
           chart: makeCopy(DEFAULT_CHART)
@@ -234,7 +229,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -244,13 +239,13 @@ test('1', async t => {
     }
 
     assert.ok(resp.type === 'Failure');
-    assert.equal(resp.error.code, ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN);
+    assert.equal(resp.error.code, 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

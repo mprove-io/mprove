@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
+import { zGivenType } from '#common/types/backend/parts/given/given-type';
 import {
   type MemberGivenValue,
   zMemberGivenValue
@@ -8,12 +9,7 @@ import {
 
 export type MemberGiven = {
   givenId: string;
-  type:
-    | GivenTypeEnum.String
-    | GivenTypeEnum.Number
-    | GivenTypeEnum.Boolean
-    | GivenTypeEnum.Date
-    | GivenTypeEnum.Timestamp;
+  type: GivenType;
   isMultiple: boolean;
   memberGivenValues: MemberGivenValue[];
 };
@@ -21,7 +17,7 @@ export type MemberGiven = {
 export let zMemberGiven = z
   .object({
     givenId: z.string(),
-    type: z.enum(GivenTypeEnum),
+    type: zGivenType,
     isMultiple: z.boolean(),
     memberGivenValues: z.array(zMemberGivenValue)
   })

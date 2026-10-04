@@ -27,7 +27,7 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import type { ToBackendCreateOrgRequest } from '#common/types/backend/routes/orgs/create-org/create-org-request';
 import type { ToBackendCreateOrgResponse } from '#common/types/backend/routes/orgs/create-org/create-org-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -111,7 +111,7 @@ export class CreateOrgDialogComponent implements OnInit {
               projectName: undefined,
               projectDefaultBranch: undefined,
               repoId: PROD_REPO_ID,
-              repoType: RepoTypeEnum.Production,
+              repoType: 'production',
               branchId: undefined,
               envId: PROJECT_ENV_PROD,
               needValidate: false

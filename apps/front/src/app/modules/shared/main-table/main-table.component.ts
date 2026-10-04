@@ -1,19 +1,16 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { Sorting } from '#common/types/blockml/parts/sorting';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { Sorting } from '#common/types/blockml/parts/query/sorting';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ModelQuery } from '#front/app/queries/model.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -30,12 +27,6 @@ import { StructService } from '#front/app/services/struct.service';
   styleUrls: ['main-table.component.scss']
 })
 export class MainTableComponent {
-  fieldClassDimension = FieldClassEnum.Dimension;
-  fieldClassMeasure = FieldClassEnum.Measure;
-  fieldClassCalculation = FieldClassEnum.Calculation;
-
-  fieldResultNumber = FieldResultEnum.Number;
-
   @Input()
   isTableHeaderWide: boolean;
 
@@ -87,13 +78,13 @@ export class MainTableComponent {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
+    if (this.mconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Sort,
+          type: 'Sort',
           sortFieldId: fieldId,
           desc: desc,
           timezone: newMconfig.timezone
@@ -185,7 +176,7 @@ export class MainTableComponent {
 
     let fields: ModelField[] = this.modelQuery.getValue().fields;
 
-    if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
+    if (this.mconfig.modelType === 'Malloy') {
       let { queryOperationType, sortFieldId, desc } = sortFieldsOnSelectChange({
         mconfig: newMconfig,
         selectFieldId: fieldId,
@@ -198,7 +189,7 @@ export class MainTableComponent {
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Remove,
+          type: 'Remove',
           fieldId: fieldId,
           sortFieldId: sortFieldId,
           desc: desc,
@@ -250,13 +241,13 @@ export class MainTableComponent {
     let dimensions = newColumnsOrder.filter(
       fieldId =>
         this.mconfigFields.find(x => x.id === fieldId).fieldClass ===
-        FieldClassEnum.Dimension
+        'dimension'
     );
 
     let notDimensions = newColumnsOrder.filter(
       fieldId =>
         this.mconfigFields.find(x => x.id === fieldId).fieldClass !==
-        FieldClassEnum.Dimension
+        'dimension'
     );
 
     let moveFieldIds = [...dimensions, ...notDimensions];
@@ -269,13 +260,13 @@ export class MainTableComponent {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
+    if (this.mconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Move,
+          type: 'Move',
           moveFieldIds: moveFieldIds,
           timezone: newMconfig.timezone
         }

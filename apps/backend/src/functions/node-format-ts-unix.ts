@@ -1,3 +1,4 @@
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 // function content is the same as frontFormatTsUnix
 
 import dayjs from 'dayjs';
@@ -5,7 +6,6 @@ import advancedFormat from 'dayjs/plugin/advancedFormat.js';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -13,28 +13,28 @@ dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 
 export function nodeFormatTsUnix(item: {
-  timeSpec: TimeSpecEnum;
+  timeSpec: TimeSpec;
   unixTimeZoned: number;
 }) {
   let { timeSpec, unixTimeZoned } = item;
 
   let date = dayjs.unix(unixTimeZoned).utc();
 
-  return timeSpec === TimeSpecEnum.Years
+  return timeSpec === 'years'
     ? date.format('YYYY') // format(date, 'yyyy')
-    : timeSpec === TimeSpecEnum.Quarters
+    : timeSpec === 'quarters'
       ? 'Q' + date.format('Q YYYY') // format(date, 'QQQ yyyy')
-      : timeSpec === TimeSpecEnum.Months
+      : timeSpec === 'months'
         ? date.format('MMM YYYY') // format(date, 'MMM yyyy')
-        : timeSpec === TimeSpecEnum.Weeks
+        : timeSpec === 'weeks'
           ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
-          : timeSpec === TimeSpecEnum.Days
+          : timeSpec === 'days'
             ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
-            : timeSpec === TimeSpecEnum.Hours
+            : timeSpec === 'hours'
               ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
-              : timeSpec === TimeSpecEnum.Minutes
+              : timeSpec === 'minutes'
                 ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
-                : timeSpec === TimeSpecEnum.Timestamps // not *_ts
+                : timeSpec === 'timestamps' // not *_ts
                   ? date.format('HH:mm:ss.SSS DD MMM YYYY') //
                   : `${unixTimeZoned}`;
 }

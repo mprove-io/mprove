@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 import { BaseQuery } from './base.query';
 
 export class SessionEventsState {

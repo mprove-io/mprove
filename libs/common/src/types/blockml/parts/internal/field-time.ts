@@ -1,5 +1,4 @@
-import type { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { EnumValues } from '#common/types/enum-values';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 
 export type FieldTime = {
   hidden?: string;
@@ -10,5 +9,5 @@ export type FieldTime = {
   group_description_line_num?: number;
   name?: string;
   name_line_num?: number;
-  fieldClass?: EnumValues<typeof FieldClassEnum>;
+  fieldClass?: FieldClass;
 };

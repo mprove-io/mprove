@@ -8,7 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import type { ToBackendDeleteSessionRequest } from '#common/types/backend/routes/sessions/delete-session/delete-session-request';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -89,7 +89,7 @@ export class DeleteSessionDialogComponent implements OnInit {
 
           let currentSession = this.sessionQuery.getValue();
           if (currentSession?.sessionId === sessionId) {
-            if (currentSession.type === SessionTypeEnum.Explorer) {
+            if (currentSession.type === 'Explorer') {
               this.navigateService.navigateToExplorer();
             } else {
               this.navigateService.navigateToBuilder({

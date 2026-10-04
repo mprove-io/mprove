@@ -13,10 +13,10 @@
     <div
       class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
       [ngClass]="{
-        'bg-m600': rowType === rowTypeEnum.Metric
+        'bg-m600': rowType === 'metric'
       }"
     >
-      <m-check-icon *ngIf="rowType === rowTypeEnum.Metric"></m-check-icon>
+      <m-check-icon *ngIf="rowType === 'metric'"></m-check-icon>
     </div>
 
     <div class="ml-5 text-base">Metric</div>
@@ -30,10 +30,10 @@
     <div
       class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
       [ngClass]="{
-        'bg-m600': rowType === rowTypeEnum.Formula
+        'bg-m600': rowType === 'formula'
       }"
     >
-      <m-check-icon *ngIf="rowType === rowTypeEnum.Formula"></m-check-icon>
+      <m-check-icon *ngIf="rowType === 'formula'"></m-check-icon>
     </div>
 
     <div class="ml-5 text-base">Formula</div>
@@ -47,10 +47,10 @@
     <div
       class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
       [ngClass]="{
-        'bg-m600': rowType === rowTypeEnum.Header
+        'bg-m600': rowType === 'header'
       }"
     >
-      <m-check-icon *ngIf="rowType === rowTypeEnum.Header"></m-check-icon>
+      <m-check-icon *ngIf="rowType === 'header'"></m-check-icon>
     </div>
 
     <div class="ml-5 text-base">Header</div>
@@ -64,10 +64,10 @@
     <div
       class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
       [ngClass]="{
-        'bg-m600': rowType === rowTypeEnum.Empty
+        'bg-m600': rowType === 'empty'
       }"
     >
-      <m-check-icon *ngIf="rowType === rowTypeEnum.Empty"></m-check-icon>
+      <m-check-icon *ngIf="rowType === 'empty'"></m-check-icon>
     </div>
 
     <div class="ml-5 text-base">Empty</div>
@@ -75,7 +75,7 @@
 
   <div class="mt-9 flex h-[150px] flex-col justify-start">
     <div
-      *ngIf="rowType === rowTypeEnum.Metric"
+      *ngIf="rowType === 'metric'"
       class="flex h-11 min-w-[2px] max-w-[1000px] flex-row items-center space-x-5"
     >
       <div
@@ -142,7 +142,7 @@
     </div>
 
     <div
-      *ngIf="[rowTypeEnum.Header, rowTypeEnum.Formula].indexOf(rowType) > -1"
+      *ngIf="['header', 'formula'].indexOf(rowType) > -1"
       class="flex h-11 max-w-[600px] flex-row items-center"
     >
       <div
@@ -172,7 +172,7 @@
     </div>
 
     <div
-      *ngIf="rowType === rowTypeEnum.Formula"
+      *ngIf="rowType === 'formula'"
       class="mt-5 flex flex-1 flex-row items-start"
     >
       <div

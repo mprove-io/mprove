@@ -8,39 +8,38 @@ import {
   startOfWeek,
   startOfYear
 } from 'date-fns';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 export function getTimeSpecUnitStartTs(item: {
-  timeSpec: TimeSpecEnum;
+  timeSpec: TimeSpec;
   unixTime: number;
-  weekStart: ProjectWeekStartEnum;
+  weekStart: ProjectWeekStart;
 }) {
   let { timeSpec, unixTime, weekStart } = item;
 
   let date = new Date(unixTime * 1000);
 
   let unitStartTs =
-    timeSpec === TimeSpecEnum.Timestamps
+    timeSpec === 'timestamps'
       ? unixTime
-      : timeSpec === TimeSpecEnum.Years
+      : timeSpec === 'years'
         ? getUnixTime(startOfYear(date))
-        : timeSpec === TimeSpecEnum.Quarters
+        : timeSpec === 'quarters'
           ? getUnixTime(startOfQuarter(date))
-          : timeSpec === TimeSpecEnum.Months
+          : timeSpec === 'months'
             ? getUnixTime(startOfMonth(date))
-            : timeSpec === TimeSpecEnum.Weeks
+            : timeSpec === 'weeks'
               ? getUnixTime(
                   startOfWeek(date, {
-                    weekStartsOn:
-                      weekStart === ProjectWeekStartEnum.Sunday ? 0 : 1
+                    weekStartsOn: weekStart === 'Sunday' ? 0 : 1
                   })
                 )
-              : timeSpec === TimeSpecEnum.Days
+              : timeSpec === 'days'
                 ? getUnixTime(startOfDay(date))
-                : timeSpec === TimeSpecEnum.Hours
+                : timeSpec === 'hours'
                   ? getUnixTime(startOfHour(date))
-                  : timeSpec === TimeSpecEnum.Minutes
+                  : timeSpec === 'minutes'
                     ? getUnixTime(startOfMinute(date))
                     : unixTime;
 

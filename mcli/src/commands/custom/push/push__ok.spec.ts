@@ -3,15 +3,13 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendSaveFileOutput } from '#common/types/backend/routes/files/save-file/save-file-output';
 import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/files/save-file/save-file-request';
 import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/repos/commit-repo/commit-repo-output';
 import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
@@ -30,7 +28,7 @@ test('1', async () => {
   let context: CustomContext;
 
   await retry(async (bail: any) => {
-    let repo = RepoTypeEnum.Dev;
+    let repo: RepoType = 'dev';
     let branch = BRANCH_MAIN;
 
     let projectId = makeId();
@@ -88,7 +86,7 @@ test('1', async () => {
               projectId,
               name: projectName,
               defaultBranch: branch,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined,
@@ -153,7 +151,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -164,7 +162,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -186,7 +184,7 @@ test('1', async () => {
 
     logToConsoleMcli({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       context: undefined,
       isJson: false
     });

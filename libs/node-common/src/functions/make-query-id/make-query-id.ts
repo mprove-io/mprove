@@ -1,13 +1,13 @@
 import * as crypto from 'crypto';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
 export function makeQueryId(item: {
   projectId: string;
   connectionId: string;
   envId: string;
-  mconfigParentType: MconfigParentTypeEnum;
+  mconfigParentType: MconfigParentType;
   mconfigParentId: string;
   sql: string;
   storeTransformedRequestString: string;
@@ -28,10 +28,10 @@ export function makeQueryId(item: {
 
   if (
     [
-      MconfigParentTypeEnum.Dashboard,
-      MconfigParentTypeEnum.Report,
-      MconfigParentTypeEnum.ChartDialogDashboard,
-      MconfigParentTypeEnum.ChartDialogReport
+      'Dashboard',
+      'Report',
+      'ChartDialogDashboard',
+      'ChartDialogReport'
     ].indexOf(mconfigParentType) > -1
   ) {
     text = text + mconfigParentId;

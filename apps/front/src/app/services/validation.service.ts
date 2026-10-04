@@ -6,11 +6,11 @@ import type {
 } from '@angular/forms';
 import { formatSpecifier } from 'd3-format';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import type { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
@@ -188,7 +188,7 @@ export class ValidationService {
   }
 
   static givenValuesValidator(item: {
-    getType: () => GivenTypeEnum | undefined;
+    getType: () => GivenType | undefined;
     getIsMultiple: () => boolean;
   }) {
     let { getType, getIsMultiple } = item;

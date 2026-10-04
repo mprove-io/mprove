@@ -13,12 +13,11 @@ import {
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { OcSessionApi } from '#common/types/backend/parts/oc-session-api';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { TabService } from '../tab.service';
 
 @Injectable()
@@ -30,7 +29,7 @@ export class SessionsService {
 
   makeSession(item: {
     sessionId: string;
-    type: SessionTypeEnum;
+    type: SessionType;
     repoId: string;
     branchId: string;
     userId: string;
@@ -53,7 +52,7 @@ export class SessionsService {
     envId?: string;
     initialCommit?: string;
     codexAuthUpdateTs: number;
-    status: SessionStatusEnum;
+    status: SessionStatus;
     lastActivityTs: number;
     sandboxStartTs?: number;
     sandboxEndTs?: number;
@@ -122,7 +121,7 @@ export class SessionsService {
 
     if (!session) {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_NOT_FOUND
+        message: 'BACKEND_SESSION_NOT_FOUND'
       });
     }
 
@@ -174,20 +173,20 @@ export class SessionsService {
     userId: string;
     projectId: string;
     allowProdRepo: boolean;
-  }): Promise<RepoTypeEnum> {
+  }): Promise<RepoType> {
     let { repoId, userId, projectId, allowProdRepo } = item;
 
     if (repoId === PROD_REPO_ID) {
       if (allowProdRepo === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_PRODUCTION_REPO_NOT_ALLOWED
+          message: 'BACKEND_PRODUCTION_REPO_NOT_ALLOWED'
         });
       }
-      return RepoTypeEnum.Production;
+      return 'production';
     }
 
     if (repoId === userId) {
-      return RepoTypeEnum.Dev;
+      return 'dev';
     }
 
     let session = await this.db.drizzle.query.sessionsTable.findFirst({
@@ -200,11 +199,11 @@ export class SessionsService {
     });
 
     if (session) {
-      return RepoTypeEnum.Session;
+      return 'session';
     }
 
     throw new ServerError({
-      message: ErEnum.BACKEND_FORBIDDEN_REPO_ID
+      message: 'BACKEND_FORBIDDEN_REPO_ID'
     });
   }
 
@@ -233,10 +232,7 @@ export class SessionsService {
       where: and(
         eq(sessionsTable.projectId, projectId),
         eq(sessionsTable.userId, userId),
-        notInArray(sessionsTable.status, [
-          SessionStatusEnum.Deleted,
-          SessionStatusEnum.Archived
-        ])
+        notInArray(sessionsTable.status, ['Deleted', 'Archived'])
       ),
       orderBy: [desc(sessionsTable.createdTs)]
     });
@@ -264,7 +260,7 @@ export class SessionsService {
       where: and(
         eq(sessionsTable.projectId, projectId),
         eq(sessionsTable.userId, userId),
-        eq(sessionsTable.status, SessionStatusEnum.Archived)
+        eq(sessionsTable.status, 'Archived')
       ),
       columns: { sessionId: true }
     });
@@ -283,11 +279,11 @@ export class SessionsService {
     let { allEnts } = item;
 
     let statusOrder: Record<string, number> = {
-      [SessionStatusEnum.New]: 0,
-      [SessionStatusEnum.Active]: 1,
-      [SessionStatusEnum.Error]: 2,
-      [SessionStatusEnum.Paused]: 3,
-      [SessionStatusEnum.Archived]: 4
+      ['New']: 0,
+      ['Active']: 1,
+      ['Error']: 2,
+      ['Paused']: 3,
+      ['Archived']: 4
     };
 
     allEnts.sort((a, b) => {

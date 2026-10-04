@@ -17,9 +17,9 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { ReportDataService } from '#backend/services/report-data.service';
 import { TabService } from '#backend/services/tab.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ToBackendGetReportOutput } from '#common/types/backend/routes/reports/get-report/get-report-output';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 @Injectable()
 export class QueryInfoReportService {
@@ -45,7 +45,7 @@ export class QueryInfoReportService {
     envId: string;
     reportId: string;
     timezone: string;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
     skipUi: boolean;
   }): Promise<ToBackendGetReportOutput> {

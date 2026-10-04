@@ -44,13 +44,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Sessions')
@@ -93,7 +88,7 @@ export class DeleteSessionController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 
@@ -102,33 +97,31 @@ export class DeleteSessionController {
     });
 
     let sessionLockToken =
-      session.type === SessionTypeEnum.Editor
+      session.type === 'Editor'
         ? await this.editorSessionLockService.acquireSessionLock({
             sessionId: session.sessionId
           })
         : undefined;
 
     try {
-      if (session.type === SessionTypeEnum.Editor) {
+      if (session.type === 'Editor') {
         session = await this.sessionsService.getSessionByIdCheckExists({
           sessionId: session.sessionId
         });
       }
 
       if (
-        session.type === SessionTypeEnum.Editor &&
-        [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
-          session.status
-        ) > -1
+        session.type === 'Editor' &&
+        ['Active', 'Paused'].indexOf(session.status) > -1
       ) {
         await this.editorSandboxService.stopSandbox({
-          sandboxType: session.sandboxType as SandboxTypeEnum,
+          sandboxType: session.sandboxType as SandboxType,
           sandboxId: session.sandboxId,
           e2bApiKey: project.e2bApiKey
         });
       }
 
-      if (session.type === SessionTypeEnum.Editor) {
+      if (session.type === 'Editor') {
         let baseProject = this.tabService.projectTabToBaseProject({
           project: project
         });
@@ -147,7 +140,7 @@ export class DeleteSessionController {
 
       let updatedSession: SessionTab = {
         ...session,
-        status: SessionStatusEnum.Deleted
+        status: 'Deleted'
       };
 
       await this.db.drizzle.transaction(
@@ -179,7 +172,7 @@ export class DeleteSessionController {
               .delete(ocSessionsTable)
               .where(and(eq(ocSessionsTable.sessionId, sessionId)));
 
-            if (session.type === SessionTypeEnum.Explorer) {
+            if (session.type === 'Explorer') {
               await tx
                 .delete(chartsTable)
                 .where(eq(chartsTable.sessionId, sessionId));
@@ -193,7 +186,7 @@ export class DeleteSessionController {
                 .where(eq(queriesTable.sessionId, sessionId));
             }
 
-            if (session.type === SessionTypeEnum.Editor) {
+            if (session.type === 'Editor') {
               await tx
                 .delete(branchesTable)
                 .where(
@@ -218,10 +211,10 @@ export class DeleteSessionController {
 
       let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
 
-      let stopDelay = backendEnv === BackendEnvEnum.TEST ? 0 : 10_000;
+      let stopDelay = backendEnv === 'TEST' ? 0 : 10_000;
 
       setTimeout(() => {
-        if (session.type === SessionTypeEnum.Explorer) {
+        if (session.type === 'Explorer') {
           this.explorerStreamService
             .publishStopSessionStream({
               sessionId: sessionId
@@ -229,12 +222,12 @@ export class DeleteSessionController {
             .catch(e => {
               logToConsoleBackend({
                 log: e,
-                logLevel: LogLevelEnum.Error,
+                logLevel: 'Error',
                 logger: this.logger,
                 cs: this.cs
               });
             });
-        } else if (session.type === SessionTypeEnum.Editor) {
+        } else if (session.type === 'Editor') {
           this.editorStreamService
             .publishStopSessionStream({
               sessionId: sessionId
@@ -242,7 +235,7 @@ export class DeleteSessionController {
             .catch(e => {
               logToConsoleBackend({
                 log: e,
-                logLevel: LogLevelEnum.Error,
+                logLevel: 'Error',
                 logger: this.logger,
                 cs: this.cs
               });

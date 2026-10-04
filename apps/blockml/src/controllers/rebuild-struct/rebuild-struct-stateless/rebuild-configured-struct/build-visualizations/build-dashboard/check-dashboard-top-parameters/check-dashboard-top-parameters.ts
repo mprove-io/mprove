@@ -4,27 +4,27 @@ import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkTopParameters } from '#blockml/functions/check-top-parameters/check-top-parameters';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
-let func = FuncEnum.CheckDashboardTopParameters;
+let func: Func = 'build-dashboard/check-dashboard-top-parameters';
 
 export function checkDashboardTopParameters(item: {
   dashboards: FileDashboard[];
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileDashboard[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId, stores } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newDashboards: FileDashboard[] = [];
 
@@ -50,9 +50,9 @@ export function checkDashboardTopParameters(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newDashboards);
+  log(cs, caller, func, structId, 'out_entities.log', newDashboards);
 
   return Result.succeed(newDashboards);
 }

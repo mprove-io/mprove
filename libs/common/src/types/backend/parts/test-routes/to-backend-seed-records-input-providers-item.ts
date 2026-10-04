@@ -4,24 +4,24 @@ import {
   CODEX_PROVIDER_ID,
   OPENAI_PROVIDER_ID
 } from '#common/constants/providers';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type ProviderOptionsAnthropic,
   zProviderOptionsAnthropic
-} from '#common/types/backend/parts/provider-options/provider-options-anthropic';
+} from '#common/types/backend/parts/provider/options/provider-options-anthropic';
 import {
   type ProviderOptionsCodex,
   zProviderOptionsCodex
-} from '#common/types/backend/parts/provider-options/provider-options-codex';
+} from '#common/types/backend/parts/provider/options/provider-options-codex';
 import {
   type ProviderOptionsOpenAI,
   zProviderOptionsOpenAI
-} from '#common/types/backend/parts/provider-options/provider-options-openai';
+} from '#common/types/backend/parts/provider/options/provider-options-openai';
 import {
   type ProviderOptionsOpenAICompatible,
   zProviderOptionsOpenAICompatible
-} from '#common/types/backend/parts/provider-options/provider-options-openai-compatible';
+} from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
 import {
   type ToBackendSeedRecordsModel,
   zToBackendSeedRecordsModel
@@ -29,7 +29,7 @@ import {
 
 export type ToBackendSeedRecordsInputProvidersItem =
   | {
-      type: ProviderTypeEnum.OpenAI;
+      type: 'OpenAI';
       projectId: string;
       providerId: typeof OPENAI_PROVIDER_ID;
       isEnabled: boolean;
@@ -37,7 +37,7 @@ export type ToBackendSeedRecordsInputProvidersItem =
       options: ProviderOptionsOpenAI;
     }
   | {
-      type: ProviderTypeEnum.Anthropic;
+      type: 'Anthropic';
       projectId: string;
       providerId: typeof ANTHROPIC_PROVIDER_ID;
       isEnabled: boolean;
@@ -45,7 +45,7 @@ export type ToBackendSeedRecordsInputProvidersItem =
       options: ProviderOptionsAnthropic;
     }
   | {
-      type: ProviderTypeEnum.OpenAICompatible;
+      type: 'OpenAICompatible';
       projectId: string;
       providerId: string;
       name: string;
@@ -54,7 +54,7 @@ export type ToBackendSeedRecordsInputProvidersItem =
       options: ProviderOptionsOpenAICompatible;
     }
   | {
-      type: ProviderTypeEnum.OpenAICodex;
+      type: 'OpenAICodex';
       projectId: string;
       providerId: typeof CODEX_PROVIDER_ID;
       isEnabled: boolean;
@@ -65,7 +65,7 @@ export type ToBackendSeedRecordsInputProvidersItem =
 export let zToBackendSeedRecordsInputProvidersItem = z
   .discriminatedUnion('type', [
     z.strictObject({
-      type: z.literal(ProviderTypeEnum.OpenAI),
+      type: z.literal('OpenAI'),
       projectId: z.string(),
       providerId: z.literal(OPENAI_PROVIDER_ID),
       isEnabled: z.boolean(),
@@ -73,7 +73,7 @@ export let zToBackendSeedRecordsInputProvidersItem = z
       options: zProviderOptionsOpenAI
     }),
     z.strictObject({
-      type: z.literal(ProviderTypeEnum.Anthropic),
+      type: z.literal('Anthropic'),
       projectId: z.string(),
       providerId: z.literal(ANTHROPIC_PROVIDER_ID),
       isEnabled: z.boolean(),
@@ -81,7 +81,7 @@ export let zToBackendSeedRecordsInputProvidersItem = z
       options: zProviderOptionsAnthropic
     }),
     z.strictObject({
-      type: z.literal(ProviderTypeEnum.OpenAICompatible),
+      type: z.literal('OpenAICompatible'),
       projectId: z.string(),
       providerId: z.string(),
       name: z.string(),
@@ -90,7 +90,7 @@ export let zToBackendSeedRecordsInputProvidersItem = z
       options: zProviderOptionsOpenAICompatible
     }),
     z.strictObject({
-      type: z.literal(ProviderTypeEnum.OpenAICodex),
+      type: z.literal('OpenAICodex'),
       projectId: z.string(),
       providerId: z.literal(CODEX_PROVIDER_ID),
       isEnabled: z.boolean(),

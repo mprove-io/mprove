@@ -19,14 +19,13 @@ import {
   PATH_SELECT_FILE,
   PROD_REPO_ID
 } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendGetBranchesListRequest } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-request';
 import type { ToBackendGetBranchesListResponse } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-response';
-import type { RepoStatus } from '#common/types/disk/parts/repo-status';
-import type { BranchItem } from '#common/types/front/branch-item';
+import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+import type { BranchItem } from '#common/types/front/repo/branch-item';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { makeBranchExtraId } from '#front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
@@ -57,8 +56,6 @@ export class BranchSelectComponent {
   onEscKeyUp() {
     this.branchSelectElement?.close();
   }
-
-  repoTypeEnum = RepoTypeEnum;
 
   defaultBranch: string;
   prodRepoID = PROD_REPO_ID;
@@ -215,15 +212,15 @@ export class BranchSelectComponent {
             };
 
             let prodBranches = this.branchesList
-              .filter(y => y.repoType === RepoTypeEnum.Production)
+              .filter(y => y.repoType === 'production')
               .sort(sortDefaultFirst);
 
             let devBranches = this.branchesList
-              .filter(y => y.repoType === RepoTypeEnum.Dev)
+              .filter(y => y.repoType === 'dev')
               .sort(sortDefaultFirst);
 
             let sessionBranches = this.branchesList
-              .filter(y => y.repoType === RepoTypeEnum.Session)
+              .filter(y => y.repoType === 'session')
               .sort(sortDefaultFirst);
 
             this.branchesList =
@@ -330,15 +327,12 @@ export class BranchSelectComponent {
       let uiState = this.uiQuery.getValue();
 
       let isChangeView =
-        uiState.builderLeft === BuilderLeftEnum.ChangesToCommit ||
-        uiState.builderLeft === BuilderLeftEnum.ChangesToPush;
+        uiState.builderLeft === 'ChangesToCommit' ||
+        uiState.builderLeft === 'ChangesToPush';
 
       let left = uiState.builderLeft;
-      if (
-        newSelectedBranchItem.repoType !== RepoTypeEnum.Session &&
-        left === BuilderLeftEnum.Info
-      ) {
-        left = BuilderLeftEnum.Tree;
+      if (newSelectedBranchItem.repoType !== 'session' && left === 'Info') {
+        left = 'Tree';
         this.uiQuery.updatePart({ builderLeft: left });
       }
 
@@ -348,10 +342,9 @@ export class BranchSelectComponent {
         right: uiState.builderRight
       };
 
-      let isTargetSession =
-        newSelectedBranchItem.repoType === RepoTypeEnum.Session;
+      let isTargetSession = newSelectedBranchItem.repoType === 'session';
 
-      let isSourceSession = this.nav.repoType === RepoTypeEnum.Session;
+      let isSourceSession = this.nav.repoType === 'session';
 
       let isFileSelected =
         urlParts[12] === PATH_FILE && isDefined(this.file.fileId);
@@ -409,7 +402,7 @@ export class BranchSelectComponent {
   makeBranchItem(item: {
     branchId: string;
     repoId: string;
-    repoType: RepoTypeEnum;
+    repoType: RepoType;
     alias: string;
     userId: string;
   }) {

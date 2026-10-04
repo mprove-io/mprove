@@ -10,7 +10,7 @@ import {
   APP_NAME_BACKEND,
   APP_NAME_SCHEDULER
 } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { startTelemetry } from '#node-common/functions/start-telemetry/start-telemetry';
@@ -30,10 +30,10 @@ const { json, urlencoded } = bodyParser;
 async function bootstrap() {
   listenProcessEvents({
     tracerNodeSdk: tracerNodeSdk,
-    appTerminated: ErEnum.BACKEND_APP_TERMINATED,
-    uncaughtException: ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
-    unhandledRejectionReason: ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,
-    unhandledRejection: ErEnum.BACKEND_UNHANDLED_REJECTION_ERROR,
+    appTerminated: 'BACKEND_APP_TERMINATED',
+    uncaughtException: 'BACKEND_UNCAUGHT_EXCEPTION',
+    unhandledRejectionReason: 'BACKEND_UNHANDLED_REJECTION_REASON',
+    unhandledRejection: 'BACKEND_UNHANDLED_REJECTION_ERROR',
     logToConsoleFn: logToConsoleBackend
   });
 

@@ -46,12 +46,11 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveModifyDashboardOutput } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-output';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
@@ -142,7 +141,7 @@ export class SaveModifyDashboardController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -293,11 +292,11 @@ export class SaveModifyDashboardController {
       userMember.isEditor === false
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
       });
     }
 
-    let dashboardFileName = `${toDashboardId}${FileExtensionEnum.Dashboard}`;
+    let dashboardFileName = `${toDashboardId}.dashboard`;
 
     let isSpaceChanged = currentDashboardSpace !== targetDashboardSpace;
 
@@ -473,7 +472,7 @@ export class SaveModifyDashboardController {
       let filePath = fileIdAr.join('/');
 
       throw new ServerError({
-        message: ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
+        message: 'BACKEND_MODIFY_DASHBOARD_FAIL',
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: tempStruct.errors

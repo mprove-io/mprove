@@ -218,7 +218,7 @@
               </div>
 
               <div
-                *ngIf="query?.status !== queryStatusEnum.Running"
+                *ngIf="query?.status !== 'Running'"
                 tp="Select Model Fields"
                 class="ml-6"
                 [tpIsEnabled]="mconfig?.select.length === 0"
@@ -261,7 +261,7 @@
 
               <button
                 type="button"
-                *ngIf="query?.status === queryStatusEnum.Running"
+                *ngIf="query?.status === 'Running'"
                 data-cy="modelCancelButton"
                 class="bg-r600 text-m0 ml-6 flex h-12 w-24 items-center justify-center rounded py-2 text-base font-medium focus:outline-none"
                 [ngClass]="{
@@ -292,7 +292,7 @@
               <!-- <div class="relative ml-5">
               <m-query-options
                 [showRunDryButton]="
-                  query?.connectionType === connectionTypeEnum.BigQuery
+                  query?.connectionType === 'BigQuery'
                 "
                 (runDryEvent)="runDry()"
               ></m-query-options>
@@ -451,7 +451,7 @@
                 >
                   <div class="flex h-6 w-6">
                     <m-tree-icon
-                      [isFlat]="modelTreeLevels === modelTreeLevelsFlatTime"
+                      [isFlat]="modelTreeLevels === 'FlatTime'"
                     ></m-tree-icon>
                   </div>
                 </button>
@@ -829,31 +829,31 @@
                       <!-- <img [src]="c.iconPath" /> -->
 
                       <m-chart-table-icon
-                        *ngIf="itemChartType === chartTypeEnumTable"
+                        *ngIf="itemChartType === 'table'"
                       ></m-chart-table-icon>
 
                       <m-chart-pivot-table-icon
-                        *ngIf="itemChartType === chartTypeEnumPivotTable"
+                        *ngIf="itemChartType === 'pivot_table'"
                       ></m-chart-pivot-table-icon>
 
                       <m-chart-line-icon
-                        *ngIf="itemChartType === chartTypeEnumLine"
+                        *ngIf="itemChartType === 'line'"
                       ></m-chart-line-icon>
 
                       <m-chart-bar-icon
-                        *ngIf="itemChartType === chartTypeEnumBar"
+                        *ngIf="itemChartType === 'bar'"
                       ></m-chart-bar-icon>
 
                       <m-chart-scatter-icon
-                        *ngIf="itemChartType === chartTypeEnumScatter"
+                        *ngIf="itemChartType === 'scatter'"
                       ></m-chart-scatter-icon>
 
                       <m-chart-single-icon
-                        *ngIf="itemChartType === chartTypeEnumSingle"
+                        *ngIf="itemChartType === 'single'"
                       ></m-chart-single-icon>
 
                       <m-chart-pie-icon
-                        *ngIf="itemChartType === chartTypeEnumPie"
+                        *ngIf="itemChartType === 'pie'"
                       ></m-chart-pie-icon>
                     </div>
 
@@ -1144,73 +1144,64 @@
                       <m-chart-table-icon
                         class="h-6 w-6 cursor-pointer"
                         [ngClass]="{
-                          'text-m500':
-                            mconfig.chart?.type === chartTypeEnumTable,
-                          'text-s500':
-                            mconfig.chart?.type !== chartTypeEnumTable
+                          'text-m500': mconfig.chart?.type === 'table',
+                          'text-s500': mconfig.chart?.type !== 'table'
                         }"
-                        (click)="chartTypeChange(chartTypeEnumTable)"
+                        (click)="chartTypeChange('table')"
                       ></m-chart-table-icon>
 
                       <m-chart-pivot-table-icon
                         class="h-6 w-6 cursor-pointer"
                         [ngClass]="{
-                          'text-m500':
-                            mconfig.chart?.type === chartTypeEnumPivotTable,
-                          'text-s500':
-                            mconfig.chart?.type !== chartTypeEnumPivotTable
+                          'text-m500': mconfig.chart?.type === 'pivot_table',
+                          'text-s500': mconfig.chart?.type !== 'pivot_table'
                         }"
-                        (click)="chartTypeChange(chartTypeEnumPivotTable)"
+                        (click)="chartTypeChange('pivot_table')"
                       ></m-chart-pivot-table-icon>
 
                       <m-chart-line-icon
                         class="h-6 w-6 cursor-pointer"
                         [ngClass]="{
-                          'text-m500':
-                            mconfig.chart?.type === chartTypeEnumLine,
-                          'text-s500': mconfig.chart?.type !== chartTypeEnumLine
+                          'text-m500': mconfig.chart?.type === 'line',
+                          'text-s500': mconfig.chart?.type !== 'line'
                         }"
-                        (click)="chartTypeChange(chartTypeEnumLine)"
+                        (click)="chartTypeChange('line')"
                       ></m-chart-line-icon>
 
                       <m-chart-bar-icon
                         class="h-6 w-6 cursor-pointer"
                         [ngClass]="{
-                          'text-m500': mconfig.chart?.type === chartTypeEnumBar,
-                          'text-s500': mconfig.chart?.type !== chartTypeEnumBar
+                          'text-m500': mconfig.chart?.type === 'bar',
+                          'text-s500': mconfig.chart?.type !== 'bar'
                         }"
-                        (click)="chartTypeChange(chartTypeEnumBar)"
+                        (click)="chartTypeChange('bar')"
                       ></m-chart-bar-icon>
 
                       <m-chart-scatter-icon
                         class="h-6 w-6 cursor-pointer"
                         [ngClass]="{
-                          'text-m500':
-                            mconfig.chart?.type === chartTypeEnumScatter,
-                          'text-s500':
-                            mconfig.chart?.type !== chartTypeEnumScatter
+                          'text-m500': mconfig.chart?.type === 'scatter',
+                          'text-s500': mconfig.chart?.type !== 'scatter'
                         }"
-                        (click)="chartTypeChange(chartTypeEnumScatter)"
+                        (click)="chartTypeChange('scatter')"
                       ></m-chart-scatter-icon>
 
                       <m-chart-single-icon
                         class="h-6 w-6 cursor-pointer"
                         [ngClass]="{
-                          'text-m500':
-                            mconfig.chart?.type === chartTypeEnumSingle,
-                          'text-s500':
-                            mconfig.chart?.type !== chartTypeEnumSingle
+                          'text-m500': mconfig.chart?.type === 'single',
+                          'text-s500': mconfig.chart?.type !== 'single'
                         }"
-                        (click)="chartTypeChange(chartTypeEnumSingle)"
+                        (click)="chartTypeChange('single')"
                       ></m-chart-single-icon>
 
                       <m-chart-pie-icon
                         class="h-6 w-6 cursor-pointer"
                         [ngClass]="{
-                          'text-m500': mconfig.chart?.type === chartTypeEnumPie,
-                          'text-s500': mconfig.chart?.type !== chartTypeEnumPie
+                          'text-m500': mconfig.chart?.type === 'pie',
+                          'text-s500': mconfig.chart?.type !== 'pie'
                         }"
-                        (click)="chartTypeChange(chartTypeEnumPie)"
+                        (click)="chartTypeChange('pie')"
                       ></m-chart-pie-icon>
                     </ng-container>
 
@@ -1305,8 +1296,8 @@
                       class="h-full w-full"
                       [ngClass]="{
                         'max-w-max':
-                          (mconfig?.chart.type === chartTypeEnumTable ||
-                            mconfig?.chart.type === chartTypeEnumPivotTable) &&
+                          (mconfig?.chart.type === 'table' ||
+                            mconfig?.chart.type === 'pivot_table') &&
                           isSelectValid === true &&
                           mconfig?.chart.isValid === true &&
                           qData?.length > 0
@@ -1322,7 +1313,7 @@
                         [qData]="qData"
                         [chart]="mconfig.chart"
                         [isAnimation]="true"
-                        [isStoreModel]="mconfig.modelType === modelTypeStore"
+                        [isStoreModel]="mconfig.modelType === 'Store'"
                         [queryStatus]="query.status"
                         [chartInstanceId]="'model-chart'"
                         (chartPartChange)="
@@ -1621,11 +1612,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.YamlTile,
+                              'YamlTile',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.YamlTile
+                              'YamlTile'
                         }"
                       >
                         TILE
@@ -1634,7 +1625,7 @@
                   </div>
 
                   <div
-                    *ngIf="model.type === modelTypeMalloy"
+                    *ngIf="model.type === 'Malloy'"
                     (click)="setShowJsonAppliedGivens()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1646,11 +1637,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.JsonAppliedGivens,
+                              'JsonAppliedGivens',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.JsonAppliedGivens
+                              'JsonAppliedGivens'
                         }"
                       >
                         GIVENS
@@ -1659,7 +1650,7 @@
                   </div>
 
                   <div
-                    *ngIf="model.type === modelTypeStore"
+                    *ngIf="model.type === 'Store'"
                     (click)="setShowJsonStoreRequestParts()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1671,11 +1662,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.JsonStoreRequestParts,
+                              'JsonStoreRequestParts',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.JsonStoreRequestParts
+                              'JsonStoreRequestParts'
                         }"
                       >
                         REQUEST
@@ -1684,7 +1675,7 @@
                   </div>
 
                   <div
-                    *ngIf="model.type === modelTypeStore"
+                    *ngIf="model.type === 'Store'"
                     (click)="setShowJavascriptStoreRequestFunction()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1696,11 +1687,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.JavascriptStoreRequestFunction,
+                              'JavascriptStoreRequestFunction',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.JavascriptStoreRequestFunction
+                              'JavascriptStoreRequestFunction'
                         }"
                       >
                         JS
@@ -1709,7 +1700,7 @@
                   </div>
 
                   <div
-                    *ngIf="model.type === modelTypeMalloy"
+                    *ngIf="model.type === 'Malloy'"
                     (click)="setShowMalloyQuery()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1721,11 +1712,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.MalloyQuery,
+                              'MalloyQuery',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.MalloyQuery
+                              'MalloyQuery'
                         }"
                       >
                         MALLOY
@@ -1734,7 +1725,7 @@
                   </div>
 
                   <div
-                    *ngIf="model.type === modelTypeMalloy"
+                    *ngIf="model.type === 'Malloy'"
                     (click)="setShowSqlMalloy()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1746,11 +1737,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.SqlMalloy,
+                              'SqlMalloy',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.SqlMalloy
+                              'SqlMalloy'
                         }"
                       >
                         SQL
@@ -1770,11 +1761,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.JsonResults,
+                              'JsonResults',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.JsonResults
+                              'JsonResults'
                         }"
                       >
                         JSON
@@ -1795,11 +1786,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.MalloyCompiledQuery,
+                              'MalloyCompiledQuery',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.MalloyCompiledQuery
+                              'MalloyCompiledQuery'
                         }"
                       >
                         METADATA
@@ -1808,7 +1799,7 @@
                   </div> -->
 
                   <div
-                    *ngIf="model.type === modelTypeMalloy"
+                    *ngIf="model.type === 'Malloy'"
                     (click)="setShowMalloySource()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1820,11 +1811,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.MalloySource,
+                              'MalloySource',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.MalloySource
+                              'MalloySource'
                         }"
                       >
                         SOURCE
@@ -1833,7 +1824,7 @@
                   </div>
 
                   <div
-                    *ngIf="model.type === modelTypeStore"
+                    *ngIf="model.type === 'Store'"
                     (click)="setShowYamlStore()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1845,11 +1836,11 @@
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.YamlStore,
+                              'YamlStore',
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.YamlStore
+                              'YamlStore'
                         }"
                       >
                         STORE
@@ -1862,11 +1853,9 @@
                     *ngIf="
                       rightIsShow === true &&
                       mconfig?.select.length > 0 &&
-                      [
-                        queryPartEnum.YamlModel,
-                        queryPartEnum.YamlStore,
-                        queryPartEnum.MalloySource
-                      ].indexOf(queryPartForm.controls['queryPart'].value) > -1
+                      ['YamlModel', 'YamlStore', 'MalloySource'].indexOf(
+                        queryPartForm.controls['queryPart'].value
+                      ) > -1
                     "
                   >
                     <button

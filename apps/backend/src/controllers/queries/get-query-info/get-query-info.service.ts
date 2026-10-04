@@ -15,9 +15,6 @@ import { QueryInfoChartService } from '#backend/services/query-info-chart.servic
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard.service';
 import { QueryInfoReportService } from '#backend/services/query-info-report.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { QueryInfoChart } from '#common/types/backend/parts/query-info/query-info-chart';
@@ -27,6 +24,7 @@ import type { QueryInfoReport } from '#common/types/backend/parts/query-info/que
 import type { QueryInfoRow } from '#common/types/backend/parts/query-info/query-info-row';
 import type { QueryInfoTile } from '#common/types/backend/parts/query-info/query-info-tile';
 import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-output';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 @Injectable()
 export class GetQueryInfoService {
@@ -56,7 +54,7 @@ export class GetQueryInfoService {
     reportId: string;
     rowId: string;
     timezone: string;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
     getMalloy: boolean;
     getSql: boolean;
@@ -86,7 +84,7 @@ export class GetQueryInfoService {
 
     if (isDefined(dashboardId) && isDefined(chartId) && isDefined(reportId)) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
         displayData: `dashboardId, chartId, reportId`,
         originalError: null
       });
@@ -99,8 +97,7 @@ export class GetQueryInfoService {
       isUndefined(reportId)
     ) {
       let serverError = new ServerError({
-        message:
-          ErEnum.BACKEND_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
+        message: 'BACKEND_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED',
         originalError: null
       });
       throw serverError;
@@ -108,7 +105,7 @@ export class GetQueryInfoService {
 
     if (isDefined(tileIndex) && isUndefined(dashboardId)) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
+        message: 'BACKEND_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID',
         originalError: null
       });
       throw serverError;
@@ -116,7 +113,7 @@ export class GetQueryInfoService {
 
     if (isDefined(rowId) && isUndefined(reportId)) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_ROW_ID_DOES_NOT_WORK_WITHOUT_REPORT_ID,
+        message: 'BACKEND_ROW_ID_DOES_NOT_WORK_WITHOUT_REPORT_ID',
         originalError: null
       });
       throw serverError;
@@ -312,7 +309,7 @@ export class GetQueryInfoService {
         .map(row => {
           let queryPartQ: QueryInfoQuery;
 
-          if (row.rowType === RowTypeEnum.Metric) {
+          if (row.rowType === 'metric') {
             queryPartQ = this.buildQueryInfoQuery({
               mconfig: row.mconfig,
               query: row.query,
@@ -325,7 +322,7 @@ export class GetQueryInfoService {
           let rowPartQ: QueryInfoRow = {
             rowId: row.rowId,
             name:
-              row.rowType === RowTypeEnum.Metric
+              row.rowType === 'metric'
                 ? `${row.partNodeLabel} ${row.partFieldLabel} by ${row.timeNodeLabel} ${row.timeFieldLabel} - ${row.topLabel}`
                 : row.name,
             rowType: row.rowType,

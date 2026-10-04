@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import type { SearchFieldMatch } from './search-model-fields.types';
 
 type SearchModelFieldLeafNameRow = {
@@ -79,7 +79,7 @@ matched_fields AS (
     OR model_field_leafs.label_lc LIKE search_terms.search_pattern ESCAPE '\'
     OR model_field_leafs.description_lc LIKE search_terms.search_pattern ESCAPE '\'
   WHERE model_field_leafs.struct_id = ${structId}
-    AND model_field_leafs.model_type = ${ModelTypeEnum.Malloy}
+    AND model_field_leafs.model_type = ${'Malloy'}
 ),
 ranked_fields AS (
   SELECT

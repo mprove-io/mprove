@@ -1,5 +1,5 @@
 import { type BaseContext, Command } from 'clipanion';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import type { McliConfig } from '#mcli/config/mcli-config';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
@@ -11,7 +11,7 @@ export class CustomCommand extends Command<CustomContext> {
   async catch(e: any) {
     logToConsoleMcli({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       context: this.context,
       isJson: false
     });

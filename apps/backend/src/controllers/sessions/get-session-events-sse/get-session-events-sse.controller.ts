@@ -8,7 +8,6 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
 import { SessionSseService } from '#backend/services/session/session-sse.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
 
 export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';
 
@@ -40,7 +39,7 @@ export class GetSessionEventsSseController {
         .then(async consumedSessionId => {
           if (!consumedSessionId || consumedSessionId !== sessionId) {
             throw new ServerError({
-              message: ErEnum.BACKEND_UNAUTHORIZED
+              message: 'BACKEND_UNAUTHORIZED'
             });
           }
 

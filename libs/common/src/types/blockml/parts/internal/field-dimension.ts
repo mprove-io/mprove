@@ -1,6 +1,5 @@
-import type { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { FieldResultEnum } from '#common/enums/field-result.enum';
-import type { EnumValues } from '#common/types/enum-values';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 
 export type FieldDimension = {
   hidden?: string;
@@ -11,7 +10,7 @@ export type FieldDimension = {
   description_line_num?: number;
   sql?: string;
   sql_line_num?: number;
-  result?: EnumValues<typeof FieldResultEnum>;
+  result?: FieldResult;
   result_line_num?: number;
   suggest_model_dimension?: string;
   suggest_model_dimension_line_num?: number;
@@ -30,7 +29,7 @@ export type FieldDimension = {
   groupId?: string;
   name?: string;
   name_line_num?: number;
-  fieldClass?: EnumValues<typeof FieldClassEnum>;
+  fieldClass?: FieldClass;
   sqlReal?: string;
   sqlTimestampReal?: string;
   sqlTimestampName?: string;

@@ -11,6 +11,7 @@ import {
   LIGHT_PLUS_CUSTOM_TAGS
 } from '#common/constants/code-themes/light-plus-tags';
 import { LIGHT_PLUS_LANGUAGES } from '#common/constants/top-front';
+import type { PlaceName } from '#front/app/services/place-name';
 import { getWorkerCode } from '../functions/get-worker-code';
 import { UiQuery } from '../queries/ui.query';
 
@@ -43,20 +44,11 @@ interface WorkerTaskOptions {
   shikiTheme: string;
 }
 
-export enum PlaceNameEnum {
-  Main = 'Main',
-  Original = 'Original',
-  Right = 'Right',
-  QueryInfo = 'QueryInfo',
-  DiffDialogOriginal = 'DiffDialogOriginal',
-  DiffDialogModified = 'DiffDialogModified'
-}
-
 @Injectable({ providedIn: 'root' })
 export class HighLightService {
   worker: Worker;
 
-  workerTaskCompleted = new EventEmitter<{ placeName: PlaceNameEnum }>();
+  workerTaskCompleted = new EventEmitter<{ placeName: PlaceName }>();
 
   mainEditorPlace: Place = {};
   originalEditorPlace: Place = {};
@@ -92,7 +84,7 @@ export class HighLightService {
     this.worker.postMessage(sMessage);
   }
 
-  getLanguages(item: { placeName: PlaceNameEnum }) {
+  getLanguages(item: { placeName: PlaceName }) {
     let { placeName } = item;
 
     let lightLanguage = this.createLightLanguage({ placeName: placeName });
@@ -149,26 +141,26 @@ export class HighLightService {
     return { languages: languages, lightLanguage: lightLanguage };
   }
 
-  getPlaceByPlaceName(placeName: PlaceNameEnum) {
+  getPlaceByPlaceName(placeName: PlaceName) {
     let place =
-      placeName === PlaceNameEnum.Main
+      placeName === 'Main'
         ? this.mainEditorPlace
-        : placeName === PlaceNameEnum.Original
+        : placeName === 'Original'
           ? this.originalEditorPlace
-          : placeName === PlaceNameEnum.Right
+          : placeName === 'Right'
             ? this.rightEditorPlace
-            : placeName === PlaceNameEnum.QueryInfo
+            : placeName === 'QueryInfo'
               ? this.queryInfoPlace
-              : placeName === PlaceNameEnum.DiffDialogOriginal
+              : placeName === 'DiffDialogOriginal'
                 ? this.diffDialogOriginalPlace
-                : placeName === PlaceNameEnum.DiffDialogModified
+                : placeName === 'DiffDialogModified'
                   ? this.diffDialogModifiedPlace
                   : undefined;
     return place;
   }
 
   updateDocText(item: {
-    placeName: PlaceNameEnum;
+    placeName: PlaceName;
     docText: string;
     shikiLanguage: string;
     shikiTheme: string;
@@ -259,7 +251,7 @@ export class HighLightService {
     }
   }
 
-  createLightLanguage(item: { placeName: PlaceNameEnum }) {
+  createLightLanguage(item: { placeName: PlaceName }) {
     let { placeName } = item;
 
     // console.log('createLightLanguage, placeName: ', placeName);

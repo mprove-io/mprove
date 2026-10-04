@@ -9,7 +9,7 @@ import type { ToBackendEditMemberRequest } from '#common/types/backend/routes/me
 import type { ToBackendEditMemberResponse } from '#common/types/backend/routes/members/edit-member/edit-member-response';
 import type { ToBackendGetMembersRequest } from '#common/types/backend/routes/members/get-members/get-members-request';
 import type { ToBackendGetMembersResponse } from '#common/types/backend/routes/members/get-members/get-members-response';
-import type { MemberExtended } from '#common/types/front/member-extended';
+import type { MemberExtended } from '#common/types/front/member/member-extended';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';

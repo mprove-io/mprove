@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DiskCatalogFile,
   zDiskCatalogFile
-} from '#common/types/disk/parts/disk-catalog-file';
+} from '#common/types/disk/parts/catalog/disk-catalog-file';
 
 export type ToDiskCreateProjectOutput = {
   orgId: string;

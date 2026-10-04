@@ -5,30 +5,27 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { drcType } from '#common/types/blockml/parts/internal/drc-type';
 import type { FileChartOptionsYAxisElement } from '#common/types/blockml/parts/internal/file-chart-options-y-axis';
 
-let func = FuncEnum.CheckChartOptionsYAxisParameters;
+let func: Func = 'build-mconfig-chart/check-chart-options-y-axis-parameters';
 
 export function checkChartOptionsYAxisParameters<T extends drcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -43,7 +40,7 @@ export function checkChartOptionsYAxisParameters<T extends drcType>(item: {
       if (tile.options.y_axis.length > 2) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.OPTIONS_TOO_MANY_Y_AXIS_ELEMENTS,
+            title: 'OPTIONS_TOO_MANY_Y_AXIS_ELEMENTS',
             message: `No more than 2 y_axis elements can be specified`,
             lines: [
               {
@@ -61,10 +58,10 @@ export function checkChartOptionsYAxisParameters<T extends drcType>(item: {
         Object.keys(yAxisElement)
           .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(parameter => {
-            if ([ParameterEnum.Scale.toString()].indexOf(parameter) < 0) {
+            if (['scale'.toString()].indexOf(parameter) < 0) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_Y_AXIS_UNKNOWN_PARAMETER,
+                  title: 'OPTIONS_Y_AXIS_UNKNOWN_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used ` +
                     'inside y_axis element',
@@ -90,7 +87,7 @@ export function checkChartOptionsYAxisParameters<T extends drcType>(item: {
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_Y_AXIS_UNEXPECTED_LIST,
+                  title: 'OPTIONS_Y_AXIS_UNEXPECTED_LIST',
                   message: `parameter "${parameter}" cannot be a list`,
                   lines: [
                     {
@@ -113,7 +110,7 @@ export function checkChartOptionsYAxisParameters<T extends drcType>(item: {
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_Y_AXIS_UNEXPECTED_DICTIONARY,
+                  title: 'OPTIONS_Y_AXIS_UNEXPECTED_DICTIONARY',
                   message: `parameter "${parameter}" cannot be a dictionary`,
                   lines: [
                     {
@@ -140,8 +137,8 @@ export function checkChartOptionsYAxisParameters<T extends drcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE,
-                message: `parameter "${ParameterEnum.Scale}" must be 'true' or 'false' if specified`,
+                title: 'OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE',
+                message: `parameter "scale" must be 'true' or 'false' if specified`,
                 lines: [
                   {
                     line: yAxisElement.scale_line_num,
@@ -162,9 +159,9 @@ export function checkChartOptionsYAxisParameters<T extends drcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

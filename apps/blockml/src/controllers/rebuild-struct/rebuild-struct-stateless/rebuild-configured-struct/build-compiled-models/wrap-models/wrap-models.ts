@@ -3,25 +3,19 @@ import type { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import { Result } from '@praha/byethrow';
 import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import { MF, UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ModelNodeIdSuffixEnum } from '#common/enums/model-node-id-suffix.enum';
-import { ModelNodeLabelEnum } from '#common/enums/model-node-label.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { KeyValuePair } from '#common/types/blockml/parts/key-value-pair';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { ModelNode } from '#common/types/blockml/parts/model-node';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+import type { KeyValuePair } from '#common/types/blockml/parts/tag/key-value-pair';
 import { applyTreeDoubleUnderscore } from './apply-tree-double-underscore/apply-tree-double-underscore';
 import { wrapField } from './wrap-field/wrap-field';
 import { wrapFlatMalloyFieldItem } from './wrap-flat-malloy-field-item/wrap-flat-malloy-field-item';
@@ -40,11 +34,11 @@ export function wrapModels(item: {
   let apiModels: Model[] = [];
 
   [...stores, ...mods].forEach(x => {
-    let modelType =
-      x.fileExt === FileExtensionEnum.Store
-        ? ModelTypeEnum.Store
-        : x.fileExt === FileExtensionEnum.Malloy
-          ? ModelTypeEnum.Malloy
+    let modelType: ModelType =
+      x.fileExt === '.store'
+        ? 'Store'
+        : x.fileExt === '.malloy'
+          ? 'Malloy'
           : undefined;
 
     let apiFields: ModelField[] = [];
@@ -58,7 +52,7 @@ export function wrapModels(item: {
     let topLabelTag: KeyValuePair;
     let treeDoubleUnderscore = false;
 
-    if (modelType === ModelTypeEnum.Malloy) {
+    if (modelType === 'Malloy') {
       {
         // model fields scope
 
@@ -72,12 +66,10 @@ export function wrapModels(item: {
         mproveTags = tagsResult.mproveTags;
         malloyTags = tagsResult.malloyTags;
 
-        labelTag = mproveTags.find(tag => tag.key === ParameterEnum.Label);
-        topLabelTag = mproveTags.find(
-          tag => tag.key === ParameterEnum.TopLabel
-        );
+        labelTag = mproveTags.find(tag => tag.key === 'label');
+        topLabelTag = mproveTags.find(tag => tag.key === 'top_label');
         treeDoubleUnderscore = mproveTags.some(
-          tag => tag.key === ParameterEnum.TreeDoubleUnderscore
+          tag => tag.key === 'tree_double_underscore'
         );
 
         let flatMalloyFieldItems = (x as FileMod).flatMalloyFieldItems;
@@ -102,8 +94,7 @@ export function wrapModels(item: {
             id: topId,
             label:
               topId === MF // ModelNodeLabelEnum.ModelFields
-                ? modelType === ModelTypeEnum.Malloy &&
-                  isDefined(topLabelTag?.value)
+                ? modelType === 'Malloy' && isDefined(topLabelTag?.value)
                   ? topLabelTag?.value.trim()
                   : x.label
                 : topId
@@ -118,7 +109,7 @@ export function wrapModels(item: {
             required: false,
             isField: false,
             children: [],
-            nodeClass: FieldClassEnum.Join
+            nodeClass: 'join'
           };
 
           let nodeFlatMalloyFieldItems = filteredFlatFieldItems.filter(y => {
@@ -138,12 +129,8 @@ export function wrapModels(item: {
             });
 
             if (
-              [
-                FieldResultEnum.String,
-                FieldResultEnum.Number,
-                FieldResultEnum.Boolean,
-                FieldResultEnum.Ts
-              ].indexOf(apiField.result) > -1
+              ['string', 'number', 'boolean', 'ts'].indexOf(apiField.result) >
+              -1
             ) {
               apiFields.push(apiField);
             }
@@ -160,7 +147,7 @@ export function wrapModels(item: {
       }
     }
 
-    if (modelType === ModelTypeEnum.Store) {
+    if (modelType === 'Store') {
       {
         // model fields scope
 
@@ -172,14 +159,14 @@ export function wrapModels(item: {
           required: false,
           isField: false,
           children: [],
-          nodeClass: FieldClassEnum.Join
+          nodeClass: 'join'
         };
 
         (x as FileStore).fields
           .filter(field => field.group === MF)
           .forEach(field => {
             let apiField: ModelField = wrapField({
-              isStoreModel: x.fileExt === FileExtensionEnum.Store,
+              isStoreModel: x.fileExt === '.store',
               topNode: topNode,
               field: field,
               alias: MF,
@@ -204,7 +191,7 @@ export function wrapModels(item: {
           required: false,
           isField: false,
           children: [],
-          nodeClass: FieldClassEnum.Join,
+          nodeClass: 'join',
           viewFilePath: undefined, // join.view.filePath,
           viewName: undefined // join.view.name
         };
@@ -215,7 +202,7 @@ export function wrapModels(item: {
 
         fieldGroupFields.forEach(field => {
           let apiField: ModelField = wrapField({
-            isStoreModel: x.fileExt === FileExtensionEnum.Store,
+            isStoreModel: x.fileExt === '.store',
             field: field,
             alias: fieldGroup.group,
             filePath: x.filePath,
@@ -241,22 +228,22 @@ export function wrapModels(item: {
 
         node.children.forEach(n => {
           switch (true) {
-            case n.nodeClass === FieldClassEnum.Filter: {
+            case n.nodeClass === 'filter': {
               filters.push(n);
               break;
             }
 
-            case n.nodeClass === FieldClassEnum.Dimension: {
+            case n.nodeClass === 'dimension': {
               dimensions.push(n);
               break;
             }
 
-            case n.nodeClass === FieldClassEnum.Measure: {
+            case n.nodeClass === 'measure': {
               measures.push(n);
               break;
             }
 
-            case n.nodeClass === FieldClassEnum.Calculation: {
+            case n.nodeClass === 'calculation': {
               calculations.push(n);
               break;
             }
@@ -291,14 +278,14 @@ export function wrapModels(item: {
 
         if (sortedMeasures.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${ModelNodeIdSuffixEnum.Measures}`,
-            label: ModelNodeLabelEnum.Measures,
+            id: `${node.id}.measures`,
+            label: 'Measures',
             description: undefined,
             hidden: false,
             required: false,
             isField: false,
             children: [],
-            nodeClass: FieldClassEnum.Info
+            nodeClass: 'info'
           });
 
           sortedChildren = sortedChildren.concat(sortedMeasures);
@@ -306,14 +293,14 @@ export function wrapModels(item: {
 
         if (sortedCalculations.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${ModelNodeIdSuffixEnum.Calculations}`,
-            label: ModelNodeLabelEnum.Calculations,
+            id: `${node.id}.calculations`,
+            label: 'Calculations',
             description: undefined,
             hidden: false,
             required: false,
             isField: false,
             children: [],
-            nodeClass: FieldClassEnum.Info
+            nodeClass: 'info'
           });
 
           sortedChildren = sortedChildren.concat(sortedCalculations);
@@ -321,14 +308,14 @@ export function wrapModels(item: {
 
         if (sortedDimensions.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${ModelNodeIdSuffixEnum.Dimensions}`,
-            label: ModelNodeLabelEnum.Dimensions,
+            id: `${node.id}.dimensions`,
+            label: 'Dimensions',
             description: undefined,
             hidden: false,
             required: false,
             isField: false,
             children: [],
-            nodeClass: FieldClassEnum.Info
+            nodeClass: 'info'
           });
 
           sortedChildren = sortedChildren.concat(sortedDimensions);
@@ -336,14 +323,14 @@ export function wrapModels(item: {
 
         if (sortedFilters.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.${ModelNodeIdSuffixEnum.Filters}`,
-            label: ModelNodeLabelEnum.FilterOnlyFields,
+            id: `${node.id}.filters`,
+            label: 'Filter-only fields',
             description: undefined,
             hidden: false,
             required: false,
             isField: false,
             children: [],
-            nodeClass: FieldClassEnum.Info
+            nodeClass: 'info'
           });
 
           sortedChildren = sortedChildren.concat(sortedFilters);
@@ -382,9 +369,9 @@ export function wrapModels(item: {
     }
 
     let space =
-      modelType === ModelTypeEnum.Malloy
+      modelType === 'Malloy'
         ? (x as FileMod).space
-        : modelType === ModelTypeEnum.Store
+        : modelType === 'Store'
           ? (x as FileStore).space
           : undefined;
 
@@ -402,9 +389,9 @@ export function wrapModels(item: {
         ? (spaces.find(x => x.space === space)?.fullTitle ?? '')
         : UNCATEGORIZED_SPACE_TITLE,
       fileText: files.find(file => file.path === x.filePath).content,
-      storeContent: x.fileExt === FileExtensionEnum.Store ? x : undefined,
+      storeContent: x.fileExt === '.store' ? x : undefined,
       dateRangeIncludesRightSide:
-        x.fileExt === FileExtensionEnum.Store &&
+        x.fileExt === '.store' &&
         (isUndefined((x as FileStore).date_range_includes_right_side) ||
           toBooleanFromLowercaseString(
             (x as FileStore).date_range_includes_right_side
@@ -412,12 +399,12 @@ export function wrapModels(item: {
           ? true
           : false,
       accessRoles:
-        modelType === ModelTypeEnum.Malloy
+        modelType === 'Malloy'
           ? ((x as FileMod).access_roles ?? [])
           : (x.access_roles ?? []),
       accessRolesCombined: x.accessRolesCombined ?? [],
       label:
-        modelType === ModelTypeEnum.Malloy && isDefined(labelTag?.value)
+        modelType === 'Malloy' && isDefined(labelTag?.value)
           ? labelTag?.value.trim()
           : x.label,
       fields: apiFields,

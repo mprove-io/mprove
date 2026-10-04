@@ -1,14 +1,14 @@
-import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
+import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
 
 export function getExpectedMirrorType(item: {
-  type: RelationshipTypeEnum;
-}): RelationshipTypeEnum {
+  type: RelationshipType;
+}): RelationshipType {
   let { type } = item;
-  if (type === RelationshipTypeEnum.OneToMany) {
-    return RelationshipTypeEnum.ManyToOne;
+  if (type === 'one_to_many') {
+    return 'many_to_one';
   }
-  if (type === RelationshipTypeEnum.ManyToOne) {
-    return RelationshipTypeEnum.OneToMany;
+  if (type === 'many_to_one') {
+    return 'one_to_many';
   }
   return type;
 }

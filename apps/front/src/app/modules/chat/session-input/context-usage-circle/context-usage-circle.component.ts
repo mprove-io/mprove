@@ -12,10 +12,10 @@ import type { AssistantMessage } from '@opencode-ai/sdk/v2';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE } from '#common/constants/top';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
 import type { LlmModelWithProvider } from '#common/types/backend/parts/llm-models/llm-model-with-provider';
-import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionModelsQuery } from '#front/app/queries/session-models.query';
@@ -117,9 +117,7 @@ export class ContextUsageCircleComponent implements OnChanges, OnDestroy {
       let session = this.sessionQuery.getValue();
 
       let models =
-        session.type === SessionTypeEnum.Explorer
-          ? this.modelsAi
-          : this.modelsOpencode;
+        session.type === 'Explorer' ? this.modelsAi : this.modelsOpencode;
 
       let selectedModel = this.findSelectedModel({ models: models });
       let assistantModel = models.find(

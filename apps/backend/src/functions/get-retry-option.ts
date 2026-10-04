@@ -3,8 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { WrapOptions } from 'retry';
 import { BackendConfig } from '#backend/config/backend-config';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { logToConsoleBackend } from './log-to-console-backend';
 
 interface MyWrapOptions extends WrapOptions {
@@ -23,10 +22,10 @@ export function getRetryOption(
     onRetry: (e: any) => {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_TRANSACTION_RETRY,
+          message: 'BACKEND_TRANSACTION_RETRY',
           originalError: e
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: logger,
         cs: cs
       });

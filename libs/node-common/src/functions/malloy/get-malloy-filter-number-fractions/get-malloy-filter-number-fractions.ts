@@ -5,11 +5,9 @@ import {
   NumberRange
 } from '@malloydata/malloy-filter';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-import { FractionNumberBetweenOptionEnum } from '#common/enums/fraction/fraction-number-between-option.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 
 export function getMalloyFilterNumberFractions(item: {
   parsed: NumberFilter;
@@ -31,8 +29,8 @@ export function getMalloyFilterNumberFractions(item: {
     let fraction: Fraction = {
       brick: MALLOY_FILTER_ANY,
       parentBrick: parentBrick,
-      operator: FractionOperatorEnum.Or,
-      type: FractionTypeEnum.NumberIsAnyValue
+      operator: 'Or',
+      type: 'NumberIsAnyValue'
     };
 
     fractions.push(fraction);
@@ -46,69 +44,57 @@ export function getMalloyFilterNumberFractions(item: {
 
     if (isDefined(range)) {
       // number range
-      let fractionOperator =
-        (numberFilter as { not: boolean })?.not === true
-          ? FractionOperatorEnum.And
-          : FractionOperatorEnum.Or;
+      let fractionOperator: FractionOperator =
+        (numberFilter as { not: boolean })?.not === true ? 'And' : 'Or';
 
       let fraction: Fraction = {
         brick:
           range.startOperator === '>=' && range.endOperator === '<='
-            ? fractionOperator === FractionOperatorEnum.Or
+            ? fractionOperator === 'Or'
               ? `f\`[${range.startValue} to ${range.endValue}]\``
               : `f\`not [${range.startValue} to ${range.endValue}]\``
             : range.startOperator === '>' && range.endOperator === '<'
-              ? fractionOperator === FractionOperatorEnum.Or
+              ? fractionOperator === 'Or'
                 ? `f\`(${range.startValue} to ${range.endValue})\``
                 : `f\`not (${range.startValue} to ${range.endValue})\``
               : range.startOperator === '>=' && range.endOperator === '<'
-                ? fractionOperator === FractionOperatorEnum.Or
+                ? fractionOperator === 'Or'
                   ? `f\`[${range.startValue} to ${range.endValue})\``
                   : `f\`not [${range.startValue} to ${range.endValue})\``
                 : range.startOperator === '>' && range.endOperator === '<='
-                  ? fractionOperator === FractionOperatorEnum.Or
+                  ? fractionOperator === 'Or'
                     ? `f\`(${range.startValue} to ${range.endValue}]\``
                     : `f\`not (${range.startValue} to ${range.endValue}]\``
                   : undefined,
         parentBrick: parentBrick,
         operator: fractionOperator,
         type:
-          fractionOperator === FractionOperatorEnum.Or
-            ? FractionTypeEnum.NumberIsBetween
-            : FractionTypeEnum.NumberIsNotBetween,
+          fractionOperator === 'Or' ? 'NumberIsBetween' : 'NumberIsNotBetween',
         numberValue1: Number(range.startValue),
         numberValue2: Number(range.endValue),
         numberBetweenOption:
           range.startOperator === '>=' && range.endOperator === '<='
-            ? FractionNumberBetweenOptionEnum.Inclusive
+            ? 'Inclusive'
             : range.startOperator === '>' && range.endOperator === '<'
-              ? FractionNumberBetweenOptionEnum.Exclusive
+              ? 'Exclusive'
               : range.startOperator === '>=' && range.endOperator === '<'
-                ? FractionNumberBetweenOptionEnum.LeftInclusive
+                ? 'LeftInclusive'
                 : range.startOperator === '>' && range.endOperator === '<='
-                  ? FractionNumberBetweenOptionEnum.RightInclusive
+                  ? 'RightInclusive'
                   : undefined
       };
 
       fractions.push(fraction);
     } else if ((numberFilter as Null).operator === 'null') {
       // number null
-      let fractionOperator =
-        (numberFilter as { not: boolean })?.not === true
-          ? FractionOperatorEnum.And
-          : FractionOperatorEnum.Or;
+      let fractionOperator: FractionOperator =
+        (numberFilter as { not: boolean })?.not === true ? 'And' : 'Or';
 
       let fraction: Fraction = {
-        brick:
-          fractionOperator === FractionOperatorEnum.Or
-            ? 'f`null`'
-            : 'f`not null`',
+        brick: fractionOperator === 'Or' ? 'f`null`' : 'f`not null`',
         parentBrick: parentBrick,
         operator: fractionOperator,
-        type:
-          fractionOperator === FractionOperatorEnum.Or
-            ? FractionTypeEnum.NumberIsNull
-            : FractionTypeEnum.NumberIsNotNull
+        type: fractionOperator === 'Or' ? 'NumberIsNull' : 'NumberIsNotNull'
       };
 
       fractions.push(fraction);
@@ -116,38 +102,38 @@ export function getMalloyFilterNumberFractions(item: {
       ['=', '!=', '<=', '>=', '<', '>'].indexOf(numberFilter.operator) > -1
     ) {
       // number main
-      let fractionOperator =
+      let fractionOperator: FractionOperator =
         (numberFilter as { not: boolean })?.not === true ||
         numberFilter.operator === '!='
-          ? FractionOperatorEnum.And
-          : FractionOperatorEnum.Or;
+          ? 'And'
+          : 'Or';
 
       let valuesStr = (numberFilter as NumberCondition).values.join(', '); // multiple values are expected only for '=' and '!=' operators
 
       let fraction: Fraction = {
         brick:
           numberFilter.operator === '='
-            ? fractionOperator === FractionOperatorEnum.Or
+            ? fractionOperator === 'Or'
               ? `f\`${valuesStr}\``
               : `f\`not ${valuesStr}\`` // becomes !=
             : numberFilter.operator === '!='
-              ? fractionOperator === FractionOperatorEnum.Or
+              ? fractionOperator === 'Or'
                 ? `f\`!= ${valuesStr}\`` // not possible
                 : `f\`not ${valuesStr}\``
               : numberFilter.operator === '<='
-                ? fractionOperator === FractionOperatorEnum.Or
+                ? fractionOperator === 'Or'
                   ? `f\`<= ${valuesStr}\``
                   : `f\`not <= ${valuesStr}\``
                 : numberFilter.operator === '>='
-                  ? fractionOperator === FractionOperatorEnum.Or
+                  ? fractionOperator === 'Or'
                     ? `f\`>= ${valuesStr}\``
                     : `f\`not >= ${valuesStr}\``
                   : numberFilter.operator === '<'
-                    ? fractionOperator === FractionOperatorEnum.Or
+                    ? fractionOperator === 'Or'
                       ? `f\`< ${valuesStr}\``
                       : `f\`not < ${valuesStr}\``
                     : numberFilter.operator === '>'
-                      ? fractionOperator === FractionOperatorEnum.Or
+                      ? fractionOperator === 'Or'
                         ? `f\`> ${valuesStr}\``
                         : `f\`not > ${valuesStr}\``
                       : undefined,
@@ -155,29 +141,29 @@ export function getMalloyFilterNumberFractions(item: {
         operator: fractionOperator,
         type:
           numberFilter.operator === '='
-            ? fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.NumberIsEqualTo
-              : FractionTypeEnum.NumberIsNotEqualTo // becomes !=
+            ? fractionOperator === 'Or'
+              ? 'NumberIsEqualTo'
+              : 'NumberIsNotEqualTo' // becomes !=
             : numberFilter.operator === '!='
-              ? fractionOperator === FractionOperatorEnum.Or
-                ? FractionTypeEnum.NumberIsEqualTo // not possible
-                : FractionTypeEnum.NumberIsNotEqualTo
+              ? fractionOperator === 'Or'
+                ? 'NumberIsEqualTo' // not possible
+                : 'NumberIsNotEqualTo'
               : numberFilter.operator === '<='
-                ? fractionOperator === FractionOperatorEnum.Or
-                  ? FractionTypeEnum.NumberIsLessThanOrEqualTo
-                  : FractionTypeEnum.NumberIsNotLessThanOrEqualTo
+                ? fractionOperator === 'Or'
+                  ? 'NumberIsLessThanOrEqualTo'
+                  : 'NumberIsNotLessThanOrEqualTo'
                 : numberFilter.operator === '>='
-                  ? fractionOperator === FractionOperatorEnum.Or
-                    ? FractionTypeEnum.NumberIsGreaterThanOrEqualTo
-                    : FractionTypeEnum.NumberIsNotGreaterThanOrEqualTo
+                  ? fractionOperator === 'Or'
+                    ? 'NumberIsGreaterThanOrEqualTo'
+                    : 'NumberIsNotGreaterThanOrEqualTo'
                   : numberFilter.operator === '<'
-                    ? fractionOperator === FractionOperatorEnum.Or
-                      ? FractionTypeEnum.NumberIsLessThan
-                      : FractionTypeEnum.NumberIsNotLessThan
+                    ? fractionOperator === 'Or'
+                      ? 'NumberIsLessThan'
+                      : 'NumberIsNotLessThan'
                     : numberFilter.operator === '>'
-                      ? fractionOperator === FractionOperatorEnum.Or
-                        ? FractionTypeEnum.NumberIsGreaterThan
-                        : FractionTypeEnum.NumberIsNotGreaterThan
+                      ? fractionOperator === 'Or'
+                        ? 'NumberIsGreaterThan'
+                        : 'NumberIsNotGreaterThan'
                       : undefined,
         numberValues:
           ['=', '!='].indexOf(numberFilter.operator) > -1

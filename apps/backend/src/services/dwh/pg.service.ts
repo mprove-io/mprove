@@ -14,9 +14,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 import type { RawSchemaColumn } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-column';
@@ -209,10 +207,10 @@ export class PgService {
       } catch (fkErr: any) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_FETCH_FK_POSTGRES_ERROR,
+            message: 'BACKEND_FETCH_FK_POSTGRES_ERROR',
             originalError: fkErr
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -482,7 +480,7 @@ export class PgService {
           .then(x => this.tabService.queryEntToTab(x));
 
         if (isDefined(q)) {
-          q.status = QueryStatusEnum.Completed;
+          q.status = 'Completed';
           q.queryJobId = undefined;
           q.data = data;
           q.lastCompleteTs = makeTsNumber();
@@ -536,7 +534,7 @@ export class PgService {
       .then(x => this.tabService.queryEntToTab(x));
 
     if (isDefined(q)) {
-      q.status = QueryStatusEnum.Error;
+      q.status = 'Error';
       q.data = [];
       q.queryJobId = undefined;
       q.lastErrorMessage = e.message;

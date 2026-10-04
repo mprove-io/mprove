@@ -1,27 +1,24 @@
-import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
+import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
 
-export function getUnitDuration(item: {
-  unit: FractionTsUnitEnum;
-  value: number;
-}) {
+export function getUnitDuration(item: { unit: FractionTsUnit; value: number }) {
   let { unit, value } = item;
 
   let unitDuration =
-    unit === FractionTsUnitEnum.Years
+    unit === 'years'
       ? { years: value }
-      : unit === FractionTsUnitEnum.Quarters
+      : unit === 'quarters'
         ? { months: value * 3 }
-        : unit === FractionTsUnitEnum.Months
+        : unit === 'months'
           ? { months: value }
-          : unit === FractionTsUnitEnum.Weeks
+          : unit === 'weeks'
             ? { days: value * 7 }
-            : unit === FractionTsUnitEnum.Days
+            : unit === 'days'
               ? { days: value }
-              : unit === FractionTsUnitEnum.Hours
+              : unit === 'hours'
                 ? { hours: value }
-                : unit === FractionTsUnitEnum.Minutes
+                : unit === 'minutes'
                   ? { minutes: value }
-                  : unit === FractionTsUnitEnum.Seconds
+                  : unit === 'seconds'
                     ? { seconds: value }
                     : undefined;
 

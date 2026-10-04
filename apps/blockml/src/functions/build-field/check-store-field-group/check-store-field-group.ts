@@ -5,28 +5,24 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MF } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
-let func = FuncEnum.CheckStoreFieldGroup;
+let func: Func = 'build-field/check-store-field-group';
 
 export function checkStoreFieldGroup(item: {
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileStore[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newEntities: FileStore[] = [];
 
@@ -34,13 +30,13 @@ export function checkStoreFieldGroup(item: {
     let errorsOnStart = item.errors.length;
 
     x.fields
-      .filter(field => field.fieldClass !== FieldClassEnum.Filter)
+      .filter(field => field.fieldClass !== 'filter')
       .forEach(field => {
         if (isDefined(field.group) && isDefined(field.time_group)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.STORE_FIELD_MULTIPLE_GROUPS,
-              message: `store field can have only one of the parameters ${ParameterEnum.Group} or ${ParameterEnum.TimeGroup}`,
+              title: 'STORE_FIELD_MULTIPLE_GROUPS',
+              message: `store field can have only one of the parameters group or time_group`,
               lines: [
                 {
                   line: field.group_line_num,
@@ -65,8 +61,8 @@ export function checkStoreFieldGroup(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_STORE_FIELD_GROUP,
-              message: `field ${field.group} must be one of store ${ParameterEnum.FieldGroups}`,
+              title: 'WRONG_STORE_FIELD_GROUP',
+              message: `field ${field.group} must be one of store field_groups`,
               lines: [
                 {
                   line: field.group_line_num,
@@ -87,8 +83,8 @@ export function checkStoreFieldGroup(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_STORE_FIELD_TIME_GROUP,
-              message: `field ${field.time_group} must be one of store ${ParameterEnum.FieldTimeGroups}`,
+              title: 'WRONG_STORE_FIELD_TIME_GROUP',
+              message: `field ${field.time_group} must be one of store field_time_groups`,
               lines: [
                 {
                   line: field.time_group_line_num,
@@ -136,8 +132,8 @@ export function checkStoreFieldGroup(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

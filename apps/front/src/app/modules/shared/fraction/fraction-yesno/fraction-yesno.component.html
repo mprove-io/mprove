@@ -32,7 +32,7 @@
         <div
           class="flex flex-row"
           [ngClass]="{
-            'text-yellow-700': item.operator === fractionOperatorEnum.And
+            'text-yellow-700': item.operator === 'And'
           }"
         >
           <div class="ml-1">{{ item.operator | uppercase }} -</div>
@@ -43,7 +43,7 @@
   </div>
 
   <div
-    *ngIf="fraction.type === fractionTypeEnum.YesnoIs"
+    *ngIf="fraction.type === 'YesnoIs'"
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
   >

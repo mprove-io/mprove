@@ -1,14 +1,14 @@
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { ErTitleEnum } from '#common/enums/special/er-title.enum';
+import type { ErTitle } from '#common/types/blockml/diagnostics/er-title';
+
 import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 
 export function checkGroupSuffix(item: {
   fieldItems: FlatMalloyFieldItem[];
   groupName: string;
   suffix: string;
-  title: ErTitleEnum;
+  title: ErTitle;
   errors: BmError[];
 }) {
   let suffixFieldItems = item.fieldItems.filter(fieldItem =>
@@ -24,7 +24,7 @@ export function checkGroupSuffix(item: {
   item.errors.push(
     new BmError({
       title: item.title,
-      message: `"${ParameterEnum.BuildMetrics}" "${MPROVE_TAG_FIELD_GROUP}" group "${item.groupName}" must have exactly one field with "${item.suffix}" suffix`,
+      message: `"build_metrics" "${MPROVE_TAG_FIELD_GROUP}" group "${item.groupName}" must have exactly one field with "${item.suffix}" suffix`,
       lines: [
         {
           line: firstFieldItem.lineNum,

@@ -1,9 +1,7 @@
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+
 import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
 
 export function checkSpaceFolderElementsRecursive(item: {
@@ -17,7 +15,7 @@ export function checkSpaceFolderElementsRecursive(item: {
     if (folder?.constructor !== Object) {
       errors.push(
         new BmError({
-          title: ErTitleEnum.SPACE_FOLDER_ELEMENT_IS_NOT_A_DICTIONARY,
+          title: 'SPACE_FOLDER_ELEMENT_IS_NOT_A_DICTIONARY',
           message: 'space folder element must be a dictionary',
           lines: [
             {
@@ -31,7 +29,7 @@ export function checkSpaceFolderElementsRecursive(item: {
       return;
     }
 
-    let spaceParameter = ParameterEnum.Space.toString();
+    let spaceParameter = 'space'.toString();
     let firstParameter = Object.keys(folder).find(
       x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM())
     );
@@ -46,8 +44,8 @@ export function checkSpaceFolderElementsRecursive(item: {
     if (isSpaceMissing === true) {
       errors.push(
         new BmError({
-          title: ErTitleEnum.MISSING_SPACE_FOLDER_SPACE,
-          message: `parameter "${spaceParameter}" must exist in ${ParameterEnum.Folders} element of ${FileExtensionEnum.Space} file`,
+          title: 'MISSING_SPACE_FOLDER_SPACE',
+          message: `parameter "${spaceParameter}" must exist in folders element of .space file`,
           lines: [
             {
               line: firstLine,
@@ -65,18 +63,18 @@ export function checkSpaceFolderElementsRecursive(item: {
       .forEach(parameter => {
         if (
           [
-            ParameterEnum.Space.toString(),
-            ParameterEnum.Title.toString(),
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString()
+            'space'.toString(),
+            'title'.toString(),
+            'access_roles'.toString(),
+            'folders'.toString()
           ].indexOf(parameter) < 0
         ) {
           errors.push(
             new BmError({
-              title: ErTitleEnum.UNKNOWN_SPACE_PARAMETER,
+              title: 'UNKNOWN_SPACE_PARAMETER',
               message:
                 `parameter "${parameter}" cannot be used in ` +
-                `${ParameterEnum.Folders} element of ${FileExtensionEnum.Space} file`,
+                `folders element of .space file`,
               lines: [
                 {
                   line: folder[parameter + LINE_NUM],
@@ -91,15 +89,13 @@ export function checkSpaceFolderElementsRecursive(item: {
 
         let isUnexpectedList =
           Array.isArray(folder[parameter]) &&
-          [
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString()
-          ].indexOf(parameter) < 0;
+          ['access_roles'.toString(), 'folders'.toString()].indexOf(parameter) <
+            0;
 
         if (isUnexpectedList === true) {
           errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_LIST,
+              title: 'UNEXPECTED_LIST',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -115,15 +111,13 @@ export function checkSpaceFolderElementsRecursive(item: {
 
         let isParameterNotAList =
           !Array.isArray(folder[parameter]) &&
-          [
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString()
-          ].indexOf(parameter) > -1;
+          ['access_roles'.toString(), 'folders'.toString()].indexOf(parameter) >
+            -1;
 
         if (isParameterNotAList === true) {
           errors.push(
             new BmError({
-              title: ErTitleEnum.PARAMETER_IS_NOT_A_LIST,
+              title: 'PARAMETER_IS_NOT_A_LIST',
               message: `parameter "${parameter}" must be a List`,
               lines: [
                 {
@@ -142,7 +136,7 @@ export function checkSpaceFolderElementsRecursive(item: {
         if (isUnexpectedDictionary === true) {
           errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+              title: 'UNEXPECTED_DICTIONARY',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -156,7 +150,7 @@ export function checkSpaceFolderElementsRecursive(item: {
           return;
         }
 
-        if (parameter === ParameterEnum.Folders.toString()) {
+        if (parameter === 'folders'.toString()) {
           checkSpaceFolderElementsRecursive({
             file: file,
             folders: folder[parameter],

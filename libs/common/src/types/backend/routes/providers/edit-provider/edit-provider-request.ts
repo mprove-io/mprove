@@ -9,15 +9,15 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ProviderOptionsAnthropic,
   zProviderOptionsAnthropic
-} from '#common/types/backend/parts/provider-options/provider-options-anthropic';
+} from '#common/types/backend/parts/provider/options/provider-options-anthropic';
 import {
   type ProviderOptionsCodex,
   zProviderOptionsCodex
-} from '#common/types/backend/parts/provider-options/provider-options-codex';
+} from '#common/types/backend/parts/provider/options/provider-options-codex';
 import {
   type ProviderOptionsOpenAI,
   zProviderOptionsOpenAI
-} from '#common/types/backend/parts/provider-options/provider-options-openai';
+} from '#common/types/backend/parts/provider/options/provider-options-openai';
 
 export type ToBackendEditProviderRequest = {
   operation: 'editProvider';

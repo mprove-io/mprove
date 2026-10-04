@@ -8,7 +8,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 
@@ -21,7 +22,7 @@ export const connectionsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
-    type: varchar('type').$type<ConnectionTypeEnum>().notNull(),
+    type: varchar('type').$type<ConnectionType>().notNull(),
     st: json('st')
       .$type<{ encrypted: string; decrypted: ConnectionSt }>()
       .notNull(),

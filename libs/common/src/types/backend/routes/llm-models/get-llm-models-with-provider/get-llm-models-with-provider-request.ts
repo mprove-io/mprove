@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
+import { zSessionType } from '#common/types/backend/parts/session/session-type';
 
 export type ToBackendGetLlmModelsWithProviderRequest = {
   operation: 'getLlmModelsWithProvider';
@@ -8,7 +9,7 @@ export type ToBackendGetLlmModelsWithProviderRequest = {
   idempotencyKey: string;
   input: {
     projectId: string;
-    sessionTypes: (SessionTypeEnum.Explorer | SessionTypeEnum.Editor)[];
+    sessionTypes: SessionType[];
   };
 };
 
@@ -20,7 +21,7 @@ export let zToBackendGetLlmModelsWithProviderRequest = z
     input: z
       .object({
         projectId: z.string(),
-        sessionTypes: z.array(z.enum(SessionTypeEnum))
+        sessionTypes: z.array(zSessionType)
       })
       .meta({ id: 'ToBackendGetLlmModelsWithProviderInput' })
   })

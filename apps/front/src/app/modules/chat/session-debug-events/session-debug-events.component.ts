@@ -5,7 +5,7 @@ import {
   OnChanges,
   Output
 } from '@angular/core';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 
 @Component({
   standalone: false,

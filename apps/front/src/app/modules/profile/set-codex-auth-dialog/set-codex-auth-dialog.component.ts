@@ -11,7 +11,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
-import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
+
 import type { ToBackendPollUserCodexAuthRequest } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-request';
 import type { ToBackendPollUserCodexAuthResponse } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-response';
 import type { ToBackendStartUserCodexAuthResponse } from '#common/types/backend/routes/users/start-user-codex-auth/start-user-codex-auth-response';
@@ -134,13 +134,13 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
 
           let status = resp.output.status;
 
-          if (status === CodexDeviceAuthStatusEnum.Authorized) {
+          if (status === 'Authorized') {
             this.pollSub?.unsubscribe();
             if (resp.output.user) {
               this.userQuery.update(resp.output.user);
             }
             this.ref.close();
-          } else if (status === CodexDeviceAuthStatusEnum.Failed) {
+          } else if (status === 'Failed') {
             this.pollSub?.unsubscribe();
             this.errorMessage =
               'Authorization failed. Generate a new code and try again.';

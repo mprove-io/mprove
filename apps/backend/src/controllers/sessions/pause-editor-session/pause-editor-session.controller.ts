@@ -14,9 +14,7 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPauseEditorSessionOutput } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-output';
 
@@ -52,13 +50,13 @@ export class PauseEditorSessionController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 
-    if (session.type !== SessionTypeEnum.Editor) {
+    if (session.type !== 'Editor') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EDITOR
+        message: 'BACKEND_SESSION_TYPE_IS_NOT_EDITOR'
       });
     }
 
@@ -74,7 +72,7 @@ export class PauseEditorSessionController {
 
       await this.editorSandboxService.pauseSessionById({
         sessionId: sessionId,
-        pauseReason: PauseReasonEnum.User
+        pauseReason: 'User'
       });
 
       let freshSession = await this.sessionsService.getSessionByIdCheckExists({

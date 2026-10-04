@@ -1,4 +1,4 @@
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 
 export const OPENAI_PROVIDER_ID = 'openai';
 export const ANTHROPIC_PROVIDER_ID = 'anthropic';
@@ -17,20 +17,20 @@ export const PROVIDER_NAME_BY_ID: Readonly<Record<string, string>> = {
 };
 
 export const PROVIDER_TYPE_BY_ID: Readonly<
-  Partial<Record<string, ProviderTypeEnum>>
+  Partial<Record<string, ProviderType>>
 > = {
-  [OPENAI_PROVIDER_ID]: ProviderTypeEnum.OpenAI,
-  [ANTHROPIC_PROVIDER_ID]: ProviderTypeEnum.Anthropic,
-  [CODEX_PROVIDER_ID]: ProviderTypeEnum.OpenAICodex
+  [OPENAI_PROVIDER_ID]: 'OpenAI',
+  [ANTHROPIC_PROVIDER_ID]: 'Anthropic',
+  [CODEX_PROVIDER_ID]: 'OpenAICodex'
 };
 
 export const PROVIDER_TYPE_NAME_BY_TYPE: Readonly<
-  Record<ProviderTypeEnum, string>
+  Record<ProviderType, string>
 > = {
-  [ProviderTypeEnum.OpenAI]: OPENAI_PROVIDER_NAME,
-  [ProviderTypeEnum.Anthropic]: ANTHROPIC_PROVIDER_NAME,
-  [ProviderTypeEnum.OpenAICodex]: CODEX_PROVIDER_NAME,
-  [ProviderTypeEnum.OpenAICompatible]: OPENAI_COMPATIBLE_PROVIDER_TYPE_NAME
+  ['OpenAI']: OPENAI_PROVIDER_NAME,
+  ['Anthropic']: ANTHROPIC_PROVIDER_NAME,
+  ['OpenAICodex']: CODEX_PROVIDER_NAME,
+  ['OpenAICompatible']: OPENAI_COMPATIBLE_PROVIDER_TYPE_NAME
 };
 
 export const RESERVED_PROVIDER_IDS: string[] = [

@@ -27,7 +27,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -82,13 +82,13 @@ export class CompleteUserRegistrationController {
 
     if (isUndefined(user)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: 'BACKEND_USER_DOES_NOT_EXIST'
       });
     }
 
     if (isDefined(user.passwordHash) || user.isEmailVerified === true) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_ALREADY_REGISTERED
+        message: 'BACKEND_USER_ALREADY_REGISTERED'
       });
     }
 

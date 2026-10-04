@@ -3,8 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ChartUnit,
   zChartUnit
-} from '#common/types/backend/parts/chart-unit';
-import { type ChartX, zChartX } from '#common/types/backend/parts/chart-x';
+} from '#common/types/backend/parts/chart/chart-unit';
+import {
+  type ChartX,
+  zChartX
+} from '#common/types/backend/parts/chart/chart-x';
 
 export type ToBackendCreateDraftChartOutput = {
   chart: ChartX;

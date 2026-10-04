@@ -9,10 +9,9 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import { ChartsService } from './db/charts.service';
 import { DashboardsService } from './db/dashboards.service';
 import { MconfigsService } from './db/mconfigs.service';
@@ -36,7 +35,7 @@ export class ParentService {
     userMember: MemberTab;
     structId: string;
     projectId: string;
-    parentType: MconfigParentTypeEnum;
+    parentType: MconfigParentType;
     parentId: string;
     modelId?: string;
     isCheckSuggest?: boolean;
@@ -59,9 +58,9 @@ export class ParentService {
     } = item;
 
     if (
-      parentType === MconfigParentTypeEnum.Dashboard ||
-      parentType === MconfigParentTypeEnum.ChartDialogDashboard ||
-      parentType === MconfigParentTypeEnum.SuggestDimensionDashboard
+      parentType === 'Dashboard' ||
+      parentType === 'ChartDialogDashboard' ||
+      parentType === 'SuggestDimensionDashboard'
     ) {
       let dashboard =
         await this.dashboardsService.getDashboardCheckExistsAndAccess({
@@ -79,14 +78,14 @@ export class ParentService {
 
         if (isUndefined(field)) {
           throw new ServerError({
-            message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+            message: 'BACKEND_SUGGEST_FIELD_NOT_FOUND'
           });
         }
       }
     } else if (
-      parentType === MconfigParentTypeEnum.Report ||
-      parentType === MconfigParentTypeEnum.ChartDialogReport ||
-      parentType === MconfigParentTypeEnum.SuggestDimensionReport
+      parentType === 'Report' ||
+      parentType === 'ChartDialogReport' ||
+      parentType === 'SuggestDimensionReport'
     ) {
       let report = await this.reportsService.getReportCheckExistsAndAccess({
         projectId: projectId,
@@ -110,7 +109,7 @@ export class ParentService {
 
           if (isUndefined(parameter)) {
             throw new ServerError({
-              message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+              message: 'BACKEND_SUGGEST_FIELD_NOT_FOUND'
             });
           }
         } else {
@@ -121,12 +120,12 @@ export class ParentService {
 
           if (isUndefined(field)) {
             throw new ServerError({
-              message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+              message: 'BACKEND_SUGGEST_FIELD_NOT_FOUND'
             });
           }
         }
       }
-    } else if (parentType === MconfigParentTypeEnum.Chart) {
+    } else if (parentType === 'Chart') {
       let chart = await this.chartsService.getChartCheckExists({
         structId: structId,
         chartId: parentId,

@@ -29,7 +29,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Ev } from '#common/types/backend/parts/ev';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -91,7 +91,7 @@ export class CreateEnvVarController {
 
     if (isDefined(ev)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_EV_ALREADY_EXISTS
+        message: 'BACKEND_EV_ALREADY_EXISTS'
       });
     }
 

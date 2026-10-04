@@ -9,10 +9,10 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { ToBackendDeleteDashboardRequest } from '#common/types/backend/routes/dashboards/delete-dashboard/delete-dashboard-request';
 import type { ToBackendDeleteDashboardResponse } from '#common/types/backend/routes/dashboards/delete-dashboard/delete-dashboard-response';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -26,7 +26,7 @@ export interface DeleteDashboardDialogData {
   repoId: string;
   branchId: string;
   envId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
   isStartSpinnerUntilNavEnd: boolean;
 }
 

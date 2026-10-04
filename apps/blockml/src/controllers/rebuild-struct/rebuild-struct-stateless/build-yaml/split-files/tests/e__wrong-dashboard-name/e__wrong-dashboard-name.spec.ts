@@ -5,19 +5,15 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 
-let caller = CallerEnum.BuildYaml;
-let func = FuncEnum.SplitFiles;
+let caller: Caller = 'BuildYaml';
+let func: Func = 'build-yaml/split-files';
 let testId = 'e__wrong-dashboard-name';
 
 test('1', async t => {
@@ -50,7 +46,7 @@ test('1', async t => {
     let connection: ProjectConnection = {
       connectionId: 'c1',
       options: {},
-      type: ConnectionTypeEnum.PostgreSQL
+      type: 'PostgreSQL'
     };
 
     await structService.rebuildStructFromDir({
@@ -63,16 +59,16 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    errors = await readLog(fromDir, LogTypeEnum.Errors);
-    dashboards = await readLog(fromDir, LogTypeEnum.Ds);
-    charts = await readLog(fromDir, LogTypeEnum.Charts);
+    errors = await readLog(fromDir, 'out_errors.log');
+    dashboards = await readLog(fromDir, 'out_dashboards.log');
+    charts = await readLog(fromDir, 'out_charts.log');
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });
@@ -82,6 +78,6 @@ test('1', async t => {
   t.is(dashboards.length, 0);
   t.is(charts.length, 0);
 
-  t.is(errors[0].title, ErTitleEnum.WRONG_DASHBOARD_NAME);
+  t.is(errors[0].title, 'WRONG_DASHBOARD_NAME');
   t.is(errors[0].lines[0].line, 1);
 });

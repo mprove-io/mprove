@@ -18,14 +18,10 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { StoreMethodEnum } from '#common/enums/store-method.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 import { EnvsService } from './envs.service';
@@ -53,7 +49,7 @@ export class QueriesService {
       reportId: query.reportId,
       reportStructId: query.reportStructId,
       sql: query.sql,
-      apiMethod: query.apiMethod as StoreMethodEnum,
+      apiMethod: query.apiMethod as StoreMethod,
       apiUrl: query.apiUrl,
       apiBody: query.apiBody,
       status: query.status,
@@ -171,7 +167,7 @@ export class QueriesService {
 
     if (isUndefined(query)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+        message: 'BACKEND_QUERY_DOES_NOT_EXIST'
       });
     }
 
@@ -192,7 +188,7 @@ export class QueriesService {
 
     if (isUndefined(query)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+        message: 'BACKEND_QUERY_DOES_NOT_EXIST'
       });
     }
 
@@ -251,7 +247,7 @@ export class QueriesService {
 
     if (notFoundQueryIds.length > 0) {
       throw new ServerError({
-        message: ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
+        message: 'BACKEND_QUERIES_DO_NOT_EXIST',
         displayData: {
           notFoundQueryIds: notFoundQueryIds
         }
@@ -283,7 +279,7 @@ export class QueriesService {
 
     if (notFoundQueryIds.length > 0) {
       throw new ServerError({
-        message: ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
+        message: 'BACKEND_QUERIES_DO_NOT_EXIST',
         displayData: {
           notFoundQueryIds: notFoundQueryIds
         }
@@ -316,8 +312,8 @@ WHERE q.report_id is NULL
     let queries = await this.db.drizzle.query.queriesTable
       .findMany({
         where: and(
-          eq(queriesTable.status, QueryStatusEnum.Running),
-          eq(queriesTable.connectionType, ConnectionTypeEnum.BigQuery)
+          eq(queriesTable.status, 'Running'),
+          eq(queriesTable.connectionType, 'BigQuery')
         )
       })
       .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
@@ -346,7 +342,7 @@ WHERE q.report_id is NULL
           .then(x => this.tabService.connectionEntToTab(x));
 
         if (isUndefined(connection)) {
-          query.status = QueryStatusEnum.Error;
+          query.status = 'Error';
           query.data = [];
           query.lastErrorMessage = `Project connection not found`;
           query.lastErrorTs = makeTsNumber();
@@ -379,7 +375,7 @@ WHERE q.report_id is NULL
           .get()
           .catch(async (e: any) => {
             if (query.bigqueryConsecutiveErrorsGetJob > 2) {
-              query.status = QueryStatusEnum.Error;
+              query.status = 'Error';
               query.data = [];
               query.lastErrorMessage = `Bigquery get Job fail`;
               query.lastErrorTs = makeTsNumber();
@@ -428,7 +424,7 @@ WHERE q.report_id is NULL
           if (queryJobGetResponse.status.errorResult) {
             let errorResult = queryJobGetResponse.status.errorResult;
 
-            query.status = QueryStatusEnum.Error;
+            query.status = 'Error';
             query.data = [];
             query.lastErrorMessage =
               `Query fail. ` +
@@ -455,7 +451,7 @@ WHERE q.report_id is NULL
               .getQueryResults()
               .catch(async (e: any) => {
                 if (query.bigqueryConsecutiveErrorsGetResults > 2) {
-                  query.status = QueryStatusEnum.Error;
+                  query.status = 'Error';
                   query.data = [];
                   query.lastErrorMessage = `Bigquery get QueryResults fail`;
                   query.lastErrorTs = makeTsNumber();
@@ -486,7 +482,7 @@ WHERE q.report_id is NULL
               (Number(newLastCompleteTs) - Number(query.lastRunTs)) / 1000
             );
 
-            query.status = QueryStatusEnum.Completed;
+            query.status = 'Completed';
             // no need for query.bigquery_consecutive_errors_get_results = 0
             // because status change to Completed
             query.data = queryResultsItem[0];
@@ -511,10 +507,10 @@ WHERE q.report_id is NULL
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
+            message: 'BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });

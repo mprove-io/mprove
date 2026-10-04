@@ -7,8 +7,9 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+
 import type { MconfigLt } from '#common/types/shared/st-lt/mconfigs/mconfig-lt';
 import type { MconfigSt } from '#common/types/shared/st-lt/mconfigs/mconfig-st';
 
@@ -19,8 +20,8 @@ export const mconfigsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     queryId: varchar('query_id', { length: 64 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
-    modelType: varchar('model_type').$type<ModelTypeEnum>(),
-    parentType: varchar('parent_type').$type<MconfigParentTypeEnum>(),
+    modelType: varchar('model_type').$type<ModelType>(),
+    parentType: varchar('parent_type').$type<MconfigParentType>(),
     parentId: varchar('parent_id', { length: 32 }),
     sessionId: varchar('session_id', { length: 255 }),
     st: json('st')

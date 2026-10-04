@@ -8,30 +8,23 @@ import {
   TILE_DEFAULT_PLATE_Y,
   TRIPLE_UNDERSCORE
 } from '#common/constants/top';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { FileFractionControl } from '#common/types/blockml/parts/internal/file-fraction-control';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFractionType } from '#common/types/blockml/parts/internal/file-store-fraction-type';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { Query } from '#common/types/blockml/parts/query';
-import type { Tile } from '#common/types/blockml/parts/tile';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { Tile } from '#common/types/blockml/parts/tile/tile';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 
 export function wrapTiles(item: {
@@ -39,7 +32,7 @@ export function wrapTiles(item: {
   projectId: string;
   envId: string;
   tiles: FilePartTile[];
-  mconfigParentType: MconfigParentTypeEnum;
+  mconfigParentType: MconfigParentType;
   mconfigParentId: string;
   apiModels: Model[];
   stores: FileStore[];
@@ -75,12 +68,12 @@ export function wrapTiles(item: {
 
     let apiModel = apiModels.find(m => m.modelId === tile.model);
 
-    if (apiModel.type === ModelTypeEnum.Store) {
+    if (apiModel.type === 'Store') {
       store = stores.find(s => s.name === tile.model);
     }
 
     let queryId =
-      apiModel.type === ModelTypeEnum.Store
+      apiModel.type === 'Store'
         ? EMPTY_QUERY_ID
         : makeQueryId({
             projectId: projectId,
@@ -101,12 +94,11 @@ export function wrapTiles(item: {
       connectionType: apiModel.connectionType,
       reportId: undefined,
       reportStructId: undefined,
-      sql:
-        apiModel.type === ModelTypeEnum.Store ? undefined : tile.sql.join('\n'),
+      sql: apiModel.type === 'Store' ? undefined : tile.sql.join('\n'),
       apiMethod: undefined,
       apiUrl: undefined,
       apiBody: undefined,
-      status: QueryStatusEnum.New,
+      status: 'New',
       lastRunBy: undefined,
       lastRunTs: undefined,
       lastCancelTs: undefined,
@@ -126,7 +118,7 @@ export function wrapTiles(item: {
 
     let filters: Filter[] = [];
 
-    if (apiModel.type === ModelTypeEnum.Store) {
+    if (apiModel.type === 'Store') {
       tile.parameters.forEach(x => {
         let storeField = store.fields.find(k => k.name === x.apply_to);
 
@@ -135,19 +127,17 @@ export function wrapTiles(item: {
           fractions: x.fractions.map(y => {
             let storeResultCurrentTypeFraction: FileStoreFractionType;
 
-            if (storeField.fieldClass !== FieldClassEnum.Filter) {
+            if (storeField.fieldClass !== 'filter') {
               storeResultCurrentTypeFraction = store.results
                 .find(r => r.result === storeField.result)
                 .fraction_types.find(ft => ft.type === y.type);
             }
 
             let storeFractionSubType =
-              storeField.fieldClass === FieldClassEnum.Filter
-                ? undefined
-                : y.type;
+              storeField.fieldClass === 'filter' ? undefined : y.type;
 
             let storeFractionSubTypeOptions =
-              storeField.fieldClass === FieldClassEnum.Filter
+              storeField.fieldClass === 'filter'
                 ? undefined
                 : store.results
                     .find(r => r.result === storeField.result)
@@ -155,16 +145,16 @@ export function wrapTiles(item: {
                       let options = [];
 
                       let optionOr: FractionSubTypeOption = {
-                        logicGroup: FractionLogicEnum.Or,
+                        logicGroup: 'OR',
                         typeValue: ft.type,
-                        value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                        value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                         label: ft.label
                       };
                       options.push(optionOr);
 
                       let optionAndNot: FractionSubTypeOption = {
-                        logicGroup: FractionLogicEnum.AndNot,
-                        value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                        logicGroup: 'AND_NOT',
+                        value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                         typeValue: ft.type,
                         label: ft.label
                       };
@@ -175,27 +165,25 @@ export function wrapTiles(item: {
                     .flat()
                     .sort((a, b) => {
                       if (a.logicGroup === b.logicGroup) return 0;
-                      return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+                      return a.logicGroup === 'OR' ? -1 : 1;
                     });
 
             let fraction: Fraction = {
               meta:
-                storeField.fieldClass === FieldClassEnum.Filter
+                storeField.fieldClass === 'filter'
                   ? undefined
                   : storeResultCurrentTypeFraction?.meta,
               operator:
-                storeField.fieldClass === FieldClassEnum.Filter
+                storeField.fieldClass === 'filter'
                   ? undefined
-                  : y.logic === FractionLogicEnum.Or
-                    ? FractionOperatorEnum.Or
-                    : FractionOperatorEnum.And,
+                  : y.logic === 'OR'
+                    ? 'Or'
+                    : 'And',
               logicGroup:
-                storeField.fieldClass === FieldClassEnum.Filter
-                  ? undefined
-                  : y.logic,
+                storeField.fieldClass === 'filter' ? undefined : y.logic,
               brick: undefined,
               parentBrick: undefined,
-              type: FractionTypeEnum.StoreFraction,
+              type: 'StoreFraction',
               storeFractionSubTypeOptions: storeFractionSubTypeOptions,
               storeFractionSubType: storeFractionSubType,
               storeFractionSubTypeLabel: isDefined(storeFractionSubType)
@@ -204,12 +192,12 @@ export function wrapTiles(item: {
                   ).label
                 : storeFractionSubType,
               storeFractionLogicGroupWithSubType:
-                storeField.fieldClass === FieldClassEnum.Filter
+                storeField.fieldClass === 'filter'
                   ? undefined
                   : `${y.logic}${TRIPLE_UNDERSCORE}${y.type}`,
               controls: y.controls.map((control: FileFractionControl) => {
                 let storeControl =
-                  storeField.fieldClass === FieldClassEnum.Filter
+                  storeField.fieldClass === 'filter'
                     ? storeField.fraction_controls.find(
                         fc => fc.name === control.name
                       )
@@ -220,7 +208,7 @@ export function wrapTiles(item: {
                 let newControl: FractionControl = {
                   options: storeControl?.options,
                   value:
-                    control.controlClass === ControlClassEnum.Switch &&
+                    control.controlClass === 'switch' &&
                     typeof control.value === 'string'
                       ? toBooleanFromLowercaseString(control.value)
                       : control.value,
@@ -256,7 +244,7 @@ export function wrapTiles(item: {
       parentType: mconfigParentType,
       parentId: mconfigParentId,
       dateRangeIncludesRightSide:
-        apiModel.type === ModelTypeEnum.Store &&
+        apiModel.type === 'Store' &&
         (isUndefined(store.date_range_includes_right_side) ||
           toBooleanFromLowercaseString(store.date_range_includes_right_side) ===
             true)

@@ -9,7 +9,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+
 import type { ChartLt } from '#common/types/shared/st-lt/charts/chart-lt';
 import type { ChartSt } from '#common/types/shared/st-lt/charts/chart-st';
 
@@ -23,7 +24,7 @@ export const chartsTable = pgTable(
     chartId: varchar('chart_id', { length: 32 }).notNull(), // name
     modelId: varchar('model_id', { length: 64 }).notNull(),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
-    chartType: varchar('chart_type').$type<ChartTypeEnum>(),
+    chartType: varchar('chart_type').$type<ChartType>(),
     draft: boolean('draft'),
     isExplorer: boolean('is_explorer'),
     sessionId: varchar('session_id', { length: 255 }),

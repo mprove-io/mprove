@@ -14,8 +14,7 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -448,7 +447,7 @@ export class TrinoService {
         } catch (e: any) {
           logToConsoleBackend({
             log: `Trino fetchSchema skipping catalog "${cat}": ${e.message}`,
-            logLevel: LogLevelEnum.Info,
+            logLevel: 'Info',
             logger: this.logger,
             cs: this.cs
           });
@@ -527,7 +526,7 @@ export class TrinoService {
             isUndefined(queryResult?.value) ||
             isDefined(queryResult?.value?.error)
           ) {
-            q.status = QueryStatusEnum.Error;
+            q.status = 'Error';
             q.data = [];
             q.queryJobId = undefined;
             q.lastErrorMessage = isUndefined(queryResult?.value)
@@ -561,7 +560,7 @@ export class TrinoService {
               return dRow;
             });
 
-            q.status = QueryStatusEnum.Completed;
+            q.status = 'Completed';
             q.queryJobId = undefined;
             q.data = data;
             q.lastCompleteTs = makeTsNumber();
@@ -614,7 +613,7 @@ export class TrinoService {
       .then(x => this.tabService.queryEntToTab(x));
 
     if (isDefined(q)) {
-      q.status = QueryStatusEnum.Error;
+      q.status = 'Error';
       q.data = [];
       q.queryJobId = undefined;
       q.lastErrorMessage = e.message;

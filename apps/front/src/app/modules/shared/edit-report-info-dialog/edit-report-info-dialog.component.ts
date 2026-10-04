@@ -24,18 +24,17 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ReportUnit } from '#common/types/backend/parts/report-unit';
+import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendSaveModifyReportRequest } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-request';
 import type { ToBackendSaveModifyReportResponse } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-response';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
@@ -52,7 +51,7 @@ export interface EditReportInfoDialogData {
   apiService: ApiService;
   projectId: string;
   repoId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
   branchId: string;
   envId: string;
   report: ReportUnit;
@@ -215,7 +214,7 @@ export class EditReportInfoDialogComponent implements OnInit {
       unitId: this.ref.data.report.reportId,
       filePath: this.ref.data.report.filePath,
       unitSpace: this.ref.data.report.space,
-      extension: FileExtensionEnum.Report,
+      extension: '.report',
       spaces: this.struct.spaces
     });
   }

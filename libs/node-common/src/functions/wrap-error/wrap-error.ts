@@ -1,9 +1,10 @@
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErrorStoryEnum } from '#common/enums/error-story.enum';
+import type { ErrorStory } from '#common/types/shared/errors/error-story';
+
 import { splitMultilineMessage } from '#node-common/functions/wrap-error/split-multiline-message/split-multiline-message';
 
 export interface WrappedError {
-  story: ErrorStoryEnum;
+  story: ErrorStory;
   name: any;
   message: any;
   at: any;
@@ -30,10 +31,7 @@ export function wrapError(e: any) {
       : originalError;
 
   let wrappedError: WrappedError = {
-    story:
-      e instanceof ServerError
-        ? ErrorStoryEnum.DefinedError
-        : ErrorStoryEnum.UnknownError,
+    story: e instanceof ServerError ? 'DefinedError' : 'UnknownError',
     name: e.name || null,
     message: splitMultilineMessage({ value: e.message }),
     at: e.stack?.split('\n')[1] || null,

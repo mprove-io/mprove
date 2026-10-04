@@ -1,10 +1,10 @@
 import { TreeNode } from '@ali-hm/angular-tree-component';
 import { Component, Input } from '@angular/core';
 import { EMPTY_CHART_ID } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -56,7 +56,7 @@ export class ModelOptionsComponent {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

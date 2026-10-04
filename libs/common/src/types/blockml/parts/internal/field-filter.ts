@@ -1,8 +1,8 @@
-import type { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { FieldResultEnum } from '#common/enums/field-result.enum';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FileFraction } from '#common/types/blockml/parts/internal/file-fraction';
-import type { EnumValues } from '#common/types/enum-values';
 
 export type FieldFilter = {
   hidden?: string;
@@ -11,7 +11,7 @@ export type FieldFilter = {
   label_line_num?: number;
   description?: string;
   description_line_num?: number;
-  result?: EnumValues<typeof FieldResultEnum>;
+  result?: FieldResult;
   result_line_num?: number;
   store_model?: string;
   store_model_line_num?: number;
@@ -29,5 +29,5 @@ export type FieldFilter = {
   filter?: string;
   name?: string;
   name_line_num?: number;
-  fieldClass?: EnumValues<typeof FieldClassEnum>;
+  fieldClass?: FieldClass;
 };

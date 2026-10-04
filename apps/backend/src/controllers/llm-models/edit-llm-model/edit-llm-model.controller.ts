@@ -33,14 +33,13 @@ import {
 import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditLlmModelOutput } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
 import type { ToBackendEditLlmModelRequest } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
@@ -104,20 +103,16 @@ export class EditLlmModelController {
     });
 
     let isManualModel: boolean =
-      provider.type === ProviderTypeEnum.OpenAICompatible ||
-      model.isManual === true;
+      provider.type === 'OpenAICompatible' || model.isManual === true;
 
-    if (
-      provider.type !== ProviderTypeEnum.OpenAICompatible &&
-      model.isManual !== true
-    ) {
+    if (provider.type !== 'OpenAICompatible' && model.isManual !== true) {
       let isCodexAuthSet: boolean = isDefined(user.codexAuth);
 
       let modelPartsResult: LlmModelPartsResult =
         await this.llmModelService.getModelParts({
           providerType: provider.type,
           apiKey:
-            provider.type === ProviderTypeEnum.OpenAICodex
+            provider.type === 'OpenAICodex'
               ? undefined
               : provider.options.apiKey,
           userId: user.userId,
@@ -131,7 +126,7 @@ export class EditLlmModelController {
 
       if (modelPartIndex < 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_DISCOVERED
+          message: 'BACKEND_PROVIDER_MODEL_NOT_DISCOVERED'
         });
       }
 
@@ -166,7 +161,7 @@ export class EditLlmModelController {
 
     if (isBuilder === true && model.isOpencodeSupported === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER
+        message: 'BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER'
       });
     }
 

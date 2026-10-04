@@ -24,11 +24,10 @@ import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BmlError } from '#common/types/blockml/parts/bml-error';
-import type { DiskCatalogFile } from '#common/types/disk/parts/disk-catalog-file';
+import type { BmlError } from '#common/types/blockml/diagnostics/bml-error';
+import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
 export type ExplorerRebuildOk = {
   ok: true;
@@ -128,7 +127,7 @@ export class ExplorerChartRebuildService {
         ? `${session.projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
         : `${session.projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${chartId}${FileExtensionEnum.Chart}`;
+    let fileName = `${chartId}.chart`;
     let fileNodeId = `${parentNodeId}/${fileName}`;
 
     let fileIdAr = fileNodeId.split('/');
@@ -179,7 +178,7 @@ export class ExplorerChartRebuildService {
 
     if (isUndefined(apiChart)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_CHART_FAIL,
+        message: 'BACKEND_CREATE_CHART_FAIL',
         displayData: { structErrors: tempStruct.errors }
       });
     }

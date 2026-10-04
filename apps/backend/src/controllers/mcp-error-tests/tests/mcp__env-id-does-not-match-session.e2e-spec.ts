@@ -11,11 +11,7 @@ import { Prep } from '#backend/interfaces/prep';
 import { MCP_TOOL_GET_STATE } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 
 let testId = 'backend-mcp__env-id-does-not-match-session';
@@ -79,7 +75,7 @@ test('1', async t => {
               orgId: orgId,
               projectId: projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -102,8 +98,8 @@ test('1', async t => {
               apiKeyPrefix: apiKeyParts.prefix,
               apiKeySecretHash: apiKeyParts.secretHash,
               apiKeySalt: apiKeyParts.salt,
-              status: SessionStatusEnum.Archived,
-              type: SessionTypeEnum.Editor,
+              status: 'Archived',
+              type: 'Editor',
               repoId: sessionId,
               branchId: BRANCH_MAIN,
               envId: PROJECT_ENV_PROD
@@ -140,7 +136,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -153,13 +149,13 @@ test('1', async t => {
     assert.equal(response.body.result.isError, true);
     let errorText = response.body.result.content[0].text;
     let errorObj = JSON.parse(errorText);
-    assert.equal(errorObj.error, ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION);
+    assert.equal(errorObj.error, 'BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

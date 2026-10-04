@@ -5,8 +5,12 @@ import type { DiscoverPathsPayload } from '../../../types/discover-paths-payload
 import type { ComposerMarkdownFileScanFailedError } from '../../../types/errors/composer-markdown-file-scan-failed-error';
 import type { DiscoverPathsError } from '../../../types/function-errors/discover-paths-error';
 
+const composerPathKindValues = ['directory', 'file'] as const;
+
+export type ComposerPathKind = (typeof composerPathKindValues)[number];
+
 type PendingPath = {
-  type: 'directory' | 'file';
+  type: ComposerPathKind;
   absolutePath: string;
   relativePath: string;
 };

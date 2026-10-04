@@ -7,9 +7,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendEditMemberRequest } from '#common/types/backend/routes/members/edit-member/edit-member-request';
 import type { ToBackendEditMemberResponse } from '#common/types/backend/routes/members/edit-member/edit-member-response';
@@ -65,7 +63,7 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -108,7 +106,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -120,14 +118,14 @@ test('1', async t => {
     assert.ok(resp.type === 'Failure');
     assert.equal(
       resp.error.code,
-      ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
+      'BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS'
     );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

@@ -1,13 +1,12 @@
-import type { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { FieldResultEnum } from '#common/enums/field-result.enum';
-import type { EnumValues } from '#common/types/enum-values';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 
 export type FieldStoreMeasure = {
   label?: string;
   label_line_num?: number;
   description?: string;
   description_line_num?: number;
-  result?: EnumValues<typeof FieldResultEnum>;
+  result?: FieldResult;
   result_line_num?: number;
   format_number?: string;
   format_number_line_num?: number;
@@ -23,5 +22,5 @@ export type FieldStoreMeasure = {
   meta_line_num?: number;
   name?: string;
   name_line_num?: number;
-  fieldClass?: EnumValues<typeof FieldClassEnum>;
+  fieldClass?: FieldClass;
 };

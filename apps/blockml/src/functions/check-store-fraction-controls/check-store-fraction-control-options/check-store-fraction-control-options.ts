@@ -4,17 +4,14 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileStoreFractionControlOption } from '#common/types/blockml/parts/internal/file-store-fraction-control-option';
 
-let func = FuncEnum.CheckStoreFractionControlOptions;
+let func: Func = 'extra/check-store-fraction-control-options';
 
 export function checkStoreFractionControlOptions(
   item: {
@@ -24,12 +21,12 @@ export function checkStoreFractionControlOptions(
     filePath: string;
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let errorsOnStart = item.errors.length;
 
@@ -37,7 +34,7 @@ export function checkStoreFractionControlOptions(
     if (isDefined(option) && option.constructor !== Object) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.OPTIONS_ELEMENT_IS_NOT_A_DICTIONARY,
+          title: 'OPTIONS_ELEMENT_IS_NOT_A_DICTIONARY',
           message: `found at least one options element that is not a dictionary`,
           lines: [
             {
@@ -54,16 +51,11 @@ export function checkStoreFractionControlOptions(
     Object.keys(option)
       .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
-        if (
-          [
-            ParameterEnum.Value.toString(),
-            ParameterEnum.Label.toString()
-          ].indexOf(parameter) < 0
-        ) {
+        if (['value'.toString(), 'label'.toString()].indexOf(parameter) < 0) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNKNOWN_OPTIONS_ELEMENT_PARAMETER,
-              message: `parameter "${parameter}" cannot be used in ${ParameterEnum.Options} element`,
+              title: 'UNKNOWN_OPTIONS_ELEMENT_PARAMETER',
+              message: `parameter "${parameter}" cannot be used in options element`,
               lines: [
                 {
                   line: option[
@@ -86,7 +78,7 @@ export function checkStoreFractionControlOptions(
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_LIST,
+              title: 'UNEXPECTED_LIST',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -109,7 +101,7 @@ export function checkStoreFractionControlOptions(
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+              title: 'UNEXPECTED_DICTIONARY',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -135,8 +127,8 @@ export function checkStoreFractionControlOptions(
       if (isUndefined(option.value)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_OPTION_VALUE,
-            message: `${ParameterEnum.Options} element must have "${ParameterEnum.Value}" parameter`,
+            title: 'MISSING_OPTION_VALUE',
+            message: `options element must have "value" parameter`,
             lines: [
               {
                 line: Math.min(...optionsElementKeyLineNums),
@@ -181,7 +173,7 @@ export function checkStoreFractionControlOptions(
 
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.DUPLICATE_OPTION_VALUES,
+          title: 'DUPLICATE_OPTION_VALUES',
           message: 'Options must have unique values',
           lines: lines
         })

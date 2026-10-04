@@ -1,10 +1,12 @@
 import { z } from 'zod';
-import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import type { EnumValues } from '#common/types/enum-values';
+import {
+  type DatabricksAuthType,
+  zDatabricksAuthType
+} from '#common/types/backend/parts/connection-parts/databricks-auth-type';
 
 export type OptionsDatabricks = {
-  authType?: EnumValues<typeof DatabricksAuthTypeEnum>;
+  authType?: DatabricksAuthType;
   host?: string;
   internalHost?: string;
   path?: string;
@@ -17,7 +19,7 @@ export type OptionsDatabricks = {
 
 export let zOptionsDatabricks = z
   .object({
-    authType: z.enum(DatabricksAuthTypeEnum).nullish(),
+    authType: zDatabricksAuthType.nullish(),
     host: z.string().nullish(),
     internalHost: z.string().nullish(),
     path: z.string().nullish(),

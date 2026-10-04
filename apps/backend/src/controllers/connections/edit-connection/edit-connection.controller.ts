@@ -33,7 +33,7 @@ import {
   DEFAULT_QUERY_SIZE_LIMIT,
   THROTTLE_CUSTOM
 } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -126,7 +126,7 @@ export class EditConnectionController {
 
       if (wrongChars?.length > 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS
+          message: 'BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS'
         });
       }
     }

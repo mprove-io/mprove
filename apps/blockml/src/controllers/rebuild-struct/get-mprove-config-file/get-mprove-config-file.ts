@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 
 export async function getMproveConfigFile(configPath: string) {

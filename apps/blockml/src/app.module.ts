@@ -8,12 +8,10 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { collectFiles } from '#blockml/functions/collect-files/collect-files';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
-import type { File3 } from '#common/types/blockml/parts/internal/file-3';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { File3 } from '#common/types/blockml/parts/internal/file/file-3';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
@@ -51,7 +49,7 @@ export class AppModule implements OnModuleInit {
           dir: resolve(dirname(fileURLToPath(import.meta.url)), 'presets'),
           repoDir: undefined,
           structId: undefined,
-          caller: CallerEnum.AppModule,
+          caller: 'AppModule',
           skipLog: true
         },
         this.cs
@@ -73,7 +71,7 @@ export class AppModule implements OnModuleInit {
           }),
           structId: undefined,
           errors: errors,
-          caller: CallerEnum.AppModule,
+          caller: 'AppModule',
           cs: this.cs
         })
       );
@@ -83,7 +81,7 @@ export class AppModule implements OnModuleInit {
           filesAny: filesAny,
           structId: undefined,
           errors: errors,
-          caller: CallerEnum.AppModule,
+          caller: 'AppModule',
           isSetLineNumToZero: true,
           cs: this.cs
         })
@@ -93,7 +91,7 @@ export class AppModule implements OnModuleInit {
 
       if (errors.length > 0) {
         throw new ServerError({
-          message: ErEnum.BLOCKML_LOAD_PRESETS_FAILED,
+          message: 'BLOCKML_LOAD_PRESETS_FAILED',
           customData: { errors: errors }
         });
       } else {
@@ -131,7 +129,7 @@ export class AppModule implements OnModuleInit {
     } catch (e) {
       logToConsoleBlockml({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });
@@ -144,7 +142,7 @@ export class AppModule implements OnModuleInit {
 
       logToConsoleBlockml({
         log: `NODE_ENV "${process.env.NODE_ENV}", BLOCKML_ENV "${blockmlEnv}"`,
-        logLevel: LogLevelEnum.Info,
+        logLevel: 'Info',
         logger: this.logger,
         cs: this.cs
       });

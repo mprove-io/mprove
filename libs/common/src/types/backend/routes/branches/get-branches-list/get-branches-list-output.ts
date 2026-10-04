@@ -8,7 +8,7 @@ import { type Member, zMember } from '#common/types/backend/parts/member';
 import {
   type SessionApi,
   zSessionApi
-} from '#common/types/backend/parts/session-api';
+} from '#common/types/backend/parts/session/session-api';
 
 export type ToBackendGetBranchesListOutput = {
   branchesList: ToBackendGetBranchesListOutputBranchesItem[];

@@ -10,8 +10,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
@@ -39,7 +38,7 @@ export class AppFilter implements ExceptionFilter {
       let e =
         (exception as any).message === 'Unauthorized'
           ? new ServerError({
-              message: ErEnum.BACKEND_UNAUTHORIZED,
+              message: 'BACKEND_UNAUTHORIZED',
               originalError: exception
             })
           : exception;
@@ -103,10 +102,10 @@ export class AppFilter implements ExceptionFilter {
         } catch (er) {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
+              message: 'BACKEND_APP_FILTER_SAVE_IDEMP_ERROR',
               originalError: er
             }),
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });
@@ -116,7 +115,7 @@ export class AppFilter implements ExceptionFilter {
       logResponseBackend({
         response: resp,
         wrappedError: wrappedError,
-        logLevel: LogLevelEnum.Info,
+        logLevel: 'Info',
         cs: this.cs,
         logger: this.logger
       });
@@ -125,10 +124,10 @@ export class AppFilter implements ExceptionFilter {
     } catch (err) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_APP_FILTER_ERROR,
+          message: 'BACKEND_APP_FILTER_ERROR',
           originalError: err
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });

@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
+import { zTimeSpec } from '#common/types/shared/time/timespec';
 import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export type ToBackendGetQueryInfoRequest = {
@@ -18,16 +19,7 @@ export type ToBackendGetQueryInfoRequest = {
     reportId?: string;
     rowId?: string;
     timezone: string;
-    timeSpec?:
-      | TimeSpecEnum.Timestamps
-      | TimeSpecEnum.Seconds
-      | TimeSpecEnum.Minutes
-      | TimeSpecEnum.Hours
-      | TimeSpecEnum.Days
-      | TimeSpecEnum.Weeks
-      | TimeSpecEnum.Months
-      | TimeSpecEnum.Quarters
-      | TimeSpecEnum.Years;
+    timeSpec?: TimeSpec;
     timeRangeFractionBrick?: string;
     getMalloy: boolean;
     getSql: boolean;
@@ -53,7 +45,7 @@ export let zToBackendGetQueryInfoRequest = z
         reportId: z.string().nullish(),
         rowId: z.string().nullish(),
         timezone: zTimezone,
-        timeSpec: z.enum(TimeSpecEnum).nullish(),
+        timeSpec: zTimeSpec.nullish(),
         timeRangeFractionBrick: z.string().nullish(),
         getMalloy: z.boolean(),
         getSql: z.boolean(),

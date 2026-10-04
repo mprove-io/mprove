@@ -27,7 +27,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-output';
@@ -79,13 +79,13 @@ export class ConfirmUserEmailController {
 
     if (isUndefined(user)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: 'BACKEND_USER_DOES_NOT_EXIST'
       });
     }
 
     if (isUndefined(user.passwordHash)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_SIGN_UP_TO_SET_PASSWORD
+        message: 'BACKEND_SIGN_UP_TO_SET_PASSWORD'
       });
     }
 

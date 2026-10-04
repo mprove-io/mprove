@@ -1,7 +1,6 @@
 import { createZodValidationPipe } from 'nestjs-zod';
 import type { z } from 'zod';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
 
 export const ZodValidationPipe = createZodValidationPipe({
   createValidationException: (error: unknown) => {
@@ -12,7 +11,7 @@ export const ZodValidationPipe = createZodValidationPipe({
       code: issue.code
     }));
     return new ServerError({
-      message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS,
+      message: 'BACKEND_WRONG_REQUEST_PARAMS',
       displayData: constraints,
       originalError: error
     });

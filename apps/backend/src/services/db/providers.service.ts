@@ -13,18 +13,17 @@ import {
   PROVIDER_TYPE_BY_ID,
   RESERVED_PROVIDER_IDS
 } from '#common/constants/providers';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
-import type { Provider } from '#common/types/backend/parts/provider';
-import type { ProviderOptionsAnthropic } from '#common/types/backend/parts/provider-options/provider-options-anthropic';
-import type { ProviderOptionsCodex } from '#common/types/backend/parts/provider-options/provider-options-codex';
-import type { ProviderOptionsOpenAI } from '#common/types/backend/parts/provider-options/provider-options-openai';
-import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/parts/provider-options/provider-options-openai-compatible';
+import type { ProviderOptionsAnthropic } from '#common/types/backend/parts/provider/options/provider-options-anthropic';
+import type { ProviderOptionsCodex } from '#common/types/backend/parts/provider/options/provider-options-codex';
+import type { ProviderOptionsOpenAI } from '#common/types/backend/parts/provider/options/provider-options-openai';
+import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -44,20 +43,20 @@ export class ProvidersService {
       models: LlmModel[];
     } & (
       | {
-          type: ProviderTypeEnum.OpenAI;
+          type: 'OpenAI';
           options: ProviderOptionsOpenAI;
         }
       | {
-          type: ProviderTypeEnum.Anthropic;
+          type: 'Anthropic';
           options: ProviderOptionsAnthropic;
         }
       | {
-          type: ProviderTypeEnum.OpenAICompatible;
+          type: 'OpenAICompatible';
           name: string;
           options: ProviderOptionsOpenAICompatible;
         }
       | {
-          type: ProviderTypeEnum.OpenAICodex;
+          type: 'OpenAICodex';
           options: ProviderOptionsCodex;
         }
     )
@@ -65,16 +64,15 @@ export class ProvidersService {
     let expectedProviderType = PROVIDER_TYPE_BY_ID[item.providerId];
 
     let isInvalidBuiltIn =
-      item.type !== ProviderTypeEnum.OpenAICompatible &&
-      expectedProviderType !== item.type;
+      item.type !== 'OpenAICompatible' && expectedProviderType !== item.type;
 
     let isReservedCompatible =
-      item.type === ProviderTypeEnum.OpenAICompatible &&
+      item.type === 'OpenAICompatible' &&
       RESERVED_PROVIDER_IDS.includes(item.providerId);
 
     if (isInvalidBuiltIn || isReservedCompatible) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_TYPE_MISMATCH
+        message: 'BACKEND_PROVIDER_TYPE_MISMATCH'
       });
     }
 
@@ -86,7 +84,7 @@ export class ProvidersService {
       projectId: item.projectId,
       providerId: item.providerId,
       name:
-        item.type === ProviderTypeEnum.OpenAICompatible
+        item.type === 'OpenAICompatible'
           ? item.name
           : PROVIDER_NAME_BY_ID[item.providerId],
       isEnabled: item.isEnabled,
@@ -97,11 +95,11 @@ export class ProvidersService {
     };
 
     let provider: ProviderTab =
-      item.type === ProviderTypeEnum.OpenAI
+      item.type === 'OpenAI'
         ? { ...common, type: item.type, options: item.options }
-        : item.type === ProviderTypeEnum.Anthropic
+        : item.type === 'Anthropic'
           ? { ...common, type: item.type, options: item.options }
-          : item.type === ProviderTypeEnum.OpenAICodex
+          : item.type === 'OpenAICodex'
             ? { ...common, type: item.type, options: item.options }
             : { ...common, type: item.type, options: item.options };
 
@@ -137,7 +135,7 @@ export class ProvidersService {
       projectId: provider.projectId,
       providerId: provider.providerId,
       name:
-        provider.type === ProviderTypeEnum.OpenAICompatible
+        provider.type === 'OpenAICompatible'
           ? provider.name
           : PROVIDER_NAME_BY_ID[provider.providerId],
       isEnabled: provider.isEnabled,
@@ -145,7 +143,7 @@ export class ProvidersService {
       serverTs: provider.serverTs
     };
 
-    if (provider.type === ProviderTypeEnum.OpenAICodex) {
+    if (provider.type === 'OpenAICodex') {
       return {
         ...common,
         providerId: CODEX_PROVIDER_ID,
@@ -161,7 +159,7 @@ export class ProvidersService {
           ? ''
           : undefined;
 
-    if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+    if (provider.type === 'OpenAICompatible') {
       let headers = isDefined(provider.options.headers)
         ? provider.options.headers.map(header => ({
             key: header.key,
@@ -188,7 +186,7 @@ export class ProvidersService {
       };
     }
 
-    if (provider.type === ProviderTypeEnum.OpenAI) {
+    if (provider.type === 'OpenAI') {
       return {
         ...common,
         providerId: OPENAI_PROVIDER_ID,
@@ -223,7 +221,7 @@ export class ProvidersService {
 
     if (isDefined(provider)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_ALREADY_EXISTS
+        message: 'BACKEND_PROVIDER_ALREADY_EXISTS'
       });
     }
   }
@@ -246,7 +244,7 @@ export class ProvidersService {
 
     if (isUndefined(provider)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_DOES_NOT_EXIST
+        message: 'BACKEND_PROVIDER_DOES_NOT_EXIST'
       });
     }
 
@@ -282,7 +280,7 @@ export class ProvidersService {
 
     if (provider.isEnabled === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_IS_DISABLED
+        message: 'BACKEND_PROVIDER_IS_DISABLED'
       });
     }
 
@@ -307,17 +305,17 @@ export class ProvidersService {
       modelId: item.modelId
     });
 
-    if (provider.type === ProviderTypeEnum.OpenAICodex) {
+    if (provider.type === 'OpenAICodex') {
       if (item.isUserCodexAuthSet === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
+          message: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET'
         });
       }
-    } else if (provider.type !== ProviderTypeEnum.OpenAICompatible) {
+    } else if (provider.type !== 'OpenAICompatible') {
       let isApiKeySet = isDefinedAndNotEmpty(provider.options.apiKey);
       if (isApiKeySet === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_PROVIDER_API_KEY_REQUIRED
+          message: 'BACKEND_PROVIDER_API_KEY_REQUIRED'
         });
       }
     }
@@ -325,18 +323,18 @@ export class ProvidersService {
     if (item.isBuilder === true) {
       if (model.isOpencodeSupported === false || model.isBuilder === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER
+          message: 'BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER'
         });
       }
     } else if (model.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_EXPLORER
+        message: 'BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_EXPLORER'
       });
     }
 
     if (!isDefined(item.variant)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MESSAGE_VARIANT_REQUIRED
+        message: 'BACKEND_MESSAGE_VARIANT_REQUIRED'
       });
     }
 
@@ -352,7 +350,7 @@ export class ProvidersService {
 
     if (isVariantAvailable === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANT_NOT_AVAILABLE
+        message: 'BACKEND_PROVIDER_MODEL_VARIANT_NOT_AVAILABLE'
       });
     }
 
@@ -366,7 +364,7 @@ export class ProvidersService {
 
     if (isDefined(model)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_ALREADY_EXISTS
+        message: 'BACKEND_PROVIDER_MODEL_ALREADY_EXISTS'
       });
     }
   }
@@ -378,7 +376,7 @@ export class ProvidersService {
 
     if (isUndefined(model)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_DOES_NOT_EXIST
+        message: 'BACKEND_PROVIDER_MODEL_DOES_NOT_EXIST'
       });
     }
 

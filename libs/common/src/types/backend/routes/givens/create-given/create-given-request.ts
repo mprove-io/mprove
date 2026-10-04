@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
+import { zGivenType } from '#common/types/backend/parts/given/given-type';
 
 export type ToBackendCreateGivenRequest = {
   operation: 'createGiven';
@@ -10,12 +11,7 @@ export type ToBackendCreateGivenRequest = {
   input: {
     projectId: string;
     givenId: string;
-    type:
-      | GivenTypeEnum.String
-      | GivenTypeEnum.Number
-      | GivenTypeEnum.Boolean
-      | GivenTypeEnum.Date
-      | GivenTypeEnum.Timestamp;
+    type: GivenType;
     isMultiple: boolean;
     values: string[];
   };
@@ -33,7 +29,7 @@ export let zToBackendCreateGivenRequest = z
           message:
             'givenId must start with an uppercase letter or underscore and contain only uppercase letters, digits and underscores'
         }),
-        type: z.enum(GivenTypeEnum),
+        type: zGivenType,
         isMultiple: z.boolean(),
         values: z.array(z.string())
       })

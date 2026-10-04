@@ -1,20 +1,25 @@
 import { z } from 'zod';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Listener, zListener } from '#common/types/blockml/parts/listener';
 import {
   type MconfigChart,
   zMconfigChart
-} from '#common/types/blockml/parts/mconfig-chart';
+} from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import {
   type ReportField,
   zReportField
-} from '#common/types/blockml/parts/report-field';
+} from '#common/types/blockml/parts/report/report-field';
+import type { ChangeType } from '#common/types/blockml/parts/report/row/change-type';
+import { zChangeType } from '#common/types/blockml/parts/report/row/change-type';
+import {
+  type Listener,
+  zListener
+} from '#common/types/blockml/parts/report/row/listener';
 import {
   type RowChange,
   zRowChange
-} from '#common/types/blockml/parts/row-change';
+} from '#common/types/blockml/parts/report/row/row-change';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
+import { zTimeSpec } from '#common/types/shared/time/timespec';
 import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export type ToBackendEditDraftReportRequest = {
@@ -27,31 +32,11 @@ export type ToBackendEditDraftReportRequest = {
     branchId: string;
     envId: string;
     reportId: string;
-    changeType:
-      | ChangeTypeEnum.AddEmpty
-      | ChangeTypeEnum.AddMetric
-      | ChangeTypeEnum.AddHeader
-      | ChangeTypeEnum.AddFormula
-      | ChangeTypeEnum.EditInfo
-      | ChangeTypeEnum.EditChart
-      | ChangeTypeEnum.EditFormula
-      | ChangeTypeEnum.EditParameters
-      | ChangeTypeEnum.EditListeners
-      | ChangeTypeEnum.Delete
-      | ChangeTypeEnum.Move;
+    changeType: ChangeType;
     rowChange?: RowChange;
     rowIds?: string[];
     timezone: string;
-    timeSpec:
-      | TimeSpecEnum.Timestamps
-      | TimeSpecEnum.Seconds
-      | TimeSpecEnum.Minutes
-      | TimeSpecEnum.Hours
-      | TimeSpecEnum.Days
-      | TimeSpecEnum.Weeks
-      | TimeSpecEnum.Months
-      | TimeSpecEnum.Quarters
-      | TimeSpecEnum.Years;
+    timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
     newReportFields: ReportField[];
     listeners?: Listener[];
@@ -71,11 +56,11 @@ export let zToBackendEditDraftReportRequest = z
         branchId: z.string(),
         envId: z.string(),
         reportId: z.string(),
-        changeType: z.enum(ChangeTypeEnum),
+        changeType: zChangeType,
         rowChange: zRowChange.nullish(),
         rowIds: z.array(z.string()).nullish(),
         timezone: zTimezone,
-        timeSpec: z.enum(TimeSpecEnum),
+        timeSpec: zTimeSpec,
         timeRangeFractionBrick: z.string(),
         newReportFields: z.array(zReportField),
         listeners: z.array(zListener).nullish(),

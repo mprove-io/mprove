@@ -3,7 +3,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 import timezone from 'dayjs/plugin/customParseFormat';
 import customParseFormat from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 // function content is the same as nodeFormatTsUnix
 
@@ -13,30 +13,30 @@ dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 
 export function frontFormatTsUnix(item: {
-  timeSpec: TimeSpecEnum;
+  timeSpec: TimeSpec;
   unixTimeZoned: number;
 }) {
   let { timeSpec, unixTimeZoned } = item;
 
   let date = dayjs.unix(unixTimeZoned).utc();
 
-  return timeSpec === TimeSpecEnum.Years
+  return timeSpec === 'years'
     ? date.format('YYYY')
-    : timeSpec === TimeSpecEnum.Quarters
+    : timeSpec === 'quarters'
       ? 'Q' + date.format('Q YYYY')
-      : timeSpec === TimeSpecEnum.Months
+      : timeSpec === 'months'
         ? date.format('MMM YYYY')
-        : timeSpec === TimeSpecEnum.Weeks
+        : timeSpec === 'weeks'
           ? date.format('YYYY MMM DD')
-          : timeSpec === TimeSpecEnum.Days
+          : timeSpec === 'days'
             ? date.format('YYYY MMM DD')
-            : timeSpec === TimeSpecEnum.Hours
+            : timeSpec === 'hours'
               ? date.format('YYYY MMM DD HH:mm')
-              : timeSpec === TimeSpecEnum.Minutes
+              : timeSpec === 'minutes'
                 ? date.format('YYYY MMM DD  HH:mm')
-                : timeSpec === TimeSpecEnum.Seconds
+                : timeSpec === 'seconds'
                   ? date.format('YYYY MMM DD HH:mm:ss') //
-                  : timeSpec === TimeSpecEnum.Timestamps // not *_ts
+                  : timeSpec === 'timestamps' // not *_ts
                     ? date.format('YYYY MMM DD HH:mm:ss.SSS') //
                     : `${unixTimeZoned}`;
 }

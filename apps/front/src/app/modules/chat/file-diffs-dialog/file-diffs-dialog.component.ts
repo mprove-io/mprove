@@ -24,11 +24,9 @@ import {
   VS_LIGHT_THEME_EXTRA_DIFF_READ
 } from '#common/constants/code-themes/themes';
 import { LIGHT_PLUS_LANGUAGES } from '#common/constants/top-front';
+import type { FileDiffSide } from '#front/app/modules/chat/file-diffs-dialog/file-diff-side';
 import { UiQuery } from '#front/app/queries/ui.query';
-import {
-  HighLightService,
-  PlaceNameEnum
-} from '#front/app/services/highlight.service';
+import { HighLightService } from '#front/app/services/highlight.service';
 import { SharedModule } from '../../shared/shared.module';
 import type { FileDiffInfo } from '../session-chat.interfaces';
 
@@ -105,9 +103,9 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
 
     this.workerTaskCompletedSubscription.add(
       this.highLightService.workerTaskCompleted.subscribe(eventData => {
-        if (eventData.placeName === PlaceNameEnum.DiffDialogOriginal) {
+        if (eventData.placeName === 'DiffDialogOriginal') {
           this.forceReRender({ side: 'original' });
-        } else if (eventData.placeName === PlaceNameEnum.DiffDialogModified) {
+        } else if (eventData.placeName === 'DiffDialogModified') {
           this.forceReRender({ side: 'modified' });
         }
       })
@@ -121,11 +119,11 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
 
   private initEditorOptions() {
     let originalLanguagesResult = this.highLightService.getLanguages({
-      placeName: PlaceNameEnum.DiffDialogOriginal
+      placeName: 'DiffDialogOriginal'
     });
 
     let modifiedLanguagesResult = this.highLightService.getLanguages({
-      placeName: PlaceNameEnum.DiffDialogModified
+      placeName: 'DiffDialogModified'
     });
 
     this.originalLanguages = originalLanguagesResult.languages;
@@ -201,7 +199,7 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
 
     if (isMalloyLang === true) {
       this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.DiffDialogOriginal,
+        placeName: 'DiffDialogOriginal',
         docText: this.diffContent.original,
         shikiLanguage: this.lang.toLowerCase(),
         shikiTheme: 'light-plus-extended',
@@ -209,7 +207,7 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
       });
 
       this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.DiffDialogModified,
+        placeName: 'DiffDialogModified',
         docText: this.diffContent.modified,
         shikiLanguage: this.lang.toLowerCase(),
         shikiTheme: 'light-plus-extended',
@@ -354,7 +352,7 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
     return { original: original, modified: modified };
   }
 
-  private forceReRender(item: { side: 'original' | 'modified' }) {
+  private forceReRender(item: { side: FileDiffSide }) {
     let { side } = item;
 
     if (!this.diffEditorRef?.mergeView) {

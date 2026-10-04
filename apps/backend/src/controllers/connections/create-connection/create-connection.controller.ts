@@ -31,7 +31,7 @@ import { TabService } from '#backend/services/tab.service';
 import { UrlService } from '#backend/services/url.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -89,7 +89,7 @@ export class CreateConnectionController {
 
       if (wrongChars?.length > 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS
+          message: 'BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS'
         });
       }
     }

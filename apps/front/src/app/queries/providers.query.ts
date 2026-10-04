@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import { BaseQuery } from './base.query';
 
 export class ProvidersState {

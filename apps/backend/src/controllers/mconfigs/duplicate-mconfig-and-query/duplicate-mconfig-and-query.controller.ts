@@ -43,10 +43,10 @@ import {
   DEFAULT_PIVOT_FIRST_COLUMN_WIDTH
 } from '#common/constants/mconfig-chart';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDuplicateMconfigAndQueryOutput } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-output';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 
 @ApiTags('Mconfigs')
@@ -161,11 +161,11 @@ export class DuplicateMconfigAndQueryController {
 
     let newMconfigId = makeId();
 
-    let newMconfigParentType =
-      oldMconfig.parentType === MconfigParentTypeEnum.Dashboard
-        ? MconfigParentTypeEnum.ChartDialogDashboard
-        : oldMconfig.parentType === MconfigParentTypeEnum.Report
-          ? MconfigParentTypeEnum.ChartDialogReport
+    let newMconfigParentType: MconfigParentType =
+      oldMconfig.parentType === 'Dashboard'
+        ? 'ChartDialogDashboard'
+        : oldMconfig.parentType === 'Report'
+          ? 'ChartDialogReport'
           : oldMconfig.parentType;
 
     let newQueryId = makeQueryId({

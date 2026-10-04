@@ -10,16 +10,13 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { TRIPLE_UNDERSCORE } from '#common/constants/top';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 
 @Component({
   standalone: false,
@@ -41,13 +38,10 @@ export class StoreFractionSubTypeComponent {
   @Input() fractionIndex: number;
   @Input() isDisabled: boolean;
   @Input() storeContent: FileStore;
-  @Input() fieldResult: FieldResultEnum | string;
+  @Input() fieldResult: FieldResult | string;
   @Input() fractionControl: FractionControl;
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
-
-  logicGroupEnumOr = FractionLogicEnum.Or;
-  logicGroupEnumAndNot = FractionLogicEnum.AndNot;
 
   constructor(private fb: FormBuilder) {}
 
@@ -65,12 +59,9 @@ export class StoreFractionSubTypeComponent {
 
     let newFraction: Fraction = {
       meta: storeTypeFraction.meta,
-      operator:
-        item.logicGroup === FractionLogicEnum.Or
-          ? FractionOperatorEnum.Or
-          : FractionOperatorEnum.And,
+      operator: item.logicGroup === 'OR' ? 'Or' : 'And',
       logicGroup: item.logicGroup,
-      type: FractionTypeEnum.StoreFraction,
+      type: 'StoreFraction',
       storeFractionSubType: item.typeValue,
       storeFractionSubTypeOptions: this.fraction.storeFractionSubTypeOptions,
       storeFractionSubTypeLabel: isDefined(item.typeValue)

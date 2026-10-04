@@ -4,12 +4,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
 import type { ToBackendGetBranchesListRequest } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-request';
 import type { ToBackendGetBranchesListResponse } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-response';
 import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
@@ -37,7 +34,7 @@ import { CHAT_SCOPE, ChatScope } from '../chat-scope.token';
   templateUrl: './new-session.component.html'
 })
 export class NewSessionComponent implements OnInit {
-  sessionType: SessionTypeEnum = SessionTypeEnum.Editor;
+  sessionType: SessionType = 'Editor';
 
   agent = 'build';
 
@@ -67,10 +64,7 @@ export class NewSessionComponent implements OnInit {
     private uiService: UiService,
     @Inject(CHAT_SCOPE) public chatScope: ChatScope
   ) {
-    this.sessionType =
-      this.chatScope === 'explorer'
-        ? SessionTypeEnum.Explorer
-        : SessionTypeEnum.Editor;
+    this.sessionType = this.chatScope === 'explorer' ? 'Explorer' : 'Editor';
 
     let nav = this.navQuery.getValue();
     let isProduction = nav.repoId === PROD_REPO_ID;
@@ -80,7 +74,7 @@ export class NewSessionComponent implements OnInit {
     let user = this.userQuery.getValue();
 
     let extraName = makeBranchExtraName({
-      repoType: RepoTypeEnum.Production,
+      repoType: 'production',
       branchId: this.initialBranch,
       alias: user.alias
     });
@@ -100,7 +94,7 @@ export class NewSessionComponent implements OnInit {
 
   ngOnInit() {
     let uiState = this.uiQuery.getValue();
-    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
+    let isExplorer = this.sessionType === 'Explorer';
     this.modelExtraId = isExplorer
       ? uiState.newSessionExplorerModelExtraId
       : uiState.newSessionEditorModelExtraId;
@@ -128,7 +122,7 @@ export class NewSessionComponent implements OnInit {
         tap((resp: ToBackendGetBranchesListResponse) => {
           if (resp?.type === 'Success') {
             this.branches = resp.output.branchesList
-              .filter(b => b.repoType === RepoTypeEnum.Production)
+              .filter(b => b.repoType === 'production')
               .map(b => ({
                 branchId: b.branchId,
                 extraName: makeBranchExtraName({
@@ -183,7 +177,7 @@ export class NewSessionComponent implements OnInit {
 
         let user = this.userQuery.getValue();
         let extraName = makeBranchExtraName({
-          repoType: RepoTypeEnum.Production,
+          repoType: 'production',
           branchId: branchId,
           alias: user.alias
         });
@@ -226,7 +220,7 @@ export class NewSessionComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let isSessionExplorer = this.sessionType === SessionTypeEnum.Explorer;
+    let isSessionExplorer = this.sessionType === 'Explorer';
 
     let messageId = makeAscendingId({ prefix: 'message' });
     let partId = makeAscendingId({ prefix: 'part' });
@@ -268,7 +262,7 @@ export class NewSessionComponent implements OnInit {
     } else {
       let editorPayload: ToBackendCreateEditorSessionRequest['input'] = {
         projectId: nav.projectId,
-        sandboxType: SandboxTypeEnum.E2B,
+        sandboxType: 'E2B',
         providerId: providerId,
         modelId: modelId,
         agent: this.agent,
@@ -342,7 +336,7 @@ export class NewSessionComponent implements OnInit {
           initialBranch: this.initialBranch,
           envId: envId,
           initialCommit: undefined,
-          status: SessionStatusEnum.New,
+          status: 'New',
           createdTs: Date.now(),
           lastActivityTs: Date.now(),
           firstMessage: text

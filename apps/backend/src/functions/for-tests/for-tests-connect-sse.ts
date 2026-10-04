@@ -1,5 +1,5 @@
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 
 export async function forTestsConnectSse(item: {
   httpServer: any;

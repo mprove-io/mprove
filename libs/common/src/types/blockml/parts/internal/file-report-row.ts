@@ -1,13 +1,12 @@
-import type { RowTypeEnum } from '#common/enums/row-type.enum';
 import type { FileReportRowParameter } from '#common/types/blockml/parts/internal/file-report-row-parameter';
-import type { EnumValues } from '#common/types/enum-values';
+import type { RowType } from '#common/types/blockml/parts/report/row/row-type';
 
 export type FileReportRow = {
   row_id?: string;
   row_id_line_num?: number;
   name?: string;
   name_line_num?: number;
-  type?: EnumValues<typeof RowTypeEnum>;
+  type?: RowType;
   type_line_num?: number;
   metric?: string;
   metric_line_num?: number;

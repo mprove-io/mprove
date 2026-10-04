@@ -1,19 +1,17 @@
 import { z } from 'zod';
-import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { CodexDeviceAuthStatus } from '#common/types/backend/parts/codex/codex-device-auth-status';
+import { zCodexDeviceAuthStatus } from '#common/types/backend/parts/codex/codex-device-auth-status';
 import { type User, zUser } from '#common/types/backend/parts/user';
 
 export type ToBackendPollUserCodexAuthOutput = {
-  status:
-    | CodexDeviceAuthStatusEnum.Pending
-    | CodexDeviceAuthStatusEnum.Authorized
-    | CodexDeviceAuthStatusEnum.Failed;
+  status: CodexDeviceAuthStatus;
   user?: User;
 };
 
 export let zToBackendPollUserCodexAuthOutput = z
   .object({
-    status: z.enum(CodexDeviceAuthStatusEnum),
+    status: zCodexDeviceAuthStatus,
     user: zUser.nullish()
   })
   .meta({ id: 'ToBackendPollUserCodexAuthOutput' });

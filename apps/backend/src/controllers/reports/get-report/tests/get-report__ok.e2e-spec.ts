@@ -11,10 +11,7 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendGetReportRequest } from '#common/types/backend/routes/reports/get-report/get-report-request';
 import type { ToBackendGetReportResponse } from '#common/types/backend/routes/reports/get-report/get-report-response';
@@ -73,7 +70,7 @@ test('1', async t => {
               seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.Managed
+              remoteType: 'Managed'
             }
           ],
           members: [
@@ -91,7 +88,7 @@ test('1', async t => {
               projectId: projectId,
               connectionId: 'c7',
               envId: PROJECT_ENV_PROD,
-              type: ConnectionTypeEnum.GoogleApi,
+              type: 'GoogleApi',
               options: {
                 storeGoogleApi: EMPTY_STORE_GOOGLE_API_OPTIONS
               }
@@ -112,7 +109,7 @@ test('1', async t => {
           repoId: userId,
           reportId: 'r1',
           timeRangeFractionBrick: 'f`last 5 months`',
-          timeSpec: TimeSpecEnum.Months,
+          timeSpec: 'months',
           timezone: 'UTC'
         }
       };
@@ -128,7 +125,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -143,7 +140,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

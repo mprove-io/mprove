@@ -14,7 +14,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgOutput } from '#common/types/backend/routes/orgs/get-org/get-org-output';
 
@@ -65,7 +65,7 @@ export class GetOrgController {
 
       if (orgIds.indexOf(orgId) < 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_FORBIDDEN_ORG
+          message: 'BACKEND_FORBIDDEN_ORG'
         });
       }
     }

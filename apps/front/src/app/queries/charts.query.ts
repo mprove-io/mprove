@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import { BaseQuery } from './base.query';
 

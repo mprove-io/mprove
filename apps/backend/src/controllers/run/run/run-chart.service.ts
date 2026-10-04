@@ -9,8 +9,7 @@ import { checkModelAccess } from '#backend/functions/check-model-access';
 import { getChartUrl } from '#backend/functions/get-chart-url';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { RunChart } from '#common/types/backend/parts/run/run-chart';
@@ -92,7 +91,7 @@ export class RunChartService {
 
         if (isFound === false) {
           let serverError = new ServerError({
-            message: ErEnum.BACKEND_CHART_NOT_FOUND,
+            message: 'BACKEND_CHART_NOT_FOUND',
             displayData: { id: chartId },
             originalError: null
           });
@@ -152,6 +151,6 @@ export class RunChartService {
   filterErrors(item: { charts: RunChart[] }): RunChart[] {
     let { charts } = item;
 
-    return charts.filter(x => x.query.status === QueryStatusEnum.Error);
+    return charts.filter(x => x.query.status === 'Error');
   }
 }

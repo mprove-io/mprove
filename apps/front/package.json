@@ -95,6 +95,7 @@
     "tslib": "catalog:",
     "vscode-oniguruma": "catalog:",
     "vscode-textmate": "catalog:",
+    "zod": "catalog:",
     "zone.js": "catalog:"
   },
   "devDependencies": {

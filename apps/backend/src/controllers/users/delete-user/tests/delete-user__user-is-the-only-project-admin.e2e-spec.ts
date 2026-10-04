@@ -7,9 +7,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendDeleteUserRequest } from '#common/types/backend/routes/users/delete-user/delete-user-request';
 import type { ToBackendDeleteUserResponse } from '#common/types/backend/routes/users/delete-user/delete-user-response';
@@ -75,7 +73,7 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -111,7 +109,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -121,16 +119,13 @@ test('1', async t => {
     }
 
     assert.ok(resp.type === 'Failure');
-    assert.equal(
-      resp.error.code,
-      ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN
-    );
+    assert.equal(resp.error.code, 'BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

@@ -1,6 +1,6 @@
 import { Logger, Module, type OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import type { DiskConfig } from '#disk/config/disk-config';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
@@ -32,7 +32,7 @@ export class AppModule implements OnModuleInit {
 
       logToConsoleDisk({
         log: `NODE_ENV "${process.env.NODE_ENV}", DISK_ENV "${diskEnv}"`,
-        logLevel: LogLevelEnum.Info,
+        logLevel: 'Info',
         logger: this.logger,
         cs: this.cs
       });

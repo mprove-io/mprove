@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
-import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ProjectChartLink } from '#common/types/backend/parts/project-chart-link';
@@ -9,7 +8,8 @@ import type { ProjectExplorerSessionLink } from '#common/types/backend/parts/pro
 import type { ProjectModelLink } from '#common/types/backend/parts/project-model-link';
 import type { ProjectReportLink } from '#common/types/backend/parts/project-report-link';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
-import type { Ui } from '#common/types/backend/parts/ui';
+import type { ModelTreeLevel } from '#common/types/backend/parts/ui/model-tree-level';
+import type { Ui } from '#common/types/backend/parts/ui/ui';
 import type { ToBackendSetUserUiRequest } from '#common/types/backend/routes/users/set-user-ui/set-user-ui-request';
 import type { ToBackendSetUserUiResponse } from '#common/types/backend/routes/users/set-user-ui/set-user-ui-response';
 import { NavQuery } from '../queries/nav.query';
@@ -26,7 +26,7 @@ export class UiService {
 
   async setUserUi(item: {
     timezone?: string;
-    modelTreeLevels?: ModelTreeLevelsEnum;
+    modelTreeLevels?: ModelTreeLevel;
     projectModelLinks?: ProjectModelLink[];
     projectChartLinks?: ProjectChartLink[];
     projectDashboardLinks?: ProjectDashboardLink[];

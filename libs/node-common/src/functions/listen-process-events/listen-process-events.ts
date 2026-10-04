@@ -1,17 +1,16 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Er } from '#common/types/shared/errors/er';
 
 const signalsNames: NodeJS.Signals[] = ['SIGTERM', 'SIGINT', 'SIGHUP'];
 
 export function listenProcessEvents(item: {
   tracerNodeSdk?: NodeSDK;
-  appTerminated: ErEnum;
-  uncaughtException: ErEnum;
-  unhandledRejectionReason: ErEnum;
-  unhandledRejection: ErEnum;
+  appTerminated: Er;
+  uncaughtException: Er;
+  unhandledRejectionReason: Er;
+  unhandledRejection: Er;
   logToConsoleFn: (x: any) => void;
 }) {
   let {
@@ -35,7 +34,7 @@ export function listenProcessEvents(item: {
             signal: signal
           }
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: undefined,
         cs: undefined
       });
@@ -61,7 +60,7 @@ export function listenProcessEvents(item: {
         message: uncaughtException,
         originalError: e
       }),
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: undefined,
       cs: undefined
     });
@@ -75,7 +74,7 @@ export function listenProcessEvents(item: {
           reason: reason
         }
       }),
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: undefined,
       cs: undefined
     });
@@ -89,7 +88,7 @@ export function listenProcessEvents(item: {
               reason: reason
             }
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: undefined,
           cs: undefined
         });

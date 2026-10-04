@@ -1,6 +1,6 @@
-import type { ControlClassEnum } from '#common/enums/control-class.enum';
+import type { ControlClass } from '#common/types/blockml/parts/fraction/control-class';
+
 import type { FileStoreFractionControlOption } from '#common/types/blockml/parts/internal/file-store-fraction-control-option';
-import type { EnumValues } from '#common/types/enum-values';
 
 export type FileStoreFractionControl = {
   input?: string;
@@ -23,6 +23,6 @@ export type FileStoreFractionControl = {
   required_line_num?: number;
   name?: string;
   name_line_num?: number;
-  controlClass?: EnumValues<typeof ControlClassEnum>;
+  controlClass?: ControlClass;
   isMetricsDate?: boolean;
 };

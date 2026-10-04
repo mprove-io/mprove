@@ -1,38 +1,38 @@
 import type { TemporalUnit, WeekdayMoment } from '@malloydata/malloy-filter';
-import { FractionTsMixUnitEnum } from '#common/enums/fraction/fraction-ts-mix-unit.enum';
+import type { FractionTsMixUnit } from '#common/types/blockml/parts/fraction/fraction-ts-mix-unit';
 
 export function getFractionTsMixUnit(
   temporalUnit: TemporalUnit | WeekdayMoment['moment']
-): FractionTsMixUnitEnum {
+): FractionTsMixUnit {
   return temporalUnit === 'year'
-    ? FractionTsMixUnitEnum.Year
+    ? 'year'
     : temporalUnit === 'quarter'
-      ? FractionTsMixUnitEnum.Quarter
+      ? 'quarter'
       : temporalUnit === 'month'
-        ? FractionTsMixUnitEnum.Month
+        ? 'month'
         : temporalUnit === 'week'
-          ? FractionTsMixUnitEnum.Week
+          ? 'week'
           : temporalUnit === 'day'
-            ? FractionTsMixUnitEnum.Day
+            ? 'day'
             : temporalUnit === 'hour'
-              ? FractionTsMixUnitEnum.Hour
+              ? 'hour'
               : temporalUnit === 'minute'
-                ? FractionTsMixUnitEnum.Minute
+                ? 'minute'
                 : temporalUnit === 'second'
-                  ? FractionTsMixUnitEnum.Second
+                  ? 'second'
                   : temporalUnit === 'sunday'
-                    ? FractionTsMixUnitEnum.Sunday
+                    ? 'sunday'
                     : temporalUnit === 'monday'
-                      ? FractionTsMixUnitEnum.Monday
+                      ? 'monday'
                       : temporalUnit === 'tuesday'
-                        ? FractionTsMixUnitEnum.Tuesday
+                        ? 'tuesday'
                         : temporalUnit === 'wednesday'
-                          ? FractionTsMixUnitEnum.Wednesday
+                          ? 'wednesday'
                           : temporalUnit === 'thursday'
-                            ? FractionTsMixUnitEnum.Thursday
+                            ? 'thursday'
                             : temporalUnit === 'friday'
-                              ? FractionTsMixUnitEnum.Friday
+                              ? 'friday'
                               : temporalUnit === 'saturday'
-                                ? FractionTsMixUnitEnum.Saturday
+                                ? 'saturday'
                                 : undefined;
 }

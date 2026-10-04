@@ -20,7 +20,7 @@ import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
@@ -62,7 +62,7 @@ export class ViewCachedColumnController {
 
     if (!Number.isInteger(offset) || offset < 0) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_OFFSET
+        message: 'BACKEND_WRONG_OFFSET'
       });
     }
 

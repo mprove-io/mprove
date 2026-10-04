@@ -52,15 +52,9 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateEditorSessionOutput } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-output';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
@@ -136,18 +130,15 @@ export class CreateEditorSessionController {
       .findMany({
         where: and(
           eq(sessionsTable.userId, user.userId),
-          eq(sessionsTable.type, SessionTypeEnum.Editor),
-          inArray(sessionsTable.status, [
-            SessionStatusEnum.Active,
-            SessionStatusEnum.New
-          ])
+          eq(sessionsTable.type, 'Editor'),
+          inArray(sessionsTable.status, ['Active', 'New'])
         )
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
     if (activeSessions.length >= maxActiveEditorSessionsPerProjectUser) {
       throw new ServerError({
-        message: ErEnum.BACKEND_TOO_MANY_ACTIVE_EDITOR_SESSIONS
+        message: 'BACKEND_TOO_MANY_ACTIVE_EDITOR_SESSIONS'
       });
     }
 
@@ -160,8 +151,7 @@ export class CreateEditorSessionController {
       isBuilder: true
     });
 
-    let useCodex =
-      modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
+    let useCodex = modelSelection.provider.type === 'OpenAICodex';
 
     if (useCodex === true) {
       await this.codexService.prewarmCodexAuth({
@@ -209,7 +199,7 @@ export class CreateEditorSessionController {
 
         session = this.sessionsService.makeSession({
           sessionId: sessionId,
-          type: SessionTypeEnum.Editor,
+          type: 'Editor',
           repoId: sessionId,
           branchId: sessionId,
           userId: user.userId,
@@ -229,7 +219,7 @@ export class CreateEditorSessionController {
           initialCommit: undefined,
           codexAuthUpdateTs:
             useCodex === true ? user.codexAuthUpdateTs : undefined,
-          status: SessionStatusEnum.New,
+          status: 'New',
           lastActivityTs: now,
           createdTs: now
         });
@@ -293,7 +283,7 @@ export class CreateEditorSessionController {
     let codexAuthFile: { path: string; data: string } | undefined;
 
     let hasCodexProvider = providers.some(
-      provider => provider.type === ProviderTypeEnum.OpenAICodex
+      provider => provider.type === 'OpenAICodex'
     );
 
     if (hasCodexProvider && isDefined(user.codexAuth)) {
@@ -331,7 +321,7 @@ export class CreateEditorSessionController {
     }).catch(e => {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });
@@ -368,7 +358,7 @@ export class CreateEditorSessionController {
     providerId: string;
     modelId: string;
     agent?: string;
-    sandboxType: SandboxTypeEnum;
+    sandboxType: SandboxType;
     sandboxEnvs: Record<string, string>;
     sandboxFiles: { path: string; data: string }[];
     project: any;
@@ -425,7 +415,7 @@ export class CreateEditorSessionController {
         .create({}, { throwOnError: true })
         .catch(e => {
           throw new ServerError({
-            message: ErEnum.BACKEND_CREATE_SESSION_FAILED,
+            message: 'BACKEND_CREATE_SESSION_FAILED',
             originalError: e
           });
         });
@@ -446,13 +436,13 @@ export class CreateEditorSessionController {
         if (currentSession.initialCommit) break;
         if (Date.now() - start >= retryMs) {
           await this.db.drizzle.execute(
-            sql`UPDATE sessions SET status = ${SessionStatusEnum.Error} WHERE session_id = ${sessionId}`
+            sql`UPDATE sessions SET status = ${'Error'} WHERE session_id = ${sessionId}`
           );
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_FAILED_TO_GET_INITIAL_COMMIT
+              message: 'BACKEND_FAILED_TO_GET_INITIAL_COMMIT'
             }),
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });
@@ -467,7 +457,7 @@ export class CreateEditorSessionController {
         sandboxBaseUrl: sandboxBaseUrl,
         opencodeSessionId: opencodeSessionId,
         opencodePassword: opencodePassword,
-        status: SessionStatusEnum.Active,
+        status: 'Active',
         lastActivityTs: now,
         sandboxStartTs: sandboxInfo.startedAt.getTime(),
         sandboxEndTs: sandboxInfo.endAt.getTime(),
@@ -511,7 +501,7 @@ export class CreateEditorSessionController {
           await this.editorStreamService.executeInteraction({
             sessionId: sessionId,
             opencodeSessionId: opencodeSessionId,
-            interactionType: InteractionTypeEnum.Message,
+            interactionType: 'Message',
             message: firstMessage,
             agent: agent,
             providerId: providerId,
@@ -543,7 +533,7 @@ export class CreateEditorSessionController {
     } catch (e: any) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });
@@ -555,7 +545,7 @@ export class CreateEditorSessionController {
               await this.db.packer.write({
                 tx: tx,
                 rawQueries: [
-                  sql`UPDATE sessions SET status = ${SessionStatusEnum.Error} WHERE session_id = ${sessionId}`
+                  sql`UPDATE sessions SET status = ${'Error'} WHERE session_id = ${sessionId}`
                 ]
               })
           ),
@@ -563,7 +553,7 @@ export class CreateEditorSessionController {
       ).catch(retryErr => {
         logToConsoleBackend({
           log: retryErr,
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });

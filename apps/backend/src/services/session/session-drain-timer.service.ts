@@ -3,8 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { EditorStreamService } from '../editor/editor-stream.service';
 import { ExplorerStreamService } from '../explorer/explorer-stream.service';
 import { SessionDrainService } from './session-drain.service';
@@ -38,10 +37,10 @@ export class SessionDrainTimerService implements OnModuleDestroy {
         } catch (e) {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_DRAIN_QUEUES_FAILED,
+              message: 'BACKEND_DRAIN_QUEUES_FAILED',
               originalError: e
             }),
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });
@@ -50,10 +49,10 @@ export class SessionDrainTimerService implements OnModuleDestroy {
         this.editorStreamService.checkStreamStalls().catch(e => {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_STREAM_STALL_CHECK_FAILED,
+              message: 'BACKEND_STREAM_STALL_CHECK_FAILED',
               originalError: e
             }),
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });
@@ -67,10 +66,10 @@ export class SessionDrainTimerService implements OnModuleDestroy {
       this.explorerStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_REFRESH_STREAM_LOCKS_FAILED,
+            message: 'BACKEND_REFRESH_STREAM_LOCKS_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -79,10 +78,10 @@ export class SessionDrainTimerService implements OnModuleDestroy {
       this.editorStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_REFRESH_STREAM_LOCKS_FAILED,
+            message: 'BACKEND_REFRESH_STREAM_LOCKS_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });

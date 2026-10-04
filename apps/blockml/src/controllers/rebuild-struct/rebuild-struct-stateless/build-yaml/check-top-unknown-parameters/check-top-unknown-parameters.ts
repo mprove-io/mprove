@@ -6,24 +6,20 @@ import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 
-let func = FuncEnum.CheckTopUnknownParameters;
+let func: Func = 'build-yaml/check-top-unknown-parameters';
 
 export function checkTopUnknownParameters(item: {
   filesAny: any[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<any[], never> {
   let { caller, structId, cs } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newFilesAny: any[] = [];
 
@@ -34,43 +30,41 @@ export function checkTopUnknownParameters(item: {
       .filter(x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
-          [
-            ParameterEnum.Path.toString(),
-            ParameterEnum.Ext.toString(),
-            ParameterEnum.Name.toString()
-          ].indexOf(parameter) > -1
+          ['path'.toString(), 'ext'.toString(), 'name'.toString()].indexOf(
+            parameter
+          ) > -1
         ) {
           return;
         }
 
         switch (file.ext) {
-          case FileExtensionEnum.Store: {
+          case '.store': {
             if (
               [
-                ParameterEnum.Store.toString(),
-                ParameterEnum.Connection.toString(),
-                ParameterEnum.Label.toString(),
-                ParameterEnum.Space.toString(),
-                ParameterEnum.AccessRoles.toString(),
-                ParameterEnum.Method.toString(),
-                ParameterEnum.Preset.toString(),
-                ParameterEnum.Request.toString(),
-                ParameterEnum.Response.toString(),
-                ParameterEnum.DateRangeIncludesRightSide.toString(),
-                ParameterEnum.Parameters.toString(),
-                ParameterEnum.Results.toString(),
-                ParameterEnum.BuildMetrics.toString(),
-                ParameterEnum.FieldGroups.toString(),
-                ParameterEnum.FieldTimeGroups.toString(),
-                ParameterEnum.Fields.toString()
+                'store'.toString(),
+                'connection'.toString(),
+                'label'.toString(),
+                'space'.toString(),
+                'access_roles'.toString(),
+                'method'.toString(),
+                'preset'.toString(),
+                'request'.toString(),
+                'response'.toString(),
+                'date_range_includes_right_side'.toString(),
+                'parameters'.toString(),
+                'results'.toString(),
+                'build_metrics'.toString(),
+                'field_groups'.toString(),
+                'field_time_groups'.toString(),
+                'fields'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_STORE_PARAMETER,
+                  title: 'UNKNOWN_STORE_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `${FileExtensionEnum.Store} file`,
+                    `.store file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -85,22 +79,22 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case FileExtensionEnum.Dashboard: {
+          case '.dashboard': {
             if (
               [
-                ParameterEnum.Dashboard.toString(),
-                ParameterEnum.Title.toString(),
-                ParameterEnum.AccessRoles.toString(),
-                ParameterEnum.Parameters.toString(),
-                ParameterEnum.Tiles.toString()
+                'dashboard'.toString(),
+                'title'.toString(),
+                'access_roles'.toString(),
+                'parameters'.toString(),
+                'tiles'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_DASHBOARD_PARAMETER,
+                  title: 'UNKNOWN_DASHBOARD_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `${FileExtensionEnum.Dashboard} file`,
+                    `.dashboard file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -115,20 +109,20 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case FileExtensionEnum.Chart: {
+          case '.chart': {
             if (
               [
-                ParameterEnum.Chart.toString(),
-                ParameterEnum.AccessRoles.toString(),
-                ParameterEnum.Tiles.toString()
+                'chart'.toString(),
+                'access_roles'.toString(),
+                'tiles'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_CHART_PARAMETER,
+                  title: 'UNKNOWN_CHART_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `${FileExtensionEnum.Chart} file`,
+                    `.chart file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -143,23 +137,23 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case FileExtensionEnum.Report: {
+          case '.report': {
             if (
               [
-                ParameterEnum.Report.toString(),
-                ParameterEnum.Title.toString(),
-                ParameterEnum.Parameters.toString(),
-                ParameterEnum.AccessRoles.toString(),
-                ParameterEnum.Options.toString(),
-                ParameterEnum.Rows.toString()
+                'report'.toString(),
+                'title'.toString(),
+                'parameters'.toString(),
+                'access_roles'.toString(),
+                'options'.toString(),
+                'rows'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_REPORT_PARAMETER,
+                  title: 'UNKNOWN_REPORT_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `${FileExtensionEnum.Report} file`,
+                    `.report file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -174,20 +168,20 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case FileExtensionEnum.Schema: {
+          case '.schema': {
             if (
               [
-                ParameterEnum.Schema.toString(),
-                ParameterEnum.Description.toString(),
-                ParameterEnum.Tables.toString()
+                'schema'.toString(),
+                'description'.toString(),
+                'tables'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_SCHEMA_PARAMETER,
+                  title: 'UNKNOWN_SCHEMA_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `${FileExtensionEnum.Schema} file`,
+                    `.schema file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -202,23 +196,23 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case FileExtensionEnum.Yml: {
+          case '.yml': {
             if (
               [
-                ParameterEnum.MproveDir.toString(),
-                ParameterEnum.WeekStart.toString(),
+                'mprove_dir'.toString(),
+                'week_start'.toString(),
                 // ParameterEnum.DefaultTimezone.toString(),
-                ParameterEnum.AllowTimezones.toString(),
-                ParameterEnum.FormatNumber.toString(),
-                ParameterEnum.CurrencyPrefix.toString(),
-                ParameterEnum.CurrencySuffix.toString(),
-                ParameterEnum.ThousandsSeparator.toString(),
-                ParameterEnum.CaseSensitiveStringFilters.toString()
+                'allow_timezones'.toString(),
+                'format_number'.toString(),
+                'currency_prefix'.toString(),
+                'currency_suffix'.toString(),
+                'thousands_separator'.toString(),
+                'case_sensitive_string_filters'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_MPROVE_CONFIG_PARAMETER,
+                  title: 'UNKNOWN_MPROVE_CONFIG_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
                     `${MPROVE_CONFIG_FILENAME} file`,
@@ -236,21 +230,21 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case FileExtensionEnum.Space: {
+          case '.space': {
             if (
               [
-                ParameterEnum.Space.toString(),
-                ParameterEnum.Title.toString(),
-                ParameterEnum.AccessRoles.toString(),
-                ParameterEnum.Folders.toString()
+                'space'.toString(),
+                'title'.toString(),
+                'access_roles'.toString(),
+                'folders'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_SPACE_PARAMETER,
+                  title: 'UNKNOWN_SPACE_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `${FileExtensionEnum.Space} file`,
+                    `.space file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -269,22 +263,22 @@ export function checkTopUnknownParameters(item: {
         if (
           Array.isArray(file[parameter]) &&
           [
-            ParameterEnum.Parameters.toString(),
-            ParameterEnum.Fields.toString(),
-            ParameterEnum.Tiles.toString(),
-            ParameterEnum.BuildMetrics.toString(),
-            ParameterEnum.FieldGroups.toString(),
-            ParameterEnum.FieldTimeGroups.toString(),
-            ParameterEnum.Results.toString(),
-            ParameterEnum.Rows.toString(),
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString(),
-            ParameterEnum.Tables.toString()
+            'parameters'.toString(),
+            'fields'.toString(),
+            'tiles'.toString(),
+            'build_metrics'.toString(),
+            'field_groups'.toString(),
+            'field_time_groups'.toString(),
+            'results'.toString(),
+            'rows'.toString(),
+            'access_roles'.toString(),
+            'folders'.toString(),
+            'tables'.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_LIST,
+              title: 'UNEXPECTED_LIST',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -301,14 +295,14 @@ export function checkTopUnknownParameters(item: {
         if (
           file[parameter]?.constructor === Object &&
           [
-            ParameterEnum.Options.toString(),
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString()
+            'options'.toString(),
+            'access_roles'.toString(),
+            'folders'.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+              title: 'UNEXPECTED_DICTIONARY',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -323,12 +317,12 @@ export function checkTopUnknownParameters(item: {
         }
 
         if (
-          [ParameterEnum.Options.toString()].indexOf(parameter) > -1 &&
+          ['options'.toString()].indexOf(parameter) > -1 &&
           file[parameter]?.constructor !== Object
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.PARAMETER_IS_NOT_A_DICTIONARY,
+              title: 'PARAMETER_IS_NOT_A_DICTIONARY',
               message: `parameter "${parameter}" must be a dictionary`,
               lines: [
                 {
@@ -345,22 +339,22 @@ export function checkTopUnknownParameters(item: {
         if (
           !Array.isArray(file[parameter]) &&
           [
-            ParameterEnum.Parameters.toString(),
-            ParameterEnum.Fields.toString(),
-            ParameterEnum.Tiles.toString(),
-            ParameterEnum.BuildMetrics.toString(),
-            ParameterEnum.FieldGroups.toString(),
-            ParameterEnum.FieldTimeGroups.toString(),
-            ParameterEnum.Results.toString(),
-            ParameterEnum.Rows.toString(),
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString(),
-            ParameterEnum.Tables.toString()
+            'parameters'.toString(),
+            'fields'.toString(),
+            'tiles'.toString(),
+            'build_metrics'.toString(),
+            'field_groups'.toString(),
+            'field_time_groups'.toString(),
+            'results'.toString(),
+            'rows'.toString(),
+            'access_roles'.toString(),
+            'folders'.toString(),
+            'tables'.toString()
           ].indexOf(parameter) > -1
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.PARAMETER_IS_NOT_A_LIST,
+              title: 'PARAMETER_IS_NOT_A_LIST',
               message: `parameter "${parameter}" must be a List`,
               lines: [
                 {
@@ -380,8 +374,8 @@ export function checkTopUnknownParameters(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.FilesAny, newFilesAny);
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_filesAny.log', newFilesAny);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
   return Result.succeed(newFilesAny);
 }

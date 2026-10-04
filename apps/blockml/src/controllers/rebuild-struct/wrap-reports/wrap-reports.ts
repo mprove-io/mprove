@@ -1,31 +1,23 @@
 import { wrapMconfigChart } from '#blockml/functions/wrap-mconfig-chart/wrap-mconfig-chart';
 import { TRIPLE_UNDERSCORE } from '#common/constants/top';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { FileFractionControl } from '#common/types/blockml/parts/internal/file-fraction-control';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFractionType } from '#common/types/blockml/parts/internal/file-store-fraction-type';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
-import type { Parameter } from '#common/types/blockml/parts/parameter';
-import type { Report } from '#common/types/blockml/parts/report';
-import type { ReportField } from '#common/types/blockml/parts/report-field';
-import type { Row } from '#common/types/blockml/parts/row';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
+import type { Report } from '#common/types/blockml/parts/report/report';
+import type { ReportField } from '#common/types/blockml/parts/report/report-field';
+import type { Parameter } from '#common/types/blockml/parts/report/row/parameter';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
 
 export function wrapReports(item: {
   projectId: string;
@@ -96,16 +88,16 @@ export function wrapReports(item: {
                       let options = [];
 
                       let optionOr: FractionSubTypeOption = {
-                        logicGroup: FractionLogicEnum.Or,
+                        logicGroup: 'OR',
                         typeValue: ft.type,
-                        value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                        value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                         label: ft.label
                       };
                       options.push(optionOr);
 
                       let optionAndNot: FractionSubTypeOption = {
-                        logicGroup: FractionLogicEnum.AndNot,
-                        value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                        logicGroup: 'AND_NOT',
+                        value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                         typeValue: ft.type,
                         label: ft.label
                       };
@@ -116,7 +108,7 @@ export function wrapReports(item: {
                     .flat()
                     .sort((a, b) => {
                       if (a.logicGroup === b.logicGroup) return 0;
-                      return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+                      return a.logicGroup === 'OR' ? -1 : 1;
                     });
 
               let fraction: Fraction = {
@@ -125,13 +117,13 @@ export function wrapReports(item: {
                   : storeResultCurrentTypeFraction?.meta,
                 operator: isDefined(field.store_filter)
                   ? undefined
-                  : y.logic === FractionLogicEnum.Or
-                    ? FractionOperatorEnum.Or
-                    : FractionOperatorEnum.And,
+                  : y.logic === 'OR'
+                    ? 'Or'
+                    : 'And',
                 logicGroup: isDefined(field.store_filter) ? undefined : y.logic,
                 brick: undefined,
                 parentBrick: undefined,
-                type: FractionTypeEnum.StoreFraction,
+                type: 'StoreFraction',
                 storeFractionSubTypeOptions: storeFractionSubTypeOptions,
                 storeFractionSubType: storeFractionSubType,
                 storeFractionSubTypeLabel: isDefined(storeFractionSubType)
@@ -147,19 +139,19 @@ export function wrapReports(item: {
                 controls: y.controls.map((control: FileFractionControl) => {
                   if (isDefined(control.input)) {
                     control.name = control.input;
-                    control.controlClass = ControlClassEnum.Input;
+                    control.controlClass = 'input';
                   } else if (isDefined(control.list_input)) {
                     control.name = control.list_input;
-                    control.controlClass = ControlClassEnum.ListInput;
+                    control.controlClass = 'list_input';
                   } else if (isDefined(control.switch)) {
                     control.name = control.switch;
-                    control.controlClass = ControlClassEnum.Switch;
+                    control.controlClass = 'switch';
                   } else if (isDefined(control.date_picker)) {
                     control.name = control.date_picker;
-                    control.controlClass = ControlClassEnum.DatePicker;
+                    control.controlClass = 'date_picker';
                   } else if (isDefined(control.selector)) {
                     control.name = control.selector;
-                    control.controlClass = ControlClassEnum.Selector;
+                    control.controlClass = 'selector';
                   }
 
                   let storeField = isDefined(field.store_filter)
@@ -177,7 +169,7 @@ export function wrapReports(item: {
                   let newControl: FractionControl = {
                     options: storeControl?.options,
                     value:
-                      control.controlClass === ControlClassEnum.Switch &&
+                      control.controlClass === 'switch' &&
                       typeof control.value === 'string'
                         ? toBooleanFromLowercaseString(control.value)
                         : control.value,
@@ -199,7 +191,7 @@ export function wrapReports(item: {
 
     let mconfigChart = wrapMconfigChart({
       title: undefined,
-      type: ChartTypeEnum.Line,
+      type: 'line',
       options: x.options,
       isReport: true,
       rowIdsWithShowChart: x.rows
@@ -234,20 +226,17 @@ export function wrapReports(item: {
           rowId: row.row_id,
           rowType: row.type,
           name: row.name,
-          topLabel:
-            row.type === RowTypeEnum.Metric ? metric.topLabel : undefined,
+          topLabel: row.type === 'metric' ? metric.topLabel : undefined,
           partNodeLabel:
-            row.type === RowTypeEnum.Metric ? metric.partNodeLabel : undefined,
+            row.type === 'metric' ? metric.partNodeLabel : undefined,
           partFieldLabel:
-            row.type === RowTypeEnum.Metric ? metric.partFieldLabel : undefined,
-          partLabel:
-            row.type === RowTypeEnum.Metric ? metric.partLabel : undefined,
+            row.type === 'metric' ? metric.partFieldLabel : undefined,
+          partLabel: row.type === 'metric' ? metric.partLabel : undefined,
           timeNodeLabel:
-            row.type === RowTypeEnum.Metric ? metric.timeNodeLabel : undefined,
+            row.type === 'metric' ? metric.timeNodeLabel : undefined,
           timeFieldLabel:
-            row.type === RowTypeEnum.Metric ? metric.timeFieldLabel : undefined,
-          timeLabel:
-            row.type === RowTypeEnum.Metric ? metric.timeLabel : undefined,
+            row.type === 'metric' ? metric.timeFieldLabel : undefined,
+          timeLabel: row.type === 'metric' ? metric.timeLabel : undefined,
           metricId: row.metric,
           modelId: row.model,
           showChart: toBooleanFromLowercaseString(row.show_chart),
@@ -259,16 +248,16 @@ export function wrapReports(item: {
           parameters: isUndefined(row.parameters)
             ? []
             : row.parameters.map(parameter => {
-                let result: FieldResultEnum;
+                let result: FieldResult;
                 let storeField: FieldAny;
 
                 let model: Model;
                 let store: FileStore;
 
-                if (row.type === RowTypeEnum.Metric) {
+                if (row.type === 'metric') {
                   model = models.find(m => m.modelId === metric.modelId);
 
-                  let isStore = metric.modelType === ModelTypeEnum.Store;
+                  let isStore = metric.modelType === 'Store';
 
                   if (isStore === true) {
                     store = model.storeContent;
@@ -289,26 +278,24 @@ export function wrapReports(item: {
                   fractions:
                     isUndefined(model) || isDefined(parameter.listen)
                       ? undefined
-                      : model.type !== ModelTypeEnum.Store
+                      : model.type !== 'Store'
                         ? parameter.apiFractions
                         : parameter.fractions.map(y => {
                             let storeResultCurrentTypeFraction: FileStoreFractionType;
 
-                            if (
-                              storeField.fieldClass !== FieldClassEnum.Filter
-                            ) {
+                            if (storeField.fieldClass !== 'filter') {
                               storeResultCurrentTypeFraction = store.results
                                 .find(r => r.result === storeField.result)
                                 .fraction_types.find(ft => ft.type === y.type);
                             }
 
                             let storeFractionSubType =
-                              storeField.fieldClass === FieldClassEnum.Filter
+                              storeField.fieldClass === 'filter'
                                 ? undefined
                                 : y.type;
 
                             let storeFractionSubTypeOptions =
-                              storeField.fieldClass === FieldClassEnum.Filter
+                              storeField.fieldClass === 'filter'
                                 ? undefined
                                 : store.results
                                     .find(r => r.result === storeField.result)
@@ -316,17 +303,17 @@ export function wrapReports(item: {
                                       let options = [];
 
                                       let optionOr: FractionSubTypeOption = {
-                                        logicGroup: FractionLogicEnum.Or,
+                                        logicGroup: 'OR',
                                         typeValue: ft.type,
-                                        value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                                        value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                                         label: ft.label
                                       };
                                       options.push(optionOr);
 
                                       let optionAndNot: FractionSubTypeOption =
                                         {
-                                          logicGroup: FractionLogicEnum.AndNot,
-                                          value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                                          logicGroup: 'AND_NOT',
+                                          value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                                           typeValue: ft.type,
                                           label: ft.label
                                         };
@@ -338,30 +325,27 @@ export function wrapReports(item: {
                                     .sort((a, b) => {
                                       if (a.logicGroup === b.logicGroup)
                                         return 0;
-                                      return a.logicGroup ===
-                                        FractionLogicEnum.Or
-                                        ? -1
-                                        : 1;
+                                      return a.logicGroup === 'OR' ? -1 : 1;
                                     });
 
                             let fraction: Fraction = {
                               meta:
-                                storeField.fieldClass === FieldClassEnum.Filter
+                                storeField.fieldClass === 'filter'
                                   ? undefined
                                   : storeResultCurrentTypeFraction?.meta,
                               operator:
-                                storeField.fieldClass === FieldClassEnum.Filter
+                                storeField.fieldClass === 'filter'
                                   ? undefined
-                                  : y.logic === FractionLogicEnum.Or
-                                    ? FractionOperatorEnum.Or
-                                    : FractionOperatorEnum.And,
+                                  : y.logic === 'OR'
+                                    ? 'Or'
+                                    : 'And',
                               logicGroup:
-                                storeField.fieldClass === FieldClassEnum.Filter
+                                storeField.fieldClass === 'filter'
                                   ? undefined
                                   : y.logic,
                               brick: undefined,
                               parentBrick: undefined,
-                              type: FractionTypeEnum.StoreFraction,
+                              type: 'StoreFraction',
                               storeFractionSubTypeOptions:
                                 storeFractionSubTypeOptions,
                               storeFractionSubType: storeFractionSubType,
@@ -373,36 +357,30 @@ export function wrapReports(item: {
                                   ).label
                                 : storeFractionSubType,
                               storeFractionLogicGroupWithSubType:
-                                storeField.fieldClass === FieldClassEnum.Filter
+                                storeField.fieldClass === 'filter'
                                   ? undefined
                                   : `${y.logic}${TRIPLE_UNDERSCORE}${y.type}`,
                               controls: y.controls.map(
                                 (control: FileFractionControl) => {
                                   if (isDefined(control.input)) {
                                     control.name = control.input;
-                                    control.controlClass =
-                                      ControlClassEnum.Input;
+                                    control.controlClass = 'input';
                                   } else if (isDefined(control.list_input)) {
                                     control.name = control.list_input;
-                                    control.controlClass =
-                                      ControlClassEnum.ListInput;
+                                    control.controlClass = 'list_input';
                                   } else if (isDefined(control.switch)) {
                                     control.name = control.switch;
-                                    control.controlClass =
-                                      ControlClassEnum.Switch;
+                                    control.controlClass = 'switch';
                                   } else if (isDefined(control.date_picker)) {
                                     control.name = control.date_picker;
-                                    control.controlClass =
-                                      ControlClassEnum.DatePicker;
+                                    control.controlClass = 'date_picker';
                                   } else if (isDefined(control.selector)) {
                                     control.name = control.selector;
-                                    control.controlClass =
-                                      ControlClassEnum.Selector;
+                                    control.controlClass = 'selector';
                                   }
 
                                   let storeControl =
-                                    storeField.fieldClass ===
-                                    FieldClassEnum.Filter
+                                    storeField.fieldClass === 'filter'
                                       ? storeField.fraction_controls.find(
                                           fc => fc.name === control.name
                                         )
@@ -413,8 +391,7 @@ export function wrapReports(item: {
                                   let newControl: FractionControl = {
                                     options: storeControl?.options,
                                     value:
-                                      control.controlClass ===
-                                        ControlClassEnum.Switch &&
+                                      control.controlClass === 'switch' &&
                                       typeof control.value === 'string'
                                         ? toBooleanFromLowercaseString(
                                             control.value
@@ -443,17 +420,17 @@ export function wrapReports(item: {
           records: [],
           formatNumber: isDefined(row.format_number)
             ? row.format_number
-            : row.type === RowTypeEnum.Metric
+            : row.type === 'metric'
               ? metric.formatNumber
               : formatNumber,
           currencyPrefix: isDefined(row.currency_prefix)
             ? row.currency_prefix
-            : row.type === RowTypeEnum.Metric
+            : row.type === 'metric'
               ? metric.currencyPrefix
               : currencyPrefix,
           currencySuffix: isDefined(row.currency_suffix)
             ? row.currency_suffix
-            : row.type === RowTypeEnum.Metric
+            : row.type === 'metric'
               ? metric.currencySuffix
               : currencySuffix
         };

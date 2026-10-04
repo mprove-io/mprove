@@ -4,29 +4,26 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFieldGroup } from '#common/types/blockml/parts/internal/file-store-field-group';
 
-let func = FuncEnum.CheckStoreFieldGroups;
+let func: Func = 'build-store-start/check-store-field-groups';
 
 export function checkStoreFieldGroups(
   item: {
     stores: FileStore[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newStores: FileStore[] = [];
 
@@ -43,7 +40,7 @@ export function checkStoreFieldGroups(
       if (isDefined(fieldGroup) && fieldGroup.constructor !== Object) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.FIELD_GROUP_IS_NOT_A_DICTIONARY,
+            title: 'FIELD_GROUP_IS_NOT_A_DICTIONARY',
             message: 'found at least one field group that is not a dictionary',
             lines: [
               {
@@ -60,15 +57,10 @@ export function checkStoreFieldGroups(
       Object.keys(fieldGroup)
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if (
-            [
-              ParameterEnum.Group.toString(),
-              ParameterEnum.Label.toString()
-            ].indexOf(parameter) < 0
-          ) {
+          if (['group'.toString(), 'label'.toString()].indexOf(parameter) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNKNOWN_FIELD_GROUP_PARAMETER,
+                title: 'UNKNOWN_FIELD_GROUP_PARAMETER',
                 message: `parameter "${parameter}" cannot be used in field_groups element`,
                 lines: [
                   {
@@ -89,7 +81,7 @@ export function checkStoreFieldGroups(
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_LIST,
+                title: 'UNEXPECTED_LIST',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -111,7 +103,7 @@ export function checkStoreFieldGroups(
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+                title: 'UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -137,8 +129,8 @@ export function checkStoreFieldGroups(
 
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_GROUP,
-              message: `field group must have "${ParameterEnum.Group}" parameter`,
+              title: 'MISSING_GROUP',
+              message: `field group must have "group" parameter`,
               lines: [
                 {
                   line: Math.min(...fieldGroupKeysLineNums),
@@ -171,8 +163,8 @@ export function checkStoreFieldGroups(
         if (group.groupLineNums.length > 1) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.DUPLICATE_GROUPS,
-              message: `"${ParameterEnum.Group}" value must be unique across field_groups elements`,
+              title: 'DUPLICATE_GROUPS',
+              message: `"group" value must be unique across field_groups elements`,
               lines: group.groupLineNums.map(l => ({
                 line: l,
                 name: x.fileName,
@@ -201,7 +193,7 @@ export function checkStoreFieldGroups(
 
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHARS_IN_GROUP,
+              title: 'WRONG_CHARS_IN_GROUP',
               message: `Characters "${groupWrongCharsString}" cannot be used for group (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
@@ -222,8 +214,8 @@ export function checkStoreFieldGroups(
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, newStores);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_stores.log', newStores);
 
   return newStores;
 }

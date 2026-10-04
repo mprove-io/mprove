@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 

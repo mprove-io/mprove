@@ -2,7 +2,8 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import { checkStoreBuildMetrics } from './check-store-build-metrics/check-store-build-metrics';
@@ -14,7 +15,7 @@ export function buildStoreNext(item: {
   spaces: FilePartSpace[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileStore[], never> {
   let { cs } = item;

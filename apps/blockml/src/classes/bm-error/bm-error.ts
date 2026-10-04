@@ -1,12 +1,13 @@
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+import type { ErTitle } from '#common/types/blockml/diagnostics/er-title';
+
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 export class BmError {
-  title: ErTitleEnum;
+  title: ErTitle;
   message: string;
   lines: FileErrorLine[];
 
   constructor(item: {
-    title: ErTitleEnum;
+    title: ErTitle;
     message: string;
     lines: FileErrorLine[];
   }) {

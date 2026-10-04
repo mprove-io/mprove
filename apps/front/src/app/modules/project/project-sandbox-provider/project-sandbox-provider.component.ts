@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_SANDBOX_PROVIDER_PAGE_TITLE } from '#common/constants/page-titles';
-import type { Project } from '#common/types/backend/parts/project';
+import type { Project } from '#common/types/backend/parts/project/project';
 import type { ToBackendSetProjectSandboxProviderRequest } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
 import type { ToBackendSetProjectSandboxProviderResponse } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';

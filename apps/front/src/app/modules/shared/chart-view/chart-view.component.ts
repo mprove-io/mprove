@@ -17,15 +17,13 @@ import {
   SeriesOption
 } from 'echarts';
 import { YAXisOption } from 'echarts/types/dist/shared';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+import type { QueryStatus } from '#common/types/blockml/parts/query/query-status';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -42,24 +40,12 @@ import { FormatNumberService } from '#front/app/services/format-number.service';
   templateUrl: './chart-view.component.html'
 })
 export class ChartViewComponent implements OnChanges {
-  chartTypeEnum = ChartTypeEnum;
-  queryStatusEnum = QueryStatusEnum;
-
   eChartInitOpts: any;
   eChartOptions: EChartsOption;
 
-  eChartsTypes = [
-    ChartTypeEnum.Line,
-    ChartTypeEnum.Bar,
-    ChartTypeEnum.Scatter,
-    ChartTypeEnum.Pie
-  ];
+  eChartsTypes: ChartType[] = ['line', 'bar', 'scatter', 'pie'];
 
-  eChartsMultiChartTypes = [
-    ChartTypeEnum.Line,
-    ChartTypeEnum.Bar,
-    ChartTypeEnum.Scatter
-  ];
+  eChartsMultiChartTypes: ChartType[] = ['line', 'bar', 'scatter'];
 
   @Input()
   isTableHeaderWide: boolean;
@@ -71,7 +57,7 @@ export class ChartViewComponent implements OnChanges {
   isAnimation: boolean;
 
   @Input()
-  modelType: ModelTypeEnum;
+  modelType: ModelType;
 
   @Input()
   mconfigFields: MconfigField[];
@@ -91,7 +77,7 @@ export class ChartViewComponent implements OnChanges {
   chart: MconfigChart;
 
   @Input()
-  queryStatus: QueryStatusEnum;
+  queryStatus: QueryStatus;
 
   @Output()
   chartPartChange = new EventEmitter<MconfigChart>();
@@ -136,7 +122,7 @@ export class ChartViewComponent implements OnChanges {
         fontFamily: 'sans-serif'
       },
       legend:
-        this.chart.type === ChartTypeEnum.Pie
+        this.chart.type === 'pie'
           ? { show: false }
           : {
               top: 20,
@@ -147,8 +133,7 @@ export class ChartViewComponent implements OnChanges {
               }
             },
       tooltip:
-        this.chart.type === ChartTypeEnum.Line ||
-        this.chart.type === ChartTypeEnum.Bar
+        this.chart.type === 'line' || this.chart.type === 'bar'
           ? {
               confine: true,
               trigger: 'axis',
@@ -169,12 +154,9 @@ export class ChartViewComponent implements OnChanges {
     });
 
     this.isSelectValid =
-      [
-        ChartTypeEnum.Table,
-        ChartTypeEnum.Single,
-        ChartTypeEnum.PivotTable,
-        ...this.eChartsTypes
-      ].indexOf(this.chart.type) > -1
+      ['table', 'single', 'pivot_table', ...this.eChartsTypes].indexOf(
+        this.chart.type
+      ) > -1
         ? checkSelectResult.isSelectValid
         : false;
 
@@ -187,10 +169,7 @@ export class ChartViewComponent implements OnChanges {
         ? this.mconfigFields.find(v => v.id === this.chart.xField)
         : undefined;
 
-      if (
-        this.chart.type === ChartTypeEnum.Single &&
-        this.chart.yFields.length > 0
-      ) {
+      if (this.chart.type === 'single' && this.chart.yFields.length > 0) {
         this.yFieldColumn = this.mconfigFields.find(
           y => y.id === this.chart.yFields[0]
         );
@@ -221,38 +200,38 @@ export class ChartViewComponent implements OnChanges {
       // echarts - axes
 
       if (
-        this.chart.type === ChartTypeEnum.Line ||
-        this.chart.type === ChartTypeEnum.Bar ||
-        this.chart.type === ChartTypeEnum.Scatter
+        this.chart.type === 'line' ||
+        this.chart.type === 'bar' ||
+        this.chart.type === 'scatter'
       ) {
         let tsFormatter = xField.sqlName.match(/(?:___year)$/g)
           ? (value: any) =>
               frontFormatTsUnix({
-                timeSpec: TimeSpecEnum.Years,
+                timeSpec: 'years',
                 unixTimeZoned: value / 1000
               })
           : xField.sqlName.match(/(?:___quarter)$/g)
             ? (value: any) =>
                 frontFormatTsUnix({
-                  timeSpec: TimeSpecEnum.Quarters,
+                  timeSpec: 'quarters',
                   unixTimeZoned: value / 1000
                 })
             : xField.sqlName.match(/(?:___month)$/g)
               ? (value: any) =>
                   frontFormatTsUnix({
-                    timeSpec: TimeSpecEnum.Months,
+                    timeSpec: 'months',
                     unixTimeZoned: value / 1000
                   })
               : xField.sqlName.match(/(?:___week)$/g)
                 ? (value: any) =>
                     frontFormatTsUnix({
-                      timeSpec: TimeSpecEnum.Weeks,
+                      timeSpec: 'weeks',
                       unixTimeZoned: value / 1000
                     })
                 : xField.sqlName.match(/(?:___date)$/g)
                   ? (value: any) =>
                       frontFormatTsUnix({
-                        timeSpec: TimeSpecEnum.Days,
+                        timeSpec: 'days',
                         unixTimeZoned: value / 1000
                       })
                   : undefined;
@@ -263,25 +242,25 @@ export class ChartViewComponent implements OnChanges {
               axisLabel: {
                 fontSize: 13,
                 formatter: (value: any) => {
-                  let storeTimeSpec =
-                    xField.detail === DetailUnitEnum.Timestamps
-                      ? TimeSpecEnum.Timestamps
-                      : xField.detail === DetailUnitEnum.Minutes
-                        ? TimeSpecEnum.Minutes
-                        : xField.detail === DetailUnitEnum.Hours
-                          ? TimeSpecEnum.Hours
-                          : xField.detail === DetailUnitEnum.Days
-                            ? TimeSpecEnum.Days
-                            : xField.detail === DetailUnitEnum.WeeksSunday
-                              ? TimeSpecEnum.Weeks
-                              : xField.detail === DetailUnitEnum.WeeksMonday
-                                ? TimeSpecEnum.Weeks
-                                : xField.detail === DetailUnitEnum.Months
-                                  ? TimeSpecEnum.Months
-                                  : xField.detail === DetailUnitEnum.Quarters
-                                    ? TimeSpecEnum.Quarters
-                                    : xField.detail === DetailUnitEnum.Years
-                                      ? TimeSpecEnum.Years
+                  let storeTimeSpec: TimeSpec =
+                    xField.detail === 'timestamps'
+                      ? 'timestamps'
+                      : xField.detail === 'minutes'
+                        ? 'minutes'
+                        : xField.detail === 'hours'
+                          ? 'hours'
+                          : xField.detail === 'days'
+                            ? 'days'
+                            : xField.detail === 'weeksSunday'
+                              ? 'weeks'
+                              : xField.detail === 'weeksMonday'
+                                ? 'weeks'
+                                : xField.detail === 'months'
+                                  ? 'months'
+                                  : xField.detail === 'quarters'
+                                    ? 'quarters'
+                                    : xField.detail === 'years'
+                                      ? 'years'
                                       : undefined;
 
                   return frontFormatTsUnix({
@@ -291,7 +270,7 @@ export class ChartViewComponent implements OnChanges {
                 }
               }
             }
-          : xField.result === FieldResultEnum.Ts
+          : xField.result === 'ts'
             ? {
                 type: 'time',
                 axisLabel: {
@@ -299,7 +278,7 @@ export class ChartViewComponent implements OnChanges {
                   formatter: tsFormatter
                 }
               }
-            : xField.result === FieldResultEnum.Number
+            : xField.result === 'number'
               ? {
                   type: 'value',
                   scale: this.chart.xAxis.scale,
@@ -341,7 +320,7 @@ export class ChartViewComponent implements OnChanges {
             fontSize: 16
           },
           formatter:
-            this.chart.type === ChartTypeEnum.Pie
+            this.chart.type === 'pie'
               ? (p: any) => {
                   let xValueFmt = isDefined(p.data.pXValueFmt)
                     ? p.data.pXValueFmt
@@ -366,7 +345,7 @@ export class ChartViewComponent implements OnChanges {
                     ? p.data.pSizeValueFmt
                     : 'null';
 
-                  return this.chart.type === ChartTypeEnum.Scatter &&
+                  return this.chart.type === 'scatter' &&
                     isDefined(this.chart.sizeField) &&
                     p.name !== p.data.pSizeFieldName
                     ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.pSizeFieldName}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
@@ -467,13 +446,13 @@ export class ChartViewComponent implements OnChanges {
               };
 
               let seriesOption =
-                chartSeriesElement.type === ChartTypeEnum.Line
+                chartSeriesElement.type === 'line'
                   ? lineSeriesOption
-                  : chartSeriesElement.type === ChartTypeEnum.Bar
+                  : chartSeriesElement.type === 'bar'
                     ? barSeriesOption
-                    : chartSeriesElement.type === ChartTypeEnum.Scatter
+                    : chartSeriesElement.type === 'scatter'
                       ? scatterSeriesOption
-                      : chartSeriesElement.type === ChartTypeEnum.Pie
+                      : chartSeriesElement.type === 'pie'
                         ? pieSeriesOption
                         : baseSeriesOption;
 

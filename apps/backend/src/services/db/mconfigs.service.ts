@@ -18,17 +18,13 @@ import { makeMconfigFiltersX } from '#backend/functions/make-mconfig-filters-x';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { StoreMethodEnum } from '#common/enums/store-method.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 import { HashService } from '../hash.service';
 import { StoreService } from '../store.service';
@@ -140,7 +136,7 @@ export class MconfigsService {
 
     if (isUndefined(mconfig)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST
+        message: 'BACKEND_MCONFIG_DOES_NOT_EXIST'
       });
     }
 
@@ -151,7 +147,7 @@ export class MconfigsService {
     struct: StructTab;
     project: ProjectTab;
     envId: string;
-    mconfigParentType: MconfigParentTypeEnum;
+    mconfigParentType: MconfigParentType;
     mconfigParentId: string;
     model: ModelTab;
     mconfig: MconfigTab;
@@ -214,7 +210,7 @@ export class MconfigsService {
       input: model.storeContent.request,
       mconfig: newMconfig,
       storeModel: model,
-      storeParam: ParameterEnum.Request,
+      storeParam: 'request',
       caseSensitiveStringFilters:
         struct.mproveConfig.caseSensitiveStringFilters,
       metricsStartDateYYYYMMDD: undefined,
@@ -232,9 +228,9 @@ export class MconfigsService {
         : (JSON.parse(processedRequest.result) as any).urlPath;
 
     let connectionBaseUrl =
-      connection.type === ConnectionTypeEnum.Api
+      connection.type === 'Api'
         ? connection.options.storeApi.baseUrl
-        : connection.type === ConnectionTypeEnum.GoogleApi
+        : connection.type === 'GoogleApi'
           ? connection.options.storeGoogleApi.baseUrl
           : '';
 
@@ -263,19 +259,14 @@ export class MconfigsService {
       envId: envId,
       connectionId: model.connectionId,
       connectionType: model.connectionType,
-      reportId:
-        mconfig.parentType === MconfigParentTypeEnum.Report
-          ? mconfig.parentId
-          : undefined,
+      reportId: mconfig.parentType === 'Report' ? mconfig.parentId : undefined,
       reportStructId:
-        mconfig.parentType === MconfigParentTypeEnum.Report
-          ? mconfig.structId
-          : undefined,
+        mconfig.parentType === 'Report' ? mconfig.structId : undefined,
       sql: undefined,
-      apiMethod: model.storeContent.method as StoreMethodEnum,
+      apiMethod: model.storeContent.method as StoreMethod,
       apiUrl: apiUrl,
       apiBody: apiBody,
-      status: isError === true ? QueryStatusEnum.Error : QueryStatusEnum.New,
+      status: isError === true ? 'Error' : 'New',
       lastRunBy: undefined,
       lastRunTs: undefined,
       lastCancelTs: undefined,

@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import type { DataRow } from '#common/types/front/data-row';
+
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { DataService } from '#front/app/services/data.service';
 
@@ -13,9 +13,6 @@ import { DataService } from '#front/app/services/data.service';
   templateUrl: './mini-chart-renderer.component.html'
 })
 export class MiniChartRendererComponent implements ICellRendererAngularComp {
-  rowTypeMetric = RowTypeEnum.Metric;
-  rowTypeFormula = RowTypeEnum.Formula;
-
   params: ICellRendererParams<DataRow>;
 
   localInitOpts: any;
@@ -38,11 +35,7 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
   }
 
   updateChartData() {
-    if (
-      [RowTypeEnum.Metric, RowTypeEnum.Formula].indexOf(
-        this.params.data.rowType
-      ) > -1
-    ) {
+    if (['metric', 'formula'].indexOf(this.params.data.rowType) > -1) {
       let chartPointsData = this.uiQuery.getValue().chartPointsData;
 
       this.localInitOpts = {

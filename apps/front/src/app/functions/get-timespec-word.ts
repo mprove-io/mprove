@@ -1,26 +1,26 @@
-import { TimeframeEnum } from '#common/enums/timeframe.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import type { Timeframe } from '#common/types/shared/time/timeframe';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
-export function getTimeSpecWord(item: { timeSpec: TimeSpecEnum }) {
+export function getTimeSpecWord(item: { timeSpec: TimeSpec }) {
   let { timeSpec } = item;
 
-  let timeSpecWord =
-    timeSpec === TimeSpecEnum.Years
-      ? TimeframeEnum.Year
-      : timeSpec === TimeSpecEnum.Quarters
-        ? TimeframeEnum.Quarter
-        : timeSpec === TimeSpecEnum.Months
-          ? TimeframeEnum.Month
-          : timeSpec === TimeSpecEnum.Weeks
-            ? TimeframeEnum.Week
-            : timeSpec === TimeSpecEnum.Days
-              ? TimeframeEnum.Date
-              : timeSpec === TimeSpecEnum.Hours
-                ? TimeframeEnum.Hour
-                : timeSpec === TimeSpecEnum.Minutes
-                  ? TimeframeEnum.Minute
-                  : timeSpec === TimeSpecEnum.Timestamps
-                    ? TimeframeEnum.Ts
+  let timeSpecWord: Timeframe =
+    timeSpec === 'years'
+      ? 'year'
+      : timeSpec === 'quarters'
+        ? 'quarter'
+        : timeSpec === 'months'
+          ? 'month'
+          : timeSpec === 'weeks'
+            ? 'week'
+            : timeSpec === 'days'
+              ? 'date'
+              : timeSpec === 'hours'
+                ? 'hour'
+                : timeSpec === 'minutes'
+                  ? 'minute'
+                  : timeSpec === 'timestamps'
+                    ? 'ts'
                     : undefined;
 
   return timeSpecWord;

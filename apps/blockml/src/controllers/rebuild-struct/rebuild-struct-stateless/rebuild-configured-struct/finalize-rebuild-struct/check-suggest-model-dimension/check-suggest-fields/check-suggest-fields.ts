@@ -1,12 +1,10 @@
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 
 export function checkSuggestFields(item: {
   fields: FieldAny[];
@@ -19,19 +17,16 @@ export function checkSuggestFields(item: {
   let { fields, isPushErrors, fileName, filePath, apiModels } = item;
 
   fields.forEach(field => {
-    if (
-      field.fieldClass !== FieldClassEnum.Filter &&
-      field.fieldClass !== FieldClassEnum.Dimension
-    ) {
+    if (field.fieldClass !== 'filter' && field.fieldClass !== 'dimension') {
       return;
     }
 
     if (isDefined(field.suggest_model_dimension)) {
-      if (isUndefined(field.result !== FieldResultEnum.String)) {
+      if (isUndefined(field.result !== 'string')) {
         if (isPushErrors === true) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.SUGGEST_MODEL_DIMENSION_WITH_WRONG_RESULT,
+              title: 'SUGGEST_MODEL_DIMENSION_WITH_WRONG_RESULT',
               message: `suggest_model_dimension only works with result "string"`,
               lines: [
                 {
@@ -55,7 +50,7 @@ export function checkSuggestFields(item: {
         if (isPushErrors === true) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_SUGGEST_MODEL_DIMENSION,
+              title: 'WRONG_SUGGEST_MODEL_DIMENSION',
               message:
                 `The value of the "suggest_model_dimension" parameter must be a reference structured as "model_name.field_path". ` +
                 `Found value "${field.suggest_model_dimension}"`,
@@ -82,7 +77,7 @@ export function checkSuggestFields(item: {
         if (isPushErrors === true) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.SUGGEST_MODEL_DIMENSION_REFS_NOT_VALID_MODEL,
+              title: 'SUGGEST_MODEL_DIMENSION_REFS_NOT_VALID_MODEL',
               message: `model "${modelId}" is missing or not valid`,
               lines: [
                 {
@@ -104,8 +99,7 @@ export function checkSuggestFields(item: {
         if (isPushErrors === true) {
           item.errors.push(
             new BmError({
-              title:
-                ErTitleEnum.SUGGEST_MODEL_DIMENSION_REFS_NOT_VALID_MODEL_FIELD,
+              title: 'SUGGEST_MODEL_DIMENSION_REFS_NOT_VALID_MODEL_FIELD',
               message: `found "${field.suggest_model_dimension}" references missing or not valid field "${fieldId}"`,
               lines: [
                 {
@@ -121,12 +115,11 @@ export function checkSuggestFields(item: {
         return;
       }
 
-      if (apiModelField.fieldClass !== FieldClassEnum.Dimension) {
+      if (apiModelField.fieldClass !== 'dimension') {
         if (isPushErrors === true) {
           item.errors.push(
             new BmError({
-              title:
-                ErTitleEnum.SUGGEST_MODEL_DIMENSION_DOES_NOT_REF_TO_A_DIMENSION,
+              title: 'SUGGEST_MODEL_DIMENSION_DOES_NOT_REF_TO_A_DIMENSION',
               message: `found "${field.suggest_model_dimension}" references ${apiModelField.fieldClass} "${fieldId}"`,
               lines: [
                 {
@@ -142,12 +135,11 @@ export function checkSuggestFields(item: {
         return;
       }
 
-      if (apiModelField.result !== FieldResultEnum.String) {
+      if (apiModelField.result !== 'string') {
         if (isPushErrors === true) {
           item.errors.push(
             new BmError({
-              title:
-                ErTitleEnum.SUGGEST_MODEL_DIMENSION_REF_RESULT_IS_NOT_A_STRING,
+              title: 'SUGGEST_MODEL_DIMENSION_REF_RESULT_IS_NOT_A_STRING',
               message:
                 `found "${field.suggest_model_dimension}" references ${apiModelField.fieldClass} ` +
                 `"${fieldId}" with result "${apiModelField.result}"`,

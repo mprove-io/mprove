@@ -4,9 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import pIteration from 'p-iteration';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
+
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
@@ -46,10 +44,10 @@ export class TasksService {
       await this.queriesService.checkBigqueryRunningQueries().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
+            message: 'BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -68,10 +66,10 @@ export class TasksService {
       await this.structsService.removeStructs().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_REMOVE_STRUCTS,
+            message: 'BACKEND_SCHEDULER_REMOVE_STRUCTS',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -90,10 +88,10 @@ export class TasksService {
       await this.queriesService.removeQueries().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_REMOVE_QUERIES,
+            message: 'BACKEND_SCHEDULER_REMOVE_QUERIES',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -112,10 +110,10 @@ export class TasksService {
       await this.notesService.removeNotes().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_REMOVE_NOTES,
+            message: 'BACKEND_SCHEDULER_REMOVE_NOTES',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -158,7 +156,7 @@ export class TasksService {
 
               await this.editorSandboxService.pauseSessionById({
                 sessionId: sessionId,
-                pauseReason: PauseReasonEnum.Idle
+                pauseReason: 'Idle'
               });
 
               await this.editorStreamService.setSessionRequestedReloadTs({
@@ -173,11 +171,10 @@ export class TasksService {
           } catch (e) {
             logToConsoleBackend({
               log: new ServerError({
-                message:
-                  ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_EDITOR_SESSION_FALIED,
+                message: 'BACKEND_SCHEDULER_PAUSE_IDLE_EDITOR_SESSION_FALIED',
                 originalError: e
               }),
-              logLevel: LogLevelEnum.Error,
+              logLevel: 'Error',
               logger: this.logger,
               cs: this.cs
             });
@@ -186,10 +183,10 @@ export class TasksService {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_EDITOR_SESSIONS_FALIED,
+            message: 'BACKEND_SCHEDULER_PAUSE_IDLE_EDITOR_SESSIONS_FALIED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -217,11 +214,10 @@ export class TasksService {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message:
-              ErEnum.BACKEND_SCHEDULER_SYNC_EDITOR_SESSIONS_STATUS_FAILED,
+            message: 'BACKEND_SCHEDULER_SYNC_EDITOR_SESSIONS_STATUS_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });

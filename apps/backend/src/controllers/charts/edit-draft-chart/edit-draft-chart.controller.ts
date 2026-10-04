@@ -45,14 +45,12 @@ import { MalloyService } from '#backend/services/malloy.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditDraftChartOutput } from '#common/types/backend/routes/charts/edit-draft-chart/edit-draft-chart-output';
-import type { Tile } from '#common/types/blockml/parts/tile';
+import type { Tile } from '#common/types/blockml/parts/tile/tile';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -120,7 +118,7 @@ export class EditDraftChartController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -164,7 +162,7 @@ export class EditDraftChartController {
 
     if (chart.draft === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CHART_IS_NOT_DRAFT
+        message: 'BACKEND_CHART_IS_NOT_DRAFT'
       });
     }
 
@@ -173,12 +171,12 @@ export class EditDraftChartController {
 
     let isError = false;
 
-    if (model.type === ModelTypeEnum.Store) {
+    if (model.type === 'Store') {
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
         project: project,
         envId: envId,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentType: 'Chart',
         mconfigParentId: chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
@@ -189,12 +187,12 @@ export class EditDraftChartController {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
-    } else if (model.type === ModelTypeEnum.Malloy) {
+    } else if (model.type === 'Malloy') {
       let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentType: 'Chart',
         mconfigParentId: chartId,
         user: user,
         model: model,

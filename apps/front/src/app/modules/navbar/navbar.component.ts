@@ -11,9 +11,7 @@ import {
   PATH_REPORTS
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { BuilderRightEnum } from '#common/enums/builder-right.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendCheckLastNavRequest } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-request';
@@ -144,11 +142,8 @@ export class NavbarComponent implements OnInit {
     this.sessionEventsQuery.reset();
 
     this.navigateService.navigateToBuilder({
-      left: BuilderLeftEnum.Tree,
-      right:
-        this.nav.repoType === RepoTypeEnum.Session
-          ? BuilderRightEnum.Sessions
-          : BuilderRightEnum.Validation
+      left: 'Tree',
+      right: this.nav.repoType === 'session' ? 'Sessions' : 'Validation'
     });
   }
 

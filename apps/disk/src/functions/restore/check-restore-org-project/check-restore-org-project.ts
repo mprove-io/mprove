@@ -1,11 +1,12 @@
 import { Result } from '@praha/byethrow';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
 import { restoreProject } from '#disk/functions/restore/check-restore-org-project/restore-project/restore-project';
 
 export function checkRestoreOrgProject(item: {
-  remoteType: ProjectRemoteTypeEnum;
+  remoteType: ProjectRemoteType;
   orgId: string;
   orgPath: string;
   projectId: string;

@@ -5,7 +5,6 @@ import { Redis } from 'ioredis';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { KEY_EDITOR_SESSION_LOCK } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
 
 @Injectable()
 export class EditorSessionLockService implements OnModuleDestroy {
@@ -69,7 +68,7 @@ export class EditorSessionLockService implements OnModuleDestroy {
 
       if (elapsed >= this.LOCK_WAIT_TIMEOUT_MS) {
         throw new ServerError({
-          message: ErEnum.BACKEND_EDITOR_SESSION_LOCK_FAILED
+          message: 'BACKEND_EDITOR_SESSION_LOCK_FAILED'
         });
       }
 

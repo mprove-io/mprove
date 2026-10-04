@@ -1,5 +1,4 @@
-import type { ControlClassEnum } from '#common/enums/control-class.enum';
-import type { EnumValues } from '#common/types/enum-values';
+import type { ControlClass } from '#common/types/blockml/parts/fraction/control-class';
 
 export type FileFractionControl = {
   input?: string;
@@ -16,5 +15,5 @@ export type FileFractionControl = {
   value_line_num?: number;
   name?: string;
   name_line_num?: number;
-  controlClass?: EnumValues<typeof ControlClassEnum>;
+  controlClass?: ControlClass;
 };

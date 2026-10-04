@@ -5,16 +5,13 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { File3 } from '#common/types/blockml/parts/internal/file-3';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { File3 } from '#common/types/blockml/parts/internal/file/file-3';
 
-let caller = CallerEnum.BuildYaml;
-let func = FuncEnum.DeduplicateFileNames;
+let caller: Caller = 'BuildYaml';
+let func: Func = 'build-yaml/deduplicate-file-names';
 let testId = 'e__duplicate-file-names';
 
 test('1', async t => {
@@ -53,15 +50,15 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    errors = await readLog(fromDir, LogTypeEnum.Errors);
-    file3s = await readLog(fromDir, LogTypeEnum.File3s);
+    errors = await readLog(fromDir, 'out_errors.log');
+    file3s = await readLog(fromDir, 'out_file3s.log');
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });
@@ -70,7 +67,7 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(file3s.length, 1);
 
-  t.is(errors[0].title, ErTitleEnum.DUPLICATE_FILE_NAMES);
+  t.is(errors[0].title, 'DUPLICATE_FILE_NAMES');
   t.is(errors[0].lines.length, 3);
   t.is(errors[0].lines[0].line, 0);
 });

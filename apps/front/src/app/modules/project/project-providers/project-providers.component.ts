@@ -2,9 +2,9 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_PROVIDERS_PAGE_TITLE } from '#common/constants/page-titles';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
 import type { ToBackendToggleProviderResponse } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -38,8 +38,6 @@ export class ProjectProvidersComponent implements OnInit {
   );
 
   providers: Provider[] = [];
-
-  providerTypeEnum = ProviderTypeEnum;
 
   providers$ = this.providersQuery.providers$.pipe(
     tap(x => {

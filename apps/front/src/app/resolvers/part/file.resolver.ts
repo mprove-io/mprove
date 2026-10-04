@@ -8,9 +8,9 @@ import {
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PARAMETER_FILE_ID } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
+import type { BuilderRight } from '#common/types/front/builder/builder-right';
 import { getFileIds } from '#front/app/functions/get-file-ids';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -59,8 +59,8 @@ export class FileResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let left: BuilderLeftEnum = route.queryParams?.left;
-    let right: BuilderRightEnum = route.queryParams?.right;
+    let left: BuilderLeft = route.queryParams?.left;
+    let right: BuilderRight = route.queryParams?.right;
 
     if (isDefined(left)) {
       this.uiQuery.updatePart({ builderLeft: left });
@@ -76,7 +76,7 @@ export class FileResolver implements Resolve<Observable<boolean>> {
 
     if (fileIds.indexOf(parametersFileId) < 0) {
       this.navigateService.navigateToBuilder({
-        left: left || BuilderLeftEnum.Tree
+        left: left || 'Tree'
       });
       return of(false);
     }

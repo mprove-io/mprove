@@ -10,11 +10,7 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateEditorSessionRequest } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-request';
@@ -79,7 +75,7 @@ test('1', async t => {
             orgId: orgId,
             projectId: projectId,
             name: projectName,
-            remoteType: ProjectRemoteTypeEnum.Managed,
+            remoteType: 'Managed',
             defaultBranch: BRANCH_MAIN,
             e2bApiKey: e2bApiKey
           }
@@ -98,7 +94,7 @@ test('1', async t => {
           {
             projectId: projectId,
             providerId: OPENAI_PROVIDER_ID,
-            type: ProviderTypeEnum.OpenAI,
+            type: 'OpenAI',
             isEnabled: true,
             models: [
               {
@@ -125,7 +121,7 @@ test('1', async t => {
       idempotencyKey: makeId(),
       input: {
         projectId: projectId,
-        sandboxType: SandboxTypeEnum.E2B,
+        sandboxType: 'E2B',
         providerId: OPENAI_PROVIDER_ID,
         modelId: OPENAI_GPT_5_6_LUNA_MODEL_INFO.modelsDev.id,
         agent: 'plan',
@@ -184,7 +180,7 @@ test('1', async t => {
       idempotencyKey: makeId(),
       input: {
         sessionId: sessionId,
-        interactionType: InteractionTypeEnum.Message,
+        interactionType: 'Message',
         message: 'what is 10 + 20?',
         agent: 'plan',
         providerId: OPENAI_PROVIDER_ID,
@@ -274,7 +270,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep.logger,
       cs: prep.cs
     });

@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type QueryInfoQuery,
@@ -8,13 +7,16 @@ import {
 import {
   type Parameter,
   zParameter
-} from '#common/types/blockml/parts/parameter';
-import type { EnumValues } from '#common/types/enum-values';
+} from '#common/types/blockml/parts/report/row/parameter';
+import {
+  type RowType,
+  zRowType
+} from '#common/types/blockml/parts/report/row/row-type';
 
 export type QueryInfoRow = {
   rowId: string;
   name: string;
-  rowType: EnumValues<typeof RowTypeEnum>;
+  rowType: RowType;
   metricId: string;
   formula: string;
   parameters: Parameter[];
@@ -26,7 +28,7 @@ export let zQueryInfoRow = z
   .object({
     rowId: z.string(),
     name: z.string(),
-    rowType: z.enum(RowTypeEnum),
+    rowType: zRowType,
     metricId: z.string(),
     formula: z.string(),
     parameters: z.array(zParameter),

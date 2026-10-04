@@ -3,14 +3,20 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ChartUnit,
   zChartUnit
-} from '#common/types/backend/parts/chart-unit';
+} from '#common/types/backend/parts/chart/chart-unit';
 import { type Member, zMember } from '#common/types/backend/parts/member';
-import { type ModelX, zModelX } from '#common/types/backend/parts/model-x';
+import {
+  type ModelX,
+  zModelX
+} from '#common/types/backend/parts/model/model-x';
 import {
   type SpaceNode,
   zSpaceNode
 } from '#common/types/backend/parts/space-node';
-import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
+import {
+  type StructX,
+  zStructX
+} from '#common/types/backend/parts/struct/struct-x';
 
 export type ToBackendGetChartsOutput = {
   needValidate: boolean;

@@ -11,10 +11,10 @@ import {
   ASTWhereViewOperation,
   ParsedFilter
 } from '@malloydata/malloy-query-builder';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import { getMalloyFilterBooleanFractions } from '#node-common/functions/malloy/get-malloy-filter-boolean-fractions/get-malloy-filter-boolean-fractions';
 import { getMalloyFilterNumberFractions } from '#node-common/functions/malloy/get-malloy-filter-number-fractions/get-malloy-filter-number-fractions';
 import { getMalloyFilterStringFractions } from '#node-common/functions/malloy/get-malloy-filter-string-fractions/get-malloy-filter-string-fractions';
@@ -58,27 +58,22 @@ export function getMalloyFiltersFractions(item: {
       let parentBrick = `f\`${(op.node.filter as FilterWithFilterString).filter}\``;
 
       let fractions: Fraction[] =
-        field.result === FieldResultEnum.String &&
-        parsedFilter.kind === 'string'
+        field.result === 'string' && parsedFilter.kind === 'string'
           ? getMalloyFilterStringFractions({
               parentBrick: parentBrick,
               parsed: parsedFilter.parsed
             }).fractions
-          : field.result === FieldResultEnum.Boolean &&
-              parsedFilter.kind === 'boolean'
+          : field.result === 'boolean' && parsedFilter.kind === 'boolean'
             ? getMalloyFilterBooleanFractions({
                 parentBrick: parentBrick,
                 parsed: parsedFilter.parsed
               }).fractions
-            : field.result === FieldResultEnum.Number &&
-                parsedFilter.kind === 'number'
+            : field.result === 'number' && parsedFilter.kind === 'number'
               ? getMalloyFilterNumberFractions({
                   parentBrick: parentBrick,
                   parsed: parsedFilter.parsed
                 }).fractions
-              : [FieldResultEnum.Ts, FieldResultEnum.Date].indexOf(
-                    field.result
-                  ) > -1 &&
+              : ['ts', 'date'].indexOf(field.result) > -1 &&
                   (parsedFilter.kind === 'timestamp' ||
                     parsedFilter.kind === 'date')
                 ? getMalloyFilterTsFractions({

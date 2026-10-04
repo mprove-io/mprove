@@ -20,12 +20,12 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { DatabricksAuthType } from '#common/types/backend/parts/connection-parts/databricks-auth-type';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
 import type { ToBackendCreateConnectionRequest } from '#common/types/backend/routes/connections/create-connection/create-connection-request';
@@ -94,37 +94,26 @@ export class AddConnectionDialogComponent implements OnInit {
   isMotherduckAttachModeSingle = true;
   isMotherduckAccessModeReadOnly = true;
 
-  connectionTypes = [
-    ConnectionTypeEnum.PostgreSQL,
-    ConnectionTypeEnum.MySQL,
-    ConnectionTypeEnum.Trino,
-    ConnectionTypeEnum.Presto,
+  connectionTypes: ConnectionType[] = [
+    'PostgreSQL',
+    'MySQL',
+    'Trino',
+    'Presto',
     // ConnectionTypeEnum.ClickHouse,
-    ConnectionTypeEnum.SnowFlake,
-    ConnectionTypeEnum.BigQuery,
-    ConnectionTypeEnum.Databricks,
-    ConnectionTypeEnum.MotherDuck,
-    ConnectionTypeEnum.Api,
-    ConnectionTypeEnum.GoogleApi
+    'SnowFlake',
+    'BigQuery',
+    'Databricks',
+    'MotherDuck',
+    'Api',
+    'GoogleApi'
   ];
 
-  typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
-  typeMySQL = ConnectionTypeEnum.MySQL;
-  typeTrino = ConnectionTypeEnum.Trino;
-  typePresto = ConnectionTypeEnum.Presto;
-  typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   // typeClickHouse = ConnectionTypeEnum.ClickHouse;
-  typeDatabricks = ConnectionTypeEnum.Databricks;
-  databricksAuthTypes = [
-    DatabricksAuthTypeEnum.OAuthM2M,
-    DatabricksAuthTypeEnum.PersonalAccessToken
+
+  databricksAuthTypes: DatabricksAuthType[] = [
+    'OAuthM2M',
+    'PersonalAccessToken'
   ];
-  databricksAuthTypeOAuthM2M = DatabricksAuthTypeEnum.OAuthM2M;
-  databricksAuthTypePAT = DatabricksAuthTypeEnum.PersonalAccessToken;
-  typeMotherDuck = ConnectionTypeEnum.MotherDuck;
-  typeBigQuery = ConnectionTypeEnum.BigQuery;
-  typeApi = ConnectionTypeEnum.Api;
-  typeGoogleApi = ConnectionTypeEnum.GoogleApi;
 
   testConnectionResult: TestConnectionResult;
   testInternalHostResult: TestConnectionResult;
@@ -147,7 +136,7 @@ export class AddConnectionDialogComponent implements OnInit {
         ]
       ],
       envId: [PROJECT_ENV_PROD],
-      type: [ConnectionTypeEnum.PostgreSQL]
+      type: ['PostgreSQL']
     });
 
     this.addBigqueryForm = this.fb.group({
@@ -231,7 +220,7 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addDatabricksForm = this.fb.group({
-      authType: [DatabricksAuthTypeEnum.OAuthM2M, [Validators.required]],
+      authType: ['OAuthM2M', [Validators.required]],
       host: [undefined, [Validators.required]],
       internalHost: [undefined, []],
       path: [undefined, [Validators.required]],
@@ -333,8 +322,8 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addDatabricksForm
       .get('authType')
-      .valueChanges.subscribe((authType: DatabricksAuthTypeEnum) => {
-        if (authType === DatabricksAuthTypeEnum.OAuthM2M) {
+      .valueChanges.subscribe((authType: DatabricksAuthType) => {
+        if (authType === 'OAuthM2M') {
           this.addDatabricksForm
             .get('oauthClientId')
             .setValidators([Validators.required]);
@@ -464,11 +453,11 @@ export class AddConnectionDialogComponent implements OnInit {
       .subscribe();
   }
 
-  changeType(type: ConnectionTypeEnum) {
+  changeType(type: ConnectionType) {
     this.testConnectionResult = undefined;
     this.testInternalHostResult = undefined;
 
-    if (type !== ConnectionTypeEnum.BigQuery) {
+    if (type !== 'BigQuery') {
       this.addBigqueryForm.controls['serviceAccountCredentials'].reset();
       this.addBigqueryForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
@@ -480,12 +469,12 @@ export class AddConnectionDialogComponent implements OnInit {
     //   this.addClickhouseForm.controls['password'].reset();
     // }
 
-    if (type !== ConnectionTypeEnum.MotherDuck) {
+    if (type !== 'MotherDuck') {
       this.addMotherduckForm.controls['motherduckToken'].reset();
       this.addMotherduckForm.controls['database'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.PostgreSQL) {
+    if (type !== 'PostgreSQL') {
       this.addPostgresForm.controls['host'].reset();
       this.addPostgresForm.controls['internalHost'].reset();
       this.addPostgresForm.controls['port'].reset();
@@ -495,7 +484,7 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addPostgresForm.controls['password'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.MySQL) {
+    if (type !== 'MySQL') {
       this.addMysqlForm.controls['host'].reset();
       this.addMysqlForm.controls['internalHost'].reset();
       this.addMysqlForm.controls['port'].reset();
@@ -505,7 +494,7 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addMysqlForm.controls['password'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.Trino) {
+    if (type !== 'Trino') {
       this.addTrinoForm.controls['server'].reset();
       this.addTrinoForm.controls['internalServer'].reset();
       this.addTrinoForm.controls['catalog'].reset();
@@ -514,7 +503,7 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addTrinoForm.controls['password'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.Presto) {
+    if (type !== 'Presto') {
       this.addPrestoForm.controls['server'].reset();
       this.addPrestoForm.controls['internalServer'].reset();
       this.addPrestoForm.controls['port'].reset();
@@ -525,7 +514,7 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addPrestoForm.controls['password'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.SnowFlake) {
+    if (type !== 'SnowFlake') {
       this.addSnowflakeForm.controls['account'].reset();
       this.addSnowflakeForm.controls['warehouse'].reset();
       this.addSnowflakeForm.controls['database'].reset();
@@ -533,10 +522,8 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addSnowflakeForm.controls['password'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.Databricks) {
-      this.addDatabricksForm.controls['authType'].reset(
-        DatabricksAuthTypeEnum.OAuthM2M
-      );
+    if (type !== 'Databricks') {
+      this.addDatabricksForm.controls['authType'].reset('OAuthM2M');
       this.addDatabricksForm.controls['host'].reset();
       this.addDatabricksForm.controls['internalHost'].reset();
       this.addDatabricksForm.controls['path'].reset();
@@ -547,19 +534,19 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addDatabricksForm.controls['defaultSchema'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.Api) {
+    if (type !== 'Api') {
       this.addApiForm.controls['baseUrl'].reset();
       this.addApiForm.controls['headers'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.GoogleApi) {
+    if (type !== 'GoogleApi') {
       this.addGoogleApiForm.controls['serviceAccountCredentials'].reset();
       this.addGoogleApiForm.controls['baseUrl'].reset();
       this.addGoogleApiForm.controls['headers'].reset();
       this.addGoogleApiForm.controls['scopes'].reset();
     }
 
-    if (type === ConnectionTypeEnum.GoogleApi) {
+    if (type === 'GoogleApi') {
       this.addGoogleApiForm = this.fb.group({
         serviceAccountCredentials: [undefined, [Validators.required]],
         baseUrl: [
@@ -603,13 +590,13 @@ export class AddConnectionDialogComponent implements OnInit {
   isCurrentInternalPairInvalid() {
     let cType = this.addForm?.value?.type;
 
-    if (cType === ConnectionTypeEnum.PostgreSQL) {
+    if (cType === 'PostgreSQL') {
       return this.isPostgresInternalPairInvalid();
     }
-    if (cType === ConnectionTypeEnum.MySQL) {
+    if (cType === 'MySQL') {
       return this.isMysqlInternalPairInvalid();
     }
-    if (cType === ConnectionTypeEnum.Presto) {
+    if (cType === 'Presto') {
       return this.isPrestoInternalPairInvalid();
     }
     return false;
@@ -618,7 +605,7 @@ export class AddConnectionDialogComponent implements OnInit {
   getInternalPairErrorMessage() {
     let cType = this.addForm?.value?.type;
 
-    if (cType === ConnectionTypeEnum.Presto) {
+    if (cType === 'Presto') {
       return 'Set both Internal Server and Internal Port, or neither';
     }
     return 'Set both Internal Host and Internal Port, or neither';
@@ -627,28 +614,28 @@ export class AddConnectionDialogComponent implements OnInit {
   isInternalFieldsComplete() {
     let cType = this.addForm?.value?.type;
 
-    if (cType === ConnectionTypeEnum.PostgreSQL) {
+    if (cType === 'PostgreSQL') {
       let host = this.addPostgresForm?.value?.internalHost;
       let port = this.addPostgresForm?.value?.internalPort;
       return isDefined(host) && host !== '' && isDefined(port) && port !== '';
     }
-    if (cType === ConnectionTypeEnum.MySQL) {
+    if (cType === 'MySQL') {
       let host = this.addMysqlForm?.value?.internalHost;
       let port = this.addMysqlForm?.value?.internalPort;
       return isDefined(host) && host !== '' && isDefined(port) && port !== '';
     }
-    if (cType === ConnectionTypeEnum.Presto) {
+    if (cType === 'Presto') {
       let server = this.addPrestoForm?.value?.internalServer;
       let port = this.addPrestoForm?.value?.internalPort;
       return (
         isDefined(server) && server !== '' && isDefined(port) && port !== ''
       );
     }
-    if (cType === ConnectionTypeEnum.Trino) {
+    if (cType === 'Trino') {
       let server = this.addTrinoForm?.value?.internalServer;
       return isDefined(server) && server !== '';
     }
-    if (cType === ConnectionTypeEnum.Databricks) {
+    if (cType === 'Databricks') {
       let host = this.addDatabricksForm?.value?.internalHost;
       return isDefined(host) && host !== '';
     }
@@ -674,22 +661,18 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (
       !this.addForm.valid ||
-      (cType === ConnectionTypeEnum.BigQuery && !this.addBigqueryForm.valid) ||
+      (cType === 'BigQuery' && !this.addBigqueryForm.valid) ||
       // (cType === ConnectionTypeEnum.ClickHouse &&
       //   !this.addClickhouseForm.valid) ||
-      (cType === ConnectionTypeEnum.MotherDuck &&
-        !this.addMotherduckForm.valid) ||
-      (cType === ConnectionTypeEnum.PostgreSQL &&
-        !this.addPostgresForm.valid) ||
-      (cType === ConnectionTypeEnum.MySQL && !this.addMysqlForm.valid) ||
-      (cType === ConnectionTypeEnum.Trino && !this.addTrinoForm.valid) ||
-      (cType === ConnectionTypeEnum.Presto && !this.addPrestoForm.valid) ||
-      (cType === ConnectionTypeEnum.SnowFlake &&
-        !this.addSnowflakeForm.valid) ||
-      (cType === ConnectionTypeEnum.Databricks &&
-        !this.addDatabricksForm.valid) ||
-      (cType === ConnectionTypeEnum.Api && !this.addApiForm.valid) ||
-      (cType === ConnectionTypeEnum.GoogleApi && !this.addGoogleApiForm.valid)
+      (cType === 'MotherDuck' && !this.addMotherduckForm.valid) ||
+      (cType === 'PostgreSQL' && !this.addPostgresForm.valid) ||
+      (cType === 'MySQL' && !this.addMysqlForm.valid) ||
+      (cType === 'Trino' && !this.addTrinoForm.valid) ||
+      (cType === 'Presto' && !this.addPrestoForm.valid) ||
+      (cType === 'SnowFlake' && !this.addSnowflakeForm.valid) ||
+      (cType === 'Databricks' && !this.addDatabricksForm.valid) ||
+      (cType === 'Api' && !this.addApiForm.valid) ||
+      (cType === 'GoogleApi' && !this.addGoogleApiForm.valid)
     ) {
       return;
     }
@@ -699,10 +682,9 @@ export class AddConnectionDialogComponent implements OnInit {
     let prestoInternalPairInvalid = this.isPrestoInternalPairInvalid();
 
     if (
-      (cType === ConnectionTypeEnum.PostgreSQL &&
-        postgresInternalPairInvalid) ||
-      (cType === ConnectionTypeEnum.MySQL && mysqlInternalPairInvalid) ||
-      (cType === ConnectionTypeEnum.Presto && prestoInternalPairInvalid)
+      (cType === 'PostgreSQL' && postgresInternalPairInvalid) ||
+      (cType === 'MySQL' && mysqlInternalPairInvalid) ||
+      (cType === 'Presto' && prestoInternalPairInvalid)
     ) {
       return;
     }
@@ -721,7 +703,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     let options: ConnectionOptions = {
       bigquery:
-        cType === ConnectionTypeEnum.BigQuery
+        cType === 'BigQuery'
           ? {
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
@@ -746,7 +728,7 @@ export class AddConnectionDialogComponent implements OnInit {
       //       }
       //     : undefined,
       motherduck:
-        cType === ConnectionTypeEnum.MotherDuck
+        cType === 'MotherDuck'
           ? {
               motherduckToken: this.addMotherduckForm.value.motherduckToken,
               database: this.addMotherduckForm.value.database,
@@ -757,7 +739,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       postgres:
-        cType === ConnectionTypeEnum.PostgreSQL
+        cType === 'PostgreSQL'
           ? {
               host: this.addPostgresForm.value.host,
               internalHost:
@@ -777,7 +759,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       mysql:
-        cType === ConnectionTypeEnum.MySQL
+        cType === 'MySQL'
           ? {
               host: this.addMysqlForm.value.host,
               internalHost: this.addMysqlForm.value.internalHost || undefined,
@@ -795,7 +777,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       trino:
-        cType === ConnectionTypeEnum.Trino
+        cType === 'Trino'
           ? {
               server: this.addTrinoForm.value.server,
               internalServer:
@@ -807,7 +789,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       presto:
-        cType === ConnectionTypeEnum.Presto
+        cType === 'Presto'
           ? {
               server: this.addPrestoForm.value.server,
               internalServer:
@@ -827,7 +809,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       snowflake:
-        cType === ConnectionTypeEnum.SnowFlake
+        cType === 'SnowFlake'
           ? {
               account: this.addSnowflakeForm.value.account,
               warehouse: this.addSnowflakeForm.value.warehouse,
@@ -837,7 +819,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       databricks:
-        cType === ConnectionTypeEnum.Databricks
+        cType === 'Databricks'
           ? {
               authType: this.addDatabricksForm.value.authType,
               host: this.addDatabricksForm.value.host,
@@ -852,14 +834,14 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       storeApi:
-        cType === ConnectionTypeEnum.Api
+        cType === 'Api'
           ? {
               baseUrl: this.addApiForm.value.baseUrl.trim(),
               headers: this.addApiForm.value.headers
             }
           : undefined,
       storeGoogleApi:
-        cType === ConnectionTypeEnum.GoogleApi
+        cType === 'GoogleApi'
           ? {
               googleAccessToken: undefined,
               googleAccessTokenExpiryDate: undefined,
@@ -869,9 +851,7 @@ export class AddConnectionDialogComponent implements OnInit {
               baseUrl: this.addGoogleApiForm.value.baseUrl.trim(),
               headers: this.addGoogleApiForm.value.headers,
               googleAuthScopes:
-                [ConnectionTypeEnum.GoogleApi].indexOf(
-                  this.addForm.get('type').value
-                ) > -1
+                ['GoogleApi'].indexOf(this.addForm.get('type').value) > -1
                   ? this.addGoogleApiForm.value.scopes.map((x: any) => x.value)
                   : []
             }

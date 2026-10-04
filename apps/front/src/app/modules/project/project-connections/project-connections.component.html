@@ -111,19 +111,19 @@
                   class="w-48"
                   [ngClass]="{
                     'text-s400':
-                      (connection.type === typeApi &&
+                      (connection.type === 'Api' &&
                         !!connection.options.storeApi?.baseUrl) ||
-                      (connection.type === typeGoogleApi &&
+                      (connection.type === 'GoogleApi' &&
                         !!connection.options.storeGoogleApi?.baseUrl)
                   }"
                 >
                   {{
-                    (connection.type === typeApi &&
+                    (connection.type === 'Api' &&
                       !!connection.options.storeApi?.baseUrl) ||
-                    (connection.type === typeGoogleApi &&
+                    (connection.type === 'GoogleApi' &&
                       !!connection.options.storeGoogleApi?.baseUrl)
                       ? ''
-                      : ((connection.type === typePostgreSQL
+                      : ((connection.type === 'PostgreSQL'
                           ? connection.options.postgres?.isSSL
                           : ''
                         ).toString() | capitalize)
@@ -132,47 +132,47 @@
 
                 <td data-cy="projectConnectionsHost" class="w-96">
                   {{
-                    (connection.type === typePostgreSQL
+                    (connection.type === 'PostgreSQL'
                       ? connection.options.postgres?.host
-                      : connection.type === typeMySQL
+                      : connection.type === 'MySQL'
                         ? connection.options.mysql?.host
-                        : connection.type === typeTrino
+                        : connection.type === 'Trino'
                           ? connection.options.trino?.server
-                          : connection.type === typePresto
+                          : connection.type === 'Presto'
                             ? connection.options.presto?.server
-                            : connection.type === typeDatabricks
+                            : connection.type === 'Databricks'
                               ? connection.options.databricks?.host
                               : undefined) ||
-                      (connection.type === typeApi
+                      (connection.type === 'Api'
                         ? connection.options.storeApi?.baseUrl
-                        : connection.type === typeGoogleApi
+                        : connection.type === 'GoogleApi'
                           ? connection.options.storeGoogleApi?.baseUrl
                           : undefined)
                   }}
                   <span
                     *ngIf="
-                      (connection.type === typePostgreSQL &&
+                      (connection.type === 'PostgreSQL' &&
                         connection.options.postgres?.internalHost) ||
-                      (connection.type === typeMySQL &&
+                      (connection.type === 'MySQL' &&
                         connection.options.mysql?.internalHost) ||
-                      (connection.type === typeTrino &&
+                      (connection.type === 'Trino' &&
                         connection.options.trino?.internalServer) ||
-                      (connection.type === typePresto &&
+                      (connection.type === 'Presto' &&
                         connection.options.presto?.internalServer) ||
-                      (connection.type === typeDatabricks &&
+                      (connection.type === 'Databricks' &&
                         connection.options.databricks?.internalHost)
                     "
                     class="text-s400 ml-2"
                     >{{
-                      connection.type === typePostgreSQL
+                      connection.type === 'PostgreSQL'
                         ? connection.options.postgres?.internalHost
-                        : connection.type === typeMySQL
+                        : connection.type === 'MySQL'
                           ? connection.options.mysql?.internalHost
-                          : connection.type === typeTrino
+                          : connection.type === 'Trino'
                             ? connection.options.trino?.internalServer
-                            : connection.type === typePresto
+                            : connection.type === 'Presto'
                               ? connection.options.presto?.internalServer
-                              : connection.type === typeDatabricks
+                              : connection.type === 'Databricks'
                                 ? connection.options.databricks?.internalHost
                                 : undefined
                     }}</span
@@ -181,30 +181,30 @@
 
                 <td class="w-48">
                   {{
-                    connection.type === typePostgreSQL
+                    connection.type === 'PostgreSQL'
                       ? connection.options.postgres?.port
-                      : connection.type === typeMySQL
+                      : connection.type === 'MySQL'
                         ? connection.options.mysql?.port
-                        : connection.type === typePresto
+                        : connection.type === 'Presto'
                           ? connection.options.presto?.port
                           : undefined
                   }}
                   <span
                     *ngIf="
-                      (connection.type === typePostgreSQL &&
+                      (connection.type === 'PostgreSQL' &&
                         connection.options.postgres?.internalPort) ||
-                      (connection.type === typeMySQL &&
+                      (connection.type === 'MySQL' &&
                         connection.options.mysql?.internalPort) ||
-                      (connection.type === typePresto &&
+                      (connection.type === 'Presto' &&
                         connection.options.presto?.internalPort)
                     "
                     class="text-s400 ml-2"
                     >{{
-                      connection.type === typePostgreSQL
+                      connection.type === 'PostgreSQL'
                         ? connection.options.postgres?.internalPort
-                        : connection.type === typeMySQL
+                        : connection.type === 'MySQL'
                           ? connection.options.mysql?.internalPort
-                          : connection.type === typePresto
+                          : connection.type === 'Presto'
                             ? connection.options.presto?.internalPort
                             : undefined
                     }}</span
@@ -213,19 +213,19 @@
 
                 <td class="w-48"
                   >{{
-                    connection.type === typePostgreSQL
+                    connection.type === 'PostgreSQL'
                       ? connection.options.postgres?.database
-                      : connection.type === typeMySQL
+                      : connection.type === 'MySQL'
                         ? connection.options.mysql?.database
-                        : connection.type === typeTrino
+                        : connection.type === 'Trino'
                           ? connection.options.trino?.catalog
-                          : connection.type === typePresto
+                          : connection.type === 'Presto'
                             ? connection.options.presto?.catalog
-                            : connection.type === typeSnowFlake
+                            : connection.type === 'SnowFlake'
                               ? connection.options.snowflake?.database
-                              : connection.type === typeMotherDuck
+                              : connection.type === 'MotherDuck'
                                 ? connection.options.motherduck?.database
-                                : connection.type === typeDatabricks
+                                : connection.type === 'Databricks'
                                   ? connection.options.databricks
                                       ?.defaultCatalog
                                   : undefined
@@ -234,15 +234,15 @@
 
                 <td class="w-48"
                   >{{
-                    connection.type === typePostgreSQL
+                    connection.type === 'PostgreSQL'
                       ? connection.options.postgres?.username
-                      : connection.type === typeMySQL
+                      : connection.type === 'MySQL'
                         ? connection.options.mysql?.user
-                        : connection.type === typeTrino
+                        : connection.type === 'Trino'
                           ? connection.options.trino?.user
-                          : connection.type === typePresto
+                          : connection.type === 'Presto'
                             ? connection.options.presto?.user
-                            : connection.type === typeSnowFlake
+                            : connection.type === 'SnowFlake'
                               ? connection.options.snowflake?.username
                               : undefined
                   }}
@@ -252,17 +252,17 @@
                   <div
                     class="flex-col"
                     *ngIf="
-                      connection.type === typeBigQuery ||
-                      connection.type === typeGoogleApi
+                      connection.type === 'BigQuery' ||
+                      connection.type === 'GoogleApi'
                     "
                   >
                     <div>
                       <span class="font-medium">Project: </span>
                       <span class="text-g700">
                         {{
-                          connection.type === typeBigQuery
+                          connection.type === 'BigQuery'
                             ? connection.options.bigquery?.googleCloudProject
-                            : connection.type === typeGoogleApi
+                            : connection.type === 'GoogleApi'
                               ? connection.options.storeGoogleApi
                                   ?.googleCloudProject
                               : undefined
@@ -273,17 +273,17 @@
                       <span class="font-medium">Client Email: </span>
                       <span class="text-g700">
                         {{
-                          connection.type === typeBigQuery
+                          connection.type === 'BigQuery'
                             ? connection.options.bigquery
                                 ?.googleCloudClientEmail
-                            : connection.type === typeGoogleApi
+                            : connection.type === 'GoogleApi'
                               ? connection.options.storeGoogleApi
                                   ?.googleCloudClientEmail
                               : undefined
                         }}
                       </span>
                     </div>
-                    <div *ngIf="connection.type === typeBigQuery">
+                    <div *ngIf="connection.type === 'BigQuery'">
                       <span class="mt-2 font-medium"
                         >Query Size Limit, gb:
                       </span>
@@ -295,10 +295,7 @@
                     </div>
                   </div>
 
-                  <div
-                    class="flex-col"
-                    *ngIf="connection.type === typeSnowFlake"
-                  >
+                  <div class="flex-col" *ngIf="connection.type === 'SnowFlake'">
                     <div>
                       <span class="font-medium">Account: </span>
                       <span class="text-g700">
@@ -316,7 +313,7 @@
                   <div
                     class="flex-col"
                     *ngIf="
-                      connection.type === typeTrino &&
+                      connection.type === 'Trino' &&
                       !!connection.options.trino?.schema
                     "
                   >
@@ -331,7 +328,7 @@
                   <div
                     class="flex-col"
                     *ngIf="
-                      connection.type === typePresto &&
+                      connection.type === 'Presto' &&
                       !!connection.options.presto?.schema
                     "
                   >
@@ -345,7 +342,7 @@
 
                   <div
                     class="flex-col"
-                    *ngIf="connection.type === typeDatabricks"
+                    *ngIf="connection.type === 'Databricks'"
                   >
                     <div *ngIf="connection.options.databricks?.authType">
                       <span class="font-medium">Auth Type: </span>
@@ -376,7 +373,7 @@
                   <div
                     class="flex-col"
                     *ngIf="
-                      connection.type === typeGoogleApi &&
+                      connection.type === 'GoogleApi' &&
                       connection.options.storeGoogleApi?.googleAuthScopes
                         .length > 0
                     "
@@ -405,9 +402,9 @@
                   <div
                     class="flex-col"
                     *ngIf="
-                      (connection.type === typeApi &&
+                      (connection.type === 'Api' &&
                         connection.options.storeApi?.headers?.length > 0) ||
-                      (connection.type === typeGoogleApi &&
+                      (connection.type === 'GoogleApi' &&
                         connection.options.storeGoogleApi?.headers?.length > 0)
                     "
                   >
@@ -415,7 +412,7 @@
                       class="font-medium"
                       [ngClass]="{
                         'mt-2':
-                          connection.type === typeGoogleApi &&
+                          connection.type === 'GoogleApi' &&
                           !!connection.options.storeGoogleApi
                             .googleCloudClientEmail
                       }"
@@ -423,9 +420,9 @@
                     >
                     <div
                       *ngFor="
-                        let header of connection.type === typeApi
+                        let header of connection.type === 'Api'
                           ? connection.options.storeApi?.headers
-                          : connection.type === typeGoogleApi
+                          : connection.type === 'GoogleApi'
                             ? connection.options.storeGoogleApi?.headers
                             : []
                       "

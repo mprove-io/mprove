@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
+
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
 import { QDataRow } from '#front/app/services/data.service';
 
 @Component({
@@ -10,12 +9,6 @@ import { QDataRow } from '#front/app/services/data.service';
   templateUrl: './chart-table.component.html'
 })
 export class ChartTableComponent {
-  fieldClassDimension = FieldClassEnum.Dimension;
-  fieldClassMeasure = FieldClassEnum.Measure;
-  fieldClassCalculation = FieldClassEnum.Calculation;
-
-  fieldResultNumber = FieldResultEnum.Number;
-
   @Input()
   isTableHeaderWide: boolean;
 

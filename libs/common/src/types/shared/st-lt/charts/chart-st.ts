@@ -1,4 +1,4 @@
-import type { Tile } from '#common/types/blockml/parts/tile';
+import type { Tile } from '#common/types/blockml/parts/tile/tile';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export type ChartSt = {

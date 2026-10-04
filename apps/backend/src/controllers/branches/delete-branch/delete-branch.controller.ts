@@ -30,8 +30,7 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Branches')
@@ -71,9 +70,9 @@ export class DeleteBranchController {
       allowProdRepo: true
     });
 
-    if (repoType === RepoTypeEnum.Session) {
+    if (repoType === 'session') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_BRANCH_CANNOT_BE_DELETED
+        message: 'BACKEND_SESSION_BRANCH_CANNOT_BE_DELETED'
       });
     }
 
@@ -94,7 +93,7 @@ export class DeleteBranchController {
 
     if (branchId === project.defaultBranch) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED
+        message: 'BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED'
       });
     }
 

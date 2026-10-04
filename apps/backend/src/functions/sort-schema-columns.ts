@@ -1,4 +1,3 @@
-import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
 
 export function sortSchemaColumns(item: {
@@ -18,9 +17,7 @@ export function sortSchemaColumns(item: {
   } else {
     let oneToManyColumns = columns
       .filter(col =>
-        col.references?.some(
-          ref => ref.relationshipType === RelationshipTypeEnum.OneToMany
-        )
+        col.references?.some(ref => ref.relationshipType === 'one_to_many')
       )
       .sort((a, b) => a.columnName.localeCompare(b.columnName));
     topColumnName = oneToManyColumns[0]?.columnName;

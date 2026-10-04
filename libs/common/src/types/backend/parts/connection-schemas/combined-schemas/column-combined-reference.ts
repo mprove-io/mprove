@@ -1,13 +1,10 @@
 import { z } from 'zod';
-import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
+import { zRelationshipType } from '#common/types/shared/schema/relationship-type';
 
 export type ColumnCombinedReference = {
-  relationshipType?:
-    | RelationshipTypeEnum.OneToOne
-    | RelationshipTypeEnum.OneToMany
-    | RelationshipTypeEnum.ManyToOne
-    | RelationshipTypeEnum.ManyToMany;
+  relationshipType?: RelationshipType;
   isForeignKey: boolean;
   referencedSchemaName?: string;
   referencedTableName: string;
@@ -16,7 +13,7 @@ export type ColumnCombinedReference = {
 
 export let zColumnCombinedReference = z
   .object({
-    relationshipType: z.enum(RelationshipTypeEnum).nullish(),
+    relationshipType: zRelationshipType.nullish(),
     isForeignKey: z.boolean(),
     referencedSchemaName: z.string().nullish(),
     referencedTableName: z.string(),

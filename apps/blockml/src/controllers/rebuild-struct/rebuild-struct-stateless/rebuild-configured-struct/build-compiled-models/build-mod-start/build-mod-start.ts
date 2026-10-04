@@ -2,9 +2,9 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
@@ -24,7 +24,7 @@ export function buildModStart(item: {
   projectId: string;
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.ResultAsync<FileMod[], never> {
   return Result.pipe(

@@ -5,15 +5,12 @@ import {
   ASTWhereViewOperation
 } from '@malloydata/malloy-query-builder';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import { getMalloyFiltersFractions } from '#node-common/functions/malloy/make-malloy-query/process-malloy-where-or-having/get-malloy-filters-fractions/get-malloy-filters-fractions';
 
 export function processMalloyWhereOrHaving(item: {
@@ -57,63 +54,61 @@ export function processMalloyWhereOrHaving(item: {
     let booleanValues = filter.fractions.filter(
       fraction =>
         [
-          FractionTypeEnum.BooleanIsTrue,
-          FractionTypeEnum.BooleanIsTruthy,
-          FractionTypeEnum.BooleanIsFalse,
-          FractionTypeEnum.BooleanIsFalsy,
-          FractionTypeEnum.BooleanIsNull,
-          FractionTypeEnum.BooleanIsNotTrue,
-          FractionTypeEnum.BooleanIsNotFalse,
-          FractionTypeEnum.BooleanIsNotFalsy,
-          FractionTypeEnum.BooleanIsNotNull
+          'BooleanIsTrue',
+          'BooleanIsTruthy',
+          'BooleanIsFalse',
+          'BooleanIsFalsy',
+          'BooleanIsNull',
+          'BooleanIsNotTrue',
+          'BooleanIsNotFalse',
+          'BooleanIsNotFalsy',
+          'BooleanIsNotNull'
         ].indexOf(fraction.type) > -1
     );
 
     let ORs = filter.fractions.filter(
       fraction =>
-        fraction.operator === FractionOperatorEnum.Or &&
+        fraction.operator === 'Or' &&
         fraction.brick !== MALLOY_FILTER_ANY &&
         [
-          FractionTypeEnum.BooleanIsTrue,
-          FractionTypeEnum.BooleanIsTruthy,
-          FractionTypeEnum.BooleanIsFalse,
-          FractionTypeEnum.BooleanIsFalsy,
-          FractionTypeEnum.BooleanIsNull,
-          FractionTypeEnum.BooleanIsNotTrue,
-          FractionTypeEnum.BooleanIsNotFalse,
-          FractionTypeEnum.BooleanIsNotFalsy,
-          FractionTypeEnum.BooleanIsNotNull
+          'BooleanIsTrue',
+          'BooleanIsTruthy',
+          'BooleanIsFalse',
+          'BooleanIsFalsy',
+          'BooleanIsNull',
+          'BooleanIsNotTrue',
+          'BooleanIsNotFalse',
+          'BooleanIsNotFalsy',
+          'BooleanIsNotNull'
         ].indexOf(fraction.type) < 0
     );
 
     let ANDs = filter.fractions.filter(
       fraction =>
-        fraction.operator === FractionOperatorEnum.And &&
+        fraction.operator === 'And' &&
         fraction.brick !== MALLOY_FILTER_ANY &&
         [
-          FractionTypeEnum.BooleanIsTrue,
-          FractionTypeEnum.BooleanIsTruthy,
-          FractionTypeEnum.BooleanIsFalse,
-          FractionTypeEnum.BooleanIsFalsy,
-          FractionTypeEnum.BooleanIsNull,
-          FractionTypeEnum.BooleanIsNotTrue,
-          FractionTypeEnum.BooleanIsNotFalse,
-          FractionTypeEnum.BooleanIsNotFalsy,
-          FractionTypeEnum.BooleanIsNotNull
+          'BooleanIsTrue',
+          'BooleanIsTruthy',
+          'BooleanIsFalse',
+          'BooleanIsFalsy',
+          'BooleanIsNull',
+          'BooleanIsNotTrue',
+          'BooleanIsNotFalse',
+          'BooleanIsNotFalsy',
+          'BooleanIsNotNull'
         ].indexOf(fraction.type) < 0
     );
 
     let filterModelFields = [modelField];
 
     if (
-      modelField.result === FieldResultEnum.Ts &&
+      modelField.result === 'ts' &&
       isDefined(modelField.timeframe) &&
       isDefined(modelField.malloyBaseFieldId)
     ) {
       let baseModelField = model.fields.find(
-        x =>
-          x.id === modelField.malloyBaseFieldId &&
-          x.result === FieldResultEnum.Ts
+        x => x.id === modelField.malloyBaseFieldId && x.result === 'ts'
       );
 
       // if (isDefined(baseModelField) && timezone === UTC) {
@@ -129,19 +124,19 @@ export function processMalloyWhereOrHaving(item: {
 
       if (ORs.length > 0) {
         let fstrORs =
-          filterModelField.result === FieldResultEnum.String
+          filterModelField.result === 'string'
             ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(', ')
-            : filterModelField.result === FieldResultEnum.Number
+            : filterModelField.result === 'number'
               ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
-              : filterModelField.result === FieldResultEnum.Ts
+              : filterModelField.result === 'ts'
                 ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
-                : filterModelField.result === FieldResultEnum.Date
+                : filterModelField.result === 'date'
                   ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(
                       ' or '
                     )
                   : undefined;
 
-        if (modelField.fieldClass === FieldClassEnum.Dimension) {
+        if (modelField.fieldClass === 'dimension') {
           segment0.addWhere(filterFieldName, filterFieldPath, fstrORs);
         } else {
           segment0.addHaving(filterFieldName, filterFieldPath, fstrORs);
@@ -150,7 +145,7 @@ export function processMalloyWhereOrHaving(item: {
 
       if (ANDs.length > 0) {
         ANDs.map(y => y.brick.slice(2, -1)).forEach(fstr => {
-          if (modelField.fieldClass === FieldClassEnum.Dimension) {
+          if (modelField.fieldClass === 'dimension') {
             segment0.addWhere(filterFieldName, filterFieldPath, fstr);
           } else {
             segment0.addHaving(filterFieldName, filterFieldPath, fstr);
@@ -181,7 +176,7 @@ export function processMalloyWhereOrHaving(item: {
         booleanValues.forEach(x => {
           let fstrAny = x.brick.slice(2, -1);
 
-          if (modelField.fieldClass === FieldClassEnum.Dimension) {
+          if (modelField.fieldClass === 'dimension') {
             segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
           } else {
             segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);
@@ -193,7 +188,7 @@ export function processMalloyWhereOrHaving(item: {
         anyValues.forEach(x => {
           let fstrAny = '';
 
-          if (modelField.fieldClass === FieldClassEnum.Dimension) {
+          if (modelField.fieldClass === 'dimension') {
             segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
           } else {
             segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);
@@ -219,7 +214,7 @@ export function processMalloyWhereOrHaving(item: {
       let modelField = model.fields.find(x => x.id === filter.fieldId);
 
       let shouldUseOriginalFractions =
-        isDefined(modelField) && modelField.result === FieldResultEnum.Ts;
+        isDefined(modelField) && modelField.result === 'ts';
 
       mconfigFiltersFractions[filter.fieldId] = shouldUseOriginalFractions
         ? filter.fractions

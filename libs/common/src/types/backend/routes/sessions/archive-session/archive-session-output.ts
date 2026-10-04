@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type SessionApi,
   zSessionApi
-} from '#common/types/backend/parts/session-api';
+} from '#common/types/backend/parts/session/session-api';
 
 export type ToBackendArchiveSessionOutput = {
   session: SessionApi;

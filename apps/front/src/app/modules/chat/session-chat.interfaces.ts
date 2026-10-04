@@ -1,22 +1,17 @@
 import type { ToolPart } from '@opencode-ai/sdk/v2';
+import type { ChatMessageRole } from '#front/app/modules/chat/chat-message-role';
+import type { FileDiffStatus } from '#front/app/modules/chat/file-diff-status';
 
 export interface FileDiffInfo {
   file: string;
   additions: number;
   deletions: number;
-  status?: 'added' | 'deleted' | 'modified';
+  status?: FileDiffStatus;
   patch?: string;
 }
 
 export interface ChatMessage {
-  role:
-    | 'user'
-    | 'agent'
-    | 'tool'
-    | 'thought'
-    | 'error'
-    | 'compaction'
-    | 'interrupted';
+  role: ChatMessageRole;
   text: string;
   toolPart?: ToolPart;
   agentName?: string;

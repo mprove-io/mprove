@@ -47,15 +47,14 @@ import {
   UTC
 } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateDraftDashboardOutput } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-output';
-import type { DiskCatalogFile } from '#common/types/disk/parts/disk-catalog-file';
+import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)
@@ -184,7 +183,7 @@ export class CreateDraftDashboardController {
     fromDashboardX.tiles = yTiles;
     fromDashboardX.fields = newDashboardFields;
 
-    let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
+    let fileName = `${newDashboardId}.dashboard`;
 
     let mdir = currentStruct.mproveConfig.mproveDirValue;
 
@@ -281,7 +280,7 @@ export class CreateDraftDashboardController {
 
     if (isUndefined(newApiDashboard)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_DRAFT_DASHBOARD_FAILED,
+        message: 'BACKEND_CREATE_DRAFT_DASHBOARD_FAILED',
         displayData: {
           structErrors: tempStruct.errors
         }
@@ -304,7 +303,7 @@ export class CreateDraftDashboardController {
     cachedMconfigs.forEach(x => {
       if (x.parentId !== fromDashboardX.dashboardId) {
         throw new ServerError({
-          message: ErEnum.BACKEND_MCONFIG_PARENT_ID_MISMATCH
+          message: 'BACKEND_MCONFIG_PARENT_ID_MISMATCH'
         });
       }
     });

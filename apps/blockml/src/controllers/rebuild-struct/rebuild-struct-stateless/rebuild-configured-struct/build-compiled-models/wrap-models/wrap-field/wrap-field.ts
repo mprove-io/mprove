@@ -1,9 +1,8 @@
-import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { ModelNode } from '#common/types/blockml/parts/model-node';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
 export function wrapField(item: {
   topNode: ModelNode;
   field: FieldAny;
@@ -82,7 +81,7 @@ export function wrapField(item: {
         required: false,
         isField: false,
         children: [fieldNode],
-        nodeClass: FieldClassEnum.Dimension
+        nodeClass: 'dimension'
       };
 
       topNode.children.push(newGroupNode);

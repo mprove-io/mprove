@@ -22,8 +22,8 @@
   <div
     class="flex h-[30px] flex-col justify-center"
     [ngClass]="{
-      'ml-[50px]': session?.type === sessionTypeEnum.Explorer,
-      'ml-[105px]': session?.type !== sessionTypeEnum.Explorer
+      'ml-[50px]': session?.type === 'Explorer',
+      'ml-[105px]': session?.type !== 'Explorer'
     }"
   >
     <div
@@ -48,7 +48,7 @@
   <!-- Permission dock -->
   <div
     *ngIf="
-      session?.type !== sessionTypeEnum.Explorer &&
+      session?.type !== 'Explorer' &&
       permissions.length > 0 &&
       !isArchived &&
       session.sessionId &&
@@ -116,11 +116,7 @@
 
   <!-- Question dock -->
   <div
-    *ngIf="
-      session?.type !== sessionTypeEnum.Explorer &&
-      questions.length > 0 &&
-      !isArchived
-    "
+    *ngIf="session?.type !== 'Explorer' && questions.length > 0 && !isArchived"
     class="mx-auto mb-8 flex w-full max-w-[976px] flex-shrink-0 flex-col gap-2 px-6 pb-2 pt-2"
   >
     <m-question-prompt
@@ -136,9 +132,9 @@
   <div *ngIf="isArchived" class="flex-shrink-0 px-6 pb-4 pt-[6px]">
     <div class="mx-auto flex max-w-[860px] items-center justify-center">
       <div class="text-s400 py-1 text-lg">{{
-        archiveReason === archiveReasonEnum.Expire
+        archiveReason === 'Expire'
           ? 'Session is archived (sandbox expired)'
-          : archiveReason === archiveReasonEnum.Commit
+          : archiveReason === 'Commit'
             ? 'Session is archived (commit by User)'
             : 'Session is archived by User'
       }}</div>
@@ -147,18 +143,18 @@
 
   <!-- Paused session message -->
   <div
-    *ngIf="session?.status === sessionStatusEnum.Paused && !isOptimisticLoading"
+    *ngIf="session?.status === 'Paused' && !isOptimisticLoading"
     class="flex-shrink-0 px-6 pb-4 pt-[6px]"
   >
     <div class="mx-auto flex max-w-[860px] items-center justify-center">
       <div class="text-s400 py-1 text-lg">{{
-        pauseReason === pauseReasonEnum.User
+        pauseReason === 'User'
           ? 'Session is paused by User'
-          : pauseReason === pauseReasonEnum.Idle
+          : pauseReason === 'Idle'
             ? 'Session is paused (idle)'
-            : pauseReason === pauseReasonEnum.Safe
+            : pauseReason === 'Safe'
               ? 'Session is paused (safe)'
-              : pauseReason === pauseReasonEnum.External
+              : pauseReason === 'External'
                 ? 'Session is paused (external)'
                 : 'Session is paused'
       }}</div>

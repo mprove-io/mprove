@@ -3,15 +3,15 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DiskCatalogFile,
   zDiskCatalogFile
-} from '#common/types/disk/parts/disk-catalog-file';
+} from '#common/types/disk/parts/catalog/disk-catalog-file';
 import {
   type DiskFileChange,
   zDiskFileChange
-} from '#common/types/disk/parts/disk-file-change';
+} from '#common/types/disk/parts/file/disk-file-change';
 import {
   type DiskSyncFile,
   zDiskSyncFile
-} from '#common/types/disk/parts/disk-sync-file';
+} from '#common/types/disk/parts/file/disk-sync-file';
 import { type ToDiskSyncRepoRepo, zToDiskSyncRepoRepo } from './sync-repo-repo';
 
 export type ToDiskSyncRepoOutput =

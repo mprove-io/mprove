@@ -7,26 +7,20 @@ import { checkStoreFractionControls } from '#blockml/functions/check-store-fract
 import { checkStoreFractionControlsUse } from '#blockml/functions/check-store-fraction-controls-use/check-store-fraction-controls-use';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
 import type { FileTileParameter } from '#common/types/blockml/parts/internal/file-tile-parameter';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
-let func = FuncEnum.CheckTileParameters;
+let func: Func = 'build-tile/check-tile-parameters';
 
 export function checkTileParameters<T extends dcType>(item: {
   caseSensitiveStringFilters: boolean;
@@ -35,7 +29,7 @@ export function checkTileParameters<T extends dcType>(item: {
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
@@ -43,7 +37,7 @@ export function checkTileParameters<T extends dcType>(item: {
   let { caller, structId, apiModels, stores, caseSensitiveStringFilters } =
     item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -66,8 +60,8 @@ export function checkTileParameters<T extends dcType>(item: {
         if (isUndefined(p.apply_to)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_APPLY_TO,
-              message: `parameter "${ParameterEnum.ApplyTo}" is required`,
+              title: 'MISSING_APPLY_TO',
+              message: `parameter "apply_to" is required`,
               lines: [
                 {
                   line: Math.min(...pKeysLineNums),
@@ -81,16 +75,16 @@ export function checkTileParameters<T extends dcType>(item: {
         }
 
         if (
-          apiModel.type !== ModelTypeEnum.Store &&
+          apiModel.type !== 'Store' &&
           isUndefined(p.listen) &&
           isUndefined(p.conditions)
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_LISTEN_OR_CONDITIONS,
+              title: 'MISSING_LISTEN_OR_CONDITIONS',
               message:
-                `"${ParameterEnum.Listen}" or ` +
-                `"${ParameterEnum.Conditions}" must be specified for a tile parameter`,
+                `"listen" or ` +
+                `"conditions" must be specified for a tile parameter`,
               lines: [
                 {
                   line: Math.min(...pKeysLineNums),
@@ -104,16 +98,16 @@ export function checkTileParameters<T extends dcType>(item: {
         }
 
         if (
-          apiModel.type === ModelTypeEnum.Store &&
+          apiModel.type === 'Store' &&
           isUndefined(p.listen) &&
           isUndefined(p.fractions)
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_LISTEN_OR_FRACTIONS,
+              title: 'MISSING_LISTEN_OR_FRACTIONS',
               message:
-                `"${ParameterEnum.Listen}" or ` +
-                `"${ParameterEnum.Conditions}" must be specified for a tile parameter`,
+                `"listen" or ` +
+                `"conditions" must be specified for a tile parameter`,
               lines: [
                 {
                   line: Math.min(...pKeysLineNums),
@@ -158,7 +152,7 @@ export function checkTileParameters<T extends dcType>(item: {
 
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.DUPLICATE_APPLY_TO,
+                title: 'DUPLICATE_APPLY_TO',
                 message: 'Tile parameter apply_to must be unique',
                 lines: lines
               })
@@ -173,27 +167,26 @@ export function checkTileParameters<T extends dcType>(item: {
       x.tiles.forEach(tile => {
         let apiModel = apiModels.find(y => y.modelId === tile.model);
 
-        if (x.fileExt === FileExtensionEnum.Dashboard) {
+        if (x.fileExt === '.dashboard') {
           tile.listen = {};
         }
         tile.combinedFilters = {};
 
         let store: FileStore;
 
-        if (apiModel.type === ModelTypeEnum.Store) {
+        if (apiModel.type === 'Store') {
           store = stores.find(m => m.name === tile.model);
         }
 
         tile.parameters
           .filter(p => isDefined(p.apply_to))
           .forEach(p => {
-            if (isDefined(p.listen) && x.fileExt === FileExtensionEnum.Chart) {
+            if (isDefined(p.listen) && x.fileExt === '.chart') {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.CHART_TILE_PARAMETER_CANNOT_HAVE_LISTEN,
+                  title: 'CHART_TILE_PARAMETER_CANNOT_HAVE_LISTEN',
                   message:
-                    `${FileExtensionEnum.Chart} does not support ` +
-                    `"${ParameterEnum.Listen}" parameter for tiles`,
+                    `.chart does not support ` + `"listen" parameter for tiles`,
                   lines: [
                     {
                       line: p.listen_line_num,
@@ -216,8 +209,7 @@ export function checkTileParameters<T extends dcType>(item: {
               if (isUndefined(dashboardField)) {
                 item.errors.push(
                   new BmError({
-                    title:
-                      ErTitleEnum.TILE_PARAMETER_LISTENS_TO_MISSING_DASHBOARD_FILTER,
+                    title: 'TILE_PARAMETER_LISTENS_TO_MISSING_DASHBOARD_FILTER',
                     message:
                       `tile parameter listens dashboard filter "${p.listen}" ` +
                       'that is missing or not valid',
@@ -236,7 +228,7 @@ export function checkTileParameters<T extends dcType>(item: {
 
             let listener;
 
-            if (apiModel.type === ModelTypeEnum.Store) {
+            if (apiModel.type === 'Store') {
               let storeField = store.fields.find(
                 sField => sField.name === p.apply_to
               );
@@ -244,7 +236,7 @@ export function checkTileParameters<T extends dcType>(item: {
               if (isUndefined(storeField)) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.APPLY_TO_REFS_MISSING_STORE_FIELD,
+                    title: 'APPLY_TO_REFS_MISSING_STORE_FIELD',
                     message:
                       `"${p.apply_to}" references missing or not valid field ` +
                       `of store "${store.name}" fields section`,
@@ -263,8 +255,8 @@ export function checkTileParameters<T extends dcType>(item: {
               if (isDefined(p.listen) && isDefined(p.fractions)) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.PARAMETER_WRONG_COMBINATION_STORE,
-                    message: `found that both parameters "${ParameterEnum.Fractions}" and "${ParameterEnum.Listen}" are specified`,
+                    title: 'PARAMETER_WRONG_COMBINATION_STORE',
+                    message: `found that both parameters "fractions" and "listen" are specified`,
                     lines: [
                       {
                         line: p.listen_line_num,
@@ -285,7 +277,7 @@ export function checkTileParameters<T extends dcType>(item: {
               if (isDefined(p.fractions) && p.fractions.length === 0) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.FRACTIONS_LIST_IS_EMPTY,
+                    title: 'FRACTIONS_LIST_IS_EMPTY',
                     message: `fractions cannot be empty`,
                     lines: [
                       {
@@ -303,13 +295,12 @@ export function checkTileParameters<T extends dcType>(item: {
                 isDefined(p.listen) &&
                 isDefined(dashboardField.store_filter) &&
                 isDefined(storeField) &&
-                (storeField.fieldClass !== FieldClassEnum.Filter ||
+                (storeField.fieldClass !== 'filter' ||
                   storeField.name !== dashboardField.store_filter)
               ) {
                 item.errors.push(
                   new BmError({
-                    title:
-                      ErTitleEnum.APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH,
+                    title: 'APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH',
                     message: `apply_to must reference to the same store filter as it listens to`,
                     lines: [
                       {
@@ -336,8 +327,7 @@ export function checkTileParameters<T extends dcType>(item: {
               ) {
                 item.errors.push(
                   new BmError({
-                    title:
-                      ErTitleEnum.APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH,
+                    title: 'APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH',
                     message: `apply_to must reference to a store field with the same result as it listens to`,
                     lines: [
                       {
@@ -358,7 +348,7 @@ export function checkTileParameters<T extends dcType>(item: {
 
               let storeResult: FileStoreResult;
 
-              if (storeField.fieldClass !== FieldClassEnum.Filter) {
+              if (storeField.fieldClass !== 'filter') {
                 storeResult = store.results.find(
                   sResult => sResult.result === storeField.result
                 );
@@ -366,13 +356,13 @@ export function checkTileParameters<T extends dcType>(item: {
 
               if (isDefined(p.fractions)) {
                 if (
-                  storeField.fieldClass === FieldClassEnum.Filter &&
+                  storeField.fieldClass === 'filter' &&
                   isDefined(storeField.max_fractions) &&
                   p.fractions.length > Number(storeField.max_fractions)
                 ) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.MAX_FRACTIONS_EXCEEDED,
+                      title: 'MAX_FRACTIONS_EXCEEDED',
                       message: `fractions length ${
                         p.fractions.length
                       } exceeded store filter max_fractions ${Number(
@@ -393,11 +383,11 @@ export function checkTileParameters<T extends dcType>(item: {
                 checkStoreFraction(
                   {
                     storeFilter:
-                      storeField.fieldClass === FieldClassEnum.Filter
+                      storeField.fieldClass === 'filter'
                         ? storeField
                         : undefined,
                     storeResult:
-                      storeField.fieldClass === FieldClassEnum.Filter
+                      storeField.fieldClass === 'filter'
                         ? undefined
                         : storeField.result,
                     storeFractionTypes: storeResult?.fraction_types,
@@ -433,7 +423,7 @@ export function checkTileParameters<T extends dcType>(item: {
                         {
                           controls: fraction.controls,
                           storeControls:
-                            storeField.fieldClass === FieldClassEnum.Filter
+                            storeField.fieldClass === 'filter'
                               ? storeField.fraction_controls
                               : storeResult.fraction_types.find(
                                   ft => ft.type === fraction.type
@@ -461,13 +451,13 @@ export function checkTileParameters<T extends dcType>(item: {
               }
             }
 
-            if (apiModel.type === ModelTypeEnum.Malloy) {
+            if (apiModel.type === 'Malloy') {
               let modelField = apiModel.fields.find(x => x.id === p.apply_to);
 
               if (isUndefined(modelField)) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
+                    title: 'APPLY_TO_REFS_MISSING_MODEL_FIELD',
                     message:
                       `"${p.apply_to}" references missing or not valid field ` +
                       `of model "${apiModel.modelId}" fields section`,
@@ -486,7 +476,7 @@ export function checkTileParameters<T extends dcType>(item: {
               if (modelField.isTimeframeBase === true) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.FIELD_GROUP_T_FIELD_CANNOT_BE_FILTERED,
+                    title: 'FIELD_GROUP_T_FIELD_CANNOT_BE_FILTERED',
                     message: `field "${p.apply_to}" cannot be filtered. Use _ts field instead`,
                     lines: [
                       {
@@ -503,8 +493,8 @@ export function checkTileParameters<T extends dcType>(item: {
               if (isDefined(p.listen) && isDefined(p.conditions)) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.PARAMETER_WRONG_COMBINATION,
-                    message: `found that both parameters "${ParameterEnum.Conditions}" and "${ParameterEnum.Listen}" are specified`,
+                    title: 'PARAMETER_WRONG_COMBINATION',
+                    message: `found that both parameters "conditions" and "listen" are specified`,
                     lines: [
                       {
                         line: p.listen_line_num,
@@ -528,7 +518,7 @@ export function checkTileParameters<T extends dcType>(item: {
                 if (p.conditions.length === 0) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.APPLY_TO_CONDITIONS_IS_EMPTY,
+                      title: 'APPLY_TO_CONDITIONS_IS_EMPTY',
                       message: `apply_to conditions cannot be empty`,
                       lines: [
                         {
@@ -551,10 +541,10 @@ export function checkTileParameters<T extends dcType>(item: {
                 if (pf.valid === 0) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.APPLY_TO_WRONG_CONDITIONS,
+                      title: 'APPLY_TO_WRONG_CONDITIONS',
                       message:
                         `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
-                        `for ${ParameterEnum.Result} "${pResult}" `,
+                        `for result "${pResult}" `,
                       lines: [
                         {
                           line: p.conditions_line_num,
@@ -574,8 +564,7 @@ export function checkTileParameters<T extends dcType>(item: {
                 if (dashboardField.result !== pResult) {
                   item.errors.push(
                     new BmError({
-                      title:
-                        ErTitleEnum.TILE_PARAMETER_AND_LISTEN_RESULT_MISMATCH,
+                      title: 'TILE_PARAMETER_AND_LISTEN_RESULT_MISMATCH',
                       message:
                         `"${p.listen}" result "${dashboardField.result}" does not match ` +
                         `listener "${p.apply_to}" result "${pResult}"`,
@@ -611,9 +600,9 @@ export function checkTileParameters<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

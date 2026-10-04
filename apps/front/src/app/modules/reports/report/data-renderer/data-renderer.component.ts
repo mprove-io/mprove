@@ -2,22 +2,14 @@ import { Component } from '@angular/core';
 import { Moment } from '@malloydata/malloy-filter';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTsMixUnitEnum } from '#common/enums/fraction/fraction-ts-mix-unit.enum';
-import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-moment-type.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeframeEnum } from '#common/enums/timeframe.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { DataRow } from '#common/types/front/data-row';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { getTimeSpecWord } from '#front/app/functions/get-timespec-word';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -33,7 +25,6 @@ import { TimeService } from '#front/app/services/time.service';
 export class DataRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
-  rowTypeMetric = RowTypeEnum.Metric;
   formattedValue: string;
   isError = false;
 
@@ -61,7 +52,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
             value: params.value,
             modelType: params.data.mconfig?.modelType,
             field: params.data.mconfig?.fields[1],
-            fieldResult: FieldResultEnum.Number,
+            fieldResult: 'number',
             rowFormatNumber: params.data.formatNumber,
             rowCurrencyPrefix: params.data.currencyPrefix,
             rowCurrencySuffix: params.data.currencySuffix
@@ -76,9 +67,9 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
     if (
       isDefined(this.params.data.mconfig) &&
-      this.params.data.rowType === RowTypeEnum.Metric
+      this.params.data.rowType === 'metric'
     ) {
-      let isStore = this.params.data.mconfig.modelType === ModelTypeEnum.Store;
+      let isStore = this.params.data.mconfig.modelType === 'Store';
 
       let rowDataRecord = this.params.data.records.find(
         x => x.key * 1000 === Number(this.params.colDef.field)
@@ -92,7 +83,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
       let timeSpec = this.reportQuery.getValue().timeSpec;
 
-      let timeRangeFraction;
+      let timeRangeFraction: Fraction;
 
       let timeSpecWord = getTimeSpecWord({ timeSpec: timeSpec });
 
@@ -110,7 +101,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       let dateToStr;
       let timeToStr;
 
-      if (timeSpecWord === TimeframeEnum.Year) {
+      if (timeSpecWord === 'year') {
         let nextYear = date.getUTCFullYear() + 1;
         let nextYearDate = new Date(nextYear, 0, 1, 0, 0, 0, 0);
 
@@ -123,7 +114,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = yearTo.dateStr;
         timeToStr = yearTo.timeStr;
-      } else if (timeSpecWord === TimeframeEnum.Quarter) {
+      } else if (timeSpecWord === 'quarter') {
         let qMonth = date.getUTCMonth(); // Months are 0-11
 
         let nextQuarterMonth = (Math.floor(qMonth / 3) * 3 + 3) % 12;
@@ -152,7 +143,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = quarterTo.dateStr;
         timeToStr = quarterTo.timeStr;
-      } else if (timeSpecWord === TimeframeEnum.Month) {
+      } else if (timeSpecWord === 'month') {
         let month = date.getUTCMonth(); // Months are zero-based (0-11)
 
         let nextMonth = month === 11 ? 0 : month + 1;
@@ -172,7 +163,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = monthTo.dateStr;
         timeToStr = monthTo.timeStr;
-      } else if (timeSpecWord === TimeframeEnum.Week) {
+      } else if (timeSpecWord === 'week') {
         cellMetricsEndDateMs = cellMetricsStartDateMs + 7 * 24 * 60 * 60 * 1000;
 
         let weekTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -181,7 +172,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = weekTo.dateStr;
         timeToStr = weekTo.timeStr;
-      } else if (timeSpecWord === TimeframeEnum.Date) {
+      } else if (timeSpecWord === 'date') {
         cellMetricsEndDateMs = cellMetricsStartDateMs + 24 * 60 * 60 * 1000;
 
         let dayTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -190,7 +181,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = dayTo.dateStr;
         timeToStr = dayTo.timeStr;
-      } else if (timeSpecWord === TimeframeEnum.Hour) {
+      } else if (timeSpecWord === 'hour') {
         let tsNextHour = tsMs + 60 * 60 * 1000;
 
         let hourTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -199,7 +190,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = hourTo.dateStr;
         timeToStr = hourTo.timeStr;
-      } else if (timeSpecWord === TimeframeEnum.Minute) {
+      } else if (timeSpecWord === 'minute') {
         let tsNextMinute = tsMs + 60 * 1000;
 
         let minuteTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -222,38 +213,38 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       let minuteStr = this.timeService.getMinuteStr({
         dateValue: dateStr,
         timeValue: timeStr,
-        dateSeparator: metric.modelType === ModelTypeEnum.Malloy ? '-' : '/'
+        dateSeparator: metric.modelType === 'Malloy' ? '-' : '/'
       });
 
       let minuteToStr = this.timeService.getMinuteStr({
         dateValue: dateToStr,
         timeValue: timeToStr,
-        dateSeparator: metric.modelType === ModelTypeEnum.Malloy ? '-' : '/'
+        dateSeparator: metric.modelType === 'Malloy' ? '-' : '/'
       });
 
       let fromMoment: Moment = {
         moment: 'literal',
         literal: minuteStr,
-        units: FractionTsMixUnitEnum.Minute
+        units: 'minute'
       };
 
       let toMoment: Moment = {
         moment: 'literal',
         literal: minuteToStr,
-        units: FractionTsMixUnitEnum.Minute
+        units: 'minute'
       };
 
       timeRangeFraction = {
         brick: `f\`${minuteStr} to ${minuteToStr}\``,
         parentBrick: `f\`${minuteStr} to ${minuteToStr}\``,
-        operator: FractionOperatorEnum.Or,
-        type: FractionTypeEnum.TsIsBetween,
-        tsFromMomentType: FractionTsMomentTypeEnum.Literal,
-        tsToMomentType: FractionTsMomentTypeEnum.Literal,
+        operator: 'Or',
+        type: 'TsIsBetween',
+        tsFromMomentType: 'Literal',
+        tsToMomentType: 'Literal',
         tsFromMoment: fromMoment,
-        tsFromMomentUnit: FractionTsMixUnitEnum.Minute,
+        tsFromMomentUnit: 'minute',
         tsToMoment: toMoment,
-        tsToMomentUnit: FractionTsMixUnitEnum.Minute,
+        tsToMomentUnit: 'minute',
         tsDateYear: Number(dateStr.split('-')[0]),
         tsDateMonth: Number(dateStr.split('-')[1].replace(/^0+/, '')),
         tsDateDay: Number(dateStr.split('-')[2].replace(/^0+/, '')),
@@ -277,7 +268,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         serverTs: 1
       });
 
-      newMconfig.chart.type = ChartTypeEnum.Table;
+      newMconfig.chart.type = 'table';
 
       let newFilters = [...newMconfig.filters];
 
@@ -306,7 +297,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         //   fractions: timeFieldFilter.fractions
         // };
 
-        let newFraction = timeRangeFraction;
+        let newFraction: Fraction = timeRangeFraction;
 
         let newFilter: Filter = {
           fieldId: `${metric.timeFieldId}_ts`,
@@ -351,3 +342,5 @@ export class DataRendererComponent implements ICellRendererAngularComp {
     private timeService: TimeService
   ) {}
 }
+
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';

@@ -5,18 +5,15 @@ import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LOGIC_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FieldStoreFilter } from '#common/types/blockml/parts/internal/field-store-filter';
 import type { FileFraction } from '#common/types/blockml/parts/internal/file-fraction';
 import type { FileStoreFractionType } from '#common/types/blockml/parts/internal/file-store-fraction-type';
 
-let func = FuncEnum.CheckStoreFraction;
+let func: Func = 'extra/check-store-fraction';
 
 export function checkStoreFraction(
   item: {
@@ -29,12 +26,12 @@ export function checkStoreFraction(
     filePath: string;
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let errorsOnStart = item.errors.length;
 
@@ -46,7 +43,7 @@ export function checkStoreFraction(
     if (isDefined(fraction) && fraction.constructor !== Object) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTIONS_ELEMENT_IS_NOT_A_DICTIONARY,
+          title: 'FRACTIONS_ELEMENT_IS_NOT_A_DICTIONARY',
           message: `found at least one fractions element that is not a dictionary`,
           lines: [
             {
@@ -65,15 +62,15 @@ export function checkStoreFraction(
       .forEach(parameter => {
         if (
           [
-            ParameterEnum.Logic.toString(),
-            ParameterEnum.Type.toString(),
-            ParameterEnum.Controls.toString()
+            'logic'.toString(),
+            'type'.toString(),
+            'controls'.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNKNOWN_FRACTIONS_ELEMENT_PARAMETER,
-              message: `parameter "${parameter}" cannot be used in ${ParameterEnum.Fractions} element`,
+              title: 'UNKNOWN_FRACTIONS_ELEMENT_PARAMETER',
+              message: `parameter "${parameter}" cannot be used in fractions element`,
               lines: [
                 {
                   line: fraction[
@@ -90,11 +87,11 @@ export function checkStoreFraction(
 
         if (
           Array.isArray(fraction[parameter as keyof FileFraction]) &&
-          [ParameterEnum.Controls.toString()].indexOf(parameter) < 0
+          ['controls'.toString()].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_LIST,
+              title: 'UNEXPECTED_LIST',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -113,7 +110,7 @@ export function checkStoreFraction(
         if (fraction[parameter as keyof FileFraction]?.constructor === Object) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+              title: 'UNEXPECTED_DICTIONARY',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -133,8 +130,8 @@ export function checkStoreFraction(
     if (isDefined(item.storeResult) && isUndefined(fraction.logic)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_MISSING_LOGIC,
-          message: `parameter "${ParameterEnum.Logic}" must be specified`,
+          title: 'FRACTION_MISSING_LOGIC',
+          message: `parameter "logic" must be specified`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -150,9 +147,8 @@ export function checkStoreFraction(
     if (isDefined(item.storeFilter) && isDefined(fraction.logic)) {
       item.errors.push(
         new BmError({
-          title:
-            ErTitleEnum.FRACTION_CANNOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER,
-          message: `parameter "${ParameterEnum.Logic}" cannot be used with store filter`,
+          title: 'FRACTION_CANNOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER',
+          message: `parameter "logic" cannot be used with store filter`,
           lines: [
             {
               line: fraction.logic_line_num,
@@ -168,9 +164,8 @@ export function checkStoreFraction(
     if (isDefined(item.storeFilter) && isDefined(fraction.type)) {
       item.errors.push(
         new BmError({
-          title:
-            ErTitleEnum.FRACTION_CANNOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER,
-          message: `parameter "${ParameterEnum.Type}" cannot be used with store filter`,
+          title: 'FRACTION_CANNOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER',
+          message: `parameter "type" cannot be used with store filter`,
           lines: [
             {
               line: fraction.type_line_num,
@@ -189,8 +184,8 @@ export function checkStoreFraction(
     ) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_WRONG_LOGIC,
-          message: `${ParameterEnum.Logic} value must be "OR" or "AND_NOT"`,
+          title: 'WRONG_LOGIC',
+          message: `logic value must be "OR" or "AND_NOT"`,
           lines: [
             {
               line: fraction.logic_line_num,
@@ -206,8 +201,8 @@ export function checkStoreFraction(
     if (isDefined(item.storeResult) && isUndefined(fraction.type)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_MISSING_TYPE,
-          message: `parameter "${ParameterEnum.Type}" must be specified`,
+          title: 'FRACTION_MISSING_TYPE',
+          message: `parameter "type" must be specified`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -223,8 +218,8 @@ export function checkStoreFraction(
     if (isDefined(item.storeResult) && isUndefined(fraction.type)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_MISSING_TYPE,
-          message: `parameter "${ParameterEnum.Type}" must be specified`,
+          title: 'FRACTION_MISSING_TYPE',
+          message: `parameter "type" must be specified`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -240,8 +235,8 @@ export function checkStoreFraction(
     if (isUndefined(fraction.controls)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_MISSING_CONTROLS,
-          message: `parameter "${ParameterEnum.Controls}" is required`,
+          title: 'FRACTION_MISSING_CONTROLS',
+          message: `parameter "controls" is required`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -262,8 +257,8 @@ export function checkStoreFraction(
       if (isUndefined(storeFractionType)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.FRACTION_WRONG_TYPE,
-            message: `${ParameterEnum.Type} references missing "${fraction.type}" of store result "${item.storeResult}"`,
+            title: 'WRONG_TYPE',
+            message: `type references missing "${fraction.type}" of store result "${item.storeResult}"`,
             lines: [
               {
                 line: fraction.type_line_num,
@@ -279,8 +274,7 @@ export function checkStoreFraction(
       if (fraction.controls.length !== storeFractionType.controls.length) {
         item.errors.push(
           new BmError({
-            title:
-              ErTitleEnum.FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_RESULT,
+            title: 'FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_RESULT',
             message: `fraction controls length must be the same as store result controls length`,
             lines: [
               {
@@ -301,8 +295,7 @@ export function checkStoreFraction(
     ) {
       item.errors.push(
         new BmError({
-          title:
-            ErTitleEnum.FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_FILTER,
+          title: 'FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_FILTER',
           message: `fraction controls length must be the same as store filter fraction_controls length`,
           lines: [
             {

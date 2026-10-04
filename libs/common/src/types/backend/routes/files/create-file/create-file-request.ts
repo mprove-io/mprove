@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ModelInfo,
   zModelInfo
-} from '#common/types/backend/parts/model-info';
+} from '#common/types/backend/parts/model/model-info';
 
 export type ToBackendCreateFileRequest = {
   operation: 'createFile';

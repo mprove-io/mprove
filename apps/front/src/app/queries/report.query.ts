@@ -3,7 +3,7 @@ import { createStore, withProps } from '@ngneat/elf';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ReportX } from '#common/types/backend/parts/report-x';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import { BaseQuery } from './base.query';
 
 export type ReportState = ReportX;

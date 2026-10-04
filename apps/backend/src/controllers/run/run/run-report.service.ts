@@ -11,8 +11,7 @@ import { checkAccess } from '#backend/functions/check-access';
 import { getReportUrl } from '#backend/functions/get-report-url';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
@@ -106,7 +105,7 @@ export class RunReportService {
 
         if (isFound === false) {
           let serverError = new ServerError({
-            message: ErEnum.BACKEND_REPORT_NOT_FOUND,
+            message: 'BACKEND_REPORT_NOT_FOUND',
             displayData: { id: reportId },
             originalError: null
           });
@@ -183,16 +182,12 @@ export class RunReportService {
     let { reports } = item;
 
     return reports
-      .filter(
-        x =>
-          x.rows.filter(y => y.query.status === QueryStatusEnum.Error).length >
-          0
-      )
+      .filter(x => x.rows.filter(y => y.query.status === 'Error').length > 0)
       .map(r => ({
         title: r.title,
         reportId: r.reportId,
         url: r.url,
-        rows: r.rows.filter(row => row.query.status === QueryStatusEnum.Error)
+        rows: r.rows.filter(row => row.query.status === 'Error')
       }));
   }
 }

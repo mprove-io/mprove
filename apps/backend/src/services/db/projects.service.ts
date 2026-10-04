@@ -15,13 +15,12 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { Ev } from '#common/types/backend/parts/ev';
-import type { Project } from '#common/types/backend/parts/project';
+import type { Project } from '#common/types/backend/parts/project/project';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
 import type { ToDiskCreateProjectOutput } from '#common/types/disk/routes/projects/create-project/create-project-output';
 import { BlockmlService } from '../blockml.service';
@@ -94,7 +93,7 @@ export class ProjectsService {
 
     if (isUndefined(project)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROJECT_DOES_NOT_EXIST
+        message: 'BACKEND_PROJECT_DOES_NOT_EXIST'
       });
     }
 
@@ -117,7 +116,7 @@ export class ProjectsService {
       (isUndefined(repoId) || repoId === PROD_REPO_ID)
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
+        message: 'BACKEND_RESTRICTED_PROJECT'
       });
     }
   }
@@ -125,7 +124,7 @@ export class ProjectsService {
   async addProject(item: {
     projectId: string;
     orgId: string;
-    remoteType: ProjectRemoteTypeEnum;
+    remoteType: ProjectRemoteType;
     name: string;
     gitUrl?: string;
     publicKey?: string;

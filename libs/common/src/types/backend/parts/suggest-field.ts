@@ -1,31 +1,39 @@
 import { z } from 'zod';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import type { EnumValues } from '#common/types/enum-values';
+import {
+  type ConnectionType,
+  zConnectionType
+} from '#common/types/backend/parts/connection-parts/connection-type';
+import {
+  type FieldClass,
+  zFieldClass
+} from '#common/types/blockml/parts/field/field-class';
+import {
+  type FieldResult,
+  zFieldResult
+} from '#common/types/blockml/parts/field/field-result';
 
 export type SuggestField = {
   modelFieldRef: string;
-  connectionType: EnumValues<typeof ConnectionTypeEnum>;
+  connectionType: ConnectionType;
   topLabel: string;
   partNodeLabel: string;
   partFieldLabel: string;
   partLabel: string;
-  fieldClass: EnumValues<typeof FieldClassEnum>;
-  result: EnumValues<typeof FieldResultEnum>;
+  fieldClass: FieldClass;
+  result: FieldResult;
 };
 
 export let zSuggestField = z
   .object({
     modelFieldRef: z.string(),
-    connectionType: z.enum(ConnectionTypeEnum),
+    connectionType: zConnectionType,
     topLabel: z.string(),
     partNodeLabel: z.string(),
     partFieldLabel: z.string(),
     partLabel: z.string(),
-    fieldClass: z.enum(FieldClassEnum),
-    result: z.enum(FieldResultEnum)
+    fieldClass: zFieldClass,
+    result: zFieldResult
   })
   .meta({ id: 'SuggestField' });
 

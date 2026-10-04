@@ -25,10 +25,10 @@
             data-cy="explorerChartRunButton"
             class="text-m0 ml-5 flex h-12 w-24 flex-shrink-0 select-none items-center justify-center rounded text-base font-medium focus:outline-none"
             [ngClass]="{
-              'bg-s400 cursor-default': query?.status === queryStatusRunning,
-              'bg-m600 cursor-pointer': query?.status !== queryStatusRunning
+              'bg-s400 cursor-default': query?.status === 'Running',
+              'bg-m600 cursor-pointer': query?.status !== 'Running'
             }"
-            [disabled]="query?.status === queryStatusRunning"
+            [disabled]="query?.status === 'Running'"
             (click)="run()"
           >
             <div>Run</div>
@@ -67,13 +67,13 @@
           *ngIf="!!qData && !!mconfig?.mconfigId"
           [ngClass]="{
             'w-full pt-3':
-              mconfig?.chart.type === chartTypeEnumTable ||
-              mconfig?.chart.type === chartTypeEnumPivotTable,
+              mconfig?.chart.type === 'table' ||
+              mconfig?.chart.type === 'pivot_table',
             'border-s300 aspect-[3/1] w-2/3 border pb-6 pt-5':
-              mconfig?.chart.type !== chartTypeEnumTable &&
-              mconfig?.chart.type !== chartTypeEnumPivotTable,
+              mconfig?.chart.type !== 'table' &&
+              mconfig?.chart.type !== 'pivot_table',
             'max-w-max':
-              mconfig?.chart.type === chartTypeEnumTable &&
+              mconfig?.chart.type === 'table' &&
               isSelectValid === true &&
               mconfig?.chart.isValid === true &&
               qData?.length > 0
@@ -86,7 +86,7 @@
           [qData]="qData"
           [chart]="mconfig.chart"
           [isAnimation]="false"
-          [isStoreModel]="mconfig?.modelType === modelTypeStore"
+          [isStoreModel]="mconfig?.modelType === 'Store'"
           [queryStatus]="query?.status"
           [chartInstanceId]="'explorer-chart-mconfig-id-' + mconfig?.mconfigId"
         ></m-chart-view>
@@ -165,8 +165,7 @@
 
           <div
             *ngIf="
-              mconfig?.fields?.length > 0 &&
-              mconfig?.chart.type === chartTypeEnumTable
+              mconfig?.fields?.length > 0 && mconfig?.chart.type === 'table'
             "
             class="ml-10 flex h-11 cursor-pointer flex-row items-center"
             (click)="toggleData()"

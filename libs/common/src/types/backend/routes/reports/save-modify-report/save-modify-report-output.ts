@@ -4,13 +4,19 @@ import { type Member, zMember } from '#common/types/backend/parts/member';
 import {
   type ReportUnit,
   zReportUnit
-} from '#common/types/backend/parts/report-unit';
-import { type ReportX, zReportX } from '#common/types/backend/parts/report-x';
+} from '#common/types/backend/parts/report/report-unit';
+import {
+  type ReportX,
+  zReportX
+} from '#common/types/backend/parts/report/report-x';
 import {
   type SpaceNode,
   zSpaceNode
 } from '#common/types/backend/parts/space-node';
-import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
+import {
+  type StructX,
+  zStructX
+} from '#common/types/backend/parts/struct/struct-x';
 
 export type ToBackendSaveModifyReportOutput = {
   needValidate: boolean;

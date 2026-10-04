@@ -1,10 +1,11 @@
 import { z } from 'zod';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type ConnectionOptions,
   zConnectionOptions
 } from '#common/types/backend/parts/connection-parts/connection-options';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import { zConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 
 export type ToBackendCreateConnectionRequest = {
   operation: 'createConnection';
@@ -14,17 +15,7 @@ export type ToBackendCreateConnectionRequest = {
     projectId: string;
     envId: string;
     connectionId: string;
-    type:
-      | ConnectionTypeEnum.PostgreSQL
-      | ConnectionTypeEnum.MySQL
-      | ConnectionTypeEnum.SnowFlake
-      | ConnectionTypeEnum.BigQuery
-      | ConnectionTypeEnum.Databricks
-      | ConnectionTypeEnum.MotherDuck
-      | ConnectionTypeEnum.Presto
-      | ConnectionTypeEnum.Trino
-      | ConnectionTypeEnum.GoogleApi
-      | ConnectionTypeEnum.Api;
+    type: ConnectionType;
     options?: ConnectionOptions;
   };
 };
@@ -42,7 +33,7 @@ export let zToBackendCreateConnectionRequest = z
           message:
             'connectionId must contain only lowercase letters, digits or underscores'
         }),
-        type: z.enum(ConnectionTypeEnum),
+        type: zConnectionType,
         options: zConnectionOptions.nullish()
       })
       .meta({ id: 'ToBackendCreateConnectionInput' })

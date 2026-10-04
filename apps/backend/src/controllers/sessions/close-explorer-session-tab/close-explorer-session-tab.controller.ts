@@ -12,7 +12,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Sessions')
@@ -45,7 +45,7 @@ export class CloseExplorerSessionTabController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 

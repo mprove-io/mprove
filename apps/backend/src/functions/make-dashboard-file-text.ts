@@ -1,14 +1,14 @@
 import { getYYYYMMDDCurrentDateByTimezone } from '#backend/functions/get-yyyymmdd-current-date-by-timezone';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { DASHBOARD_FIELD_DEFAULT_HIDDEN } from '#common/constants/top';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { prepareTile } from '#common/functions/prepare-tile/prepare-tile';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import { toYaml } from '#common/functions/to-yaml/to-yaml';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { FieldFilter } from '#common/types/blockml/parts/internal/field-filter';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileFraction } from '#common/types/blockml/parts/internal/file-fraction';
@@ -84,29 +84,19 @@ export function makeDashboardFileText(item: {
                       mconfigControl => {
                         let newFileControl: FileFractionControl = {};
 
-                        if (
-                          mconfigControl.controlClass === ControlClassEnum.Input
-                        ) {
+                        if (mconfigControl.controlClass === 'input') {
                           newFileControl.input = mconfigControl.name;
                         } else if (
-                          mconfigControl.controlClass ===
-                          ControlClassEnum.ListInput
+                          mconfigControl.controlClass === 'list_input'
                         ) {
                           newFileControl.list_input = mconfigControl.name;
-                        } else if (
-                          mconfigControl.controlClass ===
-                          ControlClassEnum.Switch
-                        ) {
+                        } else if (mconfigControl.controlClass === 'switch') {
                           newFileControl.switch = mconfigControl.name;
                         } else if (
-                          mconfigControl.controlClass ===
-                          ControlClassEnum.DatePicker
+                          mconfigControl.controlClass === 'date_picker'
                         ) {
                           newFileControl.date_picker = mconfigControl.name;
-                        } else if (
-                          mconfigControl.controlClass ===
-                          ControlClassEnum.Selector
-                        ) {
+                        } else if (mconfigControl.controlClass === 'selector') {
                           newFileControl.selector = mconfigControl.name;
                         }
 
@@ -152,8 +142,7 @@ export function makeDashboardFileText(item: {
                         }
 
                         newFileControl.value =
-                          newFileControl.controlClass ===
-                            ControlClassEnum.Switch &&
+                          newFileControl.controlClass === 'switch' &&
                           typeof newValue === 'string'
                             ? toBooleanFromLowercaseString(newValue)
                             : newValue;

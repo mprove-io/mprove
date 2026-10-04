@@ -12,12 +12,12 @@ import {
   MCP_TOOL_GET_CONNECTIONS_LIST,
   MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import {
   type McpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListInput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-input';
 import { zMcpToolGetConnectionsListOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-output';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
 
 @McpController()
@@ -44,9 +44,9 @@ export class GetConnectionsListTool {
   ) {
     let user = (request as any).user as UserTab;
 
-    let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
+    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
 
-    if (apiKeyType === ApiKeyTypeEnum.SK) {
+    if (apiKeyType === 'SK') {
       this.toolService.validateSessionEnvId({
         envId: item.envId,
         request: request

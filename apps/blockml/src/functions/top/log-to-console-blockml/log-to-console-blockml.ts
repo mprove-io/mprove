@@ -2,21 +2,21 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { getConfig } from '#blockml/config/get.config';
-import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { BlockmlEnv } from '#common/types/node-common/env/blockml-env';
+import type { LogLevel } from '#common/types/node-common/logging/log-level';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 
 export function logToConsoleBlockml(item: {
   log: any;
   logger: Logger;
-  logLevel: LogLevelEnum;
+  logLevel: LogLevel;
   cs: ConfigService;
 }) {
   let { log, logger, logLevel, cs } = item;
 
   let logIsJson: boolean;
-  let blockmlEnv: BlockmlEnvEnum;
+  let blockmlEnv: BlockmlEnv;
 
   if (isDefined(cs)) {
     logIsJson = cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson');
@@ -32,6 +32,6 @@ export function logToConsoleBlockml(item: {
     logIsJson: logIsJson,
     logger: logger,
     logLevel: logLevel,
-    useLoggerOnlyForErrorLevel: blockmlEnv !== BlockmlEnvEnum.PROD
+    useLoggerOnlyForErrorLevel: blockmlEnv !== 'PROD'
   });
 }

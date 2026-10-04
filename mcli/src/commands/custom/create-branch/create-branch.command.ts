@@ -2,13 +2,10 @@ import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/branches/create-branch/create-branch-output';
 import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
+import { zRepoType } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -37,8 +34,8 @@ export class CreateBranchCommand extends CustomCommand {
 
   repoType = Option.String('--repo-type', {
     required: true,
-    validator: t.isEnum(RepoTypeEnum),
-    description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
+    validator: t.isEnum(zRepoType.options),
+    description: `(required, "dev", "production" or "session")`
   });
 
   newBranch = Option.String('--new-branch', {
@@ -68,7 +65,7 @@ export class CreateBranchCommand extends CustomCommand {
 
     if (isUndefined(this.projectId)) {
       let serverError = new ServerError({
-        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
         originalError: null
       });
       throw serverError;
@@ -77,9 +74,9 @@ export class CreateBranchCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repoType === RepoTypeEnum.Production
+      this.repoType === 'production'
         ? PROD_REPO_ID
-        : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+        : apiKey.startsWith(`SK-`)
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
@@ -103,7 +100,7 @@ export class CreateBranchCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       context: this.context,
       isJson: this.json
     });

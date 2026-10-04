@@ -1,11 +1,10 @@
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 
 export function getBlankMconfigAndQuery(item: {
@@ -21,7 +20,7 @@ export function getBlankMconfigAndQuery(item: {
     projectId: projectId,
     envId: envId,
     connectionId: model.connectionId,
-    mconfigParentType: MconfigParentTypeEnum.Blank,
+    mconfigParentType: 'Blank',
     mconfigParentId: undefined,
     sql: '',
     store: undefined,
@@ -40,7 +39,7 @@ export function getBlankMconfigAndQuery(item: {
     apiMethod: undefined,
     apiUrl: undefined,
     apiBody: undefined,
-    status: QueryStatusEnum.New,
+    status: 'New',
     data: [],
     lastRunBy: undefined,
     lastRunTs: 1,
@@ -62,7 +61,7 @@ export function getBlankMconfigAndQuery(item: {
     queryId: queryId,
     modelId: model.modelId,
     modelType: model.type,
-    parentType: MconfigParentTypeEnum.Blank,
+    parentType: 'Blank',
     parentId: undefined,
     dateRangeIncludesRightSide: false,
     storePart: undefined,

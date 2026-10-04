@@ -46,8 +46,7 @@ import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { TabService } from './tab.service';
@@ -86,7 +85,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker Started, isAllRecords: ${isAllRecords} ...`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -127,7 +126,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker Completed, total ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -199,7 +198,7 @@ export class TabCheckerService {
     if (avatarsResult.length > 0 && avatarsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'avatars',
           count: avatarsResult[0].total
@@ -211,7 +210,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Avatars, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -282,7 +281,7 @@ export class TabCheckerService {
     if (branchesResult.length > 0 && branchesResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'branches',
           count: branchesResult[0].total
@@ -294,7 +293,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Branches, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -365,7 +364,7 @@ export class TabCheckerService {
     if (bridgesResult.length > 0 && bridgesResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'bridges',
           count: bridgesResult[0].total
@@ -377,7 +376,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Bridges, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -448,7 +447,7 @@ export class TabCheckerService {
     if (cachedColumnsResult.length > 0 && cachedColumnsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'cached_columns',
           count: cachedColumnsResult[0].total
@@ -460,7 +459,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Cached Columns, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -531,7 +530,7 @@ export class TabCheckerService {
     if (cachedPartsResult.length > 0 && cachedPartsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'cached_parts',
           count: cachedPartsResult[0].total
@@ -543,7 +542,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Cached Parts, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -614,7 +613,7 @@ export class TabCheckerService {
     if (connectionsResult.length > 0 && connectionsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'connections',
           count: connectionsResult[0].total
@@ -626,7 +625,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Connections, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -697,7 +696,7 @@ export class TabCheckerService {
     if (dconfigsResult.length > 0 && dconfigsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'dconfigs',
           count: dconfigsResult[0].total
@@ -709,7 +708,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Dconfigs, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -780,7 +779,7 @@ export class TabCheckerService {
     if (uconfigsResult.length > 0 && uconfigsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'uconfigs',
           count: uconfigsResult[0].total
@@ -792,7 +791,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Uconfigs, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -860,7 +859,7 @@ export class TabCheckerService {
     if (envsResult.length > 0 && envsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'envs',
           count: envsResult[0].total
@@ -872,7 +871,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Envs, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -940,7 +939,7 @@ export class TabCheckerService {
     if (kitsResult.length > 0 && kitsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'kits',
           count: kitsResult[0].total
@@ -952,7 +951,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Kits, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1023,7 +1022,7 @@ export class TabCheckerService {
     if (membersResult.length > 0 && membersResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'members',
           count: membersResult[0].total
@@ -1035,7 +1034,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Members, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1106,7 +1105,7 @@ export class TabCheckerService {
     if (notesResult.length > 0 && notesResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'notes',
           count: notesResult[0].total
@@ -1118,7 +1117,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Notes, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1186,7 +1185,7 @@ export class TabCheckerService {
     if (orgsResult.length > 0 && orgsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'orgs',
           count: orgsResult[0].total
@@ -1198,7 +1197,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Orgs, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1269,7 +1268,7 @@ export class TabCheckerService {
     if (projectsResult.length > 0 && projectsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'projects',
           count: projectsResult[0].total
@@ -1281,7 +1280,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Projects, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1352,7 +1351,7 @@ export class TabCheckerService {
     if (providersResult.length > 0 && providersResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'providers',
           count: providersResult[0].total
@@ -1364,7 +1363,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Providers, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1435,7 +1434,7 @@ export class TabCheckerService {
     if (queriesResult.length > 0 && queriesResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'queries',
           count: queriesResult[0].total
@@ -1447,7 +1446,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Queries, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1518,7 +1517,7 @@ export class TabCheckerService {
     if (usersResult.length > 0 && usersResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'users',
           count: usersResult[0].total
@@ -1530,7 +1529,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Users, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1601,7 +1600,7 @@ export class TabCheckerService {
     if (eventsResult.length > 0 && eventsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'oc_events',
           count: eventsResult[0].total
@@ -1613,7 +1612,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - OcEvents, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1684,7 +1683,7 @@ export class TabCheckerService {
     if (messagesResult.length > 0 && messagesResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'oc_messages',
           count: messagesResult[0].total
@@ -1696,7 +1695,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - OcMessages, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1767,7 +1766,7 @@ export class TabCheckerService {
     if (partsResult.length > 0 && partsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'oc_parts',
           count: partsResult[0].total
@@ -1779,7 +1778,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - OcParts, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1850,7 +1849,7 @@ export class TabCheckerService {
     if (sessionsResult.length > 0 && sessionsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'sessions',
           count: sessionsResult[0].total
@@ -1862,7 +1861,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Sessions, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -1933,7 +1932,7 @@ export class TabCheckerService {
     if (ocSessionsResult.length > 0 && ocSessionsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'oc_sessions',
           count: ocSessionsResult[0].total
@@ -1945,7 +1944,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - OcSessions, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -2032,7 +2031,7 @@ export class TabCheckerService {
     if (structsResult.length > 0 && structsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'structs',
           count: structsResult[0].total
@@ -2044,7 +2043,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Structs, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -2127,7 +2126,7 @@ export class TabCheckerService {
     if (modelsResult.length > 0 && modelsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'models',
           count: modelsResult[0].total
@@ -2139,7 +2138,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Models, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -2222,7 +2221,7 @@ export class TabCheckerService {
     if (mconfigsResult.length > 0 && mconfigsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'mconfigs',
           count: mconfigsResult[0].total
@@ -2234,7 +2233,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Mconfigs, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -2317,7 +2316,7 @@ export class TabCheckerService {
     if (chartsResult.length > 0 && chartsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'charts',
           count: chartsResult[0].total
@@ -2329,7 +2328,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Charts, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -2412,7 +2411,7 @@ export class TabCheckerService {
     if (reportsResult.length > 0 && reportsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'reports',
           count: reportsResult[0].total
@@ -2424,7 +2423,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Reports, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });
@@ -2507,7 +2506,7 @@ export class TabCheckerService {
     if (dashboardsResult.length > 0 && dashboardsResult[0].total > 0) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+          'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'dashboards',
           count: dashboardsResult[0].total
@@ -2519,7 +2518,7 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Dashboards, ${durationMs} ms`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });

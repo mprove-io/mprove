@@ -2,10 +2,11 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+
 import type { drcType } from '#common/types/blockml/parts/internal/drc-type';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import { checkChartData } from './check-chart-data/check-chart-data';
 import { checkChartDataParameters } from './check-chart-data-parameters/check-chart-data-parameters';
 import { checkChartOptionsParameters } from './check-chart-options-parameters/check-chart-options-parameters';
@@ -21,15 +22,15 @@ export function buildMconfigChart<T extends drcType>(item: {
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   return Result.pipe(
     Result.succeed({
       ...item,
       isTileCharts:
-        item.caller === CallerEnum.BuildDashboardTileCharts ||
-        item.caller === CallerEnum.BuildChartTileCharts
+        item.caller === 'BuildDashboardTileCharts' ||
+        item.caller === 'BuildChartTileCharts'
     }),
     Result.bind(
       'typeCheckedEntities',

@@ -6,8 +6,8 @@ import type {
   SessionStatus,
   Todo
 } from '@opencode-ai/sdk/v2';
-import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
-import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
+import type { SessionPartApi } from '#common/types/backend/parts/session/session-part-api';
 import { BaseQuery } from './base.query';
 
 export class SessionBundleState {

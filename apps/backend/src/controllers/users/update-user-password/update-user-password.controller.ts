@@ -25,7 +25,7 @@ import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
@@ -71,13 +71,13 @@ export class UpdateUserPasswordController {
 
     if (isUndefined(user)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
+        message: 'BACKEND_UPDATE_PASSWORD_WRONG_TOKEN'
       });
     }
 
     if (user.passwordResetExpiresTs < makeTsNumber()) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
+        message: 'BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED'
       });
     }
 

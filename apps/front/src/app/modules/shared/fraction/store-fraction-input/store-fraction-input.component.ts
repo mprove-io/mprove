@@ -21,8 +21,7 @@ import {
   take
 } from 'rxjs';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -30,9 +29,9 @@ import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-re
 import type { ToBackendSuggestDimensionValuesOutput } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
 import type { ToBackendSuggestDimensionValuesRequest } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
 import type { ToBackendSuggestDimensionValuesResponse } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -52,8 +51,6 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
   }
 
   defaultStringValue = 'abc';
-  fractionTypeEnum = FractionTypeEnum;
-  fieldClassEnum = FieldClassEnum;
 
   isStoreSuggestEnabled = false; // experimental
 
@@ -112,8 +109,8 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
     if (
       this.isStoreSuggestEnabled === true &&
       isDefined(this.suggestModelDimension) &&
-      (this.fraction.type === FractionTypeEnum.StringIsEqualTo ||
-        this.fraction.type === FractionTypeEnum.StringIsNotEqualTo)
+      (this.fraction.type === 'StringIsEqualTo' ||
+        this.fraction.type === 'StringIsNotEqualTo')
     ) {
       let reg = MyRegex.CAPTURE_SUGGEST_MODEL_FIELD_G();
 

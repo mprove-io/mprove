@@ -2,17 +2,14 @@ import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
-let func = FuncEnum.CheckStoreSpaces;
+let func: Func = 'build-store-next/check-store-spaces';
 
 export function checkStoreSpaces(
   item: {
@@ -20,12 +17,12 @@ export function checkStoreSpaces(
     spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   item.stores.forEach(store => {
     let space: FilePartSpace | undefined;
@@ -36,8 +33,8 @@ export function checkStoreSpaces(
       if (isDefined(space) === false) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.SPACE_DOES_NOT_EXIST,
-            message: `${ParameterEnum.Store} "${store.name}" references space "${store.space}" that does not exist`,
+            title: 'SPACE_DOES_NOT_EXIST',
+            message: `store "${store.name}" references space "${store.space}" that does not exist`,
             lines: [
               {
                 line: store.space_line_num,
@@ -56,8 +53,8 @@ export function checkStoreSpaces(
     });
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, item.stores);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_stores.log', item.stores);
 
   return item.stores;
 }

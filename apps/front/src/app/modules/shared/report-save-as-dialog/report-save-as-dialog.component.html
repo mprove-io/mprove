@@ -22,12 +22,10 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': saveAs === reportSaveAsEnum.NEW_REPORT
+          'bg-m600': saveAs === 'NEW_REPORT'
         }"
       >
-        <m-check-icon
-          *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
-        ></m-check-icon>
+        <m-check-icon *ngIf="saveAs === 'NEW_REPORT'"></m-check-icon>
       </div>
 
       <div class="ml-5 text-base">New Report</div>
@@ -45,11 +43,11 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
+          'bg-m600': saveAs === 'REPLACE_EXISTING_REPORT'
         }"
       >
         <m-check-icon
-          *ngIf="saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
+          *ngIf="saveAs === 'REPLACE_EXISTING_REPORT'"
         ></m-check-icon>
       </div>
 
@@ -61,11 +59,11 @@
     <div class="ml-5 flex flex-row items-center">
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
-        *ngIf="!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
+        *ngIf="!reports && saveAs === 'REPLACE_EXISTING_REPORT'"
       >
         <ngx-spinner
           [ngClass]="{
-            invisible: saveAs !== reportSaveAsEnum.REPLACE_EXISTING_REPORT
+            invisible: saveAs !== 'REPLACE_EXISTING_REPORT'
           }"
           class="invisible"
           [name]="spinnerName"
@@ -84,7 +82,7 @@
         [fixNgSelectBottom]="reportSaveAsDialogExistingReportSelect"
         #reportSaveAsDialogExistingReportSelect
         data-cy="reportSaveAsDialogExistingReportSelect"
-        *ngIf="!!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
+        *ngIf="!!reports && saveAs === 'REPLACE_EXISTING_REPORT'"
         class="select-h-10 w-[500px] flex-shrink-0 text-base"
         [items]="reports"
         [clearable]="false"
@@ -128,22 +126,14 @@
   </div>
 
   <div class="text-s400 mt-9 h-7 text-base">
-    <div *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT">{{
-      newReportPath
+    <div *ngIf="saveAs === 'NEW_REPORT'">{{ newReportPath }}</div>
+
+    <div *ngIf="saveAs === 'REPLACE_EXISTING_REPORT' && !!selectedReportId">{{
+      selectedRepPath
     }}</div>
 
     <div
-      *ngIf="
-        saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
-        !!selectedReportId
-      "
-      >{{ selectedRepPath }}</div
-    >
-
-    <div
-      *ngIf="
-        saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT && !selectedReportId
-      "
+      *ngIf="saveAs === 'REPLACE_EXISTING_REPORT' && !selectedReportId"
     ></div>
   </div>
 
@@ -294,15 +284,13 @@
       class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-m600': saveAs === reportSaveAsEnum.NEW_REPORT || !!selectedReportId,
+        'bg-m600': saveAs === 'NEW_REPORT' || !!selectedReportId,
         'bg-s400 cursor-default':
-          saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
-          selectedReportId === undefined
+          saveAs === 'REPLACE_EXISTING_REPORT' && selectedReportId === undefined
       }"
       (click)="save()"
       [disabled]="
-        saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
-        selectedReportId === undefined
+        saveAs === 'REPLACE_EXISTING_REPORT' && selectedReportId === undefined
       "
       >Save</button
     >

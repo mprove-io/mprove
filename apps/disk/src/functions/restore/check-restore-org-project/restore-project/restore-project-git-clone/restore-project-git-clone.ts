@@ -1,13 +1,13 @@
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
-import type { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { cloneRemote } from '#disk/functions/git/clone-remote/clone-remote';
 
 export function restoreProjectGitClone(item: {
-  remoteType: ProjectRemoteTypeEnum.GitClone;
+  remoteType: 'GitClone';
   orgId: string;
   orgPath: string;
   projectId: string;

@@ -16,11 +16,9 @@ import {
   DEFAULT_PIVOT_COLUMNS_WIDTH,
   DEFAULT_PIVOT_FIRST_COLUMN_WIDTH
 } from '#common/constants/mconfig-chart';
-import { PivotAggEnum } from '#common/enums/chart/pivot-agg.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { PivotSortDirection } from '#front/app/modules/shared/chart-pivot-table/pivot-sort-direction';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { DataService, type QDataRow } from '#front/app/services/data.service';
 
@@ -353,7 +351,7 @@ class PivotDescFirstSortPlugin extends BaseGridPlugin {
 
     let sortModel = this.getSortModel();
     let existingSort = sortModel.find(sort => sort.field === field);
-    let nextSortModel: Array<{ field: string; direction: 'asc' | 'desc' }>;
+    let nextSortModel: Array<{ field: string; direction: PivotSortDirection }>;
 
     if (!existingSort) {
       nextSortModel = [{ field: field, direction: 'desc' }];
@@ -373,7 +371,7 @@ class PivotDescFirstSortPlugin extends BaseGridPlugin {
     let firstResult = Array.isArray(results) ? results[0] : [];
 
     return Array.isArray(firstResult)
-      ? (firstResult as Array<{ field: string; direction: 'asc' | 'desc' }>)
+      ? (firstResult as Array<{ field: string; direction: PivotSortDirection }>)
       : [];
   }
 
@@ -415,7 +413,7 @@ class PivotEmptyLastSortPlugin extends BaseGridPlugin {
     rows: PivotTableRow[];
     depth: number;
     field: string;
-    direction: 'asc' | 'desc';
+    direction: PivotSortDirection;
   }) {
     let { rows, depth, field, direction } = item;
     let blocks: PivotTableRow[][] = [];
@@ -475,7 +473,7 @@ class PivotEmptyLastSortPlugin extends BaseGridPlugin {
     a: PivotTableRow;
     b: PivotTableRow;
     field: string;
-    direction: 'asc' | 'desc';
+    direction: PivotSortDirection;
   }) {
     let { a, b, field, direction } = item;
     let aValue = a[field];
@@ -509,7 +507,7 @@ class PivotEmptyLastSortPlugin extends BaseGridPlugin {
     let firstResult = Array.isArray(results) ? results[0] : [];
 
     return Array.isArray(firstResult)
-      ? (firstResult as Array<{ field: string; direction: 'asc' | 'desc' }>)
+      ? (firstResult as Array<{ field: string; direction: PivotSortDirection }>)
       : [];
   }
 
@@ -929,7 +927,7 @@ export class ChartPivotTableComponent implements OnChanges {
           animation: false,
           valueFields: (this.chart.pivotValues || []).map(pivotValue => ({
             field: pivotValue.field,
-            aggFunc: PivotAggEnum.Sum,
+            aggFunc: 'sum',
             format: (value: number) =>
               this.formatPivotValue(pivotValue.field, value)
           })),
@@ -1109,7 +1107,7 @@ export class ChartPivotTableComponent implements OnChanges {
     this.pivotValueFieldIds.forEach(fieldId => {
       let field = this.mconfigFieldById.get(fieldId);
       let fieldThousandsSeparatorTag = field?.mproveTags?.find(
-        tag => tag.key === ParameterEnum.ThousandsSeparator
+        tag => tag.key === 'thousands_separator'
       );
       let thousandsSeparator =
         fieldThousandsSeparatorTag?.value ??
@@ -1160,7 +1158,7 @@ export class ChartPivotTableComponent implements OnChanges {
     let formattedValue = this.dataService.d3FormatValue({
       value: value,
       formatNumber: metadata.formatNumber,
-      fieldResult: FieldResultEnum.Number,
+      fieldResult: 'number',
       currencyPrefix: metadata.currencyPrefix,
       currencySuffix: metadata.currencySuffix,
       thousandsSeparator: metadata.thousandsSeparator

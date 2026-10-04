@@ -16,9 +16,7 @@ import { TabService } from '#backend/services/tab.service';
 import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
@@ -101,7 +99,7 @@ test('1', async t => {
               orgId: orgId,
               projectId: projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -119,7 +117,7 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: providerId,
-              type: ProviderTypeEnum.OpenAICompatible,
+              type: 'OpenAICompatible',
               name: 'Custom LLM',
               isEnabled: true,
               models: [
@@ -154,7 +152,7 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: CODEX_PROVIDER_ID,
-              type: ProviderTypeEnum.OpenAICodex,
+              type: 'OpenAICodex',
               isEnabled: true,
               models: [
                 {
@@ -334,7 +332,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -365,7 +363,7 @@ test('1', async t => {
     assert.deepEqual(providerWithoutServerTsAndModels, {
       projectId: projectId,
       providerId: providerId,
-      type: ProviderTypeEnum.OpenAICompatible,
+      type: 'OpenAICompatible',
       name: 'Custom LLM',
       isEnabled: true,
       options: {
@@ -474,7 +472,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

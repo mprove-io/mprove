@@ -32,25 +32,21 @@ import {
   MPROVE_USERS_FOLDER,
   MY_DASHBOARDS_SPACE_TITLE
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardPart } from '#common/types/backend/parts/dashboard-part';
-import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Member } from '#common/types/backend/parts/member';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
-import type { Dashboard } from '#common/types/blockml/parts/dashboard';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import type { Space } from '#common/types/blockml/parts/space';
 import { HashService } from '../hash.service';
 import { SpaceService } from '../space.service';
@@ -130,7 +126,7 @@ export class DashboardsService {
       {
         projectId: projectId,
         userId: user.userId,
-        type: FavoriteTypeEnum.Dashboard,
+        type: 'Dashboard',
         targetIds: dashboardTargetIds
       }
     );
@@ -326,13 +322,13 @@ export class DashboardsService {
 
     if (isUndefined(dashboard)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST
+        message: 'BACKEND_DASHBOARD_DOES_NOT_EXIST'
       });
     }
 
     if (dashboard.draft === true && dashboard.creatorId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DASHBOARD_CREATOR_ID_MISMATCH
+        message: 'BACKEND_DASHBOARD_CREATOR_ID_MISMATCH'
       });
     }
 
@@ -345,7 +341,7 @@ export class DashboardsService {
 
       if (isAccessGranted === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+          message: 'BACKEND_FORBIDDEN_DASHBOARD'
         });
       }
     }
@@ -593,7 +589,7 @@ export class DashboardsService {
     let insertOrDoNothingQueries: QueryTab[] = [];
 
     let dashboardMalloyMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === ModelTypeEnum.Malloy
+      mconfig => mconfig.modelType === 'Malloy'
     );
 
     let dashboardMalloyQueries: QueryTab[] = [];
@@ -613,7 +609,7 @@ export class DashboardsService {
     });
 
     let dashboardStoreMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === ModelTypeEnum.Store
+      mconfig => mconfig.modelType === 'Store'
     );
 
     let storeQueries: QueryTab[] = [];
@@ -629,7 +625,7 @@ export class DashboardsService {
         struct: tempStruct,
         project: project,
         envId: envId,
-        mconfigParentType: MconfigParentTypeEnum.Dashboard,
+        mconfigParentType: 'Dashboard',
         mconfigParentId: newDashboardId,
         model: this.modelsService.apiToTab({ apiModel: apiModel }),
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
@@ -666,9 +662,9 @@ export class DashboardsService {
 
       if (
         isQueryCache === true &&
-        query.status !== QueryStatusEnum.Error &&
+        query.status !== 'Error' &&
         isDefined(prevQuery) &&
-        prevQuery.status === QueryStatusEnum.Completed
+        prevQuery.status === 'Completed'
       ) {
         query.data = prevQuery.data;
         query.status = prevQuery.status;
@@ -678,7 +674,7 @@ export class DashboardsService {
         insertOrUpdateQueries.push(query);
       } else if (
         isQueryCache === true &&
-        query.status !== QueryStatusEnum.Error &&
+        query.status !== 'Error' &&
         prevTile.queryId === EMPTY_QUERY_ID &&
         cachedQueries.length > 0
       ) {
@@ -690,7 +686,7 @@ export class DashboardsService {
           x => x.queryId === cachedMconfig.queryId
         );
 
-        if (cachedQuery.status === QueryStatusEnum.Completed) {
+        if (cachedQuery.status === 'Completed') {
           query.data = cachedQuery.data;
           query.status = cachedQuery.status;
           query.lastCompleteTs = cachedQuery.lastCompleteTs;

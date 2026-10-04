@@ -21,7 +21,7 @@ import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetReportsOutput } from '#common/types/backend/routes/reports/get-reports/get-reports-output';
@@ -141,7 +141,7 @@ export class GetReportsController {
       userMember: apiUserMember,
       reportUnitDrafts: reportsCatalog.reportUnitDrafts,
       reportSpaceNodes: reportsCatalog.reportSpaceNodes,
-      storeModels: apiModels.filter(model => model.type === ModelTypeEnum.Store)
+      storeModels: apiModels.filter(model => model.type === 'Store')
     };
 
     return payload;

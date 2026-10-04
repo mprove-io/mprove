@@ -1,16 +1,16 @@
 import { ConfigService } from '@nestjs/config';
 import fse from 'fs-extra';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { LogType } from '#common/types/blockml/diagnostics/log-type';
 
 export function log(
   cs: ConfigService<BlockmlConfig>,
-  caller: CallerEnum,
-  func: FuncEnum,
+  caller: Caller,
+  func: Func,
   structId: string,
-  logType: LogTypeEnum,
+  logType: LogType,
   content: any
 ) {
   let logIO = cs.get<BlockmlConfig['logIO']>('logIO');
@@ -19,7 +19,7 @@ export function log(
   }
 
   let logFunc = cs.get<BlockmlConfig['logFunc']>('logFunc');
-  if (logFunc !== FuncEnum.ALL && logFunc !== func) {
+  if (logFunc !== 'ALL' && logFunc !== func) {
     return;
   }
 

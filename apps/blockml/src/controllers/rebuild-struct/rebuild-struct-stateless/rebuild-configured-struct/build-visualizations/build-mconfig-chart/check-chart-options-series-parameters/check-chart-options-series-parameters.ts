@@ -6,33 +6,30 @@ import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { CHART_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { drcType } from '#common/types/blockml/parts/internal/drc-type';
 import type { FileChartOptionsSeriesElement } from '#common/types/blockml/parts/internal/file-chart-options-series';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 
-let func = FuncEnum.CheckChartOptionsSeriesParameters;
+let func: Func = 'build-mconfig-chart/check-chart-options-series-parameters';
 
 export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -50,15 +47,15 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
           .forEach(parameter => {
             if (
               [
-                ParameterEnum.DataRowId.toString(),
-                ParameterEnum.DataField.toString(),
-                ParameterEnum.Type.toString(),
-                ParameterEnum.YAxisIndex.toString()
+                'data_row_id'.toString(),
+                'data_field'.toString(),
+                'type'.toString(),
+                'y_axis_index'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_SERIES_UNKNOWN_PARAMETER,
+                  title: 'OPTIONS_SERIES_UNKNOWN_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used ` +
                     'inside series element',
@@ -84,7 +81,7 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_SERIES_UNEXPECTED_LIST,
+                  title: 'OPTIONS_SERIES_UNEXPECTED_LIST',
                   message: `parameter "${parameter}" cannot be a list`,
                   lines: [
                     {
@@ -107,7 +104,7 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_SERIES_UNEXPECTED_DICTIONARY,
+                  title: 'OPTIONS_SERIES_UNEXPECTED_DICTIONARY',
                   message: `parameter "${parameter}" cannot be a dictionary`,
                   lines: [
                     {
@@ -139,16 +136,15 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             .filter(ln => ln !== 0);
 
           if (
-            [
-              CallerEnum.BuildDashboardTileCharts,
-              CallerEnum.BuildChartTileCharts
-            ].indexOf(caller) > -1
+            ['BuildDashboardTileCharts', 'BuildChartTileCharts'].indexOf(
+              caller
+            ) > -1
           ) {
             if (isUndefined(seriesElement.data_field)) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_SERIES_MISSING_DATA_FIELD,
-                  message: `Series element must have "${ParameterEnum.DataField}" parameter`,
+                  title: 'OPTIONS_SERIES_MISSING_DATA_FIELD',
+                  message: `Series element must have "data_field" parameter`,
                   lines: [
                     {
                       line: Math.min(...pKeysLineNums),
@@ -170,10 +166,10 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
               ) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.OPTIONS_SERIES_WRONG_DATA_FIELD,
+                    title: 'OPTIONS_SERIES_WRONG_DATA_FIELD',
                     message:
-                      `"${ParameterEnum.DataField}" value must be one of ` +
-                      `"${ParameterEnum.YFields}" elements`,
+                      `"data_field" value must be one of ` +
+                      `"y_fields" elements`,
                     lines: [
                       {
                         line: seriesElement.data_field_line_num,
@@ -190,8 +186,8 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             if (isDefined(seriesElement.data_row_id)) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_SERIES_WRONG_USE_OF_DATA_ROW_ID,
-                  message: `"${ParameterEnum.DataRowId}" can only be used inside report`,
+                  title: 'OPTIONS_SERIES_WRONG_USE_OF_DATA_ROW_ID',
+                  message: `"data_row_id" can only be used inside report`,
                   lines: [
                     {
                       line: seriesElement.data_row_id_line_num,
@@ -205,12 +201,12 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             }
           }
 
-          if (caller === CallerEnum.BuildReportCharts) {
+          if (caller === 'BuildReportCharts') {
             if (isUndefined(seriesElement.data_row_id)) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_SERIES_MISSING_DATA_ROW_ID,
-                  message: `Series element must have "${ParameterEnum.DataRowId}" parameter`,
+                  title: 'OPTIONS_SERIES_MISSING_DATA_ROW_ID',
+                  message: `Series element must have "data_row_id" parameter`,
                   lines: [
                     {
                       line: Math.min(...pKeysLineNums),
@@ -234,10 +230,10 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
               ) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.OPTIONS_SERIES_WRONG_DATA_ROW_ID,
+                    title: 'OPTIONS_SERIES_WRONG_DATA_ROW_ID',
                     message:
-                      `"${ParameterEnum.DataRowId}" value must be one of ` +
-                      `row_ids with "${ParameterEnum.ShowChart}" enabled`,
+                      `"data_row_id" value must be one of ` +
+                      `row_ids with "show_chart" enabled`,
                     lines: [
                       {
                         line: seriesElement.data_row_id_line_num,
@@ -254,8 +250,8 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             if (isDefined(seriesElement.data_field)) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD,
-                  message: `"${ParameterEnum.DataField}" can only be used inside dashboard or chart`,
+                  title: 'OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD',
+                  message: `"data_field" can only be used inside dashboard or chart`,
                   lines: [
                     {
                       line: seriesElement.data_field_line_num,
@@ -278,8 +274,8 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_SERIES_WRONG_Y_AXIS_INDEX,
-                message: `"${ParameterEnum.YAxisIndex}" must be index of ${ParameterEnum.YAxis} elements starting from 0`,
+                title: 'OPTIONS_SERIES_WRONG_Y_AXIS_INDEX',
+                message: `"y_axis_index" must be index of y_axis elements starting from 0`,
                 lines: [
                   {
                     line: seriesElement.y_axis_index_line_num,
@@ -298,8 +294,8 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_SERIES_WRONG_TYPE,
-                message: `value "${seriesElement.type}" is not valid series "${ParameterEnum.Type}"`,
+                title: 'OPTIONS_SERIES_WRONG_TYPE',
+                message: `value "${seriesElement.type}" is not valid series "type"`,
                 lines: [
                   {
                     line: seriesElement.type_line_num,
@@ -320,9 +316,9 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

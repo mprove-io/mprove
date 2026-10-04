@@ -1,6 +1,6 @@
 import { prepareTile } from '#common/functions/prepare-tile/prepare-tile';
 import { toYaml } from '#common/functions/to-yaml/to-yaml';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 
 export function makeChartFileText(item: {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { interval, type Observable, type Subscription } from 'rxjs';
 import { exhaustMap, tap } from 'rxjs/operators';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetExplorerChartTabOutput } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';
 import type { ToBackendGetExplorerChartTabRequest } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
@@ -145,7 +145,7 @@ export class ExplorerTabService {
       }
     });
 
-    if (respPayload.query.status === QueryStatusEnum.Running) {
+    if (respPayload.query.status === 'Running') {
       this.startPolling({
         sessionId: sessionId,
         tabId: tabId,

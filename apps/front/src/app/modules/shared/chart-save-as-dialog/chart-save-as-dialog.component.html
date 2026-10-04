@@ -16,12 +16,10 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': chartSaveAs === chartSaveAsEnum.NEW_CHART
+          'bg-m600': chartSaveAs === 'NEW_CHART'
         }"
       >
-        <m-check-icon
-          *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
-        ></m-check-icon>
+        <m-check-icon *ngIf="chartSaveAs === 'NEW_CHART'"></m-check-icon>
       </div>
 
       <div class="ml-5 text-base">New Chart</div>
@@ -39,11 +37,11 @@
       <button
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
+          'bg-m600': chartSaveAs === 'TILE_OF_DASHBOARD'
         }"
       >
         <m-check-icon
-          *ngIf="chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD"
+          *ngIf="chartSaveAs === 'TILE_OF_DASHBOARD'"
         ></m-check-icon>
       </button>
 
@@ -55,13 +53,11 @@
     <div class="flex flex-row items-center">
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
-        *ngIf="
-          !dashboardUnits && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
-        "
+        *ngIf="!dashboardUnits && chartSaveAs === 'TILE_OF_DASHBOARD'"
       >
         <ngx-spinner
           [ngClass]="{
-            invisible: chartSaveAs !== chartSaveAsEnum.TILE_OF_DASHBOARD
+            invisible: chartSaveAs !== 'TILE_OF_DASHBOARD'
           }"
           class="invisible"
           [name]="spinnerName"
@@ -80,9 +76,7 @@
         #chartSaveAsDialogDashboardSelect
         [fixNgSelectBottom]="chartSaveAsDialogDashboardSelect"
         data-cy="chartSaveAsDialogDashboardSelect"
-        *ngIf="
-          !!dashboardUnits && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
-        "
+        *ngIf="!!dashboardUnits && chartSaveAs === 'TILE_OF_DASHBOARD'"
         class="w-[500px] flex-shrink-0 text-base"
         [items]="dashboardUnits"
         [searchable]="false"
@@ -124,7 +118,7 @@
   </div>
 
   <div class="mt-8 min-h-[135px]">
-    <ng-container *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART">
+    <ng-container *ngIf="chartSaveAs === 'NEW_CHART'">
       <div class="flex flex-row items-start">
         <div class="flex flex-col">
           <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
@@ -245,7 +239,7 @@
       </div>
     </ng-container>
 
-    <ng-container *ngIf="chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD">
+    <ng-container *ngIf="chartSaveAs === 'TILE_OF_DASHBOARD'">
       <div class="ml-12 flex h-9 flex-col">
         <div
           data-cy="chartSaveAsDialogNewChartCheckbox"
@@ -256,12 +250,10 @@
           <div
             class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
             [ngClass]="{
-              'bg-m600': tileSaveAs === tileSaveAsEnum.NEW_TILE
+              'bg-m600': tileSaveAs === 'NEW_TILE'
             }"
           >
-            <m-check-icon
-              *ngIf="tileSaveAs === tileSaveAsEnum.NEW_TILE"
-            ></m-check-icon>
+            <m-check-icon *ngIf="tileSaveAs === 'NEW_TILE'"></m-check-icon>
           </div>
 
           <div class="ml-5 text-base">New Tile</div>
@@ -281,11 +273,11 @@
             <button
               class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
               [ngClass]="{
-                'bg-m600': tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
+                'bg-m600': tileSaveAs === 'REPLACE_EXISTING_TILE'
               }"
             >
               <m-check-icon
-                *ngIf="tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE"
+                *ngIf="tileSaveAs === 'REPLACE_EXISTING_TILE'"
               ></m-check-icon>
             </button>
 
@@ -299,7 +291,7 @@
               class="relative flex h-9 w-9 flex-shrink-0"
               *ngIf="
                 !selectedDashboardLoaded &&
-                tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
+                tileSaveAs === 'REPLACE_EXISTING_TILE'
               "
             >
               <ngx-spinner
@@ -321,7 +313,7 @@
               data-cy="chartSaveAsDialogTileSelect"
               *ngIf="
                 !!selectedDashboardLoaded &&
-                tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
+                tileSaveAs === 'REPLACE_EXISTING_TILE'
               "
               class="w-[500px] flex-shrink-0 text-base"
               [items]="selectedDashboard?.tiles || []"
@@ -357,17 +349,11 @@
   </div>
 
   <div class="text-s400 mt-9 h-7 text-base">
-    <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART">{{
-      newChartPath
-    }}</div>
+    <div *ngIf="chartSaveAs === 'NEW_CHART'">{{ newChartPath }}</div>
 
-    <div
-      *ngIf="
-        chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
-        !!selectedDashboardId
-      "
-      >{{ selectedDashboardPath }}</div
-    >
+    <div *ngIf="chartSaveAs === 'TILE_OF_DASHBOARD' && !!selectedDashboardId">{{
+      selectedDashboardPath
+    }}</div>
 
     <!-- <div
       *ngIf="
@@ -403,7 +389,7 @@
   <!-- <div class="flex h-9 flex-row items-start">
     <div
       class="flex flex-col"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
+      *ngIf="chartSaveAs === 'NEW_CHART'"
     >
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
@@ -413,7 +399,7 @@
     <div
       [formGroup]="rolesForm"
       class="ml-5 flex flex-col items-start"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
+      *ngIf="chartSaveAs === 'NEW_CHART'"
     >
       <input
         autocomplete="off"

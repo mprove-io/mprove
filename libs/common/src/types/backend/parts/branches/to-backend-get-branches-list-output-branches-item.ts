@@ -1,17 +1,18 @@
 import { z } from 'zod';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+import { zRepoType } from '#common/types/disk/parts/repo/repo-type';
 
 export type ToBackendGetBranchesListOutputBranchesItem = {
   repoId: string;
-  repoType: RepoTypeEnum.Production | RepoTypeEnum.Dev | RepoTypeEnum.Session;
+  repoType: RepoType;
   branchId: string;
 };
 
 export let zToBackendGetBranchesListOutputBranchesItem = z
   .object({
     repoId: z.string(),
-    repoType: z.enum(RepoTypeEnum),
+    repoType: zRepoType,
     branchId: z.string()
   })
   .meta({ id: 'ToBackendGetBranchesListOutputBranchesItem' });

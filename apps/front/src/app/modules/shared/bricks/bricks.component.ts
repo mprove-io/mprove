@@ -1,12 +1,11 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { FilterX } from '#common/types/backend/parts/filter-x';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { DeleteFilterFnItem } from '#common/types/front/delete-filter-fn-item';
+import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { DeleteFilterFnItem } from '#common/types/front/filter/delete-filter-fn-item';
 import { ModelsQuery } from '#front/app/queries/models.query';
 
 @Component({
@@ -40,9 +39,6 @@ export class BricksComponent implements OnChanges {
 
   @Input()
   metricsEndDateIncludedYYYYMMDD: string;
-
-  fractionOperatorEnum = FractionOperatorEnum;
-  controlClassDatePicker = ControlClassEnum.DatePicker;
 
   constructor(private modelsQuery: ModelsQuery) {}
 

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { checkApiHostname } from '#backend/functions/check-api-hostname';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 
 @Injectable()
@@ -45,7 +45,7 @@ export class UrlService {
       hostnameLowerCase = parsedUrl.hostname.toLowerCase();
     } catch (e) {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_INVALID_URL,
+        message: 'BACKEND_API_INVALID_URL',
         displayData: { url: urlStr },
         originalError: e
       });
@@ -53,7 +53,7 @@ export class UrlService {
 
     if (protocol !== 'https:' && protocol !== 'http:') {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_PROTOCOL_MUST_BE_HTTPS_OR_HTTP,
+        message: 'BACKEND_API_PROTOCOL_MUST_BE_HTTPS_OR_HTTP',
         displayData: { url: urlStr }
       });
     }
@@ -66,7 +66,7 @@ export class UrlService {
       )
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_HOST_IS_BLOCKED_BY_LIST,
+        message: 'BACKEND_API_HOST_IS_BLOCKED_BY_LIST',
         displayData: { url: urlStr }
       });
     }

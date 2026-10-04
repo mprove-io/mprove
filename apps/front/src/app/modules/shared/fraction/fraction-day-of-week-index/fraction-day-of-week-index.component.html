@@ -34,7 +34,7 @@
         <div
           class="flex flex-row"
           [ngClass]="{
-            'text-yellow-700': item.operator === fractionOperatorEnum.And
+            'text-yellow-700': item.operator === 'And'
           }"
         >
           <div class="ml-1">{{ item.operator | uppercase }} -</div>
@@ -47,8 +47,8 @@
   <form
     [formGroup]="dayOfWeekIndexValuesForm"
     *ngIf="
-      fraction.type === fractionTypeEnum.DayOfWeekIndexIsEqualTo ||
-      fraction.type === fractionTypeEnum.DayOfWeekIndexIsNotEqualTo
+      fraction.type === 'DayOfWeekIndexIsEqualTo' ||
+      fraction.type === 'DayOfWeekIndexIsNotEqualTo'
     "
   >
     <div

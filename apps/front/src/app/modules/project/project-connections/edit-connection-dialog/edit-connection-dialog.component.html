@@ -30,7 +30,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editBigqueryForm"
-      *ngIf="ref.data.connection.type === typeBigQuery"
+      *ngIf="ref.data.connection.type === 'BigQuery'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -200,7 +200,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editMotherduckForm"
-      *ngIf="ref.data.connection.type === typeMotherDuck"
+      *ngIf="ref.data.connection.type === 'MotherDuck'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -306,7 +306,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editPostgresForm"
-      *ngIf="ref.data.connection.type === typePostgreSQL"
+      *ngIf="ref.data.connection.type === 'PostgreSQL'"
     >
       <div>
         <div class="mb-6 flex flex-row items-center">
@@ -477,7 +477,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editMysqlForm"
-      *ngIf="ref.data.connection.type === typeMySQL"
+      *ngIf="ref.data.connection.type === 'MySQL'"
     >
       <div>
         <div class="flex flex-row items-center">
@@ -631,7 +631,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editTrinoForm"
-      *ngIf="ref.data.connection.type === typeTrino"
+      *ngIf="ref.data.connection.type === 'Trino'"
     >
       <div>
         <div class="flex flex-row items-center">
@@ -768,7 +768,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editPrestoForm"
-      *ngIf="ref.data.connection.type === typePresto"
+      *ngIf="ref.data.connection.type === 'Presto'"
     >
       <div>
         <div class="flex flex-row items-center">
@@ -947,7 +947,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editSnowflakeForm"
-      *ngIf="ref.data.connection.type === typeSnowFlake"
+      *ngIf="ref.data.connection.type === 'SnowFlake'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Account</div>
@@ -1065,7 +1065,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editDatabricksForm"
-      *ngIf="ref.data.connection.type === typeDatabricks"
+      *ngIf="ref.data.connection.type === 'Databricks'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
@@ -1145,10 +1145,7 @@
       </div>
 
       <ng-container
-        *ngIf="
-          editDatabricksForm.controls['authType'].value ===
-          databricksAuthTypeOAuthM2M
-        "
+        *ngIf="editDatabricksForm.controls['authType'].value === 'OAuthM2M'"
       >
         <div class="flex flex-row items-center">
           <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -1204,7 +1201,7 @@
         class="flex flex-row items-center"
         *ngIf="
           editDatabricksForm.controls['authType'].value ===
-          databricksAuthTypePAT
+          'PersonalAccessToken'
         "
       >
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Token</div>
@@ -1283,7 +1280,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editApiForm"
-      *ngIf="ref.data.connection.type === typeApi"
+      *ngIf="ref.data.connection.type === 'Api'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Base URL</div>
@@ -1366,7 +1363,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="editGoogleApiForm"
-      *ngIf="ref.data.connection.type === typeGoogleApi"
+      *ngIf="ref.data.connection.type === 'GoogleApi'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -1547,8 +1544,8 @@
 
       <div
         *ngIf="
-          ref.data.connection.type !== typeGoogleApi &&
-          ref.data.connection.type !== typeApi
+          ref.data.connection.type !== 'GoogleApi' &&
+          ref.data.connection.type !== 'Api'
         "
         class="ml-5 flex flex-shrink-0 flex-col items-end gap-2"
       >

@@ -9,7 +9,7 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { makeFullName } from '#backend/functions/make-full-name';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Env } from '#common/types/backend/parts/env';
@@ -139,7 +139,7 @@ export class EnvsService {
 
     if (isDefined(env)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ENV_ALREADY_EXISTS
+        message: 'BACKEND_ENV_ALREADY_EXISTS'
       });
     }
   }
@@ -162,7 +162,7 @@ export class EnvsService {
 
     if (isUndefined(env)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ENV_DOES_NOT_EXIST
+        message: 'BACKEND_ENV_DOES_NOT_EXIST'
       });
     }
 
@@ -172,7 +172,7 @@ export class EnvsService {
       env.memberIds.indexOf(member.memberId) < 0
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV
+        message: 'BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV'
       });
     }
 

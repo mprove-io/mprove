@@ -43,16 +43,6 @@ import {
   SHARED_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { QueryPartEnum } from '#common/enums/query-part.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -63,13 +53,14 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { spaceUnitToChartUnit } from '#common/functions/space-unit-to-chart-unit/space-unit-to-chart-unit';
-import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
+import type { ModelTreeLevel } from '#common/types/backend/parts/ui/model-tree-level';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
 import type { ToBackendSetFavoriteResponse } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-response';
 import type { ToBackendCancelQueriesRequest } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-request';
@@ -80,11 +71,13 @@ import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/qu
 import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
 import type { ToBackendRunQueriesDryRequest } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-request';
 import type { ToBackendRunQueriesDryResponse } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-response';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { ModelFieldY } from '#common/types/blockml/parts/model-field-y';
-import type { Query } from '#common/types/blockml/parts/query';
-import type { RefreshItem } from '#common/types/front/refresh-item';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-y';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { QueryPart } from '#common/types/front/query-info/query-part';
+import type { RefreshItem } from '#common/types/front/ui/refresh-item';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
@@ -112,12 +105,12 @@ import { ValidationService } from '#front/app/services/validation.service';
 
 export class QueryPartItem {
   label: string;
-  value: QueryPartEnum;
+  value: QueryPart;
 }
 
 export class ChartTypeItem {
   label: string;
-  value: ChartTypeEnum;
+  value: ChartType;
   iconPath: string;
 }
 
@@ -164,31 +157,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
-  modelTreeLevelsFlat = ModelTreeLevelsEnum.Flat;
-  modelTreeLevelsFlatTime = ModelTreeLevelsEnum.FlatTime;
-  modelTreeLevelsNested = ModelTreeLevelsEnum.Nested;
-
-  queryStatusEnum = QueryStatusEnum;
-  connectionTypeEnum = ConnectionTypeEnum;
-  chartTypeEnum = ChartTypeEnum;
-
-  queryPartEnum = QueryPartEnum;
-
-  modelTypeStore = ModelTypeEnum.Store;
-  modelTypeMalloy = ModelTypeEnum.Malloy;
-
-  chartTypeEnumTable = ChartTypeEnum.Table;
-  chartTypeEnumSingle = ChartTypeEnum.Single;
-  chartTypeEnumLine = ChartTypeEnum.Line;
-  chartTypeEnumBar = ChartTypeEnum.Bar;
-  chartTypeEnumScatter = ChartTypeEnum.Scatter;
-  chartTypeEnumPie = ChartTypeEnum.Pie;
-  chartTypeEnumPivotTable = ChartTypeEnum.PivotTable;
-
   lastUrl: string;
   selectedChartId: string | undefined;
 
-  modelTreeLevels = ModelTreeLevelsEnum.FlatTime;
+  modelTreeLevels: ModelTreeLevel = 'FlatTime';
   modelTreeLevels$ = this.uiQuery.modelTreeLevels$.pipe(
     tap(x => {
       this.modelTreeLevels = x;
@@ -331,30 +303,30 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       if (
         isDefined(this.model.modelId) &&
-        ((this.model.type === ModelTypeEnum.Malloy &&
+        ((this.model.type === 'Malloy' &&
           [
-            QueryPartEnum.JsonAppliedGivens,
-            QueryPartEnum.MalloyQuery,
-            QueryPartEnum.MalloyCompiledQuery,
-            QueryPartEnum.SqlMalloy,
-            QueryPartEnum.YamlTile,
-            QueryPartEnum.MalloySource,
-            QueryPartEnum.JsonResults
+            'JsonAppliedGivens',
+            'MalloyQuery',
+            'MalloyCompiledQuery',
+            'SqlMalloy',
+            'YamlTile',
+            'MalloySource',
+            'JsonResults'
           ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
-          (this.model.type === ModelTypeEnum.Store &&
+          (this.model.type === 'Store' &&
             [
-              QueryPartEnum.JsonStoreRequestParts,
-              QueryPartEnum.JavascriptStoreRequestFunction,
-              QueryPartEnum.YamlTile,
-              QueryPartEnum.YamlStore,
-              QueryPartEnum.JsonResults
+              'JsonStoreRequestParts',
+              'JavascriptStoreRequestFunction',
+              'YamlTile',
+              'YamlStore',
+              'JsonResults'
             ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0))
       ) {
-        let queryPart =
-          this.model.type === ModelTypeEnum.Store
-            ? QueryPartEnum.JsonStoreRequestParts
-            : this.model.type === ModelTypeEnum.Malloy
-              ? QueryPartEnum.MalloyQuery
+        let queryPart: QueryPart =
+          this.model.type === 'Store'
+            ? 'JsonStoreRequestParts'
+            : this.model.type === 'Malloy'
+              ? 'MalloyQuery'
               : undefined;
 
         if (
@@ -374,17 +346,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
           } as ModelFieldY)
         )
         .sort((a, b) =>
-          a.fieldClass !== FieldClassEnum.Dimension &&
-          b.fieldClass === FieldClassEnum.Dimension
+          a.fieldClass !== 'dimension' && b.fieldClass === 'dimension'
             ? 1
-            : a.fieldClass === FieldClassEnum.Dimension &&
-                b.fieldClass !== FieldClassEnum.Dimension
+            : a.fieldClass === 'dimension' && b.fieldClass !== 'dimension'
               ? -1
-              : a.fieldClass !== FieldClassEnum.Filter &&
-                  b.fieldClass === FieldClassEnum.Filter
+              : a.fieldClass !== 'filter' && b.fieldClass === 'filter'
                 ? 1
-                : a.fieldClass === FieldClassEnum.Filter &&
-                    b.fieldClass !== FieldClassEnum.Filter
+                : a.fieldClass === 'filter' && b.fieldClass !== 'filter'
                   ? -1
                   : a.partLabel > b.partLabel
                     ? 1
@@ -528,7 +496,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         let checkSelectResult = getSelectValid({
           chart: this.mconfig.chart,
           mconfigFields: this.mconfig.fields,
-          isStoreModel: this.mconfig.modelType === ModelTypeEnum.Store
+          isStoreModel: this.mconfig.modelType === 'Store'
         });
 
         this.isSelectValid = checkSelectResult.isSelectValid;
@@ -647,37 +615,37 @@ export class ModelsComponent implements OnInit, OnDestroy {
   chartTypesList: ChartTypeItem[] = [
     {
       label: 'Table',
-      value: ChartTypeEnum.Table,
+      value: 'table',
       iconPath: 'assets/charts/table.svg'
     },
     {
       label: 'Pivot Table',
-      value: ChartTypeEnum.PivotTable,
+      value: 'pivot_table',
       iconPath: 'assets/charts/pivot_table.svg'
     },
     {
       label: 'Line',
-      value: ChartTypeEnum.Line,
+      value: 'line',
       iconPath: 'assets/charts/line.svg'
     },
     {
       label: 'Bar',
-      value: ChartTypeEnum.Bar,
+      value: 'bar',
       iconPath: 'assets/charts/bar_vertical.svg'
     },
     {
       label: 'Scatter',
-      value: ChartTypeEnum.Scatter,
+      value: 'scatter',
       iconPath: 'assets/charts/scatter.svg'
     },
     {
       label: 'Single',
-      value: ChartTypeEnum.Single,
+      value: 'single',
       iconPath: 'assets/charts/single.svg'
     },
     {
       label: 'Pie',
-      value: ChartTypeEnum.Pie,
+      value: 'pie',
       iconPath: 'assets/charts/pie.svg'
     }
   ];
@@ -781,7 +749,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
-          if (this.query?.status === QueryStatusEnum.Running) {
+          if (this.query?.status === 'Running') {
             let nav = this.navQuery.getValue();
 
             let payload: ToBackendGetQueryRequest['input'] = {
@@ -849,80 +817,70 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      QueryPartEnum.JsonStoreRequestParts
-    );
+    this.queryPartForm.controls['queryPart'].setValue('JsonStoreRequestParts');
   }
 
   setShowJsonAppliedGivens() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      QueryPartEnum.JsonAppliedGivens
-    );
+    this.queryPartForm.controls['queryPart'].setValue('JsonAppliedGivens');
   }
 
   setShowMalloyQuery() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      QueryPartEnum.MalloyQuery
-    );
+    this.queryPartForm.controls['queryPart'].setValue('MalloyQuery');
   }
 
   setShowMalloyCompiledQuery() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      QueryPartEnum.MalloyCompiledQuery
-    );
+    this.queryPartForm.controls['queryPart'].setValue('MalloyCompiledQuery');
   }
 
   setShowSqlMalloy() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.SqlMalloy);
+    this.queryPartForm.controls['queryPart'].setValue('SqlMalloy');
   }
 
   setShowSqlMain() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.SqlMain);
+    this.queryPartForm.controls['queryPart'].setValue('SqlMain');
   }
 
   setShowMalloySource() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      QueryPartEnum.MalloySource
-    );
+    this.queryPartForm.controls['queryPart'].setValue('MalloySource');
   }
 
   setShowYamlTile() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.YamlTile);
+    this.queryPartForm.controls['queryPart'].setValue('YamlTile');
   }
 
   setShowYamlStore() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.YamlStore);
+    this.queryPartForm.controls['queryPart'].setValue('YamlStore');
   }
 
   setShowYamlModel() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.YamlModel);
+    this.queryPartForm.controls['queryPart'].setValue('YamlModel');
   }
 
   setShowJavascriptStoreRequestFunction() {
@@ -930,7 +888,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      QueryPartEnum.JavascriptStoreRequestFunction
+      'JavascriptStoreRequestFunction'
     );
   }
 
@@ -938,9 +896,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      QueryPartEnum.JsonResults
-    );
+    this.queryPartForm.controls['queryPart'].setValue('JsonResults');
   }
 
   setShowCharts() {
@@ -969,7 +925,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (
       isDefined(this.query.queryId) &&
       this.query.queryId !== EMPTY_QUERY_ID &&
-      this.query.status === QueryStatusEnum.New &&
+      this.query.status === 'New' &&
       this.isAutoRun === true
     ) {
       setTimeout(() => {
@@ -1039,7 +995,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
         if (
           this.mconfig?.select.length > 0 &&
-          this.query?.status !== QueryStatusEnum.Running
+          this.query?.status !== 'Running'
         ) {
           this.run();
         }
@@ -1107,7 +1063,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }
@@ -1125,13 +1081,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.model.type === ModelTypeEnum.Malloy) {
+    if (this.model.type === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Limit,
+          type: 'Limit',
           timezone: newMconfig.timezone,
           limit: Number(limit.value)
         }
@@ -1358,7 +1314,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  chartTypeChange(newChartTypeValue?: ChartTypeEnum) {
+  chartTypeChange(newChartTypeValue?: ChartType) {
     if (this.canAccessChartModel === false) {
       return;
     }
@@ -1397,13 +1353,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
     newMconfig.chart.series.forEach(s => (s.type = newChartType));
 
     // query not changed
-    if (this.model.type === ModelTypeEnum.Malloy) {
+    if (this.model.type === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Get,
+          type: 'Get',
           timezone: newMconfig.timezone
         }
       });
@@ -1447,13 +1403,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
     newMconfig.chart.title = chartTitle;
 
     // query not changed
-    if (this.model.type === ModelTypeEnum.Malloy) {
+    if (this.model.type === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Get,
+          type: 'Get',
           timezone: newMconfig.timezone
         }
       });
@@ -1471,13 +1427,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart = Object.assign({}, newMconfig.chart, chartPart);
 
-    if (this.model.type === ModelTypeEnum.Malloy) {
+    if (this.model.type === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Get,
+          type: 'Get',
           timezone: newMconfig.timezone
         }
       });
@@ -1582,10 +1538,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   toggleModelTreeLevels() {
-    let newValue =
-      this.modelTreeLevels === ModelTreeLevelsEnum.FlatTime
-        ? ModelTreeLevelsEnum.Nested
-        : ModelTreeLevelsEnum.FlatTime;
+    let newValue: ModelTreeLevel =
+      this.modelTreeLevels === 'FlatTime' ? 'Nested' : 'FlatTime';
 
     this.uiQuery.updatePart({ modelTreeLevels: newValue });
     this.uiService.setUserUi({ modelTreeLevels: newValue });
@@ -1869,7 +1823,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   toggleChartsByModel() {
-    let newValue = this.chartsByModel !== true;
+    let newValue: boolean = this.chartsByModel !== true;
 
     this.chartsByModel = newValue;
 
@@ -1943,7 +1897,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendSetFavoriteRequest['input'] = {
       projectId: nav.projectId,
-      type: FavoriteTypeEnum.Chart,
+      type: 'Chart',
       targetId: chartId,
       isFavorite: isFavorite === false
     };

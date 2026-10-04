@@ -12,9 +12,7 @@ import {
   UTC
 } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
@@ -80,7 +78,7 @@ test('1', async t => {
               seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.Managed
+              remoteType: 'Managed'
             }
           ],
           members: [
@@ -98,7 +96,7 @@ test('1', async t => {
               projectId: projectId,
               connectionId: 'c7',
               envId: PROJECT_ENV_PROD,
-              type: ConnectionTypeEnum.GoogleApi,
+              type: 'GoogleApi',
               options: {
                 storeGoogleApi: EMPTY_STORE_GOOGLE_API_OPTIONS
               }
@@ -162,7 +160,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -177,7 +175,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

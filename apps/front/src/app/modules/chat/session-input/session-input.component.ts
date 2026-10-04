@@ -15,8 +15,8 @@ import {
   EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
 import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
 import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -49,9 +49,7 @@ export class SessionInputComponent implements OnChanges {
   @Input() variant = 'default';
   @Output() variantChange = new EventEmitter<string>();
 
-  sessionTypeEnum = SessionTypeEnum;
-
-  @Input() sessionType: SessionTypeEnum = SessionTypeEnum.Explorer;
+  @Input() sessionType: SessionType = 'Explorer';
   @Input() disabled = false;
   @Input() showSelects = true;
   @Input() scrollableInput = false;
@@ -115,9 +113,7 @@ export class SessionInputComponent implements OnChanges {
     let state = this.sessionModelsQuery.getValue();
 
     let models =
-      this.sessionType === SessionTypeEnum.Explorer
-        ? state.modelsAi
-        : state.modelsOpencode;
+      this.sessionType === 'Explorer' ? state.modelsAi : state.modelsOpencode;
 
     this.applyModels({ apiModels: models, selectRecommended: false });
   }
@@ -127,9 +123,7 @@ export class SessionInputComponent implements OnChanges {
       let state = this.sessionModelsQuery.getValue();
 
       let models =
-        this.sessionType === SessionTypeEnum.Explorer
-          ? state.modelsAi
-          : state.modelsOpencode;
+        this.sessionType === 'Explorer' ? state.modelsAi : state.modelsOpencode;
 
       this.applyModels({ apiModels: models, selectRecommended: false });
       this.updateProjectHasE2bApiKey();
@@ -176,7 +170,7 @@ export class SessionInputComponent implements OnChanges {
     this.modelExtraIdChange.emit(this.modelExtraId);
     this.variantChange.emit(this.variant);
 
-    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
+    let isExplorer = this.sessionType === 'Explorer';
 
     if (isExplorer) {
       this.uiQuery.updatePart({
@@ -202,7 +196,7 @@ export class SessionInputComponent implements OnChanges {
   onVariantSelect() {
     this.variantChange.emit(this.variant);
 
-    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
+    let isExplorer = this.sessionType === 'Explorer';
 
     if (isExplorer) {
       this.uiQuery.updatePart({
@@ -223,14 +217,13 @@ export class SessionInputComponent implements OnChanges {
 
   updateEffectiveDisabled() {
     let isEditorSessionWithoutEditorRole =
-      this.sessionType === SessionTypeEnum.Editor && !this.isEditor;
+      this.sessionType === 'Editor' && !this.isEditor;
 
     let isExplorerSessionWithoutExplorerRole =
-      this.sessionType === SessionTypeEnum.Explorer && !this.isExplorer;
+      this.sessionType === 'Explorer' && !this.isExplorer;
 
     let isEditorWithoutE2b =
-      this.sessionType !== SessionTypeEnum.Explorer &&
-      !this.projectHasE2bApiKey;
+      this.sessionType !== 'Explorer' && !this.projectHasE2bApiKey;
 
     this.effectiveDisabled =
       this.disabled ||
@@ -238,8 +231,7 @@ export class SessionInputComponent implements OnChanges {
       isEditorSessionWithoutEditorRole ||
       isExplorerSessionWithoutExplorerRole ||
       isEditorWithoutE2b ||
-      (this.sessionType === SessionTypeEnum.Explorer &&
-        this.isUsageLimitReached);
+      (this.sessionType === 'Explorer' && this.isUsageLimitReached);
   }
 
   onUsageLimitReachedChange(item: { isReached: boolean }) {
@@ -264,14 +256,12 @@ export class SessionInputComponent implements OnChanges {
       this.modelVariantsMap.get(this.modelExtraId) ?? [];
 
     let enabledVariants: LlmModelVariant[] = modelVariants.filter(variant =>
-      this.sessionType === SessionTypeEnum.Explorer
-        ? variant.isExplorer
-        : variant.isBuilder
+      this.sessionType === 'Explorer' ? variant.isExplorer : variant.isBuilder
     );
 
     this.variants = enabledVariants.map(variant => {
       let isRecommended: boolean =
-        this.sessionType === SessionTypeEnum.Explorer
+        this.sessionType === 'Explorer'
           ? variant.isExplorerRecommended
           : variant.isBuilderRecommended;
 
@@ -402,12 +392,12 @@ export class SessionInputComponent implements OnChanges {
             let state = this.sessionModelsQuery.getValue();
 
             let updatedModelsOpencode =
-              this.sessionType === SessionTypeEnum.Editor
+              this.sessionType === 'Editor'
                 ? resp.output.modelsOpencode
                 : state.modelsOpencode;
 
             let updatedModelsAi =
-              this.sessionType === SessionTypeEnum.Explorer
+              this.sessionType === 'Explorer'
                 ? resp.output.modelsAi
                 : state.modelsAi;
 
@@ -417,7 +407,7 @@ export class SessionInputComponent implements OnChanges {
             });
 
             let models =
-              this.sessionType === SessionTypeEnum.Explorer
+              this.sessionType === 'Explorer'
                 ? resp.output.modelsAi
                 : resp.output.modelsOpencode;
 

@@ -94,13 +94,11 @@
             }"
           >
             <span
-              *ngIf="session.type === sessionTypeEnum.Explorer"
+              *ngIf="session.type === 'Explorer'"
               class="flex [&_svg]:h-[22px] [&_svg]:w-[22px]"
               ><m-explorer-icon></m-explorer-icon
             ></span>
-            <m-editor-icon
-              *ngIf="session.type === sessionTypeEnum.Editor"
-            ></m-editor-icon>
+            <m-editor-icon *ngIf="session.type === 'Editor'"></m-editor-icon>
           </div>
           <span
             class="min-w-0 flex-1 truncate text-[17px]"
@@ -168,12 +166,11 @@
                   *ngIf="session.status === 'Active'"
                   class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                   [ngClass]="{
-                    'text-s400 cursor-default':
-                      session.type === sessionTypeEnum.Explorer
+                    'text-s400 cursor-default': session.type === 'Explorer'
                   }"
-                  [disabled]="session.type === sessionTypeEnum.Explorer"
+                  [disabled]="session.type === 'Explorer'"
                   [tp]="
-                    session.type === sessionTypeEnum.Explorer
+                    session.type === 'Explorer'
                       ? 'Pause is not needed for Explorer session'
                       : null
                   "
@@ -224,8 +221,7 @@
             {{
               isLoadingArchived
                 ? 'Loading...'
-                : archivedLastCreatedTs ||
-                    currentSession?.status === sessionStatusArchived
+                : archivedLastCreatedTs || currentSession?.status === 'Archived'
                   ? 'Load more archived sessions'
                   : 'Load archived sessions'
             }}

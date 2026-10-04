@@ -3,28 +3,25 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 
-let func = FuncEnum.CheckReport;
+let func: Func = 'build-report/check-report';
 
 export function checkReport(item: {
   reports: FileReport[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileReport[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newReports: FileReport[] = [];
 
@@ -34,8 +31,8 @@ export function checkReport(item: {
     if (isUndefined(x.title)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.MISSING_REPORT_TITLE,
-          message: `parameter "${ParameterEnum.Title}" is required for report`,
+          title: 'MISSING_REPORT_TITLE',
+          message: `parameter "title" is required for report`,
           lines: [
             {
               line: x.report_line_num,
@@ -51,8 +48,8 @@ export function checkReport(item: {
     if (isUndefined(x.rows)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.MISSING_REPORT_ROWS,
-          message: `parameter "${ParameterEnum.Rows}" is required for report`,
+          title: 'MISSING_REPORT_ROWS',
+          message: `parameter "rows" is required for report`,
           lines: [
             {
               line: x.report_line_num,
@@ -70,9 +67,9 @@ export function checkReport(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Reports, newReports);
+  log(cs, caller, func, structId, 'out_reports.log', newReports);
 
   return Result.succeed(newReports);
 }

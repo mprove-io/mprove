@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class HashService {
 
     if (isUndefined(hashSecret)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_HASH_SECRET_IS_NOT_DEFINED
+        message: 'BACKEND_HASH_SECRET_IS_NOT_DEFINED'
       });
     }
 

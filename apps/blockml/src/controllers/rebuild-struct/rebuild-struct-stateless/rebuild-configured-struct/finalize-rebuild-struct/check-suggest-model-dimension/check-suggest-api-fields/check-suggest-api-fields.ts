@@ -1,11 +1,10 @@
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 
 export function checkSuggestApiFields(item: {
   fields: ModelField[];
@@ -17,15 +16,12 @@ export function checkSuggestApiFields(item: {
   let { fields, apiModels } = item;
 
   fields.forEach(field => {
-    if (
-      field.fieldClass !== FieldClassEnum.Filter &&
-      field.fieldClass !== FieldClassEnum.Dimension
-    ) {
+    if (field.fieldClass !== 'filter' && field.fieldClass !== 'dimension') {
       return;
     }
 
     if (isDefined(field.suggestModelDimension)) {
-      if (isUndefined(field.result !== FieldResultEnum.String)) {
+      if (isUndefined(field.result !== 'string')) {
         field.suggestModelDimension = undefined;
         return;
       }
@@ -56,12 +52,12 @@ export function checkSuggestApiFields(item: {
         return;
       }
 
-      if (apiModelField.fieldClass !== FieldClassEnum.Dimension) {
+      if (apiModelField.fieldClass !== 'dimension') {
         field.suggestModelDimension = undefined;
         return;
       }
 
-      if (apiModelField.result !== FieldResultEnum.String) {
+      if (apiModelField.result !== 'string') {
         field.suggestModelDimension = undefined;
         return;
       }

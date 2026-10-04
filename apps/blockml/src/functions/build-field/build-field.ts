@@ -12,7 +12,8 @@ import { checkFieldsExist } from '#blockml/functions/build-field/check-fields-ex
 import { checkStoreFieldDetail } from '#blockml/functions/build-field/check-store-field-detail/check-store-field-detail';
 import { checkStoreFieldGroup } from '#blockml/functions/build-field/check-store-field-group/check-store-field-group';
 import { setImplicitLabel } from '#blockml/functions/build-field/set-implicit-label/set-implicit-label';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
@@ -22,7 +23,7 @@ export function buildField<T extends sdrType>(item: {
   projectConfig: FileProjectConf;
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   return Result.pipe(
@@ -108,7 +109,7 @@ export function buildField<T extends sdrType>(item: {
     Result.bind(
       'entities',
       (v): Result.Result<T[], never> =>
-        v.caller === CallerEnum.BuildStoreField
+        v.caller === 'BuildStoreField'
           ? (checkStoreFieldGroup({
               stores: v.entities as FileStore[],
               structId: v.structId,
@@ -121,7 +122,7 @@ export function buildField<T extends sdrType>(item: {
     Result.bind(
       'entities',
       (v): Result.Result<T[], never> =>
-        v.caller === CallerEnum.BuildStoreField
+        v.caller === 'BuildStoreField'
           ? (checkStoreFieldDetail({
               stores: v.entities as FileStore[],
               structId: v.structId,

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 const { forEachSeries } = pIteration;
 
@@ -28,16 +29,7 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -47,14 +39,14 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { Member } from '#common/types/backend/parts/member';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
-import type { Parameter } from '#common/types/blockml/parts/parameter';
-import type { RowRecord } from '#common/types/blockml/parts/row-record';
-import type { Rq } from '#common/types/blockml/parts/rq';
-import type { Sorting } from '#common/types/blockml/parts/sorting';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
+import type { Sorting } from '#common/types/blockml/parts/query/sorting';
+import type { Parameter } from '#common/types/blockml/parts/report/row/parameter';
+import type { RowRecord } from '#common/types/blockml/parts/report/row/row-record';
+import type { Rq } from '#common/types/blockml/parts/report/row/rq';
 import { MconfigsService } from './db/mconfigs.service';
 import { ModelsService } from './db/models.service';
 import { QueriesService } from './db/queries.service';
@@ -83,7 +75,7 @@ export class ReportDataService {
   async getReportData(item: {
     traceId: string;
     timezone: string;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
     struct: StructTab;
     metrics: ModelMetric[];
@@ -191,10 +183,10 @@ export class ReportDataService {
 
         let model = models.find(ml => ml.modelId === metric.modelId);
 
-        if (model.type === ModelTypeEnum.Store) {
+        if (model.type === 'Store') {
           // add required parameters
           model.storeContent.fields
-            .filter(x => x.fieldClass === FieldClassEnum.Filter)
+            .filter(x => x.fieldClass === 'filter')
             .forEach(storeFilter => {
               if (toBooleanFromLowercaseString(storeFilter.required) === true) {
                 let selectedParameter = row.parameters.find(
@@ -203,7 +195,7 @@ export class ReportDataService {
 
                 if (isUndefined(selectedParameter)) {
                   let newFraction: Fraction = {
-                    type: FractionTypeEnum.StoreFraction,
+                    type: 'StoreFraction',
                     controls: [] as any[],
                     brick: undefined as any,
                     parentBrick: undefined as any,
@@ -275,17 +267,17 @@ export class ReportDataService {
       );
 
       if (isDefined(rq)) {
-        if (x.rowType === RowTypeEnum.Metric) {
+        if (x.rowType === 'metric') {
           queryIds.push(rq.queryId);
           mconfigIds.push(rq.mconfigId);
-        } else if (x.rowType === RowTypeEnum.Formula) {
+        } else if (x.rowType === 'formula') {
           kitIds.push(rq.kitId);
         }
       } else {
         let newMconfig: MconfigTab;
         let newQuery: QueryTab;
 
-        if (x.rowType === RowTypeEnum.Metric) {
+        if (x.rowType === 'metric') {
           let newMconfigId = makeId();
           let newQueryId = makeId();
 
@@ -297,7 +289,7 @@ export class ReportDataService {
 
           let timeFieldIdSpec;
 
-          if (model.type === ModelTypeEnum.Store) {
+          if (model.type === 'Store') {
             let timeSpecDetail = getTimeSpecDetail({
               timeSpec: timeSpec,
               weekStart: struct.mproveConfig.weekStart
@@ -310,7 +302,7 @@ export class ReportDataService {
             );
 
             timeFieldIdSpec = storeField?.name;
-          } else if (model.type === ModelTypeEnum.Malloy) {
+          } else if (model.type === 'Malloy') {
             let timeSpecDetail = getTimeSpecDetail({
               timeSpec: timeSpec,
               weekStart: struct.mproveConfig.weekStart
@@ -318,12 +310,9 @@ export class ReportDataService {
 
             let mField = model.fields.find(field => {
               let fieldId =
-                timeSpecDetail === DetailUnitEnum.Timestamps
+                timeSpecDetail === 'timestamps'
                   ? `${metric.timeFieldId}_ts`
-                  : [
-                        DetailUnitEnum.WeeksSunday,
-                        DetailUnitEnum.WeeksMonday
-                      ].indexOf(timeSpecDetail) > -1
+                  : ['weeksSunday', 'weeksMonday'].indexOf(timeSpecDetail) > -1
                     ? `${metric.timeFieldId}_week`
                     : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`;
 
@@ -334,9 +323,7 @@ export class ReportDataService {
           }
 
           let isDesc =
-            [FractionTypeEnum.TsIsBefore, FractionTypeEnum.TsIsThrough].indexOf(
-              timeRangeFraction.type
-            ) > -1
+            ['TsIsBefore', 'TsIsThrough'].indexOf(timeRangeFraction.type) > -1
               ? true
               : false;
 
@@ -355,7 +342,7 @@ export class ReportDataService {
               };
 
           let filters: Filter[] =
-            model.type === ModelTypeEnum.Store
+            model.type === 'Store'
               ? // TODO: store parametersFiltersWithExcludedTime
                 [...x.parametersFiltersWithExcludedTime].sort((a, b) =>
                   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
@@ -383,7 +370,7 @@ export class ReportDataService {
             queryId: newQueryId,
             modelId: model.modelId,
             modelType: model.type,
-            parentType: MconfigParentTypeEnum.Report,
+            parentType: 'Report',
             parentId: report.reportId,
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
@@ -392,22 +379,19 @@ export class ReportDataService {
             malloyQueryStable: undefined,
             malloyQueryExtra: undefined,
             compiledQuery: undefined,
-            select: model.type === ModelTypeEnum.Malloy ? [] : select,
-            sortings: model.type === ModelTypeEnum.Malloy ? [] : sortings,
-            sorts: model.type === ModelTypeEnum.Malloy ? undefined : sorts,
+            select: model.type === 'Malloy' ? [] : select,
+            sortings: model.type === 'Malloy' ? [] : sortings,
+            sorts: model.type === 'Malloy' ? undefined : sorts,
             timezone: timezone,
-            limit:
-              model.type === ModelTypeEnum.Malloy
-                ? undefined
-                : timeColumnsLimit,
-            filters: model.type === ModelTypeEnum.Malloy ? [] : filters,
+            limit: model.type === 'Malloy' ? undefined : timeColumnsLimit,
+            filters: model.type === 'Malloy' ? [] : filters,
             chart: makeCopy(DEFAULT_CHART),
             sessionId: undefined,
             keyTag: undefined,
             serverTs: 1
           };
 
-          mconfig.chart.type = ChartTypeEnum.Line;
+          mconfig.chart.type = 'line';
 
           mconfig = setChartTitleOnSelectChange({
             mconfig: mconfig,
@@ -421,14 +405,14 @@ export class ReportDataService {
 
           let isError = false;
 
-          if (model.type === ModelTypeEnum.Store) {
+          if (model.type === 'Store') {
             let mqe = await this.mconfigsService.prepStoreMconfigQuery({
               struct: struct,
               project: project,
               envId: envId,
               model: model,
               mconfig: mconfig,
-              mconfigParentType: MconfigParentTypeEnum.Report,
+              mconfigParentType: 'Report',
               mconfigParentId: report.reportId,
               metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
               metricsEndDateYYYYMMDD:
@@ -442,40 +426,40 @@ export class ReportDataService {
             isError = mqe.isError;
 
             if (newMconfig.select.length === 0) {
-              newQuery.status = QueryStatusEnum.Completed;
+              newQuery.status = 'Completed';
               newQuery.data = [];
             }
-          } else if (model.type === ModelTypeEnum.Malloy) {
+          } else if (model.type === 'Malloy') {
             let editMalloyQueryResult =
               await this.malloyService.editMalloyQuery({
                 projectId: project.projectId,
                 envId: envId,
                 structId: struct.structId,
-                mconfigParentType: MconfigParentTypeEnum.Report,
+                mconfigParentType: 'Report',
                 mconfigParentId: report.reportId,
                 user: user,
                 model: model,
                 mconfig: mconfig,
                 queryOperations: [
                   {
-                    type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+                    type: 'GroupOrAggregatePlusSort',
                     timezone: timezone,
                     fieldId: select[0],
                     sortFieldId: select[0],
                     desc: isDesc
                   },
                   {
-                    type: QueryOperationTypeEnum.GroupOrAggregate,
+                    type: 'GroupOrAggregate',
                     timezone: timezone,
                     fieldId: select[1]
                   },
                   {
-                    type: QueryOperationTypeEnum.Limit,
+                    type: 'Limit',
                     timezone: timezone,
                     limit: timeColumnsLimit
                   },
                   {
-                    type: QueryOperationTypeEnum.WhereOrHaving,
+                    type: 'WhereOrHaving',
                     timezone: timezone,
                     filters: filters
                   }
@@ -578,7 +562,7 @@ export class ReportDataService {
           y.timezone === timezone
       );
 
-      if (x.rowType === RowTypeEnum.Metric) {
+      if (x.rowType === 'metric') {
         let newMconfigsApi = newMconfigs.map(y =>
           this.mconfigsService.tabToApi({
             mconfig: y,
@@ -620,9 +604,7 @@ export class ReportDataService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
     });
 
-    let formulaRows = reportApi.rows.filter(
-      row => row.rowType === RowTypeEnum.Formula
-    );
+    let formulaRows = reportApi.rows.filter(row => row.rowType === 'formula');
 
     let formulaRowsCalculated = formulaRows.filter(row => {
       let rq = row.rqs.find(
@@ -635,12 +617,10 @@ export class ReportDataService {
       return isDefined(rq) && rq.lastCalculatedTs > 0;
     });
 
-    let queryRows = reportApi.rows.filter(
-      row => row.rowType === RowTypeEnum.Metric
-    );
+    let queryRows = reportApi.rows.filter(row => row.rowType === 'metric');
 
     let queryRowsCompleted = queryRows.filter(
-      row => row.query.status === QueryStatusEnum.Completed
+      row => row.query.status === 'Completed'
     );
 
     let queryRowsCompletedCalculated = queryRowsCompleted.filter(row => {

@@ -743,6 +743,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
 
   apps/backend:
     dependencies:
@@ -1784,6 +1787,9 @@ importers:
       vscode-textmate:
         specifier: 'catalog:'
         version: 9.2.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
       zone.js:
         specifier: 'catalog:'
         version: 0.16.0

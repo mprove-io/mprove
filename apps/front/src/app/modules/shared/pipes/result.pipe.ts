@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 @Pipe({ standalone: false, name: 'result' })
@@ -9,21 +9,21 @@ export class ResultPipe implements PipeTransform {
       return value;
     }
 
-    if (value === FieldResultEnum.DayOfWeek) {
+    if (value === 'day_of_week') {
       return 'ENUM';
-    } else if (value === FieldResultEnum.DayOfWeekIndex) {
+    } else if (value === 'day_of_week_index') {
       return 'ENUM';
-    } else if (value === FieldResultEnum.MonthName) {
+    } else if (value === 'month_name') {
       return 'ENUM';
-    } else if (value === FieldResultEnum.Number) {
+    } else if (value === 'number') {
       return 'NUMBER';
-    } else if (value === FieldResultEnum.QuarterOfYear) {
+    } else if (value === 'quarter_of_year') {
       return 'ENUM';
-    } else if (value === FieldResultEnum.String) {
+    } else if (value === 'string') {
       return 'STRING';
-    } else if (value === FieldResultEnum.Ts) {
+    } else if (value === 'ts') {
       return 'TIMESTAMP';
-    } else if (value === FieldResultEnum.Yesno) {
+    } else if (value === 'yesno') {
       return 'YES-NO';
     }
 

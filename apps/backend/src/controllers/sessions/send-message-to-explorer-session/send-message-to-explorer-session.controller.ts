@@ -35,12 +35,7 @@ import { ExplorerStreamService } from '#backend/services/explorer/explorer-strea
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -96,44 +91,44 @@ export class SendMessageToExplorerSessionController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 
-    if (session.type !== SessionTypeEnum.Explorer) {
+    if (session.type !== 'Explorer') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EXPLORER
+        message: 'BACKEND_SESSION_TYPE_IS_NOT_EXPLORER'
       });
     }
 
-    if (session.status === SessionStatusEnum.New) {
+    if (session.status === 'New') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_NOT_READY
+        message: 'BACKEND_SESSION_NOT_READY'
       });
     }
 
-    if (session.status === SessionStatusEnum.Archived) {
+    if (session.status === 'Archived') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_IS_ARCHIVED
+        message: 'BACKEND_SESSION_IS_ARCHIVED'
       });
     }
 
-    if (session.status === SessionStatusEnum.Error) {
+    if (session.status === 'Error') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_IS_IN_ERROR_STATE
+        message: 'BACKEND_SESSION_IS_IN_ERROR_STATE'
       });
     }
 
-    if (interactionType === InteractionTypeEnum.Message) {
+    if (interactionType === 'Message') {
       if (isDefined(providerId) === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_MESSAGE_PROVIDER_REQUIRED
+          message: 'BACKEND_MESSAGE_PROVIDER_REQUIRED'
         });
       }
 
       if (isDefined(modelId) === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_MESSAGE_MODEL_REQUIRED
+          message: 'BACKEND_MESSAGE_MODEL_REQUIRED'
         });
       }
 
@@ -180,14 +175,13 @@ export class SendMessageToExplorerSessionController {
 
           if (isDefined(blockThreshold) && total >= blockThreshold) {
             throw new ServerError({
-              message: ErEnum.BACKEND_EXPLORER_CONTEXT_LIMIT_REACHED
+              message: 'BACKEND_EXPLORER_CONTEXT_LIMIT_REACHED'
             });
           }
         }
       }
 
-      let isCodex =
-        modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
+      let isCodex = modelSelection.provider.type === 'OpenAICodex';
 
       // Ensure codex auth is fresh in DB before stream / interact dispatch
       if (isCodex) {
@@ -239,7 +233,7 @@ export class SendMessageToExplorerSessionController {
           .catch(e => {
             logToConsoleBackend({
               log: e,
-              logLevel: LogLevelEnum.Error,
+              logLevel: 'Error',
               logger: this.logger,
               cs: this.cs
             });
@@ -256,7 +250,7 @@ export class SendMessageToExplorerSessionController {
           partId: partId
         });
       }
-    } else if (interactionType === InteractionTypeEnum.Stop) {
+    } else if (interactionType === 'Stop') {
       let isLockExist =
         await this.explorerStreamService.publishStopSessionStream({
           sessionId: session.sessionId

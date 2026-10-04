@@ -1,15 +1,18 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ChartX, zChartX } from '#common/types/backend/parts/chart-x';
+import {
+  type ChartX,
+  zChartX
+} from '#common/types/backend/parts/chart/chart-x';
 import {
   type MconfigX,
   zMconfigX
-} from '#common/types/backend/parts/mconfig-x';
+} from '#common/types/backend/parts/mconfig/mconfig-x';
 import {
   type BmlError,
   zBmlError
-} from '#common/types/blockml/parts/bml-error';
-import { type Query, zQuery } from '#common/types/blockml/parts/query';
+} from '#common/types/blockml/diagnostics/bml-error';
+import { type Query, zQuery } from '#common/types/blockml/parts/query/query';
 
 export type ToBackendGetExplorerChartTabOutput =
   | {

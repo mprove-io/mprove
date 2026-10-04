@@ -22,12 +22,10 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': saveAs === dashboardSaveAsEnum.NEW_DASHBOARD
+          'bg-m600': saveAs === 'NEW_DASHBOARD'
         }"
       >
-        <m-check-icon
-          *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
-        ></m-check-icon>
+        <m-check-icon *ngIf="saveAs === 'NEW_DASHBOARD'"></m-check-icon>
       </div>
 
       <div class="ml-5 text-base">New Dashboard</div>
@@ -45,11 +43,11 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+          'bg-m600': saveAs === 'REPLACE_EXISTING_DASHBOARD'
         }"
       >
         <m-check-icon
-          *ngIf="saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD"
+          *ngIf="saveAs === 'REPLACE_EXISTING_DASHBOARD'"
         ></m-check-icon>
       </div>
 
@@ -61,14 +59,11 @@
     <div class="ml-5 flex flex-row items-center">
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
-        *ngIf="
-          !dashboardUnits &&
-          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
-        "
+        *ngIf="!dashboardUnits && saveAs === 'REPLACE_EXISTING_DASHBOARD'"
       >
         <ngx-spinner
           [ngClass]="{
-            invisible: saveAs !== dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
+            invisible: saveAs !== 'REPLACE_EXISTING_DASHBOARD'
           }"
           class="invisible"
           [name]="spinnerName"
@@ -87,10 +82,7 @@
         #dashboardSaveAsDialogExistingDashboardSelect
         [fixNgSelectBottom]="dashboardSaveAsDialogExistingDashboardSelect"
         data-cy="dashboardSaveAsDialogExistingDashboardSelect"
-        *ngIf="
-          !!dashboardUnits &&
-          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
-        "
+        *ngIf="!!dashboardUnits && saveAs === 'REPLACE_EXISTING_DASHBOARD'"
         class="w-[500px] flex-shrink-0 text-base"
         [items]="dashboardUnits"
         [searchable]="true"
@@ -132,23 +124,15 @@
   </div>
 
   <div class="text-s400 mt-9 h-7 text-base">
-    <div *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD">{{
-      newDashboardPath
-    }}</div>
+    <div *ngIf="saveAs === 'NEW_DASHBOARD'">{{ newDashboardPath }}</div>
 
     <div
-      *ngIf="
-        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
-        !!selectedDashboardId
-      "
+      *ngIf="saveAs === 'REPLACE_EXISTING_DASHBOARD' && !!selectedDashboardId"
       >{{ selectedDashboardPath }}</div
     >
 
     <div
-      *ngIf="
-        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
-        !selectedDashboardId
-      "
+      *ngIf="saveAs === 'REPLACE_EXISTING_DASHBOARD' && !selectedDashboardId"
     ></div>
   </div>
 
@@ -299,15 +283,14 @@
       class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-m600':
-          saveAs === dashboardSaveAsEnum.NEW_DASHBOARD || !!selectedDashboardId,
+        'bg-m600': saveAs === 'NEW_DASHBOARD' || !!selectedDashboardId,
         'bg-s400 cursor-default':
-          saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
+          saveAs === 'REPLACE_EXISTING_DASHBOARD' &&
           selectedDashboardId === undefined
       }"
       (click)="save()"
       [disabled]="
-        saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
+        saveAs === 'REPLACE_EXISTING_DASHBOARD' &&
         selectedDashboardId === undefined
       "
       >Save</button

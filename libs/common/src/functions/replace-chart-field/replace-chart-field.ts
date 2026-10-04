@@ -1,12 +1,12 @@
-import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 
 export function replaceChartField<T extends Mconfig>(item: {
   mconfig: T;
   currentFieldId: string;
   newColumnFieldId: string;
-  newFieldResult: FieldResultEnum;
+  newFieldResult: FieldResult;
 }) {
   let { mconfig, currentFieldId, newColumnFieldId, newFieldResult } = item;
 
@@ -20,14 +20,14 @@ export function replaceChartField<T extends Mconfig>(item: {
 
   if (mconfig.chart.sizeField === currentFieldId) {
     mconfig.chart.sizeField =
-      newFieldResult === FieldResultEnum.Number ? newColumnFieldId : undefined;
+      newFieldResult === 'number' ? newColumnFieldId : undefined;
   }
 
   if (isDefined(mconfig.chart.yFields)) {
     let yFieldsIndex = mconfig.chart.yFields.indexOf(currentFieldId);
 
     if (yFieldsIndex > -1) {
-      if (newFieldResult === FieldResultEnum.Number) {
+      if (newFieldResult === 'number') {
         mconfig.chart.yFields.splice(yFieldsIndex, 1, newColumnFieldId);
       } else {
         mconfig.chart.yFields = mconfig.chart.yFields.filter(
@@ -41,7 +41,7 @@ export function replaceChartField<T extends Mconfig>(item: {
     let se = mconfig.chart.series.find(x => x.dataField === currentFieldId);
 
     if (isDefined(se)) {
-      if (newFieldResult === FieldResultEnum.Number) {
+      if (newFieldResult === 'number') {
         se.dataField = newColumnFieldId;
       } else {
         mconfig.chart.series = mconfig.chart.series.filter(

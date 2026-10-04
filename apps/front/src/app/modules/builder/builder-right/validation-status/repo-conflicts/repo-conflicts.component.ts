@@ -6,8 +6,8 @@ import {
   Output
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import type { DiskFileLine } from '#common/types/disk/parts/disk-file-line';
+
+import type { DiskFileLine } from '#common/types/disk/parts/file/disk-file-line';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -39,7 +39,7 @@ export class RepoConflictsComponent {
 
   goToFileLine(conflict: DiskFileLine) {
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: conflict.fileId,
       lineNumber: conflict.lineNumber
     });

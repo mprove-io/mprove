@@ -19,6 +19,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import type { EditorPermissionReply } from '#backend/types/editor-permission-reply';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
   CODEX_PROVIDER_ID,
@@ -30,12 +31,8 @@ import {
   CHANNEL_OPENCODE_STREAM_COMMAND,
   KEY_OPENCODE_STREAM_OWNER
 } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { OpencodeStreamCommandEnum } from '#common/enums/opencode-stream-command.enum';
-import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { InteractionType } from '#common/types/backend/parts/session/interaction-type';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
@@ -116,21 +113,21 @@ export class EditorStreamService implements OnModuleDestroy {
           return;
         }
 
-        if (command === OpencodeStreamCommandEnum.Stop) {
+        if (command === 'stop') {
           // console.log(`[oc-stream] received stop for sessionId=${sessionId}`);
 
           this.stopEventStream({ sessionId: sessionId }).catch(e => {
             logToConsoleBackend({
               log: new ServerError({
-                message: ErEnum.BACKEND_STOP_STREAM_PUBSUB_FAILED,
+                message: 'BACKEND_STOP_STREAM_PUBSUB_FAILED',
                 originalError: e
               }),
-              logLevel: LogLevelEnum.Error,
+              logLevel: 'Error',
               logger: this.logger,
               cs: this.cs
             });
           });
-        } else if (command === OpencodeStreamCommandEnum.Interact) {
+        } else if (command === 'interact') {
           let { replyTo, payload } = parsed;
 
           // console.log(
@@ -170,7 +167,7 @@ export class EditorStreamService implements OnModuleDestroy {
                 )
                 .catch(() => {});
             });
-        } else if (command === OpencodeStreamCommandEnum.Fetch) {
+        } else if (command === 'fetch') {
           let { replyTo, payload } = parsed;
 
           // console.log(
@@ -202,10 +199,10 @@ export class EditorStreamService implements OnModuleDestroy {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_STOP_STREAM_PUBSUB_FAILED,
+            message: 'BACKEND_STOP_STREAM_PUBSUB_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -226,7 +223,7 @@ export class EditorStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_OPENCODE_STREAM_COMMAND,
       JSON.stringify({
-        command: OpencodeStreamCommandEnum.Stop,
+        command: 'stop',
         sessionId: item.sessionId
       })
     );
@@ -248,10 +245,10 @@ export class EditorStreamService implements OnModuleDestroy {
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_SCHEDULER_PUBLISH_RELOAD_SESSION_FAILED,
+          message: 'BACKEND_SCHEDULER_PUBLISH_RELOAD_SESSION_FAILED',
           originalError: e
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });
@@ -295,7 +292,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
           await this.editorSandboxService.pauseSessionById({
             sessionId: sessionId,
-            pauseReason: PauseReasonEnum.Safe
+            pauseReason: 'Safe'
           });
 
           await this.setSessionRequestedReloadTs({
@@ -310,10 +307,10 @@ export class EditorStreamService implements OnModuleDestroy {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SAFE_PAUSE_SESSION_FAILED,
+            message: 'BACKEND_SAFE_PAUSE_SESSION_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -474,10 +471,10 @@ export class EditorStreamService implements OnModuleDestroy {
         if (e.name !== 'AbortError') {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_SSE_STREAM_FAILED,
+              message: 'BACKEND_SSE_STREAM_FAILED',
               originalError: e
             }),
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });
@@ -526,7 +523,7 @@ export class EditorStreamService implements OnModuleDestroy {
   async respondToPermission(item: {
     sessionId: string;
     permissionId: string;
-    reply: 'always' | 'once' | 'reject';
+    reply: EditorPermissionReply;
   }): Promise<void> {
     let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
@@ -783,10 +780,10 @@ export class EditorStreamService implements OnModuleDestroy {
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_REFETCH_FROM_OPENCODE_FAILED,
+          message: 'BACKEND_REFETCH_FROM_OPENCODE_FAILED',
           originalError: e
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });
@@ -796,7 +793,7 @@ export class EditorStreamService implements OnModuleDestroy {
   async executeInteraction(item: {
     sessionId: string;
     opencodeSessionId: string;
-    interactionType: InteractionTypeEnum;
+    interactionType: InteractionType;
     message?: string;
     agent?: string;
     providerId?: string;
@@ -814,7 +811,7 @@ export class EditorStreamService implements OnModuleDestroy {
       sessionId: item.sessionId
     });
 
-    if (item.interactionType === InteractionTypeEnum.Message) {
+    if (item.interactionType === 'Message') {
       let message: string = item.message ?? '';
 
       let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
@@ -921,7 +918,7 @@ export class EditorStreamService implements OnModuleDestroy {
           // );
         }
       }
-    } else if (item.interactionType === InteractionTypeEnum.Permission) {
+    } else if (item.interactionType === 'Permission') {
       if (
         item.reply !== 'always' &&
         item.reply !== 'once' &&
@@ -930,14 +927,14 @@ export class EditorStreamService implements OnModuleDestroy {
         throw new Error('Invalid permission reply');
       }
 
-      let permissionReply: 'always' | 'once' | 'reject' = item.reply;
+      let permissionReply: EditorPermissionReply = item.reply;
 
       await this.respondToPermission({
         sessionId: item.sessionId,
         permissionId: item.permissionId,
         reply: permissionReply
       });
-    } else if (item.interactionType === InteractionTypeEnum.Question) {
+    } else if (item.interactionType === 'Question') {
       if (item.answers !== undefined) {
         await this.respondToQuestion({
           sessionId: item.sessionId,
@@ -952,7 +949,7 @@ export class EditorStreamService implements OnModuleDestroy {
           questionId: item.questionId
         });
       }
-    } else if (item.interactionType === InteractionTypeEnum.Stop) {
+    } else if (item.interactionType === 'Stop') {
       await opencodeClient.session.abort(
         {
           sessionID: item.opencodeSessionId
@@ -967,7 +964,7 @@ export class EditorStreamService implements OnModuleDestroy {
   async publishInteractCommand(item: {
     sessionId: string;
     opencodeSessionId: string;
-    interactionType: InteractionTypeEnum;
+    interactionType: InteractionType;
     message?: string;
     agent?: string;
     providerId?: string;
@@ -991,7 +988,7 @@ export class EditorStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_OPENCODE_STREAM_COMMAND,
       JSON.stringify({
-        command: OpencodeStreamCommandEnum.Interact,
+        command: 'interact',
         sessionId: item.sessionId,
         replyTo: replyTo,
         payload: {
@@ -1020,7 +1017,7 @@ export class EditorStreamService implements OnModuleDestroy {
         sub.quit();
         reject(
           new ServerError({
-            message: ErEnum.BACKEND_INTERACT_TIMEOUT,
+            message: 'BACKEND_INTERACT_TIMEOUT',
             customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
           })
         );
@@ -1038,7 +1035,7 @@ export class EditorStreamService implements OnModuleDestroy {
           } else {
             reject(
               new ServerError({
-                message: ErEnum.BACKEND_INTERACT_FAILED,
+                message: 'BACKEND_INTERACT_FAILED',
                 customData: {
                   sessionId: item.sessionId,
                   error: result.error
@@ -1049,7 +1046,7 @@ export class EditorStreamService implements OnModuleDestroy {
         } catch {
           reject(
             new ServerError({
-              message: ErEnum.BACKEND_INTERACT_FAILED,
+              message: 'BACKEND_INTERACT_FAILED',
               customData: { sessionId: item.sessionId }
             })
           );
@@ -1073,7 +1070,7 @@ export class EditorStreamService implements OnModuleDestroy {
       await this.redisClient.publish(
         CHANNEL_OPENCODE_STREAM_COMMAND,
         JSON.stringify({
-          command: OpencodeStreamCommandEnum.Fetch,
+          command: 'fetch',
           sessionId: item.sessionId,
           replyTo: replyTo,
           payload: {
@@ -1089,7 +1086,7 @@ export class EditorStreamService implements OnModuleDestroy {
           sub.quit();
           reject(
             new ServerError({
-              message: ErEnum.BACKEND_FETCH_TIMEOUT,
+              message: 'BACKEND_FETCH_TIMEOUT',
               customData: {
                 sessionId: item.sessionId,
                 timeoutMs: timeoutMs
@@ -1110,7 +1107,7 @@ export class EditorStreamService implements OnModuleDestroy {
             } else {
               reject(
                 new ServerError({
-                  message: ErEnum.BACKEND_FETCH_FAILED,
+                  message: 'BACKEND_FETCH_FAILED',
                   customData: {
                     sessionId: item.sessionId,
                     error: result.error
@@ -1121,7 +1118,7 @@ export class EditorStreamService implements OnModuleDestroy {
           } catch {
             reject(
               new ServerError({
-                message: ErEnum.BACKEND_FETCH_FAILED,
+                message: 'BACKEND_FETCH_FAILED',
                 customData: { sessionId: item.sessionId }
               })
             );
@@ -1134,10 +1131,10 @@ export class EditorStreamService implements OnModuleDestroy {
           e instanceof ServerError
             ? e
             : new ServerError({
-                message: ErEnum.BACKEND_FETCH_FAILED,
+                message: 'BACKEND_FETCH_FAILED',
                 originalError: e
               }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });

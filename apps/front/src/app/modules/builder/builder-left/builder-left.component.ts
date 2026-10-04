@@ -26,8 +26,6 @@ import {
   PATH_REPO,
   PATH_SELECT_FILE
 } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -35,9 +33,10 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendMoveCatalogNodeRequest } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-request';
 import type { ToBackendMoveCatalogNodeResponse } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
-import type { DiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
-import type { RepoStatus } from '#common/types/disk/parts/repo-status';
-import type { FileItem } from '#common/types/front/file-item';
+import type { DiskCatalogNode } from '#common/types/disk/parts/catalog/disk-catalog-node';
+import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
+import type { FileItem } from '#common/types/front/builder/file-item';
 import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -57,7 +56,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class BuilderLeftComponent implements OnDestroy {
   @Input()
-  builderLeft: BuilderLeftEnum;
+  builderLeft: BuilderLeft;
 
   @Input()
   isEditor: boolean;
@@ -66,14 +65,7 @@ export class BuilderLeftComponent implements OnDestroy {
   newFileClick = new EventEmitter<void>();
 
   @Output()
-  builderLeftChange = new EventEmitter<BuilderLeftEnum>();
-
-  repoTypeEnum = RepoTypeEnum;
-
-  builderLeftTree = BuilderLeftEnum.Tree;
-  builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
-  builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
-  builderLeftInfo = BuilderLeftEnum.Info;
+  builderLeftChange = new EventEmitter<BuilderLeft>();
 
   repoStatusNeedPush: RepoStatus = 'NeedPush';
 
@@ -99,7 +91,7 @@ export class BuilderLeftComponent implements OnDestroy {
     actionMapping: this.actionMapping,
     displayField: 'name',
     allowDrag: (node: TreeNode) =>
-      this.nav?.repoType !== RepoTypeEnum.Production &&
+      this.nav?.repoType !== 'production' &&
       node.data.id !== this.nav.projectId,
     allowDrop: (node: TreeNode, to: { parent: any; index: number }) =>
       (to.parent.data.isFolder && to.parent.data.id !== node.parent.data.id) ||
@@ -227,7 +219,7 @@ export class BuilderLeftComponent implements OnDestroy {
       .pipe(
         tap(x => {
           if (
-            this.builderLeft === BuilderLeftEnum.Tree &&
+            this.builderLeft === 'Tree' &&
             isDefined(x.fileId) &&
             this.file.isExist === true
           ) {
@@ -265,7 +257,7 @@ export class BuilderLeftComponent implements OnDestroy {
   }
 
   subNavToCommitOnClick() {
-    this.builderLeftChange.emit(BuilderLeftEnum.ChangesToCommit);
+    this.builderLeftChange.emit('ChangesToCommit');
   }
 
   subNavToPushOnClick() {
@@ -273,26 +265,26 @@ export class BuilderLeftComponent implements OnDestroy {
     if (hasChangesToCommit) {
       return;
     }
-    this.builderLeftChange.emit(BuilderLeftEnum.ChangesToPush);
+    this.builderLeftChange.emit('ChangesToPush');
   }
 
   changeToCommitOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.ChangesToCommit,
+      builderLeft: 'ChangesToCommit',
       encodedFileId: fileId
     });
   }
 
   changeToPushOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.ChangesToPush,
+      builderLeft: 'ChangesToPush',
       encodedFileId: fileId
     });
   }
 
   fileItemOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: fileId
     });
   }
@@ -305,7 +297,7 @@ export class BuilderLeftComponent implements OnDestroy {
       }
     } else {
       this.navigateService.navigateToFileLine({
-        builderLeft: BuilderLeftEnum.Tree,
+        builderLeft: 'Tree',
         encodedFileId: node.data.fileId
       });
     }
@@ -382,7 +374,7 @@ export class BuilderLeftComponent implements OnDestroy {
 
             if (isDefined(newFileId)) {
               this.navigateService.navigateToFileLine({
-                builderLeft: BuilderLeftEnum.Tree,
+                builderLeft: 'Tree',
                 encodedFileId: newFileId
               });
             }
@@ -416,7 +408,7 @@ export class BuilderLeftComponent implements OnDestroy {
               .then(() => {
                 this.router.navigate(arNext, {
                   queryParams: {
-                    left: BuilderLeftEnum.Tree
+                    left: 'Tree'
                   }
                 });
               });

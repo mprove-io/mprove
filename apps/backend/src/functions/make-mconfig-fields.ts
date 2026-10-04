@@ -1,8 +1,7 @@
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { Sorting } from '#common/types/blockml/parts/sorting';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { Sorting } from '#common/types/blockml/parts/query/sorting';
 
 export function makeMconfigFields(item: {
   modelFields: ModelField[];
@@ -22,11 +21,11 @@ export function makeMconfigFields(item: {
       sortingNumber: sortings.findIndex(s => s.fieldId === fieldId)
     });
 
-    if (field.fieldClass === FieldClassEnum.Dimension) {
+    if (field.fieldClass === 'dimension') {
       selectDimensions.push(f);
-    } else if (field.fieldClass === FieldClassEnum.Measure) {
+    } else if (field.fieldClass === 'measure') {
       selectMeasuresAndCalculations.push(f);
-    } else if (field.fieldClass === FieldClassEnum.Calculation) {
+    } else if (field.fieldClass === 'calculation') {
       selectMeasuresAndCalculations.push(f);
     }
   });

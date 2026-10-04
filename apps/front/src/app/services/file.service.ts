@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import type { ToBackendGetFileRequest } from '#common/types/backend/routes/files/get-file/get-file-request';
 import type { ToBackendGetFileResponse } from '#common/types/backend/routes/files/get-file/get-file-response';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { getFileIds } from '#front/app/functions/get-file-ids';
 import { FileQuery, FileState } from '../queries/file.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -53,7 +53,7 @@ export class FileService {
 
   getFile(item: {
     fileId: string;
-    builderLeft: BuilderLeftEnum;
+    builderLeft: BuilderLeft;
     skipCheck?: boolean;
   }) {
     let { fileId, builderLeft, skipCheck } = item;

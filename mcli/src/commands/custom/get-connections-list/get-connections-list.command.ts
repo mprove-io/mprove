@@ -1,7 +1,6 @@
 import { Command, Option } from 'clipanion';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
 import type { ToBackendGetConnectionsListRequest } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-request';
@@ -52,7 +51,7 @@ export class GetConnectionsListCommand extends CustomCommand {
 
     if (isUndefined(this.projectId)) {
       let serverError = new ServerError({
-        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
         originalError: null
       });
       throw serverError;
@@ -76,7 +75,7 @@ export class GetConnectionsListCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: getConnectionsListOutput,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       context: this.context,
       isJson: this.json
     });

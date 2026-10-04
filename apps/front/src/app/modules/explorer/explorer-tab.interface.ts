@@ -1,15 +1,15 @@
-import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { BmlError } from '#common/types/blockml/parts/bml-error';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { BmlError } from '#common/types/blockml/diagnostics/bml-error';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { Query } from '#common/types/blockml/parts/query/query';
 
 export interface ExplorerTab {
   id: string;
   label: string;
   closable?: boolean;
   kind?: string;
-  chartType?: ChartTypeEnum;
+  chartType?: ChartType;
   chartId?: string;
   modelId?: string;
 }

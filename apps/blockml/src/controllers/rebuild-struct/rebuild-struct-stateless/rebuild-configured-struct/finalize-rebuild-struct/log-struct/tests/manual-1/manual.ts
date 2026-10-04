@@ -1,14 +1,13 @@
 import fse from 'fs-extra';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 
-let caller = CallerEnum.RebuildStruct;
-let func = FuncEnum.LogStruct;
+let caller: Caller = 'RebuildStruct';
+let func: Func = 'extra/log-struct';
 let testId = 'manual-1';
 
 async function run() {
@@ -23,7 +22,7 @@ async function run() {
   let connection: ProjectConnection = {
     connectionId: 'c1',
     options: {},
-    type: ConnectionTypeEnum.PostgreSQL
+    type: 'PostgreSQL'
   };
 
   await structService.rebuildStructFromDir({

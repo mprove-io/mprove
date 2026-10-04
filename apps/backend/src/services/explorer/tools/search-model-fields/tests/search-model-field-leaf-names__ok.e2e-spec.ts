@@ -6,8 +6,7 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import type { Prep } from '#backend/interfaces/prep';
 import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names.service';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 
 let testId = 'search-model-field-leaf-names__ok';
@@ -33,7 +32,7 @@ test('1', async t => {
             {
               structId: structId,
               modelId: modelId,
-              modelType: ModelTypeEnum.Malloy,
+              modelType: 'Malloy',
               fieldId: 'order_status',
               fieldNameLc: 'order_status',
               labelLc: 'order status',
@@ -42,7 +41,7 @@ test('1', async t => {
             {
               structId: structId,
               modelId: modelId,
-              modelType: ModelTypeEnum.Malloy,
+              modelType: 'Malloy',
               fieldId: 'cust_id',
               fieldNameLc: 'cust_id',
               descriptionLc: 'identifier of the customer placing the order'
@@ -50,7 +49,7 @@ test('1', async t => {
             {
               structId: structId,
               modelId: modelId,
-              modelType: ModelTypeEnum.Malloy,
+              modelType: 'Malloy',
               fieldId: 'created_at',
               fieldNameLc: 'created_at',
               labelLc: 'created at'
@@ -91,7 +90,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -103,7 +102,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

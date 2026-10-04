@@ -5,30 +5,26 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { FILTER_RESULT_VALUES } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
-let func = FuncEnum.CheckAndSetImplicitResult;
+let func: Func = 'build-field/check-and-set-implicit-result';
 
 export function checkAndSetImplicitResult<T extends sdrType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newEntities: T[] = [];
 
@@ -36,14 +32,10 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (
-        [CallerEnum.BuildReportField, CallerEnum.BuildDashboardField].indexOf(
-          caller
-        ) > -1
-      ) {
+      if (['BuildReportField', 'BuildDashboardField'].indexOf(caller) > -1) {
         if (isUndefined(field.result)) {
           switch (field.fieldClass) {
-            case FieldClassEnum.Filter: {
+            case 'filter': {
               if (
                 isUndefined(field.store_model) &&
                 isUndefined(field.store_filter) &&
@@ -51,8 +43,8 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
               ) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.MISSING_FILTER_RESULT,
-                    message: `parameter ${ParameterEnum.Result} is required for filters`,
+                    title: 'MISSING_FILTER_RESULT',
+                    message: `parameter result is required for filters`,
                     lines: [
                       {
                         line: field.name_line_num,
@@ -68,12 +60,12 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
           }
         } else {
           switch (field.fieldClass) {
-            case FieldClassEnum.Filter: {
+            case 'filter': {
               if (FILTER_RESULT_VALUES.indexOf(field.result) < 0) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.WRONG_FILTER_RESULT,
-                    message: `"${field.result}" is not valid result for ${FieldClassEnum.Filter}`,
+                    title: 'WRONG_FILTER_RESULT',
+                    message: `"${field.result}" is not valid result for filter`,
                     lines: [
                       {
                         line: field.result_line_num,
@@ -92,11 +84,8 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
         }
       }
 
-      if (caller === CallerEnum.BuildStoreField) {
-        if (
-          isUndefined(field.result) &&
-          field.fieldClass !== FieldClassEnum.Filter
-        ) {
+      if (caller === 'BuildStoreField') {
+        if (isUndefined(field.result) && field.fieldClass !== 'filter') {
           let fieldKeysLineNums: number[] = Object.keys(field)
             .filter(y => y.match(MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => field[y as keyof FieldAny] as number)
@@ -104,7 +93,7 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
 
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_STORE_FIELD_RESULT,
+              title: 'MISSING_STORE_FIELD_RESULT',
               message: `field "${field.result}" is requred`,
               lines: [
                 {
@@ -122,12 +111,12 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
 
         if (
           isDefined(field.result) &&
-          field.fieldClass !== FieldClassEnum.Filter &&
+          field.fieldClass !== 'filter' &&
           results.indexOf(field.result) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_STORE_FIELD_RESULT,
+              title: 'WRONG_STORE_FIELD_RESULT',
               message: `field ${field.result} must be one of store results`,
               lines: [
                 {
@@ -148,8 +137,8 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

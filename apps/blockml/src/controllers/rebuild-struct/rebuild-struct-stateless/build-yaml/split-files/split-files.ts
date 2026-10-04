@@ -8,13 +8,9 @@ import {
   MPROVE_CONFIG_NAME,
   MPROVE_USERS_FOLDER
 } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
@@ -24,7 +20,7 @@ import type { FileSchema } from '#common/types/blockml/parts/internal/file-schem
 import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
-let func = FuncEnum.SplitFiles;
+let func: Func = 'build-yaml/split-files';
 
 export type SplitFilesOutput = {
   mods: FileMod[];
@@ -41,11 +37,11 @@ export function splitFiles(item: {
   filesAny: any[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<SplitFilesOutput, never> {
   let { caller, structId, cs } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let mods: FileMod[] = [];
   let stores: FileStore[] = [];
@@ -62,8 +58,8 @@ export function splitFiles(item: {
     let filePath = file.path;
 
     switch (file.ext) {
-      case FileExtensionEnum.Store: {
-        if (file.name === file.store + FileExtensionEnum.Store) {
+      case '.store': {
+        if (file.name === file.store + '.store') {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -86,7 +82,7 @@ export function splitFiles(item: {
         } else {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_STORE_NAME,
+              title: 'WRONG_STORE_NAME',
               message: `filename ${file.name} does not match "store: ${file.store}"`,
               lines: [
                 {
@@ -101,8 +97,8 @@ export function splitFiles(item: {
         break;
       }
 
-      case FileExtensionEnum.Dashboard: {
-        if (file.name === file.dashboard + FileExtensionEnum.Dashboard) {
+      case '.dashboard': {
+        if (file.name === file.dashboard + '.dashboard') {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -118,7 +114,7 @@ export function splitFiles(item: {
         } else {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_DASHBOARD_NAME,
+              title: 'WRONG_DASHBOARD_NAME',
               message: `filename ${file.name} does not match "dashboard: ${file.dashboard}"`,
               lines: [
                 {
@@ -133,8 +129,8 @@ export function splitFiles(item: {
         break;
       }
 
-      case FileExtensionEnum.Report: {
-        if (file.name === file.report + FileExtensionEnum.Report) {
+      case '.report': {
+        if (file.name === file.report + '.report') {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -150,7 +146,7 @@ export function splitFiles(item: {
         } else {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_REPORT_NAME,
+              title: 'WRONG_REPORT_NAME',
               message: `filename ${file.name} does not match "report: ${file.report}"`,
               lines: [
                 {
@@ -165,8 +161,8 @@ export function splitFiles(item: {
         break;
       }
 
-      case FileExtensionEnum.Chart: {
-        if (file.name === file.chart + FileExtensionEnum.Chart) {
+      case '.chart': {
+        if (file.name === file.chart + '.chart') {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -182,8 +178,8 @@ export function splitFiles(item: {
         } else {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHART_NAME,
-              message: `filename ${file.name} does not match "${ParameterEnum.Chart}: ${file.chart}"`,
+              title: 'WRONG_CHART_NAME',
+              message: `filename ${file.name} does not match "chart: ${file.chart}"`,
               lines: [
                 {
                   line: file.chart_line_num,
@@ -197,7 +193,7 @@ export function splitFiles(item: {
         break;
       }
 
-      case FileExtensionEnum.Space: {
+      case '.space': {
         let pathParts = file.path
           .split('/')
           .filter((part: string) => part !== '');
@@ -206,8 +202,7 @@ export function splitFiles(item: {
 
         let parentFolderName = folderParts[folderParts.length - 1];
 
-        let isFileNameMatch =
-          file.name === file.space + FileExtensionEnum.Space;
+        let isFileNameMatch = file.name === file.space + '.space';
 
         let isParentFolderNameMatch = parentFolderName === file.space;
         let isInsideMproveUsersFolder = pathParts.includes(MPROVE_USERS_FOLDER);
@@ -215,7 +210,7 @@ export function splitFiles(item: {
         if (isInsideMproveUsersFolder === true) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_SPACE_PLACEMENT,
+              title: 'WRONG_SPACE_PLACEMENT',
               message: `.space files can not exist inside "${MPROVE_USERS_FOLDER}" folder`,
               lines: [
                 {
@@ -245,8 +240,8 @@ export function splitFiles(item: {
         } else if (isFileNameMatch === false) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_SPACE_NAME,
-              message: `filename ${file.name} does not match "${ParameterEnum.Space}: ${file.space}"`,
+              title: 'WRONG_SPACE_NAME',
+              message: `filename ${file.name} does not match "space: ${file.space}"`,
               lines: [
                 {
                   line: file.space_line_num,
@@ -259,8 +254,8 @@ export function splitFiles(item: {
         } else if (isParentFolderNameMatch === false) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_SPACE_PARENT_FOLDER_NAME,
-              message: `parent folder ${parentFolderName} does not match "${ParameterEnum.Space}: ${file.space}"`,
+              title: 'WRONG_SPACE_PARENT_FOLDER_NAME',
+              message: `parent folder ${parentFolderName} does not match "space: ${file.space}"`,
               lines: [
                 {
                   line: file.space_line_num,
@@ -274,8 +269,8 @@ export function splitFiles(item: {
         break;
       }
 
-      case FileExtensionEnum.Schema: {
-        if (file.name === file.schema + FileExtensionEnum.Schema) {
+      case '.schema': {
+        if (file.name === file.schema + '.schema') {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -291,8 +286,8 @@ export function splitFiles(item: {
         } else {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_SCHEMA_NAME,
-              message: `filename ${file.name} does not match "${ParameterEnum.Schema}: ${file.schema}"`,
+              title: 'WRONG_SCHEMA_NAME',
+              message: `filename ${file.name} does not match "schema: ${file.schema}"`,
               lines: [
                 {
                   line: file.schema_line_num,
@@ -306,7 +301,7 @@ export function splitFiles(item: {
         break;
       }
 
-      case FileExtensionEnum.Yml: {
+      case '.yml': {
         if (file.name === MPROVE_CONFIG_FILENAME) {
           delete file.ext;
           delete file.name;
@@ -328,15 +323,15 @@ export function splitFiles(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Mods, mods);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, stores);
-  log(cs, caller, func, structId, LogTypeEnum.Schemas, schemas);
-  log(cs, caller, func, structId, LogTypeEnum.Reports, reports);
-  log(cs, caller, func, structId, LogTypeEnum.Ds, dashboards);
-  log(cs, caller, func, structId, LogTypeEnum.Charts, charts);
-  log(cs, caller, func, structId, LogTypeEnum.FilesAny, spaces);
-  log(cs, caller, func, structId, LogTypeEnum.Confs, confs);
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_mods.log', mods);
+  log(cs, caller, func, structId, 'out_stores.log', stores);
+  log(cs, caller, func, structId, 'out_schemas.log', schemas);
+  log(cs, caller, func, structId, 'out_reports.log', reports);
+  log(cs, caller, func, structId, 'out_dashboards.log', dashboards);
+  log(cs, caller, func, structId, 'out_charts.log', charts);
+  log(cs, caller, func, structId, 'out_filesAny.log', spaces);
+  log(cs, caller, func, structId, 'out_confs.log', confs);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
   return Result.succeed({
     mods: mods,

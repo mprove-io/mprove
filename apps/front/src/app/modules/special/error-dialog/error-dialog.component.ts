@@ -8,9 +8,9 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ErrorData } from '#common/types/front/error-data';
+import type { ErrorData } from '#common/types/front/ui/error-data';
 import { UiService } from '#front/app/services/ui.service';
 
 @Component({
@@ -76,16 +76,16 @@ export class ErrorDialogComponent implements OnInit {
 
     if (
       [
-        ErEnum.BACKEND_REPORT_DOES_NOT_EXIST as string,
-        ErEnum.BACKEND_REPORT_NOT_FOUND as string
+        'BACKEND_REPORT_DOES_NOT_EXIST' as string,
+        'BACKEND_REPORT_NOT_FOUND' as string
       ].indexOf(this.message) > -1
     ) {
       this.uiService.clearProjectReportLink();
-    } else if (this.message === ErEnum.BACKEND_MODEL_DOES_NOT_EXIST) {
+    } else if (this.message === 'BACKEND_MODEL_DOES_NOT_EXIST') {
       this.uiService.clearProjectModelLink();
-    } else if (this.message === ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST) {
+    } else if (this.message === 'BACKEND_DASHBOARD_DOES_NOT_EXIST') {
       this.uiService.clearProjectDashboardLink();
-    } else if (this.message === ErEnum.BACKEND_CHART_DOES_NOT_EXIST) {
+    } else if (this.message === 'BACKEND_CHART_DOES_NOT_EXIST') {
       this.uiService.clearProjectChartLink();
     }
 

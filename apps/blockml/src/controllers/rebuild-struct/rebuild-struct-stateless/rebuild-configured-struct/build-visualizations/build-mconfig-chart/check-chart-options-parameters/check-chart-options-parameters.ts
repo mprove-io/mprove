@@ -5,30 +5,27 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { drcType } from '#common/types/blockml/parts/internal/drc-type';
 import type { FileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
 
-let func = FuncEnum.CheckChartOptionsParameters;
+let func: Func = 'build-mconfig-chart/check-chart-options-parameters';
 
 export function checkChartOptionsParameters<T extends drcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -36,7 +33,7 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
     let errorsOnStart = item.errors.length;
 
     x.tiles.forEach(tile => {
-      let tileWithType = tile as { type?: ChartTypeEnum };
+      let tileWithType = tile as { type?: ChartType };
 
       if (isUndefined(tile.options)) {
         return;
@@ -47,17 +44,17 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
         .forEach(parameter => {
           if (
             [
-              ParameterEnum.Format.toString(),
-              ParameterEnum.FirstColumnWidth.toString(),
-              ParameterEnum.ValueColumnsWidth.toString(),
-              ParameterEnum.XAxis.toString(),
-              ParameterEnum.YAxis.toString(),
-              ParameterEnum.Series.toString()
+              'format'.toString(),
+              'first_column_width'.toString(),
+              'value_columns_width'.toString(),
+              'x_axis'.toString(),
+              'y_axis'.toString(),
+              'series'.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_UNKNOWN_PARAMETER,
+                title: 'OPTIONS_UNKNOWN_PARAMETER',
                 message: `parameter "${parameter}" cannot be used inside options`,
                 lines: [
                   {
@@ -74,17 +71,14 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            [
-              ParameterEnum.YAxis.toString(),
-              ParameterEnum.Series.toString()
-            ].indexOf(parameter) < 0 &&
+            ['y_axis'.toString(), 'series'.toString()].indexOf(parameter) < 0 &&
             Array.isArray(
               tile.options[parameter as keyof FileChartOptions] as any
             )
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_UNEXPECTED_LIST,
+                title: 'OPTIONS_UNEXPECTED_LIST',
                 message: `parameter "${parameter}" cannot be a list`,
                 lines: [
                   {
@@ -101,13 +95,13 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            [ParameterEnum.XAxis.toString()].indexOf(parameter) < 0 &&
+            ['x_axis'.toString()].indexOf(parameter) < 0 &&
             (tile.options[parameter as keyof FileChartOptions] as any)
               ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_UNEXPECTED_DICTIONARY,
+                title: 'OPTIONS_UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" cannot be a dictionary`,
                 lines: [
                   {
@@ -124,12 +118,12 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            [ParameterEnum.Format.toString()].indexOf(parameter) > -1 &&
-            tileWithType.type === ChartTypeEnum.PivotTable
+            ['format'.toString()].indexOf(parameter) > -1 &&
+            tileWithType.type === 'pivot_table'
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_UNKNOWN_PARAMETER,
+                title: 'OPTIONS_UNKNOWN_PARAMETER',
                 message: `parameter "${parameter}" cannot be used inside options for pivot table charts`,
                 lines: [
                   {
@@ -147,14 +141,14 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
 
           if (
             [
-              ParameterEnum.FirstColumnWidth.toString(),
-              ParameterEnum.ValueColumnsWidth.toString()
+              'first_column_width'.toString(),
+              'value_columns_width'.toString()
             ].indexOf(parameter) > -1 &&
-            tileWithType.type !== ChartTypeEnum.PivotTable
+            tileWithType.type !== 'pivot_table'
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_UNKNOWN_PARAMETER,
+                title: 'OPTIONS_UNKNOWN_PARAMETER',
                 message: `parameter "${parameter}" can be used only inside options for pivot table charts`,
                 lines: [
                   {
@@ -171,14 +165,14 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            [ParameterEnum.Format.toString()].indexOf(parameter) > -1 &&
+            ['format'.toString()].indexOf(parameter) > -1 &&
             !(tile.options[parameter as keyof FileChartOptions] as any)
               .toString()
               .match(MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_WRONG_PARAMETER_VALUE,
+                title: 'OPTIONS_WRONG_PARAMETER_VALUE',
                 message:
                   `parameter "${parameter}" value must be ` +
                   '"true" or "false" if specified',
@@ -198,8 +192,8 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
 
           if (
             [
-              ParameterEnum.FirstColumnWidth.toString(),
-              ParameterEnum.ValueColumnsWidth.toString()
+              'first_column_width'.toString(),
+              'value_columns_width'.toString()
             ].indexOf(parameter) > -1 &&
             (!(tile.options[parameter as keyof FileChartOptions] as any)
               .toString()
@@ -208,7 +202,7 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_WRONG_PARAMETER_VALUE,
+                title: 'OPTIONS_WRONG_PARAMETER_VALUE',
                 message:
                   `parameter "${parameter}" value must be ` +
                   'a positive integer if specified',
@@ -233,9 +227,9 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

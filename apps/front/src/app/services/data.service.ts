@@ -8,25 +8,20 @@ import {
   FORMAT_NUMBER_DECIMAL,
   FORMAT_NUMBER_GROUPING
 } from '#common/constants/top-front';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
-import type { Query } from '#common/types/blockml/parts/query';
-import type { DataPoint } from '#common/types/front/data-point';
-import type { DataRow } from '#common/types/front/data-row';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig/mconfig-chart-series';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { DataPoint } from '#common/types/front/chart/data-point';
+import type { DataRow } from '#common/types/front/report/row/data-row';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { frontFormatTsUnix } from '../functions/front-format-ts-unix';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
@@ -202,7 +197,7 @@ export class DataService {
   d3FormatValue(item: {
     value: any;
     formatNumber: string;
-    fieldResult: FieldResultEnum;
+    fieldResult: FieldResult;
     currencyPrefix: string;
     currencySuffix: string;
     thousandsSeparator: string;
@@ -217,7 +212,7 @@ export class DataService {
     } = item;
 
     if (
-      fieldResult === FieldResultEnum.Number &&
+      fieldResult === 'number' &&
       this.isNumberString(value) &&
       isDefined(formatNumber)
     ) {
@@ -236,9 +231,9 @@ export class DataService {
 
   formatValue(item: {
     value: any;
-    modelType: ModelTypeEnum;
+    modelType: ModelType;
     field: MconfigField;
-    fieldResult: FieldResultEnum;
+    fieldResult: FieldResult;
     rowFormatNumber?: string;
     rowCurrencyPrefix?: string;
     rowCurrencySuffix?: string;
@@ -306,7 +301,7 @@ export class DataService {
         : 'seconds';
 
     let fieldThousandsSeparatorTag = field?.mproveTags?.find(
-      tag => tag.key === ParameterEnum.ThousandsSeparator
+      tag => tag.key === 'thousands_separator'
     );
 
     let thousandsSeparator =
@@ -315,8 +310,8 @@ export class DataService {
 
     let formattedValue =
       // malloy duration
-      fieldResult === FieldResultEnum.Number &&
-      modelType === ModelTypeEnum.Malloy &&
+      fieldResult === 'number' &&
+      modelType === 'Malloy' &&
       isDefined(fieldMalloyDurationTag)
         ? (this.getText({
             value: Number(value),
@@ -329,8 +324,7 @@ export class DataService {
           }) ??
           Number(value).toLocaleString().split(',').join(thousandsSeparator))
         : // field.formatNumber
-          fieldResult === FieldResultEnum.Number &&
-            isDefinedAndNotEmpty(fieldFormatNumber)
+          fieldResult === 'number' && isDefinedAndNotEmpty(fieldFormatNumber)
           ? this.d3FormatValue({
               value: value,
               formatNumber: fieldFormatNumber,
@@ -342,24 +336,24 @@ export class DataService {
               thousandsSeparator: thousandsSeparator
             })
           : // malloy percent
-            fieldResult === FieldResultEnum.Number &&
-              modelType === ModelTypeEnum.Malloy &&
+            fieldResult === 'number' &&
+              modelType === 'Malloy' &&
               fieldMalloyTags.map(tag => tag.key).indexOf('percent') > -1
             ? format(`#${thousandsSeparator}##0.00%`, value)
             : // malloy currency
-              fieldResult === FieldResultEnum.Number &&
-                modelType === ModelTypeEnum.Malloy &&
+              fieldResult === 'number' &&
+                modelType === 'Malloy' &&
                 isDefined(fieldMalloyCurrencyTag)
               ? format(
                   `${fieldMalloyCurrencySymbol}#${thousandsSeparator}##0.00`,
                   value
                 )
               : // malloy number
-                fieldResult === FieldResultEnum.Number &&
-                  modelType === ModelTypeEnum.Malloy &&
+                fieldResult === 'number' &&
+                  modelType === 'Malloy' &&
                   isDefined(fieldMalloyNumberTag)
                 ? format(fieldMalloyNumberTag.value, value)
-                : fieldResult === FieldResultEnum.Number &&
+                : fieldResult === 'number' &&
                     isDefinedAndNotEmpty(struct.mproveConfig.formatNumber)
                   ? // struct.mproveConfig.formatNumber
                     this.d3FormatValue({
@@ -370,7 +364,7 @@ export class DataService {
                       currencySuffix: fieldCurrencySuffix,
                       thousandsSeparator: thousandsSeparator
                     })
-                  : fieldResult === FieldResultEnum.Number
+                  : fieldResult === 'number'
                     ? // no formatNumber
                       Number(value)
                         .toLocaleString()
@@ -387,7 +381,7 @@ export class DataService {
 
     let data: SourceDataRow[] = query.data;
 
-    let isStore = mconfig.modelType === ModelTypeEnum.Store;
+    let isStore = mconfig.modelType === 'Store';
 
     if (isUndefined(data)) {
       return [];
@@ -399,8 +393,8 @@ export class DataService {
       let r: QDataRow = {};
 
       let dataRow: SourceDataRow =
-        mconfig.modelType === ModelTypeEnum.Malloy
-          ? query.connectionType === ConnectionTypeEnum.PostgreSQL
+        mconfig.modelType === 'Malloy'
+          ? query.connectionType === 'PostgreSQL'
             ? (row['row' as any] as unknown as SourceDataRow)
             : row
           : row;
@@ -413,7 +407,7 @@ export class DataService {
           let fieldId: string;
           let sqlName: string;
 
-          if (mconfig.modelType === ModelTypeEnum.Malloy) {
+          if (mconfig.modelType === 'Malloy') {
             let compiledQueryField =
               mconfig.compiledQuery.structs[0].fields.find(
                 (x: any) => x.name === key // no any
@@ -430,7 +424,7 @@ export class DataService {
                   ? drillExpression.path.join('.') + '.' + drillExpression.name
                   : drillExpression.name
                 : undefined;
-          } else if (mconfig.modelType === ModelTypeEnum.Store) {
+          } else if (mconfig.modelType === 'Store') {
             fieldId = key.toLowerCase();
           }
 
@@ -438,7 +432,7 @@ export class DataService {
             return x.id === fieldId;
           });
 
-          if (mconfig.modelType === ModelTypeEnum.Store) {
+          if (mconfig.modelType === 'Store') {
             sqlName = field.sqlName;
           }
 
@@ -446,9 +440,9 @@ export class DataService {
 
           if (isDefined(field.detail)) {
             tsValueMs = dataRow[field.id] as unknown as number;
-          } else if (field.result === FieldResultEnum.Ts) {
+          } else if (field.result === 'ts') {
             tsValueMs =
-              mconfig.modelType === ModelTypeEnum.Malloy
+              mconfig.modelType === 'Malloy'
                 ? this.getMsFromT({
                     value: value,
                     timezone: mconfig.timezone
@@ -459,27 +453,27 @@ export class DataService {
                   });
           }
 
-          let storeTimeSpec =
+          let storeTimeSpec: TimeSpec =
             isStore === false
               ? undefined
-              : field.detail === DetailUnitEnum.Timestamps
-                ? TimeSpecEnum.Timestamps
-                : field.detail === DetailUnitEnum.Minutes
-                  ? TimeSpecEnum.Minutes
-                  : field.detail === DetailUnitEnum.Hours
-                    ? TimeSpecEnum.Hours
-                    : field.detail === DetailUnitEnum.Days
-                      ? TimeSpecEnum.Days
-                      : field.detail === DetailUnitEnum.WeeksSunday
-                        ? TimeSpecEnum.Weeks
-                        : field.detail === DetailUnitEnum.WeeksMonday
-                          ? TimeSpecEnum.Weeks
-                          : field.detail === DetailUnitEnum.Months
-                            ? TimeSpecEnum.Months
-                            : field.detail === DetailUnitEnum.Quarters
-                              ? TimeSpecEnum.Quarters
-                              : field.detail === DetailUnitEnum.Years
-                                ? TimeSpecEnum.Years
+              : field.detail === 'timestamps'
+                ? 'timestamps'
+                : field.detail === 'minutes'
+                  ? 'minutes'
+                  : field.detail === 'hours'
+                    ? 'hours'
+                    : field.detail === 'days'
+                      ? 'days'
+                      : field.detail === 'weeksSunday'
+                        ? 'weeks'
+                        : field.detail === 'weeksMonday'
+                          ? 'weeks'
+                          : field.detail === 'months'
+                            ? 'months'
+                            : field.detail === 'quarters'
+                              ? 'quarters'
+                              : field.detail === 'years'
+                                ? 'years'
                                 : undefined;
 
           let cell: QCell = {
@@ -521,7 +515,7 @@ export class DataService {
   }
 
   makeSeriesData(item: {
-    modelType: ModelTypeEnum;
+    modelType: ModelType;
     mconfigTimezone: string;
     selectFields: MconfigField[];
     data: QDataRow[];
@@ -529,7 +523,7 @@ export class DataService {
     xFieldId: string;
     sizeFieldId: string;
     yFieldsIds: string[];
-    chartType: ChartTypeEnum;
+    chartType: ChartType;
   }) {
     let {
       modelType,
@@ -657,8 +651,8 @@ export class DataService {
         // x null check
         if (row[xField.id]) {
           let tsValueMs =
-            xField.result === FieldResultEnum.Ts
-              ? modelType === ModelTypeEnum.Malloy
+            xField.result === 'ts'
+              ? modelType === 'Malloy'
                 ? this.getMsFromT({
                     value: row[xField.id].value,
                     timezone: mconfigTimezone
@@ -670,7 +664,7 @@ export class DataService {
               : undefined;
 
           let xV =
-            xField.result === FieldResultEnum.Ts
+            xField.result === 'ts'
               ? (tsValueMs ?? row[xField.id].value)
               : row[xField.id].value;
 
@@ -678,7 +672,7 @@ export class DataService {
             let seriesPoint: SeriesPoint = {
               xValue: isUndefined(xV)
                 ? 'NULL'
-                : xField.result === FieldResultEnum.Number
+                : xField.result === 'number'
                   ? this.convertToNumberOrNull(xV)
                   : xV,
               xValueFmt: row[xField.id].valueFmt,
@@ -710,7 +704,7 @@ export class DataService {
     });
 
     let sortedDaysOfWeek =
-      struct.mproveConfig.weekStart === ProjectWeekStartEnum.Monday
+      struct.mproveConfig.weekStart === 'Monday'
         ? [
             'Monday',
             'Tuesday',
@@ -753,23 +747,23 @@ export class DataService {
         seriesId: ySeriesElement.yFieldId,
         seriesSizeName: sizeField?.label,
         seriesPoints:
-          chartType !== ChartTypeEnum.Scatter &&
-          (xField?.result === FieldResultEnum.Ts ||
-            xField?.result === FieldResultEnum.Number ||
-            xField?.result === FieldResultEnum.DayOfWeek ||
-            xField?.result === FieldResultEnum.DayOfWeekIndex ||
-            xField?.result === FieldResultEnum.MonthName ||
-            xField?.result === FieldResultEnum.QuarterOfYear)
+          chartType !== 'scatter' &&
+          (xField?.result === 'ts' ||
+            xField?.result === 'number' ||
+            xField?.result === 'day_of_week' ||
+            xField?.result === 'day_of_week_index' ||
+            xField?.result === 'month_name' ||
+            xField?.result === 'quarter_of_year')
             ? ySeriesElement.points.sort((a: SeriesPoint, b: SeriesPoint) =>
-                xField?.result === FieldResultEnum.Number ||
-                xField?.result === FieldResultEnum.DayOfWeekIndex ||
-                xField?.result === FieldResultEnum.Ts
+                xField?.result === 'number' ||
+                xField?.result === 'day_of_week_index' ||
+                xField?.result === 'ts'
                   ? Number(a.xValue) > Number(b.xValue)
                     ? 1
                     : Number(b.xValue) > Number(a.xValue)
                       ? -1
                       : 0
-                  : xField?.result === FieldResultEnum.DayOfWeek
+                  : xField?.result === 'day_of_week'
                     ? sortedDaysOfWeek.indexOf(a.xValue as string) >
                       sortedDaysOfWeek.indexOf(b.xValue as string)
                       ? 1
@@ -777,7 +771,7 @@ export class DataService {
                           sortedDaysOfWeek.indexOf(a.xValue as string)
                         ? -1
                         : 0
-                    : xField?.result === FieldResultEnum.MonthName
+                    : xField?.result === 'month_name'
                       ? sortedMonthNames.indexOf(a.xValue as string) >
                         sortedMonthNames.indexOf(b.xValue as string)
                         ? 1
@@ -785,7 +779,7 @@ export class DataService {
                             sortedMonthNames.indexOf(a.xValue as string)
                           ? -1
                           : 0
-                      : xField?.result === FieldResultEnum.QuarterOfYear
+                      : xField?.result === 'quarter_of_year'
                         ? sortedQuartersOfYear.indexOf(a.xValue as string) >
                           sortedQuartersOfYear.indexOf(b.xValue as string)
                           ? 1
@@ -862,32 +856,32 @@ export class DataService {
 
   getTimeSpecByFieldSqlName(fieldSqlName: string) {
     return fieldSqlName.match(/(?:___year)$/g)
-      ? TimeSpecEnum.Years
+      ? 'years'
       : fieldSqlName.match(/(?:___quarter)$/g)
-        ? TimeSpecEnum.Quarters
+        ? 'quarters'
         : fieldSqlName.match(/(?:___month)$/g)
-          ? TimeSpecEnum.Months
+          ? 'months'
           : fieldSqlName.match(/(?:___week)$/g)
-            ? TimeSpecEnum.Weeks
+            ? 'weeks'
             : fieldSqlName.match(/(?:___date)$/g)
-              ? TimeSpecEnum.Days
+              ? 'days'
               : fieldSqlName.match(/(?:___hour)$/g)
-                ? TimeSpecEnum.Hours
+                ? 'hours'
                 : fieldSqlName.match(/(?:___hour2)$/g)
-                  ? TimeSpecEnum.Hours
+                  ? 'hours'
                   : fieldSqlName.match(/(?:___hour3)$/g)
-                    ? TimeSpecEnum.Hours
+                    ? 'hours'
                     : fieldSqlName.match(/(?:___hour4)$/g)
-                      ? TimeSpecEnum.Hours
+                      ? 'hours'
                       : fieldSqlName.match(/(?:___hour6)$/g)
-                        ? TimeSpecEnum.Hours
+                        ? 'hours'
                         : fieldSqlName.match(/(?:___hour8)$/g)
-                          ? TimeSpecEnum.Hours
+                          ? 'hours'
                           : fieldSqlName.match(/(?:___hour12)$/g)
-                            ? TimeSpecEnum.Hours
+                            ? 'hours'
                             : fieldSqlName.match(/(?:___ts)$/g)
-                              ? TimeSpecEnum.Timestamps
-                              : TimeSpecEnum.Minutes;
+                              ? 'timestamps'
+                              : 'minutes';
   }
 
   getTimeSpecByMalloyTimeframe(item: { timeframe: string }) {
@@ -896,22 +890,22 @@ export class DataService {
     // export type TimestampTimeframe = 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
 
     return timeframe === 'year'
-      ? TimeSpecEnum.Years
+      ? 'years'
       : timeframe === 'quarter'
-        ? TimeSpecEnum.Quarters
+        ? 'quarters'
         : timeframe === 'month'
-          ? TimeSpecEnum.Months
+          ? 'months'
           : timeframe === 'week'
-            ? TimeSpecEnum.Weeks
+            ? 'weeks'
             : timeframe === 'day'
-              ? TimeSpecEnum.Days
+              ? 'days'
               : timeframe === 'hour'
-                ? TimeSpecEnum.Hours
+                ? 'hours'
                 : timeframe === 'minute'
-                  ? TimeSpecEnum.Minutes
+                  ? 'minutes'
                   : timeframe === 'second'
-                    ? TimeSpecEnum.Seconds
-                    : TimeSpecEnum.Timestamps;
+                    ? 'seconds'
+                    : 'timestamps';
   }
 
   private getDateFromDate(rValue: string) {
@@ -1187,7 +1181,7 @@ export class DataService {
 
     let name;
 
-    if (row.rowType !== RowTypeEnum.Metric) {
+    if (row.rowType !== 'metric') {
       name = row.name;
     } else {
       name = partLabel;
@@ -1291,7 +1285,7 @@ export class DataService {
               ? this.d3FormatValue({
                   value: Number(p.data.value[1]),
                   formatNumber: row.formatNumber,
-                  fieldResult: FieldResultEnum.Number,
+                  fieldResult: 'number',
                   currencyPrefix: row.currencyPrefix,
                   currencySuffix: row.currencySuffix,
                   thousandsSeparator: struct.mproveConfig.thousandsSeparator

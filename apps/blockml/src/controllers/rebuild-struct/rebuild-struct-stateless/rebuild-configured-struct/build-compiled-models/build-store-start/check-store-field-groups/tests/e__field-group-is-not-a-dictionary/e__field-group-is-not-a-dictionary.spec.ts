@@ -5,18 +5,14 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
-let caller = CallerEnum.BuildStoreStart;
-let func = FuncEnum.CheckStoreFieldGroups;
+let caller: Caller = 'BuildStoreStart';
+let func: Func = 'build-store-start/check-store-field-groups';
 let testId = 'e__field-group-is-not-a-dictionary';
 
 test('1', async t => {
@@ -48,7 +44,7 @@ test('1', async t => {
     let connection: ProjectConnection = {
       connectionId: 'c1',
       options: {},
-      type: ConnectionTypeEnum.Api
+      type: 'Api'
     };
 
     await structService.rebuildStructFromDir({
@@ -61,15 +57,15 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    errors = await readLog(fromDir, LogTypeEnum.Errors);
-    entStores = await readLog(fromDir, LogTypeEnum.Stores);
+    errors = await readLog(fromDir, 'out_errors.log');
+    entStores = await readLog(fromDir, 'out_stores.log');
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });
@@ -78,6 +74,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, ErTitleEnum.FIELD_GROUP_IS_NOT_A_DICTIONARY);
+  t.is(errors[0].title, 'FIELD_GROUP_IS_NOT_A_DICTIONARY');
   t.is(errors[0].lines[0].line, 3);
 });

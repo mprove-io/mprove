@@ -43,14 +43,8 @@ import { EditorStreamService } from '#backend/services/editor/editor-stream.serv
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSendMessageToEditorSessionOutput } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-output';
 
@@ -113,13 +107,13 @@ export class SendMessageToEditorSessionController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 
-    if (session.type !== SessionTypeEnum.Editor) {
+    if (session.type !== 'Editor') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EDITOR
+        message: 'BACKEND_SESSION_TYPE_IS_NOT_EDITOR'
       });
     }
 
@@ -127,16 +121,16 @@ export class SendMessageToEditorSessionController {
 
     let messageUsesCodex = false;
 
-    if (interactionType === InteractionTypeEnum.Message) {
+    if (interactionType === 'Message') {
       if (isDefined(providerId) === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_MESSAGE_PROVIDER_REQUIRED
+          message: 'BACKEND_MESSAGE_PROVIDER_REQUIRED'
         });
       }
 
       if (isDefined(modelId) === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_MESSAGE_MODEL_REQUIRED
+          message: 'BACKEND_MESSAGE_MODEL_REQUIRED'
         });
       }
 
@@ -149,8 +143,7 @@ export class SendMessageToEditorSessionController {
         isBuilder: true
       });
 
-      messageUsesCodex =
-        modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
+      messageUsesCodex = modelSelection.provider.type === 'OpenAICodex';
     }
 
     let sessionLockToken: string =
@@ -169,7 +162,7 @@ export class SendMessageToEditorSessionController {
       this.validateSessionStatus({ session: session });
 
       let isCodex =
-        interactionType === InteractionTypeEnum.Message
+        interactionType === 'Message'
           ? messageUsesCodex
           : session.providerId === CODEX_PROVIDER_ID;
 
@@ -202,7 +195,7 @@ export class SendMessageToEditorSessionController {
           }
 
           await this.editorSandboxService.resumeSandbox({
-            sandboxType: session.sandboxType as SandboxTypeEnum,
+            sandboxType: session.sandboxType as SandboxType,
             sandboxId: session.sandboxId,
             e2bApiKey: project.e2bApiKey,
             timeoutMs:
@@ -230,7 +223,7 @@ export class SendMessageToEditorSessionController {
             session.codexAuthUpdateTs = user.codexAuthUpdateTs;
           }
 
-          if (interactionType === InteractionTypeEnum.Message) {
+          if (interactionType === 'Message') {
             let providers: ProviderTab[] =
               await this.providersService.getEnabledProviders({
                 projectId: session.projectId
@@ -285,7 +278,7 @@ export class SendMessageToEditorSessionController {
                     await this.editorOpencodeService.restartOpencodeServer({
                       sessionId: rotationResult.session.sessionId,
                       sandboxType: rotationResult.session
-                        .sandboxType as SandboxTypeEnum,
+                        .sandboxType as SandboxType,
                       sandboxId: rotationResult.session.sandboxId,
                       e2bApiKey: project.e2bApiKey,
                       sandboxBaseUrl: rotationResult.session.sandboxBaseUrl,
@@ -329,31 +322,31 @@ export class SendMessageToEditorSessionController {
             sandboxBaseUrl: session.sandboxBaseUrl
           });
 
-          session.status = SessionStatusEnum.Active;
+          session.status = 'Active';
           session.sandboxStartTs = sandboxInfo.startedAt.getTime();
           session.sandboxEndTs = sandboxInfo.endAt.getTime();
           session.sandboxInfo = sandboxInfo;
           session.lastActivityTs = Date.now();
         } else {
-          session.status = SessionStatusEnum.Error;
+          session.status = 'Error';
         }
       } else {
-        session.status = SessionStatusEnum.Archived;
-        session.archiveReason = ArchiveReasonEnum.Expire;
+        session.status = 'Archived';
+        session.archiveReason = 'Expire';
       }
 
-      if (session.status === SessionStatusEnum.Active) {
+      if (session.status === 'Active') {
         // validate message interaction early
-        if (interactionType === InteractionTypeEnum.Message) {
+        if (interactionType === 'Message') {
           if (agent === undefined) {
             throw new ServerError({
-              message: ErEnum.BACKEND_MESSAGE_AGENT_REQUIRED
+              message: 'BACKEND_MESSAGE_AGENT_REQUIRED'
             });
           }
 
           if (variant === undefined) {
             throw new ServerError({
-              message: ErEnum.BACKEND_MESSAGE_VARIANT_REQUIRED
+              message: 'BACKEND_MESSAGE_VARIANT_REQUIRED'
             });
           }
         }
@@ -419,7 +412,7 @@ export class SendMessageToEditorSessionController {
           });
         }
 
-        if (interactionType === InteractionTypeEnum.Message) {
+        if (interactionType === 'Message') {
           session = {
             ...session,
             agent: agent,
@@ -505,27 +498,27 @@ export class SendMessageToEditorSessionController {
   }
 
   private validateSessionStatus(item: { session: SessionTab }): void {
-    if (item.session.status === SessionStatusEnum.New) {
+    if (item.session.status === 'New') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_NOT_READY
+        message: 'BACKEND_SESSION_NOT_READY'
       });
     }
 
-    if (item.session.status === SessionStatusEnum.Archived) {
+    if (item.session.status === 'Archived') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_IS_ARCHIVED
+        message: 'BACKEND_SESSION_IS_ARCHIVED'
       });
     }
 
-    if (item.session.status === SessionStatusEnum.Deleted) {
+    if (item.session.status === 'Deleted') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_NOT_FOUND
+        message: 'BACKEND_SESSION_NOT_FOUND'
       });
     }
 
-    if (item.session.status === SessionStatusEnum.Error) {
+    if (item.session.status === 'Error') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_IS_IN_ERROR_STATE
+        message: 'BACKEND_SESSION_IS_IN_ERROR_STATE'
       });
     }
   }

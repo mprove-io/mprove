@@ -1,12 +1,12 @@
 import { z } from 'zod';
-import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
+import { zDiskEnv } from '#common/types/node-common/env/disk-env';
 
 export let zDiskConfig = z.object({
   isTelemetryEnabled: z.boolean(),
   telemetryEndpoint: z.string().optional(),
   telemetryHyperdxIngestApiKey: z.string().optional(),
   otelLogLevel: z.string().optional(),
-  diskEnv: z.enum(DiskEnvEnum),
+  diskEnv: zDiskEnv,
   aesKey: z.string(),
   diskShard: z.string(),
   diskConcurrency: z.number(),

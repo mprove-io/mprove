@@ -5,7 +5,7 @@ import { ORGANIZATION_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
 import type { ToBackendGetOrgUsersRequest } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-request';
 import type { ToBackendGetOrgUsersResponse } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-response';
-import type { OrgUserItemExtended } from '#common/types/front/org-user-item-extended';
+import type { OrgUserItemExtended } from '#common/types/front/org-user/org-user-item-extended';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';

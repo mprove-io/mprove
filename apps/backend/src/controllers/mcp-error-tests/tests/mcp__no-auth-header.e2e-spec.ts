@@ -6,8 +6,6 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToMcp } from '#backend/functions/send-to-mcp';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
 
 let testId = 'backend-mcp__no-auth-header';
 
@@ -49,7 +47,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -61,13 +59,13 @@ test('1', async t => {
     assert.equal(response.status, 400);
     assert.equal(response.body.jsonrpc, '2.0');
     assert.equal(response.body.error.code, -32600);
-    assert.equal(response.body.error.message, ErEnum.BACKEND_UNAUTHORIZED);
+    assert.equal(response.body.error.message, 'BACKEND_UNAUTHORIZED');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

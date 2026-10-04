@@ -4,14 +4,12 @@ import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import { readLog } from '#blockml/functions/read-log/read-log';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 
-let caller = CallerEnum.BuildYaml;
-let func = FuncEnum.CheckTopUnknownParameters;
+let caller: Caller = 'BuildYaml';
+let func: Func = 'build-yaml/check-top-unknown-parameters';
 let testId = 'e__space-unexpected-list';
 
 test('1', async t => {
@@ -33,8 +31,8 @@ test('1', async t => {
     overrideTimezone: undefined
   });
 
-  let errors: BmError[] = await readLog(fromDir, LogTypeEnum.Errors);
-  let filesAny: any[] = await readLog(fromDir, LogTypeEnum.FilesAny);
+  let errors: BmError[] = await readLog(fromDir, 'out_errors.log');
+  let filesAny: any[] = await readLog(fromDir, 'out_filesAny.log');
   let isToDirDefined = isDefined(toDir);
   if (isToDirDefined) {
     fse.copySync(fromDir, toDir);
@@ -42,6 +40,6 @@ test('1', async t => {
 
   t.is(errors.length, 1);
   t.is(filesAny.length, 1);
-  t.is(errors[0].title, ErTitleEnum.UNEXPECTED_LIST);
+  t.is(errors[0].title, 'UNEXPECTED_LIST');
   t.is(errors[0].lines[0].line, 1);
 });

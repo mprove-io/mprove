@@ -63,7 +63,7 @@ import {
   DEFAULT_SRV_UI,
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -159,7 +159,7 @@ export class CreateMemberController {
 
       if (alias === RESTRICTED_USER_ALIAS) {
         throw new ServerError({
-          message: ErEnum.BACKEND_RESTRICTED_USER
+          message: 'BACKEND_RESTRICTED_USER'
         });
       }
 

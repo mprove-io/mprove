@@ -26,14 +26,13 @@ import {
   UTC
 } from '#common/constants/top';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
-import type { DiskCatalogFile } from '#common/types/disk/parts/disk-catalog-file';
+import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 import { UsersService } from './db/users.service';
 
 @Injectable()
@@ -96,7 +95,7 @@ export class QueryInfoDashboardService {
 
     let newDashboardId = fromDashboardX.dashboardId;
 
-    let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
+    let fileName = `${newDashboardId}.dashboard`;
 
     let mdir = currentStruct.mproveConfig.mproveDirValue;
 
@@ -192,7 +191,7 @@ export class QueryInfoDashboardService {
 
     if (isUndefined(newApiDashboard)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_GET_DASHBOARD_FAIL,
+        message: 'BACKEND_GET_DASHBOARD_FAIL',
         displayData: {
           structErrors: tempStruct.errors
         }

@@ -2,26 +2,26 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
 import { pushFilePartSpaceFoldersRecursive } from './push-file-part-space-folders-recursive/push-file-part-space-folders-recursive';
 
-let func = FuncEnum.MakeFilePartSpaces;
+let func: Func = 'extra/make-file-part-spaces';
 
 export function makeFilePartSpaces(item: {
   spaces: FileSpace[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FilePartSpace[], never> {
   let { cs, ...logItem } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, logItem);
+  log(cs, caller, func, structId, 'input.log', logItem);
 
   let spaces: FilePartSpace[] = [];
 
@@ -46,7 +46,7 @@ export function makeFilePartSpaces(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Spaces, spaces);
+  log(cs, caller, func, structId, 'out_spaces.log', spaces);
 
   return Result.succeed(spaces);
 }

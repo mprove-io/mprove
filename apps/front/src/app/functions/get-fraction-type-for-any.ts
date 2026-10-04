@@ -1,26 +1,25 @@
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 
-export function getFractionTypeForAny(result: FieldResultEnum) {
-  return result === FieldResultEnum.String
-    ? FractionTypeEnum.StringIsAnyValue
-    : result === FieldResultEnum.Number
-      ? FractionTypeEnum.NumberIsAnyValue
-      : result === FieldResultEnum.Ts
-        ? FractionTypeEnum.TsIsAnyValue
-        : result === FieldResultEnum.Date
-          ? FractionTypeEnum.TsIsAnyValue
-          : result === FieldResultEnum.Boolean
-            ? FractionTypeEnum.BooleanIsAnyValue
-            : result === FieldResultEnum.Yesno
-              ? FractionTypeEnum.YesnoIsAnyValue
-              : result === FieldResultEnum.DayOfWeek
-                ? FractionTypeEnum.DayOfWeekIsAnyValue
-                : result === FieldResultEnum.DayOfWeekIndex
-                  ? FractionTypeEnum.DayOfWeekIndexIsAnyValue
-                  : result === FieldResultEnum.MonthName
-                    ? FractionTypeEnum.MonthNameIsAnyValue
-                    : result === FieldResultEnum.QuarterOfYear
-                      ? FractionTypeEnum.QuarterOfYearIsAnyValue
+export function getFractionTypeForAny(result: FieldResult) {
+  return result === 'string'
+    ? 'StringIsAnyValue'
+    : result === 'number'
+      ? 'NumberIsAnyValue'
+      : result === 'ts'
+        ? 'TsIsAnyValue'
+        : result === 'date'
+          ? 'TsIsAnyValue'
+          : result === 'boolean'
+            ? 'BooleanIsAnyValue'
+            : result === 'yesno'
+              ? 'YesnoIsAnyValue'
+              : result === 'day_of_week'
+                ? 'DayOfWeekIsAnyValue'
+                : result === 'day_of_week_index'
+                  ? 'DayOfWeekIndexIsAnyValue'
+                  : result === 'month_name'
+                    ? 'MonthNameIsAnyValue'
+                    : result === 'quarter_of_year'
+                      ? 'QuarterOfYearIsAnyValue'
                       : undefined;
 }

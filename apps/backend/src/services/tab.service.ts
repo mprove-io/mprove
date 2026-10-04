@@ -65,11 +65,11 @@ import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BaseProject } from '#common/types/backend/parts/base-project';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
@@ -127,8 +127,7 @@ export class TabService {
       (isDefinedStAndUndefinedDecrypted || isDefinedLtAndUndefinedDecrypted)
     ) {
       throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORD_HAS_NO_DECRYPTED_AND_NO_ENCRYPTED_PROPS
+        message: 'BACKEND_DB_RECORD_HAS_NO_DECRYPTED_AND_NO_ENCRYPTED_PROPS'
       });
     }
 
@@ -137,7 +136,7 @@ export class TabService {
       (isDefined(ent.st?.decrypted) || isDefined(ent.lt?.decrypted))
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DB_RECORD_HAS_BOTH_DECRYPTED_AND_ENCRYPTED_PROPS
+        message: 'BACKEND_DB_RECORD_HAS_BOTH_DECRYPTED_AND_ENCRYPTED_PROPS'
       });
     }
 
@@ -146,7 +145,7 @@ export class TabService {
       (isDefined(ent.st?.decrypted) || isDefined(ent.lt?.decrypted))
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DB_RECORD_IS_DECRYPTED_BUT_HAS_KEY_TAG
+        message: 'BACKEND_DB_RECORD_IS_DECRYPTED_BUT_HAS_KEY_TAG'
       });
     }
 
@@ -155,7 +154,7 @@ export class TabService {
       [this.keyTag, this.prevKeyTag].indexOf(ent.keyTag) < 0
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DB_RECORD_KEY_TAG_DOES_NOT_MATCH_CURRENT_OR_PREV
+        message: 'BACKEND_DB_RECORD_KEY_TAG_DOES_NOT_MATCH_CURRENT_OR_PREV'
       });
     }
 

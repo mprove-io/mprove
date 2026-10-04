@@ -13,11 +13,10 @@ import {
   PATH_ORG,
   PATH_PROJECT
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
 import type { ToBackendGetDashboardResponse } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-response';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardQuery } from '../queries/dashboard.query';
@@ -47,7 +46,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let timezoneParam: TimeSpecEnum = route.queryParams?.timezone;
+    let timezoneParam: TimeSpec = route.queryParams?.timezone;
 
     let uiState = this.uiQuery.getValue();
     let structState = this.structQuery.getValue();
@@ -154,7 +153,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
             return true;
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

@@ -43,11 +43,11 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed
+          'bg-m600': projectRemoteRepoType === 'Managed'
         }"
       >
         <m-check-icon
-          *ngIf="projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed"
+          *ngIf="projectRemoteRepoType === 'Managed'"
         ></m-check-icon>
       </div>
 
@@ -63,11 +63,11 @@
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
           'bg-m600':
-            projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone
+            projectRemoteRepoType === 'GitClone'
         }"
       >
         <m-check-icon
-          *ngIf="projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone"
+          *ngIf="projectRemoteRepoType === 'GitClone'"
         ></m-check-icon>
       </div>
 
@@ -77,7 +77,7 @@
     </div> -->
 
     <div
-      *ngIf="projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone"
+      *ngIf="projectRemoteRepoType === 'GitClone'"
       class="flex w-full flex-col"
     >
       <input
@@ -158,15 +158,12 @@
         type="submit"
         [ngClass]="{
           'bg-m600':
-            projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed ||
-            isDeployKeyAdded === true,
+            projectRemoteRepoType === 'Managed' || isDeployKeyAdded === true,
           'bg-s400 cursor-default':
-            projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone &&
-            isDeployKeyAdded === false
+            projectRemoteRepoType === 'GitClone' && isDeployKeyAdded === false
         }"
         [disabled]="
-          projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone &&
-          isDeployKeyAdded === false
+          projectRemoteRepoType === 'GitClone' && isDeployKeyAdded === false
         "
         >Create</button
       >

@@ -12,7 +12,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateSessionSseTicketOutput } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-output';
@@ -47,7 +47,7 @@ export class CreateSessionSseTicketController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 

@@ -5,25 +5,22 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import { checkSpaceFolderValuesRecursive } from './check-space-folder-values-recursive/check-space-folder-values-recursive';
 
-let func = FuncEnum.CheckTopValues;
+let func: Func = 'build-yaml/check-top-values';
 
 export function checkTopValues(item: {
   filesAny: any[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<any[], never> {
   let { caller, structId, cs } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newFilesAny: any[] = [];
 
@@ -34,23 +31,21 @@ export function checkTopValues(item: {
       .filter(x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
-          [
-            ParameterEnum.Path.toString(),
-            ParameterEnum.Ext.toString(),
-            ParameterEnum.Name.toString()
-          ].indexOf(parameter) > -1
+          ['path'.toString(), 'ext'.toString(), 'name'.toString()].indexOf(
+            parameter
+          ) > -1
         ) {
           return;
         }
 
         if (
           [
-            ParameterEnum.Model.toString(),
-            ParameterEnum.Mod.toString(),
-            ParameterEnum.Store.toString(),
-            ParameterEnum.Report.toString(),
-            ParameterEnum.Dashboard.toString(),
-            ParameterEnum.Chart.toString()
+            'model'.toString(),
+            'mod'.toString(),
+            'store'.toString(),
+            'report'.toString(),
+            'dashboard'.toString(),
+            'chart'.toString()
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()
@@ -58,7 +53,7 @@ export function checkTopValues(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE,
+              title: 'WRONG_CHARS_IN_PARAMETER_VALUE',
               message: `parameter "${parameter}" contains wrong characters or whitespace (only snake_case "a...zA...Z0...9_" is allowed)`,
               lines: [
                 {
@@ -74,13 +69,13 @@ export function checkTopValues(item: {
         }
 
         if (
-          ParameterEnum.Space.toString() === parameter &&
-          file.ext !== FileExtensionEnum.Space &&
+          'space'.toString() === parameter &&
+          file.ext !== '.space' &&
           !file[parameter].toString().match(/^[a-z][a-z0-9_.]*$/)
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE,
+              title: 'WRONG_CHARS_IN_PARAMETER_VALUE',
               message: `parameter "${parameter}" contains wrong characters or whitespace (only "a...z0...9_." is allowed and must start with a letter)`,
               lines: [
                 {
@@ -96,13 +91,13 @@ export function checkTopValues(item: {
         }
 
         if (
-          ParameterEnum.Space.toString() === parameter &&
-          file.ext === FileExtensionEnum.Space &&
+          'space'.toString() === parameter &&
+          file.ext === '.space' &&
           !file[parameter].toString().match(/^[a-z][a-z0-9_]*$/)
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE,
+              title: 'WRONG_CHARS_IN_PARAMETER_VALUE',
               message: `parameter "${parameter}" contains wrong characters or whitespace (only "a...z0...9_" is allowed and must start with a letter)`,
               lines: [
                 {
@@ -118,7 +113,7 @@ export function checkTopValues(item: {
         }
       });
 
-    if (file.ext === FileExtensionEnum.Space) {
+    if (file.ext === '.space') {
       checkSpaceFolderValuesRecursive({
         file: file,
         rootFile: file,
@@ -131,8 +126,8 @@ export function checkTopValues(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.FilesAny, newFilesAny);
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_filesAny.log', newFilesAny);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
   return Result.succeed(newFilesAny);
 }

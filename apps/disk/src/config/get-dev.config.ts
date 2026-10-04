@@ -1,6 +1,6 @@
-import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
 import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { DiskEnv } from '#common/types/node-common/env/disk-env';
 import type { DiskConfig } from '#disk/config/disk-config';
 
 export function getDevConfig() {
@@ -16,7 +16,7 @@ export function getDevConfig() {
 
     otelLogLevel: process.env.OTEL_LOG_LEVEL,
 
-    diskEnv: <DiskEnvEnum>process.env.DISK_ENV,
+    diskEnv: <DiskEnv>process.env.DISK_ENV,
 
     aesKey: process.env.DISK_AES_KEY,
 

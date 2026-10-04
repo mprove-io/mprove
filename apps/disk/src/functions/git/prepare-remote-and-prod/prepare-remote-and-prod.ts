@@ -2,7 +2,8 @@ import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+
 import type { DiskInitializeAndPushManagedProdError } from '#common/types/disk/function-errors/disk-initialize-and-push-managed-prod-error';
 import type { DiskPrepareRemoteAndProdError } from '#common/types/disk/function-errors/disk-prepare-remote-and-prod-error';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
@@ -17,7 +18,7 @@ export function prepareRemoteAndProd(item: {
   seedProjectId: string;
   projectName: string;
   userAlias: string;
-  remoteType: ProjectRemoteTypeEnum;
+  remoteType: ProjectRemoteType;
   gitUrl: string;
   keyDir: string;
   privateKeyEncrypted: string;
@@ -33,13 +34,13 @@ export function prepareRemoteAndProd(item: {
           prodDir: `${item.projectDir}/${PROD_REPO_ID}`,
           centralDir: `${item.projectDir}/${CENTRAL_REPO_ID}`,
           remoteUrl:
-            item.remoteType === ProjectRemoteTypeEnum.GitClone
+            item.remoteType === 'GitClone'
               ? item.gitUrl
               : `${item.projectDir}/${CENTRAL_REPO_ID}`
         }),
         Result.andThrough(v => ensureDir({ dir: v.prodDir })),
         Result.andThrough(v =>
-          v.remoteType === ProjectRemoteTypeEnum.Managed
+          v.remoteType === 'Managed'
             ? initializeManagedCentralRepo({ centralDir: v.centralDir })
             : Result.succeed()
         ),
@@ -65,7 +66,7 @@ export function prepareRemoteAndProd(item: {
           async (
             v
           ): Result.ResultAsync<void, DiskInitializeAndPushManagedProdError> =>
-            v.remoteType === ProjectRemoteTypeEnum.Managed
+            v.remoteType === 'Managed'
               ? initializeAndPushManagedProd({
                   projectId: v.projectId,
                   projectDir: v.projectDir,

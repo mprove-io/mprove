@@ -28,11 +28,11 @@ import {
   PROD_REPO_ID
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
 import type { ToBackendCreateBranchResponse } from '#common/types/backend/routes/branches/create-branch/create-branch-response';
-import type { BranchItem } from '#common/types/front/branch-item';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+import type { BranchItem } from '#common/types/front/repo/branch-item';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
@@ -62,8 +62,6 @@ export class CreateBranchDialogComponent implements OnInit {
   onEscKeyUp() {
     this.createBranchSelectElement?.close();
   }
-
-  repoTypeEnum = RepoTypeEnum;
 
   createBranchForm: FormGroup;
 
@@ -96,7 +94,7 @@ export class CreateBranchDialogComponent implements OnInit {
   selectedBranchItem: BranchItem = this.ref.data.selectedBranchItem;
   selectedBranchExtraId: string = this.ref.data.selectedBranchExtraId;
 
-  targetRepoType: RepoTypeEnum;
+  targetRepoType: RepoType;
 
   constructor(
     public ref: DialogRef<CreateBranchDialogData>,
@@ -122,7 +120,7 @@ export class CreateBranchDialogComponent implements OnInit {
   }
 
   prodOnClick() {
-    this.targetRepoType = RepoTypeEnum.Production;
+    this.targetRepoType = 'production';
 
     this.branchesList = makeCopy<BranchItem[]>(
       this.ref.data.branchesList
@@ -135,7 +133,7 @@ export class CreateBranchDialogComponent implements OnInit {
   }
 
   devOnClick() {
-    this.targetRepoType = RepoTypeEnum.Dev;
+    this.targetRepoType = 'dev';
 
     this.branchesList = makeCopy<BranchItem[]>(
       this.ref.data.branchesList
@@ -166,8 +164,7 @@ export class CreateBranchDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let repoId =
-      this.targetRepoType === RepoTypeEnum.Production ? PROD_REPO_ID : userId;
+    let repoId = this.targetRepoType === 'production' ? PROD_REPO_ID : userId;
 
     let payload: ToBackendCreateBranchRequest['input'] = {
       projectId: this.ref.data.projectId,

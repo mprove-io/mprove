@@ -1,5 +1,5 @@
-import type { CodexAuth } from '#common/types/backend/parts/codex-auth';
-import type { Ui } from '#common/types/backend/parts/ui';
+import type { CodexAuth } from '#common/types/backend/parts/codex/codex-auth';
+import type { Ui } from '#common/types/backend/parts/ui/ui';
 
 export type UserLt = {
   email: string;

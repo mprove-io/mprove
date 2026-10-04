@@ -1,11 +1,13 @@
 import { z } from 'zod';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { StoreMethodEnum } from '#common/enums/store-method.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type ConnectionOptions,
   zConnectionOptions
 } from '#common/types/backend/parts/connection-parts/connection-options';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import { zConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
+import { zStoreMethod } from '#common/types/blockml/parts/store/store-method';
 
 export type ToBackendTestConnectionRequest = {
   operation: 'testConnection';
@@ -15,19 +17,9 @@ export type ToBackendTestConnectionRequest = {
     projectId: string;
     envId: string;
     connectionId: string;
-    type:
-      | ConnectionTypeEnum.PostgreSQL
-      | ConnectionTypeEnum.MySQL
-      | ConnectionTypeEnum.SnowFlake
-      | ConnectionTypeEnum.BigQuery
-      | ConnectionTypeEnum.Databricks
-      | ConnectionTypeEnum.MotherDuck
-      | ConnectionTypeEnum.Presto
-      | ConnectionTypeEnum.Trino
-      | ConnectionTypeEnum.GoogleApi
-      | ConnectionTypeEnum.Api;
+    type: ConnectionType;
     options?: ConnectionOptions;
-    storeMethod?: StoreMethodEnum.Post | StoreMethodEnum.Get;
+    storeMethod?: StoreMethod;
   };
 };
 
@@ -41,9 +33,9 @@ export let zToBackendTestConnectionRequest = z
         projectId: z.string(),
         envId: z.string(),
         connectionId: z.string(),
-        type: z.enum(ConnectionTypeEnum),
+        type: zConnectionType,
         options: zConnectionOptions.nullish(),
-        storeMethod: z.enum(StoreMethodEnum).nullish()
+        storeMethod: zStoreMethod.nullish()
       })
       .meta({ id: 'ToBackendTestConnectionInput' })
   })

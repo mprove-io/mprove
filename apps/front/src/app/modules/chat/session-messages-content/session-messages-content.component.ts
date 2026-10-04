@@ -4,9 +4,8 @@ import { languages as cmLanguages } from '@codemirror/language-data';
 import { Extension } from '@codemirror/state';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ } from '#common/constants/code-themes/themes';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import { environment } from '#front/environments/environment';
 import { ExplorerTabsQuery } from '../../../queries/explorer-tabs.query';
 import { ExplorerTabService } from '../../../services/explorer-tab.service';
@@ -189,8 +188,6 @@ const TOOL_TITLE_MAP: Record<string, string> = {
   templateUrl: './session-messages-content.component.html'
 })
 export class SessionMessagesContentComponent {
-  chartTypeEnum = ChartTypeEnum;
-  sessionTypeEnum = SessionTypeEnum;
   showPromptEnabled = environment.showPromptEnabled;
 
   @Input() turns: ChatTurn[] = [];
@@ -257,7 +254,7 @@ export class SessionMessagesContentComponent {
     this.explorerTabsQuery.setActive({ tabId: tabId });
   }
 
-  getMproveTabChartType(item: { tabId: string }): ChartTypeEnum | undefined {
+  getMproveTabChartType(item: { tabId: string }): ChartType | undefined {
     let state = this.explorerTabsQuery.getValue();
     let tab = state.allTabs.find(t => t.id === item.tabId);
 

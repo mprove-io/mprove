@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { DEFAULT_CHART_SERIES_LINE } from '#common/constants/mconfig-chart';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
+
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
-import type { DataRow } from '#common/types/front/data-row';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig/mconfig-chart-series';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportService } from '#front/app/services/report.service';
 
@@ -18,11 +17,6 @@ import { ReportService } from '#front/app/services/report.service';
 })
 export class ChartRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
-
-  rowTypeMetric = RowTypeEnum.Metric;
-  rowTypeFormula = RowTypeEnum.Formula;
-  rowTypeHeader = RowTypeEnum.Header;
-  rowTypeEmpty = RowTypeEnum.Empty;
 
   constructor(
     private reportQuery: ReportQuery,
@@ -65,7 +59,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
 
       this.reportService.modifyRows({
         report: report,
-        changeType: ChangeTypeEnum.EditInfo,
+        changeType: 'EditInfo',
         rowChange: rowChange,
         rowIds: undefined,
         reportFields: report.fields,

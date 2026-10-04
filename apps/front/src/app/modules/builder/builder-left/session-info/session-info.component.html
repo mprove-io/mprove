@@ -31,20 +31,20 @@
             <div class="grid grid-cols-[auto_1fr] gap-x-4">
               <div class="text-s400 text-base font-medium">Status</div>
               <div class="text-s400 text-base">{{
-                session?.status === sessionStatusEnum.Archived
-                  ? session?.archiveReason === archiveReasonEnum.Expire
+                session?.status === 'Archived'
+                  ? session?.archiveReason === 'Expire'
                     ? 'Archived (sandbox expired)'
-                    : session?.archiveReason === archiveReasonEnum.Commit
+                    : session?.archiveReason === 'Commit'
                       ? 'Archived (commit by User)'
                       : 'Archived by User'
-                  : session?.status === sessionStatusEnum.Paused
-                    ? session?.pauseReason === pauseReasonEnum.User
+                  : session?.status === 'Paused'
+                    ? session?.pauseReason === 'User'
                       ? 'Paused by User'
-                      : session?.pauseReason === pauseReasonEnum.Idle
+                      : session?.pauseReason === 'Idle'
                         ? 'Paused (idle)'
-                        : session?.pauseReason === pauseReasonEnum.Safe
+                        : session?.pauseReason === 'Safe'
                           ? 'Paused (safe)'
-                          : session?.pauseReason === pauseReasonEnum.External
+                          : session?.pauseReason === 'External'
                             ? 'Paused (external)'
                             : 'Paused'
                     : session?.status || '-'

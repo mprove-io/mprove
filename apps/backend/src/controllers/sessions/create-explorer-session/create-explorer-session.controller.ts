@@ -39,11 +39,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
@@ -105,7 +101,7 @@ export class CreateExplorerSessionController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -144,7 +140,7 @@ export class CreateExplorerSessionController {
       isBuilder: false
     });
 
-    let isCodex = modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
+    let isCodex = modelSelection.provider.type === 'OpenAICodex';
 
     // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
     if (isCodex) {
@@ -162,7 +158,7 @@ export class CreateExplorerSessionController {
 
         session = this.sessionsService.makeSession({
           sessionId: sessionId,
-          type: SessionTypeEnum.Explorer,
+          type: 'Explorer',
           repoId: repoId,
           branchId: branchId,
           userId: user.userId,
@@ -176,7 +172,7 @@ export class CreateExplorerSessionController {
           initialBranch: undefined,
           envId: envId,
           initialCommit: undefined,
-          status: SessionStatusEnum.Active,
+          status: 'Active',
           lastActivityTs: now,
           codexAuthUpdateTs: isCodex ? user.codexAuthUpdateTs : undefined,
           createdTs: now
@@ -252,7 +248,7 @@ export class CreateExplorerSessionController {
         .catch(e => {
           logToConsoleBackend({
             log: e,
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });

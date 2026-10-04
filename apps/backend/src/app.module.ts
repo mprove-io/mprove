@@ -37,10 +37,7 @@ import {
   RESTRICTED_USER_PASSWORD
 } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -368,7 +365,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });
@@ -379,10 +376,10 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     setTimeout(() => {
       let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
 
-      if (backendEnv !== BackendEnvEnum.TEST) {
+      if (backendEnv !== 'TEST') {
         logToConsoleBackend({
           log: `NODE_ENV "${process.env.NODE_ENV}", BACKEND_ENV "${backendEnv}"`,
-          logLevel: LogLevelEnum.Info,
+          logLevel: 'Info',
           logger: this.logger,
           cs: this.cs
         });
@@ -405,27 +402,26 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
 
     if (isEncryptMetadata === true && isEncryptDb === false) {
       throw new ServerError({
-        message:
-          ErEnum.BACKEND_ENCRYPT_METADATA_DOES_NOT_WORK_WITHOUT_ENCRYPT_DB
+        message: 'BACKEND_ENCRYPT_METADATA_DOES_NOT_WORK_WITHOUT_ENCRYPT_DB'
       });
     }
 
     if (isUndefined(keyBase64)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AES_KEY_IS_NOT_DEFINED
+        message: 'BACKEND_AES_KEY_IS_NOT_DEFINED'
       });
     }
 
     if (isUndefined(keyTag)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AES_KEY_TAG_IS_NOT_DEFINED
+        message: 'BACKEND_AES_KEY_TAG_IS_NOT_DEFINED'
       });
     }
 
     if (isDefined(prevKeyBase64) && isUndefined(prevKeyTag)) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_PREV_AES_KEY_IS_DEFINED_BUT_PREV_AES_KEY_TAG_IS_NOT_DEFINED
+          'BACKEND_PREV_AES_KEY_IS_DEFINED_BUT_PREV_AES_KEY_TAG_IS_NOT_DEFINED'
       });
     }
 
@@ -437,7 +433,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
 
     if (isUndefined(dconfigA)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DCONFIG_IS_NOT_DEFINED
+        message: 'BACKEND_DCONFIG_IS_NOT_DEFINED'
       });
     }
 
@@ -657,7 +653,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c1_postgres',
-        type: ConnectionTypeEnum.PostgreSQL,
+        type: 'PostgreSQL',
         options: {
           postgres: {
             host: this.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
@@ -701,7 +697,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c3_bigquery',
-        type: ConnectionTypeEnum.BigQuery,
+        type: 'BigQuery',
         options: {
           bigquery: {
             serviceAccountCredentials: bigqueryTestCredentials,
@@ -735,7 +731,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c4_snowflake',
-        type: ConnectionTypeEnum.SnowFlake,
+        type: 'SnowFlake',
         options: {
           snowflake: {
             account: demoProjectDwhSnowflakeAccount,
@@ -776,7 +772,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c5_duckdb',
-        type: ConnectionTypeEnum.MotherDuck,
+        type: 'MotherDuck',
         options: {
           motherduck: {
             motherduckToken: demoProjectDwhMotherDuckToken,
@@ -810,7 +806,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c6_mysql',
-        type: ConnectionTypeEnum.MySQL,
+        type: 'MySQL',
         options: {
           mysql: {
             host: this.cs.get<BackendConfig['demoProjectDwhMysqlHost']>(
@@ -857,7 +853,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c7_google',
-        type: ConnectionTypeEnum.GoogleApi,
+        type: 'GoogleApi',
         options: {
           storeGoogleApi: {
             baseUrl: 'https://analyticsdata.googleapis.com',
@@ -897,7 +893,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c8_trino',
-        type: ConnectionTypeEnum.Trino,
+        type: 'Trino',
         options: {
           trino: {
             server: 'http://dwh-trino:8081',
@@ -935,7 +931,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c9_presto',
-        type: ConnectionTypeEnum.Presto,
+        type: 'Presto',
         options: {
           presto: {
             server: 'http://dwh-presto',

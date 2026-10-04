@@ -4,7 +4,7 @@ import {
   type QueryEstimate,
   zQueryEstimate
 } from '#common/types/backend/parts/query-estimate';
-import { type Query, zQuery } from '#common/types/blockml/parts/query';
+import { type Query, zQuery } from '#common/types/blockml/parts/query/query';
 
 export type ToBackendRunQueriesDryOutput = {
   dryId: string;

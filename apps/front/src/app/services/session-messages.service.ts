@@ -5,9 +5,9 @@ import type {
   UserMessage
 } from '@opencode-ai/sdk/v2';
 import { EMPTY_ASSISTANT_RESPONSE_MESSAGE } from '#common/constants/top';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
-import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
-import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
+import type { SessionPartApi } from '#common/types/backend/parts/session/session-part-api';
 import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
 import {
   ChatMessage,

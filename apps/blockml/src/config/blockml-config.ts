@@ -1,16 +1,16 @@
 import { z } from 'zod';
-import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
+import { zFunc } from '#common/types/blockml/diagnostics/func';
+import { zBlockmlEnv } from '#common/types/node-common/env/blockml-env';
 
 export let zBlockmlConfig = z.object({
   isTelemetryEnabled: z.boolean(),
   telemetryEndpoint: z.string().optional(),
   telemetryHyperdxIngestApiKey: z.string().optional(),
   otelLogLevel: z.string().optional(),
-  blockmlEnv: z.enum(BlockmlEnvEnum),
+  blockmlEnv: zBlockmlEnv,
   aesKey: z.string(),
   logIO: z.boolean(),
-  logFunc: z.enum(FuncEnum),
+  logFunc: zFunc,
   copyLogsToModels: z.boolean(),
   logsPath: z.string(),
   concurrencyLimit: z.number().int(),

@@ -1,29 +1,17 @@
 import { z } from 'zod';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import { zFieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+import { zModelType } from '#common/types/blockml/parts/model/model-type';
 
 export type ToBackendSeedRecordsInputModelFieldLeafsItem = {
   structId: string;
   modelId: string;
-  modelType: ModelTypeEnum.Store | ModelTypeEnum.Malloy;
+  modelType: ModelType;
   connectionId?: string;
   fieldId: string;
-  fieldResult?:
-    | FieldResultEnum.DayOfWeek
-    | FieldResultEnum.DayOfWeekIndex
-    | FieldResultEnum.MonthName
-    | FieldResultEnum.QuarterOfYear
-    | FieldResultEnum.Ts
-    | FieldResultEnum.Yesno
-    | FieldResultEnum.String
-    | FieldResultEnum.Number
-    | FieldResultEnum.Date
-    | FieldResultEnum.Boolean
-    | FieldResultEnum.Array
-    | FieldResultEnum.Record
-    | FieldResultEnum.Json
-    | FieldResultEnum.SqlNative;
+  fieldResult?: FieldResult;
   schemaNameLc?: string;
   tableNameLc?: string;
   columnNameLc?: string;
@@ -38,10 +26,10 @@ export let zToBackendSeedRecordsInputModelFieldLeafsItem = z
   .object({
     structId: z.string(),
     modelId: z.string(),
-    modelType: z.enum(ModelTypeEnum),
+    modelType: zModelType,
     connectionId: z.string().nullish(),
     fieldId: z.string(),
-    fieldResult: z.enum(FieldResultEnum).nullish(),
+    fieldResult: zFieldResult.nullish(),
     schemaNameLc: z.string().nullish(),
     tableNameLc: z.string().nullish(),
     columnNameLc: z.string().nullish(),

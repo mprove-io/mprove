@@ -24,17 +24,16 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendSaveModifyChartRequest } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-request';
 import type { ToBackendSaveModifyChartResponse } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-response';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
@@ -51,7 +50,7 @@ export interface EditChartInfoDialogData {
   apiService: ApiService;
   projectId: string;
   repoId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
   branchId: string;
   envId: string;
   chart: ChartUnit;
@@ -213,7 +212,7 @@ export class EditChartInfoDialogComponent implements OnInit {
       unitId: this.ref.data.chart.chartId,
       filePath: this.ref.data.chart.filePath,
       unitSpace: this.ref.data.chart.space,
-      extension: FileExtensionEnum.Chart,
+      extension: '.chart',
       spaces: this.struct.spaces
     });
   }

@@ -14,8 +14,7 @@ import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-sessi
 import { validateToBackendRequest } from '#backend/functions/validate-to-backend-request';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
@@ -76,7 +75,7 @@ export class AppInterceptor implements NestInterceptor {
 
     if (isDefined(idemp) && !!idemp.stId && idemp.stId !== stId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_IDEMP_USER_MISMATCH
+        message: 'BACKEND_IDEMP_USER_MISMATCH'
       });
     }
 
@@ -120,10 +119,10 @@ export class AppInterceptor implements NestInterceptor {
             onRetry: (e: any) => {
               logToConsoleBackend({
                 log: new ServerError({
-                  message: ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
+                  message: 'BACKEND_GET_IDEMP_RESP_RETRY',
                   originalError: e
                 }),
-                logLevel: LogLevelEnum.Error,
+                logLevel: 'Error',
                 logger: this.logger,
                 cs: this.cs
               });
@@ -132,7 +131,7 @@ export class AppInterceptor implements NestInterceptor {
         );
       } catch (e) {
         let err = new ServerError({
-          message: ErEnum.BACKEND_GET_IDEMP_RESP_RETRY_FAILED,
+          message: 'BACKEND_GET_IDEMP_RESP_RETRY_FAILED',
           originalError: e
         });
 
@@ -205,7 +204,7 @@ export class AppInterceptor implements NestInterceptor {
           tap(x =>
             logResponseBackend({
               response: x,
-              logLevel: LogLevelEnum.Info,
+              logLevel: 'Info',
               cs: this.cs,
               logger: this.logger
             })
@@ -221,7 +220,7 @@ export class AppInterceptor implements NestInterceptor {
             tap(x =>
               logResponseBackend({
                 response: x,
-                logLevel: LogLevelEnum.Info,
+                logLevel: 'Info',
                 cs: this.cs,
                 logger: this.logger
               })
@@ -236,7 +235,7 @@ export class AppInterceptor implements NestInterceptor {
               logResponseBackend({
                 response: y,
                 wrappedError: wrappedError,
-                logLevel: LogLevelEnum.Info,
+                logLevel: 'Info',
                 cs: this.cs,
                 logger: this.logger
               })

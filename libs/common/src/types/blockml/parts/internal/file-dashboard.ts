@@ -1,5 +1,5 @@
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
-import type { FileBasic } from '#common/types/blockml/parts/internal/file-basic';
+import type { FileBasic } from '#common/types/blockml/parts/internal/file/file-basic';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 import type { Extend } from '#common/types/extend';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';

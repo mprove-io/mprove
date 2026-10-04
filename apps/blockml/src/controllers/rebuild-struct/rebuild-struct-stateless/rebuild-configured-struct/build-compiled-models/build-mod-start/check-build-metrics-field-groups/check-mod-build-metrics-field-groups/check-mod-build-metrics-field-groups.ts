@@ -1,8 +1,7 @@
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 import { checkGroupSuffix } from './check-group-suffix/check-group-suffix';
@@ -24,7 +23,7 @@ export function checkModBuildMetricsFieldGroups(item: {
     );
 
     let buildMetricsTag = tagsResult.mproveTags.find(
-      tag => tag.key === ParameterEnum.BuildMetrics
+      tag => tag.key === 'build_metrics'
     );
 
     if (isUndefined(fieldGroupTag) || isUndefined(buildMetricsTag)) {
@@ -52,7 +51,7 @@ export function checkModBuildMetricsFieldGroups(item: {
       fieldItems: group.fieldItems,
       groupName: group.groupName,
       suffix: '_ts',
-      title: ErTitleEnum.BUILD_METRICS_FIELD_GROUP_MISSING_FIELD_WITH_TS_SUFFIX,
+      title: 'BUILD_METRICS_FIELD_GROUP_MISSING_FIELD_WITH_TS_SUFFIX',
       errors: item.errors
     });
 
@@ -60,7 +59,7 @@ export function checkModBuildMetricsFieldGroups(item: {
       fieldItems: group.fieldItems,
       groupName: group.groupName,
       suffix: '_t',
-      title: ErTitleEnum.BUILD_METRICS_FIELD_GROUP_MISSING_FIELD_WITH_T_SUFFIX,
+      title: 'BUILD_METRICS_FIELD_GROUP_MISSING_FIELD_WITH_T_SUFFIX',
       errors: item.errors
     });
   });

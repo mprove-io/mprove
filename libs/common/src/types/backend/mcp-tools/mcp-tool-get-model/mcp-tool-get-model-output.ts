@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Model, zModel } from '#common/types/blockml/parts/model';
+import { type Model, zModel } from '#common/types/blockml/parts/model/model';
 
 export type McpToolGetModelOutput = {
   needValidate: boolean;

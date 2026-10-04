@@ -4,7 +4,7 @@ import fse from 'fs-extra';
 import pIteration from 'p-iteration';
 import type { StatusResult } from 'simple-git';
 import type { DiskPathTraversalError } from '#common/types/disk/errors/disk-path-traversal-error';
-import type { DiskSyncFile } from '#common/types/disk/parts/disk-sync-file';
+import type { DiskSyncFile } from '#common/types/disk/parts/file/disk-sync-file';
 import type { FileIsSymlinkError } from '#common/types/node-common/errors/file-is-symlink-error';
 import type { FileSizeIsTooBigError } from '#common/types/node-common/errors/file-size-is-too-big-error';
 import type { GetSyncAppliedChangesError } from '#common/types/node-common/function-errors/get-sync-applied-changes-error';

@@ -4,12 +4,11 @@ import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Given } from '#common/types/backend/parts/given';
+import type { Given } from '#common/types/backend/parts/given/given';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
 import type { MemberGivenValue } from '#common/types/backend/parts/members/member-given-value';
 import { HashService } from '../hash.service';
@@ -28,7 +27,7 @@ export class GivensService {
   makeGiven(item: {
     projectId: string;
     givenId: string;
-    type: GivenTypeEnum;
+    type: GivenType;
     isMultiple: boolean;
     values: string[];
   }): GivenTab {
@@ -66,7 +65,7 @@ export class GivensService {
   }
 
   validateGivenValues(item: {
-    type: GivenTypeEnum;
+    type: GivenType;
     isMultiple: boolean;
     values: string[];
   }) {
@@ -80,7 +79,7 @@ export class GivensService {
 
     if (isDefined(error)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_GIVEN_VALUE,
+        message: 'BACKEND_WRONG_GIVEN_VALUE',
         displayData: {
           error: error
         }
@@ -100,7 +99,7 @@ export class GivensService {
 
     if (isDefined(given)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_GIVEN_ALREADY_EXISTS
+        message: 'BACKEND_GIVEN_ALREADY_EXISTS'
       });
     }
   }
@@ -119,7 +118,7 @@ export class GivensService {
 
     if (isUndefined(given)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_GIVEN_DOES_NOT_EXIST
+        message: 'BACKEND_GIVEN_DOES_NOT_EXIST'
       });
     }
 
@@ -164,7 +163,7 @@ export class GivensService {
       string,
       Record<string, { isProjectDefault: boolean; roleIds: string[] }>
     > = {};
-    let typeByGivenId: Record<string, GivenTypeEnum> = {};
+    let typeByGivenId: Record<string, GivenType> = {};
     let isMultipleByGivenId: Record<string, boolean> = {};
 
     apiGivens.forEach(given => {

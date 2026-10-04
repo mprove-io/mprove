@@ -76,7 +76,7 @@
 
     <div
       class="mt-6 flex flex-row items-start"
-      *ngIf="modelTypeForm.get('modelType').value === modelTypeStore"
+      *ngIf="modelTypeForm.get('modelType').value === 'Store'"
     >
       <div class="flex flex-col">
         <div
@@ -138,7 +138,7 @@
     <div
       class="mt-6 flex flex-row items-start"
       *ngIf="
-        modelTypeForm.get('modelType').value === modelTypeStore &&
+        modelTypeForm.get('modelType').value === 'Store' &&
         storeModelSet === true
       "
     >
@@ -185,7 +185,7 @@
       class="mt-6 flex flex-row items-start"
       *ngIf="
         storeModelSet === true &&
-        storeFilterForForm.get('storeFilterFor').value === storeFilterForFilter
+        storeFilterForForm.get('storeFilterFor').value === 'Filter'
       "
     >
       <div class="flex flex-col">
@@ -249,9 +249,8 @@
       <div
         class="mt-6 flex flex-row items-start"
         *ngIf="
-          modelTypeForm.get('modelType').value === modelTypeMalloy ||
-          storeFilterForForm.get('storeFilterFor').value ===
-            storeFilterForResult
+          modelTypeForm.get('modelType').value === 'Malloy' ||
+          storeFilterForForm.get('storeFilterFor').value === 'Result'
         "
       >
         <div class="flex flex-col">
@@ -264,7 +263,7 @@
         <div
           class="relative flex h-9 w-9 flex-shrink-0"
           *ngIf="
-            modelTypeForm.get('modelType').value === modelTypeStore &&
+            modelTypeForm.get('modelType').value === 'Store' &&
             !selectedModelLoaded
           "
         >
@@ -284,7 +283,7 @@
         <form [formGroup]="fieldResultForm">
           <ng-select
             *ngIf="
-              modelTypeForm.get('modelType').value === modelTypeMalloy ||
+              modelTypeForm.get('modelType').value === 'Malloy' ||
               !!selectedModelLoaded
             "
             #typeSelect
@@ -292,7 +291,7 @@
             data-cy="resultSelect"
             class="w-72 text-base"
             [items]="
-              modelTypeForm.get('modelType').value === modelTypeMalloy
+              modelTypeForm.get('modelType').value === 'Malloy'
                 ? malloyResultsList
                 : storeResultsList
             "
@@ -335,20 +334,16 @@
 
       <div
         class="mt-6 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-center"
-        *ngIf="modelTypeForm.get('modelType').value === modelTypeMalloy"
+        *ngIf="modelTypeForm.get('modelType').value === 'Malloy'"
       >
         <div class="flex flex-col">
           <div
-            *ngIf="
-              fieldResultForm.get('fieldResult').value !== fieldResultString
-            "
+            *ngIf="fieldResultForm.get('fieldResult').value !== 'string'"
             class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
           ></div>
 
           <div
-            *ngIf="
-              fieldResultForm.get('fieldResult').value === fieldResultString
-            "
+            *ngIf="fieldResultForm.get('fieldResult').value === 'string'"
             class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
             >Suggest values from</div
           >
@@ -358,7 +353,7 @@
           class="relative flex h-9 w-9 flex-shrink-0"
           *ngIf="
             !suggestFieldsLoaded &&
-            fieldResultForm.get('fieldResult').value === fieldResultString
+            fieldResultForm.get('fieldResult').value === 'string'
           "
         >
           <ngx-spinner
@@ -381,7 +376,7 @@
           <ng-select
             *ngIf="
               !!suggestFieldsLoaded &&
-              fieldResultForm.get('fieldResult').value === fieldResultString
+              fieldResultForm.get('fieldResult').value === 'string'
             "
             #dashboardSuggestFieldSelect
             [fixNgSelectBottom]="dashboardSuggestFieldSelect"

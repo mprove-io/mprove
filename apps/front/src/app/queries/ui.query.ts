@@ -6,20 +6,20 @@ import {
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
 } from '#common/constants/top-front';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { BuilderRightEnum } from '#common/enums/builder-right.enum';
-import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import type { ProjectChartLink } from '#common/types/backend/parts/project-chart-link';
 import type { ProjectDashboardLink } from '#common/types/backend/parts/project-dashboard-link';
 import type { ProjectExplorerSessionLink } from '#common/types/backend/parts/project-explorer-session-link';
 import type { ProjectModelLink } from '#common/types/backend/parts/project-model-link';
 import type { ProjectReportLink } from '#common/types/backend/parts/project-report-link';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
-import type { Column } from '#common/types/blockml/parts/column';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { ChartPointsData } from '#common/types/front/chart-points-data';
-import type { DataRow } from '#common/types/front/data-row';
+import type { ModelTreeLevel } from '#common/types/backend/parts/ui/model-tree-level';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { Column } from '#common/types/blockml/parts/report/column';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
+import type { BuilderRight } from '#common/types/front/builder/builder-right';
+import type { ChartPointsData } from '#common/types/front/chart/chart-points-data';
+import type { DataRow } from '#common/types/front/report/row/data-row';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { BaseQuery } from './base.query';
 
 export interface RepChartData {
@@ -40,8 +40,8 @@ export class UiState {
   showSchema: boolean;
   searchSchemaWord: string;
   searchMetricsWord: string;
-  builderLeft: BuilderLeftEnum;
-  builderRight: BuilderRightEnum;
+  builderLeft: BuilderLeft;
+  builderRight: BuilderRight;
   needSave: boolean;
   showTileParameters: boolean;
   showDashboardsLeftPanel: boolean;
@@ -63,9 +63,9 @@ export class UiState {
   showContent: boolean;
   showSessionInput: boolean;
   //
-  modelTreeLevels: ModelTreeLevelsEnum;
+  modelTreeLevels: ModelTreeLevel;
   timezone: string;
-  timeSpec: TimeSpecEnum;
+  timeSpec: TimeSpec;
   timeRangeFraction: Fraction;
   projectModelLinks: ProjectModelLink[];
   projectChartLinks: ProjectChartLink[];
@@ -103,8 +103,8 @@ let uiState: UiState = {
   showSchema: false,
   searchSchemaWord: undefined,
   searchMetricsWord: undefined,
-  builderLeft: BuilderLeftEnum.Tree,
-  builderRight: BuilderRightEnum.Validation,
+  builderLeft: 'Tree',
+  builderRight: 'Validation',
   needSave: false,
   showTileParameters: false,
   showDashboardsLeftPanel: true,

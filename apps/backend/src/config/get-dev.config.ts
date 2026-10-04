@@ -1,13 +1,13 @@
 import { BackendConfig } from '#backend/config/backend-config';
-import { EmailTransportEnum } from '#common/enums/email-transport.enum';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { EmailTransport } from '#common/types/backend/config/email-transport';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+import type { BackendEnv } from '#common/types/node-common/env/backend-env';
 
 export function getDevConfig() {
   let devConfig: BackendConfig = {
-    mproveReleaseTag: <BackendEnvEnum>process.env.MPROVE_RELEASE_TAG,
+    mproveReleaseTag: <BackendEnv>process.env.MPROVE_RELEASE_TAG,
 
     isTelemetryEnabled: enumToBoolean({
       value: process.env.IS_TELEMETRY_ENABLED,
@@ -25,7 +25,7 @@ export function getDevConfig() {
 
     otelLogLevel: process.env.OTEL_LOG_LEVEL,
 
-    backendEnv: <BackendEnvEnum>process.env.BACKEND_ENV,
+    backendEnv: <BackendEnv>process.env.BACKEND_ENV,
 
     isEncryptDb: enumToBoolean({
       value: process.env.BACKEND_IS_ENCRYPT_DB,
@@ -88,7 +88,7 @@ export function getDevConfig() {
 
     demoProjectName: process.env.BACKEND_DEMO_PROJECT_NAME,
 
-    demoProjectRemoteType: <ProjectRemoteTypeEnum>(
+    demoProjectRemoteType: <ProjectRemoteType>(
       process.env.BACKEND_DEMO_PROJECT_REMOTE_TYPE
     ),
 
@@ -190,7 +190,7 @@ export function getDevConfig() {
 
     sendEmailFromAddress: process.env.BACKEND_SEND_EMAIL_FROM_ADDRESS,
 
-    emailTransport: <EmailTransportEnum>process.env.BACKEND_EMAIL_TRANSPORT,
+    emailTransport: <EmailTransport>process.env.BACKEND_EMAIL_TRANSPORT,
 
     smtpHost: process.env.BACKEND_SMTP_HOST,
 

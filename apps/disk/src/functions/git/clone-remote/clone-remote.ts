@@ -1,7 +1,8 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
@@ -10,7 +11,7 @@ export function cloneRemote(item: {
   projectId: string;
   repoId: string;
   orgPath: string;
-  remoteType: ProjectRemoteTypeEnum;
+  remoteType: ProjectRemoteType;
   gitUrl: string;
   keyDir: string;
   privateKeyEncrypted: string;
@@ -29,7 +30,7 @@ export function cloneRemote(item: {
           publicKey: item.publicKey,
           passPhrase: item.passPhrase,
           remoteUrl:
-            item.remoteType === ProjectRemoteTypeEnum.GitClone
+            item.remoteType === 'GitClone'
               ? item.gitUrl
               : `${item.orgPath}/${item.orgId}/${item.projectId}/${CENTRAL_REPO_ID}`,
           dirDev: `${item.orgPath}/${item.orgId}/${item.projectId}/${item.repoId}`

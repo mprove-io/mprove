@@ -10,10 +10,9 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { ValidationService } from '#front/app/services/validation.service';
 import { FractionTypeItem } from '../fraction.component';
 
@@ -34,9 +33,6 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
   defaultDayOfWeekIndexValues = '1, 2, 3';
 
-  fractionOperatorEnum = FractionOperatorEnum;
-  fractionTypeEnum = FractionTypeEnum;
-
   @Input() isDisabled: boolean;
   @Input() fraction: Fraction;
   @Input() fractionIndex: number;
@@ -49,28 +45,28 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
   fractionDayOfWeekIndexTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: FractionTypeEnum.DayOfWeekIndexIsAnyValue,
-      operator: FractionOperatorEnum.Or
+      value: 'DayOfWeekIndexIsAnyValue',
+      operator: 'Or'
     },
     {
       label: 'is equal to',
-      value: FractionTypeEnum.DayOfWeekIndexIsEqualTo,
-      operator: FractionOperatorEnum.Or
+      value: 'DayOfWeekIndexIsEqualTo',
+      operator: 'Or'
     },
     {
       label: 'is null',
-      value: FractionTypeEnum.DayOfWeekIndexIsNull,
-      operator: FractionOperatorEnum.Or
+      value: 'DayOfWeekIndexIsNull',
+      operator: 'Or'
     },
     {
       label: 'is not equal to',
-      value: FractionTypeEnum.DayOfWeekIndexIsNotEqualTo,
-      operator: FractionOperatorEnum.And
+      value: 'DayOfWeekIndexIsNotEqualTo',
+      operator: 'And'
     },
     {
       label: 'is not null',
-      value: FractionTypeEnum.DayOfWeekIndexIsNotNull,
-      operator: FractionOperatorEnum.And
+      value: 'DayOfWeekIndexIsNotNull',
+      operator: 'And'
     }
   ];
 
@@ -103,11 +99,11 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
     let fractionType = fractionTypeItem.value;
 
     switch (fractionType) {
-      case this.fractionTypeEnum.DayOfWeekIndexIsAnyValue: {
+      case 'DayOfWeekIndexIsAnyValue': {
         this.fraction = {
           brick: `any`,
           parentBrick: `any`,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           type: fractionType
         };
 
@@ -115,13 +111,13 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
         break;
       }
 
-      case this.fractionTypeEnum.DayOfWeekIndexIsEqualTo: {
+      case 'DayOfWeekIndexIsEqualTo': {
         let dayOfWeekIndexValues = this.defaultDayOfWeekIndexValues;
 
         this.fraction = {
           brick: `${dayOfWeekIndexValues}`,
           parentBrick: `${dayOfWeekIndexValues}`,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           type: fractionType,
           dayOfWeekIndexValues: dayOfWeekIndexValues
         };
@@ -131,11 +127,11 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
         break;
       }
 
-      case this.fractionTypeEnum.DayOfWeekIndexIsNull: {
+      case 'DayOfWeekIndexIsNull': {
         this.fraction = {
           brick: `null`,
           parentBrick: `null`,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           type: fractionType
         };
 
@@ -143,13 +139,13 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
         break;
       }
 
-      case this.fractionTypeEnum.DayOfWeekIndexIsNotEqualTo: {
+      case 'DayOfWeekIndexIsNotEqualTo': {
         let dayOfWeekIndexValues = this.defaultDayOfWeekIndexValues;
 
         this.fraction = {
           brick: `not ${dayOfWeekIndexValues}`,
           parentBrick: `not ${dayOfWeekIndexValues}`,
-          operator: FractionOperatorEnum.And,
+          operator: 'And',
           type: fractionType,
           dayOfWeekIndexValues: dayOfWeekIndexValues
         };
@@ -160,11 +156,11 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
         break;
       }
 
-      case this.fractionTypeEnum.DayOfWeekIndexIsNotNull: {
+      case 'DayOfWeekIndexIsNotNull': {
         this.fraction = {
           brick: `not null`,
           parentBrick: `not null`,
-          operator: FractionOperatorEnum.And,
+          operator: 'And',
           type: fractionType
         };
 
@@ -177,11 +173,11 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
     }
   }
 
-  getDayOfWeekIndexBrick(fractionType: FractionTypeEnum, value: string) {
+  getDayOfWeekIndexBrick(fractionType: FractionType, value: string) {
     let newBrick =
-      fractionType === FractionTypeEnum.DayOfWeekIndexIsEqualTo
+      fractionType === 'DayOfWeekIndexIsEqualTo'
         ? value
-        : fractionType === FractionTypeEnum.DayOfWeekIndexIsNotEqualTo
+        : fractionType === 'DayOfWeekIndexIsNotEqualTo'
           ? `not ${value}`
           : '';
 

@@ -11,11 +11,10 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ModelMetricX } from '#common/types/backend/parts/model-metric-x';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
+import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
+import type { RowType } from '#common/types/blockml/parts/report/row/row-type';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -42,9 +41,7 @@ export class ReportAddRowDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  rowTypeEnum = RowTypeEnum;
-
-  rowType: RowTypeEnum = RowTypeEnum.Metric;
+  rowType: RowType = 'metric';
 
   newNameForm: FormGroup = this.fb.group({
     name: [undefined, [Validators.required]]
@@ -83,15 +80,15 @@ export class ReportAddRowDialogComponent implements OnInit {
   }
 
   emptyOnClick() {
-    this.rowType = RowTypeEnum.Empty;
+    this.rowType = 'empty';
   }
 
   metricOnClick() {
-    this.rowType = RowTypeEnum.Metric;
+    this.rowType = 'metric';
   }
 
   formulaOnClick() {
-    this.rowType = RowTypeEnum.Formula;
+    this.rowType = 'formula';
 
     this.newNameForm.controls['name'].setValue(undefined);
     this.newNameForm.controls['name'].markAsUntouched();
@@ -101,7 +98,7 @@ export class ReportAddRowDialogComponent implements OnInit {
   }
 
   headerOnClick() {
-    this.rowType = RowTypeEnum.Header;
+    this.rowType = 'header';
 
     this.newNameForm.controls['name'].setValue(undefined);
     this.newNameForm.controls['name'].markAsUntouched();
@@ -112,13 +109,13 @@ export class ReportAddRowDialogComponent implements OnInit {
   }
 
   save() {
-    if (this.rowType === RowTypeEnum.Header) {
+    if (this.rowType === 'header') {
       this.newNameForm.controls['name'].markAsTouched();
 
       if (this.newNameForm.valid === false) {
         return;
       }
-    } else if (this.rowType === RowTypeEnum.Formula) {
+    } else if (this.rowType === 'formula') {
       this.newNameForm.controls['name'].markAsTouched();
       this.newFormulaForm.controls['formula'].markAsTouched();
 
@@ -128,7 +125,7 @@ export class ReportAddRowDialogComponent implements OnInit {
       ) {
         return;
       }
-    } else if (this.rowType === RowTypeEnum.Metric) {
+    } else if (this.rowType === 'metric') {
       if (isUndefined(this.newMetricId)) {
         return;
       }
@@ -144,30 +141,30 @@ export class ReportAddRowDialogComponent implements OnInit {
         : undefined;
 
     let rowChange: RowChange =
-      this.rowType === RowTypeEnum.Metric
+      this.rowType === 'metric'
         ? {
             rowId: rowId,
             metricId: this.newMetricId,
-            rowType: RowTypeEnum.Metric,
+            rowType: 'metric',
             showChart: false
           }
-        : this.rowType === RowTypeEnum.Formula
+        : this.rowType === 'formula'
           ? {
               rowId: rowId,
               name: this.newNameForm.controls['name'].value,
               formula: this.newFormulaForm.controls['formula'].value,
               showChart: false
             }
-          : this.rowType === RowTypeEnum.Header
+          : this.rowType === 'header'
             ? {
                 rowId: rowId,
                 name: this.newNameForm.controls['name'].value,
                 showChart: false
               }
-            : this.rowType === RowTypeEnum.Empty
+            : this.rowType === 'empty'
               ? {
                   rowId: rowId,
-                  rowType: RowTypeEnum.Empty,
+                  rowType: 'empty',
                   showChart: false
                 }
               : undefined;
@@ -175,14 +172,14 @@ export class ReportAddRowDialogComponent implements OnInit {
     this.reportService.modifyRows({
       report: report,
       changeType:
-        this.rowType === RowTypeEnum.Metric
-          ? ChangeTypeEnum.AddMetric
-          : this.rowType === RowTypeEnum.Formula
-            ? ChangeTypeEnum.AddFormula
-            : this.rowType === RowTypeEnum.Header
-              ? ChangeTypeEnum.AddHeader
-              : this.rowType === RowTypeEnum.Empty
-                ? ChangeTypeEnum.AddEmpty
+        this.rowType === 'metric'
+          ? 'AddMetric'
+          : this.rowType === 'formula'
+            ? 'AddFormula'
+            : this.rowType === 'header'
+              ? 'AddHeader'
+              : this.rowType === 'empty'
+                ? 'AddEmpty'
                 : undefined,
       rowChange: rowChange,
       rowIds: undefined,

@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { InteractionType } from '#common/types/backend/parts/session/interaction-type';
+import { zInteractionType } from '#common/types/backend/parts/session/interaction-type';
 
 export type ToBackendSendMessageToExplorerSessionRequest = {
   operation: 'sendMessageToExplorerSession';
@@ -10,11 +11,7 @@ export type ToBackendSendMessageToExplorerSessionRequest = {
     sessionId: string;
     messageId?: string;
     partId?: string;
-    interactionType:
-      | InteractionTypeEnum.Message
-      | InteractionTypeEnum.Question
-      | InteractionTypeEnum.Permission
-      | InteractionTypeEnum.Stop;
+    interactionType: InteractionType;
     message?: string;
     providerId?: string;
     modelId?: string;
@@ -32,7 +29,7 @@ export let zToBackendSendMessageToExplorerSessionRequest = z
         sessionId: z.string(),
         messageId: z.string().nullish(),
         partId: z.string().nullish(),
-        interactionType: z.enum(InteractionTypeEnum),
+        interactionType: zInteractionType,
         message: z.string().nullish(),
         providerId: z.string().nullish(),
         modelId: z.string().nullish(),

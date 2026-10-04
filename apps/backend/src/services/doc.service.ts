@@ -19,19 +19,15 @@ import {
   DOUBLE_UNDERSCORE,
   SOME_ROWS_HAVE_FORMULA_ERRORS
 } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ReportDataColumn } from '#common/types/backend/parts/report-data-column';
-import type { ReportX } from '#common/types/backend/parts/report-x';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { Row } from '#common/types/blockml/parts/row';
-import type { RowRecord } from '#common/types/blockml/parts/row-record';
+import type { ReportDataColumn } from '#common/types/backend/parts/report/report-data-column';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+import type { RowRecord } from '#common/types/blockml/parts/report/row/row-record';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { CycleGraph } from '#node-common/classes/cycle-graph/cycle-graph';
 
 @Injectable()
@@ -69,7 +65,7 @@ export class DocService implements OnModuleDestroy {
   async calculateData(item: {
     report: ReportX;
     timezone: string;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timeRangeFraction: Fraction;
     traceId: string;
   }) {
@@ -139,7 +135,7 @@ export class DocService implements OnModuleDestroy {
       let mainSelect = [
         `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
         ...report.rows
-          .filter(row => row.rowType === RowTypeEnum.Metric)
+          .filter(row => row.rowType === 'metric')
           .map(row => {
             let values = reportDataColumns.map(r =>
               isDefined(r.fields[row.rowId]) ? r.fields[row.rowId] : 'NULL'
@@ -154,10 +150,10 @@ export class DocService implements OnModuleDestroy {
       let outerSelect = [
         `  main.timestamp as timestamp`,
         ...report.rows
-          .filter(row => row.rowType === RowTypeEnum.Metric)
+          .filter(row => row.rowType === 'metric')
           .map(x => `  main.${x.rowId} AS ${x.rowId}`),
         ...report.rows
-          .filter(row => row.rowType === RowTypeEnum.Formula)
+          .filter(row => row.rowType === 'formula')
           .map(row => {
             let newFormula = row.formula;
             let reg = MyRegex.CAPTURE_ROW_REF();
@@ -169,14 +165,14 @@ export class DocService implements OnModuleDestroy {
               let targetRow = report.rows.find(y => y.rowId === reference);
 
               let targetTo =
-                targetRow.rowType === RowTypeEnum.Formula
+                targetRow.rowType === 'formula'
                   ? targetRow.formula
-                  : targetRow.rowType === RowTypeEnum.Metric
+                  : targetRow.rowType === 'metric'
                     ? `main.${targetRow.rowId}`
                     : reference;
 
               newFormula =
-                targetRow.rowType === RowTypeEnum.Metric
+                targetRow.rowType === 'metric'
                   ? MyRegex.replaceRowIdsFinalNoPars(
                       newFormula,
                       reference,
@@ -228,16 +224,9 @@ FROM main;`;
     let newKits: KitTab[] = [];
 
     report.rows
-      .filter(
-        row =>
-          row.rowType === RowTypeEnum.Metric ||
-          row.rowType === RowTypeEnum.Formula
-      )
+      .filter(row => row.rowType === 'metric' || row.rowType === 'formula')
       .forEach(row => {
-        if (
-          row.rowType === RowTypeEnum.Formula &&
-          isDefined(row.formulaError)
-        ) {
+        if (row.rowType === 'formula' && isDefined(row.formulaError)) {
           row.topQueryError = row.formulaError;
           row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = y.fields['timestamp'];
@@ -252,10 +241,7 @@ FROM main;`;
 
             return record;
           });
-        } else if (
-          row.rowType === RowTypeEnum.Formula &&
-          isDefined(topQueryError)
-        ) {
+        } else if (row.rowType === 'formula' && isDefined(topQueryError)) {
           row.topQueryError = topQueryError;
           row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = y.fields['timestamp'];
@@ -270,10 +256,7 @@ FROM main;`;
 
             return record;
           });
-        } else if (
-          row.rowType === RowTypeEnum.Metric &&
-          isDefined(topQueryError)
-        ) {
+        } else if (row.rowType === 'metric' && isDefined(topQueryError)) {
           row.topQueryError = topQueryError;
 
           row.records = reportDataColumns.map((y: any, index) => {
@@ -314,7 +297,7 @@ FROM main;`;
             y.timezone === timezone
         );
 
-        if (row.rowType === RowTypeEnum.Formula) {
+        if (row.rowType === 'formula') {
           rq.kitId = makeId();
 
           let newKit: KitTab = {
@@ -351,7 +334,7 @@ FROM main;`;
     return report;
   }
 
-  makeReportDataColumns(item: { report: ReportX; timeSpec: TimeSpecEnum }) {
+  makeReportDataColumns(item: { report: ReportX; timeSpec: TimeSpec }) {
     let { report, timeSpec } = item;
 
     let reportDataColumns: ReportDataColumn[] = [];
@@ -359,14 +342,14 @@ FROM main;`;
     report.rows
       .filter(
         row =>
-          row.rowType === RowTypeEnum.Metric &&
+          row.rowType === 'metric' &&
           row.mconfig.select.length > 0 &&
           isDefined(row.query?.data)
       )
       .forEach(row => {
         row.query.data =
-          row.mconfig?.modelType === ModelTypeEnum.Malloy &&
-          row.query.connectionType === ConnectionTypeEnum.PostgreSQL
+          row.mconfig?.modelType === 'Malloy' &&
+          row.query.connectionType === 'PostgreSQL'
             ? row.query.data
                 .filter((x: any) => isDefined(x.row))
                 .map((x: any) => {
@@ -385,7 +368,7 @@ FROM main;`;
               );
       });
 
-    if (timeSpec !== TimeSpecEnum.Timestamps) {
+    if (timeSpec !== 'timestamps') {
       reportDataColumns = report.columns.map((column, i) => {
         let reportDataColumn: ReportDataColumn = {
           id: i,
@@ -396,9 +379,7 @@ FROM main;`;
 
         report.rows
           .filter(
-            row =>
-              row.rowType === RowTypeEnum.Metric &&
-              row.mconfig.select.length > 0
+            row => row.rowType === 'metric' && row.mconfig.select.length > 0
           )
           .forEach((row: Row) => {
             let timeFieldId = this.getReportDataFieldSqlName({
@@ -413,7 +394,7 @@ FROM main;`;
 
             let dataRow;
 
-            if (row.mconfig.modelType === ModelTypeEnum.Store) {
+            if (row.mconfig.modelType === 'Store') {
               dataRow = row.query?.data?.find(
                 (r: any) => r[timeFieldId] === column.columnId
               );
@@ -426,7 +407,7 @@ FROM main;`;
 
               if (!zonedDate.isValid) {
                 throw new ServerError({
-                  message: ErEnum.BACKEND_DATE_CONVERSION_FAILED
+                  message: 'BACKEND_DATE_CONVERSION_FAILED'
                 });
               }
 
@@ -445,21 +426,21 @@ FROM main;`;
               );
 
               let timeValue =
-                row.mconfig?.modelType === ModelTypeEnum.Malloy
+                row.mconfig?.modelType === 'Malloy'
                   ? zonedTimeValue
-                  : timeSpec === TimeSpecEnum.Years
+                  : timeSpec === 'years'
                     ? format(tsDate, 'yyyy')
-                    : timeSpec === TimeSpecEnum.Quarters
+                    : timeSpec === 'quarters'
                       ? format(tsDate, 'yyyy-MM')
-                      : timeSpec === TimeSpecEnum.Months
+                      : timeSpec === 'months'
                         ? format(tsDate, 'yyyy-MM')
-                        : timeSpec === TimeSpecEnum.Weeks
+                        : timeSpec === 'weeks'
                           ? format(tsDate, 'yyyy-MM-dd')
-                          : timeSpec === TimeSpecEnum.Days
+                          : timeSpec === 'days'
                             ? format(tsDate, 'yyyy-MM-dd')
-                            : timeSpec === TimeSpecEnum.Hours
+                            : timeSpec === 'hours'
                               ? format(tsDate, 'yyyy-MM-dd HH')
-                              : timeSpec === TimeSpecEnum.Minutes
+                              : timeSpec === 'minutes'
                                 ? format(tsDate, 'yyyy-MM-dd HH:mm')
                                 : undefined;
 
@@ -473,8 +454,8 @@ FROM main;`;
               };
 
               dataRow =
-                row.mconfig?.modelType === ModelTypeEnum.Malloy &&
-                row.query.connectionType === ConnectionTypeEnum.PostgreSQL
+                row.mconfig?.modelType === 'Malloy' &&
+                row.query.connectionType === 'PostgreSQL'
                   ? row.query?.data?.find(
                       (r: any) =>
                         normalizeTimeValue(timeValue) ===
@@ -503,8 +484,7 @@ FROM main;`;
 
       report.rows
         .filter(
-          row =>
-            row.rowType === RowTypeEnum.Metric && row.mconfig.select.length > 0
+          row => row.rowType === 'metric' && row.mconfig.select.length > 0
         )
         .forEach((row: Row) => {
           let timeFieldId = this.getReportDataFieldSqlName({
@@ -519,8 +499,8 @@ FROM main;`;
 
           (row.query?.data as any[])?.forEach(x => {
             let dataRow =
-              row.mconfig?.modelType === ModelTypeEnum.Malloy &&
-              row.query.connectionType === ConnectionTypeEnum.PostgreSQL
+              row.mconfig?.modelType === 'Malloy' &&
+              row.query.connectionType === 'PostgreSQL'
                 ? x.row
                 : x;
 
@@ -600,7 +580,7 @@ FROM main;`;
     let mconfigField = row.mconfig?.fields.find(field => field.id === fieldId);
 
     let fallbackSqlName =
-      row.mconfig?.modelType === ModelTypeEnum.Malloy
+      row.mconfig?.modelType === 'Malloy'
         ? fieldId?.split('.').join(DOUBLE_UNDERSCORE)
         : fieldId?.split('.').join('_');
 

@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
+import { zSessionType } from '#common/types/backend/parts/session/session-type';
 
 export type ToBackendGetSessionsListRequest = {
   operation: 'getSessionsList';
@@ -12,7 +13,7 @@ export type ToBackendGetSessionsListRequest = {
     includeArchived?: boolean;
     archivedLimit?: number;
     archivedLastCreatedTs?: number;
-    sessionType: SessionTypeEnum.Explorer | SessionTypeEnum.Editor;
+    sessionType: SessionType;
   };
 };
 
@@ -28,7 +29,7 @@ export let zToBackendGetSessionsListRequest = z
         includeArchived: z.boolean().nullish(),
         archivedLimit: z.number().nullish(),
         archivedLastCreatedTs: z.number().nullish(),
-        sessionType: z.enum(SessionTypeEnum)
+        sessionType: zSessionType
       })
       .meta({ id: 'ToBackendGetSessionsListInput' })
   })

@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MconfigX,
   zMconfigX
-} from '#common/types/backend/parts/mconfig-x';
+} from '#common/types/backend/parts/mconfig/mconfig-x';
 
 export type ToBackendSaveCreateChartRequest = {
   operation: 'saveCreateChart';

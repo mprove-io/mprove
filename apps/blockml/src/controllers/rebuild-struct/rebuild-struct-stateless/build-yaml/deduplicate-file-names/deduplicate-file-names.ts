@@ -3,25 +3,24 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { File2 } from '#common/types/blockml/parts/internal/file-2';
-import type { File3 } from '#common/types/blockml/parts/internal/file-3';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
+import type { File2 } from '#common/types/blockml/parts/internal/file/file-2';
+import type { File3 } from '#common/types/blockml/parts/internal/file/file-3';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 
-let func = FuncEnum.DeduplicateFileNames;
+let func: Func = 'build-yaml/deduplicate-file-names';
 
 export function deduplicateFileNames(item: {
   file2s: File2[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<File3[], never> {
   let { caller, structId, cs } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let file3s: File3[] = [];
 
@@ -35,7 +34,7 @@ export function deduplicateFileNames(item: {
 
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.DUPLICATE_FILE_NAMES,
+          title: 'DUPLICATE_FILE_NAMES',
           message:
             'Mprove Files file names must be unique across all folders. ' +
             `Found duplicate ${x.name} files`,
@@ -52,8 +51,8 @@ export function deduplicateFileNames(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.File3s, file3s);
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_file3s.log', file3s);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
   return Result.succeed(file3s);
 }

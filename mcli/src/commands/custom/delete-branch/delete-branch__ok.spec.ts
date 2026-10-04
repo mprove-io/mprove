@@ -3,12 +3,10 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/branches/create-branch/create-branch-output';
 import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
@@ -28,7 +26,7 @@ test('1', async () => {
   await retry(async (bail: any) => {
     let defaultBranch = BRANCH_MAIN;
 
-    let repo: RepoTypeEnum = RepoTypeEnum.Dev;
+    let repo: RepoType = 'dev';
     let branch = 'b1';
 
     let projectId = makeId();
@@ -84,7 +82,7 @@ test('1', async () => {
               projectId,
               name: projectName,
               defaultBranch: defaultBranch,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined,
@@ -109,10 +107,7 @@ test('1', async () => {
 
       context = mockContext as any;
 
-      let repoId =
-        (repo as RepoTypeEnum) === RepoTypeEnum.Production
-          ? PROD_REPO_ID
-          : userId;
+      let repoId = (repo as RepoType) === 'production' ? PROD_REPO_ID : userId;
 
       let createBranchReqPayload: ToBackendCreateBranchRequest['input'] = {
         projectId: projectId,
@@ -132,7 +127,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -143,7 +138,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -165,7 +160,7 @@ test('1', async () => {
 
     logToConsoleMcli({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       context: undefined,
       isJson: false
     });

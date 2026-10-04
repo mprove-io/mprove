@@ -5,31 +5,30 @@
     'mt-[2px]':
       size === 2 &&
       (!result ||
-        result === fieldResultString ||
-        result === fieldResultDayOfWeek ||
-        result === fieldResultDayOfWeekIndex ||
-        result === fieldResultMonthName ||
-        result === fieldResultQuarterOfYear ||
+        result === 'string' ||
+        result === 'day_of_week' ||
+        result === 'day_of_week_index' ||
+        result === 'month_name' ||
+        result === 'quarter_of_year' ||
         (!!result && allResultValues.indexOf(result) < 0)),
     'mb-[2px]':
       size === 3 &&
       (!result ||
-        result === fieldResultString ||
-        result === fieldResultDayOfWeek ||
-        result === fieldResultDayOfWeekIndex ||
-        result === fieldResultMonthName ||
-        result === fieldResultQuarterOfYear ||
+        result === 'string' ||
+        result === 'day_of_week' ||
+        result === 'day_of_week_index' ||
+        result === 'month_name' ||
+        result === 'quarter_of_year' ||
         (!!result && allResultValues.indexOf(result) < 0)),
-    'text-g1':
-      fieldClass === fieldClassMeasure || fieldClass === fieldClassCalculation,
-    'text-m600': fieldClass === fieldClassDimension,
-    'text-s500': !fieldClass || fieldClass === fieldClassFilter
+    'text-g1': fieldClass === 'measure' || fieldClass === 'calculation',
+    'text-m600': fieldClass === 'dimension',
+    'text-s500': !fieldClass || fieldClass === 'filter'
   }"
   tp="{{
-    result === fieldResultDayOfWeek ||
-    result === fieldResultDayOfWeekIndex ||
-    result === fieldResultMonthName ||
-    result === fieldResultQuarterOfYear
+    result === 'day_of_week' ||
+    result === 'day_of_week_index' ||
+    result === 'month_name' ||
+    result === 'quarter_of_year'
       ? 'Enum: ' + result
       : !!result && allResultValues.indexOf(result) < 0
         ? 'Custom: ' + result
@@ -39,31 +38,31 @@
   }}"
 >
   <m-type-number-icon
-    *ngIf="result === fieldResultNumber"
+    *ngIf="result === 'number'"
     [size]="size"
   ></m-type-number-icon>
 
   <m-type-string-icon
-    *ngIf="result === fieldResultString"
+    *ngIf="result === 'string'"
     [size]="size"
   ></m-type-string-icon>
 
   <m-type-on-off-icon
-    *ngIf="[fieldResultYesno, fieldResultBoolean].indexOf(result) > -1"
+    *ngIf="['yesno', 'boolean'].indexOf(result) > -1"
     [size]="size"
   ></m-type-on-off-icon>
 
   <m-type-date-icon
-    *ngIf="[fieldResultTs, fieldResultDate].indexOf(result) > -1"
+    *ngIf="['ts', 'date'].indexOf(result) > -1"
     [size]="size"
   ></m-type-date-icon>
 
   <m-type-enum-icon
     *ngIf="
-      result === fieldResultDayOfWeek ||
-      result === fieldResultDayOfWeekIndex ||
-      result === fieldResultMonthName ||
-      result === fieldResultQuarterOfYear
+      result === 'day_of_week' ||
+      result === 'day_of_week_index' ||
+      result === 'month_name' ||
+      result === 'quarter_of_year'
     "
     [size]="size"
   ></m-type-enum-icon>

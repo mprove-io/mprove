@@ -1,5 +1,5 @@
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
-import type { DiskCatalogFile } from '#common/types/disk/parts/disk-catalog-file';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
 export function diskFilesToBlockmlFiles(diskFiles: DiskCatalogFile[]) {
   return diskFiles.map(x => {

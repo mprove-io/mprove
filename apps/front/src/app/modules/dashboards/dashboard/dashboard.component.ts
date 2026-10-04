@@ -20,13 +20,13 @@ import {
   TILE_DEFAULT_PLATE_X,
   TILE_DEFAULT_PLATE_Y
 } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
-import type { TileX } from '#common/types/backend/parts/tile-x';
-import type { DeleteFilterFnItem } from '#common/types/front/delete-filter-fn-item';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
+import type { DeleteFilterFnItem } from '#common/types/front/filter/delete-filter-fn-item';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -231,7 +231,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

@@ -30,13 +30,12 @@ import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { SESSION_TITLE_UPDATED_EVENT_TYPE } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   MproveSessionTitleUpdatedEvent,
   SessionStreamEvent
-} from '#common/types/backend/parts/session-stream-event';
+} from '#common/types/backend/parts/session/session-stream-event';
 import { OcEventsService } from '../db/oc-events.service';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
@@ -459,7 +458,7 @@ export class SessionDrainService {
       let queueLength = queue.length;
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_DRAIN_QUEUE_FAILED,
+          message: 'BACKEND_DRAIN_QUEUE_FAILED',
           customData: {
             sessionId: sessionId,
             eventCount: eventIds.length,
@@ -468,7 +467,7 @@ export class SessionDrainService {
           },
           originalError: e
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });

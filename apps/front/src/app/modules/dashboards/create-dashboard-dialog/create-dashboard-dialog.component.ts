@@ -25,11 +25,11 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendSaveCreateDashboardRequest } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-request';
 import type { ToBackendSaveCreateDashboardResponse } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
@@ -204,7 +204,7 @@ export class CreateDashboardDialogComponent implements OnInit {
       unitId: this.newDashboardId,
       filePath: undefined,
       unitSpace: EMPTY_SPACE_NAME,
-      extension: FileExtensionEnum.Dashboard,
+      extension: '.dashboard',
       spaces: struct.spaces
     });
   }

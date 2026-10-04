@@ -33,8 +33,7 @@ import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -87,7 +86,7 @@ export class TestConnectionController {
 
       if (wrongChars?.length > 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS
+          message: 'BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS'
         });
       }
     }
@@ -115,31 +114,31 @@ export class TestConnectionController {
     });
 
     let testConnectionResult =
-      testConnection.type === ConnectionTypeEnum.MySQL
+      testConnection.type === 'MySQL'
         ? await this.mysqlService.testConnection({ connection: testConnection })
-        : testConnection.type === ConnectionTypeEnum.PostgreSQL
+        : testConnection.type === 'PostgreSQL'
           ? await this.pgService.testConnection({ connection: testConnection })
-          : testConnection.type === ConnectionTypeEnum.MotherDuck
+          : testConnection.type === 'MotherDuck'
             ? await this.duckDbService.testConnection({
                 connection: testConnection
               })
-            : testConnection.type === ConnectionTypeEnum.Trino
+            : testConnection.type === 'Trino'
               ? await this.trinoService.testConnection({
                   connection: testConnection
                 })
-              : testConnection.type === ConnectionTypeEnum.Presto
+              : testConnection.type === 'Presto'
                 ? await this.prestoService.testConnection({
                     connection: testConnection
                   })
-                : testConnection.type === ConnectionTypeEnum.BigQuery
+                : testConnection.type === 'BigQuery'
                   ? await this.bigQueryService.testConnection({
                       connection: testConnection
                     })
-                  : testConnection.type === ConnectionTypeEnum.SnowFlake
+                  : testConnection.type === 'SnowFlake'
                     ? await this.snowFlakeService.testConnection({
                         connection: testConnection
                       })
-                    : testConnection.type === ConnectionTypeEnum.Databricks
+                    : testConnection.type === 'Databricks'
                       ? await this.databricksService.testConnection({
                           connection: testConnection
                         })
@@ -154,7 +153,7 @@ export class TestConnectionController {
 
     if (isUndefined(testConnectionResult)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_TEST_CONNECTION_RESULT_IS_NOT_DEFINED
+        message: 'BACKEND_TEST_CONNECTION_RESULT_IS_NOT_DEFINED'
       });
     }
 

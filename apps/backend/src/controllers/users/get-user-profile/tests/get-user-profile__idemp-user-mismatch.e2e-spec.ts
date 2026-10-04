@@ -6,8 +6,7 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetUserProfileRequest } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-request';
@@ -99,7 +98,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -110,13 +109,13 @@ test('1', async t => {
 
     assert.equal(resp2.type, 'Failure');
     assert.ok(resp2.type === 'Failure');
-    assert.equal(resp2.error?.code, ErEnum.BACKEND_IDEMP_USER_MISMATCH);
+    assert.equal(resp2.error?.code, 'BACKEND_IDEMP_USER_MISMATCH');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

@@ -28,8 +28,7 @@ import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -78,7 +77,7 @@ export class CreateProjectController {
 
     if (org.orgId === demoOrgId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION
+        message: 'BACKEND_RESTRICTED_ORGANIZATION'
       });
     }
 
@@ -100,13 +99,13 @@ export class CreateProjectController {
 
     if (isDefined(project)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
+        message: 'BACKEND_PROJECT_ALREADY_EXISTS'
       });
     }
 
     let note: NoteTab;
 
-    if (remoteType === ProjectRemoteTypeEnum.GitClone) {
+    if (remoteType === 'GitClone') {
       note = await this.db.drizzle.query.notesTable
         .findFirst({
           where: eq(notesTable.noteId, noteId)
@@ -115,7 +114,7 @@ export class CreateProjectController {
 
       if (isUndefined(note)) {
         throw new ServerError({
-          message: ErEnum.BACKEND_NOTE_DOES_NOT_EXIST
+          message: 'BACKEND_NOTE_DOES_NOT_EXIST'
         });
       }
     }

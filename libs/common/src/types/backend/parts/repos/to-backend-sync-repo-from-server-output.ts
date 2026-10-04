@@ -7,7 +7,7 @@ import {
 import {
   type DiskSyncFile,
   zDiskSyncFile
-} from '#common/types/disk/parts/disk-sync-file';
+} from '#common/types/disk/parts/file/disk-sync-file';
 import type { Extend } from '#common/types/extend';
 
 export type ToBackendSyncRepoFromServerOutput = Extend<

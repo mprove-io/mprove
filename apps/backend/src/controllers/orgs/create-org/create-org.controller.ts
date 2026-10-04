@@ -21,7 +21,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs/create-org/create-org-output';
@@ -67,7 +67,7 @@ export class CreateOrgController {
       user.email !== mproveAdminEmail
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATION_OF_ORGANIZATIONS_IS_FORBIDDEN
+        message: 'BACKEND_CREATION_OF_ORGANIZATIONS_IS_FORBIDDEN'
       });
     }
 
@@ -86,13 +86,13 @@ export class CreateOrgController {
 
     if (name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()) {
       throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME
+        message: 'BACKEND_RESTRICTED_ORGANIZATION_NAME'
       });
     }
 
     if (isDefined(org)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ORG_ALREADY_EXISTS
+        message: 'BACKEND_ORG_ALREADY_EXISTS'
       });
     }
 

@@ -3,8 +3,8 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MconfigX,
   zMconfigX
-} from '#common/types/backend/parts/mconfig-x';
-import { type Query, zQuery } from '#common/types/blockml/parts/query';
+} from '#common/types/backend/parts/mconfig/mconfig-x';
+import { type Query, zQuery } from '#common/types/blockml/parts/query/query';
 
 export type ToBackendDuplicateMconfigAndQueryOutput = {
   mconfig: MconfigX;

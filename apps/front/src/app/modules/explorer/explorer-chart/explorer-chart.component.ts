@@ -11,19 +11,16 @@ import {
 } from '@angular/core';
 import { interval, of, type Subscription } from 'rxjs';
 import { concatMap, tap } from 'rxjs/operators';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { ToBackendGetQueryRequest } from '#common/types/backend/routes/queries/get-query/get-query-request';
 import type { ToBackendGetQueryResponse } from '#common/types/backend/routes/queries/get-query/get-query-response';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -38,17 +35,6 @@ import type { ChartViewComponent } from '../../shared/chart-view/chart-view.comp
   templateUrl: './explorer-chart.component.html'
 })
 export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
-  chartTypeEnumTable = ChartTypeEnum.Table;
-  chartTypeEnumPivotTable = ChartTypeEnum.PivotTable;
-  chartTypeEnumSingle = ChartTypeEnum.Single;
-  chartTypeEnumLine = ChartTypeEnum.Line;
-  chartTypeEnumScatter = ChartTypeEnum.Scatter;
-  chartTypeEnumBar = ChartTypeEnum.Bar;
-
-  queryStatusRunning = QueryStatusEnum.Running;
-
-  modelTypeStore = ModelTypeEnum.Store;
-
   @ViewChildren('chartView') chartViewComponents: QueryList<ChartViewComponent>;
 
   @Input()
@@ -103,8 +89,8 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.mconfig) {
       this.isData =
-        this.mconfig?.chart.type !== ChartTypeEnum.Table &&
-        this.mconfig?.chart.type !== ChartTypeEnum.PivotTable;
+        this.mconfig?.chart.type !== 'table' &&
+        this.mconfig?.chart.type !== 'pivot_table';
     }
 
     if (changes.query || changes.mconfig) {
@@ -199,7 +185,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
-          if (this.query?.status === QueryStatusEnum.Running) {
+          if (this.query?.status === 'Running') {
             let nav = this.navQuery.getValue();
 
             let payload: ToBackendGetQueryRequest['input'] = {
@@ -224,7 +210,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
             this.query = resp.output.query;
             this.updateChartData();
 
-            if (this.query.status !== QueryStatusEnum.Running) {
+            if (this.query.status !== 'Running') {
               this.stopCheckRunning();
             }
 
@@ -252,14 +238,14 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
       serverTs: 1
     });
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         isKeepQueryId: true,
         isDraft: false,
         chartId: undefined,
         mconfig: newMconfig,
         queryOperation: {
-          type: QueryOperationTypeEnum.Get,
+          type: 'Get',
           timezone: newMconfig.timezone
         }
       });
@@ -285,7 +271,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
       mconfigFields: this.mconfig.fields,
-      isStoreModel: this.mconfig.modelType === ModelTypeEnum.Store
+      isStoreModel: this.mconfig.modelType === 'Store'
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;

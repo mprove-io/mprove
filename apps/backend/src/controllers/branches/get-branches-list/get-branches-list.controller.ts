@@ -17,7 +17,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetBranchesListOutput } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-output';
 
@@ -119,10 +119,10 @@ export class GetBranchesListController {
         repoId: x.repoId,
         repoType:
           x.repoId === PROD_REPO_ID
-            ? RepoTypeEnum.Production
+            ? 'production'
             : x.repoId === user.userId
-              ? RepoTypeEnum.Dev
-              : RepoTypeEnum.Session,
+              ? 'dev'
+              : 'session',
         branchId: x.branchId
       }))
     };

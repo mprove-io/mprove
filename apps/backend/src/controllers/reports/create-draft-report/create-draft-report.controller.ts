@@ -38,13 +38,13 @@ import { ReportDataService } from '#backend/services/report-data.service';
 import { ReportRowService } from '#backend/services/report-row.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateDraftReportOutput } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-output';
-import type { Row } from '#common/types/blockml/parts/row';
-import type { Rq } from '#common/types/blockml/parts/rq';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+import type { Rq } from '#common/types/blockml/parts/report/row/rq';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -179,10 +179,7 @@ export class CreateDraftReportController {
     let copyKitsMap: { fromKitId: string; toKitId: string }[] = [];
 
     fromReport.rows.forEach(row => {
-      if (
-        row.rowType === RowTypeEnum.Metric ||
-        row.rowType === RowTypeEnum.Formula
-      ) {
+      if (row.rowType === 'metric' || row.rowType === 'formula') {
         // copy to draft current rq only (not all rqs)
         let rq: Rq = row.rqs.find(
           y =>
@@ -192,7 +189,7 @@ export class CreateDraftReportController {
         );
 
         if (isDefined(rq)) {
-          if (row.rowType === RowTypeEnum.Metric && isDefined(rq.mconfigId)) {
+          if (row.rowType === 'metric' && isDefined(rq.mconfigId)) {
             let newMconfigId = makeId();
             let newQueryId = makeId();
 
@@ -213,7 +210,7 @@ export class CreateDraftReportController {
             }
           }
 
-          if (row.rowType === RowTypeEnum.Formula && isDefined(rq.kitId)) {
+          if (row.rowType === 'formula' && isDefined(rq.kitId)) {
             let newKitId = makeId();
 
             copyKitsMap.push({

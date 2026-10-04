@@ -8,8 +8,9 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+
 import type { ModelLt } from '#common/types/shared/st-lt/models/model-lt';
 import type { ModelSt } from '#common/types/shared/st-lt/models/model-st';
 
@@ -21,9 +22,9 @@ export const modelsTable = pgTable(
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(), // name
-    type: varchar('type').$type<ModelTypeEnum>(),
+    type: varchar('type').$type<ModelType>(),
     connectionId: varchar('connection_id'),
-    connectionType: varchar('connection_type').$type<ConnectionTypeEnum>(),
+    connectionType: varchar('connection_type').$type<ConnectionType>(),
     st: json('st').$type<{ encrypted: string; decrypted: ModelSt }>().notNull(),
     lt: json('lt').$type<{ encrypted: string; decrypted: ModelLt }>().notNull(),
     keyTag: text('key_tag'),

@@ -1,73 +1,73 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionDayOfWeekValueEnum } from '#common/enums/fraction/fraction-day-of-week-value.enum';
-import { FractionMonthNameValueEnum } from '#common/enums/fraction/fraction-month-name-value.enum';
-import { FractionNumberBetweenOptionEnum } from '#common/enums/fraction/fraction-number-between-option.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionQuarterOfYearValueEnum } from '#common/enums/fraction/fraction-quarter-of-year-value.enum';
-import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fraction-ts-last-complete-option.enum';
-import { FractionTsMixUnitEnum } from '#common/enums/fraction/fraction-ts-mix-unit.enum';
-import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-moment-type.enum';
-import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { FractionYesnoValueEnum } from '#common/enums/fraction/fraction-yesno-value.enum';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionDayOfWeekValue } from '#common/types/blockml/parts/fraction/fraction-day-of-week-value';
+import type { FractionMonthNameValue } from '#common/types/blockml/parts/fraction/fraction-month-name-value';
+import type { FractionNumberBetweenOption } from '#common/types/blockml/parts/fraction/fraction-number-between-option';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
+import type { FractionQuarterOfYearValue } from '#common/types/blockml/parts/fraction/fraction-quarter-of-year-value';
+import type { FractionTsLastCompleteOption } from '#common/types/blockml/parts/fraction/fraction-ts-last-complete-option';
+import type { FractionTsMixUnit } from '#common/types/blockml/parts/fraction/fraction-ts-mix-unit';
+import type { FractionTsMomentType } from '#common/types/blockml/parts/fraction/fraction-ts-moment-type';
+import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
+import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
+import type { FractionYesnoValue } from '#common/types/blockml/parts/fraction/fraction-yesno-value';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 
 export class FractionTypeItem {
   label: string;
-  value: FractionTypeEnum;
-  operator: FractionOperatorEnum;
+  value: FractionType;
+  operator: FractionOperator;
   timeframeLevel?: number;
 }
 
 export class FractionTsMomentTypesItem {
   label: string;
-  value: FractionTsMomentTypeEnum;
+  value: FractionTsMomentType;
 }
 
 export class FractionTsMixUnitItem {
   label: string;
-  value: FractionTsMixUnitEnum;
+  value: FractionTsMixUnit;
   timeframeLevel: number;
 }
 
 export class FractionTsUnitItem {
   label: string;
-  value: FractionTsUnitEnum;
+  value: FractionTsUnit;
   timeframeLevel: number;
 }
 
 export class FractionDayOfWeekValueItem {
   label: string;
-  value: FractionDayOfWeekValueEnum;
+  value: FractionDayOfWeekValue;
 }
 
 export class FractionTsLastCompleteOptionItem {
   label: string;
-  value: FractionTsLastCompleteOptionEnum;
+  value: FractionTsLastCompleteOption;
 }
 
 export class FractionQuarterOfYearValueItem {
   label: string;
-  value: FractionQuarterOfYearValueEnum;
+  value: FractionQuarterOfYearValue;
 }
 
 export class FractionMonthNameValueItem {
   label: string;
-  value: FractionMonthNameValueEnum;
+  value: FractionMonthNameValue;
 }
 
 export class FractionYesnoValueItem {
   label: string;
-  value: FractionYesnoValueEnum;
+  value: FractionYesnoValue;
 }
 
 export class FractionNumberBetweenOptionItem {
   label: string;
-  value: FractionNumberBetweenOptionEnum;
+  value: FractionNumberBetweenOption;
 }
 
 @Component({
@@ -76,16 +76,6 @@ export class FractionNumberBetweenOptionItem {
   templateUrl: './fraction.component.html'
 })
 export class FractionComponent {
-  fractionOperatorEnum = FractionOperatorEnum;
-  fieldResultEnum = FieldResultEnum;
-
-  fractionTypeStoreFraction = FractionTypeEnum.StoreFraction;
-
-  controlClassSelector = ControlClassEnum.Selector;
-  controlClassInput = ControlClassEnum.Input;
-  controlClassSwitch = ControlClassEnum.Switch;
-  controlClassDatePicker = ControlClassEnum.DatePicker;
-
   @Input() storeContent: FileStore;
 
   @Input() suggestModelDimension: string;
@@ -100,7 +90,7 @@ export class FractionComponent {
 
   @Input() isMetricsPage: boolean;
   @Input() isDisabled: boolean = false;
-  @Input() fieldResult: FieldResultEnum | string;
+  @Input() fieldResult: FieldResult | string;
   @Input() fieldTimeframe: string;
 
   @Input() fraction: Fraction;

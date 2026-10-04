@@ -3,9 +3,12 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DashboardX,
   zDashboardX
-} from '#common/types/backend/parts/dashboard-x';
+} from '#common/types/backend/parts/dashboard/dashboard-x';
 import { type Member, zMember } from '#common/types/backend/parts/member';
-import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
+import {
+  type StructX,
+  zStructX
+} from '#common/types/backend/parts/struct/struct-x';
 
 export type ToBackendGetDashboardOutput = {
   needValidate: boolean;

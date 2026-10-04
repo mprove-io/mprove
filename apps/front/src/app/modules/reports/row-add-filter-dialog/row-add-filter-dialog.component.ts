@@ -15,27 +15,21 @@ import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { take, tap } from 'rxjs';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { TimeframeEnum } from '#common/enums/timeframe.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
 import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { ModelFieldY } from '#common/types/blockml/parts/model-field-y';
-import type { Parameter } from '#common/types/blockml/parts/parameter';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
-import type { DataRow } from '#common/types/front/data-row';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-y';
+import type { Parameter } from '#common/types/blockml/parts/report/row/parameter';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -127,7 +121,7 @@ export class RowAddFilterDialogComponent implements OnInit {
         tap((resp: ToBackendGetModelResponse) => {
           if (resp?.type === 'Success') {
             let restrictedFilterFieldIds =
-              metric.modelType === ModelTypeEnum.Malloy
+              metric.modelType === 'Malloy'
                 ? [
                     `${metric.timeFieldId}_year`,
                     `${metric.timeFieldId}_quarter`,
@@ -140,14 +134,14 @@ export class RowAddFilterDialogComponent implements OnInit {
                     `${metric.timeFieldId}_ts`
                   ]
                 : [
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Year}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Quarter}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Month}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Week}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Date}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Hour}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Minute}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}year`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}quarter`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}month`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}week`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}date`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}hour`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}minute`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}time`
                   ];
 
             this.sortedFieldsY = resp.output.model.fields
@@ -164,17 +158,13 @@ export class RowAddFilterDialogComponent implements OnInit {
                 } as ModelFieldY)
               )
               .sort((a: ModelFieldY, b: ModelFieldY) =>
-                a.fieldClass !== FieldClassEnum.Dimension &&
-                b.fieldClass === FieldClassEnum.Dimension
+                a.fieldClass !== 'dimension' && b.fieldClass === 'dimension'
                   ? 1
-                  : a.fieldClass === FieldClassEnum.Dimension &&
-                      b.fieldClass !== FieldClassEnum.Dimension
+                  : a.fieldClass === 'dimension' && b.fieldClass !== 'dimension'
                     ? -1
-                    : a.fieldClass !== FieldClassEnum.Filter &&
-                        b.fieldClass === FieldClassEnum.Filter
+                    : a.fieldClass !== 'filter' && b.fieldClass === 'filter'
                       ? 1
-                      : a.fieldClass === FieldClassEnum.Filter &&
-                          b.fieldClass !== FieldClassEnum.Filter
+                      : a.fieldClass === 'filter' && b.fieldClass !== 'filter'
                         ? -1
                         : a.partLabel > b.partLabel
                           ? 1
@@ -219,21 +209,21 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     let newFraction: Fraction;
 
-    if (this.model.type === ModelTypeEnum.Store) {
+    if (this.model.type === 'Store') {
       let storeFilter =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? this.model.storeContent.fields.find(f => f.name === field.id)
           : undefined;
 
       let storeResultFraction =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? undefined
           : this.model.storeContent.results.find(r => r.result === field.result)
               .fraction_types[0];
 
-      let logicGroup = isUndefined(storeResultFraction)
+      let logicGroup: FractionLogic = isUndefined(storeResultFraction)
         ? undefined
-        : FractionLogicEnum.Or;
+        : 'OR';
 
       let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
@@ -243,16 +233,16 @@ export class RowAddFilterDialogComponent implements OnInit {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.Or,
+                logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.AndNot,
-                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: 'AND_NOT',
+                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -263,20 +253,20 @@ export class RowAddFilterDialogComponent implements OnInit {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === 'OR' ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFraction?.meta,
         operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === FractionLogicEnum.Or
-            ? FractionOperatorEnum.Or
-            : FractionOperatorEnum.And,
+          : logicGroup === 'OR'
+            ? 'Or'
+            : 'And',
         logicGroup: logicGroup,
         brick: undefined,
         parentBrick: undefined,
-        type: FractionTypeEnum.StoreFraction,
+        type: 'StoreFraction',
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFraction?.type,
@@ -317,18 +307,18 @@ export class RowAddFilterDialogComponent implements OnInit {
                 return newControl;
               })
       };
-    } else if (this.model.type === ModelTypeEnum.Malloy) {
+    } else if (this.model.type === 'Malloy') {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(field.result)
       };
     } else {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(field.result)
       };
     }
@@ -350,7 +340,7 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditParameters,
+      changeType: 'EditParameters',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,

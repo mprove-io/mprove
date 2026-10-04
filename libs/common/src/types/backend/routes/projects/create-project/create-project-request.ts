@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+import { zProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
 
 export type ToBackendCreateProjectRequest = {
   operation: 'createProject';
@@ -9,7 +10,7 @@ export type ToBackendCreateProjectRequest = {
   input: {
     orgId: string;
     name: string;
-    remoteType: ProjectRemoteTypeEnum.Managed | ProjectRemoteTypeEnum.GitClone;
+    remoteType: ProjectRemoteType;
     gitUrl?: string;
     noteId?: string;
   };
@@ -24,7 +25,7 @@ export let zToBackendCreateProjectRequest = z
       .object({
         orgId: z.string(),
         name: z.string(),
-        remoteType: z.enum(ProjectRemoteTypeEnum),
+        remoteType: zProjectRemoteType,
         gitUrl: z.string().nullish(),
         noteId: z.string().nullish()
       })

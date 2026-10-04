@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { EmailTransportEnum } from '#common/enums/email-transport.enum';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { zEmailTransport } from '#common/types/backend/config/email-transport';
+import { zProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+import { zBackendEnv } from '#common/types/node-common/env/backend-env';
 
 export let zBackendConfig = z.object({
   mproveReleaseTag: z.string(),
@@ -10,7 +10,7 @@ export let zBackendConfig = z.object({
   telemetryEndpoint: z.string().optional(),
   telemetryHyperdxIngestApiKey: z.string().optional(),
   otelLogLevel: z.string().optional(),
-  backendEnv: z.enum(BackendEnvEnum),
+  backendEnv: zBackendEnv,
   isEncryptDb: z.boolean(),
   isEncryptMetadata: z.boolean(),
   aesKey: z.string(),
@@ -34,7 +34,7 @@ export let zBackendConfig = z.object({
   demoOrgId: z.string().optional(),
   demoProjectId: z.string().optional(),
   demoProjectName: z.string().optional(),
-  demoProjectRemoteType: z.enum(ProjectRemoteTypeEnum).optional(),
+  demoProjectRemoteType: zProjectRemoteType.optional(),
   demoProjectRemoteGitUrl: z.string().optional(),
   demoProjectRemotePrivateKeyEncryptedPath: z.string().optional(),
   demoProjectRemotePublicKeyPath: z.string().optional(),
@@ -65,7 +65,7 @@ export let zBackendConfig = z.object({
   hostUrl: z.string(),
   sendEmailFromName: z.string(),
   sendEmailFromAddress: z.string(),
-  emailTransport: z.enum(EmailTransportEnum),
+  emailTransport: zEmailTransport,
   smtpHost: z.string(),
   smtpPort: z.number().int(),
   smtpSecure: z.boolean(),

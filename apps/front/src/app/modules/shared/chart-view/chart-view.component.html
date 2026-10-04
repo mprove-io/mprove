@@ -18,8 +18,7 @@
       isSelectValid === true &&
       chart.isValid === true &&
       qData?.length === 0 &&
-      (queryStatus === queryStatusEnum.New ||
-        queryStatus === queryStatusEnum.Canceled)
+      (queryStatus === 'New' || queryStatus === 'Canceled')
     "
     class="text-s500 flex h-full select-none items-center justify-center text-lg font-semibold"
     >Run query to get data</div
@@ -30,7 +29,7 @@
       isSelectValid === true &&
       chart.isValid === true &&
       qData?.length === 0 &&
-      queryStatus === queryStatusEnum.Running
+      queryStatus === 'Running'
     "
     class="text-s500 flex h-full select-none items-center justify-center text-lg font-semibold"
     >Query is Running</div
@@ -41,7 +40,7 @@
       isSelectValid === true &&
       chart.isValid === true &&
       qData?.length === 0 &&
-      queryStatus === queryStatusEnum.Completed
+      queryStatus === 'Completed'
     "
     class="text-s500 flex h-full select-none items-center justify-center text-lg font-semibold"
     >Query returned zero rows</div
@@ -51,7 +50,7 @@
     *ngIf="
       isSelectValid === true &&
       chart.isValid === true &&
-      queryStatus === queryStatusEnum.Error
+      queryStatus === 'Error'
     "
     class="text-r1 flex h-full select-none items-center justify-center text-lg font-semibold"
     >Query Error</div
@@ -60,7 +59,7 @@
   <div
     class="flex h-full w-full"
     *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
+      queryStatus !== 'Error' &&
       isSelectValid === true &&
       eChartsTypes.indexOf(chart.type) > -1 &&
       chart.isValid === true &&
@@ -78,9 +77,9 @@
   <div
     class="h-full"
     *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
+      queryStatus !== 'Error' &&
       isSelectValid === true &&
-      chart.type === chartTypeEnum.Table &&
+      chart.type === 'table' &&
       chart.isValid === true &&
       qData?.length > 0
     "
@@ -96,9 +95,9 @@
 
   <m-chart-pivot-table
     *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
+      queryStatus !== 'Error' &&
       isSelectValid === true &&
-      chart.type === chartTypeEnum.PivotTable &&
+      chart.type === 'pivot_table' &&
       chart.isValid === true &&
       qData?.length > 0
     "
@@ -111,9 +110,9 @@
 
   <m-chart-single
     *ngIf="
-      queryStatus !== queryStatusEnum.Error &&
+      queryStatus !== 'Error' &&
       isSelectValid === true &&
-      chart.type === chartTypeEnum.Single &&
+      chart.type === 'single' &&
       chart.isValid === true &&
       qData?.length > 0
     "

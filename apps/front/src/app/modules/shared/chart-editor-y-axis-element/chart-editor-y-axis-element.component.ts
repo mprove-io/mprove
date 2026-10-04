@@ -7,11 +7,12 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import type { MconfigChartYAxis } from '#common/types/blockml/parts/mconfig-chart-y-axis';
-import type { EventChartDeleteYAxisElement } from '#common/types/front/event-chart-delete-y-axis-element';
-import type { EventChartToggleYAxisElement } from '#common/types/front/event-chart-toggle-y-axis-element';
-import type { EventChartYAxisElementUpdate } from '#common/types/front/event-chart-y-axis-element-update';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+
+import type { MconfigChartYAxis } from '#common/types/blockml/parts/mconfig/mconfig-chart-y-axis';
+import type { EventChartDeleteYAxisElement } from '#common/types/front/chart/events/event-chart-delete-y-axis-element';
+import type { EventChartToggleYAxisElement } from '#common/types/front/chart/events/event-chart-toggle-y-axis-element';
+import type { EventChartYAxisElementUpdate } from '#common/types/front/chart/events/event-chart-y-axis-element-update';
 
 @Component({
   standalone: false,
@@ -30,7 +31,7 @@ export class ChartEditorYAxisElementComponent {
   isExpanded: boolean;
 
   @Input()
-  chartType: ChartTypeEnum;
+  chartType: ChartType;
 
   @Output() chartToggleYAxisElement =
     new EventEmitter<EventChartToggleYAxisElement>();

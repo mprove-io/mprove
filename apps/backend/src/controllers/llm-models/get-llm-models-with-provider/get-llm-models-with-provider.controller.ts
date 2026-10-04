@@ -12,8 +12,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LlmModelWithProvider } from '#common/types/backend/parts/llm-models/llm-model-with-provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -60,8 +59,7 @@ export class GetLlmModelsWithProviderController {
     let isUserCodexAuthSet = isDefined(user.codexAuth);
 
     let visibleProviders = providers.filter(
-      provider =>
-        provider.type !== ProviderTypeEnum.OpenAICodex || isUserCodexAuthSet
+      provider => provider.type !== 'OpenAICodex' || isUserCodexAuthSet
     );
 
     let modelsWithProvider: LlmModelWithProvider[][] = visibleProviders.map(
@@ -75,9 +73,7 @@ export class GetLlmModelsWithProviderController {
 
     let allModels: LlmModelWithProvider[] = modelsWithProvider.flat();
 
-    let modelsAi: LlmModelWithProvider[] = sessionTypes.includes(
-      SessionTypeEnum.Explorer
-    )
+    let modelsAi: LlmModelWithProvider[] = sessionTypes.includes('Explorer')
       ? allModels
           .filter(model => model.isExplorer)
           .map(model => ({
@@ -86,9 +82,7 @@ export class GetLlmModelsWithProviderController {
           }))
       : [];
 
-    let modelsOpencode: LlmModelWithProvider[] = sessionTypes.includes(
-      SessionTypeEnum.Editor
-    )
+    let modelsOpencode: LlmModelWithProvider[] = sessionTypes.includes('Editor')
       ? allModels
           .filter(model => model.isOpencodeSupported && model.isBuilder)
           .map(model => ({

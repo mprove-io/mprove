@@ -10,15 +10,13 @@ import {
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { TileX } from '#common/types/backend/parts/tile-x';
-import type { Query } from '#common/types/blockml/parts/query';
-import type { DeleteFilterFnItem } from '#common/types/front/delete-filter-fn-item';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { DeleteFilterFnItem } from '#common/types/front/filter/delete-filter-fn-item';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -34,15 +32,6 @@ import { ChartViewComponent } from '../chart-view/chart-view.component';
   templateUrl: './dashboard-tile-chart.component.html'
 })
 export class DashboardTileChartComponent implements OnInit, OnChanges {
-  chartTypeEnumTable = ChartTypeEnum.Table;
-  chartTypeEnumPivotTable = ChartTypeEnum.PivotTable;
-  chartTypeEnumSingle = ChartTypeEnum.Single;
-
-  queryStatusEnum = QueryStatusEnum;
-  queryStatusRunning = QueryStatusEnum.Running;
-
-  modelTypeStore = ModelTypeEnum.Store;
-
   @ViewChildren('chartView') chartViewComponents: QueryList<ChartViewComponent>;
 
   @Input()
@@ -103,7 +92,7 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
       mconfigFields: this.mconfig.fields,
-      isStoreModel: this.mconfig.modelType === ModelTypeEnum.Store
+      isStoreModel: this.mconfig.modelType === 'Store'
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;
@@ -113,14 +102,14 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes.query?.currentValue?.status === QueryStatusEnum.Running &&
+      changes.query?.currentValue?.status === 'Running' &&
       (isUndefined(changes.query?.previousValue?.status) ||
-        changes.query.previousValue.status !== QueryStatusEnum.Running)
+        changes.query.previousValue.status !== 'Running')
     ) {
       this.spinner.show(this.tile.title);
     } else if (
       !!changes.query?.currentValue?.status &&
-      changes.query?.currentValue?.status !== QueryStatusEnum.Running
+      changes.query?.currentValue?.status !== 'Running'
     ) {
       this.spinner.hide(this.tile.title);
     }

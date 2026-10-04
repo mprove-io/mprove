@@ -17,8 +17,7 @@ import {
   isOpenAiGpt5Pro
 } from '#backend/functions/openai-model-variants';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 
@@ -31,17 +30,17 @@ export class ExplorerModelsService {
   }): LanguageModel {
     let { provider, modelId, codexFetch } = item;
 
-    if (provider.type === ProviderTypeEnum.OpenAI) {
+    if (provider.type === 'OpenAI') {
       let openai = createOpenAI({ apiKey: provider.options.apiKey });
       return openai(modelId);
     }
 
-    if (provider.type === ProviderTypeEnum.Anthropic) {
+    if (provider.type === 'Anthropic') {
       let anthropic = createAnthropic({ apiKey: provider.options.apiKey });
       return anthropic(modelId);
     }
 
-    if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+    if (provider.type === 'OpenAICompatible') {
       let headers = Object.fromEntries(
         (provider.options.headers ?? []).map(x => [x.key, x.value])
       );
@@ -63,7 +62,7 @@ export class ExplorerModelsService {
 
     let isCodexFetchSet = isDefined(codexFetch);
 
-    if (provider.type === ProviderTypeEnum.OpenAICodex && isCodexFetchSet) {
+    if (provider.type === 'OpenAICodex' && isCodexFetchSet) {
       let openai = createOpenAI({
         apiKey: 'oauth-dummy-key',
         fetch: codexFetch
@@ -72,7 +71,7 @@ export class ExplorerModelsService {
     }
 
     throw new ServerError({
-      message: ErEnum.BACKEND_GET_PROVIDER_MODEL_FAILED
+      message: 'BACKEND_GET_PROVIDER_MODEL_FAILED'
     });
   }
 

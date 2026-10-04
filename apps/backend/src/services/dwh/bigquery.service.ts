@@ -12,9 +12,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 import type { RawSchemaColumn } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-column';
@@ -293,10 +291,10 @@ export class BigQueryService {
           } catch (fkErr: any) {
             logToConsoleBackend({
               log: new ServerError({
-                message: ErEnum.BACKEND_FETCH_FK_BIGQUERY_ERROR,
+                message: 'BACKEND_FETCH_FK_BIGQUERY_ERROR',
                 originalError: fkErr
               }),
-              logLevel: LogLevelEnum.Error,
+              logLevel: 'Error',
               logger: this.logger,
               cs: this.cs
             });
@@ -319,10 +317,10 @@ export class BigQueryService {
           } catch (constraintErr: any) {
             logToConsoleBackend({
               log: new ServerError({
-                message: ErEnum.BACKEND_FETCH_CONSTRAINTS_BIGQUERY_ERROR,
+                message: 'BACKEND_FETCH_CONSTRAINTS_BIGQUERY_ERROR',
                 originalError: constraintErr
               }),
-              logLevel: LogLevelEnum.Error,
+              logLevel: 'Error',
               logger: this.logger,
               cs: this.cs
             });
@@ -330,10 +328,10 @@ export class BigQueryService {
         } catch (datasetErr: any) {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_FETCH_DATASET_BIGQUERY_ERROR,
+              message: 'BACKEND_FETCH_DATASET_BIGQUERY_ERROR',
               originalError: datasetErr
             }),
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });
@@ -462,7 +460,7 @@ export class BigQueryService {
         maximumBytesBilled: maximumBytesBilled.toString()
       })
       .catch(e => {
-        query.status = QueryStatusEnum.Error;
+        query.status = 'Error';
         query.data = [];
         query.lastErrorMessage = e.message;
         query.lastErrorTs = makeTsNumber();
@@ -472,7 +470,7 @@ export class BigQueryService {
       let queryJob = (createQueryJobItem as JobResponse)[0];
       let createQueryJobApiResponse = (createQueryJobItem as JobResponse)[1];
 
-      query.status = QueryStatusEnum.Running;
+      query.status = 'Running';
       query.bigqueryQueryJobId = queryJob.id;
     }
 
@@ -498,7 +496,7 @@ export class BigQueryService {
         query: query.sql
       })
       .catch(e => {
-        query.status = QueryStatusEnum.Error;
+        query.status = 'Error';
         query.data = [];
         query.lastErrorMessage = e.message;
         query.lastErrorTs = makeTsNumber();

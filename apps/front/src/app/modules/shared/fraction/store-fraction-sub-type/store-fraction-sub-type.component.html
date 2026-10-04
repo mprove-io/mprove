@@ -29,7 +29,7 @@
     >
       <ng-template ng-label-tmp let-item="item">
         <div class="ml-1 truncate">{{
-          item.logicGroup === logicGroupEnumOr
+          item.logicGroup === 'OR'
             ? item.label || item.typeValue
             : 'NOT ' + (item.label || item.typeValue)
         }}</div>
@@ -38,7 +38,7 @@
       <ng-template ng-option-tmp let-item="item">
         <div class="flex flex-row">
           <div class="ml-1 truncate">{{
-            item.logicGroup === logicGroupEnumOr
+            item.logicGroup === 'OR'
               ? 'OR - ' + (item.label || item.typeValue)
               : 'AND - NOT ' + (item.label || item.typeValue)
           }}</div>

@@ -4,25 +4,25 @@ import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkAccess } from '#blockml/functions/check-access/check-access';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 
-let func = FuncEnum.CheckDashboardAccess;
+let func: Func = 'build-dashboard/check-dashboard-access';
 
 export function checkDashboardAccess(item: {
   dashboards: FileDashboard[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileDashboard[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newDashboards: FileDashboard[] = checkAccess(
     {
@@ -34,9 +34,9 @@ export function checkDashboardAccess(item: {
     cs
   );
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Ds, newDashboards);
+  log(cs, caller, func, structId, 'out_dashboards.log', newDashboards);
 
   return Result.succeed(newDashboards);
 }

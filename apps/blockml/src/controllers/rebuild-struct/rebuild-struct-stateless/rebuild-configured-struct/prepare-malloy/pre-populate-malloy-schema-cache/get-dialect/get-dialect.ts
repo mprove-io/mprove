@@ -8,22 +8,22 @@ import {
   StandardSQLDialect,
   TrinoDialect
 } from '@malloydata/malloy';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 
 export function getDialect(item: {
-  connectionType: ConnectionTypeEnum;
+  connectionType: ConnectionType;
 }): Dialect | undefined {
   let { connectionType } = item;
 
-  let dialectMap: Partial<Record<ConnectionTypeEnum, Dialect>> = {
-    [ConnectionTypeEnum.PostgreSQL]: new PostgresDialect(),
-    [ConnectionTypeEnum.MySQL]: new MySQLDialect(),
-    [ConnectionTypeEnum.BigQuery]: new StandardSQLDialect(),
-    [ConnectionTypeEnum.SnowFlake]: new SnowflakeDialect(),
-    [ConnectionTypeEnum.Databricks]: new DatabricksDialect(),
-    [ConnectionTypeEnum.MotherDuck]: new DuckDBDialect(),
-    [ConnectionTypeEnum.Presto]: new TrinoDialect(),
-    [ConnectionTypeEnum.Trino]: new TrinoDialect()
+  let dialectMap: Partial<Record<ConnectionType, Dialect>> = {
+    ['PostgreSQL']: new PostgresDialect(),
+    ['MySQL']: new MySQLDialect(),
+    ['BigQuery']: new StandardSQLDialect(),
+    ['SnowFlake']: new SnowflakeDialect(),
+    ['Databricks']: new DatabricksDialect(),
+    ['MotherDuck']: new DuckDBDialect(),
+    ['Presto']: new TrinoDialect(),
+    ['Trino']: new TrinoDialect()
   };
 
   return dialectMap[connectionType];

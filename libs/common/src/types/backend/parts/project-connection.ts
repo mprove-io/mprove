@@ -1,21 +1,23 @@
 import { z } from 'zod';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type ConnectionOptions,
   zConnectionOptions
 } from '#common/types/backend/parts/connection-parts/connection-options';
 import {
+  type ConnectionType,
+  zConnectionType
+} from '#common/types/backend/parts/connection-parts/connection-type';
+import {
   type ConnectionRawSchema,
   zConnectionRawSchema
 } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
-import type { EnumValues } from '#common/types/enum-values';
 
 export type ProjectConnection = {
   projectId?: string;
   connectionId?: string;
   envId?: string;
-  type?: EnumValues<typeof ConnectionTypeEnum>;
+  type?: ConnectionType;
   options: ConnectionOptions;
   rawSchema?: ConnectionRawSchema;
   serverTs?: number;
@@ -30,7 +32,7 @@ export let zProjectConnection = z
     projectId: z.string().nullish(),
     connectionId: z.string().nullish(),
     envId: z.string().nullish(),
-    type: z.enum(ConnectionTypeEnum).nullish(),
+    type: zConnectionType.nullish(),
     options: zConnectionOptions,
     rawSchema: zConnectionRawSchema.nullish(),
     serverTs: z.number().int().nullish()

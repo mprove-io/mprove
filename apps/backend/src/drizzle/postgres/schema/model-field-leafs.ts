@@ -10,13 +10,13 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FieldTypeEnum } from '#common/enums/field-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { KeyValuePair } from '#common/types/blockml/parts/key-value-pair';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { FieldType } from '#common/types/blockml/parts/field/field-type';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+import type { KeyValuePair } from '#common/types/blockml/parts/tag/key-value-pair';
 
 export const modelFieldLeafsTable = pgTable(
   'model_field_leafs',
@@ -26,15 +26,15 @@ export const modelFieldLeafsTable = pgTable(
       .primaryKey(),
     structId: varchar('struct_id').notNull(),
     modelId: varchar('model_id').notNull(),
-    modelType: varchar('model_type').$type<ModelTypeEnum>().notNull(),
+    modelType: varchar('model_type').$type<ModelType>().notNull(),
     connectionId: varchar('connection_id'),
-    connectionType: varchar('connection_type').$type<ConnectionTypeEnum>(),
+    connectionType: varchar('connection_type').$type<ConnectionType>(),
     fieldId: text('field_id').notNull(),
     fieldNameLc: text('field_name_lc'),
     fieldPath: json('field_path').$type<string[]>(),
-    fieldClass: varchar('field_class').$type<FieldClassEnum>(),
-    fieldResult: varchar('field_result').$type<FieldResultEnum>(),
-    fieldType: varchar('field_type').$type<FieldTypeEnum>(),
+    fieldClass: varchar('field_class').$type<FieldClass>(),
+    fieldResult: varchar('field_result').$type<FieldResult>(),
+    fieldType: varchar('field_type').$type<FieldType>(),
     labelLc: text('label_lc'),
     descriptionLc: text('description_lc'),
     hidden: boolean('hidden'),

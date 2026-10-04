@@ -33,8 +33,7 @@ import {
 import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
@@ -85,9 +84,9 @@ export class GetLlmModelPartsController {
         providerId: providerId
       });
 
-    if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+    if (provider.type === 'OpenAICompatible') {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_TYPE_MISMATCH
+        message: 'BACKEND_PROVIDER_TYPE_MISMATCH'
       });
     }
 
@@ -97,9 +96,7 @@ export class GetLlmModelPartsController {
       await this.llmModelService.getModelParts({
         providerType: provider.type,
         apiKey:
-          provider.type === ProviderTypeEnum.OpenAICodex
-            ? undefined
-            : provider.options.apiKey,
+          provider.type === 'OpenAICodex' ? undefined : provider.options.apiKey,
         userId: user.userId,
         isCodexAuthSet: isCodexAuthSet,
         isForceRefresh: true

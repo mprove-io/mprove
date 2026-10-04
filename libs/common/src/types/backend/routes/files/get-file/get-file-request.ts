@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
+import { zBuilderLeft } from '#common/types/front/builder/builder-left';
 
 export type ToBackendGetFileRequest = {
   operation: 'getFile';
@@ -12,11 +13,7 @@ export type ToBackendGetFileRequest = {
     branchId: string;
     envId: string;
     fileNodeId: string;
-    builderLeft:
-      | BuilderLeftEnum.Tree
-      | BuilderLeftEnum.ChangesToCommit
-      | BuilderLeftEnum.ChangesToPush
-      | BuilderLeftEnum.Info;
+    builderLeft: BuilderLeft;
   };
 };
 
@@ -32,7 +29,7 @@ export let zToBackendGetFileRequest = z
         branchId: z.string(),
         envId: z.string(),
         fileNodeId: z.string(),
-        builderLeft: z.enum(BuilderLeftEnum)
+        builderLeft: zBuilderLeft
       })
       .meta({ id: 'ToBackendGetFileInput' })
   })

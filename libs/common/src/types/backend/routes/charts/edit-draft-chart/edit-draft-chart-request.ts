@@ -3,11 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MconfigX,
   zMconfigX
-} from '#common/types/backend/parts/mconfig-x';
+} from '#common/types/backend/parts/mconfig/mconfig-x';
 import {
   type QueryOperation,
   zQueryOperation
-} from '#common/types/backend/parts/query-operation';
+} from '#common/types/backend/parts/query-operation/query-operation';
 
 export type ToBackendEditDraftChartRequest = {
   operation: 'editDraftChart';

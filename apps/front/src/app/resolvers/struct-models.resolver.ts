@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
@@ -78,7 +78,7 @@ export class StructModelsResolver implements Resolve<Observable<boolean>> {
             return true;
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

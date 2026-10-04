@@ -15,7 +15,7 @@ import { Prep } from '#backend/interfaces/prep';
 import { EmailService } from '#backend/services/email.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabToEntService } from '#backend/services/tab-to-ent.service';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendDeleteRecordsRequest } from '#common/types/backend/routes/test-routes/delete-records/delete-records-request';
@@ -35,7 +35,7 @@ export async function prepareTest(item: {
   let { overrideConfigOptions, mcpOptions } = item;
 
   let extraOverride: Partial<BackendConfig> = {
-    backendEnv: BackendEnvEnum.TEST,
+    backendEnv: 'TEST',
     backendLogResponseOk: false,
     backendLogResponseError: false
   };

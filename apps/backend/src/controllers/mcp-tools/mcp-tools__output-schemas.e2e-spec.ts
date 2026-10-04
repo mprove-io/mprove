@@ -18,7 +18,7 @@ import {
   mcpToolsRegistry
 } from '#common/constants/mcp-tools-registry';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
@@ -206,7 +206,7 @@ test('1', async t => {
     } catch (error) {
       logToConsoleBackend({
         log: error,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prepTest?.logger,
         cs: prepTest?.cs
       });

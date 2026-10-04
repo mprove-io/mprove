@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_ROLES_PAGE_TITLE } from '#common/constants/page-titles';
-import type { Given } from '#common/types/backend/parts/given';
+import type { Given } from '#common/types/backend/parts/given/given';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendDeleteRoleGivenRequest } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-request';

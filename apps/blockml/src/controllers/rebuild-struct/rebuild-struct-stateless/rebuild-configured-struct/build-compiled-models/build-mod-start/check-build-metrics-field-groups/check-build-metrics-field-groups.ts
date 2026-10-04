@@ -3,25 +3,24 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import { checkModBuildMetricsFieldGroups } from './check-mod-build-metrics-field-groups/check-mod-build-metrics-field-groups';
 
-let func = FuncEnum.CheckBuildMetricsFieldGroups;
+let func: Func = 'build-mod-start/check-build-metrics-field-groups';
 
 export function checkBuildMetricsFieldGroups(item: {
   mods: FileMod[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileMod[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newMods: FileMod[] = [];
 
@@ -44,9 +43,9 @@ export function checkBuildMetricsFieldGroups(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Mods, newMods);
+  log(cs, caller, func, structId, 'out_mods.log', newMods);
 
   return Result.succeed(newMods);
 }

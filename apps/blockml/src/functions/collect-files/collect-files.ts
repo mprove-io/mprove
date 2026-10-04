@@ -5,21 +5,20 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 
-let func = FuncEnum.CollectFiles;
+let func: Func = 'extra/collect-files';
 
 export async function collectFiles(
   item: {
     dir: string;
     repoDir: string;
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
     skipLog: boolean;
   },
   cs: ConfigService<BlockmlConfig>
@@ -27,7 +26,7 @@ export async function collectFiles(
   let { caller, structId, skipLog } = item;
 
   if (skipLog === false) {
-    log(cs, caller, func, structId, LogTypeEnum.Input, item);
+    log(cs, caller, func, structId, 'input.log', item);
   }
 
   return new Promise((resolve, reject) => {
@@ -72,8 +71,8 @@ export async function collectFiles(
 
     walker.on('end', () => {
       if (skipLog === false) {
-        log(cs, caller, func, structId, LogTypeEnum.Errors, []);
-        log(cs, caller, func, structId, LogTypeEnum.Files, files);
+        log(cs, caller, func, structId, 'out_errors.log', []);
+        log(cs, caller, func, structId, 'out_files.log', files);
       }
       resolve(files);
     });

@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import type { BaseProject } from '#common/types/backend/parts/base-project';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetFileContentError } from '#common/types/disk/function-errors/disk-get-file-content-error';
 import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/disk-item-catalog';
-import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
+import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
+import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import type { ToDiskGetFileOutput } from '#common/types/disk/routes/files/get-file/get-file-output';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getFileContent } from '#disk/controllers/files/get-file/get-file-content/get-file-content';
@@ -38,7 +38,7 @@ export class GetFileService {
     repoId: string;
     branch: string;
     fileNodeId: string;
-    builderLeft: BuilderLeftEnum;
+    builderLeft: BuilderLeft;
   }): Promise<DiskResultForOperation<'getFile'>> {
     let { baseProject, repoId, branch, fileNodeId, builderLeft } = item;
 
@@ -123,7 +123,7 @@ export class GetFileService {
           isPathExist({ path: v.filePath })
       ),
       Result.andThrough(v =>
-        v.isExist === false && v.builderLeft === BuilderLeftEnum.Tree
+        v.isExist === false && v.builderLeft === 'Tree'
           ? Result.fail({ code: 'DISK_FILE_IS_NOT_EXIST' })
           : Result.succeed()
       ),
@@ -139,14 +139,14 @@ export class GetFileService {
       Result.bind(
         'originalContent',
         async (v): Result.ResultAsync<string, never> => {
-          if (v.builderLeft === BuilderLeftEnum.ChangesToCommit) {
+          if (v.builderLeft === 'ChangesToCommit') {
             return getLastCommitFileContent({
               repoDir: v.repoDir,
               filePathRelative: v.filePathRelative
             });
           }
 
-          if (v.builderLeft === BuilderLeftEnum.ChangesToPush) {
+          if (v.builderLeft === 'ChangesToPush') {
             return getBaseCommitFileContent({
               repoDir: v.repoDir,
               filePathRelative: v.filePathRelative

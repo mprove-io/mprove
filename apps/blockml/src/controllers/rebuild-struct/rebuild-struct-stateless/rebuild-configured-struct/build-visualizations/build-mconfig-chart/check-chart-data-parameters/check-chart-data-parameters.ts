@@ -5,23 +5,16 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartDataPivotValue } from '#common/types/blockml/parts/internal/file-chart-data-pivot-value';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 
-let func = FuncEnum.CheckChartDataParameters;
+let func: Func = 'build-mconfig-chart/check-chart-data-parameters';
 
 export function checkChartDataParameters<T extends dcType>(item: {
   entities: T[];
@@ -29,14 +22,14 @@ export function checkChartDataParameters<T extends dcType>(item: {
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -48,25 +41,20 @@ export function checkChartDataParameters<T extends dcType>(item: {
 
       let store: FileStore;
 
-      if (apiModel.type === ModelTypeEnum.Store) {
+      if (apiModel.type === 'Store') {
         store = item.stores.find(m => m.name === tile.model);
       }
 
       if (
-        [
-          ChartTypeEnum.Pie,
-          ChartTypeEnum.Line,
-          ChartTypeEnum.Bar,
-          ChartTypeEnum.Scatter
-        ].indexOf(tile.type) > -1 &&
+        ['pie', 'line', 'bar', 'scatter'].indexOf(tile.type) > -1 &&
         (isUndefined(tile.data) || isUndefined(tile.data.x_field))
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_MISSING_X_FIELD,
+            title: 'TILE_DATA_MISSING_X_FIELD',
             message:
               `tile of type "${tile.type}" must have ` +
-              `"${ParameterEnum.XField}" parameter in "${ParameterEnum.Data}"`,
+              `"x_field" parameter in "data"`,
             lines: [
               {
                 line: tile.data_line_num,
@@ -80,21 +68,15 @@ export function checkChartDataParameters<T extends dcType>(item: {
       }
 
       if (
-        [
-          ChartTypeEnum.Bar,
-          ChartTypeEnum.Line,
-          ChartTypeEnum.Scatter,
-          ChartTypeEnum.Pie,
-          ChartTypeEnum.Single
-        ].indexOf(tile.type) > -1 &&
+        ['bar', 'line', 'scatter', 'pie', 'single'].indexOf(tile.type) > -1 &&
         (isUndefined(tile.data) || isUndefined(tile.data.y_fields))
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_MISSING_Y_FIELDS,
+            title: 'TILE_DATA_MISSING_Y_FIELDS',
             message:
               `tile of type "${tile.type}" must have ` +
-              `"${ParameterEnum.YFields}" parameter in "${ParameterEnum.Data}"`,
+              `"y_fields" parameter in "data"`,
             lines: [
               {
                 line: tile.data_line_num,
@@ -108,15 +90,15 @@ export function checkChartDataParameters<T extends dcType>(item: {
       }
 
       if (
-        tile.type === ChartTypeEnum.PivotTable &&
+        tile.type === 'pivot_table' &&
         (isUndefined(tile.data) || isUndefined(tile.data.pivot_rows))
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_MISSING_PIVOT_ROWS,
+            title: 'TILE_DATA_MISSING_PIVOT_ROWS',
             message:
               `tile of type "${tile.type}" must have ` +
-              `"${ParameterEnum.PivotRows}" parameter in "${ParameterEnum.Data}"`,
+              `"pivot_rows" parameter in "data"`,
             lines: [
               {
                 line: tile.data_line_num,
@@ -130,15 +112,15 @@ export function checkChartDataParameters<T extends dcType>(item: {
       }
 
       if (
-        tile.type === ChartTypeEnum.PivotTable &&
+        tile.type === 'pivot_table' &&
         (isUndefined(tile.data) || isUndefined(tile.data.pivot_columns))
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_MISSING_PIVOT_COLUMNS,
+            title: 'TILE_DATA_MISSING_PIVOT_COLUMNS',
             message:
               `tile of type "${tile.type}" must have ` +
-              `"${ParameterEnum.PivotColumns}" parameter in "${ParameterEnum.Data}"`,
+              `"pivot_columns" parameter in "data"`,
             lines: [
               {
                 line: tile.data_line_num,
@@ -152,15 +134,15 @@ export function checkChartDataParameters<T extends dcType>(item: {
       }
 
       if (
-        tile.type === ChartTypeEnum.PivotTable &&
+        tile.type === 'pivot_table' &&
         (isUndefined(tile.data) || isUndefined(tile.data.pivot_values))
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_MISSING_PIVOT_VALUES,
+            title: 'TILE_DATA_MISSING_PIVOT_VALUES',
             message:
               `tile of type "${tile.type}" must have ` +
-              `"${ParameterEnum.PivotValues}" parameter in "${ParameterEnum.Data}"`,
+              `"pivot_values" parameter in "data"`,
             lines: [
               {
                 line: tile.data_line_num,
@@ -173,14 +155,11 @@ export function checkChartDataParameters<T extends dcType>(item: {
         return;
       }
 
-      if (
-        tile.type === ChartTypeEnum.PivotTable &&
-        tile.data.pivot_values.length === 0
-      ) {
+      if (tile.type === 'pivot_table' && tile.data.pivot_values.length === 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_PIVOT_VALUES_EMPTY,
-            message: `"${ParameterEnum.PivotValues}" must have at least one element`,
+            title: 'TILE_DATA_PIVOT_VALUES_EMPTY',
+            message: `"pivot_values" must have at least one element`,
             lines: [
               {
                 line: tile.data.pivot_values_line_num,
@@ -194,15 +173,15 @@ export function checkChartDataParameters<T extends dcType>(item: {
       }
 
       if (
-        [ChartTypeEnum.Pie, ChartTypeEnum.Single].indexOf(tile.type) > -1 &&
+        ['pie', 'single'].indexOf(tile.type) > -1 &&
         tile.data.y_fields.length > 1
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_TOO_MANY_Y_FIELDS,
+            title: 'TILE_DATA_TOO_MANY_Y_FIELDS',
             message:
               `tile of type "${tile.type}" can have only one element inside ` +
-              `"${ParameterEnum.YFields}" list`,
+              `"y_fields" list`,
             lines: [
               {
                 line: tile.data.y_fields_line_num,
@@ -220,16 +199,15 @@ export function checkChartDataParameters<T extends dcType>(item: {
       }
 
       if (
-        tile.type === ChartTypeEnum.PivotTable &&
+        tile.type === 'pivot_table' &&
         (tile.data.pivot_rows || []).length === 0 &&
         (tile.data.pivot_columns || []).length === 0
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_DATA_PIVOT_ROWS_AND_COLUMNS_EMPTY,
+            title: 'TILE_DATA_PIVOT_ROWS_AND_COLUMNS_EMPTY',
             message:
-              `"${ParameterEnum.PivotRows}" and "${ParameterEnum.PivotColumns}" ` +
-              'cannot both be empty',
+              `"pivot_rows" and "pivot_columns" ` + 'cannot both be empty',
             lines: [
               {
                 line: tile.data.pivot_rows_line_num,
@@ -246,10 +224,8 @@ export function checkChartDataParameters<T extends dcType>(item: {
         if (tile.select.indexOf(tile.data.x_field) < 0) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TILE_DATA_WRONG_X_FIELD,
-              message:
-                `"${ParameterEnum.XField}" value must be one of ` +
-                `"${ParameterEnum.Select}" elements`,
+              title: 'TILE_DATA_WRONG_X_FIELD',
+              message: `"x_field" value must be one of ` + `"select" elements`,
               lines: [
                 {
                   line: tile.data.x_field_line_num,
@@ -262,20 +238,17 @@ export function checkChartDataParameters<T extends dcType>(item: {
           return;
         } else {
           let field =
-            apiModel.type === ModelTypeEnum.Store
+            apiModel.type === 'Store'
               ? store.fields.find(sField => sField.name === tile.data.x_field)
-              : apiModel.type === ModelTypeEnum.Malloy
+              : apiModel.type === 'Malloy'
                 ? apiModel.fields.find(field => field.id === tile.data.x_field)
                 : undefined;
 
-          if (
-            field.fieldClass !== FieldClassEnum.Dimension &&
-            tile.type !== ChartTypeEnum.Scatter
-          ) {
+          if (field.fieldClass !== 'dimension' && tile.type !== 'scatter') {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_X_FIELD_CLASS,
-                message: `"${ParameterEnum.XField}" must be a Dimension for this chart type`,
+                title: 'TILE_DATA_WRONG_X_FIELD_CLASS',
+                message: `"x_field" must be a Dimension for this chart type`,
                 lines: [
                   {
                     line: tile.data.x_field_line_num,
@@ -294,10 +267,9 @@ export function checkChartDataParameters<T extends dcType>(item: {
         if (tile.select.indexOf(tile.data.size_field) < 0) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD,
+              title: 'TILE_DATA_WRONG_SIZE_FIELD',
               message:
-                `"${ParameterEnum.SizeField}" value must be one of ` +
-                `"${ParameterEnum.Select}" elements`,
+                `"size_field" value must be one of ` + `"select" elements`,
               lines: [
                 {
                   line: tile.data.size_field_line_num,
@@ -310,21 +282,21 @@ export function checkChartDataParameters<T extends dcType>(item: {
           return;
         } else {
           let field =
-            apiModel.type === ModelTypeEnum.Store
+            apiModel.type === 'Store'
               ? store.fields.find(
                   sField => sField.name === tile.data.size_field
                 )
-              : apiModel.type === ModelTypeEnum.Malloy
+              : apiModel.type === 'Malloy'
                 ? apiModel.fields.find(
                     field => field.id === tile.data.size_field
                   )
                 : undefined;
 
-          if (field.result !== FieldResultEnum.Number) {
+          if (field.result !== 'number') {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_SIZE_FIELD_RESULT,
-                message: `"${ParameterEnum.SizeField}" result must be a number`,
+                title: 'TILE_DATA_WRONG_SIZE_FIELD_RESULT',
+                message: `"size_field" result must be a number`,
                 lines: [
                   {
                     line: tile.data.size_field_line_num,
@@ -343,10 +315,9 @@ export function checkChartDataParameters<T extends dcType>(item: {
         if (tile.select.indexOf(tile.data.multi_field) < 0) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TILE_DATA_WRONG_MULTI_FIELD,
+              title: 'TILE_DATA_WRONG_MULTI_FIELD',
               message:
-                `"${ParameterEnum.MultiField}" value must be one of ` +
-                `"${ParameterEnum.Select}" elements`,
+                `"multi_field" value must be one of ` + `"select" elements`,
               lines: [
                 {
                   line: tile.data.multi_field_line_num,
@@ -359,21 +330,21 @@ export function checkChartDataParameters<T extends dcType>(item: {
           return;
         } else {
           let field =
-            apiModel.type === ModelTypeEnum.Store
+            apiModel.type === 'Store'
               ? store.fields.find(
                   sField => sField.name === tile.data.multi_field
                 )
-              : apiModel.type === ModelTypeEnum.Malloy
+              : apiModel.type === 'Malloy'
                 ? apiModel.fields.find(
                     field => field.id === tile.data.multi_field
                   )
                 : undefined;
 
-          if (field.fieldClass !== FieldClassEnum.Dimension) {
+          if (field.fieldClass !== 'dimension') {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_MULTI_FIELD_CLASS,
-                message: `"${ParameterEnum.MultiField}" must be a Dimension`,
+                title: 'TILE_DATA_WRONG_MULTI_FIELD_CLASS',
+                message: `"multi_field" must be a Dimension`,
                 lines: [
                   {
                     line: tile.data.multi_field_line_num,
@@ -393,10 +364,10 @@ export function checkChartDataParameters<T extends dcType>(item: {
           if (tile.select.indexOf(element) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_PIVOT_ROWS_ELEMENT,
+                title: 'TILE_DATA_WRONG_PIVOT_ROWS_ELEMENT',
                 message:
                   `found element "${element}" that is not ` +
-                  `listed in "${ParameterEnum.Select}"`,
+                  `listed in "select"`,
                 lines: [
                   {
                     line: tile.data.pivot_rows_line_num,
@@ -410,18 +381,17 @@ export function checkChartDataParameters<T extends dcType>(item: {
           }
 
           let field =
-            apiModel.type === ModelTypeEnum.Store
+            apiModel.type === 'Store'
               ? store.fields.find(sField => sField.name === element)
-              : apiModel.type === ModelTypeEnum.Malloy
+              : apiModel.type === 'Malloy'
                 ? apiModel.fields.find(modelField => modelField.id === element)
                 : undefined;
 
-          if (field.fieldClass !== FieldClassEnum.Dimension) {
+          if (field.fieldClass !== 'dimension') {
             item.errors.push(
               new BmError({
-                title:
-                  ErTitleEnum.TILE_DATA_WRONG_PIVOT_ROWS_ELEMENT_FIELD_CLASS,
-                message: `"${ParameterEnum.PivotRows}" elements must be Dimensions`,
+                title: 'TILE_DATA_WRONG_PIVOT_ROWS_ELEMENT_FIELD_CLASS',
+                message: `"pivot_rows" elements must be Dimensions`,
                 lines: [
                   {
                     line: tile.data.pivot_rows_line_num,
@@ -441,10 +411,10 @@ export function checkChartDataParameters<T extends dcType>(item: {
           if (tile.select.indexOf(element) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_PIVOT_COLUMNS_ELEMENT,
+                title: 'TILE_DATA_WRONG_PIVOT_COLUMNS_ELEMENT',
                 message:
                   `found element "${element}" that is not ` +
-                  `listed in "${ParameterEnum.Select}"`,
+                  `listed in "select"`,
                 lines: [
                   {
                     line: tile.data.pivot_columns_line_num,
@@ -460,8 +430,8 @@ export function checkChartDataParameters<T extends dcType>(item: {
           if (tile.data.pivot_rows?.indexOf(element) > -1) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_DUPLICATE_PIVOT_COLUMNS_ELEMENT,
-                message: `"${ParameterEnum.PivotColumns}" elements cannot also be used in "${ParameterEnum.PivotRows}"`,
+                title: 'TILE_DATA_DUPLICATE_PIVOT_COLUMNS_ELEMENT',
+                message: `"pivot_columns" elements cannot also be used in "pivot_rows"`,
                 lines: [
                   {
                     line: tile.data.pivot_columns_line_num,
@@ -475,18 +445,17 @@ export function checkChartDataParameters<T extends dcType>(item: {
           }
 
           let field =
-            apiModel.type === ModelTypeEnum.Store
+            apiModel.type === 'Store'
               ? store.fields.find(sField => sField.name === element)
-              : apiModel.type === ModelTypeEnum.Malloy
+              : apiModel.type === 'Malloy'
                 ? apiModel.fields.find(modelField => modelField.id === element)
                 : undefined;
 
-          if (field.fieldClass !== FieldClassEnum.Dimension) {
+          if (field.fieldClass !== 'dimension') {
             item.errors.push(
               new BmError({
-                title:
-                  ErTitleEnum.TILE_DATA_WRONG_PIVOT_COLUMNS_ELEMENT_FIELD_CLASS,
-                message: `"${ParameterEnum.PivotColumns}" elements must be Dimensions`,
+                title: 'TILE_DATA_WRONG_PIVOT_COLUMNS_ELEMENT_FIELD_CLASS',
+                message: `"pivot_columns" elements must be Dimensions`,
                 lines: [
                   {
                     line: tile.data.pivot_columns_line_num,
@@ -507,12 +476,11 @@ export function checkChartDataParameters<T extends dcType>(item: {
             Object.keys(element)
               .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
               .forEach(parameter => {
-                if ([ParameterEnum.Field.toString()].indexOf(parameter) < 0) {
+                if (['field'.toString()].indexOf(parameter) < 0) {
                   item.errors.push(
                     new BmError({
-                      title:
-                        ErTitleEnum.TILE_DATA_UNKNOWN_PIVOT_VALUES_ELEMENT_PARAMETER,
-                      message: `parameter "${parameter}" cannot be used in ${ParameterEnum.PivotValues} element`,
+                      title: 'TILE_DATA_UNKNOWN_PIVOT_VALUES_ELEMENT_PARAMETER',
+                      message: `parameter "${parameter}" cannot be used in pivot_values element`,
                       lines: [
                         {
                           line: element[
@@ -533,8 +501,8 @@ export function checkChartDataParameters<T extends dcType>(item: {
           if (isUndefined(element.field)) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_PIVOT_VALUES_ELEMENT_MISSING_FIELD,
-                message: `"${ParameterEnum.Field}" is required inside "${ParameterEnum.PivotValues}" element`,
+                title: 'TILE_DATA_PIVOT_VALUES_ELEMENT_MISSING_FIELD',
+                message: `"field" is required inside "pivot_values" element`,
                 lines: [
                   {
                     line: tile.data.pivot_values_line_num,
@@ -550,10 +518,10 @@ export function checkChartDataParameters<T extends dcType>(item: {
           if (tile.select.indexOf(element.field) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_PIVOT_VALUES_ELEMENT_FIELD,
+                title: 'TILE_DATA_WRONG_PIVOT_VALUES_ELEMENT_FIELD',
                 message:
                   `found element "${element.field}" that is not ` +
-                  `listed in "${ParameterEnum.Select}"`,
+                  `listed in "select"`,
                 lines: [
                   {
                     line:
@@ -569,7 +537,7 @@ export function checkChartDataParameters<T extends dcType>(item: {
         });
       }
 
-      if (tile.type === ChartTypeEnum.PivotTable) {
+      if (tile.type === 'pivot_table') {
         let pivotDimensionFields = [
           ...(tile.data.pivot_rows || []),
           ...(tile.data.pivot_columns || [])
@@ -580,23 +548,23 @@ export function checkChartDataParameters<T extends dcType>(item: {
 
         tile.select.forEach(element => {
           let field =
-            apiModel.type === ModelTypeEnum.Store
+            apiModel.type === 'Store'
               ? store.fields.find(sField => sField.name === element)
-              : apiModel.type === ModelTypeEnum.Malloy
+              : apiModel.type === 'Malloy'
                 ? apiModel.fields.find(modelField => modelField.id === element)
                 : undefined;
 
           if (
-            field.fieldClass === FieldClassEnum.Dimension &&
+            field.fieldClass === 'dimension' &&
             pivotDimensionFields.indexOf(element) < 0
           ) {
             item.errors.push(
               new BmError({
                 title:
-                  ErTitleEnum.TILE_DATA_PIVOT_SELECTED_DIMENSION_MISSING_FROM_ROWS_OR_COLUMNS,
+                  'TILE_DATA_PIVOT_SELECTED_DIMENSION_MISSING_FROM_ROWS_OR_COLUMNS',
                 message:
                   `selected Dimension "${element}" must be used in ` +
-                  `"${ParameterEnum.PivotRows}" or "${ParameterEnum.PivotColumns}"`,
+                  `"pivot_rows" or "pivot_columns"`,
                 lines: [
                   {
                     line: tile.select_line_num,
@@ -610,16 +578,15 @@ export function checkChartDataParameters<T extends dcType>(item: {
           }
 
           if (
-            field.fieldClass === FieldClassEnum.Measure &&
+            field.fieldClass === 'measure' &&
             pivotValueFields.indexOf(element) < 0
           ) {
             item.errors.push(
               new BmError({
-                title:
-                  ErTitleEnum.TILE_DATA_PIVOT_SELECTED_MEASURE_MISSING_FROM_VALUES,
+                title: 'TILE_DATA_PIVOT_SELECTED_MEASURE_MISSING_FROM_VALUES',
                 message:
                   `selected Measure "${element}" must be used in ` +
-                  `"${ParameterEnum.PivotValues}"`,
+                  `"pivot_values"`,
                 lines: [
                   {
                     line: tile.select_line_num,
@@ -638,8 +605,8 @@ export function checkChartDataParameters<T extends dcType>(item: {
         if (!Array.isArray(tile.data.y_fields)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TILE_DATA_Y_FIELDS_MUST_BE_A_LIST,
-              message: `parameter "${ParameterEnum.YFields}" must be a list`,
+              title: 'TILE_DATA_Y_FIELDS_MUST_BE_A_LIST',
+              message: `parameter "y_fields" must be a list`,
               lines: [
                 {
                   line: tile.data.y_fields_line_num,
@@ -656,10 +623,10 @@ export function checkChartDataParameters<T extends dcType>(item: {
           if (tile.select.indexOf(element) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_Y_FIELDS_ELEMENT,
+                title: 'TILE_DATA_WRONG_Y_FIELDS_ELEMENT',
                 message:
                   `found element "${element}" that is not ` +
-                  `listed in "${ParameterEnum.Select}"`,
+                  `listed in "select"`,
                 lines: [
                   {
                     line: tile.data.y_fields_line_num,
@@ -672,22 +639,21 @@ export function checkChartDataParameters<T extends dcType>(item: {
             return;
           } else {
             let field =
-              apiModel.type === ModelTypeEnum.Store
+              apiModel.type === 'Store'
                 ? store.fields.find(sField => sField.name === element)
-                : apiModel.type === ModelTypeEnum.Malloy
+                : apiModel.type === 'Malloy'
                   ? apiModel.fields.find(field => field.id === element)
                   : undefined;
 
             if (
-              field.fieldClass !== FieldClassEnum.Measure &&
-              field.fieldClass !== FieldClassEnum.Calculation &&
-              tile.type !== ChartTypeEnum.Scatter
+              field.fieldClass !== 'measure' &&
+              field.fieldClass !== 'calculation' &&
+              tile.type !== 'scatter'
             ) {
               item.errors.push(
                 new BmError({
-                  title:
-                    ErTitleEnum.TILE_DATA_WRONG_Y_FIELDS_ELEMENT_FIELD_CLASS,
-                  message: `"${ParameterEnum.YFields}" element must be a Measure or Calculation for this chart type`,
+                  title: 'TILE_DATA_WRONG_Y_FIELDS_ELEMENT_FIELD_CLASS',
+                  message: `"y_fields" element must be a Measure or Calculation for this chart type`,
                   lines: [
                     {
                       line: tile.data.y_fields_line_num,
@@ -709,9 +675,9 @@ export function checkChartDataParameters<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

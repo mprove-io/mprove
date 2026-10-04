@@ -5,7 +5,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { RoleTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Gv } from '#common/types/backend/parts/gv';
@@ -65,7 +65,7 @@ export class RolesService {
 
     if (isDefined(role)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ROLE_ALREADY_EXISTS
+        message: 'BACKEND_ROLE_ALREADY_EXISTS'
       });
     }
   }
@@ -84,7 +84,7 @@ export class RolesService {
 
     if (isUndefined(role)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ROLE_DOES_NOT_EXIST
+        message: 'BACKEND_ROLE_DOES_NOT_EXIST'
       });
     }
 
@@ -121,7 +121,7 @@ export class RolesService {
 
     if (missingRoleIds.length > 0) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ROLES_DO_NOT_EXIST,
+        message: 'BACKEND_ROLES_DO_NOT_EXIST',
         displayData: {
           roles: missingRoleIds
         }
@@ -136,7 +136,7 @@ export class RolesService {
 
     if (isDefined(roleGiven)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ROLE_GIVEN_ALREADY_EXISTS
+        message: 'BACKEND_ROLE_GIVEN_ALREADY_EXISTS'
       });
     }
   }
@@ -148,7 +148,7 @@ export class RolesService {
 
     if (isUndefined(roleGiven)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ROLE_GIVEN_DOES_NOT_EXIST
+        message: 'BACKEND_ROLE_GIVEN_DOES_NOT_EXIST'
       });
     }
 

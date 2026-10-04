@@ -34,7 +34,7 @@
         <div
           class="flex flex-row"
           [ngClass]="{
-            'text-yellow-700': item.operator === fractionOperatorEnum.And
+            'text-yellow-700': item.operator === 'And'
           }"
         >
           <div class="ml-1">{{ item.operator | uppercase }} -</div>
@@ -46,8 +46,8 @@
 
   <div
     *ngIf="
-      fraction.type === fractionTypeEnum.QuarterOfYearIs ||
-      fraction.type === fractionTypeEnum.QuarterOfYearIsNot
+      fraction.type === 'QuarterOfYearIs' ||
+      fraction.type === 'QuarterOfYearIsNot'
     "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"

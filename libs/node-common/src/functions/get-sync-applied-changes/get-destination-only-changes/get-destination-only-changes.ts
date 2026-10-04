@@ -1,7 +1,8 @@
 import type { StatusResult } from 'simple-git';
+import type { DestinationChangeStatus } from '#node-common/functions/get-sync-applied-changes/get-destination-only-changes/destination-change-status';
 
 export type DestinationChange = {
-  status: 'deleted' | 'modified' | 'new';
+  status: DestinationChangeStatus;
   path: string;
 };
 

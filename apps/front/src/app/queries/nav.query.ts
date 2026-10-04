@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+
 import { BaseQuery } from './base.query';
 
 export class NavState {
@@ -14,7 +15,7 @@ export class NavState {
   projectName: string;
   projectDefaultBranch: string;
   repoId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
   branchId: string;
   envId: string;
   needValidate: boolean;

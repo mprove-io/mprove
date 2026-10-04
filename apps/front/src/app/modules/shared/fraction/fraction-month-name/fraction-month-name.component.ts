@@ -9,11 +9,9 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { FractionMonthNameValueEnum } from '#common/enums/fraction/fraction-month-name-value.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionMonthNameValue } from '#common/types/blockml/parts/fraction/fraction-month-name-value';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import {
   FractionMonthNameValueItem,
   FractionTypeItem
@@ -38,9 +36,6 @@ export class FractionMonthNameComponent {
     this.fractionMonthNameValueSelectElement?.close();
   }
 
-  fractionOperatorEnum = FractionOperatorEnum;
-  fractionTypeEnum = FractionTypeEnum;
-
   @Input() isDisabled: boolean;
   @Input() fraction: Fraction;
   @Input() fractionIndex: number;
@@ -51,79 +46,79 @@ export class FractionMonthNameComponent {
   fractionMonthNameTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: FractionTypeEnum.MonthNameIsAnyValue,
-      operator: FractionOperatorEnum.Or
+      value: 'MonthNameIsAnyValue',
+      operator: 'Or'
     },
     {
       label: 'is',
-      value: FractionTypeEnum.MonthNameIs,
-      operator: FractionOperatorEnum.Or
+      value: 'MonthNameIs',
+      operator: 'Or'
     },
     {
       label: 'is null',
-      value: FractionTypeEnum.MonthNameIsNull,
-      operator: FractionOperatorEnum.Or
+      value: 'MonthNameIsNull',
+      operator: 'Or'
     },
     {
       label: 'is not',
-      value: FractionTypeEnum.MonthNameIsNot,
-      operator: FractionOperatorEnum.And
+      value: 'MonthNameIsNot',
+      operator: 'And'
     },
     {
       label: 'is not null',
-      value: FractionTypeEnum.MonthNameIsNotNull,
-      operator: FractionOperatorEnum.And
+      value: 'MonthNameIsNotNull',
+      operator: 'And'
     }
   ];
 
   fractionMonthNameValuesList: FractionMonthNameValueItem[] = [
     {
       label: 'January',
-      value: FractionMonthNameValueEnum.January
+      value: 'January'
     },
     {
       label: 'February',
-      value: FractionMonthNameValueEnum.February
+      value: 'February'
     },
     {
       label: 'March',
-      value: FractionMonthNameValueEnum.March
+      value: 'March'
     },
     {
       label: 'April',
-      value: FractionMonthNameValueEnum.April
+      value: 'April'
     },
     {
       label: 'May',
-      value: FractionMonthNameValueEnum.May
+      value: 'May'
     },
     {
       label: 'June',
-      value: FractionMonthNameValueEnum.June
+      value: 'June'
     },
     {
       label: 'July',
-      value: FractionMonthNameValueEnum.July
+      value: 'July'
     },
     {
       label: 'August',
-      value: FractionMonthNameValueEnum.August
+      value: 'August'
     },
     {
       label: 'September',
-      value: FractionMonthNameValueEnum.September
+      value: 'September'
     },
     {
       label: 'October',
-      value: FractionMonthNameValueEnum.October
+      value: 'October'
     },
     {
       label: 'November',
-      value: FractionMonthNameValueEnum.November
+      value: 'November'
     },
     {
       label: 'December',
-      value: FractionMonthNameValueEnum.December
+      value: 'December'
     }
   ];
 
@@ -140,10 +135,10 @@ export class FractionMonthNameComponent {
     let fractionType = fractionTypeItem.value;
 
     switch (fractionType) {
-      case FractionTypeEnum.MonthNameIsAnyValue: {
+      case 'MonthNameIsAnyValue': {
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           brick: `any`,
           parentBrick: `any`
         };
@@ -152,12 +147,12 @@ export class FractionMonthNameComponent {
         break;
       }
 
-      case FractionTypeEnum.MonthNameIs: {
-        let newMonthNameValue = FractionMonthNameValueEnum.January;
+      case 'MonthNameIs': {
+        let newMonthNameValue: FractionMonthNameValue = 'January';
 
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           monthNameValue: newMonthNameValue,
           brick: `${newMonthNameValue}`,
           parentBrick: `${newMonthNameValue}`
@@ -168,10 +163,10 @@ export class FractionMonthNameComponent {
         break;
       }
 
-      case FractionTypeEnum.MonthNameIsNull: {
+      case 'MonthNameIsNull': {
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           brick: `null`,
           parentBrick: `null`
         };
@@ -181,12 +176,12 @@ export class FractionMonthNameComponent {
         break;
       }
 
-      case FractionTypeEnum.MonthNameIsNot: {
-        let newMonthNameValue = FractionMonthNameValueEnum.January;
+      case 'MonthNameIsNot': {
+        let newMonthNameValue: FractionMonthNameValue = 'January';
 
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.And,
+          operator: 'And',
           monthNameValue: newMonthNameValue,
           brick: `not ${newMonthNameValue}`,
           parentBrick: `not ${newMonthNameValue}`
@@ -197,10 +192,10 @@ export class FractionMonthNameComponent {
         break;
       }
 
-      case FractionTypeEnum.MonthNameIsNotNull: {
+      case 'MonthNameIsNotNull': {
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.And,
+          operator: 'And',
           brick: `not null`,
           parentBrick: `not null`
         };
@@ -218,18 +213,18 @@ export class FractionMonthNameComponent {
   monthNameValueChange(fractionMonthNameValueItem: FractionMonthNameValueItem) {
     let fractionMonthNameValue = fractionMonthNameValueItem.value;
 
-    if (this.fraction.type === FractionTypeEnum.MonthNameIs) {
+    if (this.fraction.type === 'MonthNameIs') {
       this.fraction = {
         type: this.fraction.type,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         monthNameValue: fractionMonthNameValue,
         brick: `${fractionMonthNameValue}`,
         parentBrick: `${fractionMonthNameValue}`
       };
-    } else if (this.fraction.type === FractionTypeEnum.MonthNameIsNot) {
+    } else if (this.fraction.type === 'MonthNameIsNot') {
       this.fraction = {
         type: this.fraction.type,
-        operator: FractionOperatorEnum.And,
+        operator: 'And',
         monthNameValue: fractionMonthNameValue,
         brick: `not ${fractionMonthNameValue}`,
         parentBrick: `not ${fractionMonthNameValue}`

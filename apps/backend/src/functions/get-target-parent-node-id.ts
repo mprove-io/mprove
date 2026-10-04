@@ -1,5 +1,5 @@
 import { getUserFolderNodeId } from '#backend/functions/get-user-folder-node-id';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Space } from '#common/types/blockml/parts/space';
 
@@ -57,7 +57,7 @@ export function getTargetParentNodeId(item: {
   // Example: turn the defining file name "s1.space" into root space folder name "s1".
   let selectedSpaceFileName = selectedSpaceFilePathParts[
     selectedSpaceFilePathParts.length - 1
-  ].replace(FileExtensionEnum.Space, '');
+  ].replace('.space', '');
 
   // Example: split selected space "s1.s2" into ["s1", "s2"].
   let spaceParts = selectedSpace.space.split('.');

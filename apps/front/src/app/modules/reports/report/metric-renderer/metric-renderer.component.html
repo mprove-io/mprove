@@ -1,14 +1,14 @@
 <div
   class="font-ms truncate"
-  *ngIf="params.data.rowType !== rowTypeMetric"
+  *ngIf="params.data.rowType !== 'metric'"
   [ngClass]="{
-    '': params.data.rowType === rowTypeHeader
+    '': params.data.rowType === 'header'
   }"
 >
   <div
     class="flex max-w-min truncate"
     [ngClass]="{
-      'hover:text-m500 cursor-pointer': params.data.rowType === rowTypeFormula
+      'hover:text-m500 cursor-pointer': params.data.rowType === 'formula'
     }"
     (click)="showDialog($event)"
   >
@@ -22,7 +22,7 @@
   </div>
 </div>
 
-<div *ngIf="params.data.rowType === rowTypeMetric" class="font-ms">
+<div *ngIf="params.data.rowType === 'metric'" class="font-ms">
   <div class="flex flex-col">
     <div
       class="hover:text-m500 flex max-w-min cursor-pointer truncate"
@@ -49,8 +49,8 @@
     <div
       class="flex flex-row"
       *ngIf="
-        params.data.rowType === rowTypeMetric &&
-        metric.type === metricTypeModel &&
+        params.data.rowType === 'metric' &&
+        metric.type === 'Model' &&
         showParameters === true
       "
     >

@@ -5,18 +5,15 @@ import { checkStoreFractionControlOptions } from '#blockml/functions/check-store
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { ControlClass } from '#common/types/blockml/parts/fraction/control-class';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileStoreFractionControl } from '#common/types/blockml/parts/internal/file-store-fraction-control';
 
-let func = FuncEnum.CheckStoreFractionControls;
+let func: Func = 'extra/check-store-fraction-controls';
 
 export function checkStoreFractionControls(
   item: {
@@ -27,12 +24,12 @@ export function checkStoreFractionControls(
     filePath: string;
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId, skipOptions } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let errorsOnStart = item.errors.length;
 
@@ -40,7 +37,7 @@ export function checkStoreFractionControls(
     if (isDefined(control) && control.constructor !== Object) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.CONTROLS_ELEMENT_IS_NOT_A_DICTIONARY,
+          title: 'CONTROLS_ELEMENT_IS_NOT_A_DICTIONARY',
           message: `found at least one controls element that is not a dictionary`,
           lines: [
             {
@@ -59,20 +56,20 @@ export function checkStoreFractionControls(
       .forEach(parameter => {
         if (
           [
-            ParameterEnum.Input.toString(),
-            ParameterEnum.ListInput.toString(),
-            ParameterEnum.Switch.toString(),
-            ParameterEnum.DatePicker.toString(),
-            ParameterEnum.Selector.toString(),
-            ParameterEnum.Options.toString(),
-            ParameterEnum.Value.toString(),
-            ParameterEnum.Label.toString()
+            'input'.toString(),
+            'list_input'.toString(),
+            'switch'.toString(),
+            'date_picker'.toString(),
+            'selector'.toString(),
+            'options'.toString(),
+            'value'.toString(),
+            'label'.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNKNOWN_CONTROLS_ELEMENT_PARAMETER,
-              message: `parameter "${parameter}" cannot be used in ${ParameterEnum.FractionTypes} element controls`,
+              title: 'UNKNOWN_CONTROLS_ELEMENT_PARAMETER',
+              message: `parameter "${parameter}" cannot be used in fraction_types element controls`,
               lines: [
                 {
                   line: control[
@@ -89,11 +86,11 @@ export function checkStoreFractionControls(
 
         if (
           Array.isArray(control[parameter as keyof FileStoreFractionControl]) &&
-          [ParameterEnum.Options.toString()].indexOf(parameter) < 0
+          ['options'.toString()].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_LIST,
+              title: 'UNEXPECTED_LIST',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -115,7 +112,7 @@ export function checkStoreFractionControls(
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+              title: 'UNEXPECTED_DICTIONARY',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -144,8 +141,8 @@ export function checkStoreFractionControls(
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_OPTIONS,
-            message: `${ParameterEnum.Selector} must have "${ParameterEnum.Options}" parameter`,
+            title: 'MISSING_OPTIONS',
+            message: `selector must have "options" parameter`,
             lines: [
               {
                 line: Math.min(...controlsElementKeyLineNums),
@@ -165,8 +162,8 @@ export function checkStoreFractionControls(
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.OPTIONS_WITHOUT_SELECTOR,
-            message: `${ParameterEnum.Options} can only be used with "${ParameterEnum.Selector}" control`,
+            title: 'OPTIONS_WITHOUT_SELECTOR',
+            message: `options can only be used with "selector" control`,
             lines: [
               {
                 line: control.options_line_num,
@@ -201,19 +198,19 @@ export function checkStoreFractionControls(
       let declarations: string[] = Object.keys(control).filter(
         d =>
           [
-            ParameterEnum.Input.toString(),
-            ParameterEnum.ListInput.toString(),
-            ParameterEnum.Switch.toString(),
-            ParameterEnum.DatePicker.toString(),
-            ParameterEnum.Selector.toString()
+            'input'.toString(),
+            'list_input'.toString(),
+            'switch'.toString(),
+            'date_picker'.toString(),
+            'selector'.toString()
           ].indexOf(d) > -1
       );
 
       if (declarations.length === 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_CONTROL_DECLARATION,
-            message: `control must contain one of parameters: ${ParameterEnum.Input}, ${ParameterEnum.Switch}, ${ParameterEnum.DatePicker}, ${ParameterEnum.Selector}`,
+            title: 'MISSING_CONTROL_DECLARATION',
+            message: `control must contain one of parameters: input, switch, date_picker, selector`,
             lines: [
               {
                 line: Math.min(...controlsElementKeyLineNums),
@@ -229,8 +226,8 @@ export function checkStoreFractionControls(
       if (declarations.length > 1) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_CONTROL,
-            message: `control must contain only one of parameters:${ParameterEnum.Input}, ${ParameterEnum.Switch}, ${ParameterEnum.DatePicker}, ${ParameterEnum.Selector}`,
+            title: 'TOO_MANY_DECLARATIONS_FOR_ONE_CONTROL',
+            message: `control must contain only one of parameters:input, switch, date_picker, selector`,
             lines: [
               {
                 line: Math.min(...controlsElementKeyLineNums),
@@ -252,7 +249,7 @@ export function checkStoreFractionControls(
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.WRONG_CHARS_IN_CONTROL_NAME,
+            title: 'WRONG_CHARS_IN_CONTROL_NAME',
             message: `parameter "${declaration}" contains wrong characters or whitespace (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
@@ -285,9 +282,9 @@ export function checkStoreFractionControls(
       let newControlProps: FileStoreFractionControl = {
         name: controlName,
         name_line_num: controNameLineNum,
-        controlClass: <ControlClassEnum>controlClass,
+        controlClass: <ControlClass>controlClass,
         isMetricsDate:
-          <ControlClassEnum>controlClass === ControlClassEnum.DatePicker &&
+          <ControlClass>controlClass === 'date_picker' &&
           isDefined(control.value) &&
           control.value.toString().split('$METRICS_DATE_').length > 1
       };
@@ -325,7 +322,7 @@ export function checkStoreFractionControls(
 
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.DUPLICATE_CONTROL_NAMES,
+            title: 'DUPLICATE_CONTROL_NAMES',
             message: 'Controls must have unique names',
             lines: lines
           })

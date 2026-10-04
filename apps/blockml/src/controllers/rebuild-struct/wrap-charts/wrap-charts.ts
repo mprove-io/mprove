@@ -1,11 +1,11 @@
 import { wrapTiles } from '#blockml/functions/wrap-tiles/wrap-tiles';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import type { Chart } from '#common/types/blockml/parts/chart';
+
+import type { Chart } from '#common/types/blockml/parts/chart/chart';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { Query } from '#common/types/blockml/parts/query/query';
 
 export function wrapCharts(item: {
   structId: string;
@@ -30,7 +30,7 @@ export function wrapCharts(item: {
       apiModels: apiModels,
       stores: stores,
       tiles: x.tiles,
-      mconfigParentType: MconfigParentTypeEnum.Chart,
+      mconfigParentType: 'Chart',
       mconfigParentId: x.chart,
       envId: envId,
       timezone: timezone

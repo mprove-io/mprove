@@ -19,19 +19,12 @@ import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID, TRIPLE_UNDERSCORE } from '#common/constants/top';
 import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { TimeframeEnum } from '#common/enums/timeframe.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { ToBackendDuplicateMconfigAndQueryRequest } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-request';
 import type { ToBackendDuplicateMconfigAndQueryResponse } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-response';
 import type { ToBackendGroupMetricByDimensionRequest } from '#common/types/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-request';
@@ -42,9 +35,10 @@ import type { ToBackendGetQueryRequest } from '#common/types/backend/routes/quer
 import type { ToBackendGetQueryResponse } from '#common/types/backend/routes/queries/get-query/get-query-response';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelFieldY } from '#common/types/blockml/parts/model-field-y';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-y';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -89,11 +83,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.ref.close();
   }
 
-  queryStatusRunning = QueryStatusEnum.Running;
-  queryStatusCompleted = QueryStatusEnum.Completed;
-
-  modelTypeStore = ModelTypeEnum.Store;
-
   title: string;
 
   groupByFieldForm: FormGroup;
@@ -107,12 +96,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   isShowInit = true;
   isRunButtonPressed = false;
 
-  chartTypeEnumTable = ChartTypeEnum.Table;
-  chartTypeEnumPivotTable = ChartTypeEnum.PivotTable;
-  chartTypeEnumLine = ChartTypeEnum.Line;
-  chartTypeEnumScatter = ChartTypeEnum.Scatter;
-  chartTypeEnumBar = ChartTypeEnum.Bar;
-  groupMetricChartType = ChartTypeEnum.Line;
+  groupMetricChartType: ChartType = 'line';
 
   isData = true;
   isFormat = true;
@@ -239,7 +223,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         concatMap(() => {
           let nav = this.navQuery.getValue();
 
-          if (this.query?.status === QueryStatusEnum.Running) {
+          if (this.query?.status === 'Running') {
             let payload: ToBackendGetQueryRequest['input'] = {
               projectId: nav.projectId,
               branchId: nav.branchId,
@@ -316,14 +300,14 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       serverTs: 1
     });
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         isKeepQueryId: true,
         isDraft: false,
         chartId: undefined,
         mconfig: newMconfig,
         queryOperation: {
-          type: QueryOperationTypeEnum.Get,
+          type: 'Get',
           timezone: newMconfig.timezone
         }
       });
@@ -425,7 +409,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       .metrics.find(y => y.metricId === this.ref.data.metricId);
 
     let restrictedFilterFieldIds =
-      metric.modelType === ModelTypeEnum.Malloy
+      metric.modelType === 'Malloy'
         ? [
             `${metric.timeFieldId}_year`,
             `${metric.timeFieldId}_quarter`,
@@ -438,14 +422,14 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
             `${metric.timeFieldId}_ts`
           ]
         : [
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Year}`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Quarter}`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Month}`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Week}`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Date}`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Hour}`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Minute}`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}year`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}quarter`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}month`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}week`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}date`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}hour`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}minute`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}time`
           ];
 
     this.fieldsListLoading = true;
@@ -478,8 +462,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               ...resp.output.model.fields
                 .filter(
                   x =>
-                    x.result !== FieldResultEnum.Ts &&
-                    x.fieldClass === FieldClassEnum.Dimension &&
+                    x.result !== 'ts' &&
+                    x.fieldClass === 'dimension' &&
                     restrictedFilterFieldIds.indexOf(x.id) < 0
                 )
                 .map(x =>
@@ -558,7 +542,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
               this.cd.detectChanges();
 
-              if (this.query.status !== QueryStatusEnum.Completed) {
+              if (this.query.status !== 'Completed') {
                 this.run();
               }
             }
@@ -611,7 +595,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  groupMetricChartTypeChange(item: { newChartType: ChartTypeEnum }) {
+  groupMetricChartTypeChange(item: { newChartType: ChartType }) {
     let { newChartType } = item;
 
     (document.activeElement as HTMLElement).blur();
@@ -635,7 +619,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
   setGroupMetricChartType(item: {
     mconfig: MconfigX;
-    newChartType: ChartTypeEnum;
+    newChartType: ChartType;
   }) {
     let { mconfig, newChartType } = item;
 

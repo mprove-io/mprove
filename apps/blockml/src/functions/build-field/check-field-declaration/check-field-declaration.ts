@@ -5,27 +5,25 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
-let func = FuncEnum.CheckFieldDeclaration;
+let func: Func = 'build-field/check-field-declaration';
 
 export function checkFieldDeclaration<T extends sdrType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newEntities: T[] = [];
 
@@ -34,7 +32,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
 
     x.parameters.forEach(field => {
       let declarations: string[] = Object.keys(field).filter(
-        d => [ParameterEnum.Filter.toString()].indexOf(d) > -1
+        d => ['filter'.toString()].indexOf(d) > -1
       );
 
       let fieldKeysLineNums: number[] = Object.keys(field)
@@ -45,8 +43,8 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       if (declarations.length === 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_PARAMETER_DECLARATION,
-            message: `parameter must contain ${ParameterEnum.Filter}`,
+            title: 'MISSING_PARAMETER_DECLARATION',
+            message: `parameter must contain filter`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -68,7 +66,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.PARAMETER_DECLARATION_WRONG_VALUE,
+            title: 'PARAMETER_DECLARATION_WRONG_VALUE',
             message: `parameter "${declaration}" contains wrong characters or whitespace (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
@@ -97,7 +95,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       let newFieldProps: FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
-        fieldClass: <FieldClassEnum>fieldClass
+        fieldClass: <FieldClass>fieldClass
       };
       Object.assign(field, newFieldProps);
     });
@@ -106,9 +104,9 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       let declarations: string[] = Object.keys(field).filter(
         d =>
           [
-            ParameterEnum.Dimension.toString(),
-            ParameterEnum.Time.toString(),
-            ParameterEnum.Measure.toString()
+            'dimension'.toString(),
+            'time'.toString(),
+            'measure'.toString()
           ].indexOf(d) > -1
       );
 
@@ -119,8 +117,8 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       if (declarations.length === 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_FIELD_DECLARATION,
-            message: `field must contain one of parameters: ${ParameterEnum.Dimension}, ${ParameterEnum.Time}, ${ParameterEnum.Measure}`,
+            title: 'MISSING_FIELD_DECLARATION',
+            message: `field must contain one of parameters: dimension, time, measure`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -136,8 +134,8 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       if (declarations.length > 1) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD,
-            message: `field must contain only one of parameters: ${ParameterEnum.Dimension}, ${ParameterEnum.Time}, ${ParameterEnum.Measure}`,
+            title: 'TOO_MANY_DECLARATIONS_FOR_ONE_FIELD',
+            message: `field must contain only one of parameters: dimension, time, measure`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -159,7 +157,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE,
+            title: 'FIELD_DECLARATION_WRONG_VALUE',
             message: `parameter "${declaration}" contains wrong characters or whitespace (only snake_case "a...z0...9_" is allowed)`,
             lines: [
               {
@@ -179,12 +177,12 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       let fieldName = field[fieldClass as keyof FieldAny] as string;
 
       if (
-        [ParameterEnum.Time.toString()].indexOf(fieldClass) > -1 &&
-        caller === CallerEnum.BuildStoreField
+        ['time'.toString()].indexOf(fieldClass) > -1 &&
+        caller === 'BuildStoreField'
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.WRONG_FIELD_DECLARATION,
+            title: 'WRONG_FIELD_DECLARATION',
             message: `${fieldClass} cannot be used in fields of ${x.fileExt} file`,
             lines: [
               {
@@ -208,7 +206,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       let newFieldProps: FieldAny = {
         name: fieldName,
         name_line_num: fieldNameLineNum,
-        fieldClass: <FieldClassEnum>fieldClass
+        fieldClass: <FieldClass>fieldClass
       };
       Object.assign(field, newFieldProps);
     });
@@ -221,8 +219,8 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

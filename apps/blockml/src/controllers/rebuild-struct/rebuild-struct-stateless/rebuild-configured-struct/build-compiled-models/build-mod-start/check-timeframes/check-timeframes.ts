@@ -3,26 +3,24 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 
-let func = FuncEnum.CheckTimeframes;
+let func: Func = 'build-mod-start/check-timeframes';
 
 export function checkTimeframes(item: {
   mods: FileMod[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileMod[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newMods: FileMod[] = [];
 
@@ -59,7 +57,7 @@ export function checkTimeframes(item: {
 
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TIMEFRAME_MUST_BE_BASED_ON_A_FIELD_WITH_T_SUFFIX,
+          title: 'TIMEFRAME_MUST_BE_BASED_ON_A_FIELD_WITH_T_SUFFIX',
           message: `Timeframe field "${fieldItem.field.name}" must be based on a field with "_t" suffix`,
           lines: [
             {
@@ -77,8 +75,8 @@ export function checkTimeframes(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Mods, newMods);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_mods.log', newMods);
 
   return Result.succeed(newMods);
 }

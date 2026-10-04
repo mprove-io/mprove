@@ -5,29 +5,26 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartPlate } from '#common/types/blockml/parts/internal/file-chart-plate';
 
-let func = FuncEnum.CheckChartPlateParameters;
+let func: Func = 'build-mconfig-chart/check-chart-plate-parameters';
 
 export function checkChartPlateParameters<T extends dcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -44,15 +41,15 @@ export function checkChartPlateParameters<T extends dcType>(item: {
         .forEach(parameter => {
           if (
             [
-              ParameterEnum.PlateWidth.toString(),
-              ParameterEnum.PlateHeight.toString(),
-              ParameterEnum.PlateX.toString(),
-              ParameterEnum.PlateY.toString()
+              'plate_width'.toString(),
+              'plate_height'.toString(),
+              'plate_x'.toString(),
+              'plate_y'.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_PLATE_UNKNOWN_PARAMETER,
+                title: 'TILE_PLATE_UNKNOWN_PARAMETER',
                 message:
                   `parameter "${parameter}" cannot be used ` +
                   'inside Tile plate',
@@ -75,7 +72,7 @@ export function checkChartPlateParameters<T extends dcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_PLATE_UNEXPECTED_LIST,
+                title: 'TILE_PLATE_UNEXPECTED_LIST',
                 message: `parameter "${parameter}" cannot be a list`,
                 lines: [
                   {
@@ -97,7 +94,7 @@ export function checkChartPlateParameters<T extends dcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_PLATE_UNEXPECTED_DICTIONARY,
+                title: 'TILE_PLATE_UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" cannot be a dictionary`,
                 lines: [
                   {
@@ -115,10 +112,10 @@ export function checkChartPlateParameters<T extends dcType>(item: {
 
           if (
             [
-              ParameterEnum.PlateWidth.toString(),
-              ParameterEnum.PlateHeight.toString(),
-              ParameterEnum.PlateX.toString(),
-              ParameterEnum.PlateY.toString()
+              'plate_width'.toString(),
+              'plate_height'.toString(),
+              'plate_x'.toString(),
+              'plate_y'.toString()
             ].indexOf(parameter) > -1 &&
             !(tile.plate[parameter as keyof FileChartPlate] as any).match(
               MyRegex.CAPTURE_DIGITS_START_TO_END_G()
@@ -126,8 +123,7 @@ export function checkChartPlateParameters<T extends dcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title:
-                  ErTitleEnum.TILE_PLATE_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
+                title: 'TILE_PLATE_PARAMETER_MUST_BE_A_POSITIVE_INTEGER',
                 message:
                   `"${
                     tile.plate[parameter as keyof FileChartPlate] as any
@@ -153,9 +149,9 @@ export function checkChartPlateParameters<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

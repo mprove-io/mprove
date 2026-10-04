@@ -8,7 +8,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 
@@ -17,7 +18,7 @@ export const projectsTable = pgTable(
   {
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
     orgId: varchar('org_id', { length: 128 }).notNull(),
-    remoteType: varchar('remote_type').$type<ProjectRemoteTypeEnum>().notNull(),
+    remoteType: varchar('remote_type').$type<ProjectRemoteType>().notNull(),
     st: json('st')
       .$type<{ encrypted: string; decrypted: ProjectSt }>()
       .notNull(),

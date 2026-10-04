@@ -6,12 +6,11 @@ import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
@@ -101,7 +100,7 @@ export class ConnectionsService {
     projectId: string;
     connectionId: string;
     envId: string;
-    type: ConnectionTypeEnum;
+    type: ConnectionType;
     options: ConnectionOptions;
   }): ConnectionTab {
     let { projectId, connectionId, envId, type, options } = item;
@@ -361,7 +360,7 @@ export class ConnectionsService {
 
     if (isDefined(connection)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
+        message: 'BACKEND_CONNECTION_ALREADY_EXISTS'
       });
     }
   }
@@ -385,7 +384,7 @@ export class ConnectionsService {
 
     if (isUndefined(connection)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+        message: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
       });
     }
 

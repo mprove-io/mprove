@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
 import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { NavQuery } from '../queries/nav.query';
@@ -31,7 +31,7 @@ export class SessionModelsResolver {
 
     let payload: ToBackendGetLlmModelsWithProviderRequest['input'] = {
       projectId: nav.projectId,
-      sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor]
+      sessionTypes: ['Explorer', 'Editor']
     };
 
     return this.apiService

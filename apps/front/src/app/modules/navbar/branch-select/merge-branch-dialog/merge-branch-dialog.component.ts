@@ -17,10 +17,10 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import type { ToBackendMergeRepoRequest } from '#common/types/backend/routes/repos/merge-repo/merge-repo-request';
 import type { ToBackendMergeRepoResponse } from '#common/types/backend/routes/repos/merge-repo/merge-repo-response';
-import type { BranchItem } from '#common/types/front/branch-item';
+import type { BranchItem } from '#common/types/front/repo/branch-item';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -60,7 +60,7 @@ export class MergeBranchDialogComponent implements OnInit {
   mergeForm: FormGroup;
 
   branchesList: BranchItem[] = this.ref.data.branchesList.filter(
-    (x: BranchItem) => x.repoType !== RepoTypeEnum.Session
+    (x: BranchItem) => x.repoType !== 'session'
   );
 
   selectedBranchItem: BranchItem = undefined;
@@ -101,8 +101,7 @@ export class MergeBranchDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let isTheirBranchRemote =
-      this.selectedBranchItem.repoType === RepoTypeEnum.Production;
+    let isTheirBranchRemote = this.selectedBranchItem.repoType === 'production';
 
     let payload: ToBackendMergeRepoRequest['input'] = {
       projectId: this.ref.data.projectId,

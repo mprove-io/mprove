@@ -9,7 +9,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
+
 import type { GivenLt } from '#common/types/shared/st-lt/givens/given-lt';
 import type { GivenSt } from '#common/types/shared/st-lt/givens/given-st';
 
@@ -21,7 +22,7 @@ export const givensTable = pgTable(
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     givenId: varchar('given_id', { length: 32 }).notNull(), // name
-    type: varchar('type').$type<GivenTypeEnum>().notNull(),
+    type: varchar('type').$type<GivenType>().notNull(),
     isMultiple: boolean('is_multiple'),
     st: json('st').$type<{ encrypted: string; decrypted: GivenSt }>().notNull(),
     lt: json('lt').$type<{ encrypted: string; decrypted: GivenLt }>().notNull(),

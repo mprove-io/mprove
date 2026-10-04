@@ -1,5 +1,5 @@
 import type { FieldDef, TableSourceDef } from '@malloydata/malloy';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
@@ -40,7 +40,7 @@ export function prePopulateMalloySchemaCache(item: {
       // columns so Malloy falls back to its own fetching + sampling.
       // ref: malloy/packages/malloy-db-snowflake/src/snowflake_connection.ts
       //   schemaFromTablePath (line 348) — samples 100 rows for VARIANT columns
-      if (pc.type === ConnectionTypeEnum.SnowFlake) {
+      if (pc.type === 'SnowFlake') {
         let snowflakeVariantTypes = ['variant', 'array', 'object'];
         let hasVariant = table.columns.some(col =>
           snowflakeVariantTypes.includes(col.dataType.toLowerCase())

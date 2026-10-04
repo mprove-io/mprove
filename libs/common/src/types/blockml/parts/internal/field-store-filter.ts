@@ -1,7 +1,7 @@
-import type { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FileStoreFractionControl } from '#common/types/blockml/parts/internal/file-store-fraction-control';
-import type { EnumValues } from '#common/types/enum-values';
 
 export type FieldStoreFilter = {
   label?: string;
@@ -16,6 +16,6 @@ export type FieldStoreFilter = {
   fraction_controls_line_num?: number;
   name?: string;
   name_line_num?: number;
-  fieldClass?: EnumValues<typeof FieldClassEnum>;
+  fieldClass?: FieldClass;
   apiFractions?: Fraction[];
 };

@@ -18,11 +18,11 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { DatabricksAuthType } from '#common/types/backend/parts/connection-parts/databricks-auth-type';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { ToBackendEditConnectionRequest } from '#common/types/backend/routes/connections/edit-connection/edit-connection-request';
@@ -78,23 +78,12 @@ export class EditConnectionDialogComponent implements OnInit {
   isMotherduckAttachModeSingle = true;
   isMotherduckAccessModeReadOnly = true;
 
-  typeSnowFlake = ConnectionTypeEnum.SnowFlake;
-  typeBigQuery = ConnectionTypeEnum.BigQuery;
   // typeClickHouse = ConnectionTypeEnum.ClickHouse;
-  typeDatabricks = ConnectionTypeEnum.Databricks;
-  databricksAuthTypes = [
-    DatabricksAuthTypeEnum.OAuthM2M,
-    DatabricksAuthTypeEnum.PersonalAccessToken
+
+  databricksAuthTypes: DatabricksAuthType[] = [
+    'OAuthM2M',
+    'PersonalAccessToken'
   ];
-  databricksAuthTypeOAuthM2M = DatabricksAuthTypeEnum.OAuthM2M;
-  databricksAuthTypePAT = DatabricksAuthTypeEnum.PersonalAccessToken;
-  typeMotherDuck = ConnectionTypeEnum.MotherDuck;
-  typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
-  typeMySQL = ConnectionTypeEnum.MySQL;
-  typeTrino = ConnectionTypeEnum.Trino;
-  typePresto = ConnectionTypeEnum.Presto;
-  typeGoogleApi = ConnectionTypeEnum.GoogleApi;
-  typeApi = ConnectionTypeEnum.Api;
 
   testConnectionResult: TestConnectionResult;
   testInternalHostResult: TestConnectionResult;
@@ -289,11 +278,9 @@ export class EditConnectionDialogComponent implements OnInit {
       ]
     });
 
-    let databricksAuthType =
-      this.dataItem.connection.options.databricks?.authType ??
-      DatabricksAuthTypeEnum.OAuthM2M;
-    let isDatabricksM2M =
-      databricksAuthType === DatabricksAuthTypeEnum.OAuthM2M;
+    let databricksAuthType: DatabricksAuthType =
+      this.dataItem.connection.options.databricks?.authType ?? 'OAuthM2M';
+    let isDatabricksM2M = databricksAuthType === 'OAuthM2M';
 
     this.editDatabricksForm = this.fb.group({
       authType: [databricksAuthType, [Validators.required]],
@@ -333,8 +320,8 @@ export class EditConnectionDialogComponent implements OnInit {
 
     this.editDatabricksForm
       .get('authType')
-      .valueChanges.subscribe((authType: DatabricksAuthTypeEnum) => {
-        if (authType === DatabricksAuthTypeEnum.OAuthM2M) {
+      .valueChanges.subscribe((authType: DatabricksAuthType) => {
+        if (authType === 'OAuthM2M') {
           this.editDatabricksForm
             .get('oauthClientId')
             .setValidators([Validators.required]);
@@ -517,13 +504,13 @@ export class EditConnectionDialogComponent implements OnInit {
   isCurrentInternalPairInvalid() {
     let cType = this.dataItem.connection.type;
 
-    if (cType === ConnectionTypeEnum.PostgreSQL) {
+    if (cType === 'PostgreSQL') {
       return this.isPostgresInternalPairInvalid();
     }
-    if (cType === ConnectionTypeEnum.MySQL) {
+    if (cType === 'MySQL') {
       return this.isMysqlInternalPairInvalid();
     }
-    if (cType === ConnectionTypeEnum.Presto) {
+    if (cType === 'Presto') {
       return this.isPrestoInternalPairInvalid();
     }
     return false;
@@ -532,28 +519,28 @@ export class EditConnectionDialogComponent implements OnInit {
   isInternalFieldsComplete() {
     let cType = this.dataItem.connection.type;
 
-    if (cType === ConnectionTypeEnum.PostgreSQL) {
+    if (cType === 'PostgreSQL') {
       let host = this.editPostgresForm?.value?.internalHost;
       let port = this.editPostgresForm?.value?.internalPort;
       return isDefined(host) && host !== '' && isDefined(port) && port !== '';
     }
-    if (cType === ConnectionTypeEnum.MySQL) {
+    if (cType === 'MySQL') {
       let host = this.editMysqlForm?.value?.internalHost;
       let port = this.editMysqlForm?.value?.internalPort;
       return isDefined(host) && host !== '' && isDefined(port) && port !== '';
     }
-    if (cType === ConnectionTypeEnum.Presto) {
+    if (cType === 'Presto') {
       let server = this.editPrestoForm?.value?.internalServer;
       let port = this.editPrestoForm?.value?.internalPort;
       return (
         isDefined(server) && server !== '' && isDefined(port) && port !== ''
       );
     }
-    if (cType === ConnectionTypeEnum.Trino) {
+    if (cType === 'Trino') {
       let server = this.editTrinoForm?.value?.internalServer;
       return isDefined(server) && server !== '';
     }
-    if (cType === ConnectionTypeEnum.Databricks) {
+    if (cType === 'Databricks') {
       let host = this.editDatabricksForm?.value?.internalHost;
       return isDefined(host) && host !== '';
     }
@@ -563,7 +550,7 @@ export class EditConnectionDialogComponent implements OnInit {
   getInternalPairErrorMessage() {
     let cType = this.dataItem.connection.type;
 
-    if (cType === ConnectionTypeEnum.Presto) {
+    if (cType === 'Presto') {
       return 'Set both Internal Server and Internal Port, or neither';
     }
     return 'Set both Internal Host and Internal Port, or neither';
@@ -582,25 +569,21 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editApiForm.markAllAsTouched();
     this.editGoogleApiForm.markAllAsTouched();
 
-    let cType: ConnectionTypeEnum = this.dataItem.connection.type;
+    let cType: ConnectionType = this.dataItem.connection.type;
 
     if (
-      (cType === ConnectionTypeEnum.BigQuery && !this.editBigqueryForm.valid) ||
+      (cType === 'BigQuery' && !this.editBigqueryForm.valid) ||
       // (cType === ConnectionTypeEnum.ClickHouse &&
       //   !this.editClickhouseForm.valid) ||
-      (cType === ConnectionTypeEnum.MotherDuck &&
-        !this.editMotherduckForm.valid) ||
-      (cType === ConnectionTypeEnum.PostgreSQL &&
-        !this.editPostgresForm.valid) ||
-      (cType === ConnectionTypeEnum.MySQL && !this.editMysqlForm.valid) ||
-      (cType === ConnectionTypeEnum.Trino && !this.editTrinoForm.valid) ||
-      (cType === ConnectionTypeEnum.Presto && !this.editPrestoForm.valid) ||
-      (cType === ConnectionTypeEnum.SnowFlake &&
-        !this.editSnowflakeForm.valid) ||
-      (cType === ConnectionTypeEnum.Databricks &&
-        !this.editDatabricksForm.valid) ||
-      (cType === ConnectionTypeEnum.Api && !this.editApiForm.valid) ||
-      (cType === ConnectionTypeEnum.GoogleApi && !this.editGoogleApiForm.valid)
+      (cType === 'MotherDuck' && !this.editMotherduckForm.valid) ||
+      (cType === 'PostgreSQL' && !this.editPostgresForm.valid) ||
+      (cType === 'MySQL' && !this.editMysqlForm.valid) ||
+      (cType === 'Trino' && !this.editTrinoForm.valid) ||
+      (cType === 'Presto' && !this.editPrestoForm.valid) ||
+      (cType === 'SnowFlake' && !this.editSnowflakeForm.valid) ||
+      (cType === 'Databricks' && !this.editDatabricksForm.valid) ||
+      (cType === 'Api' && !this.editApiForm.valid) ||
+      (cType === 'GoogleApi' && !this.editGoogleApiForm.valid)
     ) {
       return;
     }
@@ -610,10 +593,9 @@ export class EditConnectionDialogComponent implements OnInit {
     let prestoInternalPairInvalid = this.isPrestoInternalPairInvalid();
 
     if (
-      (cType === ConnectionTypeEnum.PostgreSQL &&
-        postgresInternalPairInvalid) ||
-      (cType === ConnectionTypeEnum.MySQL && mysqlInternalPairInvalid) ||
-      (cType === ConnectionTypeEnum.Presto && prestoInternalPairInvalid)
+      (cType === 'PostgreSQL' && postgresInternalPairInvalid) ||
+      (cType === 'MySQL' && mysqlInternalPairInvalid) ||
+      (cType === 'Presto' && prestoInternalPairInvalid)
     ) {
       return;
     }
@@ -632,7 +614,7 @@ export class EditConnectionDialogComponent implements OnInit {
 
     let options: ConnectionOptions = {
       bigquery:
-        cType === ConnectionTypeEnum.BigQuery
+        cType === 'BigQuery'
           ? {
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
@@ -657,7 +639,7 @@ export class EditConnectionDialogComponent implements OnInit {
       //       }
       //     : undefined,
       motherduck:
-        cType === ConnectionTypeEnum.MotherDuck
+        cType === 'MotherDuck'
           ? {
               motherduckToken: this.editMotherduckForm.value.motherduckToken,
               database: this.editMotherduckForm.value.database,
@@ -668,7 +650,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       postgres:
-        cType === ConnectionTypeEnum.PostgreSQL
+        cType === 'PostgreSQL'
           ? {
               host: this.editPostgresForm.value.host,
               internalHost:
@@ -688,7 +670,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       mysql:
-        cType === ConnectionTypeEnum.MySQL
+        cType === 'MySQL'
           ? {
               host: this.editMysqlForm.value.host,
               internalHost: this.editMysqlForm.value.internalHost || undefined,
@@ -706,7 +688,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       trino:
-        cType === ConnectionTypeEnum.Trino
+        cType === 'Trino'
           ? {
               server: this.editTrinoForm.value.server,
               internalServer:
@@ -718,7 +700,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       presto:
-        cType === ConnectionTypeEnum.Presto
+        cType === 'Presto'
           ? {
               server: this.editPrestoForm.value.server,
               internalServer:
@@ -738,7 +720,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       snowflake:
-        cType === ConnectionTypeEnum.SnowFlake
+        cType === 'SnowFlake'
           ? {
               account: this.editSnowflakeForm.value.account,
               warehouse: this.editSnowflakeForm.value.warehouse,
@@ -748,7 +730,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       databricks:
-        cType === ConnectionTypeEnum.Databricks
+        cType === 'Databricks'
           ? {
               authType: this.editDatabricksForm.value.authType,
               host: this.editDatabricksForm.value.host,
@@ -764,14 +746,14 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       storeApi:
-        cType === ConnectionTypeEnum.Api
+        cType === 'Api'
           ? {
               baseUrl: this.editApiForm.value.baseUrl,
               headers: this.editApiForm.value.headers
             }
           : undefined,
       storeGoogleApi:
-        cType === ConnectionTypeEnum.GoogleApi
+        cType === 'GoogleApi'
           ? {
               googleAccessToken: undefined,
               googleAccessTokenExpiryDate: undefined,

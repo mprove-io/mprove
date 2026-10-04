@@ -23,12 +23,11 @@ import {
   PROJECT_CONFIG_FORMAT_NUMBER,
   PROJECT_CONFIG_THOUSANDS_SEPARATOR
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ModelMetricX } from '#common/types/backend/parts/model-metric-x';
-import type { ModelPartX } from '#common/types/backend/parts/model-part-x';
-import type { StructX } from '#common/types/backend/parts/struct-x';
+import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
+import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
+import type { StructX } from '#common/types/backend/parts/struct/struct-x';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -85,7 +84,7 @@ export class StructsService {
       extraSchemas: [],
       mproveConfig: {
         mproveDirValue: './data',
-        weekStart: ProjectWeekStartEnum.Sunday,
+        weekStart: 'Sunday',
         allowTimezones: true,
         caseSensitiveStringFilters: false,
         defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
@@ -120,7 +119,7 @@ export class StructsService {
           struct = emptyStruct;
         } else {
           throw new ServerError({
-            message: ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
+            message: 'BACKEND_STRUCT_DOES_NOT_EXIST'
           });
         }
       }
@@ -143,7 +142,7 @@ export class StructsService {
 
     if (structId !== bridgeStructId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
+        message: 'BACKEND_STRUCT_ID_CHANGED'
       });
     }
 

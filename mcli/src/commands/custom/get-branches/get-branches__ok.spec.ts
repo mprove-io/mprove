@@ -3,8 +3,7 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
@@ -76,7 +75,7 @@ test('1', async () => {
               projectId,
               name: projectName,
               defaultBranch: defaultBranch,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined,
@@ -104,7 +103,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -115,7 +114,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -137,7 +136,7 @@ test('1', async () => {
 
     logToConsoleMcli({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       context: undefined,
       isJson: false
     });

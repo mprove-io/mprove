@@ -19,9 +19,9 @@ import {
   PROD_REPO_ID
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import type { ToBackendDeleteBranchRequest } from '#common/types/backend/routes/branches/delete-branch/delete-branch-request';
 import type { ToBackendDeleteBranchResponse } from '#common/types/backend/routes/branches/delete-branch/delete-branch-response';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteBranchDialogData {
@@ -32,7 +32,7 @@ export interface DeleteBranchDialogData {
   envId: string;
   defaultBranch: string;
   repoId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
   alias: string;
 }
 
@@ -49,12 +49,10 @@ export class DeleteBranchDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  repoTypeEnum = RepoTypeEnum;
-
   repoName =
-    this.ref.data.repoType === RepoTypeEnum.Production
+    this.ref.data.repoType === 'production'
       ? PROD_REPO_ID
-      : this.ref.data.repoType === RepoTypeEnum.Dev
+      : this.ref.data.repoType === 'dev'
         ? this.ref.data.alias
         : 'unknown';
 

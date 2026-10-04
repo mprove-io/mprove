@@ -1,24 +1,24 @@
 <div class="flex flex-row items-start justify-start">
   <div
     class="ml-5 flex h-[36px] w-10 items-center justify-start"
-    *ngIf="fraction.type !== fractionTypeStoreFraction || !!fieldResult"
+    *ngIf="fraction.type !== 'StoreFraction' || !!fieldResult"
   >
     {{
-      !isFirst && fraction.operator === fractionOperatorEnum.Or
+      !isFirst && fraction.operator === 'Or'
         ? 'OR'
-        : !isFirst && fraction.operator === fractionOperatorEnum.And
+        : !isFirst && fraction.operator === 'And'
           ? 'AND'
           : ''
     }}
   </div>
 
   <div
-    *ngIf="fraction.type !== fractionTypeStoreFraction"
+    *ngIf="fraction.type !== 'StoreFraction'"
     [ngSwitch]="fieldResult"
     class="ml-5 flex flex-row items-start justify-start"
   >
     <m-fraction-number
-      *ngSwitchCase="fieldResultEnum.Number"
+      *ngSwitchCase="'number'"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -27,7 +27,7 @@
     ></m-fraction-number>
 
     <m-fraction-string
-      *ngSwitchCase="fieldResultEnum.String"
+      *ngSwitchCase="'string'"
       [suggestModelDimension]="suggestModelDimension"
       [structId]="structId"
       [chartId]="chartId"
@@ -42,7 +42,7 @@
     ></m-fraction-string>
 
     <m-fraction-day-of-week
-      *ngSwitchCase="fieldResultEnum.DayOfWeek"
+      *ngSwitchCase="'day_of_week'"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -51,7 +51,7 @@
     ></m-fraction-day-of-week>
 
     <m-fraction-day-of-week-index
-      *ngSwitchCase="fieldResultEnum.DayOfWeekIndex"
+      *ngSwitchCase="'day_of_week_index'"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -60,7 +60,7 @@
     ></m-fraction-day-of-week-index>
 
     <m-fraction-month-name
-      *ngSwitchCase="fieldResultEnum.MonthName"
+      *ngSwitchCase="'month_name'"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -69,7 +69,7 @@
     ></m-fraction-month-name>
 
     <m-fraction-quarter-of-year
-      *ngSwitchCase="fieldResultEnum.QuarterOfYear"
+      *ngSwitchCase="'quarter_of_year'"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -78,7 +78,7 @@
     ></m-fraction-quarter-of-year>
 
     <m-fraction-ts
-      *ngSwitchCase="fieldResultEnum.Ts"
+      *ngSwitchCase="'ts'"
       [fraction]="fraction"
       [fieldTimeframe]="fieldTimeframe"
       [isMetrics]="false"
@@ -89,7 +89,7 @@
     ></m-fraction-ts>
 
     <m-fraction-boolean
-      *ngSwitchCase="fieldResultEnum.Boolean"
+      *ngSwitchCase="'boolean'"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -98,7 +98,7 @@
     ></m-fraction-boolean>
 
     <m-fraction-yesno
-      *ngSwitchCase="fieldResultEnum.Yesno"
+      *ngSwitchCase="'yesno'"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -108,7 +108,7 @@
   </div>
 
   <div
-    *ngIf="fraction.type === fractionTypeStoreFraction"
+    *ngIf="fraction.type === 'StoreFraction'"
     class="flex flex-row items-start justify-start"
   >
     <!-- <div class="ml-5 flex h-[36px] w-10 items-center justify-start"></div> -->
@@ -129,7 +129,7 @@
 
     <div *ngFor="let fractionControl of fraction.controls" class="ml-5 flex">
       <m-store-fraction-selector
-        *ngIf="fractionControl.controlClass === controlClassSelector"
+        *ngIf="fractionControl.controlClass === 'selector'"
         [fraction]="fraction"
         [isFirst]="isFirst"
         [fractionIndex]="fractionIndex"
@@ -140,7 +140,7 @@
       </m-store-fraction-selector>
 
       <m-store-fraction-input
-        *ngIf="fractionControl.controlClass === controlClassInput"
+        *ngIf="fractionControl.controlClass === 'input'"
         [suggestModelDimension]="suggestModelDimension"
         [structId]="structId"
         [chartId]="chartId"
@@ -157,7 +157,7 @@
       </m-store-fraction-input>
 
       <m-store-fraction-switch
-        *ngIf="fractionControl.controlClass === controlClassSwitch"
+        *ngIf="fractionControl.controlClass === 'switch'"
         [fraction]="fraction"
         [isFirst]="isFirst"
         [fractionIndex]="fractionIndex"
@@ -168,7 +168,7 @@
       </m-store-fraction-switch>
 
       <m-store-fraction-date-picker
-        *ngIf="fractionControl.controlClass === controlClassDatePicker"
+        *ngIf="fractionControl.controlClass === 'date_picker'"
         [metricsStartDateYYYYMMDD]="metricsStartDateYYYYMMDD"
         [metricsEndDateYYYYMMDD]="metricsEndDateYYYYMMDD"
         [isMetricsPage]="isMetricsPage"

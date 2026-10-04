@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type SelectedGiven, zSelectedGiven } from './selected-given';
+import { type SelectedGiven, zSelectedGiven } from './given/selected-given';
 
 export type ProjectSelectedGivenLink = {
   projectId: string;

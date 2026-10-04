@@ -12,13 +12,13 @@ import {
   MCP_TOOL_GET_QUERY_INFO,
   MCP_TOOL_GET_QUERY_INFO_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-query-info/mcp-tool-get-query-info-input';
 import { zMcpToolGetQueryInfoOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-query-info/mcp-tool-get-query-info-output';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-output';
 
 @McpController()
@@ -43,14 +43,14 @@ export class GetQueryInfoTool {
   ) {
     let user = (request as any).user as UserTab;
 
-    let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
+    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
 
-    if (apiKeyType === ApiKeyTypeEnum.PK) {
+    if (apiKeyType === 'PK') {
       this.toolService.validateUserRepoId({
         repoId: item.repoId,
         userId: user.userId
       });
-    } else if (apiKeyType === ApiKeyTypeEnum.SK) {
+    } else if (apiKeyType === 'SK') {
       this.toolService.validateSessionProjectId({
         projectId: item.projectId,
         request: request

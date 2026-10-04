@@ -1,4 +1,4 @@
-import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
+import type { SessionPartApi } from '#common/types/backend/parts/session/session-part-api';
 
 export function groupPartsByMessageId(parts: SessionPartApi[]): {
   [messageId: string]: SessionPartApi[];

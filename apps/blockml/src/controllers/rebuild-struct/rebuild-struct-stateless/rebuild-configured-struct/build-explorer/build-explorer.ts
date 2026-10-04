@@ -4,24 +4,23 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MPROVE_EXPLORER_FILENAME } from '#common/constants/top';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 
-let func = FuncEnum.CheckMproveExplorer;
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+
+let func: Func = 'extra/check-mprove-explorer';
 
 export function buildExplorer(item: {
   files: BmlFile[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<string, never> {
   let { caller, structId, cs, files } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, {
+  log(cs, caller, func, structId, 'input.log', {
     files: files,
     errors: item.errors,
     structId: structId,
@@ -37,7 +36,7 @@ export function buildExplorer(item: {
   if (mproveExplorerFiles.length > 1) {
     errors.push(
       new BmError({
-        title: ErTitleEnum.DUPLICATE_MPROVE_EXPLORER_FILES,
+        title: 'DUPLICATE_MPROVE_EXPLORER_FILES',
         message: `Only one ${MPROVE_EXPLORER_FILENAME} file is allowed`,
         lines: mproveExplorerFiles.map(file => ({
           line: 0,
@@ -50,7 +49,7 @@ export function buildExplorer(item: {
 
   item.errors.push(...errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, errors);
+  log(cs, caller, func, structId, 'out_errors.log', errors);
 
   let mproveExplorer: string =
     mproveExplorerFiles.length === 1

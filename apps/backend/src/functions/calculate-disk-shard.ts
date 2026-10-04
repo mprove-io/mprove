@@ -1,5 +1,4 @@
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
 
 let FIRST_CHAR_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // 26
 let SECOND_CHAR_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // 36
@@ -14,7 +13,7 @@ export function calculateDiskShard(item: {
 
   if (totalDiskShards <= 0 || totalDiskShards > MAX_BUCKETS) {
     throw new ServerError({
-      message: ErEnum.BACKEND_WRONG_TOTAL_DISK_SHARDS
+      message: 'BACKEND_WRONG_TOTAL_DISK_SHARDS'
     });
   }
 

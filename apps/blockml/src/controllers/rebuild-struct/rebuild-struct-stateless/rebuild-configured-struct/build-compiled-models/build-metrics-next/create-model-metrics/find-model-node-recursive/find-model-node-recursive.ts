@@ -1,5 +1,5 @@
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ModelNode } from '#common/types/blockml/parts/model-node';
+import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
 
 export type FindModelNodeOutput = {
   node: ModelNode;

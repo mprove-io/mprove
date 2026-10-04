@@ -1,11 +1,12 @@
 import { Result } from '@praha/byethrow';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project/check-restore-org-project';
 import { restoreProjectGitCloneRepo } from '#disk/functions/restore/check-restore-org-project-repo/restore-project-git-clone-repo/restore-project-git-clone-repo';
 
 export function checkRestoreOrgProjectRepo(item: {
-  remoteType: ProjectRemoteTypeEnum;
+  remoteType: ProjectRemoteType;
   orgId: string;
   orgPath: string;
   projectId: string;
@@ -29,7 +30,7 @@ export function checkRestoreOrgProjectRepo(item: {
         })
     ),
     Result.andThen(async (v): Result.ResultAsync<string, never> => {
-      if (v.remoteType !== ProjectRemoteTypeEnum.GitClone) {
+      if (v.remoteType !== 'GitClone') {
         return Result.succeed(v.keyDir);
       }
 

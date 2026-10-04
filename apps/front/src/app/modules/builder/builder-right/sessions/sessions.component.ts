@@ -4,10 +4,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendArchiveSessionRequest } from '#common/types/backend/routes/sessions/archive-session/archive-session-request';
 import type { ToBackendArchiveSessionResponse } from '#common/types/backend/routes/sessions/archive-session/archive-session-response';
 import type { ToBackendGetSessionsListOutput } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
@@ -15,7 +14,7 @@ import type { ToBackendGetSessionsListRequest } from '#common/types/backend/rout
 import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 import type { ToBackendPauseEditorSessionRequest } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
 import type { ToBackendPauseEditorSessionResponse } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
-import type { SessionApiX } from '#common/types/front/session-api-x';
+import type { SessionApiX } from '#common/types/front/session/session-api-x';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -43,13 +42,12 @@ export class SessionsComponent implements OnInit {
   archivedLastCreatedTs: number = undefined;
   currentSession: SessionApi;
   isRefreshing = false;
-  sessionStatusArchived = SessionStatusEnum.Archived;
-  sessionTypeEnum = SessionTypeEnum;
+
   spinnerName = SESSIONS_SPINNER_NAME;
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
       this.sessions = x
-        .filter(s => s.type === SessionTypeEnum.Editor)
+        .filter(s => s.type === 'Editor')
         .map(s =>
           Object.assign({}, s, <SessionApiX>{
             displayTitle: makeTitle(s),
@@ -57,8 +55,8 @@ export class SessionsComponent implements OnInit {
           })
         )
         .sort((a, b) => {
-          let aArchived = a.status === SessionStatusEnum.Archived ? 1 : 0;
-          let bArchived = b.status === SessionStatusEnum.Archived ? 1 : 0;
+          let aArchived = a.status === 'Archived' ? 1 : 0;
+          let bArchived = b.status === 'Archived' ? 1 : 0;
           return aArchived - bArchived || b.createdTs - a.createdTs;
         });
       this.cd.detectChanges();
@@ -120,7 +118,7 @@ export class SessionsComponent implements OnInit {
     let payload: ToBackendGetSessionsListRequest['input'] = {
       projectId: projectId,
       currentSessionId: currentSessionId,
-      sessionType: SessionTypeEnum.Editor
+      sessionType: 'Editor'
     };
 
     this.isRefreshing = true;
@@ -345,7 +343,7 @@ export class SessionsComponent implements OnInit {
       archivedLimit: 10,
       archivedLastCreatedTs: this.archivedLastCreatedTs,
       currentSessionId: this.currentSession?.sessionId,
-      sessionType: SessionTypeEnum.Editor
+      sessionType: 'Editor'
     };
 
     this.isLoadingArchived = true;
@@ -381,7 +379,7 @@ export class SessionsComponent implements OnInit {
 
             let archivedSessions: SessionApi[] = sessions.filter(
               s =>
-                s.status === SessionStatusEnum.Archived &&
+                s.status === 'Archived' &&
                 s.sessionId !== this.currentSession?.sessionId
             );
 

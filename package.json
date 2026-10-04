@@ -183,7 +183,8 @@
     "shx": "catalog:",
     "tsx": "4.21.0",
     "turbo": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zod": "catalog:"
   },
   "madge": {
     "fileExtensions": [

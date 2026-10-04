@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type CachedColumnRefreshType,
+  zCachedColumnRefreshType
+} from '#common/types/backend/parts/connections/cached-column-refresh-type';
 
 export type ToBackendRefreshCachedColumnRequest = {
   operation: 'refreshCachedColumn';
@@ -12,7 +16,7 @@ export type ToBackendRefreshCachedColumnRequest = {
     schemaName: string;
     tableName: string;
     columnName: string;
-    refreshType: 'full' | 'sample';
+    refreshType: CachedColumnRefreshType;
     sampleSize?: number;
   };
 };
@@ -30,7 +34,7 @@ export let zToBackendRefreshCachedColumnRequest = z
         schemaName: z.string(),
         tableName: z.string(),
         columnName: z.string(),
-        refreshType: z.enum(['full', 'sample']),
+        refreshType: zCachedColumnRefreshType,
         sampleSize: z.number().nullish()
       })
       .meta({ id: 'ToBackendRefreshCachedColumnInput' })

@@ -8,10 +8,11 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import type { ArchiveReason } from '#common/types/backend/parts/session/archive-reason';
+import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
+import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
+
 import type { SessionLt } from '#common/types/shared/st-lt/sessions/session-lt';
 import type { SessionSt } from '#common/types/shared/st-lt/sessions/session-st';
 
@@ -19,7 +20,7 @@ export const sessionsTable = pgTable(
   'sessions',
   {
     sessionId: varchar('session_id', { length: 255 }).notNull().primaryKey(),
-    type: varchar('type', { length: 32 }).notNull().$type<SessionTypeEnum>(),
+    type: varchar('type', { length: 32 }).notNull().$type<SessionType>(),
     repoId: varchar('repo_id', { length: 255 }).notNull(),
     branchId: varchar('branch_id', { length: 255 }).notNull(),
     envId: varchar('env_id', { length: 255 }).notNull(),
@@ -32,15 +33,13 @@ export const sessionsTable = pgTable(
       length: 64
     }),
     agent: varchar('agent', { length: 64 }),
-    status: varchar('status', { length: 32 })
-      .notNull()
-      .$type<SessionStatusEnum>(),
+    status: varchar('status', { length: 32 }).notNull().$type<SessionStatus>(),
     archiveReason: varchar('archive_reason', {
       length: 32
-    }).$type<ArchiveReasonEnum>(),
+    }).$type<ArchiveReason>(),
     pauseReason: varchar('pause_reason', {
       length: 32
-    }).$type<PauseReasonEnum>(),
+    }).$type<PauseReason>(),
     st: json('st')
       .$type<{ encrypted: string; decrypted: SessionSt }>()
       .notNull(),

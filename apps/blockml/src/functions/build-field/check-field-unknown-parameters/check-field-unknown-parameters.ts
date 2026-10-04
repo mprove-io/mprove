@@ -6,27 +6,24 @@ import { checkStoreFractionControls } from '#blockml/functions/check-store-fract
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
-let func = FuncEnum.CheckFieldUnknownParameters;
+let func: Func = 'build-field/check-field-unknown-parameters';
 
 export function checkFieldUnknownParameters<T extends sdrType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newEntities: T[] = [];
 
@@ -38,20 +35,17 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
         .filter(
           k =>
             !k.match(MyRegex.ENDS_WITH_LINE_NUM()) &&
-            [
-              ParameterEnum.Name.toString(),
-              ParameterEnum.FieldClass.toString()
-            ].indexOf(k) < 0
+            ['name'.toString(), 'fieldClass'.toString()].indexOf(k) < 0
         )
         .forEach(parameter => {
           if (
-            parameter === ParameterEnum.Hidden &&
+            parameter === 'hidden' &&
             !field[parameter].match(MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.WRONG_FIELD_HIDDEN,
-                message: `parameter "${ParameterEnum.Hidden}" must be 'true' or 'false' if specified`,
+                title: 'WRONG_FIELD_HIDDEN',
+                message: `parameter "hidden" must be 'true' or 'false' if specified`,
                 lines: [
                   {
                     line: field[
@@ -67,44 +61,42 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
           }
 
           switch (field.fieldClass) {
-            case FieldClassEnum.Dimension: {
+            case 'dimension': {
               if (
-                (caller === CallerEnum.BuildStoreField &&
+                (caller === 'BuildStoreField' &&
                   [
-                    ParameterEnum.Dimension.toString(),
-                    ParameterEnum.Label.toString(),
-                    ParameterEnum.Description.toString(),
-                    ParameterEnum.Group.toString(),
-                    ParameterEnum.TimeGroup.toString(),
-                    ParameterEnum.Detail.toString(),
-                    ParameterEnum.Result.toString(),
-                    ParameterEnum.FormatNumber.toString(),
-                    ParameterEnum.CurrencyPrefix.toString(),
-                    ParameterEnum.CurrencySuffix.toString(),
-                    ParameterEnum.Required.toString(),
-                    ParameterEnum.Meta.toString()
+                    'dimension'.toString(),
+                    'label'.toString(),
+                    'description'.toString(),
+                    'group'.toString(),
+                    'time_group'.toString(),
+                    'detail'.toString(),
+                    'result'.toString(),
+                    'format_number'.toString(),
+                    'currency_prefix'.toString(),
+                    'currency_suffix'.toString(),
+                    'required'.toString(),
+                    'meta'.toString()
                   ].indexOf(parameter) < 0) ||
-                ([
-                  CallerEnum.BuildDashboardField,
-                  CallerEnum.BuildReportField
-                ].indexOf(caller) > -1 &&
+                (['BuildDashboardField', 'BuildReportField'].indexOf(caller) >
+                  -1 &&
                   [
-                    ParameterEnum.Dimension.toString(),
-                    ParameterEnum.Hidden.toString(),
-                    ParameterEnum.Label.toString(),
-                    ParameterEnum.Description.toString(),
-                    ParameterEnum.Type.toString(),
-                    ParameterEnum.Result.toString(),
-                    ParameterEnum.SuggestModelDimension.toString(),
-                    ParameterEnum.FormatNumber.toString(),
-                    ParameterEnum.CurrencyPrefix.toString(),
-                    ParameterEnum.CurrencySuffix.toString()
+                    'dimension'.toString(),
+                    'hidden'.toString(),
+                    'label'.toString(),
+                    'description'.toString(),
+                    'type'.toString(),
+                    'result'.toString(),
+                    'suggest_model_dimension'.toString(),
+                    'format_number'.toString(),
+                    'currency_prefix'.toString(),
+                    'currency_suffix'.toString()
                   ].indexOf(parameter) < 0)
               ) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
-                    message: `parameter "${parameter}" cannot be used with ${FieldClassEnum.Dimension} in ${x.fileExt} file`,
+                    title: 'UNKNOWN_DIMENSION_PARAMETER',
+                    message: `parameter "${parameter}" cannot be used with dimension in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -121,26 +113,26 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
               break;
             }
 
-            case FieldClassEnum.Measure: {
+            case 'measure': {
               if (
-                caller === CallerEnum.BuildStoreField &&
+                caller === 'BuildStoreField' &&
                 [
-                  ParameterEnum.Measure.toString(),
-                  ParameterEnum.Label.toString(),
-                  ParameterEnum.Description.toString(),
-                  ParameterEnum.Result.toString(),
-                  ParameterEnum.Group.toString(),
-                  ParameterEnum.FormatNumber.toString(),
-                  ParameterEnum.CurrencyPrefix.toString(),
-                  ParameterEnum.CurrencySuffix.toString(),
-                  ParameterEnum.Required.toString(),
-                  ParameterEnum.Meta.toString()
+                  'measure'.toString(),
+                  'label'.toString(),
+                  'description'.toString(),
+                  'result'.toString(),
+                  'group'.toString(),
+                  'format_number'.toString(),
+                  'currency_prefix'.toString(),
+                  'currency_suffix'.toString(),
+                  'required'.toString(),
+                  'meta'.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
-                    message: `parameter "${parameter}" cannot be used with ${FieldClassEnum.Measure} in ${x.fileExt} file`,
+                    title: 'UNKNOWN_MEASURE_PARAMETER',
+                    message: `parameter "${parameter}" cannot be used with measure in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -157,43 +149,40 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
               break;
             }
 
-            case FieldClassEnum.Filter: {
+            case 'filter': {
               if (
-                (caller === CallerEnum.BuildStoreField &&
+                (caller === 'BuildStoreField' &&
                   [
-                    ParameterEnum.Filter.toString(),
-                    ParameterEnum.Label.toString(),
-                    ParameterEnum.Description.toString(),
-                    ParameterEnum.MaxFractions.toString(),
-                    ParameterEnum.Required.toString(),
-                    ParameterEnum.FractionControls.toString()
+                    'filter'.toString(),
+                    'label'.toString(),
+                    'description'.toString(),
+                    'max_fractions'.toString(),
+                    'required'.toString(),
+                    'fraction_controls'.toString()
                   ].indexOf(parameter) < 0) ||
                 //
-                ([CallerEnum.BuildStoreField].indexOf(caller) > -1 &&
-                  [ParameterEnum.Conditions.toString()].indexOf(parameter) >
-                    -1) ||
+                (['BuildStoreField'].indexOf(caller) > -1 &&
+                  ['conditions'.toString()].indexOf(parameter) > -1) ||
                 //
-                ([
-                  CallerEnum.BuildDashboardField,
-                  CallerEnum.BuildReportField
-                ].indexOf(caller) > -1 &&
+                (['BuildDashboardField', 'BuildReportField'].indexOf(caller) >
+                  -1 &&
                   [
-                    ParameterEnum.Filter.toString(),
-                    ParameterEnum.Label.toString(),
-                    ParameterEnum.Description.toString(),
-                    ParameterEnum.Result.toString(),
-                    ParameterEnum.SuggestModelDimension.toString(),
-                    ParameterEnum.Conditions.toString(),
-                    ParameterEnum.Fractions.toString(),
-                    ParameterEnum.StoreModel.toString(),
-                    ParameterEnum.StoreFilter.toString(),
-                    ParameterEnum.StoreResult.toString()
+                    'filter'.toString(),
+                    'label'.toString(),
+                    'description'.toString(),
+                    'result'.toString(),
+                    'suggest_model_dimension'.toString(),
+                    'conditions'.toString(),
+                    'fractions'.toString(),
+                    'store_model'.toString(),
+                    'store_filter'.toString(),
+                    'store_result'.toString()
                   ].indexOf(parameter) < 0)
               ) {
                 item.errors.push(
                   new BmError({
-                    title: ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
-                    message: `parameter "${parameter}" cannot be used with ${FieldClassEnum.Filter} in ${x.fileExt} file`,
+                    title: 'UNKNOWN_FILTER_PARAMETER',
+                    message: `parameter "${parameter}" cannot be used with filter in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -214,15 +203,15 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
           if (
             Array.isArray(field[parameter as keyof FieldAny]) &&
             [
-              ParameterEnum.Timeframes.toString(),
-              ParameterEnum.Conditions.toString(),
-              ParameterEnum.Fractions.toString(),
-              ParameterEnum.FractionControls.toString()
+              'timeframes'.toString(),
+              'conditions'.toString(),
+              'fractions'.toString(),
+              'fraction_controls'.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_LIST,
+                title: 'UNEXPECTED_LIST',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -240,11 +229,11 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
 
           if (
             field[parameter as keyof FieldAny]?.constructor === Object &&
-            [ParameterEnum.Meta.toString()].indexOf(parameter) < 0
+            ['meta'.toString()].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+                title: 'UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -263,15 +252,15 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
           if (
             !Array.isArray(field[parameter as keyof FieldAny]) &&
             [
-              ParameterEnum.Timeframes.toString(),
-              ParameterEnum.Conditions.toString(),
-              ParameterEnum.Fractions.toString(),
-              ParameterEnum.FractionControls.toString()
+              'timeframes'.toString(),
+              'conditions'.toString(),
+              'fractions'.toString(),
+              'fraction_controls'.toString()
             ].indexOf(parameter) > -1
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.PARAMETER_IS_NOT_A_LIST,
+                title: 'PARAMETER_IS_NOT_A_LIST',
                 message: `parameter "${parameter}" must be a List`,
                 lines: [
                   {
@@ -289,7 +278,7 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
 
           if (
             errorsOnStart === item.errors.length &&
-            parameter === ParameterEnum.FractionControls.toString()
+            parameter === 'fraction_controls'.toString()
           ) {
             checkStoreFractionControls(
               {
@@ -313,8 +302,8 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

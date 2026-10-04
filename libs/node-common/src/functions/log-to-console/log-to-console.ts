@@ -1,15 +1,16 @@
+import type { LogLevel } from '#common/types/node-common/logging/log-level';
 // import { hostname } from 'os';
 
 import { Logger } from '@nestjs/common';
 import * as util from 'util';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { getLogSorted } from '#node-common/functions/log-to-console/get-log-sorted/get-log-sorted';
 import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 export function logToConsole(item: {
   log: any;
-  logLevel: LogLevelEnum;
+  logLevel: LogLevel;
   logger: Logger;
   logIsJson: boolean;
   useLoggerOnlyForErrorLevel: boolean;
@@ -34,11 +35,11 @@ export function logToConsole(item: {
 
   if (
     isDefined(logger) &&
-    (logLevel === LogLevelEnum.Error || useLoggerOnlyForErrorLevel === false)
+    (logLevel === 'Error' || useLoggerOnlyForErrorLevel === false)
   ) {
     let logSorted: any = getLogSorted({ log: log });
 
-    if (logLevel === LogLevelEnum.Error) {
+    if (logLevel === 'Error') {
       logger.error(logSorted);
     } else {
       logger.log(logSorted);

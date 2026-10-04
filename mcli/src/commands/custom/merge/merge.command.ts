@@ -1,8 +1,6 @@
 import { Command, Option } from 'clipanion';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
@@ -74,7 +72,7 @@ export class MergeCommand extends CustomCommand {
 
     if (isUndefined(this.projectId)) {
       let serverError = new ServerError({
-        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
         originalError: null
       });
       throw serverError;
@@ -82,7 +80,7 @@ export class MergeCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId = apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+    let repoId = apiKey.startsWith(`SK-`)
       ? apiKey.split('-')[2].toLowerCase()
       : apiKey.split('-')[2];
 
@@ -136,7 +134,7 @@ export class MergeCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       context: this.context,
       isJson: this.json
     });

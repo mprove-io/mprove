@@ -5,10 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { tap } from 'rxjs/operators';
 import { MODELS_LIST_PAGE_TITLE } from '#common/constants/page-titles';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ModelQuery } from '#front/app/queries/model.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
@@ -169,7 +169,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

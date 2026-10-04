@@ -1,10 +1,10 @@
 import { DatePickerDate, DatePickerI18n } from '@vaadin/date-picker';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { Space } from '#common/types/blockml/parts/space';
-import type { RefreshItem } from '#common/types/front/refresh-item';
+import type { RefreshItem } from '#common/types/front/ui/refresh-item';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 export const SPECIAL_ERROR = 'SPECIAL_ERROR';
 export const PASSWORD_RESET_EMAIL = 'PASSWORD_RESET_EMAIL';
@@ -24,25 +24,25 @@ export const DEFAULT_METRICS_COLUMN_NAME_WIDTH = 530;
 export const DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH = 155;
 export const DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH = 220;
 
-export const DEFAULT_TIME_SPEC = TimeSpecEnum.Days;
+export const DEFAULT_TIME_SPEC: TimeSpec = 'days';
 
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;
 
-export const BLOCKML_EXT_LIST: FileExtensionEnum[] = [
-  FileExtensionEnum.Schema,
-  FileExtensionEnum.Store,
-  FileExtensionEnum.Space,
-  FileExtensionEnum.Report,
-  FileExtensionEnum.Dashboard,
-  FileExtensionEnum.Chart
+export const BLOCKML_EXT_LIST: FileExtension[] = [
+  '.schema',
+  '.store',
+  '.space',
+  '.report',
+  '.dashboard',
+  '.chart'
 ];
 
-export const RESULTS_LIST: FieldResultEnum[] = [
-  FieldResultEnum.String,
-  FieldResultEnum.Number,
-  FieldResultEnum.Boolean,
-  FieldResultEnum.Ts
+export const RESULTS_LIST: FieldResult[] = [
+  'string',
+  'number',
+  'boolean',
+  'ts'
   // FieldResultEnum.Date
   //
   // FieldResultEnum.Array,

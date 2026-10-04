@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { Given } from '#common/types/backend/parts/given';
+import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendDeleteGivenRequest } from '#common/types/backend/routes/givens/delete-given/delete-given-request';
 import type { ToBackendDeleteGivenResponse } from '#common/types/backend/routes/givens/delete-given/delete-given-response';
 import { GivensQuery } from '#front/app/queries/givens.query';

@@ -199,17 +199,14 @@
                             class="relative top-[3px] ml-1 w-14 text-right text-sm"
                             [ngClass]="{
                               'text-m600':
-                                provider.type ===
-                                  providerTypeEnum.OpenAICompatible ||
+                                provider.type === 'OpenAICompatible' ||
                                 model.isManual === true,
                               'text-s400':
-                                provider.type !==
-                                  providerTypeEnum.OpenAICompatible &&
+                                provider.type !== 'OpenAICompatible' &&
                                 model.isManual !== true
                             }"
                             [tp]="
-                              provider.type ===
-                                providerTypeEnum.OpenAICompatible ||
+                              provider.type === 'OpenAICompatible' ||
                               model.isManual === true
                                 ? 'User-provided value'
                                 : model.contextLimit !== undefined
@@ -289,20 +286,18 @@
                   </div>
                 </td>
                 <td class="w-96 break-all py-5 pr-8">
-                  <ng-container
-                    *ngIf="provider.type === providerTypeEnum.OpenAICompatible"
-                  >
+                  <ng-container *ngIf="provider.type === 'OpenAICompatible'">
                     {{ provider.options.baseURL }}
                   </ng-container>
                   <span
-                    *ngIf="provider.type === providerTypeEnum.OpenAICodex"
+                    *ngIf="provider.type === 'OpenAICodex'"
                     class="text-s400"
                     >User's Codex subscription</span
                   >
                   <span
                     *ngIf="
-                      provider.type === providerTypeEnum.OpenAI ||
-                      provider.type === providerTypeEnum.Anthropic
+                      provider.type === 'OpenAI' ||
+                      provider.type === 'Anthropic'
                     "
                     class="text-s400"
                     >Official provider API</span
@@ -318,7 +313,7 @@
                         provider.options.apiKey === undefined ||
                         provider.options.apiKey === null
                     }"
-                    *ngIf="provider.type !== providerTypeEnum.OpenAICodex"
+                    *ngIf="provider.type !== 'OpenAICodex'"
                   >
                     {{
                       provider.options.apiKey !== undefined &&
@@ -331,7 +326,7 @@
                   <div
                     class="flex-col"
                     *ngIf="
-                      provider.type === providerTypeEnum.OpenAICompatible &&
+                      provider.type === 'OpenAICompatible' &&
                       (provider.options.headers?.length ?? 0) > 0
                     "
                   >
@@ -345,7 +340,7 @@
                   <div
                     class="flex-col"
                     *ngIf="
-                      provider.type === providerTypeEnum.OpenAICompatible &&
+                      provider.type === 'OpenAICompatible' &&
                       (provider.options.queryParams?.length ?? 0) > 0
                     "
                   >

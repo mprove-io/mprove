@@ -14,7 +14,7 @@
       class="flex min-h-0 min-w-0 flex-col overflow-y-auto pr-1 pt-px [scrollbar-gutter:stable]"
     >
       <div
-        *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICodex"
+        *ngIf="ref.data.provider.type === 'OpenAICodex'"
         class="mb-4 flex w-fit items-center gap-3"
         [ngClass]="{
           'cursor-pointer': isManualEntryRequired === false,
@@ -35,10 +35,7 @@
       </div>
 
       <ng-container
-        *ngIf="
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
-          isManualEntry
-        "
+        *ngIf="ref.data.provider.type !== 'OpenAICompatible' && isManualEntry"
       >
         <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
           <label class="pt-3 font-semibold">Model ID</label>
@@ -129,10 +126,7 @@
 
       <ng-select
         #llmModelDialogModelIdSelect
-        *ngIf="
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
-          !isManualEntry
-        "
+        *ngIf="ref.data.provider.type !== 'OpenAICompatible' && !isManualEntry"
         [fixNgSelectBottom]="llmModelDialogModelIdSelect"
         data-cy="llmModelDialogModelIdSelect"
         class="llm-model-select"
@@ -190,10 +184,7 @@
         </ng-template>
       </ng-select>
       <m-validation
-        *ngIf="
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
-          !isManualEntry
-        "
+        *ngIf="ref.data.provider.type !== 'OpenAICompatible' && !isManualEntry"
         [control]="modelForm.controls['modelId']"
       >
       </m-validation>
@@ -255,15 +246,14 @@
 
       <m-llm-model-variants
         *ngIf="
-          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
+          ref.data.provider.type === 'OpenAICompatible' ||
           modelForm.controls['modelId'].value
         "
         [variants]="variants"
         [isExplorer]="modelForm.controls['isExplorer'].value === true"
         [isBuilder]="modelForm.controls['isBuilder'].value === true"
         [allowManualVariants]="
-          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
-          isManualEntry
+          ref.data.provider.type === 'OpenAICompatible' || isManualEntry
         "
         (variantsChange)="variants = $event"
       ></m-llm-model-variants>
@@ -293,7 +283,7 @@
 
     <div class="relative min-h-[16rem] min-w-0 overflow-hidden">
       <div
-        *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+        *ngIf="ref.data.provider.type === 'OpenAICompatible'"
         class="absolute inset-0 flex flex-col overflow-y-auto pl-4 pr-px pt-px"
       >
         <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
@@ -384,7 +374,7 @@
       <div
         *ngIf="
           !selectedModelPart &&
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          ref.data.provider.type !== 'OpenAICompatible' &&
           !isManualEntry
         "
         class="border-s300 bg-s100 text-s400 absolute inset-0 flex items-center justify-center rounded border p-4 text-sm"
@@ -395,7 +385,7 @@
       <div
         *ngIf="
           !selectedModelPart &&
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          ref.data.provider.type !== 'OpenAICompatible' &&
           isManualEntry
         "
         data-cy="llmModelDialogManualModelInfo"
@@ -416,7 +406,7 @@
           </ng-container>
           <ng-container
             *ngIf="
-              ref.data.provider.type === providerTypeEnum.OpenAI &&
+              ref.data.provider.type === 'OpenAI' &&
               selectedModelPart.modelsDevStatus
             "
           >

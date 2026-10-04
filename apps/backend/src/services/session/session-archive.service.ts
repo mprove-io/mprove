@@ -11,13 +11,10 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { ArchiveReason } from '#common/types/backend/parts/session/archive-reason';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 
 @Injectable()
 export class SessionArchiveService {
@@ -33,7 +30,7 @@ export class SessionArchiveService {
 
   async archiveSession(item: {
     session: SessionTab;
-    archiveReason: ArchiveReasonEnum;
+    archiveReason: ArchiveReason;
     e2bApiKey: string;
   }): Promise<SessionApi> {
     let { session, archiveReason, e2bApiKey } = item;
@@ -41,27 +38,24 @@ export class SessionArchiveService {
     // TODO: check session type is editor
 
     let sessionLockToken =
-      session.type === SessionTypeEnum.Editor
+      session.type === 'Editor'
         ? await this.editorSessionLockService.acquireSessionLock({
             sessionId: session.sessionId
           })
         : undefined;
 
     try {
-      if (session.type === SessionTypeEnum.Editor) {
+      if (session.type === 'Editor') {
         session = await this.sessionsService.getSessionByIdCheckExists({
           sessionId: session.sessionId
         });
       }
 
-      let isActiveOrPaused =
-        [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
-          session.status
-        ) > -1;
+      let isActiveOrPaused = ['Active', 'Paused'].indexOf(session.status) > -1;
 
-      if (session.type === SessionTypeEnum.Editor && isActiveOrPaused) {
+      if (session.type === 'Editor' && isActiveOrPaused) {
         await this.editorSandboxService.stopSandbox({
-          sandboxType: session.sandboxType as SandboxTypeEnum,
+          sandboxType: session.sandboxType as SandboxType,
           sandboxId: session.sandboxId,
           e2bApiKey: e2bApiKey
         });
@@ -69,7 +63,7 @@ export class SessionArchiveService {
 
       let updatedSession: SessionTab = {
         ...session,
-        status: SessionStatusEnum.Archived,
+        status: 'Archived',
         archiveReason: archiveReason
       };
 
@@ -87,7 +81,7 @@ export class SessionArchiveService {
       );
 
       setTimeout(() => {
-        if (session.type === SessionTypeEnum.Editor) {
+        if (session.type === 'Editor') {
           this.editorStreamService
             .publishStopSessionStream({
               sessionId: session.sessionId
@@ -95,7 +89,7 @@ export class SessionArchiveService {
             .catch(e => {
               logToConsoleBackend({
                 log: e,
-                logLevel: LogLevelEnum.Error,
+                logLevel: 'Error',
                 logger: this.logger,
                 cs: this.cs
               });

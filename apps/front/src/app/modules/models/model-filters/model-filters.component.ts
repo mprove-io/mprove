@@ -1,23 +1,18 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { FilterX } from '#common/types/backend/parts/filter-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartService } from '#front/app/services/chart.service';
@@ -81,13 +76,13 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.WhereOrHaving,
+          type: 'WhereOrHaving',
           timezone: newMconfig.timezone,
           filters: newFilters
         }
@@ -110,23 +105,23 @@ export class ModelFiltersComponent {
 
     let newFraction: Fraction;
 
-    if (newMconfig.modelType === ModelTypeEnum.Store) {
+    if (newMconfig.modelType === 'Store') {
       let field = filterExtended.field;
 
       let storeFilter =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? this.storeContent.fields.find(f => f.name === field.id)
           : undefined;
 
       let storeResultFirstTypeFraction =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? undefined
           : this.storeContent.results.find(r => r.result === field.result)
               .fraction_types[0];
 
-      let logicGroup = isUndefined(storeResultFirstTypeFraction)
+      let logicGroup: FractionLogic = isUndefined(storeResultFirstTypeFraction)
         ? undefined
-        : FractionLogicEnum.Or;
+        : 'OR';
 
       let storeFractionSubTypeOptions = isUndefined(
         storeResultFirstTypeFraction
@@ -138,16 +133,16 @@ export class ModelFiltersComponent {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.Or,
+                logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.AndNot,
-                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: 'AND_NOT',
+                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -158,20 +153,20 @@ export class ModelFiltersComponent {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === 'OR' ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFirstTypeFraction?.meta,
         operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === FractionLogicEnum.Or
-            ? FractionOperatorEnum.Or
-            : FractionOperatorEnum.And,
+          : logicGroup === 'OR'
+            ? 'Or'
+            : 'And',
         logicGroup: logicGroup,
         brick: undefined,
         parentBrick: undefined,
-        type: FractionTypeEnum.StoreFraction,
+        type: 'StoreFraction',
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFirstTypeFraction?.type,
@@ -210,18 +205,18 @@ export class ModelFiltersComponent {
               return newControl;
             })
       };
-    } else if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    } else if (newMconfig.modelType === 'Malloy') {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(filterExtended.field.result)
       };
     } else {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(filterExtended.field.result)
       };
     }
@@ -239,13 +234,13 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.WhereOrHaving,
+          type: 'WhereOrHaving',
           timezone: newMconfig.timezone,
           filters: newFilters
         }
@@ -294,13 +289,13 @@ export class ModelFiltersComponent {
       ];
     }
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.WhereOrHaving,
+          type: 'WhereOrHaving',
           timezone: newMconfig.timezone,
           filters: newFilters
         }
@@ -323,13 +318,13 @@ export class ModelFiltersComponent {
       x => x.fieldId !== filterExtended.fieldId
     );
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.WhereOrHaving,
+          type: 'WhereOrHaving',
           timezone: newMconfig.timezone,
           filters: newFilters
         }

@@ -3,19 +3,18 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildField } from '#blockml/functions/build-field/build-field';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { buildChart } from './build-chart/build-chart';
 import { buildDashboard } from './build-dashboard/build-dashboard';
@@ -67,7 +66,7 @@ export function buildVisualizations(item: {
           projectConfig: v.projectConfig,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildDashboardField,
+          caller: 'BuildDashboardField',
           cs: v.cs
         })
     ),
@@ -81,7 +80,7 @@ export function buildVisualizations(item: {
           structId: v.structId,
           caseSensitiveStringFilters: v.caseSensitiveStringFilters,
           errors: v.errors,
-          caller: CallerEnum.BuildDashboard,
+          caller: 'BuildDashboard',
           cs: v.cs
         })
     ),
@@ -92,7 +91,7 @@ export function buildVisualizations(item: {
           charts: v.charts,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildChart,
+          caller: 'BuildChart',
           cs: v.cs
         })
     ),
@@ -103,7 +102,7 @@ export function buildVisualizations(item: {
           projectId: v.projectId,
           envId: v.envId,
           entities: v.builtDashboards,
-          mconfigParentType: MconfigParentTypeEnum.Dashboard,
+          mconfigParentType: 'Dashboard',
           apiModels: v.apiModels,
           malloyConnections: v.malloyConnections,
           projectConnections: v.projectConnections,
@@ -114,7 +113,7 @@ export function buildVisualizations(item: {
           selectedGivens: v.selectedGivens,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildDashboardTile,
+          caller: 'BuildDashboardTile',
           cs: v.cs
         })
     ),
@@ -125,7 +124,7 @@ export function buildVisualizations(item: {
           projectId: v.projectId,
           envId: v.envId,
           entities: v.builtCharts,
-          mconfigParentType: MconfigParentTypeEnum.Chart,
+          mconfigParentType: 'Chart',
           apiModels: v.apiModels,
           malloyConnections: v.malloyConnections,
           projectConnections: v.projectConnections,
@@ -136,7 +135,7 @@ export function buildVisualizations(item: {
           selectedGivens: v.selectedGivens,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildChartTile,
+          caller: 'BuildChartTile',
           cs: v.cs
         })
     ),
@@ -148,7 +147,7 @@ export function buildVisualizations(item: {
           spaces: v.spaces,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildChart,
+          caller: 'BuildChart',
           cs: v.cs
         })
     ),
@@ -161,7 +160,7 @@ export function buildVisualizations(item: {
           stores: v.stores,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildDashboardTileCharts,
+          caller: 'BuildDashboardTileCharts',
           cs: v.cs
         })
     ),
@@ -174,7 +173,7 @@ export function buildVisualizations(item: {
           stores: v.stores,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildChartTileCharts,
+          caller: 'BuildChartTileCharts',
           cs: v.cs
         })
     ),
@@ -192,7 +191,7 @@ export function buildVisualizations(item: {
           stores: v.stores,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildReportCharts,
+          caller: 'BuildReportCharts',
           cs: v.cs
         })
     ),
@@ -204,7 +203,7 @@ export function buildVisualizations(item: {
           projectConfig: v.projectConfig,
           structId: v.structId,
           errors: v.errors,
-          caller: CallerEnum.BuildReportField,
+          caller: 'BuildReportField',
           cs: v.cs
         })
     ),
@@ -220,7 +219,7 @@ export function buildVisualizations(item: {
           structId: v.structId,
           caseSensitiveStringFilters: v.caseSensitiveStringFilters,
           errors: v.errors,
-          caller: CallerEnum.BuildReport,
+          caller: 'BuildReport',
           cs: v.cs
         })
     ),

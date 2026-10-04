@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -189,7 +189,7 @@ export class RenameFolderDialogComponent implements OnInit {
 
             if (isNavigateNewFile === true) {
               this.navigateService.navigateToFileLine({
-                builderLeft: BuilderLeftEnum.Tree,
+                builderLeft: 'Tree',
                 encodedFileId: newFileId
               });
             }

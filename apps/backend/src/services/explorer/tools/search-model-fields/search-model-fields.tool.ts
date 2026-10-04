@@ -13,7 +13,7 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import {
   SEARCH_FIELD_VALUE_MATCH_FIELDS_LIMIT,
   SEARCH_FIELD_VALUE_MATCH_VALUES_LIMIT,
@@ -177,7 +177,7 @@ So searchFieldNames will be a list of individual words.`
           modelAccessRoles: model.accessRolesCombined
         })
       )
-      .filter(model => model.type === ModelTypeEnum.Malloy);
+      .filter(model => model.type === 'Malloy');
 
     let modelIds = accessibleMalloyModelTabs.map(model => model.modelId);
 

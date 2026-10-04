@@ -4,30 +4,27 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
-import type { KeyValuePair } from '#common/types/blockml/parts/key-value-pair';
+import type { KeyValuePair } from '#common/types/blockml/parts/tag/key-value-pair';
 
-let func = FuncEnum.CheckModSpaces;
+let func: Func = 'build-mod-start/check-mod-spaces';
 
 export function checkModSpaces(item: {
   mods: FileMod[];
   spaces: FilePartSpace[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileMod[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   item.mods.forEach(mod => {
     let tagsResult = parseTags({
@@ -35,11 +32,9 @@ export function checkModSpaces(item: {
     });
     let mproveTags = tagsResult.mproveTags;
 
-    let spaceTag: KeyValuePair = mproveTags.find(
-      tag => tag.key === ParameterEnum.Space
-    );
+    let spaceTag: KeyValuePair = mproveTags.find(tag => tag.key === 'space');
     let accessRolesTag: KeyValuePair = mproveTags.find(
-      tag => tag.key === ParameterEnum.AccessRoles
+      tag => tag.key === 'access_roles'
     );
 
     mod.space = isDefined(spaceTag?.value) ? spaceTag.value.trim() : undefined;
@@ -55,8 +50,8 @@ export function checkModSpaces(item: {
       if (isDefined(space) === false) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.SPACE_DOES_NOT_EXIST,
-            message: `${ParameterEnum.Model} "${mod.name}" references space "${mod.space}" that does not exist`,
+            title: 'SPACE_DOES_NOT_EXIST',
+            message: `model "${mod.name}" references space "${mod.space}" that does not exist`,
             lines: [
               {
                 line: 0,
@@ -75,8 +70,8 @@ export function checkModSpaces(item: {
     });
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, item.mods);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', item.mods);
 
   return Result.succeed(item.mods);
 }

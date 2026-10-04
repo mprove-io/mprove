@@ -26,27 +26,22 @@ import {
 import { ServerError } from '#common/classes/server-error/server-error';
 // import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import { replaceChartField } from '#common/functions/replace-chart-field/replace-chart-field';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
-import type { QueryOperation } from '#common/types/backend/parts/query-operation';
-import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
-import type { SelectedGivenValue } from '#common/types/backend/parts/selected-given-value';
-import type { AppliedGivenValue } from '#common/types/blockml/parts/applied-given-value';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { Query } from '#common/types/blockml/parts/query';
-import type { Sorting } from '#common/types/blockml/parts/sorting';
+import type { AppliedGivenValue } from '#common/types/backend/parts/given/applied-given-value';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
+import type { SelectedGivenValue } from '#common/types/backend/parts/given/selected-given-value';
+import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { Sorting } from '#common/types/blockml/parts/query/sorting';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 import { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { getBlankMconfigAndQuery } from '#node-common/functions/malloy/make-malloy-query/get-blank-mconfig-and-query/get-blank-mconfig-and-query';
@@ -64,7 +59,7 @@ export async function makeMalloyQuery(item: {
   projectId: string;
   envId: string;
   structId: string;
-  mconfigParentType: MconfigParentTypeEnum;
+  mconfigParentType: MconfigParentType;
   mconfigParentId: string;
   model: Model;
   mconfig: Mconfig;
@@ -93,10 +88,9 @@ export async function makeMalloyQuery(item: {
 
   if (
     queryOperations.length === 1 &&
-    ((queryOperations[0].type === QueryOperationTypeEnum.Get &&
+    ((queryOperations[0].type === 'Get' &&
       isUndefined(mconfig.malloyQueryStable)) ||
-      (queryOperations[0].type === QueryOperationTypeEnum.Remove &&
-        mconfig.select?.length === 1))
+      (queryOperations[0].type === 'Remove' && mconfig.select?.length === 1))
   ) {
     let { blankMconfig, blankQuery } = getBlankMconfigAndQuery({
       projectId: projectId,
@@ -128,7 +122,7 @@ export async function makeMalloyQuery(item: {
 
   if (malloyToQueryLogs?.filter(x => x.severity === 'error').length > 0) {
     throw new ServerError({
-      message: ErEnum.MALLOY_TO_QUERY_FAILED,
+      message: 'MALLOY_TO_QUERY_FAILED',
       customData: { malloyToQueryLogs: malloyToQueryLogs }
     });
   }
@@ -148,10 +142,9 @@ export async function makeMalloyQuery(item: {
 
   queryOperations.forEach(queryOperation => {
     if (
-      [
-        QueryOperationTypeEnum.GroupOrAggregate,
-        QueryOperationTypeEnum.GroupOrAggregatePlusSort
-      ].indexOf(queryOperation.type) > -1
+      ['GroupOrAggregate', 'GroupOrAggregatePlusSort'].indexOf(
+        queryOperation.type
+      ) > -1
     ) {
       if (isUndefined(queryOperation.fieldId)) {
         isError = true;
@@ -169,11 +162,7 @@ export async function makeMalloyQuery(item: {
       let fieldPath: string[] = modelField.malloyFieldPath;
       let fieldRename = modelField.sqlName;
 
-      if (
-        [FieldClassEnum.Measure, FieldClassEnum.Dimension].indexOf(
-          modelField.fieldClass
-        ) < 0
-      ) {
+      if (['measure', 'dimension'].indexOf(modelField.fieldClass) < 0) {
         isError = true;
         errorMessage = `wrong modelField.fieldClass`;
       }
@@ -183,13 +172,13 @@ export async function makeMalloyQuery(item: {
       );
 
       if (selectIndex < 0) {
-        if (modelField.fieldClass === FieldClassEnum.Measure) {
+        if (modelField.fieldClass === 'measure') {
           if (fieldPath.length > 0) {
             segment0.addAggregate(fieldName, fieldPath, fieldRename);
           } else {
             segment0.addAggregate(fieldName);
           }
-        } else if (modelField.fieldClass === FieldClassEnum.Dimension) {
+        } else if (modelField.fieldClass === 'dimension') {
           if (fieldPath.length > 0) {
             segment0.addGroupBy(fieldName, fieldPath, fieldRename);
           } else {
@@ -197,7 +186,7 @@ export async function makeMalloyQuery(item: {
           }
         }
       } else {
-        if (modelField.fieldClass === FieldClassEnum.Measure) {
+        if (modelField.fieldClass === 'measure') {
           // deselect aggregate
           segment0.operations.items
             .filter(
@@ -215,7 +204,7 @@ export async function makeMalloyQuery(item: {
               return fieldId === queryOperation.fieldId;
             })
             .delete();
-        } else if (modelField.fieldClass === FieldClassEnum.Dimension) {
+        } else if (modelField.fieldClass === 'dimension') {
           // deselect groupBy
           segment0.operations.items
             .filter(
@@ -235,7 +224,7 @@ export async function makeMalloyQuery(item: {
             .delete();
         }
       }
-    } else if (queryOperation.type === QueryOperationTypeEnum.Get) {
+    } else if (queryOperation.type === 'Get') {
       let p = processMalloyWhereOrHaving({
         model: model,
         segment0: segment0,
@@ -247,7 +236,7 @@ export async function makeMalloyQuery(item: {
         isError = p.isError;
         errorMessage = p.errorMessage;
       }
-    } else if (queryOperation.type === QueryOperationTypeEnum.WhereOrHaving) {
+    } else if (queryOperation.type === 'WhereOrHaving') {
       let p = processMalloyWhereOrHaving({
         model: model,
         segment0: segment0,
@@ -275,7 +264,7 @@ export async function makeMalloyQuery(item: {
       mconfig.filters = filters.sort((a, b) =>
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       );
-    } else if (queryOperation.type === QueryOperationTypeEnum.Remove) {
+    } else if (queryOperation.type === 'Remove') {
       if (isUndefined(queryOperation.fieldId)) {
         isError = true;
         errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Remove)`;
@@ -304,7 +293,7 @@ export async function makeMalloyQuery(item: {
           return fieldId === queryOperation.fieldId;
         })
         .delete();
-    } else if (queryOperation.type === QueryOperationTypeEnum.Replace) {
+    } else if (queryOperation.type === 'Replace') {
       if (isUndefined(queryOperation.fieldId)) {
         isError = true;
         errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Replace)`;
@@ -349,7 +338,7 @@ export async function makeMalloyQuery(item: {
         })
         .delete();
 
-      if (replaceWithModelField.fieldClass === FieldClassEnum.Measure) {
+      if (replaceWithModelField.fieldClass === 'measure') {
         if (currentFieldPath.length > 0) {
           segment0.addAggregate(
             replaceFieldName,
@@ -359,9 +348,7 @@ export async function makeMalloyQuery(item: {
         } else {
           segment0.addAggregate(replaceFieldName);
         }
-      } else if (
-        replaceWithModelField.fieldClass === FieldClassEnum.Dimension
-      ) {
+      } else if (replaceWithModelField.fieldClass === 'dimension') {
         if (replaceFieldPath.length > 0) {
           segment0.addGroupBy(
             replaceFieldName,
@@ -404,23 +391,21 @@ export async function makeMalloyQuery(item: {
           sorting.desc === true ? 'desc' : 'asc'
         );
       });
-    } else if (queryOperation.type === QueryOperationTypeEnum.Move) {
+    } else if (queryOperation.type === 'Move') {
       segment0.reorderFields(
         queryOperation.moveFieldIds.map(x =>
           x.split('.').join(DOUBLE_UNDERSCORE)
         )
       );
-    } else if (queryOperation.type === QueryOperationTypeEnum.Limit) {
+    } else if (queryOperation.type === 'Limit') {
       segment0.setLimit(queryOperation.limit);
     }
 
     // not else
     if (
-      [
-        QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-        QueryOperationTypeEnum.Remove,
-        QueryOperationTypeEnum.Sort
-      ].indexOf(queryOperation.type) > -1 &&
+      ['GroupOrAggregatePlusSort', 'Remove', 'Sort'].indexOf(
+        queryOperation.type
+      ) > -1 &&
       isDefined(queryOperation.sortFieldId)
     ) {
       let fieldNameUnderscore = queryOperation.sortFieldId
@@ -497,7 +482,7 @@ export async function makeMalloyQuery(item: {
     }
 
     let convertedValues = selectedGiven.values.map(value =>
-      selectedGiven.type === GivenTypeEnum.Boolean ? value === 'true' : value
+      selectedGiven.type === 'Boolean' ? value === 'true' : value
     );
 
     malloySelectedGivens[selectedGiven.givenId] = selectedGiven.isMultiple
@@ -557,7 +542,7 @@ export async function makeMalloyQuery(item: {
     urlReader: {
       readURL: async (_url: URL) => {
         throw new ServerError({
-          message: ErEnum.BLOCKML_UNEXPECTED_URL_READ
+          message: 'BLOCKML_UNEXPECTED_URL_READ'
         });
       }
     },
@@ -573,8 +558,7 @@ export async function makeMalloyQuery(item: {
   );
 
   let timezone =
-    queryOperations.length > 0 &&
-    queryOperations[0].type === QueryOperationTypeEnum.Get
+    queryOperations.length > 0 && queryOperations[0].type === 'Get'
       ? queryOperations[0].timezone
       : mconfig.timezone;
 
@@ -641,22 +625,14 @@ export async function makeMalloyQuery(item: {
     envId: envId,
     connectionId: model.connectionId,
     connectionType: model.connectionType,
-    reportId:
-      mconfig.parentType === MconfigParentTypeEnum.Report
-        ? mconfig.parentId
-        : undefined,
+    reportId: mconfig.parentType === 'Report' ? mconfig.parentId : undefined,
     reportStructId:
-      mconfig.parentType === MconfigParentTypeEnum.Report
-        ? mconfig.structId
-        : undefined,
+      mconfig.parentType === 'Report' ? mconfig.structId : undefined,
     sql: pr.sql,
     apiMethod: undefined,
     apiUrl: undefined,
     apiBody: undefined,
-    status:
-      (isError as boolean) === true
-        ? QueryStatusEnum.Error
-        : QueryStatusEnum.New,
+    status: (isError as boolean) === true ? 'Error' : 'New',
     lastRunBy: undefined,
     lastRunTs: undefined,
     lastCancelTs: undefined,
@@ -768,10 +744,10 @@ export async function makeMalloyQuery(item: {
     queryOperations.filter(
       queryOperation =>
         [
-          QueryOperationTypeEnum.GroupOrAggregate,
-          QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-          QueryOperationTypeEnum.Replace,
-          QueryOperationTypeEnum.Remove
+          'GroupOrAggregate',
+          'GroupOrAggregatePlusSort',
+          'Replace',
+          'Remove'
         ].indexOf(queryOperation.type) > -1
     ).length > 0
   ) {
@@ -783,7 +759,7 @@ export async function makeMalloyQuery(item: {
 
   if (
     queryOperations.length === 1 &&
-    [QueryOperationTypeEnum.Replace].indexOf(queryOperations[0].type) > -1
+    ['Replace'].indexOf(queryOperations[0].type) > -1
   ) {
     let replaceWithModelField = model.fields.find(
       x => x.id === queryOperations[0].replaceWithFieldId
@@ -801,10 +777,10 @@ export async function makeMalloyQuery(item: {
     queryOperations.filter(
       queryOperation =>
         [
-          QueryOperationTypeEnum.GroupOrAggregate,
-          QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-          QueryOperationTypeEnum.Replace,
-          QueryOperationTypeEnum.Remove
+          'GroupOrAggregate',
+          'GroupOrAggregatePlusSort',
+          'Replace',
+          'Remove'
         ].indexOf(queryOperation.type) > -1
     ).length > 0
   ) {

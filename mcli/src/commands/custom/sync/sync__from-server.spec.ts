@@ -4,9 +4,7 @@ import retry from 'async-retry';
 import fse from 'fs-extra';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRenameCatalogNodeRequest } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
 import type { ToBackendCreateFileRequest } from '#common/types/backend/routes/files/create-file/create-file-request';
@@ -94,7 +92,7 @@ test('1', async () => {
               projectId: projectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.GitClone,
+              remoteType: 'GitClone',
               gitUrl: config.mproveCliTestDevSourceGitUrl,
               publicKey: fse
                 .readFileSync(config.mproveCliTestPublicKeyPath)
@@ -120,7 +118,7 @@ test('1', async () => {
               projectId: projectId,
               connectionId: 'c1_postgres',
               envId: PROJECT_ENV_PROD,
-              type: ConnectionTypeEnum.PostgreSQL,
+              type: 'PostgreSQL',
               options: {
                 postgres: {
                   host: 'dwh-postgres',
@@ -284,7 +282,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -295,7 +293,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -351,7 +349,7 @@ test('1', async () => {
 
     logToConsoleMcli({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       context: undefined,
       isJson: false
     });

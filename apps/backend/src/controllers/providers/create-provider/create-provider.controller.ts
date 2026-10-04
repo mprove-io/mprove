@@ -28,9 +28,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProviderOutput } from '#common/types/backend/routes/providers/create-provider/create-provider-output';
 import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
@@ -75,7 +75,7 @@ export class CreateProviderController {
       projectId: projectId
     });
 
-    if (type === ProviderTypeEnum.OpenAICompatible && 'baseURL' in options) {
+    if (type === 'OpenAICompatible' && 'baseURL' in options) {
       await this.urlService.checkApiUrl({
         urlStr: options.baseURL
       });

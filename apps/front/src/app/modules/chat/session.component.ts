@@ -13,15 +13,13 @@ import type {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
-import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
+import type { ArchiveReason } from '#common/types/backend/parts/session/archive-reason';
+import type { InteractionType } from '#common/types/backend/parts/session/interaction-type';
+import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
 import type { ToBackendSendMessageToEditorSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
 import type { ToBackendSendMessageToEditorSessionResponse } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
 import type { ToBackendSendMessageToExplorerSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-request';
@@ -54,11 +52,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   @ViewChild(SessionMessagesComponent)
   sessionMessages: SessionMessagesComponent;
 
-  archiveReasonEnum = ArchiveReasonEnum;
-  pauseReasonEnum = PauseReasonEnum;
-  sessionStatusEnum = SessionStatusEnum;
-  sessionTypeEnum = SessionTypeEnum;
-
   agent = 'plan';
   modelExtraId: string;
   variant = 'default';
@@ -85,8 +78,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   scrollTrigger = 0;
   previousTurnsCount = 0;
   previousSessionId: string;
-  archiveReason: ArchiveReasonEnum;
-  pauseReason: PauseReasonEnum;
+  archiveReason: ArchiveReason;
+  pauseReason: PauseReason;
   retryMessage: string;
   lastSessionError: Record<string, unknown>;
   workingSpinnerName = 'sessionInProgress';
@@ -246,7 +239,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       let state = this.sessionModelsQuery.getValue();
 
       let models =
-        this.session.type === SessionTypeEnum.Explorer
+        this.session.type === 'Explorer'
           ? state.modelsAi
           : state.modelsOpencode;
 
@@ -272,12 +265,12 @@ export class SessionComponent implements OnInit, OnDestroy {
       messages: this.messages
     });
 
-    this.isActivating = this.session.status === SessionStatusEnum.New;
-    this.isArchived = this.session.status === SessionStatusEnum.Archived;
+    this.isActivating = this.session.status === 'New';
+    this.isArchived = this.session.status === 'Archived';
     this.archiveReason = this.session.archiveReason;
     this.pauseReason = this.session.pauseReason;
     this.retryMessage = this.makeRetryMessage(sessionData.ocSessionStatus);
-    this.isSessionError = this.session.status === SessionStatusEnum.Error;
+    this.isSessionError = this.session.status === 'Error';
     this.lastSessionError = sessionData.lastSessionError;
     this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
 
@@ -290,12 +283,12 @@ export class SessionComponent implements OnInit, OnDestroy {
     });
 
     this.isSessionBusy =
-      this.session?.status === SessionStatusEnum.Active &&
+      this.session?.status === 'Active' &&
       ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1 &&
       !lastAssistantCompleted;
 
     this.isWorking =
-      this.session?.status === SessionStatusEnum.Active &&
+      this.session?.status === 'Active' &&
       isDefined(sessionData.ocSessionStatus) &&
       ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) > -1 &&
       !lastAssistantCompleted;
@@ -359,21 +352,21 @@ export class SessionComponent implements OnInit, OnDestroy {
       messages: this.messages
     });
 
-    this.isArchived = this.session.status === SessionStatusEnum.Archived;
+    this.isArchived = this.session.status === 'Archived';
     this.archiveReason = this.session.archiveReason;
     this.pauseReason = this.session.pauseReason;
     this.retryMessage = this.makeRetryMessage(sessionData.ocSessionStatus);
-    this.isSessionError = this.session.status === SessionStatusEnum.Error;
+    this.isSessionError = this.session.status === 'Error';
     this.lastSessionError = sessionData.lastSessionError;
     this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
 
-    if (this.session?.status !== SessionStatusEnum.Active) {
+    if (this.session?.status !== 'Active') {
       this.isOptimisticLoading = false;
       this.uiQuery.updatePart({ isOptimisticLoading: false });
     }
 
     let wasActivating = this.isActivating;
-    this.isActivating = this.session.status === SessionStatusEnum.New;
+    this.isActivating = this.session.status === 'New';
     let justActivated = wasActivating && !this.isActivating;
 
     if (justActivated && !this.isActivating && !!this.session.firstMessage) {
@@ -394,12 +387,12 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.isOptimisticLoading ||
       (this.questions.length === 0 &&
         this.permissions.length === 0 &&
-        this.session?.status === SessionStatusEnum.Active &&
+        this.session?.status === 'Active' &&
         ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1 &&
         !lastAssistantCompleted);
 
     if (
-      this.session?.status === SessionStatusEnum.Active &&
+      this.session?.status === 'Active' &&
       isDefined(sessionData.ocSessionStatus) &&
       ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) < 0
     ) {
@@ -408,7 +401,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.isWorking =
       this.isOptimisticLoading ||
-      (this.session?.status === SessionStatusEnum.Active &&
+      (this.session?.status === 'Active' &&
         isDefined(sessionData.ocSessionStatus) &&
         ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) > -1 &&
         this.isAborting === false &&
@@ -462,7 +455,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.sendInteraction({
       sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Stop
+      interactionType: 'Stop'
     });
   }
 
@@ -483,7 +476,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.sendInteraction({
       sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Permission,
+      interactionType: 'Permission',
       permissionId: event.permissionId,
       reply: event.reply
     });
@@ -504,7 +497,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.sendInteraction({
       sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Question,
+      interactionType: 'Question',
       questionId: event.questionId,
       answers: event.answers
     });
@@ -525,7 +518,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.sendInteraction({
       sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Question,
+      interactionType: 'Question',
       questionId: event.questionId
     });
   }
@@ -581,7 +574,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.sendInteraction({
       sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Message,
+      interactionType: 'Message',
       message: text,
       modelExtraId: this.modelExtraId,
       variant: this.variant,
@@ -593,7 +586,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   sendInteraction(item: {
     sessionId: string;
-    interactionType: InteractionTypeEnum;
+    interactionType: InteractionType;
     messageId?: string;
     partId?: string;
     message?: string;
@@ -611,7 +604,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     let modelId = modelSelection?.modelID;
 
-    let isExplorer = this.session.type === SessionTypeEnum.Explorer;
+    let isExplorer = this.session.type === 'Explorer';
 
     if (isExplorer) {
       let explorerPayload: ToBackendSendMessageToExplorerSessionRequest['input'] =

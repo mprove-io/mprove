@@ -16,9 +16,8 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROVIDER_TYPE_NAME_BY_TYPE } from '#common/constants/providers';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import type { Provider } from '#common/types/backend/parts/provider';
-import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/parts/provider-options/provider-options-openai-compatible';
+import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendEditProviderRequest } from '#common/types/backend/routes/providers/edit-provider/edit-provider-request';
 import type { ToBackendEditProviderResponse } from '#common/types/backend/routes/providers/edit-provider/edit-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -47,8 +46,6 @@ export class EditProviderDialogComponent implements OnInit {
 
   editProviderForm: FormGroup;
 
-  providerTypeEnum = ProviderTypeEnum;
-
   get providerTypeLabel(): string {
     let providerTypeLabel: string =
       PROVIDER_TYPE_NAME_BY_TYPE[this.ref.data.provider.type];
@@ -65,8 +62,7 @@ export class EditProviderDialogComponent implements OnInit {
   ngOnInit() {
     let provider = this.ref.data.provider;
 
-    let isOpenAICompatible =
-      provider.type === ProviderTypeEnum.OpenAICompatible;
+    let isOpenAICompatible = provider.type === 'OpenAICompatible';
 
     let compatibleOptions = isOpenAICompatible
       ? (provider.options as ProviderOptionsOpenAICompatible)
@@ -110,8 +106,7 @@ export class EditProviderDialogComponent implements OnInit {
       ],
       apiKey: [
         undefined,
-        provider.type === ProviderTypeEnum.OpenAI ||
-        provider.type === ProviderTypeEnum.Anthropic
+        provider.type === 'OpenAI' || provider.type === 'Anthropic'
           ? [Validators.required]
           : []
       ],
@@ -165,7 +160,7 @@ export class EditProviderDialogComponent implements OnInit {
 
     let payload: ToBackendEditProviderRequest['input'];
 
-    if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+    if (provider.type === 'OpenAICompatible') {
       payload = {
         name: this.editProviderForm.value.name.trim(),
         projectId: this.ref.data.projectId,
@@ -187,13 +182,13 @@ export class EditProviderDialogComponent implements OnInit {
           )
         }
       };
-    } else if (provider.type === ProviderTypeEnum.OpenAICodex) {
+    } else if (provider.type === 'OpenAICodex') {
       payload = {
         projectId: this.ref.data.projectId,
         providerId: provider.providerId,
         options: {}
       };
-    } else if (provider.type === ProviderTypeEnum.OpenAI) {
+    } else if (provider.type === 'OpenAI') {
       payload = {
         projectId: this.ref.data.projectId,
         providerId: provider.providerId,

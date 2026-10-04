@@ -4,28 +4,27 @@ import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { getSpaceFromFilePath } from '#blockml/functions/get-space-from-file-path/get-space-from-file-path';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 
-let func = FuncEnum.MakeDashboardAccessRolesCombined;
+let func: Func = 'build-dashboard/make-dashboard-access-roles-combined';
 
 export function makeDashboardAccessRolesCombined(item: {
   dashboards: FileDashboard[];
   spaces: FilePartSpace[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileDashboard[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   item.dashboards.forEach(dashboard => {
     dashboard.space = getSpaceFromFilePath({
@@ -43,9 +42,9 @@ export function makeDashboardAccessRolesCombined(item: {
     });
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Ds, item.dashboards);
+  log(cs, caller, func, structId, 'out_dashboards.log', item.dashboards);
 
   return Result.succeed(item.dashboards);
 }

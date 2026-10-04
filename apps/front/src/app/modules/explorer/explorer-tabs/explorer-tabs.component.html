@@ -15,31 +15,25 @@
       }"
     >
       <m-chart-table-icon
-        *ngIf="tab.chartType === chartTypeEnum.Table"
+        *ngIf="tab.chartType === 'table'"
       ></m-chart-table-icon>
 
-      <m-chart-line-icon
-        *ngIf="tab.chartType === chartTypeEnum.Line"
-      ></m-chart-line-icon>
+      <m-chart-line-icon *ngIf="tab.chartType === 'line'"></m-chart-line-icon>
 
-      <m-chart-bar-icon
-        *ngIf="tab.chartType === chartTypeEnum.Bar"
-      ></m-chart-bar-icon>
+      <m-chart-bar-icon *ngIf="tab.chartType === 'bar'"></m-chart-bar-icon>
 
       <m-chart-scatter-icon
-        *ngIf="tab.chartType === chartTypeEnum.Scatter"
+        *ngIf="tab.chartType === 'scatter'"
       ></m-chart-scatter-icon>
 
       <m-chart-single-icon
-        *ngIf="tab.chartType === chartTypeEnum.Single"
+        *ngIf="tab.chartType === 'single'"
       ></m-chart-single-icon>
 
-      <m-chart-pie-icon
-        *ngIf="tab.chartType === chartTypeEnum.Pie"
-      ></m-chart-pie-icon>
+      <m-chart-pie-icon *ngIf="tab.chartType === 'pie'"></m-chart-pie-icon>
 
       <m-chart-pivot-table-icon
-        *ngIf="tab.chartType === chartTypeEnum.PivotTable"
+        *ngIf="tab.chartType === 'pivot_table'"
       ></m-chart-pivot-table-icon>
     </div>
 

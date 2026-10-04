@@ -4,15 +4,13 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 
-let caller = CallerEnum.RebuildStruct;
-let func = FuncEnum.CollectFiles;
+let caller: Caller = 'RebuildStruct';
+let func: Func = 'extra/collect-files';
 let testId = 'v__files-length';
 
 test('1', async t => {
@@ -51,14 +49,14 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    files = await readLog(fromDir, LogTypeEnum.Files);
+    files = await readLog(fromDir, 'out_files.log');
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });

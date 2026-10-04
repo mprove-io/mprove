@@ -1,19 +1,20 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import type { SimpleGit } from 'simple-git';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
 export async function createGit(item: {
   repoDir: string;
-  remoteType: ProjectRemoteTypeEnum;
+  remoteType: ProjectRemoteType;
   keyDir: string;
   gitUrl: string;
   publicKey: string;
   privateKeyEncrypted: string;
   passPhrase: string;
 }): Result.ResultAsync<SimpleGit, never> {
-  if (item.remoteType === ProjectRemoteTypeEnum.GitClone) {
+  if (item.remoteType === 'GitClone') {
     let pubKeyPath: string = `${item.keyDir}/id_rsa.pub`;
     let privateKeyPath: string = `${item.keyDir}/id_rsa`;
     let askpassPath: string = `${item.keyDir}/ssh-askpass.sh`;

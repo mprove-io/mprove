@@ -7,8 +7,7 @@ import { getDashboardUrl } from '#backend/functions/get-dashboard-url';
 import { DashboardsService } from '#backend/services/db/dashboards.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { RunDashboard } from '#common/types/backend/parts/run/run-dashboard';
@@ -90,7 +89,7 @@ export class RunDashboardService {
 
         if (isFound === false) {
           let serverError = new ServerError({
-            message: ErEnum.BACKEND_DASHBOARD_NOT_FOUND,
+            message: 'BACKEND_DASHBOARD_NOT_FOUND',
             displayData: { id: dashboardId },
             originalError: null
           });
@@ -163,16 +162,12 @@ export class RunDashboardService {
     let { dashboards } = item;
 
     return dashboards
-      .filter(
-        x =>
-          x.tiles.filter(y => y.query.status === QueryStatusEnum.Error).length >
-          0
-      )
+      .filter(x => x.tiles.filter(y => y.query.status === 'Error').length > 0)
       .map(d => ({
         title: d.title,
         dashboardId: d.dashboardId,
         url: d.url,
-        tiles: d.tiles.filter(t => t.query.status === QueryStatusEnum.Error)
+        tiles: d.tiles.filter(t => t.query.status === 'Error')
       }));
   }
 }

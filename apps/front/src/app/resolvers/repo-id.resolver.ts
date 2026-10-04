@@ -7,7 +7,8 @@ import {
   PARAMETER_REPO_ID,
   PROD_REPO_ID
 } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';
@@ -45,12 +46,12 @@ export class RepoIdResolver implements Resolve<Observable<boolean>> {
       )
       .subscribe();
 
-    let repoType =
+    let repoType: RepoType =
       repoId === PROD_REPO_ID
-        ? RepoTypeEnum.Production
+        ? 'production'
         : repoId === userId
-          ? RepoTypeEnum.Dev
-          : RepoTypeEnum.Session;
+          ? 'dev'
+          : 'session';
 
     let branchId = route.firstChild?.params[PARAMETER_BRANCH_ID];
 

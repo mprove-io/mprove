@@ -4,12 +4,11 @@ import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { makeLineNumbers } from '#blockml/functions/make-line-numbers/make-line-numbers';
 import { yamlToObjects } from '#blockml/functions/yaml-to-objects/yaml-to-objects';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
-import type { File2 } from '#common/types/blockml/parts/internal/file-2';
-import type { File3 } from '#common/types/blockml/parts/internal/file-3';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { File2 } from '#common/types/blockml/parts/internal/file/file-2';
+import type { File3 } from '#common/types/blockml/parts/internal/file/file-3';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
@@ -45,7 +44,7 @@ export function buildYaml(item: {
   connections: ProjectConnection[];
   mproveDir: string;
   isUseCache: boolean;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<BuildYamlOutput, never> {
   return Result.pipe(
@@ -79,13 +78,13 @@ export function buildYaml(item: {
           file3s: v.file3s.filter(
             x =>
               [
-                FileExtensionEnum.Store,
-                FileExtensionEnum.Schema,
-                FileExtensionEnum.Report,
-                FileExtensionEnum.Dashboard,
-                FileExtensionEnum.Chart,
-                FileExtensionEnum.Space,
-                FileExtensionEnum.Yml
+                '.store',
+                '.schema',
+                '.report',
+                '.dashboard',
+                '.chart',
+                '.space',
+                '.yml'
               ].indexOf(x.ext) > -1
           ),
           structId: v.structId,

@@ -2,9 +2,9 @@ import { rowIdLetterToNumber } from '#backend/functions/row-id-letter-to-number'
 import { rowIdNumberToLetter } from '#backend/functions/row-id-number-to-letter';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { QUAD_UNDERSCORE, UNDEF } from '#common/constants/top';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Row } from '#common/types/blockml/parts/row';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
 
 export function processRowIds(item: {
   rows: Row[];
@@ -30,7 +30,7 @@ export function processRowIds(item: {
   });
 
   rows.forEach(row => {
-    if (row.rowType === RowTypeEnum.Formula) {
+    if (row.rowType === 'formula') {
       let newFormula = row.formula;
       let formulaDeps: string[] = [];
       let reg = MyRegex.CAPTURE_ROW_REF();
@@ -47,8 +47,7 @@ export function processRowIds(item: {
 
         let targetTo =
           isDefined(targetRow) &&
-          (targetRow.rowType === RowTypeEnum.Formula ||
-            targetRow.rowType === RowTypeEnum.Metric)
+          (targetRow.rowType === 'formula' || targetRow.rowType === 'metric')
             ? targets[reference]
             : isDefined(replaceWithUndef) &&
                 replaceWithUndef.indexOf(reference) > -1

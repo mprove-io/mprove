@@ -17,8 +17,7 @@ import { TrinoService } from '#backend/services/dwh/trino.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
@@ -68,7 +67,7 @@ export class GetConnectionSampleService {
 
     if (isDefined(offset) && (!Number.isInteger(offset) || offset < 0)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_OFFSET
+        message: 'BACKEND_WRONG_OFFSET'
       });
     }
 
@@ -110,30 +109,30 @@ export class GetConnectionSampleService {
 
     if (!isDefined(connection)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+        message: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
       });
     }
 
     if (
       [
-        ConnectionTypeEnum.PostgreSQL,
-        ConnectionTypeEnum.MySQL,
-        ConnectionTypeEnum.SnowFlake,
-        ConnectionTypeEnum.BigQuery,
-        ConnectionTypeEnum.Databricks,
-        ConnectionTypeEnum.MotherDuck,
-        ConnectionTypeEnum.Presto,
-        ConnectionTypeEnum.Trino
+        'PostgreSQL',
+        'MySQL',
+        'SnowFlake',
+        'BigQuery',
+        'Databricks',
+        'MotherDuck',
+        'Presto',
+        'Trino'
       ].indexOf(connection.type) < 0
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE
+        message: 'BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE'
       });
     }
 
     if (isUndefined(connection.rawSchema)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND
+        message: 'BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND'
       });
     }
 
@@ -143,13 +142,13 @@ export class GetConnectionSampleService {
 
     if (!connection.rawSchema.tables.some(t => t.schemaName === schemaName)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_SCHEMA_NAME
+        message: 'BACKEND_WRONG_SCHEMA_NAME'
       });
     }
 
     if (!isDefined(schemaTable)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_TABLE_NAME
+        message: 'BACKEND_WRONG_TABLE_NAME'
       });
     }
 
@@ -158,13 +157,13 @@ export class GetConnectionSampleService {
       !schemaTable.columns.some(c => c.columnName === columnName)
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_COLUMN_NAME
+        message: 'BACKEND_WRONG_COLUMN_NAME'
       });
     }
 
     let sampleResult: FetchSampleResult;
 
-    if (connection.type === ConnectionTypeEnum.PostgreSQL) {
+    if (connection.type === 'PostgreSQL') {
       sampleResult = await this.pgService.fetchSample({
         connection: connection,
         schemaName: schemaName,
@@ -172,7 +171,7 @@ export class GetConnectionSampleService {
         columnName: columnName,
         offset: offset
       });
-    } else if (connection.type === ConnectionTypeEnum.MySQL) {
+    } else if (connection.type === 'MySQL') {
       sampleResult = await this.mysqlService.fetchSample({
         connection: connection,
         schemaName: schemaName,
@@ -180,7 +179,7 @@ export class GetConnectionSampleService {
         columnName: columnName,
         offset: offset
       });
-    } else if (connection.type === ConnectionTypeEnum.SnowFlake) {
+    } else if (connection.type === 'SnowFlake') {
       sampleResult = await this.snowFlakeService.fetchSample({
         connection: connection,
         schemaName: schemaName,
@@ -188,7 +187,7 @@ export class GetConnectionSampleService {
         columnName: columnName,
         offset: offset
       });
-    } else if (connection.type === ConnectionTypeEnum.Databricks) {
+    } else if (connection.type === 'Databricks') {
       sampleResult = await this.databricksService.fetchSample({
         connection: connection,
         schemaName: schemaName,
@@ -196,7 +195,7 @@ export class GetConnectionSampleService {
         columnName: columnName,
         offset: offset
       });
-    } else if (connection.type === ConnectionTypeEnum.BigQuery) {
+    } else if (connection.type === 'BigQuery') {
       sampleResult = await this.bigQueryService.fetchSample({
         connection: connection,
         schemaName: schemaName,
@@ -204,7 +203,7 @@ export class GetConnectionSampleService {
         columnName: columnName,
         offset: offset
       });
-    } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+    } else if (connection.type === 'MotherDuck') {
       sampleResult = await this.duckDbService.fetchSample({
         connection: connection,
         schemaName: schemaName,
@@ -212,7 +211,7 @@ export class GetConnectionSampleService {
         columnName: columnName,
         offset: offset
       });
-    } else if (connection.type === ConnectionTypeEnum.Presto) {
+    } else if (connection.type === 'Presto') {
       sampleResult = await this.prestoService.fetchSample({
         connection: connection,
         schemaName: schemaName,
@@ -220,7 +219,7 @@ export class GetConnectionSampleService {
         columnName: columnName,
         offset: offset
       });
-    } else if (connection.type === ConnectionTypeEnum.Trino) {
+    } else if (connection.type === 'Trino') {
       sampleResult = await this.trinoService.fetchSample({
         connection: connection,
         schemaName: schemaName,

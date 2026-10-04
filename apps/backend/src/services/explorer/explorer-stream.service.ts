@@ -22,13 +22,9 @@ import {
   CHANNEL_AI_STREAM_COMMAND,
   KEY_AI_STREAM_OWNER
 } from '#common/constants/top-backend';
-import { AiStreamCommandEnum } from '#common/enums/ai-stream-command.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import { CodexService } from '../codex.service';
 import { ProjectsService } from '../db/projects.service';
 import { ProvidersService } from '../db/providers.service';
@@ -124,12 +120,12 @@ export class ExplorerStreamService implements OnModuleDestroy {
           return;
         }
 
-        if (command === AiStreamCommandEnum.Stop) {
+        if (command === 'stop') {
           // console.log(`[ai-stream] received stop for sessionId=${sessionId}`);
 
           let ac = this.abortControllers.get(sessionId);
           ac.abort();
-        } else if (command === AiStreamCommandEnum.SetTitle) {
+        } else if (command === 'set-title') {
           // console.log(
           //   `[ai-stream] received set-title for sessionId=${sessionId}`
           // );
@@ -142,7 +138,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
             sessionId: sessionId,
             event: titleEvent
           });
-        } else if (command === AiStreamCommandEnum.Interact) {
+        } else if (command === 'interact') {
           let { replyTo, payload } = parsed;
 
           // console.log(
@@ -172,10 +168,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AI_SDK_STREAM_COMMAND_FAILED,
+            message: 'BACKEND_AI_SDK_STREAM_COMMAND_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -198,7 +194,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_AI_STREAM_COMMAND,
       JSON.stringify({
-        command: AiStreamCommandEnum.Stop,
+        command: 'stop',
         sessionId: item.sessionId
       })
     );
@@ -226,7 +222,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_AI_STREAM_COMMAND,
       JSON.stringify({
-        command: AiStreamCommandEnum.Interact,
+        command: 'interact',
         sessionId: item.sessionId,
         replyTo: replyTo,
         payload: {
@@ -247,7 +243,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         sub.quit();
         reject(
           new ServerError({
-            message: ErEnum.BACKEND_INTERACT_TIMEOUT,
+            message: 'BACKEND_INTERACT_TIMEOUT',
             customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
           })
         );
@@ -265,7 +261,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           } else {
             reject(
               new ServerError({
-                message: ErEnum.BACKEND_INTERACT_FAILED,
+                message: 'BACKEND_INTERACT_FAILED',
                 customData: {
                   sessionId: item.sessionId,
                   error: result.error
@@ -276,7 +272,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         } catch {
           reject(
             new ServerError({
-              message: ErEnum.BACKEND_INTERACT_FAILED,
+              message: 'BACKEND_INTERACT_FAILED',
               customData: { sessionId: item.sessionId }
             })
           );
@@ -293,7 +289,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       await this.redisClient.publish(
         CHANNEL_AI_STREAM_COMMAND,
         JSON.stringify({
-          command: AiStreamCommandEnum.SetTitle,
+          command: 'set-title',
           sessionId: item.sessionId,
           title: item.title
         })
@@ -307,7 +303,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         await this.redisClient.publish(
           CHANNEL_AI_STREAM_COMMAND,
           JSON.stringify({
-            command: AiStreamCommandEnum.SetTitle,
+            command: 'set-title',
             sessionId: item.sessionId,
             title: item.title
           })
@@ -433,12 +429,12 @@ export class ExplorerStreamService implements OnModuleDestroy {
       if (isAcquired === false) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_PROMPT_FAILED,
+            message: 'BACKEND_PROMPT_FAILED',
             originalError: new Error(
               `Failed to acquire stream lock for session ${sessionId}`
             )
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -481,10 +477,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
       } catch (e: any) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_PROMPT_FAILED,
+            message: 'BACKEND_PROMPT_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -599,7 +595,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       isBuilder: false
     });
 
-    let isCodex = modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
+    let isCodex = modelSelection.provider.type === 'OpenAICodex';
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: session.projectId
@@ -728,14 +724,12 @@ export class ExplorerStreamService implements OnModuleDestroy {
       codexFetch: codexFetch
     });
 
-    let isOpenAI =
-      modelSelection.provider.type === ProviderTypeEnum.OpenAI || isCodex;
+    let isOpenAI = modelSelection.provider.type === 'OpenAI' || isCodex;
 
-    let isAnthropic: boolean =
-      modelSelection.provider.type === ProviderTypeEnum.Anthropic;
+    let isAnthropic: boolean = modelSelection.provider.type === 'Anthropic';
 
     let isOpenAICompatible: boolean =
-      modelSelection.provider.type === ProviderTypeEnum.OpenAICompatible;
+      modelSelection.provider.type === 'OpenAICompatible';
 
     // Start title generation in parallel
     let isFirstMessage = history.length === 0;
@@ -783,7 +777,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     ];
 
     let tools =
-      session.type === SessionTypeEnum.Explorer
+      session.type === 'Explorer'
         ? this.explorerToolsService.getTools({
             user: user,
             sessionId: sessionId,
@@ -1033,7 +1027,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         message: string;
         sessionId: string;
         providerId: string;
-        providerType: ProviderTypeEnum;
+        providerType: ProviderType;
         modelId: string;
         responseId: string;
         responseModelId: string;
@@ -1075,7 +1069,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
       logToConsoleBackend({
         log: streamDiagnostic,
-        logLevel: LogLevelEnum.Info,
+        logLevel: 'Info',
         logger: this.logger,
         cs: this.cs
       });

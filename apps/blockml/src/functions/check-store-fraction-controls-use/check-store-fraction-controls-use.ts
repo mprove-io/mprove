@@ -3,15 +3,12 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStoreFractionControl } from '#common/types/blockml/parts/internal/file-store-fraction-control';
 
-let func = FuncEnum.CheckStoreFractionControlsUse;
+let func: Func = 'extra/check-store-fraction-controls-use';
 
 export function checkStoreFractionControlsUse(
   item: {
@@ -22,12 +19,12 @@ export function checkStoreFractionControlsUse(
     filePath: string;
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId, storeControls } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   item.controls.forEach(control => {
     let storeControl = storeControls.find(x => x.name === control.name);
@@ -35,7 +32,7 @@ export function checkStoreFractionControlsUse(
     if (isUndefined(storeControl)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_CONTROL_REFS_MISSING_STORE_CONTROL,
+          title: 'FRACTION_CONTROL_REFS_MISSING_STORE_CONTROL',
           message: `store control "${control.name}" is missing or not valid`,
           lines: [
             {
@@ -52,7 +49,7 @@ export function checkStoreFractionControlsUse(
     if (storeControl.controlClass !== control.controlClass) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_CONTROL_CLASS_MISMATCH,
+          title: 'FRACTION_CONTROL_CLASS_MISMATCH',
           message: `control type "${control.controlClass}" does not match store control type "${storeControl.controlClass}"`,
           lines: [
             {
@@ -67,13 +64,13 @@ export function checkStoreFractionControlsUse(
     }
 
     if (
-      control.controlClass === ControlClassEnum.Selector &&
+      control.controlClass === 'selector' &&
       storeControl.options.map(option => option.value).indexOf(control.value) <
         0
     ) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_CONTROL_SELECTOR_VALUE_MISSING_OPTION,
+          title: 'FRACTION_CONTROL_SELECTOR_VALUE_MISSING_OPTION',
           message: `selector value "${control.value}" does not match options`,
           lines: [
             {
@@ -88,12 +85,12 @@ export function checkStoreFractionControlsUse(
     }
 
     if (
-      control.controlClass === ControlClassEnum.Switch &&
+      control.controlClass === 'switch' &&
       !control.value.match(MyRegex.TRUE_FALSE())
     ) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FRACTION_CONTROL_WRONG_SWITCH_VALUE,
+          title: 'FRACTION_CONTROL_WRONG_SWITCH_VALUE',
           message: `switch value must be 'true' or 'false' if specified`,
           lines: [
             {

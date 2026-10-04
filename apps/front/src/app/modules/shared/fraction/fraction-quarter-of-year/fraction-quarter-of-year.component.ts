@@ -9,11 +9,9 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionQuarterOfYearValueEnum } from '#common/enums/fraction/fraction-quarter-of-year-value.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionQuarterOfYearValue } from '#common/types/blockml/parts/fraction/fraction-quarter-of-year-value';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import {
   FractionQuarterOfYearValueItem,
   FractionTypeItem
@@ -38,9 +36,6 @@ export class FractionQuarterOfYearComponent {
     this.fractionQuarterOfYearValueSelectElement?.close();
   }
 
-  fractionOperatorEnum = FractionOperatorEnum;
-  fractionTypeEnum = FractionTypeEnum;
-
   @Input() isDisabled: boolean;
   @Input() fraction: Fraction;
   @Input() fractionIndex: number;
@@ -51,47 +46,47 @@ export class FractionQuarterOfYearComponent {
   fractionQuarterOfYearTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: FractionTypeEnum.QuarterOfYearIsAnyValue,
-      operator: FractionOperatorEnum.Or
+      value: 'QuarterOfYearIsAnyValue',
+      operator: 'Or'
     },
     {
       label: 'is',
-      value: FractionTypeEnum.QuarterOfYearIs,
-      operator: FractionOperatorEnum.Or
+      value: 'QuarterOfYearIs',
+      operator: 'Or'
     },
     {
       label: 'is null',
-      value: FractionTypeEnum.QuarterOfYearIsNull,
-      operator: FractionOperatorEnum.Or
+      value: 'QuarterOfYearIsNull',
+      operator: 'Or'
     },
     {
       label: 'is not',
-      value: FractionTypeEnum.QuarterOfYearIsNot,
-      operator: FractionOperatorEnum.And
+      value: 'QuarterOfYearIsNot',
+      operator: 'And'
     },
     {
       label: 'is not null',
-      value: FractionTypeEnum.QuarterOfYearIsNotNull,
-      operator: FractionOperatorEnum.And
+      value: 'QuarterOfYearIsNotNull',
+      operator: 'And'
     }
   ];
 
   fractionQuarterOfYearValuesList: FractionQuarterOfYearValueItem[] = [
     {
       label: 'Q1',
-      value: FractionQuarterOfYearValueEnum.Q1
+      value: 'q1'
     },
     {
       label: 'Q2',
-      value: FractionQuarterOfYearValueEnum.Q2
+      value: 'q2'
     },
     {
       label: 'Q3',
-      value: FractionQuarterOfYearValueEnum.Q3
+      value: 'q3'
     },
     {
       label: 'Q4',
-      value: FractionQuarterOfYearValueEnum.Q4
+      value: 'q4'
     }
   ];
 
@@ -108,10 +103,10 @@ export class FractionQuarterOfYearComponent {
     let fractionType = fractionTypeItem.value;
 
     switch (fractionType) {
-      case FractionTypeEnum.QuarterOfYearIsAnyValue: {
+      case 'QuarterOfYearIsAnyValue': {
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           brick: `any`,
           parentBrick: `any`
         };
@@ -120,12 +115,12 @@ export class FractionQuarterOfYearComponent {
         break;
       }
 
-      case FractionTypeEnum.QuarterOfYearIs: {
-        let newQuarterOfYearValue = FractionQuarterOfYearValueEnum.Q1;
+      case 'QuarterOfYearIs': {
+        let newQuarterOfYearValue: FractionQuarterOfYearValue = 'q1';
 
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           quarterOfYearValue: newQuarterOfYearValue,
           brick: `${newQuarterOfYearValue}`,
           parentBrick: `${newQuarterOfYearValue}`
@@ -136,10 +131,10 @@ export class FractionQuarterOfYearComponent {
         break;
       }
 
-      case FractionTypeEnum.QuarterOfYearIsNull: {
+      case 'QuarterOfYearIsNull': {
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.Or,
+          operator: 'Or',
           brick: `null`,
           parentBrick: `null`
         };
@@ -149,12 +144,12 @@ export class FractionQuarterOfYearComponent {
         break;
       }
 
-      case FractionTypeEnum.QuarterOfYearIsNot: {
-        let newQuarterOfYearValue = FractionQuarterOfYearValueEnum.Q1;
+      case 'QuarterOfYearIsNot': {
+        let newQuarterOfYearValue: FractionQuarterOfYearValue = 'q1';
 
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.And,
+          operator: 'And',
           quarterOfYearValue: newQuarterOfYearValue,
           brick: `not ${newQuarterOfYearValue}`,
           parentBrick: `not ${newQuarterOfYearValue}`
@@ -165,10 +160,10 @@ export class FractionQuarterOfYearComponent {
         break;
       }
 
-      case FractionTypeEnum.QuarterOfYearIsNotNull: {
+      case 'QuarterOfYearIsNotNull': {
         this.fraction = {
           type: fractionType,
-          operator: FractionOperatorEnum.And,
+          operator: 'And',
           brick: `not null`,
           parentBrick: `not null`
         };
@@ -188,18 +183,18 @@ export class FractionQuarterOfYearComponent {
   ) {
     let fractionQuarterOfYearValue = fractionQuarterOfYearValueItem.value;
 
-    if (this.fraction.type === FractionTypeEnum.QuarterOfYearIs) {
+    if (this.fraction.type === 'QuarterOfYearIs') {
       this.fraction = {
         type: this.fraction.type,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         quarterOfYearValue: fractionQuarterOfYearValue,
         brick: `${fractionQuarterOfYearValue}`,
         parentBrick: `${fractionQuarterOfYearValue}`
       };
-    } else if (this.fraction.type === FractionTypeEnum.QuarterOfYearIsNot) {
+    } else if (this.fraction.type === 'QuarterOfYearIsNot') {
       this.fraction = {
         type: this.fraction.type,
-        operator: FractionOperatorEnum.And,
+        operator: 'And',
         quarterOfYearValue: fractionQuarterOfYearValue,
         brick: `not ${fractionQuarterOfYearValue}`,
         parentBrick: `not ${fractionQuarterOfYearValue}`

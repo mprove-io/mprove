@@ -4,19 +4,18 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Ev } from '#common/types/backend/parts/ev';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import { buildSpace } from './build-space/build-space';
 import { type BuildYamlOutput, buildYaml } from './build-yaml/build-yaml';
@@ -58,7 +57,7 @@ export function rebuildStructStateless(item: {
           structId: v.structId,
           errors: v.errors,
           isUseCache: v.isUseCache,
-          caller: CallerEnum.BuildYaml,
+          caller: 'BuildYaml',
           cs: v.cs
         })
     ),
@@ -66,7 +65,7 @@ export function rebuildStructStateless(item: {
       let stores: FileStore[] =
         v.isUseCache === true
           ? v.cachedModels
-              .filter(model => model.type === ModelTypeEnum.Store)
+              .filter(model => model.type === 'Store')
               .map(model => model.storeContent)
           : v.yamlBuildItem.stores;
 
@@ -79,7 +78,7 @@ export function rebuildStructStateless(item: {
           spaces: v.yamlBuildItem.spaces,
           errors: v.errors,
           structId: v.structId,
-          caller: CallerEnum.BuildSpace,
+          caller: 'BuildSpace',
           cs: v.cs
         })
     ),

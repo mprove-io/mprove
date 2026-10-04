@@ -4,11 +4,11 @@ import {
   type MproveConfig,
   zMproveConfig
 } from '#common/types/backend/parts/mprove-config';
-import { type Model, zModel } from '#common/types/blockml/parts/model';
+import { type Model, zModel } from '#common/types/blockml/parts/model/model';
 import {
   type ModelMetric,
   zModelMetric
-} from '#common/types/blockml/parts/model-metric';
+} from '#common/types/blockml/parts/model/model-metric';
 
 export type ToBackendGetRebuildStructRequest = {
   operation: 'getRebuildStruct';

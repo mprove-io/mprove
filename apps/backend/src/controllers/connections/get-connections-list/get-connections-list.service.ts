@@ -8,7 +8,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionItem } from '#common/types/backend/parts/connections/connection-item';
 
@@ -68,7 +68,7 @@ export class GetConnectionsListService {
     let connectionItems: ConnectionItem[] = [];
 
     connections.forEach(connection => {
-      if (connection.type === ConnectionTypeEnum.Api) {
+      if (connection.type === 'Api') {
         let storeApi = connection.options.storeApi;
 
         if (isDefined(storeApi)) {
@@ -83,7 +83,7 @@ export class GetConnectionsListService {
             headerKeys: headerKeys
           });
         }
-      } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
+      } else if (connection.type === 'GoogleApi') {
         let storeGoogleApi = connection.options.storeGoogleApi;
 
         if (isDefined(storeGoogleApi)) {

@@ -20,28 +20,24 @@ import {
   FORMAT_NUMBER_EXAMPLES
 } from '#common/constants/top-front';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { setChartSeries } from '#common/functions/set-chart-series/set-chart-series';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
-import type { ReportX } from '#common/types/backend/parts/report-x';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { MconfigChartPivotValue } from '#common/types/blockml/parts/mconfig-chart-pivot-value';
-import type { ChartSeriesWithField } from '#common/types/front/chart-series-with-field';
-import type { EventChartDeleteYAxisElement } from '#common/types/front/event-chart-delete-y-axis-element';
-import type { EventChartSeriesElementUpdate } from '#common/types/front/event-chart-series-element-update';
-import type { EventChartToggleSeries } from '#common/types/front/event-chart-toggle-series';
-import type { EventChartToggleYAxisElement } from '#common/types/front/event-chart-toggle-y-axis-element';
-import type { EventChartYAxisElementUpdate } from '#common/types/front/event-chart-y-axis-element-update';
-import type { SeriesPart } from '#common/types/front/series-part';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { MconfigChartPivotValue } from '#common/types/blockml/parts/mconfig/mconfig-chart-pivot-value';
+import type { ChartSeriesWithField } from '#common/types/front/chart/chart-series-with-field';
+import type { EventChartDeleteYAxisElement } from '#common/types/front/chart/events/event-chart-delete-y-axis-element';
+import type { EventChartSeriesElementUpdate } from '#common/types/front/chart/events/event-chart-series-element-update';
+import type { EventChartToggleSeries } from '#common/types/front/chart/events/event-chart-toggle-series';
+import type { EventChartToggleYAxisElement } from '#common/types/front/chart/events/event-chart-toggle-y-axis-element';
+import type { EventChartYAxisElementUpdate } from '#common/types/front/chart/events/event-chart-y-axis-element-update';
+import type { SeriesPart } from '#common/types/front/chart/series-part';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import type { PivotAxis } from '#front/app/modules/shared/chart-editor/pivot-axis';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ChartService } from '#front/app/services/chart.service';
@@ -85,11 +81,6 @@ export class ChartEditorComponent implements OnChanges {
     this.sizeFieldSelectElement?.close();
   }
 
-  chartTypeEnum = ChartTypeEnum;
-  chartTypeEnumTable = ChartTypeEnum.Table;
-  chartTypeEnumSingle = ChartTypeEnum.Single;
-  chartTypeEnumPivotTable = ChartTypeEnum.PivotTable;
-
   pivotThemeList = [
     { value: 'standard', label: 'Standard' },
     { value: 'material', label: 'Material' },
@@ -102,8 +93,6 @@ export class ChartEditorComponent implements OnChanges {
   defaultPivotFirstColumnWidth = DEFAULT_PIVOT_FIRST_COLUMN_WIDTH;
   defaultPivotColumnsWidth = DEFAULT_PIVOT_COLUMNS_WIDTH;
 
-  fieldResultEnum = FieldResultEnum;
-
   empty = EMPTY_MCONFIG_FIELD.topLabel;
 
   uiChartTypes = UI_CHART_TYPES;
@@ -114,7 +103,7 @@ export class ChartEditorComponent implements OnChanges {
     x.output = this.dataService.d3FormatValue({
       value: x.input,
       formatNumber: x.id,
-      fieldResult: FieldResultEnum.Number,
+      fieldResult: 'number',
       currencyPrefix: struct.mproveConfig.currencyPrefix,
       currencySuffix: struct.mproveConfig.currencySuffix,
       thousandsSeparator: struct.mproveConfig.thousandsSeparator
@@ -167,7 +156,7 @@ export class ChartEditorComponent implements OnChanges {
 
   chartSeriesWithField: ChartSeriesWithField[];
 
-  xFieldResult: FieldResultEnum;
+  xFieldResult: FieldResult;
 
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
@@ -220,22 +209,13 @@ export class ChartEditorComponent implements OnChanges {
       )?.result;
 
       this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
-        x =>
-          [
-            FieldClassEnum.Dimension,
-            FieldClassEnum.Measure,
-            FieldClassEnum.Calculation
-          ].indexOf(x.fieldClass) > -1
+        x => ['dimension', 'measure', 'calculation'].indexOf(x.fieldClass) > -1
       );
 
       this.numbersDimensionsMeasuresCalculations = this.mconfigFields.filter(
         x =>
-          x.result === FieldResultEnum.Number &&
-          [
-            FieldClassEnum.Dimension,
-            FieldClassEnum.Measure,
-            FieldClassEnum.Calculation
-          ].indexOf(x.fieldClass) > -1
+          x.result === 'number' &&
+          ['dimension', 'measure', 'calculation'].indexOf(x.fieldClass) > -1
       );
 
       this.numbersDimensionsMeasuresCalculationsPlusEmpty = [
@@ -244,7 +224,7 @@ export class ChartEditorComponent implements OnChanges {
       ];
 
       this.dimensions = this.mconfigFields.filter(
-        x => x.fieldClass === FieldClassEnum.Dimension
+        x => x.fieldClass === 'dimension'
       );
 
       this.dimensionsPlusEmpty = [
@@ -254,9 +234,8 @@ export class ChartEditorComponent implements OnChanges {
 
       this.numbersMeasuresAndCalculations = this.mconfigFields.filter(
         x =>
-          x.result === FieldResultEnum.Number &&
-          (x.fieldClass === FieldClassEnum.Measure ||
-            x.fieldClass === FieldClassEnum.Calculation)
+          x.result === 'number' &&
+          (x.fieldClass === 'measure' || x.fieldClass === 'calculation')
       );
 
       this.pivotValueColumns = this.makePivotValueColumns();
@@ -275,7 +254,7 @@ export class ChartEditorComponent implements OnChanges {
       ];
 
       this.numbersYFields =
-        this.chart.type === ChartTypeEnum.Scatter
+        this.chart.type === 'scatter'
           ? this.numbersDimensionsMeasuresCalculations
           : this.numbersMeasuresAndCalculations;
 
@@ -398,13 +377,13 @@ export class ChartEditorComponent implements OnChanges {
 
       if (isCheck === false || isCheckPass === true) {
         // query not changed
-        if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+        if (newMconfig.modelType === 'Malloy') {
           this.chartService.editChart({
             mconfig: newMconfig,
             isDraft: this.chartQuery.getValue().draft,
             chartId: this.chartQuery.getValue().chartId,
             queryOperation: {
-              type: QueryOperationTypeEnum.Get,
+              type: 'Get',
               timezone: newMconfig.timezone
             }
           });
@@ -426,7 +405,7 @@ export class ChartEditorComponent implements OnChanges {
 
           this.reportService.modifyRows({
             report: this.report,
-            changeType: ChangeTypeEnum.EditChart,
+            changeType: 'EditChart',
             rowChange: undefined,
             rowIds: undefined,
             reportFields: this.report.fields,
@@ -436,7 +415,7 @@ export class ChartEditorComponent implements OnChanges {
       } else {
         this.reportService.modifyRows({
           report: this.report,
-          changeType: ChangeTypeEnum.EditChart,
+          changeType: 'EditChart',
           rowChange: undefined,
           rowIds: undefined,
           reportFields: this.report.fields,
@@ -535,7 +514,7 @@ export class ChartEditorComponent implements OnChanges {
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
   }
 
-  pivotDragStart(item: { section: 'values' | 'rows' | 'columns' }) {
+  pivotDragStart(item: { section: PivotAxis }) {
     let { section } = item;
 
     this.isPivotDrag = true;
@@ -547,9 +526,7 @@ export class ChartEditorComponent implements OnChanges {
     this.clearPivotSectionHeights({});
   }
 
-  private setPivotSectionHeight(item: {
-    section: 'values' | 'rows' | 'columns';
-  }) {
+  private setPivotSectionHeight(item: { section: PivotAxis }) {
     let { section } = item;
 
     this.clearPivotSectionHeights({});

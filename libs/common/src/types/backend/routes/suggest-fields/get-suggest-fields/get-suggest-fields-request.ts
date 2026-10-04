@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import { zMconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
 export type ToBackendGetSuggestFieldsRequest = {
   operation: 'getSuggestFields';
@@ -12,17 +13,7 @@ export type ToBackendGetSuggestFieldsRequest = {
     branchId: string;
     envId: string;
     parentId: string;
-    parentType:
-      | MconfigParentTypeEnum.Dashboard
-      | MconfigParentTypeEnum.ChartDialogDashboard
-      | MconfigParentTypeEnum.SuggestDimensionDashboard
-      | MconfigParentTypeEnum.Report
-      | MconfigParentTypeEnum.ChartDialogReport
-      | MconfigParentTypeEnum.SuggestDimensionReport
-      | MconfigParentTypeEnum.Chart
-      | MconfigParentTypeEnum.SuggestDimensionChart
-      | MconfigParentTypeEnum.SuggestDimensionModel
-      | MconfigParentTypeEnum.Blank;
+    parentType: MconfigParentType;
   };
 };
 
@@ -38,7 +29,7 @@ export let zToBackendGetSuggestFieldsRequest = z
         branchId: z.string(),
         envId: z.string(),
         parentId: z.string(),
-        parentType: z.enum(MconfigParentTypeEnum)
+        parentType: zMconfigParentType
       })
       .meta({ id: 'ToBackendGetSuggestFieldsInput' })
   })

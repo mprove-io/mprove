@@ -5,7 +5,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { BranchTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { HashService } from '../hash.service';
@@ -61,7 +61,7 @@ export class BranchesService {
 
     if (isUndefined(branch)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+        message: 'BACKEND_BRANCH_DOES_NOT_EXIST'
       });
     }
 
@@ -85,7 +85,7 @@ export class BranchesService {
 
     if (isDefined(branch)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_BRANCH_ALREADY_EXISTS
+        message: 'BACKEND_BRANCH_ALREADY_EXISTS'
       });
     }
   }

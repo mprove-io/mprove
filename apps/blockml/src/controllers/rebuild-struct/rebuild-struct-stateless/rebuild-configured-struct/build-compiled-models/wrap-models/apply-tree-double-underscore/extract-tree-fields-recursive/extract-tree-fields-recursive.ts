@@ -1,6 +1,6 @@
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { ModelNode } from '#common/types/blockml/parts/model-node';
+
+import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
 
 type TreeField = {
   fieldNode: ModelNode;
@@ -35,7 +35,7 @@ export function extractTreeFieldsRecursive(item: {
 
     if (node.isField === false) {
       let nextFieldGroupNode =
-        node.nodeClass === FieldClassEnum.Dimension ? node : fieldGroupNode;
+        node.nodeClass === 'dimension' ? node : fieldGroupNode;
       let result = extractTreeFieldsRecursive({
         nodes: node.children ?? [],
         fieldGroupNode: nextFieldGroupNode

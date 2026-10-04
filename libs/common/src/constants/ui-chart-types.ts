@@ -1,40 +1,28 @@
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-
 export const UI_CHART_TYPES = {
   //
   // data
   //
-  sizeField: [ChartTypeEnum.Scatter],
-  xField: [
-    ChartTypeEnum.Line,
-    ChartTypeEnum.Bar,
-    ChartTypeEnum.Scatter,
-    ChartTypeEnum.Pie
-  ],
-  yField: [ChartTypeEnum.Pie, ChartTypeEnum.Single],
-  yFields: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
-  nullableMultiField: [ChartTypeEnum.Scatter],
-  multiField: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
-  pivotRows: [ChartTypeEnum.PivotTable],
-  pivotColumns: [ChartTypeEnum.PivotTable],
-  pivotValues: [ChartTypeEnum.PivotTable],
+  sizeField: ['scatter'],
+  xField: ['line', 'bar', 'scatter', 'pie'],
+  yField: ['pie', 'single'],
+  yFields: ['line', 'bar', 'scatter'],
+  nullableMultiField: ['scatter'],
+  multiField: ['line', 'bar', 'scatter'],
+  pivotRows: ['pivot_table'],
+  pivotColumns: ['pivot_table'],
+  pivotValues: ['pivot_table'],
   //
   // options
   //
-  format: [ChartTypeEnum.Table],
-  pivot: [ChartTypeEnum.PivotTable],
-  xAxisGroup: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
+  format: ['table'],
+  pivot: ['pivot_table'],
+  xAxisGroup: ['line', 'bar', 'scatter'],
   xAxis: {
-    scale: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter]
+    scale: ['line', 'bar', 'scatter']
   },
-  yAxisGroup: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
+  yAxisGroup: ['line', 'bar', 'scatter'],
   yAxis: {
-    scale: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter]
+    scale: ['line', 'bar', 'scatter']
   },
-  seriesGroup: [
-    ChartTypeEnum.Line,
-    ChartTypeEnum.Bar,
-    ChartTypeEnum.Scatter,
-    ChartTypeEnum.Pie
-  ]
+  seriesGroup: ['line', 'bar', 'scatter', 'pie']
 };

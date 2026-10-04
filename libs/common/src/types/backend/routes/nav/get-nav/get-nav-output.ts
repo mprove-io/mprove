@@ -1,10 +1,14 @@
 import { z } from 'zod';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { type Member, zMember } from '#common/types/backend/parts/member';
-import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
+import {
+  type StructX,
+  zStructX
+} from '#common/types/backend/parts/struct/struct-x';
 import { type User, zUser } from '#common/types/backend/parts/user';
-import { type Repo, zRepo } from '#common/types/disk/parts/repo';
+import { type Repo, zRepo } from '#common/types/disk/parts/repo/repo';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+import { zRepoType } from '#common/types/disk/parts/repo/repo-type';
 
 export type ToBackendGetNavOutput = {
   avatarSmall: string;
@@ -16,7 +20,7 @@ export type ToBackendGetNavOutput = {
   projectName: string;
   projectDefaultBranch: string;
   repoId: string;
-  repoType: RepoTypeEnum.Production | RepoTypeEnum.Dev | RepoTypeEnum.Session;
+  repoType: RepoType;
   branchId: string;
   envId: string;
   needValidate: boolean;
@@ -39,7 +43,7 @@ export let zToBackendGetNavOutput = z
     projectName: z.string(),
     projectDefaultBranch: z.string(),
     repoId: z.string(),
-    repoType: z.enum(RepoTypeEnum),
+    repoType: zRepoType,
     branchId: z.string(),
     envId: z.string(),
     needValidate: z.boolean(),

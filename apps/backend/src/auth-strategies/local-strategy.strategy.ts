@@ -4,7 +4,6 @@ import { Strategy } from 'passport-local';
 import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -32,7 +31,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     if (passwordHash !== user.passwordHash) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_PASSWORD
+        message: 'BACKEND_WRONG_PASSWORD'
       });
     }
 

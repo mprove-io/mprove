@@ -2,11 +2,11 @@ import path from 'node:path';
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import type { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 
 export async function prepareMalloyFile(item: {
@@ -41,7 +41,7 @@ export async function prepareMalloyFile(item: {
 
   let mods: FileMod[] = captures.map(sourceName => ({
     fileName: file.name,
-    fileExt: `.${ext}` as FileExtensionEnum, // malloy
+    fileExt: `.${ext}` as FileExtension, // malloy
     filePath: relativePath,
     name: sourceName,
     location: relativePath,

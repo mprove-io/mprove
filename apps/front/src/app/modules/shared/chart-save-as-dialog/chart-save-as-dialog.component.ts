@@ -27,17 +27,16 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Role } from '#common/types/backend/parts/role';
-import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { ToBackendSaveCreateChartRequest } from '#common/types/backend/routes/charts/save-create-chart/save-create-chart-request';
 import type { ToBackendSaveCreateChartResponse } from '#common/types/backend/routes/charts/save-create-chart/save-create-chart-response';
 import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
@@ -48,13 +47,15 @@ import type { ToBackendSaveModifyDashboardRequest } from '#common/types/backend/
 import type { ToBackendSaveModifyDashboardResponse } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
-import type { Chart } from '#common/types/blockml/parts/chart';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Chart } from '#common/types/blockml/parts/chart/chart';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
+import type { ChartSaveAs } from '#front/app/modules/shared/chart-save-as-dialog/chart-save-as';
+import type { TileSaveAs } from '#front/app/modules/shared/chart-save-as-dialog/tile-save-as';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -63,16 +64,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-
-enum ChartSaveAsEnum {
-  NEW_CHART = 'NEW_CHART',
-  TILE_OF_DASHBOARD = 'TILE_OF_DASHBOARD'
-}
-
-enum TileSaveAsEnum {
-  NEW_TILE = 'NEW_TILE',
-  REPLACE_EXISTING_TILE = 'REPLACE_EXISTING_TILE'
-}
 
 export interface ChartSaveAsDialogData {
   apiService: ApiService;
@@ -114,9 +105,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   selectedDashboardLoaded = false;
 
-  chartSaveAsEnum = ChartSaveAsEnum;
-  tileSaveAsEnum = TileSaveAsEnum;
-
   spinnerName = 'chartSaveAs';
 
   chart: ChartX;
@@ -132,8 +120,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   );
 
-  chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
-  tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
+  chartSaveAs: ChartSaveAs = 'NEW_CHART';
+  tileSaveAs: TileSaveAs = 'NEW_TILE';
 
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
@@ -310,18 +298,15 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let title: string = this.titleForm.controls['title'].value.toUpperCase();
 
     if (
-      this.chartSaveAs === this.chartSaveAsEnum.TILE_OF_DASHBOARD &&
+      this.chartSaveAs === 'TILE_OF_DASHBOARD' &&
       isDefined(this.selectedDashboard)
     ) {
       let titles = this.selectedDashboard.tiles.map(x => x.title.toUpperCase());
 
-      if (
-        this.tileSaveAs === this.tileSaveAsEnum.NEW_TILE &&
-        titles.indexOf(title) > -1
-      ) {
+      if (this.tileSaveAs === 'NEW_TILE' && titles.indexOf(title) > -1) {
         this.titleForm.controls['title'].setErrors({ titleIsNotUnique: true });
       } else if (
-        this.tileSaveAs === this.tileSaveAsEnum.REPLACE_EXISTING_TILE &&
+        this.tileSaveAs === 'REPLACE_EXISTING_TILE' &&
         titles.indexOf(title) > -1 &&
         title !== this.selectedTileTitle?.toUpperCase()
       ) {
@@ -340,13 +325,13 @@ export class ChartSaveAsDialogComponent implements OnInit {
     if (this.titleForm.controls['title'].valid && saveDisabled === false) {
       let newTitle = this.titleForm.controls['title'].value;
 
-      if (this.chartSaveAs === ChartSaveAsEnum.NEW_CHART) {
+      if (this.chartSaveAs === 'NEW_CHART') {
         this.ref.close();
 
         this.saveAsNewChart({
           newTitle: newTitle
         });
-      } else if (this.chartSaveAs === ChartSaveAsEnum.TILE_OF_DASHBOARD) {
+      } else if (this.chartSaveAs === 'TILE_OF_DASHBOARD') {
         this.ref.close();
         this.saveAsTile({ newTitle: newTitle });
       }
@@ -358,10 +343,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let dashboardNotSelected = this.selectedDashboardId === undefined;
     let dashboardNotLoaded = this.selectedDashboardLoaded === false;
     let tileNotSelected = this.selectedTileTitle === undefined;
-    let replaceExistingTile =
-      this.tileSaveAs === TileSaveAsEnum.REPLACE_EXISTING_TILE;
-    let tileOfDashboard =
-      this.chartSaveAs === ChartSaveAsEnum.TILE_OF_DASHBOARD;
+    let replaceExistingTile = this.tileSaveAs === 'REPLACE_EXISTING_TILE';
+    let tileOfDashboard = this.chartSaveAs === 'TILE_OF_DASHBOARD';
 
     return (
       titleInvalid ||
@@ -373,36 +356,36 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   newChartOnClick() {
-    this.chartSaveAs = ChartSaveAsEnum.NEW_CHART;
+    this.chartSaveAs = 'NEW_CHART';
     this.selectedDashboardId = undefined;
     this.selectedDashboardPath = '';
     this.selectedDashboard = undefined;
     this.selectedDashboardLoaded = false;
     this.selectedTileTitle = undefined;
-    this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
+    this.tileSaveAs = 'NEW_TILE';
     this.updateNewChartPath();
     this.titleForm.get('title').updateValueAndValidity();
   }
 
   tileOfDashboardOnClick() {
-    this.chartSaveAs = ChartSaveAsEnum.TILE_OF_DASHBOARD;
+    this.chartSaveAs = 'TILE_OF_DASHBOARD';
     this.selectedDashboardId = undefined;
     this.selectedDashboardPath = '';
     this.selectedDashboard = undefined;
     this.selectedDashboardLoaded = false;
     this.selectedTileTitle = undefined;
-    this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
+    this.tileSaveAs = 'NEW_TILE';
     this.titleForm.get('title').updateValueAndValidity();
   }
 
   newTileOnClick() {
-    this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
+    this.tileSaveAs = 'NEW_TILE';
     this.selectedTileTitle = undefined;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
   replaceExistingTileOnClick() {
-    this.tileSaveAs = TileSaveAsEnum.REPLACE_EXISTING_TILE;
+    this.tileSaveAs = 'REPLACE_EXISTING_TILE';
     this.selectedTileTitle = undefined;
     this.titleForm.get('title').updateValueAndValidity();
   }
@@ -583,7 +566,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       fromDashboardId: this.selectedDashboardId,
       selectedTileTitle: this.selectedTileTitle,
       newTile: newTile,
-      isReplaceTile: this.tileSaveAs === TileSaveAsEnum.REPLACE_EXISTING_TILE,
+      isReplaceTile: this.tileSaveAs === 'REPLACE_EXISTING_TILE',
       timezone: this.uiQuery.getValue().timezone
     };
 
@@ -621,7 +604,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       unitId: this.newChartId,
       filePath: undefined,
       unitSpace: EMPTY_SPACE_NAME,
-      extension: FileExtensionEnum.Chart,
+      extension: '.chart',
       spaces: this.struct.spaces
     });
   }

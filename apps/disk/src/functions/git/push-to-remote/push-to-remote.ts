@@ -3,7 +3,7 @@ import type { SimpleGit } from 'simple-git';
 import type { DiskRepoStatusIsNotNeedPushError } from '#common/types/disk/errors/disk-repo-status-is-not-need-push-error';
 import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
 import type { DiskPushToRemoteError } from '#common/types/disk/function-errors/disk-push-to-remote-error';
-import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
+import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 

@@ -2,8 +2,8 @@ import { Result } from '@praha/byethrow';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoConflictsError } from '#common/types/disk/function-errors/disk-get-repo-conflicts-error';
-import type { DiskFileLine } from '#common/types/disk/parts/disk-file-line';
-import type { DiskItemCatalog } from '#common/types/disk/parts/disk-item-catalog';
+import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
+import type { DiskFileLine } from '#common/types/disk/parts/file/disk-file-line';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 
 export function getRepoConflicts(item: {

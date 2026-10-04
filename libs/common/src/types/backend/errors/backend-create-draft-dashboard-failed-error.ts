@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type BmlError,
   zBmlError
-} from '#common/types/blockml/parts/bml-error';
+} from '#common/types/blockml/diagnostics/bml-error';
 
 export type BackendCreateDraftDashboardFailedError = {
   code: 'BACKEND_CREATE_DRAFT_DASHBOARD_FAILED';

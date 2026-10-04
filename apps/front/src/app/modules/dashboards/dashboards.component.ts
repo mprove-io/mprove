@@ -24,16 +24,15 @@ import {
   SHARED_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
-import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Member } from '#common/types/backend/parts/member';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
@@ -43,8 +42,8 @@ import type { ToBackendGetQueriesRequest } from '#common/types/backend/routes/qu
 import type { ToBackendGetQueriesResponse } from '#common/types/backend/routes/queries/get-queries/get-queries-response';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
-import type { Query } from '#common/types/blockml/parts/query';
-import type { RefreshItem } from '#common/types/front/refresh-item';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { RefreshItem } from '#common/types/front/ui/refresh-item';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
@@ -640,7 +639,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendSetFavoriteRequest['input'] = {
       projectId: nav.projectId,
-      type: FavoriteTypeEnum.Dashboard,
+      type: 'Dashboard',
       targetId: dashboardId,
       isFavorite: isFavorite === false
     };
@@ -829,7 +828,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   checkAutoRun() {
     let newQueries = this.dashboard.tiles.filter(
-      tile => isDefined(tile.query) && tile.query.status === QueryStatusEnum.New
+      tile => isDefined(tile.query) && tile.query.status === 'New'
     );
 
     if (this.isAutoRun === true && newQueries.length > 0) {
@@ -961,7 +960,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let nav = this.navQuery.getValue();
 
     let mconfigIds = this.dashboard.tiles
-      .filter(tile => tile.query?.status === QueryStatusEnum.Running)
+      .filter(tile => tile.query?.status === 'Running')
       .map(tile => tile.mconfigId);
 
     if (mconfigIds.length === 0) {
@@ -994,8 +993,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
                 let newTile = Object.assign({}, x, {
                   query: isDefined(query) ? query : x.query,
                   trackChangeId:
-                    isUndefined(query) ||
-                    query.status === QueryStatusEnum.Running
+                    isUndefined(query) || query.status === 'Running'
                       ? x.trackChangeId
                       : makeTrackChangeId({
                           mconfig: x.mconfig,
@@ -1037,19 +1035,19 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   checkQueries() {
     let newQueriesLength = [
       ...this.dashboard.tiles.filter(
-        r => isDefined(r.query) && r.query.status === QueryStatusEnum.New
+        r => isDefined(r.query) && r.query.status === 'New'
       )
     ].map(r => r.query).length;
 
     let runningQueriesLength = [
       ...this.dashboard.tiles.filter(
-        r => isDefined(r.query) && r.query.status === QueryStatusEnum.Running
+        r => isDefined(r.query) && r.query.status === 'Running'
       )
     ].map(r => r.query).length;
 
     let completedQueries = [
       ...this.dashboard.tiles.filter(
-        r => isDefined(r.query) && r.query.status === QueryStatusEnum.Completed
+        r => isDefined(r.query) && r.query.status === 'Completed'
       )
     ]
       .map(r => r.query)

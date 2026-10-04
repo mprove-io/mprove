@@ -40,18 +40,14 @@ import { ParentService } from '#backend/services/parent.service';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSuggestDimensionValuesOutput } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
 type CachedMatchedValueRow = {
   value: string | null;
@@ -169,13 +165,13 @@ export class SuggestDimensionValuesController {
           ? chartId
           : undefined;
 
-    let parentType = isDefined(dashboardId)
-      ? MconfigParentTypeEnum.SuggestDimensionDashboard
+    let parentType: MconfigParentType = isDefined(dashboardId)
+      ? 'SuggestDimensionDashboard'
       : isDefined(reportId)
-        ? MconfigParentTypeEnum.SuggestDimensionReport
+        ? 'SuggestDimensionReport'
         : isDefined(chartId)
-          ? MconfigParentTypeEnum.SuggestDimensionChart
-          : MconfigParentTypeEnum.SuggestDimensionModel;
+          ? 'SuggestDimensionChart'
+          : 'SuggestDimensionModel';
 
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
@@ -196,7 +192,7 @@ export class SuggestDimensionValuesController {
       suggestModel: model
     });
 
-    if (model.type === ModelTypeEnum.Malloy) {
+    if (model.type === 'Malloy') {
       // let temporaryPayload: ToBackendSuggestDimensionValuesOutput = {
       //   matchedValues: [],
       //   errorMessage: 'Temporary Malloy suggest error for UI testing'
@@ -212,7 +208,7 @@ FROM ${cachedColumnsTable} AS cached_columns
 INNER JOIN ${modelFieldLeafsTable} AS model_field_leafs
   ON model_field_leafs.struct_id = ${struct.structId}
   AND model_field_leafs.model_id = ${modelId}
-  AND model_field_leafs.model_type = ${ModelTypeEnum.Malloy}
+  AND model_field_leafs.model_type = ${'Malloy'}
   AND model_field_leafs.field_id = ${fieldId}
   AND model_field_leafs.connection_id = cached_columns.connection_id
   AND model_field_leafs.schema_name_lc = cached_columns.schema_name_lc
@@ -258,7 +254,7 @@ FROM ${cachedPartsTable} AS cached_parts
 INNER JOIN ${modelFieldLeafsTable} AS model_field_leafs
   ON model_field_leafs.struct_id = ${struct.structId}
   AND model_field_leafs.model_id = ${modelId}
-  AND model_field_leafs.model_type = ${ModelTypeEnum.Malloy}
+  AND model_field_leafs.model_type = ${'Malloy'}
   AND model_field_leafs.field_id = ${fieldId}
   AND model_field_leafs.connection_id = cached_parts.connection_id
   AND model_field_leafs.schema_name_lc = cached_parts.schema_name_lc
@@ -284,7 +280,7 @@ LIMIT 500;
       return payload;
     }
 
-    if (model.type !== ModelTypeEnum.Store) {
+    if (model.type !== 'Store') {
       let payload: ToBackendSuggestDimensionValuesOutput = {
         matchedValues: []
       };
@@ -297,7 +293,7 @@ LIMIT 500;
       mconfigId: makeId(),
       queryId: makeId(),
       modelId: modelId,
-      modelType: ModelTypeEnum.Store,
+      modelType: 'Store',
       parentType: parentType,
       parentId: parentId,
       dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
@@ -320,8 +316,8 @@ LIMIT 500;
                 {
                   brick: `%${term}%`,
                   parentBrick: `%${term}%`,
-                  type: FractionTypeEnum.StringContains,
-                  operator: FractionOperatorEnum.Or
+                  type: 'StringContains',
+                  operator: 'Or'
                 }
               ]
             }
@@ -398,7 +394,7 @@ LIMIT 500;
       });
     }
 
-    if (newQuery.status === QueryStatusEnum.Error) {
+    if (newQuery.status === 'Error') {
       let payload: ToBackendSuggestDimensionValuesOutput = {
         matchedValues: [],
         errorMessage: newQuery.lastErrorMessage ?? 'Suggest Values Error'

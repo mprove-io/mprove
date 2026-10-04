@@ -6,6 +6,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
+import type { LlmModelVariantsScope } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants-scope';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 
 @Component({
@@ -50,7 +51,7 @@ export class LlmModelVariantsComponent {
 
   toggleEnabled(item: {
     row: LlmModelVariant;
-    destination: 'Explorer' | 'Builder';
+    destination: LlmModelVariantsScope;
   }) {
     let { row, destination } = item;
 
@@ -87,7 +88,7 @@ export class LlmModelVariantsComponent {
 
   selectRecommended(item: {
     row: LlmModelVariant;
-    destination: 'Explorer' | 'Builder';
+    destination: LlmModelVariantsScope;
   }) {
     let { row, destination } = item;
 

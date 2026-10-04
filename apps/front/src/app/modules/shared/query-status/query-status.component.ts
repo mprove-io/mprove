@@ -8,11 +8,11 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { TimeService } from '#front/app/services/time.service';
 
@@ -22,8 +22,6 @@ import { TimeService } from '#front/app/services/time.service';
   templateUrl: './query-status.component.html'
 })
 export class QueryStatusComponent implements OnChanges {
-  queryStatusEnum = QueryStatusEnum;
-
   spinnerName = makeId();
 
   @Input()
@@ -72,7 +70,7 @@ export class QueryStatusComponent implements OnChanges {
 
       this.calculateTimes();
 
-      if (this.query.status === QueryStatusEnum.Running) {
+      if (this.query.status === 'Running') {
         this.spinner.show(this.spinnerName);
       } else {
         this.spinner.hide(this.spinnerName);

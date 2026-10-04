@@ -1,5 +1,5 @@
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
-import type { FileBasic } from '#common/types/blockml/parts/internal/file-basic';
+import type { FileBasic } from '#common/types/blockml/parts/internal/file/file-basic';
 import type { FileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
 import type { FileReportRow } from '#common/types/blockml/parts/internal/file-report-row';
 import type { Extend } from '#common/types/extend';

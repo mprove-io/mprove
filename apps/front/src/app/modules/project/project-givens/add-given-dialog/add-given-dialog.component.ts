@@ -16,7 +16,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
 import { GIVEN_TYPES } from '#common/constants/top';
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
+
 import type { ToBackendCreateGivenRequest } from '#common/types/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateGivenResponse } from '#common/types/backend/routes/givens/create-given/create-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -72,7 +72,7 @@ export class AddGivenDialogComponent implements OnInit {
           Validators.maxLength(32)
         ]
       ],
-      type: [GivenTypeEnum.String, [Validators.required]],
+      type: ['String', [Validators.required]],
       isMultiple: [false],
       values: [
         undefined,

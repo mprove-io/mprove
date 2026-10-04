@@ -19,28 +19,25 @@ import {
   PROJECT_WEEK_START_VALUES
 } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isTimezoneValid } from '#common/functions/is-timezone-valid/is-timezone-valid';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 
-let func = FuncEnum.CheckProjectConfig;
+let func: Func = 'build-yaml/check-project-config';
 
 export function checkProjectConfig(item: {
   confs: FileProjectConf[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   mproveDir: string;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileProjectConf | undefined, never> {
   let { caller, structId, cs } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let errorsOnStart = item.errors.length;
 
@@ -66,11 +63,11 @@ export function checkProjectConfig(item: {
       x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM())
     );
 
-    if (parameters.indexOf(ParameterEnum.MproveDir.toString()) < 0) {
+    if (parameters.indexOf('mprove_dir'.toString()) < 0) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.MISSING_MPROVE_DIR,
-          message: `parameter "${ParameterEnum.MproveDir}" must be specified`,
+          title: 'MISSING_MPROVE_DIR',
+          message: `parameter "mprove_dir" must be specified`,
           lines: [
             {
               line: 0,
@@ -81,13 +78,13 @@ export function checkProjectConfig(item: {
         })
       );
     } else {
-      let mdir = conf[ParameterEnum.MproveDir].toString();
+      let mdir = conf['mprove_dir'].toString();
 
       if (mdir.length <= 2 && mdir !== MPROVE_CONFIG_DIR_DOT_SLASH) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MPROVE_DIR_MUST_START_WITH_DOT_SLASH,
-            message: `${ParameterEnum.MproveDir} must start with "./"`,
+            title: 'MPROVE_DIR_MUST_START_WITH_DOT_SLASH',
+            message: `mprove_dir must start with "./"`,
             lines: [
               {
                 line: conf.mprove_dir_line_num,
@@ -106,8 +103,8 @@ export function checkProjectConfig(item: {
         if (mdir.match(MyRegex.CONTAINS_DOT())) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MPROVE_DIR_HAS_DOT_AFTER_SLASH,
-              message: `${ParameterEnum.MproveDir} must not have "." after "/"`,
+              title: 'MPROVE_DIR_HAS_DOT_AFTER_SLASH',
+              message: `mprove_dir must not have "." after "/"`,
               lines: [
                 {
                   line: conf.mprove_dir_line_num,
@@ -120,7 +117,7 @@ export function checkProjectConfig(item: {
         } else if (isUndefined(item.mproveDir)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
+              title: 'MPROVE_DIR_PATH_DOES_NOT_EXIST',
               message: `path "${mdir}" does not exist or is not a directory`,
               lines: [
                 {
@@ -137,19 +134,17 @@ export function checkProjectConfig(item: {
 
     parameters.forEach(parameter => {
       if (
-        [
-          ParameterEnum.Path.toString(),
-          ParameterEnum.Ext.toString(),
-          ParameterEnum.Name.toString()
-        ].indexOf(parameter) > -1
+        ['path'.toString(), 'ext'.toString(), 'name'.toString()].indexOf(
+          parameter
+        ) > -1
       ) {
         return;
       }
 
       if (
         [
-          ParameterEnum.AllowTimezones.toString(),
-          ParameterEnum.CaseSensitiveStringFilters.toString()
+          'allow_timezones'.toString(),
+          'case_sensitive_string_filters'.toString()
         ].indexOf(parameter) > -1 &&
         !conf[parameter as keyof FileProjectConf]
           .toString()
@@ -158,12 +153,11 @@ export function checkProjectConfig(item: {
         item.errors.push(
           new BmError({
             title:
-              parameter === ParameterEnum.AllowTimezones.toString()
-                ? ErTitleEnum.WRONG_ALLOW_TIMEZONES
-                : parameter ===
-                    ParameterEnum.CaseSensitiveStringFilters.toString()
-                  ? ErTitleEnum.WRONG_CASE_SENSITIVE_STRING_FILTERS
-                  : ErTitleEnum.WRONG_PROJECT_CONFIG_PARAMETER,
+              parameter === 'allow_timezones'.toString()
+                ? 'WRONG_ALLOW_TIMEZONES'
+                : parameter === 'case_sensitive_string_filters'.toString()
+                  ? 'WRONG_CASE_SENSITIVE_STRING_FILTERS'
+                  : 'WRONG_PROJECT_CONFIG_PARAMETER',
 
             message: `parameter "${parameter}:" must be "true" or "false" if specified`,
             lines: [
@@ -181,7 +175,7 @@ export function checkProjectConfig(item: {
         return;
       }
 
-      if (parameter === ParameterEnum.WeekStart.toString()) {
+      if (parameter === 'week_start'.toString()) {
         let lowerCaseWeekStart = conf.week_start.toLowerCase();
 
         (<any>conf).week_start = capitalizeFirstLetter(lowerCaseWeekStart);
@@ -193,7 +187,7 @@ export function checkProjectConfig(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_WEEK_START,
+              title: 'WRONG_WEEK_START',
               message: `parameter "${parameter}:" must be "Sunday" or "Monday" if specified`,
               lines: [
                 {
@@ -212,14 +206,14 @@ export function checkProjectConfig(item: {
       }
 
       if (
-        parameter === ParameterEnum.DefaultTimezone.toString() &&
+        parameter === 'default_timezone'.toString() &&
         isTimezoneValid(conf[parameter as keyof FileProjectConf].toString()) ===
           false
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.WRONG_DEFAULT_TIMEZONE,
-            message: `wrong ${ParameterEnum.DefaultTimezone} value`,
+            title: 'WRONG_DEFAULT_TIMEZONE',
+            message: `wrong default_timezone value`,
             lines: [
               {
                 line: conf[
@@ -235,15 +229,15 @@ export function checkProjectConfig(item: {
         return;
       }
 
-      if (parameter === ParameterEnum.FormatNumber.toString()) {
+      if (parameter === 'format_number'.toString()) {
         let value = conf[parameter as keyof FileProjectConf].toString();
         try {
           formatSpecifier(value);
         } catch (e) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_FORMAT_NUMBER,
-              message: ` ${ParameterEnum.FormatNumber} value "${value}" is not valid`,
+              title: 'WRONG_FORMAT_NUMBER',
+              message: ` format_number value "${value}" is not valid`,
               lines: [
                 {
                   line: conf[
@@ -270,7 +264,7 @@ export function checkProjectConfig(item: {
   ) {
     item.errors.push(
       new BmError({
-        title: ErTitleEnum.MPROVE_CONFIG_NOT_FOUND,
+        title: 'MPROVE_CONFIG_NOT_FOUND',
         message: `project must have ./${MPROVE_CONFIG_FILENAME} file`,
         lines: []
       })
@@ -282,13 +276,13 @@ export function checkProjectConfig(item: {
     // already checked by "duplicate file names" and "wrong extension"
   }
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
   log(
     cs,
     caller,
     func,
     structId,
-    LogTypeEnum.ProjectConf,
+    'out_project_conf.log',
     errorsOnStart === item.errors.length ? projectConfig : ''
   );
 

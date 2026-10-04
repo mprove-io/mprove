@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import { zSandboxType } from '#common/types/backend/parts/session/sandbox-type';
 
 export type ToBackendCreateEditorSessionRequest = {
   operation: 'createEditorSession';
@@ -8,7 +8,7 @@ export type ToBackendCreateEditorSessionRequest = {
   idempotencyKey: string;
   input: {
     projectId: string;
-    sandboxType: SandboxTypeEnum.E2B;
+    sandboxType: 'E2B';
     providerId: string;
     modelId: string;
     agent: string;
@@ -29,7 +29,7 @@ export let zToBackendCreateEditorSessionRequest = z
     input: z
       .object({
         projectId: z.string(),
-        sandboxType: z.enum(SandboxTypeEnum),
+        sandboxType: zSandboxType,
         providerId: z.string(),
         modelId: z.string(),
         agent: z.string(),

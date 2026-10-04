@@ -22,9 +22,7 @@ import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SuggestField } from '#common/types/backend/parts/suggest-field';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -112,7 +110,7 @@ export class GetSuggestFieldsController {
 
     let extraModelIds: string[] = [];
 
-    if (parentType === MconfigParentTypeEnum.Dashboard) {
+    if (parentType === 'Dashboard') {
       let dashboard =
         await this.dashboardsService.getDashboardCheckExistsAndAccess({
           dashboardId: parentId,
@@ -122,7 +120,7 @@ export class GetSuggestFieldsController {
         });
 
       extraModelIds = dashboard.tiles.map(x => x.modelId);
-    } else if (parentType === MconfigParentTypeEnum.Report) {
+    } else if (parentType === 'Report') {
       let report = await this.reportsService.getReportCheckExistsAndAccess({
         projectId: projectId,
         reportId: parentId,
@@ -152,8 +150,8 @@ export class GetSuggestFieldsController {
         .filter(
           y =>
             y.hidden === false &&
-            y.fieldClass === FieldClassEnum.Dimension &&
-            y.result === FieldResultEnum.String
+            y.fieldClass === 'dimension' &&
+            y.result === 'string'
         )
         .forEach(field => {
           let partFieldLabel = isDefined(field.groupLabel)
@@ -178,17 +176,13 @@ export class GetSuggestFieldsController {
     });
 
     suggestFields = suggestFields.sort((a, b) =>
-      a.fieldClass !== FieldClassEnum.Dimension &&
-      b.fieldClass === FieldClassEnum.Dimension
+      a.fieldClass !== 'dimension' && b.fieldClass === 'dimension'
         ? 1
-        : a.fieldClass === FieldClassEnum.Dimension &&
-            b.fieldClass !== FieldClassEnum.Dimension
+        : a.fieldClass === 'dimension' && b.fieldClass !== 'dimension'
           ? -1
-          : a.fieldClass !== FieldClassEnum.Filter &&
-              b.fieldClass === FieldClassEnum.Filter
+          : a.fieldClass !== 'filter' && b.fieldClass === 'filter'
             ? 1
-            : a.fieldClass === FieldClassEnum.Filter &&
-                b.fieldClass !== FieldClassEnum.Filter
+            : a.fieldClass === 'filter' && b.fieldClass !== 'filter'
               ? -1
               : a.partLabel > b.partLabel
                 ? 1

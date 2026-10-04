@@ -1,10 +1,7 @@
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 
 export function getSelectValid(item: {
   chart: MconfigChart;
@@ -21,9 +18,7 @@ export function getSelectValid(item: {
   if (isDefined(chart.yFields)) {
     let yFields = mconfigFields.filter(f => chart.yFields.indexOf(f.id) > -1);
 
-    let yFieldsResultIsNumber = yFields.filter(
-      f => f.result === FieldResultEnum.Number
-    );
+    let yFieldsResultIsNumber = yFields.filter(f => f.result === 'number');
 
     if (yFields.length !== yFieldsResultIsNumber.length) {
       yFieldsIsOk = false;
@@ -34,25 +29,23 @@ export function getSelectValid(item: {
   let errorMessage;
 
   let selectedDimensions = mconfigFields.filter(
-    x => x.fieldClass === FieldClassEnum.Dimension
+    x => x.fieldClass === 'dimension'
   );
 
   let selectedDimensionsResultForXField = mconfigFields.filter(
     x =>
-      x.fieldClass === FieldClassEnum.Dimension &&
+      x.fieldClass === 'dimension' &&
       ((isStoreModel === true && isDefined(x.detail)) ||
-        x.result === FieldResultEnum.Number ||
-        x.result === FieldResultEnum.Ts ||
-        x.result === FieldResultEnum.DayOfWeek ||
-        x.result === FieldResultEnum.DayOfWeekIndex ||
-        x.result === FieldResultEnum.MonthName ||
-        x.result === FieldResultEnum.QuarterOfYear)
+        x.result === 'number' ||
+        x.result === 'ts' ||
+        x.result === 'day_of_week' ||
+        x.result === 'day_of_week_index' ||
+        x.result === 'month_name' ||
+        x.result === 'quarter_of_year')
   );
 
   let selectedMeasuresAndCalculations = mconfigFields.filter(
-    x =>
-      x.fieldClass === FieldClassEnum.Measure ||
-      x.fieldClass === FieldClassEnum.Calculation
+    x => x.fieldClass === 'measure' || x.fieldClass === 'calculation'
   );
 
   let pivotRows = chart.pivotRows || [];
@@ -60,9 +53,9 @@ export function getSelectValid(item: {
   let pivotValues = chart.pivotValues || [];
   let pivotGroupFields = [...pivotRows, ...pivotColumns];
 
-  if (chart.type === ChartTypeEnum.Table) {
+  if (chart.type === 'table') {
     //
-  } else if (chart.type === ChartTypeEnum.PivotTable) {
+  } else if (chart.type === 'pivot_table') {
     let selectedPivotGroupFields = mconfigFields.filter(
       field => pivotGroupFields.indexOf(field.id) > -1
     );
@@ -76,7 +69,7 @@ export function getSelectValid(item: {
     );
 
     let invalidPivotValueFields = pivotValueFields.filter(
-      field => field.result !== FieldResultEnum.Number
+      field => field.result !== 'number'
     );
 
     if (pivotRows.length === 0 && pivotColumns.length === 0) {
@@ -86,9 +79,8 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage = 'Pivot group fields must be selected fields';
     } else if (
-      selectedPivotGroupFields.filter(
-        field => field.fieldClass !== FieldClassEnum.Dimension
-      ).length > 0
+      selectedPivotGroupFields.filter(field => field.fieldClass !== 'dimension')
+        .length > 0
     ) {
       isSelectValid = false;
       errorMessage = 'Pivot group fields must be Dimensions';
@@ -105,7 +97,7 @@ export function getSelectValid(item: {
       isSelectValid = false;
       errorMessage = 'Pivot Value fields must be numeric';
     }
-  } else if (chart.type === ChartTypeEnum.Single) {
+  } else if (chart.type === 'single') {
     if (selectedDimensions.length > 0) {
       isSelectValid = false;
       errorMessage = 'Dimensions cannot be selected for this chart type';
@@ -114,7 +106,7 @@ export function getSelectValid(item: {
       errorMessage =
         'Measure or Calculation field must be selected for this chart type';
     }
-  } else if (chart.type === ChartTypeEnum.Pie) {
+  } else if (chart.type === 'pie') {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
       errorMessage = 'Dimension field must be selected for this chart type';
@@ -128,23 +120,20 @@ export function getSelectValid(item: {
         'Measure or Calculation field must be selected for this chart type';
     }
   } else if (
-    chart.type === ChartTypeEnum.Line ||
-    chart.type === ChartTypeEnum.Bar ||
-    chart.type === ChartTypeEnum.Scatter
+    chart.type === 'line' ||
+    chart.type === 'bar' ||
+    chart.type === 'scatter'
   ) {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
       errorMessage = 'Dimension field must be selected for this chart type';
-    } else if (
-      selectedDimensions.length > 2 &&
-      chart.type !== ChartTypeEnum.Scatter
-    ) {
+    } else if (selectedDimensions.length > 2 && chart.type !== 'scatter') {
       isSelectValid = false;
       errorMessage =
         'A maximum of 2 dimension fields can be selected for this chart type';
     } else if (
       selectedDimensionsResultForXField.length === 0 &&
-      chart.type === ChartTypeEnum.Line
+      chart.type === 'line'
     ) {
       isSelectValid = false;
       errorMessage =
@@ -153,13 +142,13 @@ export function getSelectValid(item: {
       isDefined(xField) &&
       isStoreModel === true &&
       isUndefined(xField.detail) &&
-      xField.result !== FieldResultEnum.Number &&
-      xField.result !== FieldResultEnum.Ts &&
-      xField.result !== FieldResultEnum.DayOfWeek &&
-      xField.result !== FieldResultEnum.DayOfWeekIndex &&
-      xField.result !== FieldResultEnum.MonthName &&
-      xField.result !== FieldResultEnum.QuarterOfYear &&
-      chart.type === ChartTypeEnum.Line
+      xField.result !== 'number' &&
+      xField.result !== 'ts' &&
+      xField.result !== 'day_of_week' &&
+      xField.result !== 'day_of_week_index' &&
+      xField.result !== 'month_name' &&
+      xField.result !== 'quarter_of_year' &&
+      chart.type === 'line'
     ) {
       isSelectValid = false;
       errorMessage =
@@ -170,9 +159,9 @@ export function getSelectValid(item: {
       selectedDimensions.length === 2 &&
       selectedDimensions[0].topId === selectedDimensions[1].topId &&
       selectedDimensions[0].groupId === selectedDimensions[1].groupId &&
-      (selectedDimensions[0].result === FieldResultEnum.Ts ||
+      (selectedDimensions[0].result === 'ts' ||
         (isStoreModel === true && isDefined(selectedDimensions[0].detail))) &&
-      (selectedDimensions[1].result === FieldResultEnum.Ts ||
+      (selectedDimensions[1].result === 'ts' ||
         (isStoreModel === true && isDefined(selectedDimensions[1].detail)))
     ) {
       isSelectValid = false;
@@ -182,15 +171,12 @@ export function getSelectValid(item: {
           : 'Two dimensions with result type TS from the same time group can be selected simultaneously only for the table chart';
     } else if (
       selectedMeasuresAndCalculations.length === 0 &&
-      chart.type !== ChartTypeEnum.Scatter
+      chart.type !== 'scatter'
     ) {
       isSelectValid = false;
       errorMessage =
         'Measure or Calculation field must be selected for this chart type';
-    } else if (
-      isDefined(sizeField) &&
-      sizeField.result !== FieldResultEnum.Number
-    ) {
+    } else if (isDefined(sizeField) && sizeField.result !== 'number') {
       isSelectValid = false;
       errorMessage =
         'sizeField for this chart type must have result type "number"';

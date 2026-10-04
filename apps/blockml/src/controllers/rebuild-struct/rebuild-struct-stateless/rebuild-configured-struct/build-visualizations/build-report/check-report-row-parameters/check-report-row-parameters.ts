@@ -7,26 +7,20 @@ import { checkStoreFractionControls } from '#blockml/functions/check-store-fract
 import { checkStoreFractionControlsUse } from '#blockml/functions/check-store-fraction-controls-use/check-store-fraction-controls-use';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileReportRowParameter } from '#common/types/blockml/parts/internal/file-report-row-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
-let func = FuncEnum.CheckReportRowParameters;
+let func: Func = 'build-report/check-report-row-parameters';
 
 export function checkReportRowParameters(item: {
   caseSensitiveStringFilters: boolean;
@@ -36,7 +30,7 @@ export function checkReportRowParameters(item: {
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileReport[], never> {
   let { cs, ...input } = item;
@@ -50,7 +44,7 @@ export function checkReportRowParameters(item: {
     caseSensitiveStringFilters
   } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newReports: FileReport[] = [];
 
@@ -68,8 +62,8 @@ export function checkReportRowParameters(item: {
           if (isUndefined(p.apply_to)) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.MISSING_APPLY_TO,
-                message: `parameter "${ParameterEnum.ApplyTo}" is required`,
+                title: 'MISSING_APPLY_TO',
+                message: `parameter "apply_to" is required`,
                 lines: [
                   {
                     line: Math.min(...pKeysLineNums),
@@ -88,7 +82,7 @@ export function checkReportRowParameters(item: {
 
           let metric = metrics.find(m => m.metricId === row.metric);
 
-          isStore = metric?.modelType === ModelTypeEnum.Store;
+          isStore = metric?.modelType === 'Store';
 
           if (
             isStore === false &&
@@ -97,10 +91,10 @@ export function checkReportRowParameters(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.MISSING_LISTEN_OR_CONDITIONS,
+                title: 'MISSING_LISTEN_OR_CONDITIONS',
                 message:
-                  `"${ParameterEnum.Listen}" or ` +
-                  `"${ParameterEnum.Conditions}" must be specified for a row parameter`,
+                  `"listen" or ` +
+                  `"conditions" must be specified for a row parameter`,
                 lines: [
                   {
                     line: Math.min(...pKeysLineNums),
@@ -120,10 +114,10 @@ export function checkReportRowParameters(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.MISSING_LISTEN_OR_FRACTIONS,
+                title: 'MISSING_LISTEN_OR_FRACTIONS',
                 message:
-                  `"${ParameterEnum.Listen}" or ` +
-                  `"${ParameterEnum.Conditions}" must be specified for a tile parameter`,
+                  `"listen" or ` +
+                  `"conditions" must be specified for a tile parameter`,
                 lines: [
                   {
                     line: Math.min(...pKeysLineNums),
@@ -165,7 +159,7 @@ export function checkReportRowParameters(item: {
 
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.DUPLICATE_APPLY_TO,
+                title: 'DUPLICATE_APPLY_TO',
                 message: 'Row parameter apply_to must be unique',
                 lines: lines
               })
@@ -177,13 +171,11 @@ export function checkReportRowParameters(item: {
 
     if (errorsOnStart === item.errors.length) {
       x.rows
-        .filter(
-          row => row.type === RowTypeEnum.Metric && isDefined(row.parameters)
-        )
+        .filter(row => row.type === 'metric' && isDefined(row.parameters))
         .forEach(row => {
           let metric = metrics.find(m => m.metricId === row.metric);
 
-          let isStore = metric?.modelType === ModelTypeEnum.Store;
+          let isStore = metric?.modelType === 'Store';
 
           let store: FileStore;
 
@@ -202,8 +194,7 @@ export function checkReportRowParameters(item: {
                 if (isUndefined(reportField)) {
                   item.errors.push(
                     new BmError({
-                      title:
-                        ErTitleEnum.ROW_PARAMETER_LISTENS_TO_MISSING_REPORT_FILTER,
+                      title: 'ROW_PARAMETER_LISTENS_TO_MISSING_REPORT_FILTER',
                       message:
                         `row parameter listens report filter "${p.listen}" ` +
                         'that is missing or not valid',
@@ -228,7 +219,7 @@ export function checkReportRowParameters(item: {
                 if (isUndefined(storeField)) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.APPLY_TO_REFS_MISSING_STORE_FIELD,
+                      title: 'APPLY_TO_REFS_MISSING_STORE_FIELD',
                       message:
                         `"${p.apply_to}" references missing or not valid field ` +
                         `of store "${store.name}" fields section`,
@@ -247,8 +238,8 @@ export function checkReportRowParameters(item: {
                 if (isDefined(p.listen) && isDefined(p.fractions)) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.PARAMETER_WRONG_COMBINATION_STORE,
-                      message: `found that both parameters "${ParameterEnum.Fractions}" and "${ParameterEnum.Listen}" are specified`,
+                      title: 'PARAMETER_WRONG_COMBINATION_STORE',
+                      message: `found that both parameters "fractions" and "listen" are specified`,
                       lines: [
                         {
                           line: p.listen_line_num,
@@ -269,7 +260,7 @@ export function checkReportRowParameters(item: {
                 if (isDefined(p.fractions) && p.fractions.length === 0) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.FRACTIONS_LIST_IS_EMPTY,
+                      title: 'FRACTIONS_LIST_IS_EMPTY',
                       message: `fractions cannot be empty`,
                       lines: [
                         {
@@ -287,13 +278,12 @@ export function checkReportRowParameters(item: {
                   isDefined(p.listen) &&
                   isDefined(reportField.store_filter) &&
                   isDefined(storeField) &&
-                  (storeField.fieldClass !== FieldClassEnum.Filter ||
+                  (storeField.fieldClass !== 'filter' ||
                     storeField.name !== reportField.store_filter)
                 ) {
                   item.errors.push(
                     new BmError({
-                      title:
-                        ErTitleEnum.APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH,
+                      title: 'APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH',
                       message: `apply_to must reference to the same store filter as it listens to`,
                       lines: [
                         {
@@ -320,8 +310,7 @@ export function checkReportRowParameters(item: {
                 ) {
                   item.errors.push(
                     new BmError({
-                      title:
-                        ErTitleEnum.APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH,
+                      title: 'APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH',
                       message: `apply_to must reference to a store field with the same result as it listens to`,
                       lines: [
                         {
@@ -342,7 +331,7 @@ export function checkReportRowParameters(item: {
 
                 let storeResult: FileStoreResult;
 
-                if (storeField.fieldClass !== FieldClassEnum.Filter) {
+                if (storeField.fieldClass !== 'filter') {
                   storeResult = store.results.find(
                     sResult => sResult.result === storeField.result
                   );
@@ -350,13 +339,13 @@ export function checkReportRowParameters(item: {
 
                 if (isDefined(p.fractions)) {
                   if (
-                    storeField.fieldClass === FieldClassEnum.Filter &&
+                    storeField.fieldClass === 'filter' &&
                     isDefined(storeField.max_fractions) &&
                     p.fractions.length > Number(storeField.max_fractions)
                   ) {
                     item.errors.push(
                       new BmError({
-                        title: ErTitleEnum.MAX_FRACTIONS_EXCEEDED,
+                        title: 'MAX_FRACTIONS_EXCEEDED',
                         message: `fractions length ${
                           p.fractions.length
                         } exceeded store filter max_fractions ${Number(
@@ -377,11 +366,11 @@ export function checkReportRowParameters(item: {
                   checkStoreFraction(
                     {
                       storeFilter:
-                        storeField.fieldClass === FieldClassEnum.Filter
+                        storeField.fieldClass === 'filter'
                           ? storeField
                           : undefined,
                       storeResult:
-                        storeField.fieldClass === FieldClassEnum.Filter
+                        storeField.fieldClass === 'filter'
                           ? undefined
                           : storeField.result,
                       storeFractionTypes: storeResult?.fraction_types,
@@ -417,7 +406,7 @@ export function checkReportRowParameters(item: {
                           {
                             controls: fraction.controls,
                             storeControls:
-                              storeField.fieldClass === FieldClassEnum.Filter
+                              storeField.fieldClass === 'filter'
                                 ? storeField.fraction_controls
                                 : storeResult.fraction_types.find(
                                     ft => ft.type === fraction.type
@@ -437,7 +426,7 @@ export function checkReportRowParameters(item: {
                 }
               }
 
-              if (metric?.modelType === ModelTypeEnum.Malloy) {
+              if (metric?.modelType === 'Malloy') {
                 let apiModel = item.apiModels.find(
                   y => y.modelId === metric.modelId
                 );
@@ -447,7 +436,7 @@ export function checkReportRowParameters(item: {
                 if (isUndefined(modelField)) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
+                      title: 'APPLY_TO_REFS_MISSING_MODEL_FIELD',
                       message:
                         `"${p.apply_to}" references missing or not valid field ` +
                         `of model "${apiModel.modelId}"`,
@@ -468,7 +457,7 @@ export function checkReportRowParameters(item: {
                 if (modelField.isTimeframeBase === true) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.FIELD_GROUP_T_FIELD_CANNOT_BE_FILTERED,
+                      title: 'FIELD_GROUP_T_FIELD_CANNOT_BE_FILTERED',
                       message: `field "${p.apply_to}" cannot be filtered. Use _ts field instead`,
                       lines: [
                         {
@@ -485,8 +474,8 @@ export function checkReportRowParameters(item: {
                 if (isDefined(p.listen) && isDefined(p.conditions)) {
                   item.errors.push(
                     new BmError({
-                      title: ErTitleEnum.PARAMETER_WRONG_COMBINATION,
-                      message: `found that both parameters "${ParameterEnum.Conditions}" and "${ParameterEnum.Listen}" are specified`,
+                      title: 'PARAMETER_WRONG_COMBINATION',
+                      message: `found that both parameters "conditions" and "listen" are specified`,
                       lines: [
                         {
                           line: p.listen_line_num,
@@ -510,7 +499,7 @@ export function checkReportRowParameters(item: {
                   if (p.conditions.length === 0) {
                     item.errors.push(
                       new BmError({
-                        title: ErTitleEnum.APPLY_TO_CONDITIONS_IS_EMPTY,
+                        title: 'APPLY_TO_CONDITIONS_IS_EMPTY',
                         message: `apply_to conditions cannot be empty`,
                         lines: [
                           {
@@ -533,10 +522,10 @@ export function checkReportRowParameters(item: {
                   if (pf.valid === 0) {
                     item.errors.push(
                       new BmError({
-                        title: ErTitleEnum.APPLY_TO_WRONG_CONDITIONS,
+                        title: 'APPLY_TO_WRONG_CONDITIONS',
                         message:
                           `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
-                          `for ${ParameterEnum.Result} "${pResult}" `,
+                          `for result "${pResult}" `,
                         lines: [
                           {
                             line: p.conditions_line_num,
@@ -554,8 +543,7 @@ export function checkReportRowParameters(item: {
                   if (reportField.result !== pResult) {
                     item.errors.push(
                       new BmError({
-                        title:
-                          ErTitleEnum.ROW_PARAMETER_AND_LISTEN_RESULT_MISMATCH,
+                        title: 'ROW_PARAMETER_AND_LISTEN_RESULT_MISMATCH',
                         message:
                           `"${p.listen}" result "${reportField.result}" does not match ` +
                           `listener "${p.apply_to}" result "${pResult}"`,
@@ -586,9 +574,9 @@ export function checkReportRowParameters(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newReports);
+  log(cs, caller, func, structId, 'out_entities.log', newReports);
 
   return Result.succeed(newReports);
 }

@@ -1,13 +1,15 @@
 import { z } from 'zod';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import type { EnumValues } from '#common/types/enum-values';
+import {
+  type ConnectionType,
+  zConnectionType
+} from '#common/types/backend/parts/connection-parts/connection-type';
 
 export type BaseConnection = {
   projectId?: string;
   connectionId?: string;
   envId?: string;
-  type?: EnumValues<typeof ConnectionTypeEnum>;
+  type?: ConnectionType;
   st: string;
   lt: string;
 };
@@ -17,7 +19,7 @@ export let zBaseConnection = z
     projectId: z.string().nullish(),
     connectionId: z.string().nullish(),
     envId: z.string().nullish(),
-    type: z.enum(ConnectionTypeEnum).nullish(),
+    type: zConnectionType.nullish(),
     st: z.string(),
     lt: z.string()
   })

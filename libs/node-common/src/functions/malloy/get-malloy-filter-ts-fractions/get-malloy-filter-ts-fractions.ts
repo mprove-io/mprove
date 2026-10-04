@@ -18,15 +18,13 @@ import {
 } from '@malloydata/malloy-filter';
 import { add, fromUnixTime, getUnixTime, sub } from 'date-fns';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fraction-ts-last-complete-option.enum';
-import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
+import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { getCurrentUnitStartTs } from '#node-common/functions/get-current-unit-start-ts/get-current-unit-start-ts';
 import { getUnitDuration } from '#node-common/functions/get-unit-duration/get-unit-duration';
 import { getFractionTsMixUnit } from '#node-common/functions/malloy/get-malloy-filter-ts-fractions/get-fraction-ts-mix-unit/get-fraction-ts-mix-unit';
@@ -40,9 +38,9 @@ export function getMalloyFilterTsFractions(item: {
   parsed: TemporalFilter;
   parentBrick: string;
   isGetTimeRange: boolean;
-  weekStart?: ProjectWeekStartEnum;
+  weekStart?: ProjectWeekStart;
   timezone?: string;
-  timeSpec?: TimeSpecEnum;
+  timeSpec?: TimeSpec;
 }) {
   let { parsed, parentBrick, isGetTimeRange, timezone, weekStart, timeSpec } =
     item;
@@ -106,8 +104,8 @@ export function getMalloyFilterTsFractions(item: {
     let fraction: Fraction = {
       brick: MALLOY_FILTER_ANY,
       parentBrick: parentBrick,
-      operator: FractionOperatorEnum.Or,
-      type: FractionTypeEnum.TsIsAnyValue
+      operator: 'Or',
+      type: 'TsIsAnyValue'
     };
 
     fractions.push(fraction);
@@ -136,26 +134,18 @@ export function getMalloyFilterTsFractions(item: {
     .forEach(temporalFilter => {
       // temporal main
 
-      let fractionOperator =
-        (temporalFilter as { not: boolean })?.not === true
-          ? FractionOperatorEnum.And
-          : FractionOperatorEnum.Or;
+      let fractionOperator: FractionOperator =
+        (temporalFilter as { not: boolean })?.not === true ? 'And' : 'Or';
 
       let fraction: Fraction;
 
       if ((temporalFilter as Null).operator === 'null') {
         // temporal null (null)
         fraction = {
-          brick:
-            fractionOperator === FractionOperatorEnum.Or
-              ? 'f`null`'
-              : 'f`not null`',
+          brick: fractionOperator === 'Or' ? 'f`null`' : 'f`not null`',
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsNull
-              : FractionTypeEnum.TsIsNotNull
+          type: fractionOperator === 'Or' ? 'TsIsNull' : 'TsIsNotNull'
         };
       } else if ((temporalFilter as JustUnits).operator === 'last') {
         // temporal last (completed)
@@ -166,18 +156,15 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`last ${tFilter.n} ${tFilter.units}s\``
               : `f\`not last ${tFilter.n} ${tFilter.units}s\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsInLast
-              : FractionTypeEnum.TsIsNotInLast,
+          type: fractionOperator === 'Or' ? 'TsIsInLast' : 'TsIsNotInLast',
           tsLastValue: tsLastValue,
           tsLastUnit: tsLastUnit,
-          tsLastCompleteOption: FractionTsLastCompleteOptionEnum.Complete
+          tsLastCompleteOption: 'Complete'
         };
 
         if (isGetTimeRange === true) {
@@ -205,19 +192,15 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`${tFilter.n} ${tFilter.units}s\``
               : `f\`not ${tFilter.n} ${tFilter.units}s\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsInLast
-              : FractionTypeEnum.TsIsNotInLast,
+          type: fractionOperator === 'Or' ? 'TsIsInLast' : 'TsIsNotInLast',
           tsLastValue: tsLastValue,
           tsLastUnit: tsLastUnit,
-          tsLastCompleteOption:
-            FractionTsLastCompleteOptionEnum.CompleteWithCurrent
+          tsLastCompleteOption: 'CompleteWithCurrent'
         };
 
         if (isGetTimeRange === true) {
@@ -252,15 +235,12 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`next ${tFilter.n} ${tFilter.units}s\``
               : `f\`not next ${tFilter.n} ${tFilter.units}s\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsInNext
-              : FractionTypeEnum.TsIsNotInNext,
+          type: fractionOperator === 'Or' ? 'TsIsInNext' : 'TsIsNotInNext',
           tsNextValue: tsNextValue,
           tsNextUnit: tsNextUnit
         };
@@ -277,21 +257,21 @@ export function getMalloyFilterTsFractions(item: {
             unit: tsNextUnit
           });
 
-          let timeSpecUnit: FractionTsUnitEnum =
-            timeSpec === TimeSpecEnum.Years
-              ? FractionTsUnitEnum.Years
-              : timeSpec === TimeSpecEnum.Quarters
-                ? FractionTsUnitEnum.Quarters
-                : timeSpec === TimeSpecEnum.Months
-                  ? FractionTsUnitEnum.Months
-                  : timeSpec === TimeSpecEnum.Weeks
-                    ? FractionTsUnitEnum.Weeks
-                    : timeSpec === TimeSpecEnum.Days
-                      ? FractionTsUnitEnum.Days
-                      : timeSpec === TimeSpecEnum.Hours
-                        ? FractionTsUnitEnum.Hours
-                        : timeSpec === TimeSpecEnum.Minutes
-                          ? FractionTsUnitEnum.Minutes
+          let timeSpecUnit: FractionTsUnit =
+            timeSpec === 'years'
+              ? 'years'
+              : timeSpec === 'quarters'
+                ? 'quarters'
+                : timeSpec === 'months'
+                  ? 'months'
+                  : timeSpec === 'weeks'
+                    ? 'weeks'
+                    : timeSpec === 'days'
+                      ? 'days'
+                      : timeSpec === 'hours'
+                        ? 'hours'
+                        : timeSpec === 'minutes'
+                          ? 'minutes'
                           : undefined;
 
           let timeSpecCurrentUnitStartTs = getCurrentUnitStartTs({
@@ -341,15 +321,12 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`before ${m.momentStr}\``
               : `f\`starting ${m.momentStr}\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsBefore
-              : FractionTypeEnum.TsIsStarting,
+          type: fractionOperator === 'Or' ? 'TsIsBefore' : 'TsIsStarting',
           tsMomentType: m.momentType,
           tsMoment: before,
           tsMomentAgoFromNowQuantity: isDefined(
@@ -399,9 +376,9 @@ export function getMalloyFilterTsFractions(item: {
             currentTs: timestampsResult.currentTs
           });
 
-          if (fraction.type === FractionTypeEnum.TsIsBefore) {
+          if (fraction.type === 'TsIsBefore') {
             rangeEnd = start.momentRangeStart;
-          } else if (fraction.type === FractionTypeEnum.TsIsStarting) {
+          } else if (fraction.type === 'TsIsStarting') {
             rangeStart =
               start.timeSpecMomentRangeStart < start.momentRangeStart
                 ? isUndefined(start.timeSpecOneUnitDuration)
@@ -429,15 +406,12 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`after ${m.momentStr}\``
               : `f\`through ${m.momentStr}\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsAfter
-              : FractionTypeEnum.TsIsThrough,
+          type: fractionOperator === 'Or' ? 'TsIsAfter' : 'TsIsThrough',
           tsMomentType: m.momentType,
           tsMoment: after,
           tsMomentAgoFromNowQuantity: isDefined(
@@ -487,7 +461,7 @@ export function getMalloyFilterTsFractions(item: {
             currentTs: timestampsResult.currentTs
           });
 
-          if (fraction.type === FractionTypeEnum.TsIsAfter) {
+          if (fraction.type === 'TsIsAfter') {
             rangeStart = isUndefined(start.timeSpecOneUnitDuration)
               ? start.timeSpecMomentRangeStart
               : getUnixTime(
@@ -496,7 +470,7 @@ export function getMalloyFilterTsFractions(item: {
                     start.timeSpecOneUnitDuration
                   )
                 );
-          } else if (fraction.type === FractionTypeEnum.TsIsThrough) {
+          } else if (fraction.type === 'TsIsThrough') {
             rangeEnd = isUndefined(start.momentOneUnitDuration) // now, literal with no units
               ? start.momentRangeStart
               : getUnixTime(
@@ -535,15 +509,12 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`${mFrom.momentStr} to ${mTo.momentStr}\``
               : `f\`not ${mFrom.momentStr} to ${mTo.momentStr}\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsBetween
-              : FractionTypeEnum.TsIsNotBetween,
+          type: fractionOperator === 'Or' ? 'TsIsBetween' : 'TsIsNotBetween',
           tsFromMomentType: mFrom.momentType,
           tsToMomentType: mTo.momentType,
           tsFromMoment: from,
@@ -659,28 +630,28 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`${m.momentStr}\``
               : `f\`not ${m.momentStr}\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
           type:
             (tfIn as TemporalLiteral).units === 'year'
-              ? fractionOperator === FractionOperatorEnum.Or
-                ? FractionTypeEnum.TsIsOnYear
-                : FractionTypeEnum.TsIsNotOnYear
+              ? fractionOperator === 'Or'
+                ? 'TsIsOnYear'
+                : 'TsIsNotOnYear'
               : (tfIn as TemporalLiteral).units === 'quarter'
-                ? fractionOperator === FractionOperatorEnum.Or
-                  ? FractionTypeEnum.TsIsOnQuarter
-                  : FractionTypeEnum.TsIsNotOnQuarter
+                ? fractionOperator === 'Or'
+                  ? 'TsIsOnQuarter'
+                  : 'TsIsNotOnQuarter'
                 : (tfIn as TemporalLiteral).units === 'month'
-                  ? fractionOperator === FractionOperatorEnum.Or
-                    ? FractionTypeEnum.TsIsOnMonth
-                    : FractionTypeEnum.TsIsNotOnMonth
+                  ? fractionOperator === 'Or'
+                    ? 'TsIsOnMonth'
+                    : 'TsIsNotOnMonth'
                   : (tfIn as TemporalLiteral).units === 'week'
-                    ? fractionOperator === FractionOperatorEnum.Or
-                      ? FractionTypeEnum.TsIsOnWeek
-                      : FractionTypeEnum.TsIsNotOnWeek
+                    ? fractionOperator === 'Or'
+                      ? 'TsIsOnWeek'
+                      : 'TsIsNotOnWeek'
                     : (tfIn as TemporalLiteral).units === 'day' ||
                         ['today', 'yesterday', 'tomorrow'].indexOf(
                           (tfIn as WhichdayMoment).moment
@@ -694,22 +665,22 @@ export function getMalloyFilterTsFractions(item: {
                           'friday',
                           'saturday'
                         ].indexOf((tfIn as WeekdayMoment).moment) > -1
-                      ? fractionOperator === FractionOperatorEnum.Or
-                        ? FractionTypeEnum.TsIsOnDay
-                        : FractionTypeEnum.TsIsNotOnDay
+                      ? fractionOperator === 'Or'
+                        ? 'TsIsOnDay'
+                        : 'TsIsNotOnDay'
                       : (tfIn as TemporalLiteral).units === 'hour'
-                        ? fractionOperator === FractionOperatorEnum.Or
-                          ? FractionTypeEnum.TsIsOnHour
-                          : FractionTypeEnum.TsIsNotOnHour
+                        ? fractionOperator === 'Or'
+                          ? 'TsIsOnHour'
+                          : 'TsIsNotOnHour'
                         : (tfIn as TemporalLiteral).units === 'minute'
-                          ? fractionOperator === FractionOperatorEnum.Or
-                            ? FractionTypeEnum.TsIsOnMinute
-                            : FractionTypeEnum.TsIsNotOnMinute
+                          ? fractionOperator === 'Or'
+                            ? 'TsIsOnMinute'
+                            : 'TsIsNotOnMinute'
                           : tfIn.moment === 'literal' ||
                               (tfIn as NowMoment).moment === 'now'
-                            ? fractionOperator === FractionOperatorEnum.Or
-                              ? FractionTypeEnum.TsIsOnTimestamp
-                              : FractionTypeEnum.TsIsNotOnTimestamp
+                            ? fractionOperator === 'Or'
+                              ? 'TsIsOnTimestamp'
+                              : 'TsIsNotOnTimestamp'
                             : undefined,
           tsMomentType: m.momentType,
           tsMoment: tfIn,
@@ -782,15 +753,12 @@ export function getMalloyFilterTsFractions(item: {
 
         fraction = {
           brick:
-            fractionOperator === FractionOperatorEnum.Or
+            fractionOperator === 'Or'
               ? `f\`${m.momentStr} for ${tFilter.n} ${tFilter.units}s\``
               : `f\`not ${m.momentStr} for ${tFilter.n} ${tFilter.units}s\``,
           parentBrick: parentBrick,
           operator: fractionOperator,
-          type:
-            fractionOperator === FractionOperatorEnum.Or
-              ? FractionTypeEnum.TsIsBeginFor
-              : FractionTypeEnum.TsIsNotBeginFor,
+          type: fractionOperator === 'Or' ? 'TsIsBeginFor' : 'TsIsNotBeginFor',
           tsMomentType: m.momentType,
           tsMoment: begin,
           tsMomentAgoFromNowQuantity: isDefined(

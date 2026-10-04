@@ -9,14 +9,14 @@ import type {
 import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Member } from '#common/types/backend/parts/member';
-import type { ModelPart } from '#common/types/backend/parts/model-part';
-import type { ModelPartX } from '#common/types/backend/parts/model-part-x';
-import type { ModelX } from '#common/types/backend/parts/model-x';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { ModelPart } from '#common/types/backend/parts/model/model-part';
+import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -142,7 +142,7 @@ export class ModelsService {
 
     if (isUndefined(model)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
+        message: 'BACKEND_MODEL_DOES_NOT_EXIST'
       });
     }
 
@@ -158,7 +158,7 @@ export class ModelsService {
 
     if (isUndefined(modelId)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MODEL_ID_IS_NOT_DEFINED
+        message: 'BACKEND_MODEL_ID_IS_NOT_DEFINED'
       });
     }
 
@@ -173,7 +173,7 @@ export class ModelsService {
 
     if (isUndefined(model)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
+        message: 'BACKEND_MODEL_DOES_NOT_EXIST'
       });
     }
 
@@ -184,7 +184,7 @@ export class ModelsService {
 
     if (isAccessGranted === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_MODEL
+        message: 'BACKEND_FORBIDDEN_MODEL'
       });
     }
 

@@ -13,17 +13,17 @@ import { PresetsService } from '#blockml/services/presets/presets.service';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { Ev } from '#common/types/backend/parts/ev';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
 import type { BlockmlInternalError } from '#common/types/blockml/errors/blockml-internal-error';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-output';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
@@ -216,7 +216,7 @@ export class RebuildStructService {
           dir: mproveDir,
           repoDir: item.dir,
           structId: item.structId,
-          caller: CallerEnum.RebuildStruct,
+          caller: 'RebuildStruct',
           skipLog: false
         },
         this.cs

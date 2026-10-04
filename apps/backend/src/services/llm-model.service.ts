@@ -16,15 +16,14 @@ import {
 import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { CodexModel } from '#common/types/backend/parts/codex-model';
+import type { CodexModel } from '#common/types/backend/parts/codex/codex-model';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelInput } from '#common/types/backend/parts/llm-models/llm-model-input';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 
 export type LlmModelPartsResult = {
   modelParts: LlmModelPart[];
@@ -40,7 +39,7 @@ export class LlmModelService {
   constructor(private codexService: CodexService) {}
 
   async refreshModel(item: {
-    providerType: ProviderTypeEnum;
+    providerType: ProviderType;
     apiKey?: string;
     userId?: string;
     isCodexAuthSet?: boolean;
@@ -61,22 +60,18 @@ export class LlmModelService {
     let refreshedTs: number = Date.now();
 
     let isManualCodexModel: boolean =
-      providerType === ProviderTypeEnum.OpenAICodex &&
-      modelInput.isManual === true;
+      providerType === 'OpenAICodex' && modelInput.isManual === true;
 
     let isManualModel: boolean =
-      providerType === ProviderTypeEnum.OpenAICompatible || isManualCodexModel;
+      providerType === 'OpenAICompatible' || isManualCodexModel;
 
     if (isManualModel) {
       this.validateManualModelLimits({ modelInput: modelInput });
     }
 
-    if (
-      providerType === ProviderTypeEnum.OpenAICompatible ||
-      isManualCodexModel
-    ) {
+    if (providerType === 'OpenAICompatible' || isManualCodexModel) {
       let isOpencodeSupported: boolean =
-        providerType === ProviderTypeEnum.OpenAICompatible
+        providerType === 'OpenAICompatible'
           ? true
           : isCodexModelSupportedByOpencode({ modelId: modelInput.modelId });
 
@@ -120,7 +115,7 @@ export class LlmModelService {
 
     if (modelPartIndex < 0) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_DISCOVERED
+        message: 'BACKEND_PROVIDER_MODEL_NOT_DISCOVERED'
       });
     }
 
@@ -202,7 +197,7 @@ export class LlmModelService {
 
     if (isInvalid) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANTS_INVALID
+        message: 'BACKEND_PROVIDER_MODEL_VARIANTS_INVALID'
       });
     }
   }
@@ -239,7 +234,7 @@ export class LlmModelService {
 
     if (hasUniqueVariantNames === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANTS_INVALID
+        message: 'BACKEND_PROVIDER_MODEL_VARIANTS_INVALID'
       });
     }
 
@@ -251,7 +246,7 @@ export class LlmModelService {
 
     if (hasUnknownVariant) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANTS_INVALID
+        message: 'BACKEND_PROVIDER_MODEL_VARIANTS_INVALID'
       });
     }
 
@@ -342,7 +337,7 @@ export class LlmModelService {
 
     if (!isDefined(modelInput.contextLimit)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_CONTEXT_LIMIT_REQUIRED
+        message: 'BACKEND_PROVIDER_MODEL_CONTEXT_LIMIT_REQUIRED'
       });
     }
 
@@ -356,16 +351,13 @@ export class LlmModelService {
 
     if (isInputLimitInvalid || isOutputLimitInvalid) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_LIMIT_INVALID
+        message: 'BACKEND_PROVIDER_MODEL_LIMIT_INVALID'
       });
     }
   }
 
   async getModelParts(item: {
-    providerType:
-      | ProviderTypeEnum.OpenAI
-      | ProviderTypeEnum.Anthropic
-      | ProviderTypeEnum.OpenAICodex;
+    providerType: ModelCatalogProviderType;
     apiKey?: string;
     userId?: string;
     isCodexAuthSet?: boolean;
@@ -373,16 +365,13 @@ export class LlmModelService {
   }): Promise<LlmModelPartsResult> {
     let { providerType, apiKey, userId, isCodexAuthSet, isForceRefresh } = item;
 
-    if (
-      providerType !== ProviderTypeEnum.OpenAICodex &&
-      !isDefinedAndNotEmpty(apiKey)
-    ) {
+    if (providerType !== 'OpenAICodex' && !isDefinedAndNotEmpty(apiKey)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_API_KEY_REQUIRED
+        message: 'BACKEND_PROVIDER_API_KEY_REQUIRED'
       });
     }
 
-    if (providerType === ProviderTypeEnum.OpenAICodex) {
+    if (providerType === 'OpenAICodex') {
       let canGetCodexModels: boolean =
         isCodexAuthSet === true && isDefinedAndNotEmpty(userId);
 
@@ -418,7 +407,7 @@ export class LlmModelService {
       return result;
     }
 
-    if (providerType === ProviderTypeEnum.Anthropic) {
+    if (providerType === 'Anthropic') {
       let anthropicModelParts: LlmModelPart[] =
         await this.getAnthropicModelParts({ apiKey: apiKey as string });
 
@@ -452,7 +441,7 @@ export class LlmModelService {
         this.modelsDevTs = Date.now();
       } catch (error) {
         throw new ServerError({
-          message: ErEnum.BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED,
+          message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED',
           originalError: error
         });
       }
@@ -462,7 +451,7 @@ export class LlmModelService {
 
     if (!devProvider) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED
+        message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED'
       });
     }
 
@@ -486,13 +475,13 @@ export class LlmModelService {
     } catch (error) {
       if (error instanceof OpenAI.AuthenticationError) {
         throw new ServerError({
-          message: ErEnum.BACKEND_PROVIDER_NOT_VALID_API_KEY,
+          message: 'BACKEND_PROVIDER_NOT_VALID_API_KEY',
           originalError: error
         });
       }
 
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED,
+        message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED',
         originalError: error
       });
     }
@@ -545,13 +534,13 @@ export class LlmModelService {
     } catch (error) {
       if (error instanceof Anthropic.AuthenticationError) {
         throw new ServerError({
-          message: ErEnum.BACKEND_PROVIDER_NOT_VALID_API_KEY,
+          message: 'BACKEND_PROVIDER_NOT_VALID_API_KEY',
           originalError: error
         });
       }
 
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED,
+        message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED',
         originalError: error
       });
     }
@@ -730,3 +719,5 @@ function isCodexModelSupportedByOpencode(item: { modelId: string }): boolean {
 
   return isSupported;
 }
+
+import type { ModelCatalogProviderType } from '#backend/types/model-catalog-provider-type';

@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type CachedColumnStatus,
+  zCachedColumnStatus
+} from '#common/types/backend/parts/connections/cached-column-status';
 
 export type ToBackendSeedRecordsInputCachedColumnsItem = {
   projectId: string;
@@ -8,7 +12,7 @@ export type ToBackendSeedRecordsInputCachedColumnsItem = {
   schemaNameLc: string;
   tableNameLc: string;
   columnNameLc: string;
-  status: 'running' | 'completed' | 'error';
+  status: CachedColumnStatus;
   limit: number;
   startedTs: number;
   completedTs?: number;
@@ -28,7 +32,7 @@ export let zToBackendSeedRecordsInputCachedColumnsItem = z
     schemaNameLc: z.string(),
     tableNameLc: z.string(),
     columnNameLc: z.string(),
-    status: z.enum(['running', 'completed', 'error']),
+    status: zCachedColumnStatus,
     limit: z.number(),
     startedTs: z.number(),
     completedTs: z.number().nullish(),

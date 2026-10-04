@@ -13,24 +13,19 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { ModelFieldY } from '#common/types/blockml/parts/model-field-y';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-y';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ApiService } from '#front/app/services/api.service';
 import { ChartService } from '#front/app/services/chart.service';
@@ -98,17 +93,13 @@ export class ChartsAddFilterDialogComponent implements OnInit {
         } as ModelFieldY)
       )
       .sort((a, b) =>
-        a.fieldClass !== FieldClassEnum.Dimension &&
-        b.fieldClass === FieldClassEnum.Dimension
+        a.fieldClass !== 'dimension' && b.fieldClass === 'dimension'
           ? 1
-          : a.fieldClass === FieldClassEnum.Dimension &&
-              b.fieldClass !== FieldClassEnum.Dimension
+          : a.fieldClass === 'dimension' && b.fieldClass !== 'dimension'
             ? -1
-            : a.fieldClass !== FieldClassEnum.Filter &&
-                b.fieldClass === FieldClassEnum.Filter
+            : a.fieldClass !== 'filter' && b.fieldClass === 'filter'
               ? 1
-              : a.fieldClass === FieldClassEnum.Filter &&
-                  b.fieldClass !== FieldClassEnum.Filter
+              : a.fieldClass === 'filter' && b.fieldClass !== 'filter'
                 ? -1
                 : a.partLabel > b.partLabel
                   ? 1
@@ -138,24 +129,24 @@ export class ChartsAddFilterDialogComponent implements OnInit {
 
     let field = this.ref.data.model.fields.find(x => x.id === this.newFieldId);
 
-    if (newMconfig.modelType === ModelTypeEnum.Store) {
+    if (newMconfig.modelType === 'Store') {
       let storeFilter =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? this.ref.data.model.storeContent.fields.find(
               f => f.name === field.id
             )
           : undefined;
 
       let storeResultFraction =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? undefined
           : this.ref.data.model.storeContent.results.find(
               r => r.result === field.result
             ).fraction_types[0];
 
-      let logicGroup = isUndefined(storeResultFraction)
+      let logicGroup: FractionLogic = isUndefined(storeResultFraction)
         ? undefined
-        : FractionLogicEnum.Or;
+        : 'OR';
 
       let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
@@ -165,16 +156,16 @@ export class ChartsAddFilterDialogComponent implements OnInit {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.Or,
+                logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.AndNot,
-                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: 'AND_NOT',
+                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -185,20 +176,20 @@ export class ChartsAddFilterDialogComponent implements OnInit {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === 'OR' ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFraction?.meta,
         operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === FractionLogicEnum.Or
-            ? FractionOperatorEnum.Or
-            : FractionOperatorEnum.And,
+          : logicGroup === 'OR'
+            ? 'Or'
+            : 'And',
         logicGroup: logicGroup,
         brick: undefined,
         parentBrick: undefined,
-        type: FractionTypeEnum.StoreFraction,
+        type: 'StoreFraction',
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFraction?.type,
@@ -239,18 +230,18 @@ export class ChartsAddFilterDialogComponent implements OnInit {
                 return newControl;
               })
       };
-    } else if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    } else if (newMconfig.modelType === 'Malloy') {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(field.result)
       };
     } else {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(field.result)
       };
     }
@@ -266,13 +257,13 @@ export class ChartsAddFilterDialogComponent implements OnInit {
       a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
     );
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.WhereOrHaving,
+          type: 'WhereOrHaving',
           timezone: newMconfig.timezone,
           filters: newFilters
         }

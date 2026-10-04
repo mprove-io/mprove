@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ReportX } from '#common/types/backend/parts/report-x';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { ToBackendCreateDraftReportRequest } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-request';
 import type { ToBackendCreateDraftReportResponse } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-response';
 import type { ToBackendDeleteDraftReportsRequest } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-request';
 import type { ToBackendDeleteDraftReportsResponse } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-response';
 import type { ToBackendEditDraftReportRequest } from '#common/types/backend/routes/reports/edit-draft-report/edit-draft-report-request';
 import type { ToBackendEditDraftReportResponse } from '#common/types/backend/routes/reports/edit-draft-report/edit-draft-report-response';
-import type { Listener } from '#common/types/blockml/parts/listener';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { ReportField } from '#common/types/blockml/parts/report-field';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { ReportField } from '#common/types/blockml/parts/report/report-field';
+import type { ChangeType } from '#common/types/blockml/parts/report/row/change-type';
+import type { Listener } from '#common/types/blockml/parts/report/row/listener';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';
@@ -49,7 +49,7 @@ export class ReportService {
 
   modifyRows(item: {
     report: ReportX;
-    changeType: ChangeTypeEnum;
+    changeType: ChangeType;
     rowChange: RowChange;
     rowIds: string[];
     reportFields: ReportField[];
@@ -92,7 +92,7 @@ export class ReportService {
   }
 
   navCreateDraftReport(item: {
-    changeType: ChangeTypeEnum;
+    changeType: ChangeType;
     rowChange: RowChange;
     rowIds: string[];
     fromReportId: string;
@@ -157,7 +157,7 @@ export class ReportService {
   }
 
   editDraftReport(item: {
-    changeType: ChangeTypeEnum;
+    changeType: ChangeType;
     rowChange: RowChange;
     rowIds: string[];
     reportId: string;

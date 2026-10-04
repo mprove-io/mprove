@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { spaceUnitToChartUnit } from '#common/functions/space-unit-to-chart-unit/space-unit-to-chart-unit';
-import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -54,7 +54,7 @@ export class ChartOptionsComponent {
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

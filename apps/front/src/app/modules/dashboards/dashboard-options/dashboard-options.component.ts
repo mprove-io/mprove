@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
-import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
@@ -59,7 +59,7 @@ export class DashboardOptionsComponent {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

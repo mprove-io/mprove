@@ -39,7 +39,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 const { forEachSeries } = pIteration;
@@ -107,7 +107,7 @@ export class DeleteChartController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 

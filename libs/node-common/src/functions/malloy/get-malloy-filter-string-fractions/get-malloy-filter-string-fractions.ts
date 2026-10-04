@@ -6,10 +6,9 @@ import {
   StringMatch
 } from '@malloydata/malloy-filter';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 import { malloyEscape } from '#node-common/functions/malloy/get-malloy-filter-string-fractions/malloy-escape/malloy-escape';
 import { malloyUnescape } from '#node-common/functions/malloy/get-malloy-filter-string-fractions/malloy-unescape/malloy-unescape';
 
@@ -33,8 +32,8 @@ export function getMalloyFilterStringFractions(item: {
     let fraction: Fraction = {
       brick: MALLOY_FILTER_ANY,
       parentBrick: parentBrick,
-      operator: FractionOperatorEnum.Or,
-      type: FractionTypeEnum.StringIsAnyValue
+      operator: 'Or',
+      type: 'StringIsAnyValue'
     };
 
     fractions.push(fraction);
@@ -43,41 +42,27 @@ export function getMalloyFilterStringFractions(item: {
   stringFilters.forEach(stringFilter => {
     if ((stringFilter as Null).operator === 'null') {
       // string null
-      let fractionOperator =
-        (stringFilter as { not: boolean })?.not === true
-          ? FractionOperatorEnum.And
-          : FractionOperatorEnum.Or;
+      let fractionOperator: FractionOperator =
+        (stringFilter as { not: boolean })?.not === true ? 'And' : 'Or';
 
       let fraction: Fraction = {
-        brick:
-          fractionOperator === FractionOperatorEnum.Or ? 'f`null`' : 'f`-null`',
+        brick: fractionOperator === 'Or' ? 'f`null`' : 'f`-null`',
         parentBrick: parentBrick,
         operator: fractionOperator,
-        type:
-          fractionOperator === FractionOperatorEnum.Or
-            ? FractionTypeEnum.StringIsNull
-            : FractionTypeEnum.StringIsNotNull
+        type: fractionOperator === 'Or' ? 'StringIsNull' : 'StringIsNotNull'
       };
 
       fractions.push(fraction);
     } else if ((stringFilter as StringEmpty).operator === 'empty') {
       // string empty
-      let fractionOperator =
-        (stringFilter as { not: boolean })?.not === true
-          ? FractionOperatorEnum.And
-          : FractionOperatorEnum.Or;
+      let fractionOperator: FractionOperator =
+        (stringFilter as { not: boolean })?.not === true ? 'And' : 'Or';
 
       let fraction: Fraction = {
-        brick:
-          fractionOperator === FractionOperatorEnum.Or
-            ? 'f`empty`'
-            : 'f`-empty`',
+        brick: fractionOperator === 'Or' ? 'f`empty`' : 'f`-empty`',
         parentBrick: parentBrick,
         operator: fractionOperator,
-        type:
-          fractionOperator === FractionOperatorEnum.Or
-            ? FractionTypeEnum.StringIsEmpty
-            : FractionTypeEnum.StringIsNotEmpty
+        type: fractionOperator === 'Or' ? 'StringIsEmpty' : 'StringIsNotEmpty'
       };
 
       fractions.push(fraction);
@@ -98,31 +83,29 @@ export function getMalloyFilterStringFractions(item: {
       eValues
         .map(eValue => malloyUnescape({ str: eValue }))
         .forEach(uValue => {
-          let fractionOperator =
-            (stringFilter as { not: boolean })?.not === true
-              ? FractionOperatorEnum.And
-              : FractionOperatorEnum.Or;
+          let fractionOperator: FractionOperator =
+            (stringFilter as { not: boolean })?.not === true ? 'And' : 'Or';
 
           let fraction: Fraction = {
             brick:
               stringFilter.operator === '~'
-                ? fractionOperator === FractionOperatorEnum.Or
+                ? fractionOperator === 'Or'
                   ? `f\`${uValue}\``
                   : `f\`-${uValue}\``
                 : stringFilter.operator === '='
-                  ? fractionOperator === FractionOperatorEnum.Or
+                  ? fractionOperator === 'Or'
                     ? `f\`${uValue}\``
                     : `f\`-${uValue}\``
                   : stringFilter.operator === 'contains'
-                    ? fractionOperator === FractionOperatorEnum.Or
+                    ? fractionOperator === 'Or'
                       ? `f\`%${uValue}%\``
                       : `f\`-%${uValue}%\``
                     : stringFilter.operator === 'starts'
-                      ? fractionOperator === FractionOperatorEnum.Or
+                      ? fractionOperator === 'Or'
                         ? `f\`${uValue}%\``
                         : `f\`-${uValue}%\``
                       : stringFilter.operator === 'ends'
-                        ? fractionOperator === FractionOperatorEnum.Or
+                        ? fractionOperator === 'Or'
                           ? `f\`%${uValue}\``
                           : `f\`-%${uValue}\``
                         : undefined,
@@ -130,25 +113,25 @@ export function getMalloyFilterStringFractions(item: {
             operator: fractionOperator,
             type:
               stringFilter.operator === '~'
-                ? fractionOperator === FractionOperatorEnum.Or
-                  ? FractionTypeEnum.StringIsLike
-                  : FractionTypeEnum.StringIsNotLike
+                ? fractionOperator === 'Or'
+                  ? 'StringIsLike'
+                  : 'StringIsNotLike'
                 : stringFilter.operator === '='
-                  ? fractionOperator === FractionOperatorEnum.Or
-                    ? FractionTypeEnum.StringIsEqualTo
-                    : FractionTypeEnum.StringIsNotEqualTo
+                  ? fractionOperator === 'Or'
+                    ? 'StringIsEqualTo'
+                    : 'StringIsNotEqualTo'
                   : stringFilter.operator === 'contains'
-                    ? fractionOperator === FractionOperatorEnum.Or
-                      ? FractionTypeEnum.StringContains
-                      : FractionTypeEnum.StringDoesNotContain
+                    ? fractionOperator === 'Or'
+                      ? 'StringContains'
+                      : 'StringDoesNotContain'
                     : stringFilter.operator === 'starts'
-                      ? fractionOperator === FractionOperatorEnum.Or
-                        ? FractionTypeEnum.StringStartsWith
-                        : FractionTypeEnum.StringDoesNotStartWith
+                      ? fractionOperator === 'Or'
+                        ? 'StringStartsWith'
+                        : 'StringDoesNotStartWith'
                       : stringFilter.operator === 'ends'
-                        ? fractionOperator === FractionOperatorEnum.Or
-                          ? FractionTypeEnum.StringEndsWith
-                          : FractionTypeEnum.StringDoesNotEndWith
+                        ? fractionOperator === 'Or'
+                          ? 'StringEndsWith'
+                          : 'StringDoesNotEndWith'
                         : undefined,
             stringValue: uValue
           };

@@ -1,5 +1,5 @@
-import type { DiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
-import type { FileItem } from '#common/types/front/file-item';
+import type { DiskCatalogNode } from '#common/types/disk/parts/catalog/disk-catalog-node';
+import type { FileItem } from '#common/types/front/builder/file-item';
 
 export function getFileItems(item: { nodes: DiskCatalogNode[] }): FileItem[] {
   let { nodes } = item;

@@ -3,26 +3,26 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
 import { checkSpaceFolderElementsRecursive } from './check-space-folder-elements-recursive/check-space-folder-elements-recursive';
 
-let func = FuncEnum.CheckSpaceFolders;
+let func: Func = 'build-spaces/check-space-folders';
 
 export function checkSpaceFolders(item: {
   spaces: FileSpace[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileSpace[], never> {
   let { cs, ...logItem } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, logItem);
+  log(cs, caller, func, structId, 'input.log', logItem);
 
   let newSpaces: FileSpace[] = [];
 
@@ -42,9 +42,9 @@ export function checkSpaceFolders(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Spaces, newSpaces);
+  log(cs, caller, func, structId, 'out_spaces.log', newSpaces);
 
   return Result.succeed(newSpaces);
 }

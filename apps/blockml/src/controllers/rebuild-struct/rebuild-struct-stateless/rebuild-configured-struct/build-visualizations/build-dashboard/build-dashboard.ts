@@ -2,7 +2,8 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
@@ -19,7 +20,7 @@ export function buildDashboard(item: {
   errors: BmError[];
   structId: string;
   caseSensitiveStringFilters: boolean;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileDashboard[], never> {
   return Result.pipe(

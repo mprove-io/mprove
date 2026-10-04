@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+import { zProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
 
 export type ToBackendSeedRecordsInputProjectsItem = {
   orgId: string;
@@ -8,7 +9,7 @@ export type ToBackendSeedRecordsInputProjectsItem = {
   seedProjectId?: string;
   name: string;
   defaultBranch: string;
-  remoteType: ProjectRemoteTypeEnum.Managed | ProjectRemoteTypeEnum.GitClone;
+  remoteType: ProjectRemoteType;
   gitUrl?: string;
   publicKey?: string;
   privateKey?: string;
@@ -25,7 +26,7 @@ export let zToBackendSeedRecordsInputProjectsItem = z
     seedProjectId: z.string().nullish(),
     name: z.string(),
     defaultBranch: z.string(),
-    remoteType: z.enum(ProjectRemoteTypeEnum),
+    remoteType: zProjectRemoteType,
     gitUrl: z.string().nullish(),
     publicKey: z.string().nullish(),
     privateKey: z.string().nullish(),

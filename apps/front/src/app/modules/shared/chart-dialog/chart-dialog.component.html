@@ -114,23 +114,21 @@
           <m-chart-line-icon
             class="h-6 w-6 cursor-pointer"
             [ngClass]="{
-              'text-m500': groupMetricChartType === chartTypeEnumLine,
-              'text-s500': groupMetricChartType !== chartTypeEnumLine
+              'text-m500': groupMetricChartType === 'line',
+              'text-s500': groupMetricChartType !== 'line'
             }"
-            (click)="
-              groupMetricChartTypeChange({ newChartType: chartTypeEnumLine })
-            "
+            (click)="groupMetricChartTypeChange({ newChartType: 'line' })"
           ></m-chart-line-icon>
 
           <m-chart-pivot-table-icon
             class="h-6 w-6 cursor-pointer"
             [ngClass]="{
-              'text-m500': groupMetricChartType === chartTypeEnumPivotTable,
-              'text-s500': groupMetricChartType !== chartTypeEnumPivotTable
+              'text-m500': groupMetricChartType === 'pivot_table',
+              'text-s500': groupMetricChartType !== 'pivot_table'
             }"
             (click)="
               groupMetricChartTypeChange({
-                newChartType: chartTypeEnumPivotTable
+                newChartType: 'pivot_table'
               })
             "
           ></m-chart-pivot-table-icon>
@@ -164,14 +162,12 @@
         class="text-m0 ml-5 flex h-12 w-24 flex-shrink-0 select-none items-center justify-center rounded text-base font-medium focus:outline-none"
         [ngClass]="{
           'bg-s400 cursor-default':
-            isRunButtonPressed === true || query?.status === queryStatusRunning,
+            isRunButtonPressed === true || query?.status === 'Running',
           'bg-m600 cursor-pointer':
-            isRunButtonPressed === false && query?.status !== queryStatusRunning
+            isRunButtonPressed === false && query?.status !== 'Running'
         }"
         (click)="run()"
-        [disabled]="
-          isRunButtonPressed === true || query?.status === queryStatusRunning
-        "
+        [disabled]="isRunButtonPressed === true || query?.status === 'Running'"
       >
         <div>Run</div>
 
@@ -232,28 +228,28 @@
     class="flex h-full w-full flex-grow flex-row overflow-auto"
     [ngClass]="{
       'justify-center':
-        (mconfig?.chart.type !== chartTypeEnumTable &&
-          mconfig?.chart.type !== chartTypeEnumPivotTable) ||
+        (mconfig?.chart.type !== 'table' &&
+          mconfig?.chart.type !== 'pivot_table') ||
         query?.lastCompleteTs <= 1,
       'justify-start':
         query?.lastCompleteTs > 1 &&
-        (mconfig?.chart.type === chartTypeEnumTable ||
-          mconfig?.chart.type === chartTypeEnumPivotTable)
+        (mconfig?.chart.type === 'table' ||
+          mconfig?.chart.type === 'pivot_table')
     }"
   >
     <m-chart-view
       class="h-full w-full overflow-auto rounded"
       [ngClass]="{
-        'pt-3': mconfig?.chart.type === chartTypeEnumTable,
+        'pt-3': mconfig?.chart.type === 'table',
         'max-w-max':
-          (mconfig?.chart.type === chartTypeEnumTable ||
-            mconfig?.chart.type === chartTypeEnumPivotTable) &&
+          (mconfig?.chart.type === 'table' ||
+            mconfig?.chart.type === 'pivot_table') &&
           mconfig?.chart.isValid === true &&
           qData?.length > 0,
         'border-s300 aspect-[3/1] border':
-          mconfig?.chart.type !== chartTypeEnumTable &&
-          mconfig?.chart.type !== chartTypeEnumPivotTable,
-        'pb-6 pt-5': mconfig?.chart.type !== chartTypeEnumTable
+          mconfig?.chart.type !== 'table' &&
+          mconfig?.chart.type !== 'pivot_table',
+        'pb-6 pt-5': mconfig?.chart.type !== 'table'
       }"
       [modelType]="mconfig?.modelType"
       [mconfigFields]="mconfig?.fields"
@@ -262,7 +258,7 @@
       [qData]="qData"
       [chart]="mconfig?.chart"
       [isAnimation]="false"
-      [isStoreModel]="mconfig?.modelType === modelTypeStore"
+      [isStoreModel]="mconfig?.modelType === 'Store'"
       [queryStatus]="query?.status"
       [chartInstanceId]="'chart-dialog-mconfig-id-' + mconfig?.mconfigId"
     ></m-chart-view>
@@ -274,24 +270,24 @@
     [ngClass]="{
       'max-h-[24%] min-h-[24%]':
         showNav === true &&
-        (mconfig?.chart.type === chartTypeEnumLine ||
-          mconfig?.chart.type === chartTypeEnumBar ||
-          mconfig?.chart.type === chartTypeEnumScatter),
+        (mconfig?.chart.type === 'line' ||
+          mconfig?.chart.type === 'bar' ||
+          mconfig?.chart.type === 'scatter'),
       'max-h-[23%] min-h-[23%]':
         showNav === true &&
-        mconfig?.chart.type !== chartTypeEnumLine &&
-        mconfig?.chart.type !== chartTypeEnumBar &&
-        mconfig?.chart.type !== chartTypeEnumScatter,
+        mconfig?.chart.type !== 'line' &&
+        mconfig?.chart.type !== 'bar' &&
+        mconfig?.chart.type !== 'scatter',
       'max-h-[29%] min-h-[29%]':
         showNav === false &&
-        (mconfig?.chart.type === chartTypeEnumLine ||
-          mconfig?.chart.type === chartTypeEnumBar ||
-          mconfig?.chart.type === chartTypeEnumScatter),
+        (mconfig?.chart.type === 'line' ||
+          mconfig?.chart.type === 'bar' ||
+          mconfig?.chart.type === 'scatter'),
       'max-h-[28%] min-h-[28%]':
         showNav === false &&
-        mconfig?.chart.type !== chartTypeEnumLine &&
-        mconfig?.chart.type !== chartTypeEnumBar &&
-        mconfig?.chart.type !== chartTypeEnumScatter
+        mconfig?.chart.type !== 'line' &&
+        mconfig?.chart.type !== 'bar' &&
+        mconfig?.chart.type !== 'scatter'
     }"
   >
     <div

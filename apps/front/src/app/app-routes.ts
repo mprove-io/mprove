@@ -63,8 +63,7 @@ import {
   PATH_USERS,
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { BuilderRightEnum } from '#common/enums/builder-right.enum';
+
 import { environment } from '#front/environments/environment';
 import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
@@ -322,7 +321,7 @@ export const appRoutes: Routes = [
                                       .split('?')[0] ?? '';
 
                                   return router.parseUrl(
-                                    `${currentPath}/${PATH_SELECT_FILE}?left=${BuilderLeftEnum.Tree}&right=${BuilderRightEnum.Validation}`
+                                    `${currentPath}/${PATH_SELECT_FILE}?left=Tree&right=Validation`
                                   );
                                 },
                                 pathMatch: 'full'

@@ -1,14 +1,15 @@
 import { z } from 'zod';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type MconfigChart,
   zMconfigChart
-} from '#common/types/blockml/parts/mconfig-chart';
+} from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import {
   type ReportField,
   zReportField
-} from '#common/types/blockml/parts/report-field';
+} from '#common/types/blockml/parts/report/report-field';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
+import { zTimeSpec } from '#common/types/shared/time/timespec';
 import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export type ToBackendSaveModifyReportRequest = {
@@ -26,16 +27,7 @@ export type ToBackendSaveModifyReportRequest = {
     space?: string;
     accessRoles: string[];
     timezone: string;
-    timeSpec:
-      | TimeSpecEnum.Timestamps
-      | TimeSpecEnum.Seconds
-      | TimeSpecEnum.Minutes
-      | TimeSpecEnum.Hours
-      | TimeSpecEnum.Days
-      | TimeSpecEnum.Weeks
-      | TimeSpecEnum.Months
-      | TimeSpecEnum.Quarters
-      | TimeSpecEnum.Years;
+    timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
     newReportFields?: ReportField[];
     chart?: MconfigChart;
@@ -59,7 +51,7 @@ export let zToBackendSaveModifyReportRequest = z
         space: z.string().nullish(),
         accessRoles: z.array(z.string()),
         timezone: zTimezone,
-        timeSpec: z.enum(TimeSpecEnum),
+        timeSpec: zTimeSpec,
         timeRangeFractionBrick: z.string(),
         newReportFields: z.array(zReportField).nullish(),
         chart: zMconfigChart.nullish()

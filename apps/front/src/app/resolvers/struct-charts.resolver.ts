@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendGetChartsRequest } from '#common/types/backend/routes/charts/get-charts/get-charts-request';
 import type { ToBackendGetChartsResponse } from '#common/types/backend/routes/charts/get-charts/get-charts-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
@@ -91,7 +91,7 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
             return true;
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

@@ -10,8 +10,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RESTRICTED_USER_EMAIL } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
@@ -56,7 +55,7 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
   protected async getTracker(req: Record<string, any>): Promise<string> {
     if (isUndefined(req.user?.userId)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_THROTTLER_USER_ID_IS_NOT_DEFINED
+        message: 'BACKEND_THROTTLER_USER_ID_IS_NOT_DEFINED'
       });
     }
 
@@ -112,7 +111,7 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
     if (isLogThrottleTracker === true) {
       logToConsoleBackend({
         log: `ThrottlerUserIdGuard - ${req.originalUrl} - tracker: ${tracker}`,
-        logLevel: LogLevelEnum.Info,
+        logLevel: 'Info',
         logger: this.logger,
         cs: this.cs
       });

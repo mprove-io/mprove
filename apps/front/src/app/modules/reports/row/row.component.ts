@@ -12,16 +12,13 @@ import {
   EMPTY_FORMAT_NUMBER,
   FORMAT_NUMBER_EXAMPLES
 } from '#common/constants/top-front';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FilterX } from '#common/types/backend/parts/filter-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { ReportX } from '#common/types/backend/parts/report-x';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
-import type { DataRow } from '#common/types/front/data-row';
+import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -50,11 +47,6 @@ export class RowComponent {
   onEscKeyUp() {
     this.formatNumberSelectElement?.close();
   }
-
-  rowTypeFormula = RowTypeEnum.Formula;
-  rowTypeMetric = RowTypeEnum.Metric;
-  rowTypeHeader = RowTypeEnum.Header;
-  rowTypeEmpty = RowTypeEnum.Empty;
 
   formulaForm: FormGroup = this.fb.group({
     formula: [undefined, [Validators.required]]
@@ -120,7 +112,7 @@ export class RowComponent {
               : this.dataService.d3FormatValue({
                   value: example.input,
                   formatNumber: example.id,
-                  fieldResult: FieldResultEnum.Number,
+                  fieldResult: 'number',
                   currencyPrefix:
                     this.reportSelectedNode.data.currencyPrefix ??
                     struct.mproveConfig.currencyPrefix,
@@ -136,7 +128,7 @@ export class RowComponent {
 
       if (
         isDefined(this.reportSelectedNode) &&
-        this.reportSelectedNode.data.rowType === RowTypeEnum.Metric
+        this.reportSelectedNode.data.rowType === 'metric'
       ) {
         this.mconfig = this.reportSelectedNode.data.mconfig;
 
@@ -146,8 +138,7 @@ export class RowComponent {
               (
                 filter // TODO: row store parametersFiltersWithExcludedTime
               ) =>
-                this.reportSelectedNode.data.mconfig.modelType ===
-                ModelTypeEnum.Store
+                this.reportSelectedNode.data.mconfig.modelType === 'Store'
                   ? this.reportSelectedNode.data.mconfig.filters
                       .map(f => f.fieldId)
                       .indexOf(filter.fieldId) > -1
@@ -167,7 +158,7 @@ export class RowComponent {
       }
 
       if (isDefined(this.reportSelectedNode)) {
-        if (this.reportSelectedNode.data.rowType === RowTypeEnum.Formula) {
+        if (this.reportSelectedNode.data.rowType === 'formula') {
           setValueAndMark({
             control: this.formulaForm.controls['formula'],
             value: this.reportSelectedNode.data.formula
@@ -175,8 +166,8 @@ export class RowComponent {
         }
 
         if (
-          this.reportSelectedNode.data.rowType === RowTypeEnum.Header ||
-          this.reportSelectedNode.data.rowType === RowTypeEnum.Formula
+          this.reportSelectedNode.data.rowType === 'header' ||
+          this.reportSelectedNode.data.rowType === 'formula'
         ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
@@ -185,8 +176,8 @@ export class RowComponent {
         }
 
         if (
-          this.reportSelectedNode.data.rowType === RowTypeEnum.Formula ||
-          this.reportSelectedNode.data.rowType === RowTypeEnum.Metric
+          this.reportSelectedNode.data.rowType === 'formula' ||
+          this.reportSelectedNode.data.rowType === 'metric'
         ) {
           setValueAndMark({
             control: this.formatNumberForm.controls['formatNumber'],
@@ -247,7 +238,7 @@ export class RowComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditFormula,
+      changeType: 'EditFormula',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -271,7 +262,7 @@ export class RowComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditInfo,
+      changeType: 'EditInfo',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -300,7 +291,7 @@ export class RowComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditInfo,
+      changeType: 'EditInfo',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -327,7 +318,7 @@ export class RowComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditInfo,
+      changeType: 'EditInfo',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -354,7 +345,7 @@ export class RowComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditInfo,
+      changeType: 'EditInfo',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -367,7 +358,7 @@ export class RowComponent {
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: ChangeTypeEnum.Delete,
+      changeType: 'Delete',
       rowChange: undefined,
       rowIds: this.reportSelectedNodes.map(node => node.data.rowId),
       reportFields: this.report.fields,

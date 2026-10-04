@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '#common/constants/top-disk';
-import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
+
 import { appServices } from '#disk/app-services';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getConfig } from '#disk/config/get.config';
@@ -18,7 +18,7 @@ export async function prepareTest(
   overrideConfigOptions?: Partial<DiskConfig>
 ) {
   let extraOverride: Partial<DiskConfig> = {
-    diskEnv: DiskEnvEnum.TEST,
+    diskEnv: 'TEST',
     diskLogResponseError: true,
     ...overrideConfigOptions
   };

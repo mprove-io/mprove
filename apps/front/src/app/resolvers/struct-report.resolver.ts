@@ -9,11 +9,10 @@ import {
   PATH_ORG,
   PATH_PROJECT
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetReportRequest } from '#common/types/backend/routes/reports/get-report/get-report-request';
 import type { ToBackendGetReportResponse } from '#common/types/backend/routes/reports/get-report/get-report-response';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -37,9 +36,9 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
-    let timezoneParam: TimeSpecEnum = route.queryParams?.timezone;
-    let timeSpecParam: TimeSpecEnum = route.queryParams?.timeSpec;
-    let timeRangeParam: TimeSpecEnum = route.queryParams?.timeRange;
+    let timezoneParam: TimeSpec = route.queryParams?.timezone;
+    let timeSpecParam: TimeSpec = route.queryParams?.timeSpec;
+    let timeRangeParam: TimeSpec = route.queryParams?.timeRange;
 
     let uiState = this.uiQuery.getValue();
     let structState = this.structQuery.getValue();
@@ -65,7 +64,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
   resolveRoute(item: {
     route: ActivatedRouteSnapshot;
     showSpinner: boolean;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timezone: string;
     timeRangeFractionBrick: string;
     skipCache?: boolean;
@@ -163,7 +162,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
             return true;
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

@@ -10,12 +10,12 @@ import {
 import { BigQueryTypeParser } from '#blockml/classes/parse/parse-bigquery-type/parse-bigquery-type';
 import { DatabricksTypeParser } from '#blockml/classes/parse/parse-databricks-type/parse-databricks-type';
 import { TrinoPrestoSchemaParser } from '#blockml/classes/parse/parse-trino-type/parse-trino-type';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { RawSchemaColumn } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-column';
 
 export function columnToFieldDef(item: {
-  connectionType: ConnectionTypeEnum;
+  connectionType: ConnectionType;
   dialect: Dialect;
   col: RawSchemaColumn;
 }): FieldDef {
@@ -32,7 +32,7 @@ export function columnToFieldDef(item: {
   // DuckDB: use parseDuckDBType() for full type parsing (INTEGER[], STRUCT, etc.)
   // ref: malloy/packages/malloy-db-duckdb/src/duckdb_common.ts
   //   fillStructDefFromTypeMap (line 166) — calls dialect.parseDuckDBType()
-  if (connectionType === ConnectionTypeEnum.MotherDuck) {
+  if (connectionType === 'MotherDuck') {
     let duckdbDialect = dialect as DuckDBDialect;
     let typeDef = duckdbDialect.parseDuckDBType(col.dataType);
     return mkFieldDef(typeDef, col.columnName);
@@ -41,7 +41,7 @@ export function columnToFieldDef(item: {
   // BigQuery: STRUCT<name TYPE>, ARRAY<TYPE>, nested combinations
   // ref: malloy/packages/malloy-db-bigquery/src/bigquery_connection.ts
   //   addFieldsToStructDef (line 529) — handles REPEATED mode and STRUCT recursion
-  if (connectionType === ConnectionTypeEnum.BigQuery) {
+  if (connectionType === 'BigQuery') {
     let parser = new BigQueryTypeParser(
       col.dataType,
       dialect as StandardSQLDialect
@@ -53,7 +53,7 @@ export function columnToFieldDef(item: {
   // Databricks: struct<name:type>, array<type>, map<k,v>, decimal(p,s)
   // ref: malloy/packages/malloy-db-databricks/src/databricks_connection.ts
   //   DatabricksTypeParser (line 35) — recursive descent parser
-  if (connectionType === ConnectionTypeEnum.Databricks) {
+  if (connectionType === 'Databricks') {
     let parser = new DatabricksTypeParser(
       col.dataType,
       dialect as DatabricksDialect
@@ -65,10 +65,7 @@ export function columnToFieldDef(item: {
   // Trino / Presto: row(name type, ...), array(type), map(k,v)
   // ref: malloy/packages/malloy-db-trino/src/trino_connection.ts
   //   malloyTypeFromTrinoType (line 379) — uses TrinoPrestoSchemaParser
-  if (
-    connectionType === ConnectionTypeEnum.Trino ||
-    connectionType === ConnectionTypeEnum.Presto
-  ) {
+  if (connectionType === 'Trino' || connectionType === 'Presto') {
     let parser = new TrinoPrestoSchemaParser(col.dataType, dialect);
     let typeDef = parser.typeDef();
     return mkFieldDef(typeDef, col.columnName);

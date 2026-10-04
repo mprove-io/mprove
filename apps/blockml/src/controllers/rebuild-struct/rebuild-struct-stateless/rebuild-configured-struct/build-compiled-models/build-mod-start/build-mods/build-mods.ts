@@ -14,16 +14,15 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 
 const { forEachSeries } = pIteration;
 
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
@@ -33,7 +32,7 @@ import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy
 import { errorToWrapResult } from './error-to-wrap-result/error-to-wrap-result';
 import { getWrapResult } from './get-wrap-result/get-wrap-result';
 
-let func = FuncEnum.BuildMods;
+let func: Func = 'build-mod-start/build-mods';
 
 export async function buildMods(item: {
   mods: FileMod[];
@@ -43,12 +42,12 @@ export async function buildMods(item: {
   projectId: string;
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.ResultAsync<FileMod[], never> {
   let { caller, structId, projectId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newMods: FileMod[] = [];
 
@@ -61,7 +60,7 @@ export async function buildMods(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.IMPORT_FROM_NON_MALLOY_FILE,
+              title: 'IMPORT_FROM_NON_MALLOY_FILE',
               message:
                 'One or more of ".malloy" files has an import from non-malloy file (not supported by Mprove)',
               lines: [
@@ -91,7 +90,7 @@ export async function buildMods(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_IMPORT_PATH_FOR_MALLOY_FILE,
+              title: 'WRONG_IMPORT_PATH_FOR_MALLOY_FILE',
               message:
                 'One or more of ".malloy" files has an import with too many "../" segments or with an absolute path (not supported by Mprove)',
               lines: [
@@ -150,7 +149,7 @@ export async function buildMods(item: {
     if (isDefined(wrapResult.error)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.FAILED_TO_COMPILE_MALLOY,
+          title: 'FAILED_TO_COMPILE_MALLOY',
           message: wrapResult.errorStr,
           lines: isDefined(wrapResult.error.problems)
             ? wrapResult.error.problems
@@ -227,8 +226,8 @@ export async function buildMods(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Mods, newMods);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_mods.log', newMods);
 
   return Result.succeed(newMods);
 }

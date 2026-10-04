@@ -1,9 +1,6 @@
 <div
   class="flex h-full flex-row justify-center"
-  *ngIf="
-    params.data.rowType !== rowTypeEmpty &&
-    params.data.rowType !== rowTypeHeader
-  "
+  *ngIf="params.data.rowType !== 'empty' && params.data.rowType !== 'header'"
 >
   <m-mini-charts-icon
     class="mt-1 flex h-7 w-7 cursor-pointer"

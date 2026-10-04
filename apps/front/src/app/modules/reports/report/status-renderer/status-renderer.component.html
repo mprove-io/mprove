@@ -23,9 +23,7 @@
   </div>
 
   <div
-    *ngIf="
-      isRunning === false && params.data.query?.status === queryStatusEnum.Error
-    "
+    *ngIf="isRunning === false && params.data.query?.status === 'Error'"
     class="text-r1 flex h-8 w-8 flex-shrink-0"
     tp="Query Error: {{ params.data.query?.lastErrorMessage }}"
     placement="left"
@@ -59,7 +57,7 @@
   <!-- <div
     *ngIf="
       isRunning === false &&
-      params.data.query?.status !== queryStatusEnum.Error &&
+      params.data.query?.status !== 'Error' &&
       !topQueryError &&
       isLimitReached === false &&
       !!params.data.mconfig &&

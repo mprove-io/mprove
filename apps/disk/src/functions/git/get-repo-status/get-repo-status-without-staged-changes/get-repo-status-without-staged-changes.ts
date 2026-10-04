@@ -1,12 +1,12 @@
 import { Result } from '@praha/byethrow';
 import type { DiffResult, SimpleGit } from 'simple-git';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
-import type { DiskFileChange } from '#common/types/disk/parts/disk-file-change';
-import type { DiskFileLine } from '#common/types/disk/parts/disk-file-line';
-import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
-import type { FileStatus } from '#common/types/disk/parts/file-status';
-import type { RepoError } from '#common/types/disk/parts/repo-error';
-import type { RepoStatus } from '#common/types/disk/parts/repo-status';
+import type { DiskFileChange } from '#common/types/disk/parts/file/disk-file-change';
+import type { DiskFileLine } from '#common/types/disk/parts/file/disk-file-line';
+import type { FileStatus } from '#common/types/disk/parts/file/file-status';
+import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
+import type { RepoError } from '#common/types/disk/parts/repo/repo-error';
+import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 
 export function getRepoStatusWithoutStagedChanges(item: {

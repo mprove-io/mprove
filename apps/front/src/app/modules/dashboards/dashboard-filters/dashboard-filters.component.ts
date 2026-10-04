@@ -1,17 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { TRIPLE_UNDERSCORE } from '#common/constants/top';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
-import type { DashboardField } from '#common/types/blockml/parts/dashboard-field';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
+import type { DashboardField } from '#common/types/blockml/parts/dashboard/dashboard-field';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { DashboardService } from '#front/app/services/dashboard.service';
@@ -92,9 +90,9 @@ export class DashboardFiltersComponent {
             r => r.result === dashboardField.storeResult
           ).fraction_types[0];
 
-      let logicGroup = isUndefined(storeResultFirstTypeFraction)
+      let logicGroup: FractionLogic = isUndefined(storeResultFirstTypeFraction)
         ? undefined
-        : FractionLogicEnum.Or;
+        : 'OR';
 
       let storeFractionSubTypeOptions = isUndefined(
         storeResultFirstTypeFraction
@@ -106,16 +104,16 @@ export class DashboardFiltersComponent {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.Or,
+                logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.AndNot,
-                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: 'AND_NOT',
+                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -126,20 +124,20 @@ export class DashboardFiltersComponent {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === 'OR' ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFirstTypeFraction?.meta,
         operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === FractionLogicEnum.Or
-            ? FractionOperatorEnum.Or
-            : FractionOperatorEnum.And,
+          : logicGroup === 'OR'
+            ? 'Or'
+            : 'And',
         logicGroup: logicGroup,
         brick: undefined,
         parentBrick: undefined,
-        type: FractionTypeEnum.StoreFraction,
+        type: 'StoreFraction',
         storeResult: dashboardField.storeResult,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFirstTypeFraction?.type,
@@ -182,7 +180,7 @@ export class DashboardFiltersComponent {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(dashboardField.result)
       };
     }

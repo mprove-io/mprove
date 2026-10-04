@@ -3,7 +3,7 @@
     [tp]="t1"
     [tpIsEnabled]="true"
     *ngIf="
-      query?.status === queryStatusEnum.Completed &&
+      query?.status === 'Completed' &&
       showDataRowsLength === true &&
       showLastCompleteDuration === true
     "
@@ -23,7 +23,7 @@
     [tp]="t2"
     [tpIsEnabled]="true"
     *ngIf="
-      query?.status === queryStatusEnum.Completed &&
+      query?.status === 'Completed' &&
       showDataRowsLength === true &&
       showLastCompleteDuration === false
     "
@@ -43,7 +43,7 @@
     [tp]="t3"
     [tpIsEnabled]="true"
     *ngIf="
-      query?.status === queryStatusEnum.Completed &&
+      query?.status === 'Completed' &&
       showDataRowsLength === false &&
       showLastCompleteDuration === true
     "
@@ -63,7 +63,7 @@
     [tp]="t4"
     [tpIsEnabled]="true"
     *ngIf="
-      query?.status === queryStatusEnum.Completed &&
+      query?.status === 'Completed' &&
       showDataRowsLength === false &&
       showLastCompleteDuration === false
     "
@@ -79,7 +79,7 @@
   <div
     [tp]="t5"
     [tpIsEnabled]="true"
-    *ngIf="query?.status === queryStatusEnum.Running"
+    *ngIf="query?.status === 'Running'"
     class="flex flex-row items-center"
   >
     <div class="line-clamp-1 select-none">
@@ -106,10 +106,7 @@
     </div>
   </div>
 
-  <div
-    class="flex flex-row items-center"
-    *ngIf="query?.status === queryStatusEnum.Error"
-  >
+  <div class="flex flex-row items-center" *ngIf="query?.status === 'Error'">
     <div
       [tp]="t6"
       [tpIsEnabled]="true"
@@ -138,7 +135,7 @@
   <div
     [tp]="t8"
     [tpIsEnabled]="true"
-    *ngIf="query?.status === queryStatusEnum.Canceled"
+    *ngIf="query?.status === 'Canceled'"
     class="line-clamp-1 select-none"
   >
     <ng-template #t8>

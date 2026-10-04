@@ -20,8 +20,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetSessionsListOutput } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
 
@@ -69,17 +68,14 @@ export class GetSessionsListController {
       memberId: user.userId
     });
 
-    if (project.e2bApiKey && sessionType === SessionTypeEnum.Editor) {
+    if (project.e2bApiKey && sessionType === 'Editor') {
       let editorSessions = await this.db.drizzle.query.sessionsTable
         .findMany({
           where: and(
             eq(sessionsTable.projectId, projectId),
             eq(sessionsTable.userId, user.userId),
-            eq(sessionsTable.type, SessionTypeEnum.Editor),
-            inArray(sessionsTable.status, [
-              SessionStatusEnum.Active,
-              SessionStatusEnum.Paused
-            ])
+            eq(sessionsTable.type, 'Editor'),
+            inArray(sessionsTable.status, ['Active', 'Paused'])
           )
         })
         .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
@@ -94,10 +90,7 @@ export class GetSessionsListController {
       where: and(
         eq(sessionsTable.projectId, projectId),
         eq(sessionsTable.userId, user.userId),
-        notInArray(sessionsTable.status, [
-          SessionStatusEnum.Deleted,
-          SessionStatusEnum.Archived
-        ]),
+        notInArray(sessionsTable.status, ['Deleted', 'Archived']),
         eq(sessionsTable.type, sessionType)
       ),
       orderBy: [desc(sessionsTable.createdTs)]
@@ -115,7 +108,7 @@ export class GetSessionsListController {
       let baseConditions = [
         eq(sessionsTable.projectId, projectId),
         eq(sessionsTable.userId, user.userId),
-        eq(sessionsTable.status, SessionStatusEnum.Archived),
+        eq(sessionsTable.status, 'Archived'),
         eq(sessionsTable.type, sessionType)
       ];
 
@@ -172,7 +165,7 @@ export class GetSessionsListController {
         where: and(
           eq(sessionsTable.projectId, projectId),
           eq(sessionsTable.userId, user.userId),
-          eq(sessionsTable.status, SessionStatusEnum.Archived),
+          eq(sessionsTable.status, 'Archived'),
           eq(sessionsTable.type, sessionType)
         ),
         columns: { sessionId: true }

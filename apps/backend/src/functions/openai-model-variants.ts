@@ -1,10 +1,6 @@
-export type OpenAiModelVariant =
-  | 'none'
-  | 'minimal'
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'xhigh';
+import type { OpenAiModelVariant } from '#backend/types/openai-model-variant';
+
+export type { OpenAiModelVariant } from '#backend/types/openai-model-variant';
 
 const WIDELY_SUPPORTED_EFFORTS: OpenAiModelVariant[] = [
   'low',

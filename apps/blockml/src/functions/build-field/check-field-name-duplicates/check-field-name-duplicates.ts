@@ -3,25 +3,24 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
-let func = FuncEnum.CheckFieldNameDuplicates;
+let func: Func = 'build-field/check-field-name-duplicates';
 
 export function checkFieldNameDuplicates<T extends sdrType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newEntities: T[] = [];
 
@@ -57,7 +56,7 @@ export function checkFieldNameDuplicates<T extends sdrType>(item: {
 
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.DUPLICATE_FIELD_NAMES,
+            title: 'DUPLICATE_FIELD_NAMES',
             message: 'Fields must have unique names',
             lines: lines
           })
@@ -71,8 +70,8 @@ export function checkFieldNameDuplicates<T extends sdrType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

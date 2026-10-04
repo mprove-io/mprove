@@ -5,14 +5,12 @@ import {
   EMPTY_MCONFIG_ID,
   EMPTY_QUERY_ID
 } from '#common/constants/top';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { TileX } from '#common/types/backend/parts/tile-x';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import { BaseQuery } from './base.query';
 
 export type ChartState = ChartX;
@@ -23,7 +21,7 @@ export const emptyMconfig: MconfigX = {
   queryId: undefined,
   modelId: undefined,
   modelType: undefined,
-  parentType: MconfigParentTypeEnum.Chart,
+  parentType: 'Chart',
   parentId: undefined,
   dateRangeIncludesRightSide: undefined,
   storePart: undefined,
@@ -56,7 +54,7 @@ export const emptyQuery: Query = {
   apiMethod: undefined,
   apiUrl: undefined,
   apiBody: undefined,
-  status: QueryStatusEnum.New,
+  status: 'New',
   data: [],
   lastRunBy: undefined,
   lastRunTs: 1,
@@ -97,7 +95,7 @@ export const emptyChart: ChartState = {
   draft: false,
   creatorId: undefined,
   title: emptyTile.title,
-  chartType: ChartTypeEnum.Table,
+  chartType: 'table',
   modelId: undefined,
   modelLabel: undefined,
   filePath: undefined,

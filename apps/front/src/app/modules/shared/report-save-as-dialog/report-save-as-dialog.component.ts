@@ -16,12 +16,11 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ReportUnit } from '#common/types/backend/parts/report-unit';
-import type { ReportX } from '#common/types/backend/parts/report-x';
+import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendSaveCreateReportRequest } from '#common/types/backend/routes/reports/save-create-report/save-create-report-request';
 import type { ToBackendSaveCreateReportResponse } from '#common/types/backend/routes/reports/save-create-report/save-create-report-response';
@@ -33,6 +32,7 @@ import type { Space } from '#common/types/blockml/parts/space';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import type { ReportSaveAs } from '#front/app/modules/shared/report-save-as-dialog/report-save-as';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -42,11 +42,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-
-enum ReportSaveAsEnum {
-  NEW_REPORT = 'NEW_REPORT',
-  REPLACE_EXISTING_REPORT = 'REPLACE_EXISTING_REPORT'
-}
 
 export interface ReportSaveAsDialogData {
   apiService: ApiService;
@@ -80,8 +75,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   emptySpaceName = EMPTY_SPACE_NAME;
 
-  reportSaveAsEnum = ReportSaveAsEnum;
-
   spinnerName = 'reportSaveAs';
 
   report: ReportX;
@@ -90,7 +83,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
 
-  saveAs: ReportSaveAsEnum = ReportSaveAsEnum.NEW_REPORT;
+  saveAs: ReportSaveAs = 'NEW_REPORT';
 
   newReportId: string;
 
@@ -241,12 +234,12 @@ export class ReportSaveAsDialogComponent implements OnInit {
       let newTitle = this.titleForm.controls['title'].value;
       let roles = [...this.selectedAccessRoles];
 
-      if (this.saveAs === ReportSaveAsEnum.NEW_REPORT) {
+      if (this.saveAs === 'NEW_REPORT') {
         this.saveAsNewRep({
           newTitle: newTitle,
           roles: roles
         });
-      } else if (this.saveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT) {
+      } else if (this.saveAs === 'REPLACE_EXISTING_REPORT') {
         this.saveAsExistingRep({
           newTitle: newTitle,
           roles: roles
@@ -256,7 +249,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   }
 
   newRepOnClick() {
-    this.saveAs = ReportSaveAsEnum.NEW_REPORT;
+    this.saveAs = 'NEW_REPORT';
     this.selectedAccessRoles = [];
     this.selectedSpace = EMPTY_SPACE.space;
     this.updateCombinedAccessRoles();
@@ -264,7 +257,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   }
 
   existingRepOnClick() {
-    this.saveAs = ReportSaveAsEnum.REPLACE_EXISTING_REPORT;
+    this.saveAs = 'REPLACE_EXISTING_REPORT';
     this.selectedReportId = undefined;
     this.selectedRepPath = '';
     this.selectedAccessRoles = [];
@@ -484,7 +477,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       unitId: this.newReportId,
       filePath: undefined,
       unitSpace: EMPTY_SPACE_NAME,
-      extension: FileExtensionEnum.Report,
+      extension: '.report',
       spaces: this.struct.spaces
     });
 
@@ -506,7 +499,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
         unitId: selectedReport.reportId,
         filePath: selectedReport.filePath,
         unitSpace: selectedReport.space,
-        extension: FileExtensionEnum.Report,
+        extension: '.report',
         spaces: this.struct.spaces
       });
     }

@@ -49,7 +49,7 @@
       <div
         class="bg-m0 flex w-full flex-grow cursor-default overflow-auto rounded pb-10"
         [ngClass]="{
-          'px-7': mconfig?.chart.type !== chartTypeEnumSingle
+          'px-7': mconfig?.chart.type !== 'single'
         }"
         (click)="stopClick($event)"
       >
@@ -58,11 +58,11 @@
           *ngIf="!!qData && !!mconfig?.mconfigId"
           [ngClass]="{
             'pt-3':
-              mconfig?.chart.type === chartTypeEnumTable ||
-              mconfig?.chart.type === chartTypeEnumPivotTable,
+              mconfig?.chart.type === 'table' ||
+              mconfig?.chart.type === 'pivot_table',
             'max-w-max':
-              (mconfig?.chart.type === chartTypeEnumTable ||
-                mconfig?.chart.type === chartTypeEnumPivotTable) &&
+              (mconfig?.chart.type === 'table' ||
+                mconfig?.chart.type === 'pivot_table') &&
               isSelectValid === true &&
               mconfig?.chart.isValid === true &&
               qData?.length > 0
@@ -75,7 +75,7 @@
           [qData]="qData"
           [chart]="mconfig.chart"
           [isAnimation]="false"
-          [isStoreModel]="mconfig?.modelType === modelTypeStore"
+          [isStoreModel]="mconfig?.modelType === 'Store'"
           [queryStatus]="query?.status"
           [chartInstanceId]="'dashboard-tile-mconfig-id-' + mconfig?.mconfigId"
         ></m-chart-view>

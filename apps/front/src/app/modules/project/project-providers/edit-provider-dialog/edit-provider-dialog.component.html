@@ -24,16 +24,14 @@
 
     <div
       class="flex flex-col sm:flex-row sm:items-start"
-      [class.mb-6]="
-        ref.data.provider.type !== providerTypeEnum.OpenAICompatible
-      "
+      [class.mb-6]="ref.data.provider.type !== 'OpenAICompatible'"
     >
       <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
         Name
       </label>
       <div class="flex w-full flex-col">
         <input
-          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          *ngIf="ref.data.provider.type === 'OpenAICompatible'"
           autocomplete="off"
           spellcheck="false"
           data-cy="editProviderDialogNameInput"
@@ -41,20 +39,20 @@
           formControlName="name"
         />
         <div
-          *ngIf="ref.data.provider.type !== providerTypeEnum.OpenAICompatible"
+          *ngIf="ref.data.provider.type !== 'OpenAICompatible'"
           class="text-s500 py-3"
         >
           {{ ref.data.provider.name }}
         </div>
         <m-validation
-          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          *ngIf="ref.data.provider.type === 'OpenAICompatible'"
           [control]="editProviderForm.controls['name']"
         ></m-validation>
       </div>
     </div>
 
     <div
-      *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+      *ngIf="ref.data.provider.type === 'OpenAICompatible'"
       class="mt-1 flex flex-col sm:flex-row sm:items-start"
     >
       <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
@@ -81,11 +79,9 @@
     </div>
 
     <div
-      *ngIf="ref.data.provider.type !== providerTypeEnum.OpenAICodex"
+      *ngIf="ref.data.provider.type !== 'OpenAICodex'"
       class="mb-6 flex flex-col sm:flex-row sm:items-start"
-      [class.mt-1]="
-        ref.data.provider.type === providerTypeEnum.OpenAICompatible
-      "
+      [class.mt-1]="ref.data.provider.type === 'OpenAICompatible'"
     >
       <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
         API Key
@@ -98,7 +94,7 @@
           class="form-input border-s3 focus:border-m600 w-full rounded"
           formControlName="apiKey"
           [placeholder]="
-            ref.data.provider.type === providerTypeEnum.OpenAICompatible
+            ref.data.provider.type === 'OpenAICompatible'
               ? 'Will be empty after Save if not set'
               : ''
           "
@@ -106,13 +102,13 @@
         />
         <m-validation
           *ngIf="
-            ref.data.provider.type === providerTypeEnum.OpenAI ||
-            ref.data.provider.type === providerTypeEnum.Anthropic
+            ref.data.provider.type === 'OpenAI' ||
+            ref.data.provider.type === 'Anthropic'
           "
           [control]="editProviderForm.controls['apiKey']"
         ></m-validation>
         <div
-          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          *ngIf="ref.data.provider.type === 'OpenAICompatible'"
           class="text-s400 mt-1 text-sm"
         >
           Will be sent as Authorization: Bearer &lt;key&gt;
@@ -121,7 +117,7 @@
     </div>
 
     <div
-      *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+      *ngIf="ref.data.provider.type === 'OpenAICompatible'"
       class="border-s300 mb-8 border-t pt-7"
     >
       <div class="mb-4 flex items-center justify-between">
@@ -179,7 +175,7 @@
     </div>
 
     <div
-      *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+      *ngIf="ref.data.provider.type === 'OpenAICompatible'"
       class="border-s300 mb-2 border-t pt-7"
     >
       <div class="mb-4 flex items-center justify-between">
@@ -243,7 +239,7 @@
         data-cy="editProviderDialogSaveButton"
         class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none disabled:cursor-default disabled:opacity-50"
         type="submit"
-        [disabled]="ref.data.provider.type === providerTypeEnum.OpenAICodex"
+        [disabled]="ref.data.provider.type === 'OpenAICodex'"
         >Save</button
       >
       <button

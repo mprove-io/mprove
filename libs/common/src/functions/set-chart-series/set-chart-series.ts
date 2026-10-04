@@ -4,12 +4,12 @@ import {
   DEFAULT_CHART_SERIES_PIE,
   DEFAULT_CHART_SERIES_SCATTER
 } from '#common/constants/mconfig-chart';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig/mconfig-chart-series';
 
 export function setChartSeries<T extends Mconfig>(item: { mconfig: T }) {
   let { mconfig } = item;
@@ -17,10 +17,7 @@ export function setChartSeries<T extends Mconfig>(item: { mconfig: T }) {
   let series = makeCopy(mconfig.chart.series);
   let sortedSeries: MconfigChartSeries[] = [];
 
-  if (
-    mconfig.chart.type !== ChartTypeEnum.Table &&
-    mconfig.chart.type !== ChartTypeEnum.PivotTable
-  ) {
+  if (mconfig.chart.type !== 'table' && mconfig.chart.type !== 'pivot_table') {
     series = series.filter(
       s => mconfig.chart.yFields.indexOf(s.dataField) > -1
     );
@@ -32,13 +29,13 @@ export function setChartSeries<T extends Mconfig>(item: { mconfig: T }) {
         sortedSeries.push(seriesElement);
       } else {
         let newSeriesElement: MconfigChartSeries =
-          mconfig.chart.type === ChartTypeEnum.Line
+          mconfig.chart.type === 'line'
             ? makeCopy(DEFAULT_CHART_SERIES_LINE)
-            : mconfig.chart.type === ChartTypeEnum.Bar
+            : mconfig.chart.type === 'bar'
               ? makeCopy(DEFAULT_CHART_SERIES_BAR)
-              : mconfig.chart.type === ChartTypeEnum.Scatter
+              : mconfig.chart.type === 'scatter'
                 ? makeCopy(DEFAULT_CHART_SERIES_SCATTER)
-                : mconfig.chart.type === ChartTypeEnum.Pie
+                : mconfig.chart.type === 'pie'
                   ? makeCopy(DEFAULT_CHART_SERIES_PIE)
                   : makeCopy(DEFAULT_CHART_SERIES_LINE);
 

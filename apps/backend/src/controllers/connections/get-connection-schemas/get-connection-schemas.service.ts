@@ -24,8 +24,6 @@ import { TrinoService } from '#backend/services/dwh/trino.service';
 import { TabService } from '#backend/services/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ColumnCombinedReference } from '#common/types/backend/parts/connection-schemas/combined-schemas/column-combined-reference';
 import type { CombinedSchema } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema';
@@ -36,6 +34,7 @@ import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { Member } from '#common/types/backend/parts/member';
+import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 
@@ -127,16 +126,16 @@ export class GetConnectionSchemasService {
 
     let eligibleConnections = connections.filter(
       c =>
-        c.type !== ConnectionTypeEnum.GoogleApi &&
-        c.type !== ConnectionTypeEnum.Api &&
-        (c.type === ConnectionTypeEnum.PostgreSQL ||
-          c.type === ConnectionTypeEnum.MySQL ||
-          c.type === ConnectionTypeEnum.SnowFlake ||
-          c.type === ConnectionTypeEnum.Databricks ||
-          c.type === ConnectionTypeEnum.BigQuery ||
-          c.type === ConnectionTypeEnum.MotherDuck ||
-          c.type === ConnectionTypeEnum.Presto ||
-          c.type === ConnectionTypeEnum.Trino)
+        c.type !== 'GoogleApi' &&
+        c.type !== 'Api' &&
+        (c.type === 'PostgreSQL' ||
+          c.type === 'MySQL' ||
+          c.type === 'SnowFlake' ||
+          c.type === 'Databricks' ||
+          c.type === 'BigQuery' ||
+          c.type === 'MotherDuck' ||
+          c.type === 'Presto' ||
+          c.type === 'Trino')
     );
 
     let rawSchemasByConnection: {
@@ -227,35 +226,35 @@ export class GetConnectionSchemasService {
       connections.map(async connection => {
         let schema: ConnectionRawSchema;
 
-        if (connection.type === ConnectionTypeEnum.PostgreSQL) {
+        if (connection.type === 'PostgreSQL') {
           schema = await this.pgService.fetchSchema({
             connection: connection
           });
-        } else if (connection.type === ConnectionTypeEnum.MySQL) {
+        } else if (connection.type === 'MySQL') {
           schema = await this.mysqlService.fetchSchema({
             connection: connection
           });
-        } else if (connection.type === ConnectionTypeEnum.SnowFlake) {
+        } else if (connection.type === 'SnowFlake') {
           schema = await this.snowFlakeService.fetchSchema({
             connection: connection
           });
-        } else if (connection.type === ConnectionTypeEnum.Databricks) {
+        } else if (connection.type === 'Databricks') {
           schema = await this.databricksService.fetchSchema({
             connection: connection
           });
-        } else if (connection.type === ConnectionTypeEnum.BigQuery) {
+        } else if (connection.type === 'BigQuery') {
           schema = await this.bigQueryService.fetchSchema({
             connection: connection
           });
-        } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+        } else if (connection.type === 'MotherDuck') {
           schema = await this.duckDbService.fetchSchema({
             connection: connection
           });
-        } else if (connection.type === ConnectionTypeEnum.Presto) {
+        } else if (connection.type === 'Presto') {
           schema = await this.prestoService.fetchSchema({
             connection: connection
           });
-        } else if (connection.type === ConnectionTypeEnum.Trino) {
+        } else if (connection.type === 'Trino') {
           schema = await this.trinoService.fetchSchema({
             connection: connection
           });
@@ -309,7 +308,7 @@ export class GetConnectionSchemasService {
     // Build relationship lookup
     let relLookup: {
       key: string;
-      relationshipType: RelationshipTypeEnum;
+      relationshipType: RelationshipType;
       targetSchemaName: string;
       targetTableName: string;
       targetColumnName: string;
@@ -339,11 +338,11 @@ export class GetConnectionSchemasService {
             });
 
             // Reverse entry
-            let reverseType =
-              rel.type === RelationshipTypeEnum.ManyToOne
-                ? RelationshipTypeEnum.OneToMany
-                : rel.type === RelationshipTypeEnum.OneToMany
-                  ? RelationshipTypeEnum.ManyToOne
+            let reverseType: RelationshipType =
+              rel.type === 'many_to_one'
+                ? 'one_to_many'
+                : rel.type === 'one_to_many'
+                  ? 'many_to_one'
                   : rel.type;
 
             relLookup.push({

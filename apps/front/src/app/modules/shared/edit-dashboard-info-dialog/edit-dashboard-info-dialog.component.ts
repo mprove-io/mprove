@@ -24,17 +24,16 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendSaveModifyDashboardRequest } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
 import type { ToBackendSaveModifyDashboardResponse } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
@@ -51,7 +50,7 @@ export interface EditDashboardInfoDialogData {
   apiService: ApiService;
   projectId: string;
   repoId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
   branchId: string;
   envId: string;
   dashboardUnit: DashboardUnit;
@@ -216,7 +215,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       unitId: this.ref.data.dashboardUnit.dashboardId,
       filePath: this.ref.data.dashboardUnit.filePath,
       unitSpace: this.ref.data.dashboardUnit.space,
-      extension: FileExtensionEnum.Dashboard,
+      extension: '.dashboard',
       spaces: this.struct.spaces
     });
   }

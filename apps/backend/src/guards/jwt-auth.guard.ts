@@ -13,8 +13,6 @@ import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-sessi
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { SKIP_JWT } from '#common/constants/top-backend';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -56,10 +54,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (authHeader) {
       let bearer = authHeader.replace(/^Bearer\s+/i, '');
 
-      if (
-        bearer.startsWith(`${ApiKeyTypeEnum.PK}-`) ||
-        bearer.startsWith(`${ApiKeyTypeEnum.SK}-`)
-      ) {
+      if (bearer.startsWith(`PK-`) || bearer.startsWith(`SK-`)) {
         return this.validateApiKey(request, bearer);
       }
     }
@@ -70,18 +65,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   async validateApiKey(request: any, fullKey: string): Promise<boolean> {
     let parsed = parseApiKey({ fullKey: fullKey });
 
-    if (
-      parsed.type !== ApiKeyTypeEnum.PK &&
-      parsed.type !== ApiKeyTypeEnum.SK
-    ) {
+    if (parsed.type !== 'PK' && parsed.type !== 'SK') {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_KEY_NOT_FOUND
+        message: 'BACKEND_API_KEY_NOT_FOUND'
       });
     }
 
     request.apiKeyType = parsed.type;
 
-    if (parsed.type === ApiKeyTypeEnum.PK) {
+    if (parsed.type === 'PK') {
       let user = await this.db.drizzle.query.usersTable
         .findFirst({
           where: eq(usersTable.apiKeyPrefix, parsed.prefix)
@@ -90,13 +82,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (!user) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_NOT_FOUND
+          message: 'BACKEND_API_KEY_NOT_FOUND'
         });
       }
 
       if (!user.apiKeySecretHash) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_NOT_FOUND
+          message: 'BACKEND_API_KEY_NOT_FOUND'
         });
       }
 
@@ -108,7 +100,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (!isValid) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_NOT_VALID
+          message: 'BACKEND_API_KEY_NOT_VALID'
         });
       }
 
@@ -124,7 +116,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (MCLI_USER_ALLOWED_REQUEST_NAMES.indexOf(path) < 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED
+          message: 'BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED'
         });
       }
 
@@ -132,12 +124,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
-          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER
+          message: 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER'
         });
       }
 
       return true;
-    } else if (parsed.type === ApiKeyTypeEnum.SK) {
+    } else if (parsed.type === 'SK') {
       let session = await this.db.drizzle.query.sessionsTable
         .findFirst({
           where: eq(sessionsTable.apiKeyPrefix, parsed.prefix)
@@ -146,13 +138,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (!session) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_NOT_FOUND
+          message: 'BACKEND_API_KEY_NOT_FOUND'
         });
       }
 
       if (!session.apiKeySecretHash) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_NOT_FOUND
+          message: 'BACKEND_API_KEY_NOT_FOUND'
         });
       }
 
@@ -164,7 +156,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (!isValid) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_NOT_VALID
+          message: 'BACKEND_API_KEY_NOT_VALID'
         });
       }
 
@@ -176,7 +168,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (!user) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_NOT_FOUND
+          message: 'BACKEND_API_KEY_NOT_FOUND'
         });
       }
 
@@ -196,7 +188,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (MCLI_SESSION_ALLOWED_REQUEST_NAMES.indexOf(url) < 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED
+          message: 'BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED'
         });
       }
 
@@ -204,7 +196,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
-          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION
+          message: 'BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION'
         });
       }
 
@@ -212,7 +204,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (envId && session.envId && envId !== session.envId) {
         throw new ServerError({
-          message: ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION
+          message: 'BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION'
         });
       }
 
@@ -220,7 +212,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (branchId && session.branchId && branchId !== session.branchId) {
         throw new ServerError({
-          message: ErEnum.BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION
+          message: 'BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION'
         });
       }
 

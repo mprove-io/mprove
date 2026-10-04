@@ -30,8 +30,7 @@ import {
 } from '#backend/services/explorer/explorer-chart-rebuild.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetExplorerChartTabOutput } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';
 
@@ -70,12 +69,12 @@ export class GetExplorerChartTabService {
     });
 
     if (session.userId !== user.userId) {
-      throw new ServerError({ message: ErEnum.BACKEND_UNAUTHORIZED });
+      throw new ServerError({ message: 'BACKEND_UNAUTHORIZED' });
     }
 
-    if (session.type !== SessionTypeEnum.Explorer) {
+    if (session.type !== 'Explorer') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EXPLORER
+        message: 'BACKEND_SESSION_TYPE_IS_NOT_EXPLORER'
       });
     }
 
@@ -97,7 +96,7 @@ export class GetExplorerChartTabService {
 
     if (isUndefined(bridge)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST
+        message: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST'
       });
     }
 
@@ -111,7 +110,7 @@ export class GetExplorerChartTabService {
       .then(x => this.tabService.chartEntToTab(x));
 
     if (isUndefined(originalChart)) {
-      throw new ServerError({ message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST });
+      throw new ServerError({ message: 'BACKEND_CHART_DOES_NOT_EXIST' });
     }
 
     let chartYaml = originalChart.chartYaml;
@@ -170,12 +169,12 @@ export class GetExplorerChartTabService {
       } catch (e) {
         if (
           e instanceof ServerError &&
-          e.message === ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
+          e.message === 'BACKEND_MODEL_DOES_NOT_EXIST'
         ) {
           rebuildErrors = [
             {
               title: 'Model does not exist',
-              message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
+              message: 'BACKEND_MODEL_DOES_NOT_EXIST',
               lines: []
             }
           ];
@@ -240,7 +239,7 @@ export class GetExplorerChartTabService {
       };
     } else {
       if (!chart || !mconfig || !query) {
-        throw new ServerError({ message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST });
+        throw new ServerError({ message: 'BACKEND_CHART_DOES_NOT_EXIST' });
       }
 
       let allModels = await this.db.drizzle.query.modelsTable

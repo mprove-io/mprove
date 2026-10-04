@@ -32,7 +32,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteEnvOutput } from '#common/types/backend/routes/envs/delete-env/delete-env-output';
 
@@ -76,7 +76,7 @@ export class DeleteEnvController {
 
     if (envId === PROJECT_ENV_PROD) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ENV_PROD_CANNOT_BE_DELETED
+        message: 'BACKEND_ENV_PROD_CANNOT_BE_DELETED'
       });
     }
 

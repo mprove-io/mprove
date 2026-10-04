@@ -1,9 +1,7 @@
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
+import type { QueryOperationType } from '#common/types/backend/parts/query-operation/query-operation-type';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 
 export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;
@@ -15,14 +13,12 @@ export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
 
   let prevDimensions = mconfig.select.filter(
     fieldId =>
-      mconfigFields.find(x => x.id === fieldId).fieldClass ===
-      FieldClassEnum.Dimension
+      mconfigFields.find(x => x.id === fieldId).fieldClass === 'dimension'
   );
 
   let prevMeasuresAndCalculations = mconfig.select.filter(
     fieldId =>
-      mconfigFields.find(x => x.id === fieldId).fieldClass !==
-      FieldClassEnum.Dimension
+      mconfigFields.find(x => x.id === fieldId).fieldClass !== 'dimension'
   );
 
   let selectedModelField = modelFields.find(x => x.id === selectFieldId);
@@ -35,7 +31,7 @@ export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
     mconfig.select.indexOf(selectFieldId) > -1 &&
     mconfig.sortings.length === 1 &&
     mconfig.sortings.map(s => s.fieldId).indexOf(selectFieldId) > -1 &&
-    selectedModelField.fieldClass === FieldClassEnum.Dimension &&
+    selectedModelField.fieldClass === 'dimension' &&
     prevDimensions.length > 1
   ) {
     // remove sorted dimension - sort by other dimension
@@ -45,7 +41,7 @@ export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
     mconfig.select.indexOf(selectFieldId) > -1 &&
     mconfig.sortings.length === 1 &&
     mconfig.sortings.map(s => s.fieldId).indexOf(selectFieldId) > -1 &&
-    selectedModelField.fieldClass === FieldClassEnum.Measure &&
+    selectedModelField.fieldClass === 'measure' &&
     prevMeasuresAndCalculations.length === 1 &&
     prevDimensions.length > 0
   ) {
@@ -56,7 +52,7 @@ export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
     mconfig.select.indexOf(selectFieldId) > -1 &&
     mconfig.sortings.length === 1 &&
     mconfig.sortings.map(s => s.fieldId).indexOf(selectFieldId) > -1 &&
-    selectedModelField.fieldClass === FieldClassEnum.Measure &&
+    selectedModelField.fieldClass === 'measure' &&
     prevMeasuresAndCalculations.length > 1
   ) {
     // remove sorted measure - sort by other measure
@@ -67,14 +63,14 @@ export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
   } else if (
     mconfig.select.indexOf(selectFieldId) < 0 &&
     mconfig.sortings.length === 0 &&
-    selectedModelField.fieldClass === FieldClassEnum.Dimension &&
+    selectedModelField.fieldClass === 'dimension' &&
     prevDimensions.length === 0 &&
     prevMeasuresAndCalculations.length > 0
   ) {
     // sort by added dimension or existing measure
     if (
-      selectedModelField.result === FieldResultEnum.String ||
-      selectedModelField.result === FieldResultEnum.Number
+      selectedModelField.result === 'string' ||
+      selectedModelField.result === 'number'
     ) {
       sortFieldId = prevMeasuresAndCalculations[0];
       desc = true;
@@ -85,7 +81,7 @@ export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
   } else if (
     mconfig.select.indexOf(selectFieldId) < 0 &&
     mconfig.sortings.length === 0 &&
-    selectedModelField.fieldClass === FieldClassEnum.Dimension
+    selectedModelField.fieldClass === 'dimension'
   ) {
     // sort by added dimension
     sortFieldId = selectedModelField.id;
@@ -94,28 +90,28 @@ export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
     mconfig.select.indexOf(selectFieldId) < 0 &&
     mconfig.sortings.length === 0 &&
     prevDimensions.length > 0 &&
-    selectedModelField.fieldClass === FieldClassEnum.Measure
+    selectedModelField.fieldClass === 'measure'
   ) {
     // sort by added measure
     sortFieldId = selectedModelField.id;
     desc = true;
   }
 
-  let queryOperationType =
+  let queryOperationType: QueryOperationType =
     mconfig.select.length === 1 && mconfig.select[0] === selectFieldId
-      ? QueryOperationTypeEnum.Remove
+      ? 'Remove'
       : isDefined(sortFieldId)
-        ? QueryOperationTypeEnum.GroupOrAggregatePlusSort
-        : QueryOperationTypeEnum.GroupOrAggregate;
+        ? 'GroupOrAggregatePlusSort'
+        : 'GroupOrAggregate';
 
   return {
     queryOperationType: queryOperationType,
     sortFieldId:
-      queryOperationType === QueryOperationTypeEnum.GroupOrAggregatePlusSort
+      queryOperationType === 'GroupOrAggregatePlusSort'
         ? sortFieldId
         : undefined,
     desc:
-      queryOperationType === QueryOperationTypeEnum.GroupOrAggregatePlusSort &&
+      queryOperationType === 'GroupOrAggregatePlusSort' &&
       isDefined(sortFieldId)
         ? desc
         : undefined

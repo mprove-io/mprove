@@ -15,8 +15,7 @@ import { QueriesService } from '#backend/services/db/queries.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { sleep } from '#common/functions/sleep/sleep';
 import type { RunChart } from '#common/types/backend/parts/run/run-chart';
@@ -86,7 +85,7 @@ export class RunService {
 
     if (noDashboards === true && getDashboards === true) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
         displayData: `noDashboards and getDashboards`,
         originalError: null
       });
@@ -95,7 +94,7 @@ export class RunService {
 
     if (noDashboards === true && isDefined(dashboardIds)) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
         displayData: `noDashboards and dashboardIds`,
         originalError: null
       });
@@ -104,7 +103,7 @@ export class RunService {
 
     if (noCharts === true && getCharts === true) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
         displayData: `noCharts and getCharts`,
         originalError: null
       });
@@ -113,7 +112,7 @@ export class RunService {
 
     if (noCharts === true && isDefined(chartIds)) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
         displayData: `noCharts and chartIds`,
         originalError: null
       });
@@ -122,7 +121,7 @@ export class RunService {
 
     if (noReports === true && getReports === true) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
         displayData: `noReports and getReports`,
         originalError: null
       });
@@ -131,7 +130,7 @@ export class RunService {
 
     if (noReports === true && isDefined(reportIds)) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
         displayData: `noReports and reportIds`,
         originalError: null
       });
@@ -140,7 +139,7 @@ export class RunService {
 
     if (isDefined(item.sleep) && wait === false) {
       let serverError = new ServerError({
-        message: ErEnum.BACKEND_SLEEP_DOES_NOT_WORK_WITHOUT_WAIT,
+        message: 'BACKEND_SLEEP_DOES_NOT_WORK_WITHOUT_WAIT',
         originalError: null
       });
       throw serverError;
@@ -300,7 +299,7 @@ export class RunService {
           );
 
           if (
-            query.status !== QueryStatusEnum.Running &&
+            query.status !== 'Running' &&
             query.serverTs > queryStart.serverTs
           ) {
             waitQueries.push(query);
@@ -329,7 +328,7 @@ export class RunService {
           lastErrorMessage: query.lastErrorMessage
         };
       }
-      return { queryId: item.queryId, status: QueryStatusEnum.New };
+      return { queryId: item.queryId, status: 'New' };
     };
 
     let chartParts: RunChart[] = this.runChartService.build({
@@ -349,16 +348,10 @@ export class RunService {
 
     let queriesStats: McliQueriesStats = {
       started: wait === true ? 0 : runQueriesResp.startedQueryIds.length,
-      running: queriesForStats.filter(q => q.status === QueryStatusEnum.Running)
-        .length,
-      completed: queriesForStats.filter(
-        q => q.status === QueryStatusEnum.Completed
-      ).length,
-      error: queriesForStats.filter(q => q.status === QueryStatusEnum.Error)
-        .length,
-      canceled: queriesForStats.filter(
-        q => q.status === QueryStatusEnum.Canceled
-      ).length
+      running: queriesForStats.filter(q => q.status === 'Running').length,
+      completed: queriesForStats.filter(q => q.status === 'Completed').length,
+      error: queriesForStats.filter(q => q.status === 'Error').length,
+      canceled: queriesForStats.filter(q => q.status === 'Canceled').length
     };
 
     let hasErrors = queriesStats.error > 0;

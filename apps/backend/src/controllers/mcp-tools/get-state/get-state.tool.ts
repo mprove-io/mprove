@@ -12,13 +12,13 @@ import {
   MCP_TOOL_GET_STATE,
   MCP_TOOL_GET_STATE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolGetStateInput,
   zMcpToolGetStateInput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-state/mcp-tool-get-state-input';
 import { zMcpToolGetStateOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-state/mcp-tool-get-state-output';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
@@ -42,14 +42,14 @@ export class GetStateTool {
   ) {
     let user = (request as any).user as UserTab;
 
-    let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
+    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
 
-    if (apiKeyType === ApiKeyTypeEnum.PK) {
+    if (apiKeyType === 'PK') {
       this.toolService.validateUserRepoId({
         repoId: item.repoId,
         userId: user.userId
       });
-    } else if (apiKeyType === ApiKeyTypeEnum.SK) {
+    } else if (apiKeyType === 'SK') {
       this.toolService.validateSessionProjectId({
         projectId: item.projectId,
         request: request

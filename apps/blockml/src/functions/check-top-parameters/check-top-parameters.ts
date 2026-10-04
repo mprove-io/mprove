@@ -6,18 +6,16 @@ import { checkStoreFractionControls } from '#blockml/functions/check-store-fract
 import { checkStoreFractionControlsUse } from '#blockml/functions/check-store-fraction-controls-use/check-store-fraction-controls-use';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FieldFilter } from '#common/types/blockml/parts/internal/field-filter';
 import type { FieldStoreFilter } from '#common/types/blockml/parts/internal/field-store-filter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
 
-let func = FuncEnum.CheckStoreFractionControls;
+let func: Func = 'extra/check-store-fraction-controls';
 
 export function checkTopParameters(
   item: {
@@ -28,12 +26,12 @@ export function checkTopParameters(
     filePath: string;
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId, stores } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   item.fields.forEach(field => {
     let errorsOnStart = item.errors.length;
@@ -46,7 +44,7 @@ export function checkTopParameters(
     if (isDefined(field.result) && isDefined(field.store_model)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TOP_PARAMETERS_RESULT_AND_STORE,
+          title: 'TOP_PARAMETERS_RESULT_AND_STORE',
           message: `filter parameters "result" and "store" do not work together`,
           lines: [
             {
@@ -68,7 +66,7 @@ export function checkTopParameters(
     if (isDefined(field.result) && isDefined(field.store_filter)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TOP_PARAMETERS_RESULT_AND_STORE_FILTER,
+          title: 'TOP_PARAMETERS_RESULT_AND_STORE_FILTER',
           message: `filter parameters "result" and "store_filter" do not work together`,
           lines: [
             {
@@ -90,7 +88,7 @@ export function checkTopParameters(
     if (isDefined(field.result) && isDefined(field.store_result)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TOP_PARAMETERS_RESULT_AND_STORE_RESULT,
+          title: 'TOP_PARAMETERS_RESULT_AND_STORE_RESULT',
           message: `filter parameters "result" and "store_result" do not work together`,
           lines: [
             {
@@ -112,7 +110,7 @@ export function checkTopParameters(
     if (isDefined(field.store_filter) && isDefined(field.store_result)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TOP_PARAMETERS_STORE_FILTER_AND_STORE_RESULT,
+          title: 'TOP_PARAMETERS_STORE_FILTER_AND_STORE_RESULT',
           message: `filter parameters "store_filter" and "store_result" do not work together`,
           lines: [
             {
@@ -134,7 +132,7 @@ export function checkTopParameters(
     if (isDefined(field.store_filter) && isUndefined(field.store_model)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TOP_PARAMETERS_STORE_FILTER_WITHOUT_STORE,
+          title: 'TOP_PARAMETERS_STORE_FILTER_WITHOUT_STORE',
           message: `filter parameter "store" is required for "store_filter" to work`,
           lines: [
             {
@@ -151,7 +149,7 @@ export function checkTopParameters(
     if (isDefined(field.store_result) && isUndefined(field.store_model)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TOP_PARAMETERS_STORE_RESULT_WITHOUT_STORE,
+          title: 'TOP_PARAMETERS_STORE_RESULT_WITHOUT_STORE',
           message: `filter parameter "store" is required for "store_result" to work`,
           lines: [
             {
@@ -172,7 +170,7 @@ export function checkTopParameters(
     ) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.TOP_PARAMETERS_STORE_ONLY,
+          title: 'TOP_PARAMETERS_STORE_ONLY',
           message: `filter parameter "store_filter" or "store_result" is required when "store" specified`,
           lines: [
             {
@@ -192,7 +190,7 @@ export function checkTopParameters(
       if (isUndefined(store)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TOP_PARAMETER_REFS_MISSING_STORE,
+            title: 'TOP_PARAMETER_REFS_MISSING_STORE',
             message: `store "${field.store_model}" is missing or not valid`,
             lines: [
               {
@@ -216,7 +214,7 @@ export function checkTopParameters(
         if (isUndefined(storeFilter)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TOP_PARAMETER_REFS_MISSING_STORE_FILTER,
+              title: 'TOP_PARAMETER_REFS_MISSING_STORE_FILTER',
               message: `store filter "${field.store_filter}" is missing or not valid`,
               lines: [
                 {
@@ -241,7 +239,7 @@ export function checkTopParameters(
         if (isUndefined(storeResult)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TOP_PARAMETER_REFS_MISSING_STORE_RESULT,
+              title: 'TOP_PARAMETER_REFS_MISSING_STORE_RESULT',
               message: `store result "${field.store_result}" is missing or not valid`,
               lines: [
                 {
@@ -259,7 +257,7 @@ export function checkTopParameters(
       if (isUndefined(field.fractions)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_FRACTIONS,
+            title: 'MISSING_FRACTIONS',
             message: `fractions parameter is required`,
             lines: [
               {
@@ -276,7 +274,7 @@ export function checkTopParameters(
       if (field.fractions.length === 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.FRACTIONS_LIST_IS_EMPTY,
+            title: 'FRACTIONS_LIST_IS_EMPTY',
             message: `fractions cannot be empty`,
             lines: [
               {
@@ -296,7 +294,7 @@ export function checkTopParameters(
       ) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MAX_FRACTIONS_EXCEEDED,
+            title: 'MAX_FRACTIONS_EXCEEDED',
             message: `fractions length ${
               field.fractions.length
             } exceeded store filter max_fractions ${Number(

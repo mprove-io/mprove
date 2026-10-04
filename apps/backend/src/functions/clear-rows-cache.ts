@@ -1,12 +1,11 @@
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import type { Row } from '#common/types/blockml/parts/row';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 export function clearRowsCache(item: {
   processedRows: Row[];
   changedRowIds: string[];
   timezone: string;
-  timeSpec: TimeSpecEnum;
+  timeSpec: TimeSpec;
   timeRangeFractionBrick: string;
 }) {
   let {
@@ -22,10 +21,7 @@ export function clearRowsCache(item: {
       changedRowIds.length === 0 ||
       row.deps.findIndex(dep => changedRowIds.indexOf(dep) > -1) > -1
     ) {
-      if (
-        row.rowType === RowTypeEnum.Formula ||
-        row.rowType === RowTypeEnum.Metric
-      ) {
+      if (row.rowType === 'formula' || row.rowType === 'metric') {
         let currentRqIndex = row.rqs.findIndex(
           y =>
             y.fractionBrick === timeRangeFractionBrick &&
@@ -38,7 +34,7 @@ export function clearRowsCache(item: {
           ...row.rqs.slice(currentRqIndex + 1)
         ];
 
-        if (row.rowType === RowTypeEnum.Metric) {
+        if (row.rowType === 'metric') {
           row.parametersFiltersWithExcludedTime = [];
 
           row.records = [];

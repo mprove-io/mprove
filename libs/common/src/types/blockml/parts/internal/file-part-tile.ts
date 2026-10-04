@@ -1,11 +1,11 @@
-import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import type { FilterBricksDictionary } from '#common/types/blockml/parts/filter-bricks-dictionary';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+
+import type { FilterBricksDictionary } from '#common/types/blockml/parts/filter/filter-bricks-dictionary';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FileChartData } from '#common/types/blockml/parts/internal/file-chart-data';
 import type { FileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
 import type { FileChartPlate } from '#common/types/blockml/parts/internal/file-chart-plate';
 import type { FileTileParameter } from '#common/types/blockml/parts/internal/file-tile-parameter';
-import type { EnumValues } from '#common/types/enum-values';
 
 export type FilePartTile = {
   title?: string;
@@ -18,7 +18,7 @@ export type FilePartTile = {
   sorts_line_num?: number;
   limit?: string;
   limit_line_num?: number;
-  type?: EnumValues<typeof ChartTypeEnum>;
+  type?: ChartType;
   type_line_num?: number;
   data?: FileChartData;
   data_line_num?: number;

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Given, zGiven } from '#common/types/backend/parts/given';
+import { type Given, zGiven } from '#common/types/backend/parts/given/given';
 import { type Member, zMember } from '#common/types/backend/parts/member';
 
 export type ToBackendEditGivenOutput = {

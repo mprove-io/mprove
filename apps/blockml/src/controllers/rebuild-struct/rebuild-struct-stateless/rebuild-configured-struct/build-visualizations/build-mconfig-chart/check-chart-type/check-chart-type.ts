@@ -4,28 +4,25 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { CHART_TYPE_VALUES } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 
-let func = FuncEnum.CheckChartType;
+let func: Func = 'build-mconfig-chart/check-chart-type';
 
 export function checkChartType<T extends dcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -36,8 +33,8 @@ export function checkChartType<T extends dcType>(item: {
       if (isUndefined(tile.type)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_MISSING_TYPE,
-            message: `tile must have "${ParameterEnum.Type}" parameter`,
+            title: 'TILE_MISSING_TYPE',
+            message: `tile must have "type" parameter`,
             lines: [
               {
                 line: tile.title_line_num,
@@ -53,8 +50,8 @@ export function checkChartType<T extends dcType>(item: {
       if (CHART_TYPE_VALUES.indexOf(tile.type) < 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.TILE_WRONG_TYPE,
-            message: `value "${tile.type}" is not valid "${ParameterEnum.Type}"`,
+            title: 'TILE_WRONG_TYPE',
+            message: `value "${tile.type}" is not valid "type"`,
             lines: [
               {
                 line: tile.type_line_num,
@@ -73,9 +70,9 @@ export function checkChartType<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

@@ -61,19 +61,17 @@
         repo.repoStatus !== repoStatusNeedCommit
       "
       tp="Not available for Session repos"
-      [tpIsEnabled]="selectedBranchItem.repoType === repoTypeEnum.Session"
+      [tpIsEnabled]="selectedBranchItem.repoType === 'session'"
     >
       <button
         data-cy="branchSelectCreateBranchButton"
         class="w-full rounded py-3 text-base focus:outline-none"
         [ngClass]="{
-          'text-s400 cursor-default':
-            selectedBranchItem.repoType === repoTypeEnum.Session,
-          'text-m600 hover:bg-m50':
-            selectedBranchItem.repoType !== repoTypeEnum.Session
+          'text-s400 cursor-default': selectedBranchItem.repoType === 'session',
+          'text-m600 hover:bg-m50': selectedBranchItem.repoType !== 'session'
         }"
         (click)="createNewBranch(branchSelect, $event)"
-        [disabled]="selectedBranchItem.repoType === repoTypeEnum.Session"
+        [disabled]="selectedBranchItem.repoType === 'session'"
         >New Branch</button
       >
     </div>
@@ -86,23 +84,21 @@
         repo.repoStatus !== repoStatusNeedCommit
       "
       [tp]="
-        selectedBranchItem.repoType === repoTypeEnum.Session
+        selectedBranchItem.repoType === 'session'
           ? 'Not available for Session repos'
           : 'Switch to a Dev branch to merge'
       "
-      [tpIsEnabled]="selectedBranchItem.repoType !== repoTypeEnum.Dev"
+      [tpIsEnabled]="selectedBranchItem.repoType !== 'dev'"
     >
       <button
         data-cy="branchSelectMergeBranchButton"
         class="w-full rounded py-3 text-base focus:outline-none"
         [ngClass]="{
-          'text-s400 cursor-default':
-            selectedBranchItem.repoType !== repoTypeEnum.Dev,
-          'text-m600 hover:bg-m50':
-            selectedBranchItem.repoType === repoTypeEnum.Dev
+          'text-s400 cursor-default': selectedBranchItem.repoType !== 'dev',
+          'text-m600 hover:bg-m50': selectedBranchItem.repoType === 'dev'
         }"
         (click)="mergeBranch(branchSelect, $event)"
-        [disabled]="selectedBranchItem.repoType !== repoTypeEnum.Dev"
+        [disabled]="selectedBranchItem.repoType !== 'dev'"
         >Merge Branch</button
       >
     </div>
@@ -115,13 +111,13 @@
             repo.repoStatus !== repoStatusNeedCommit))
       "
       [tp]="
-        selectedBranchItem.repoType === repoTypeEnum.Session
+        selectedBranchItem.repoType === 'session'
           ? 'Not available for Session repos'
           : 'Cannot delete the default branch'
       "
       [tpIsEnabled]="
         selectedBranchItem.branchId === defaultBranch ||
-        selectedBranchItem.repoType === repoTypeEnum.Session
+        selectedBranchItem.repoType === 'session'
       "
     >
       <button
@@ -130,15 +126,15 @@
         [ngClass]="{
           'text-s400 cursor-default':
             selectedBranchItem.branchId === defaultBranch ||
-            selectedBranchItem.repoType === repoTypeEnum.Session,
+            selectedBranchItem.repoType === 'session',
           'text-m600 hover:bg-m50':
             selectedBranchItem.branchId !== defaultBranch &&
-            selectedBranchItem.repoType !== repoTypeEnum.Session
+            selectedBranchItem.repoType !== 'session'
         }"
         (click)="deleteBranch(branchSelect, $event)"
         [disabled]="
           selectedBranchItem.branchId === defaultBranch ||
-          selectedBranchItem.repoType === repoTypeEnum.Session
+          selectedBranchItem.repoType === 'session'
         "
         >Delete Branch</button
       >

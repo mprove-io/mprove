@@ -25,8 +25,8 @@ import {
   OPENAI_PROVIDER_NAME,
   PROVIDER_TYPE_NAME_BY_TYPE
 } from '#common/constants/providers';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
 import type { ToBackendCreateProviderResponse } from '#common/types/backend/routes/providers/create-provider/create-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -40,7 +40,7 @@ export interface AddProviderDialogData {
 }
 
 type SelectableProviderType = {
-  value: ProviderTypeEnum;
+  value: ProviderType;
   label: string;
   disabled: boolean;
   isAlreadySelected: boolean;
@@ -67,8 +67,6 @@ export class AddProviderDialogComponent implements OnInit {
 
   addProviderForm: FormGroup;
 
-  providerTypeEnum = ProviderTypeEnum;
-
   providerTypes: SelectableProviderType[] = [];
 
   constructor(
@@ -85,55 +83,55 @@ export class AddProviderDialogComponent implements OnInit {
       );
 
     let isAnthropicAlreadySelected: boolean = providers.some(
-      provider => provider.type === ProviderTypeEnum.Anthropic
+      provider => provider.type === 'Anthropic'
     );
 
     let isOpenAIAlreadySelected: boolean = providers.some(
-      provider => provider.type === ProviderTypeEnum.OpenAI
+      provider => provider.type === 'OpenAI'
     );
 
     let isOpenAICodexAlreadySelected: boolean = providers.some(
-      provider => provider.type === ProviderTypeEnum.OpenAICodex
+      provider => provider.type === 'OpenAICodex'
     );
 
     this.providerTypes = [
       {
-        value: ProviderTypeEnum.Anthropic,
-        label: PROVIDER_TYPE_NAME_BY_TYPE[ProviderTypeEnum.Anthropic],
+        value: 'Anthropic',
+        label: PROVIDER_TYPE_NAME_BY_TYPE['Anthropic'],
         disabled: isAnthropicAlreadySelected,
         isAlreadySelected: isAnthropicAlreadySelected
       },
       {
-        value: ProviderTypeEnum.OpenAI,
-        label: PROVIDER_TYPE_NAME_BY_TYPE[ProviderTypeEnum.OpenAI],
+        value: 'OpenAI',
+        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAI'],
         disabled: isOpenAIAlreadySelected,
         isAlreadySelected: isOpenAIAlreadySelected
       },
       {
-        value: ProviderTypeEnum.OpenAICodex,
-        label: PROVIDER_TYPE_NAME_BY_TYPE[ProviderTypeEnum.OpenAICodex],
+        value: 'OpenAICodex',
+        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAICodex'],
         disabled: isOpenAICodexAlreadySelected,
         isAlreadySelected: isOpenAICodexAlreadySelected
       },
       {
-        value: ProviderTypeEnum.OpenAICompatible,
-        label: PROVIDER_TYPE_NAME_BY_TYPE[ProviderTypeEnum.OpenAICompatible],
+        value: 'OpenAICompatible',
+        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAICompatible'],
         disabled: false,
         isAlreadySelected: false
       }
     ];
 
-    let initialProviderType: ProviderTypeEnum =
+    let initialProviderType: ProviderType =
       isOpenAIAlreadySelected === false
-        ? ProviderTypeEnum.OpenAI
+        ? 'OpenAI'
         : isAnthropicAlreadySelected === false
-          ? ProviderTypeEnum.Anthropic
+          ? 'Anthropic'
           : isOpenAICodexAlreadySelected === false
-            ? ProviderTypeEnum.OpenAICodex
-            : ProviderTypeEnum.OpenAICompatible;
+            ? 'OpenAICodex'
+            : 'OpenAICompatible';
 
     this.addProviderForm = this.fb.group({
-      type: [ProviderTypeEnum.OpenAI, [Validators.required]],
+      type: ['OpenAI', [Validators.required]],
       name: [OPENAI_PROVIDER_NAME],
       providerId: [OPENAI_PROVIDER_ID],
       baseURL: [undefined],
@@ -143,29 +141,29 @@ export class AddProviderDialogComponent implements OnInit {
     });
 
     this.addProviderForm.controls['type'].valueChanges.subscribe(
-      (type: ProviderTypeEnum) => {
+      (type: ProviderType) => {
         this.applyProviderType({ type: type });
       }
     );
 
-    if (initialProviderType !== ProviderTypeEnum.OpenAI) {
+    if (initialProviderType !== 'OpenAI') {
       this.addProviderForm.controls['type'].setValue(initialProviderType);
     }
   }
 
-  get providerType(): ProviderTypeEnum {
+  get providerType(): ProviderType {
     return this.addProviderForm?.controls['type'].value;
   }
 
   get isOpenAICompatible(): boolean {
-    return this.providerType === ProviderTypeEnum.OpenAICompatible;
+    return this.providerType === 'OpenAICompatible';
   }
 
   get usesApiKey(): boolean {
     return (
-      this.providerType === ProviderTypeEnum.OpenAI ||
-      this.providerType === ProviderTypeEnum.Anthropic ||
-      this.providerType === ProviderTypeEnum.OpenAICompatible
+      this.providerType === 'OpenAI' ||
+      this.providerType === 'Anthropic' ||
+      this.providerType === 'OpenAICompatible'
     );
   }
 
@@ -205,10 +203,10 @@ export class AddProviderDialogComponent implements OnInit {
     }
 
     let value = this.addProviderForm.getRawValue();
-    let type: ProviderTypeEnum = value.type;
+    let type: ProviderType = value.type;
     let payload: ToBackendCreateProviderRequest['input'];
 
-    if (type === ProviderTypeEnum.OpenAICompatible) {
+    if (type === 'OpenAICompatible') {
       payload = {
         name: value.name.trim(),
         projectId: this.ref.data.projectId,
@@ -231,14 +229,14 @@ export class AddProviderDialogComponent implements OnInit {
           )
         }
       };
-    } else if (type === ProviderTypeEnum.OpenAICodex) {
+    } else if (type === 'OpenAICodex') {
       payload = {
         projectId: this.ref.data.projectId,
         providerId: CODEX_PROVIDER_ID,
         type: type,
         options: {}
       };
-    } else if (type === ProviderTypeEnum.OpenAI) {
+    } else if (type === 'OpenAI') {
       payload = {
         projectId: this.ref.data.projectId,
         providerId: OPENAI_PROVIDER_ID,
@@ -251,7 +249,7 @@ export class AddProviderDialogComponent implements OnInit {
       payload = {
         projectId: this.ref.data.projectId,
         providerId: ANTHROPIC_PROVIDER_ID,
-        type: ProviderTypeEnum.Anthropic,
+        type: 'Anthropic',
         options: {
           apiKey: value.apiKey.trim()
         }
@@ -286,7 +284,7 @@ export class AddProviderDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  private applyProviderType(item: { type: ProviderTypeEnum }) {
+  private applyProviderType(item: { type: ProviderType }) {
     let { type } = item;
 
     let nameControl = this.addProviderForm.controls['name'];
@@ -304,7 +302,7 @@ export class AddProviderDialogComponent implements OnInit {
 
     baseUrlControl.setValue(undefined);
 
-    if (type === ProviderTypeEnum.OpenAICompatible) {
+    if (type === 'OpenAICompatible') {
       nameControl.setValue(undefined);
 
       nameControl.setValidators([
@@ -331,9 +329,9 @@ export class AddProviderDialogComponent implements OnInit {
       nameControl.clearValidators();
 
       nameControl.setValue(
-        type === ProviderTypeEnum.OpenAI
+        type === 'OpenAI'
           ? OPENAI_PROVIDER_NAME
-          : type === ProviderTypeEnum.Anthropic
+          : type === 'Anthropic'
             ? ANTHROPIC_PROVIDER_NAME
             : CODEX_PROVIDER_NAME
       );
@@ -343,17 +341,14 @@ export class AddProviderDialogComponent implements OnInit {
       baseUrlControl.clearValidators();
 
       providerIdControl.setValue(
-        type === ProviderTypeEnum.OpenAI
+        type === 'OpenAI'
           ? OPENAI_PROVIDER_ID
-          : type === ProviderTypeEnum.Anthropic
+          : type === 'Anthropic'
             ? ANTHROPIC_PROVIDER_ID
             : CODEX_PROVIDER_ID
       );
 
-      if (
-        type === ProviderTypeEnum.OpenAI ||
-        type === ProviderTypeEnum.Anthropic
-      ) {
+      if (type === 'OpenAI' || type === 'Anthropic') {
         apiKeyControl.setValidators([Validators.required]);
       } else {
         apiKeyControl.clearValidators();

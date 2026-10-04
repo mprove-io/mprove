@@ -30,7 +30,7 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Members')
@@ -74,7 +74,7 @@ export class DeleteMemberController {
 
     if (user.userId === memberId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ADMIN_CANNOT_DELETE_HIMSELF
+        message: 'BACKEND_ADMIN_CANNOT_DELETE_HIMSELF'
       });
     }
 

@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type BaseProject,
   zBaseProject
-} from '#common/types/backend/parts/base-project';
+} from '#common/types/backend/parts/project/base-project';
 
 export type ToDiskRenameCatalogNodeRequest = {
   operation: 'renameCatalogNode';

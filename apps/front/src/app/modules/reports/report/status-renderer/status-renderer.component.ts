@@ -3,13 +3,11 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { SOME_ROWS_HAVE_FORMULA_ERRORS } from '#common/constants/top';
-import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DataRow } from '#common/types/front/data-row';
+import type { DetailUnit } from '#common/types/blockml/parts/field/detail-unit';
+import type { DataRow } from '#common/types/front/report/row/data-row';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 
@@ -22,15 +20,14 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
   spinnerName = makeId();
-  queryStatusEnum = QueryStatusEnum;
 
   timeColumnsLimit: number;
   isLimitReached = false;
   isRunning = false;
   topQueryError: string;
 
-  timeSpec: TimeSpecEnum;
-  timeSpecDetail: DetailUnitEnum;
+  timeSpec: TimeSpec;
+  timeSpecDetail: DetailUnit;
 
   someRowsHaveFormulaErrors = SOME_ROWS_HAVE_FORMULA_ERRORS;
 
@@ -49,13 +46,11 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
     this.params = params;
 
     this.topQueryError =
-      params.data.rowType === RowTypeEnum.Formula
-        ? params.data.topQueryError
-        : undefined;
+      params.data.rowType === 'formula' ? params.data.topQueryError : undefined;
 
     this.isRunning =
-      this.params.data.query?.status === QueryStatusEnum.Running ||
-      (this.params.data.rowType === RowTypeEnum.Formula &&
+      this.params.data.query?.status === 'Running' ||
+      (this.params.data.rowType === 'formula' &&
         this.params.column.getColDef().type === 'running');
 
     this.timeColumnsLimit = this.reportQuery.getValue().timeColumnsLimit;
@@ -67,8 +62,8 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
     });
 
     this.isLimitReached =
-      this.params.data.query?.status === QueryStatusEnum.Completed &&
-      this.timeSpec === TimeSpecEnum.Timestamps &&
+      this.params.data.query?.status === 'Completed' &&
+      this.timeSpec === 'timestamps' &&
       this.params.data.query.data.length === this.timeColumnsLimit;
   }
 

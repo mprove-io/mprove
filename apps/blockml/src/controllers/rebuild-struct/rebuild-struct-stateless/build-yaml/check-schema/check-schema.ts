@@ -6,31 +6,28 @@ import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { RELATIONSHIP_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileSchema } from '#common/types/blockml/parts/internal/file-schema';
 import type { FileSchemaColumn } from '#common/types/blockml/parts/internal/file-schema-column';
 import type { FileSchemaRelationship } from '#common/types/blockml/parts/internal/file-schema-relationship';
 import type { FileSchemaTable } from '#common/types/blockml/parts/internal/file-schema-table';
+import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
 import { getExpectedMirrorType } from './get-expected-mirror-type/get-expected-mirror-type';
 
-let func = FuncEnum.CheckSchema;
+let func: Func = 'build-yaml/check-schema';
 
 export function checkSchema(item: {
   schemas: FileSchema[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<void, never> {
   let { caller, structId, cs } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   item.schemas.forEach(schema => {
     let errorsOnStart = item.errors.length;
@@ -40,11 +37,11 @@ export function checkSchema(item: {
     );
 
     // Validate schema value exists
-    if (schemaParameters.indexOf(ParameterEnum.Schema.toString()) < 0) {
+    if (schemaParameters.indexOf('schema'.toString()) < 0) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.MISSING_SCHEMA,
-          message: `parameter "${ParameterEnum.Schema}" is required`,
+          title: 'MISSING_SCHEMA',
+          message: `parameter "schema" is required`,
           lines: [
             {
               line: 0,
@@ -63,8 +60,8 @@ export function checkSchema(item: {
     if (!hasDot) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.WRONG_SCHEMA_FORMAT,
-          message: `"${ParameterEnum.Schema}" value "${schemaValue}" must contain a dot to separate connection name from schema name`,
+          title: 'WRONG_SCHEMA_FORMAT',
+          message: `"schema" value "${schemaValue}" must contain a dot to separate connection name from schema name`,
           lines: [
             {
               line: schema.schema_line_num,
@@ -78,11 +75,11 @@ export function checkSchema(item: {
     }
 
     // Validate tables exists
-    if (schemaParameters.indexOf(ParameterEnum.Tables.toString()) < 0) {
+    if (schemaParameters.indexOf('tables'.toString()) < 0) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.MISSING_TABLES,
-          message: `parameter "${ParameterEnum.Tables}" is required`,
+          title: 'MISSING_TABLES',
+          message: `parameter "tables" is required`,
           lines: [
             {
               line: 0,
@@ -98,8 +95,8 @@ export function checkSchema(item: {
     if (!Array.isArray(schema.tables)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.SCHEMA_TABLES_IS_NOT_A_LIST,
-          message: `parameter "${ParameterEnum.Tables}" must be a List`,
+          title: 'SCHEMA_TABLES_IS_NOT_A_LIST',
+          message: `parameter "tables" must be a List`,
           lines: [
             {
               line: schema.tables_line_num,
@@ -118,7 +115,7 @@ export function checkSchema(item: {
       if (isDefined(tableElement) && tableElement.constructor !== Object) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.SCHEMA_TABLE_ELEMENT_IS_NOT_A_DICTIONARY,
+            title: 'SCHEMA_TABLE_ELEMENT_IS_NOT_A_DICTIONARY',
             message:
               'found at least one tables element that is not a dictionary',
             lines: [
@@ -142,14 +139,14 @@ export function checkSchema(item: {
       tableParameters.forEach(parameter => {
         if (
           [
-            ParameterEnum.Table.toString(),
-            ParameterEnum.Description.toString(),
-            ParameterEnum.Columns.toString()
+            'table'.toString(),
+            'description'.toString(),
+            'columns'.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.UNKNOWN_SCHEMA_TABLE_PARAMETER,
+              title: 'UNKNOWN_SCHEMA_TABLE_PARAMETER',
               message: `parameter "${parameter}" cannot be used in tables element`,
               lines: [
                 {
@@ -168,11 +165,11 @@ export function checkSchema(item: {
 
         if (
           Array.isArray(tableElement[parameter as keyof FileSchemaTable]) &&
-          [ParameterEnum.Columns.toString()].indexOf(parameter) < 0
+          ['columns'.toString()].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.SCHEMA_TABLE_UNEXPECTED_LIST,
+              title: 'SCHEMA_TABLE_UNEXPECTED_LIST',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -192,11 +189,11 @@ export function checkSchema(item: {
         if (
           tableElement[parameter as keyof FileSchemaTable]?.constructor ===
             Object &&
-          [ParameterEnum.Columns.toString()].indexOf(parameter) < 0
+          ['columns'.toString()].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.SCHEMA_TABLE_UNEXPECTED_DICTIONARY,
+              title: 'SCHEMA_TABLE_UNEXPECTED_DICTIONARY',
               message: `parameter "${parameter}" must have a single value`,
               lines: [
                 {
@@ -218,11 +215,11 @@ export function checkSchema(item: {
         return;
       }
 
-      if (tableParameters.indexOf(ParameterEnum.Table.toString()) < 0) {
+      if (tableParameters.indexOf('table'.toString()) < 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_SCHEMA_TABLE,
-            message: `parameter "${ParameterEnum.Table}" is required for tables element`,
+            title: 'MISSING_SCHEMA_TABLE',
+            message: `parameter "table" is required for tables element`,
             lines: [
               {
                 line: schema.tables_line_num,
@@ -242,8 +239,8 @@ export function checkSchema(item: {
       if (!Array.isArray(tableElement.columns)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.SCHEMA_COLUMNS_IS_NOT_A_LIST,
-            message: `parameter "${ParameterEnum.Columns}" must be a List`,
+            title: 'SCHEMA_COLUMNS_IS_NOT_A_LIST',
+            message: `parameter "columns" must be a List`,
             lines: [
               {
                 line: tableElement.columns_line_num,
@@ -260,7 +257,7 @@ export function checkSchema(item: {
         if (isDefined(columnElement) && columnElement.constructor !== Object) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.SCHEMA_COLUMN_ELEMENT_IS_NOT_A_DICTIONARY,
+              title: 'SCHEMA_COLUMN_ELEMENT_IS_NOT_A_DICTIONARY',
               message:
                 'found at least one columns element that is not a dictionary',
               lines: [
@@ -284,16 +281,16 @@ export function checkSchema(item: {
         columnParameters.forEach(parameter => {
           if (
             [
-              ParameterEnum.Column.toString(),
-              ParameterEnum.Example.toString(),
-              ParameterEnum.CacheUniqueValues.toString(),
-              ParameterEnum.Description.toString(),
-              ParameterEnum.Relationships.toString()
+              'column'.toString(),
+              'example'.toString(),
+              'cache_unique_values'.toString(),
+              'description'.toString(),
+              'relationships'.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNKNOWN_SCHEMA_COLUMN_PARAMETER,
+                title: 'UNKNOWN_SCHEMA_COLUMN_PARAMETER',
                 message: `parameter "${parameter}" cannot be used in columns element`,
                 lines: [
                   {
@@ -312,11 +309,11 @@ export function checkSchema(item: {
 
           if (
             Array.isArray(columnElement[parameter as keyof FileSchemaColumn]) &&
-            [ParameterEnum.Relationships.toString()].indexOf(parameter) < 0
+            ['relationships'.toString()].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.SCHEMA_COLUMN_UNEXPECTED_LIST,
+                title: 'SCHEMA_COLUMN_UNEXPECTED_LIST',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -336,11 +333,11 @@ export function checkSchema(item: {
           if (
             columnElement[parameter as keyof FileSchemaColumn]?.constructor ===
               Object &&
-            [ParameterEnum.Relationships.toString()].indexOf(parameter) < 0
+            ['relationships'.toString()].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.SCHEMA_COLUMN_UNEXPECTED_DICTIONARY,
+                title: 'SCHEMA_COLUMN_UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -358,14 +355,14 @@ export function checkSchema(item: {
           }
 
           if (
-            parameter === ParameterEnum.CacheUniqueValues.toString() &&
+            parameter === 'cache_unique_values'.toString() &&
             !columnElement[parameter as keyof FileSchemaColumn]
               .toString()
               .match(MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.WRONG_SCHEMA_COLUMN_CACHE_UNIQUE_VALUES,
+                title: 'WRONG_SCHEMA_COLUMN_CACHE_UNIQUE_VALUES',
                 message: `parameter "${parameter}:" must be "true" or "false" if specified`,
                 lines: [
                   {
@@ -387,11 +384,11 @@ export function checkSchema(item: {
           return;
         }
 
-        if (columnParameters.indexOf(ParameterEnum.Column.toString()) < 0) {
+        if (columnParameters.indexOf('column'.toString()) < 0) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_SCHEMA_COLUMN,
-              message: `parameter "${ParameterEnum.Column}" is required for columns element`,
+              title: 'MISSING_SCHEMA_COLUMN',
+              message: `parameter "column" is required for columns element`,
               lines: [
                 {
                   line: tableElement.columns_line_num,
@@ -411,8 +408,8 @@ export function checkSchema(item: {
         if (!Array.isArray(columnElement.relationships)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.SCHEMA_RELATIONSHIPS_IS_NOT_A_LIST,
-              message: `parameter "${ParameterEnum.Relationships}" must be a List`,
+              title: 'SCHEMA_RELATIONSHIPS_IS_NOT_A_LIST',
+              message: `parameter "relationships" must be a List`,
               lines: [
                 {
                   line: columnElement.relationships_line_num,
@@ -431,8 +428,7 @@ export function checkSchema(item: {
           if (isDefined(relElement) && relElement.constructor !== Object) {
             item.errors.push(
               new BmError({
-                title:
-                  ErTitleEnum.SCHEMA_RELATIONSHIP_ELEMENT_IS_NOT_A_DICTIONARY,
+                title: 'SCHEMA_RELATIONSHIP_ELEMENT_IS_NOT_A_DICTIONARY',
                 message:
                   'found at least one relationships element that is not a dictionary',
                 lines: [
@@ -456,14 +452,14 @@ export function checkSchema(item: {
           relParameters.forEach(parameter => {
             if (
               [
-                ParameterEnum.To.toString(),
-                ParameterEnum.ToSchema.toString(),
-                ParameterEnum.Type.toString()
+                'to'.toString(),
+                'to_schema'.toString(),
+                'type'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_SCHEMA_RELATIONSHIP_PARAMETER,
+                  title: 'UNKNOWN_SCHEMA_RELATIONSHIP_PARAMETER',
                   message: `parameter "${parameter}" cannot be used in relationships element`,
                   lines: [
                     {
@@ -487,7 +483,7 @@ export function checkSchema(item: {
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.SCHEMA_RELATIONSHIP_UNEXPECTED_LIST,
+                  title: 'SCHEMA_RELATIONSHIP_UNEXPECTED_LIST',
                   message: `parameter "${parameter}" must have a single value`,
                   lines: [
                     {
@@ -510,7 +506,7 @@ export function checkSchema(item: {
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.SCHEMA_RELATIONSHIP_UNEXPECTED_DICTIONARY,
+                  title: 'SCHEMA_RELATIONSHIP_UNEXPECTED_DICTIONARY',
                   message: `parameter "${parameter}" must have a single value`,
                   lines: [
                     {
@@ -532,11 +528,11 @@ export function checkSchema(item: {
             return;
           }
 
-          if (relParameters.indexOf(ParameterEnum.To.toString()) < 0) {
+          if (relParameters.indexOf('to'.toString()) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.MISSING_SCHEMA_RELATIONSHIP_TO,
-                message: `parameter "${ParameterEnum.To}" is required for relationships element`,
+                title: 'MISSING_SCHEMA_RELATIONSHIP_TO',
+                message: `parameter "to" is required for relationships element`,
                 lines: [
                   {
                     line: columnElement.relationships_line_num,
@@ -549,11 +545,11 @@ export function checkSchema(item: {
             return;
           }
 
-          if (relParameters.indexOf(ParameterEnum.Type.toString()) < 0) {
+          if (relParameters.indexOf('type'.toString()) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.MISSING_SCHEMA_RELATIONSHIP_TYPE,
-                message: `parameter "${ParameterEnum.Type}" is required for relationships element`,
+                title: 'MISSING_SCHEMA_RELATIONSHIP_TYPE',
+                message: `parameter "type" is required for relationships element`,
                 lines: [
                   {
                     line: columnElement.relationships_line_num,
@@ -574,8 +570,8 @@ export function checkSchema(item: {
           if (!isValidType) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.WRONG_SCHEMA_RELATIONSHIP_TYPE,
-                message: `"${ParameterEnum.Type}" value "${typeValue}" is not valid. Use one of: ${RELATIONSHIP_TYPE_VALUES.join(', ')}`,
+                title: 'WRONG_SCHEMA_RELATIONSHIP_TYPE',
+                message: `"type" value "${typeValue}" is not valid. Use one of: ${RELATIONSHIP_TYPE_VALUES.join(', ')}`,
                 lines: [
                   {
                     line: relElement.type_line_num,
@@ -594,8 +590,8 @@ export function checkSchema(item: {
           if (!toMatch) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.WRONG_SCHEMA_RELATIONSHIP_TO_FORMAT,
-                message: `"${ParameterEnum.To}" value "${toValue}" must be in "table.column" format`,
+                title: 'WRONG_SCHEMA_RELATIONSHIP_TO_FORMAT',
+                message: `"to" value "${toValue}" must be in "table.column" format`,
                 lines: [
                   {
                     line: relElement.to_line_num,
@@ -615,8 +611,8 @@ export function checkSchema(item: {
             if (toSchemaDotIndex < 0) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.WRONG_SCHEMA_RELATIONSHIP_TO_SCHEMA_FORMAT,
-                  message: `"${ParameterEnum.ToSchema}" value "${toSchemaValue}" must contain a dot to separate connection name from schema name`,
+                  title: 'WRONG_SCHEMA_RELATIONSHIP_TO_SCHEMA_FORMAT',
+                  message: `"to_schema" value "${toSchemaValue}" must contain a dot to separate connection name from schema name`,
                   lines: [
                     {
                       line: relElement.to_schema_line_num,
@@ -641,9 +637,8 @@ export function checkSchema(item: {
             if (toSchemaConnectionId !== schemaConnectionId) {
               item.errors.push(
                 new BmError({
-                  title:
-                    ErTitleEnum.WRONG_SCHEMA_RELATIONSHIP_TO_SCHEMA_CONNECTION,
-                  message: `"${ParameterEnum.ToSchema}" connection "${toSchemaConnectionId}" must match "${ParameterEnum.Schema}" connection "${schemaConnectionId}"`,
+                  title: 'WRONG_SCHEMA_RELATIONSHIP_TO_SCHEMA_CONNECTION',
+                  message: `"to_schema" connection "${toSchemaConnectionId}" must match "schema" connection "${schemaConnectionId}"`,
                   lines: [
                     {
                       line: relElement.to_schema_line_num,
@@ -688,7 +683,7 @@ export function checkSchema(item: {
             hasDuplicates = true;
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.SCHEMA_RELATIONSHIP_DUPLICATE,
+                title: 'SCHEMA_RELATIONSHIP_DUPLICATE',
                 message:
                   'duplicate relationship with same "to" value found within the same column',
                 lines: lineNums.map(l => ({
@@ -720,7 +715,7 @@ export function checkSchema(item: {
       toTable: string;
       toColumn: string;
       toSchema: string;
-      type: RelationshipTypeEnum;
+      type: RelationshipType;
       typeLine: number;
     }[] = [];
 
@@ -761,7 +756,7 @@ export function checkSchema(item: {
           if (isTypeMismatch) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.SCHEMA_RELATIONSHIP_TYPE_MISMATCH,
+                title: 'SCHEMA_RELATIONSHIP_TYPE_MISMATCH',
                 message: `mirror relationships have incompatible types: "${relA.type}" and "${relB.type}"`,
                 lines: [
                   {
@@ -787,7 +782,7 @@ export function checkSchema(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
   return Result.succeed();
 }

@@ -9,7 +9,7 @@ import { PrepTest } from '#backend/interfaces/prep-test';
 import { toc } from '#backend/mprove-docs-cache/toc';
 import { MCP_TOOL_READ_DOCS } from '#common/constants/mcp-tools-registry';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
@@ -82,7 +82,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prepTest?.logger,
         cs: prepTest?.cs
       });
@@ -108,7 +108,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prepTest?.logger,
       cs: prepTest?.cs
     });

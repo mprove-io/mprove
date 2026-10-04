@@ -5,15 +5,12 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 
-let caller = CallerEnum.BuildSpace;
-let func = FuncEnum.CheckSpaceFolders;
+let caller: Caller = 'BuildSpace';
+let func: Func = 'build-spaces/check-space-folders';
 let testId = 'e__unknown-space-parameter__folder';
 
 test('1', async t => {
@@ -52,15 +49,15 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    errors = await readLog(fromDir, LogTypeEnum.Errors);
-    filesAny = await readLog(fromDir, LogTypeEnum.Spaces);
+    errors = await readLog(fromDir, 'out_errors.log');
+    filesAny = await readLog(fromDir, 'out_spaces.log');
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });
@@ -68,6 +65,6 @@ test('1', async t => {
 
   t.is(errors.length, 1);
   t.is(filesAny.length, 0);
-  t.is(errors[0].title, ErTitleEnum.UNKNOWN_SPACE_PARAMETER);
+  t.is(errors[0].title, 'UNKNOWN_SPACE_PARAMETER');
   t.is(errors[0].lines[0].line, 4);
 });

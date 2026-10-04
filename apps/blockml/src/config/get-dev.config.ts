@@ -1,8 +1,8 @@
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
 import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { BlockmlEnv } from '#common/types/node-common/env/blockml-env';
 
 export function getDevConfig() {
   let devConfig: BlockmlConfig = {
@@ -17,7 +17,7 @@ export function getDevConfig() {
 
     otelLogLevel: process.env.OTEL_LOG_LEVEL,
 
-    blockmlEnv: <BlockmlEnvEnum>process.env.BLOCKML_ENV,
+    blockmlEnv: <BlockmlEnv>process.env.BLOCKML_ENV,
 
     aesKey: process.env.BLOCKML_AES_KEY,
 
@@ -25,7 +25,7 @@ export function getDevConfig() {
       value: process.env.BLOCKML_LOG_IO,
       name: 'BLOCKML_LOG_IO'
     }),
-    logFunc: <FuncEnum>process.env.BLOCKML_LOG_FUNC,
+    logFunc: <Func>process.env.BLOCKML_LOG_FUNC,
     copyLogsToModels: enumToBoolean({
       value: process.env.BLOCKML_COPY_LOGS_TO_MODELS,
       name: 'BLOCKML_COPY_LOGS_TO_MODELS'

@@ -6,18 +6,14 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 
-let caller = CallerEnum.BuildModStart;
-let func = FuncEnum.CheckBuildMetricsFieldGroups;
+let caller: Caller = 'BuildModStart';
+let func: Func = 'build-mod-start/check-build-metrics-field-groups';
 let testId = 'e__build-metrics-field-group-missing-field-with-ts-suffix';
 
 test('1', async t => {
@@ -49,7 +45,7 @@ test('1', async t => {
 
     let c1: ProjectConnection = {
       connectionId: 'c1_postgres',
-      type: ConnectionTypeEnum.PostgreSQL,
+      type: 'PostgreSQL',
       options: {
         postgres: {
           host: cs.get<BlockmlConfig['blockmlTestsDwhPostgresHost']>(
@@ -84,8 +80,8 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    errors = await readLog(fromDir, LogTypeEnum.Errors);
-    entMods = await readLog(fromDir, LogTypeEnum.Mods);
+    errors = await readLog(fromDir, 'out_errors.log');
+    entMods = await readLog(fromDir, 'out_mods.log');
 
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
@@ -93,7 +89,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });
@@ -102,7 +98,7 @@ test('1', async t => {
   t.is(errors.length > 0, true);
   t.is(
     errors[0].title,
-    ErTitleEnum.BUILD_METRICS_FIELD_GROUP_MISSING_FIELD_WITH_TS_SUFFIX
+    'BUILD_METRICS_FIELD_GROUP_MISSING_FIELD_WITH_TS_SUFFIX'
   );
   t.is(errors[0].lines[0].line, 8);
   t.true(

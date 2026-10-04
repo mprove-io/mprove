@@ -1,8 +1,9 @@
 import { Result } from '@praha/byethrow';
 import type { StatusResult } from 'simple-git';
 import type { DiskGetSyncDataError } from '#common/types/disk/function-errors/disk-get-sync-data-error';
-import type { DiskSyncFile } from '#common/types/disk/parts/disk-sync-file';
+import type { DiskSyncFile } from '#common/types/disk/parts/file/disk-sync-file';
 import type { GetSyncFilesPayloadError } from '#common/types/node-common/function-errors/get-sync-files-payload-error';
+import type { SyncDirection } from '#common/types/shared/sync-direction';
 import { getSyncFilesPayload } from '#node-common/functions/get-sync-files-payload/get-sync-files-payload';
 import { getToServerSyncData } from './get-to-server-sync-data/get-to-server-sync-data';
 
@@ -23,7 +24,7 @@ export type SyncData =
     };
 
 export function getSyncData(item: {
-  direction: 'from-server' | 'to-server';
+  direction: SyncDirection;
   repoDir: string;
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];

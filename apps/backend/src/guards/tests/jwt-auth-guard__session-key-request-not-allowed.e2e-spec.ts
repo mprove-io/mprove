@@ -10,11 +10,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
 import type { ToBackendCommitRepoResponse } from '#common/types/backend/routes/repos/commit-repo/commit-repo-response';
@@ -80,7 +76,7 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -103,8 +99,8 @@ test('1', async t => {
               apiKeyPrefix: apiKeyParts.prefix,
               apiKeySecretHash: apiKeyParts.secretHash,
               apiKeySalt: apiKeyParts.salt,
-              status: SessionStatusEnum.Archived,
-              type: SessionTypeEnum.Editor,
+              status: 'Archived',
+              type: 'Editor',
               repoId: sessionId,
               branchId: BRANCH_MAIN,
               envId: PROJECT_ENV_PROD
@@ -137,7 +133,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -149,14 +145,14 @@ test('1', async t => {
     assert.equal(resp.type, 'Failure');
     assert.equal(
       resp.error.code,
-      ErEnum.BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED
+      'BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED'
     );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

@@ -3,7 +3,7 @@ import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
 import type { DiskPathTraversalError } from '#common/types/disk/errors/disk-path-traversal-error';
-import type { DiskSyncFile } from '#common/types/disk/parts/disk-sync-file';
+import type { DiskSyncFile } from '#common/types/disk/parts/file/disk-sync-file';
 import type { FileIsSymlinkError } from '#common/types/node-common/errors/file-is-symlink-error';
 import type { ApplySyncPayloadError } from '#common/types/node-common/function-errors/apply-sync-payload-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';

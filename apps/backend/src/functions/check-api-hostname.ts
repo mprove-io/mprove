@@ -1,8 +1,9 @@
 import { promises as dnsPromises, LookupAddress } from 'dns';
 import ipaddr from 'ipaddr.js';
 import * as neoip from 'neoip';
+import type { ApiHostnameCheckPhase } from '#backend/types/api-hostname-check-phase';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 // Non-public IPv4 CIDRs (IANA special-purpose)
@@ -54,14 +55,14 @@ export async function checkApiHostname(item: { hostname: string }) {
 
   if (BLOCKED_SPEC_HOSTS.includes(hostname)) {
     throw new ServerError({
-      message: ErEnum.BACKEND_API_HOST_IS_BLOCKED_BY_SPEC,
+      message: 'BACKEND_API_HOST_IS_BLOCKED_BY_SPEC',
       displayData: { hostname: hostname, tag: 'instant', type: 'spec' }
     });
   }
 
   if (INTERNAL_DOMAIN_SUFFIXES.some(suffix => hostname.endsWith(suffix))) {
     throw new ServerError({
-      message: ErEnum.BACKEND_API_HOST_IS_BLOCKED_BY_SUFFIX,
+      message: 'BACKEND_API_HOST_IS_BLOCKED_BY_SUFFIX',
       displayData: { hostname: hostname, tag: 'instant', type: 'suffix' }
     });
   }
@@ -90,7 +91,7 @@ export async function checkApiHostname(item: { hostname: string }) {
       records = await dnsPromises.lookup(hostname, { all: true });
     } catch (err) {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_HOST_DNS_LOOKUP_FAILED,
+        message: 'BACKEND_API_HOST_DNS_LOOKUP_FAILED',
         displayData: { hostname: hostname },
         originalError: err
       });
@@ -121,7 +122,7 @@ function isPrivateIp(item: {
   hostname: string;
   parsedIp: any;
   resolvedRecordAddress: any;
-  tag: 'instant' | 'resolved';
+  tag: ApiHostnameCheckPhase;
 }) {
   let { hostname, parsedIp, resolvedRecordAddress, tag } = item;
 
@@ -142,7 +143,7 @@ function isPrivateIp(item: {
     ].includes(range)
   ) {
     throw new ServerError({
-      message: ErEnum.BACKEND_API_HOST_IS_BLOCKED_BY_IP,
+      message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
       displayData: {
         hostname: hostname,
         ipString: ipString,
@@ -155,7 +156,7 @@ function isPrivateIp(item: {
 
   if (neoip.isPrivate(ipString)) {
     throw new ServerError({
-      message: ErEnum.BACKEND_API_HOST_IS_BLOCKED_BY_IP,
+      message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
       displayData: {
         hostname: hostname,
         ipString: ipString,
@@ -174,7 +175,7 @@ function isPrivateIp(item: {
       })
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_HOST_IS_BLOCKED_BY_IP,
+        message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
         displayData: {
           hostname: hostname,
           ipString: ipString,
@@ -192,7 +193,7 @@ function isPrivateIp(item: {
       })
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_HOST_IS_BLOCKED_BY_IP,
+        message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
         displayData: {
           hostname: hostname,
           ipString: ipString,

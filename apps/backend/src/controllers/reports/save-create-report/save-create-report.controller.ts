@@ -44,14 +44,13 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveCreateReportOutput } from '#common/types/backend/routes/reports/save-create-report/save-create-report-output';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { ToDiskCreateFileOutput } from '#common/types/disk/routes/files/create-file/create-file-output';
 
 const { forEachSeries } = pIteration;
@@ -137,7 +136,7 @@ export class SaveCreateReportController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -147,7 +146,7 @@ export class SaveCreateReportController {
       userMember.isEditor === false
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
       });
     }
 
@@ -236,7 +235,7 @@ export class SaveCreateReportController {
       targetFolder: 'reports'
     });
 
-    let fileName = `${newReportId}${FileExtensionEnum.Report}`;
+    let fileName = `${newReportId}.report`;
 
     let baseProject = this.tabService.projectTabToBaseProject({
       project: project
@@ -336,7 +335,7 @@ export class SaveCreateReportController {
       let filePath = fileIdAr.join('/');
 
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_REPORT_FAIL,
+        message: 'BACKEND_CREATE_REPORT_FAIL',
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: tempStruct.errors

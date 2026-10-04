@@ -5,17 +5,14 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 
-let caller = CallerEnum.BuildChart;
-let func = FuncEnum.MakeChartAccessRolesCombined;
+let caller: Caller = 'BuildChart';
+let func: Func = 'build-chart/make-chart-access-roles-combined';
 let testId = 'v__chart-access-roles-combined';
 
 test('1', async t => {
@@ -47,7 +44,7 @@ test('1', async t => {
     let connection: ProjectConnection = {
       connectionId: 'c1',
       options: {},
-      type: ConnectionTypeEnum.Api
+      type: 'Api'
     };
 
     await structService.rebuildStructFromDir({
@@ -60,15 +57,15 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    errors = await readLog(fromDir, LogTypeEnum.Errors);
-    charts = await readLog(fromDir, LogTypeEnum.Charts);
+    errors = await readLog(fromDir, 'out_errors.log');
+    charts = await readLog(fromDir, 'out_charts.log');
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });

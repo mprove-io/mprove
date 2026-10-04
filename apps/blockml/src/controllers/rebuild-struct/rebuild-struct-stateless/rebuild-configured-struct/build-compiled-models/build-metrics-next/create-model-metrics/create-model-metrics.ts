@@ -7,25 +7,20 @@ import {
   MF,
   MPROVE_TAG_FIELD_GROUP
 } from '#common/constants/top';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { MetricTypeEnum } from '#common/enums/metric-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import {
   type FindModelNodeOutput,
   findModelNodeRecursive
 } from './find-model-node-recursive/find-model-node-recursive';
 
-let func = FuncEnum.CreateModelMetrics;
+let func: Func = 'build-metrics-next/create-model-metrics';
 
 export function createModelMetrics(
   item: {
@@ -33,12 +28,12 @@ export function createModelMetrics(
     stores: FileStore[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let modelMetrics: ModelMetric[] = [];
 
@@ -80,7 +75,7 @@ export function createModelMetrics(
       }
 
       store.fields
-        .filter(storeField => storeField.fieldClass === FieldClassEnum.Measure)
+        .filter(storeField => storeField.fieldClass === 'measure')
         .forEach(storeField => {
           let topLabel = `${store.label}`;
 
@@ -97,7 +92,7 @@ export function createModelMetrics(
             filePath: store.filePath,
             fieldLineNum: storeField.name_line_num,
             modelId: `${store.name}`,
-            modelType: ModelTypeEnum.Store,
+            modelType: 'Store',
             connectionType: store.connectionType,
             topNode: `${store.name}`,
             topLabel: topLabel,
@@ -109,7 +104,7 @@ export function createModelMetrics(
             timeFieldLabel: timeFieldLabel,
             timeLabel: timeLabel,
             structId: structId,
-            type: MetricTypeEnum.Model,
+            type: 'Model',
             label: `${topLabel} ${partLabel} by ${timeLabel}`,
             partNodeLabel: partNodeLabel,
             partFieldLabel: partFieldLabel,
@@ -127,7 +122,7 @@ export function createModelMetrics(
   });
 
   item.apiModels
-    .filter(m => m.type === ModelTypeEnum.Malloy)
+    .filter(m => m.type === 'Malloy')
     .forEach(apiModel => {
       let timeGroups: {
         timeId: string;
@@ -204,11 +199,7 @@ export function createModelMetrics(
 
       timeGroups.forEach(tg => {
         apiModel.fields
-          .filter(
-            y =>
-              y.fieldClass === FieldClassEnum.Measure &&
-              y.result === FieldResultEnum.Number
-          )
+          .filter(y => y.fieldClass === 'measure' && y.result === 'number')
           .forEach(y => {
             let topLabel = apiModel.label;
 
@@ -234,7 +225,7 @@ export function createModelMetrics(
               filePath: y.fieldFilePath,
               fieldLineNum: y.fieldLineNum,
               modelId: apiModel.modelId,
-              modelType: ModelTypeEnum.Malloy,
+              modelType: 'Malloy',
               connectionType: apiModel.connectionType,
               topNode: apiModel.modelId,
               topLabel: topLabel,
@@ -246,7 +237,7 @@ export function createModelMetrics(
               timeFieldLabel: tg.timeFieldLabel,
               timeLabel: tg.timeLabel,
               structId: structId,
-              type: MetricTypeEnum.Model,
+              type: 'Model',
               label: `${topLabel} ${partLabel} by ${tg.timeLabel}`,
               partNodeLabel: partNodeLabel,
               partFieldLabel: partFieldLabel,
@@ -263,8 +254,8 @@ export function createModelMetrics(
       });
     });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Metrics, modelMetrics);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_metrics.log', modelMetrics);
 
   return modelMetrics;
 }

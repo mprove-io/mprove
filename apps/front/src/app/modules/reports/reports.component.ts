@@ -42,22 +42,14 @@ import {
   SHARED_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fraction-ts-last-complete-option.enum';
-import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
-import type { ReportUnit } from '#common/types/backend/parts/report-unit';
-import type { ReportX } from '#common/types/backend/parts/report-x';
+import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
@@ -66,12 +58,14 @@ import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/qu
 import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
 import type { ToBackendGetReportRequest } from '#common/types/backend/routes/reports/get-report/get-report-request';
 import type { ToBackendGetReportResponse } from '#common/types/backend/routes/reports/get-report/get-report-response';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { Query } from '#common/types/blockml/parts/query';
-import type { DataPoint } from '#common/types/front/data-point';
-import type { DataRow } from '#common/types/front/data-row';
-import type { RefreshItem } from '#common/types/front/refresh-item';
-import type { SeriesPart } from '#common/types/front/series-part';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { DataPoint } from '#common/types/front/chart/data-point';
+import type { SeriesPart } from '#common/types/front/chart/series-part';
+import type { DataRow } from '#common/types/front/report/row/data-row';
+import type { RefreshItem } from '#common/types/front/ui/refresh-item';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
@@ -96,7 +90,7 @@ import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 export class TimeSpecItem {
   label: string;
-  value: TimeSpecEnum;
+  value: TimeSpec;
 }
 
 @Component({
@@ -129,24 +123,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   pathReports = PATH_REPORTS;
   pathReportsList = PATH_REPORTS_LIST;
-
-  rowTypeFormula = RowTypeEnum.Formula;
-  rowTypeMetric = RowTypeEnum.Metric;
-  rowTypeHeader = RowTypeEnum.Header;
-  rowTypeEmpty = RowTypeEnum.Empty;
-
-  fractionTypeEnum = FractionTypeEnum;
-
-  fractionTypeTsIsBetween = FractionTypeEnum.TsIsBetween;
-
-  timeSpecYears = TimeSpecEnum.Years;
-  timeSpecQuarters = TimeSpecEnum.Quarters;
-  timeSpecMonths = TimeSpecEnum.Months;
-  timeSpecWeeks = TimeSpecEnum.Weeks;
-  timeSpecDays = TimeSpecEnum.Days;
-  timeSpecHours = TimeSpecEnum.Hours;
-  timeSpecMinutes = TimeSpecEnum.Minutes;
-  timeSpecTimestamps = TimeSpecEnum.Timestamps;
 
   isShow = true;
 
@@ -345,35 +321,35 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecList: TimeSpecItem[] = [
     {
       label: 'Days',
-      value: TimeSpecEnum.Days
+      value: 'days'
     },
     {
       label: 'Weeks',
-      value: TimeSpecEnum.Weeks
+      value: 'weeks'
     },
     {
       label: 'Months',
-      value: TimeSpecEnum.Months
+      value: 'months'
     },
     {
       label: 'Quarters',
-      value: TimeSpecEnum.Quarters
+      value: 'quarters'
     },
     {
       label: 'Years',
-      value: TimeSpecEnum.Years
+      value: 'years'
     },
     {
       label: 'Hours',
-      value: TimeSpecEnum.Hours
+      value: 'hours'
     },
     {
       label: 'Minutes',
-      value: TimeSpecEnum.Minutes
+      value: 'minutes'
     },
     {
       label: 'Timestamps',
-      value: TimeSpecEnum.Timestamps
+      value: 'timestamps'
     }
   ];
 
@@ -416,23 +392,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
         repChartData.rows.forEach(row => {
           if (
             isDefined(row.formula) ||
-            (isDefined(row.query) &&
-              row.query.status === QueryStatusEnum.Completed)
+            (isDefined(row.query) && row.query.status === 'Completed')
           ) {
             completedQueriesAndFormulasLength++;
           }
 
-          if (
-            isDefined(row.query) &&
-            row.query.status === QueryStatusEnum.New
-          ) {
+          if (isDefined(row.query) && row.query.status === 'New') {
             newQueriesLength++;
           }
 
-          if (
-            isDefined(row.query) &&
-            row.query.status === QueryStatusEnum.Running
-          ) {
+          if (isDefined(row.query) && row.query.status === 'Running') {
             runningQueriesLength++;
           }
         });
@@ -444,8 +413,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
         let completedQueries = [
           ...repChartData.rows.filter(
-            r =>
-              isDefined(r.query) && r.query.status === QueryStatusEnum.Completed
+            r => isDefined(r.query) && r.query.status === 'Completed'
           )
         ]
           .map(r => r.query)
@@ -520,7 +488,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.selectedDataRowsLength = repChartData.rows.filter(
           row =>
             row.showChart === true &&
-            [RowTypeEnum.Metric, RowTypeEnum.Formula].indexOf(row.rowType) > -1
+            ['metric', 'formula'].indexOf(row.rowType) > -1
         ).length;
 
         this.eChartInitOpts = {
@@ -570,11 +538,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
           xAxis: {
             type: 'time',
             axisLabel:
-              [
-                TimeSpecEnum.Hours,
-                TimeSpecEnum.Minutes,
-                TimeSpecEnum.Timestamps
-              ].indexOf(this.uiQuery.getValue().timeSpec) > -1
+              ['hours', 'minutes', 'timestamps'].indexOf(
+                this.uiQuery.getValue().timeSpec
+              ) > -1
                 ? { fontSize: 13 }
                 : {
                     fontSize: 13,
@@ -603,9 +569,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
                     .filter(
                       row =>
                         row.showChart === true &&
-                        [RowTypeEnum.Metric, RowTypeEnum.Formula].indexOf(
-                          row.rowType
-                        ) > -1
+                        ['metric', 'formula'].indexOf(row.rowType) > -1
                     )
                     .find(row => row.rowId === chartSeriesElement.dataRowId);
 
@@ -621,7 +585,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
                   let seriesPart: SeriesPart = {
                     seriesRowId: seriesRow.rowId,
                     seriesRowName: seriesRow.name,
-                    isMetric: seriesRow.rowType === RowTypeEnum.Metric,
+                    isMetric: seriesRow.rowType === 'metric',
                     showMetricsModelName: showMetricsModelName,
                     showMetricsTimeFieldName: showMetricsTimeFieldName,
                     seriesName: seriesElement.name.toString(),
@@ -684,7 +648,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           : undefined;
 
       if (isDefined(this.reportSelectedNode)) {
-        if (this.reportSelectedNode.data.rowType === RowTypeEnum.Formula) {
+        if (this.reportSelectedNode.data.rowType === 'formula') {
           setValueAndMark({
             control: this.formulaForm.controls['formula'],
             value: this.reportSelectedNode.data.formula
@@ -692,8 +656,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
         }
 
         if (
-          this.reportSelectedNode.data.rowType !== RowTypeEnum.Empty &&
-          this.reportSelectedNode.data.rowType !== RowTypeEnum.Metric
+          this.reportSelectedNode.data.rowType !== 'empty' &&
+          this.reportSelectedNode.data.rowType !== 'metric'
         ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
@@ -789,7 +753,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
             this.report?.rows
               .filter(row => isDefined(row.query))
               .map(row => row.query.status)
-              .indexOf(QueryStatusEnum.Running) > -1
+              .indexOf('Running') > -1
           ) {
             return this.getRepObservable();
           } else {
@@ -928,7 +892,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  timeSpecChange(timeSpecValue?: TimeSpecEnum) {
+  timeSpecChange(timeSpecValue?: TimeSpec) {
     if (timeSpecValue === this.timeSpecForm.controls['timeSpec'].value) {
       return;
     }
@@ -941,25 +905,21 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let fraction = this.fractions[0];
 
-    if (fraction.type === FractionTypeEnum.TsIsInLast) {
-      let tsLastUnit =
-        timeSpec === TimeSpecEnum.Timestamps
-          ? FractionTsUnitEnum.Minutes
-          : timeSpec;
+    if (fraction.type === 'TsIsInLast') {
+      let tsLastUnit: FractionTsUnit =
+        timeSpec === 'timestamps' ? 'minutes' : timeSpec;
 
       let mBrick =
-        fraction.tsLastCompleteOption ===
-        FractionTsLastCompleteOptionEnum.CompleteWithCurrent
+        fraction.tsLastCompleteOption === 'CompleteWithCurrent'
           ? `f\`${fraction.tsLastValue} ${tsLastUnit}\``
-          : fraction.tsLastCompleteOption ===
-              FractionTsLastCompleteOptionEnum.Complete
+          : fraction.tsLastCompleteOption === 'Complete'
             ? `f\`last ${fraction.tsLastValue} ${tsLastUnit}\``
             : MALLOY_FILTER_ANY;
 
       let newFraction: Fraction = {
         brick: mBrick,
         parentBrick: mBrick,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: fraction.type,
         tsLastValue: fraction.tsLastValue,
         tsLastUnit: tsLastUnit,
@@ -970,18 +930,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
         timeSpec: timeSpec,
         timeRangeFraction: newFraction
       });
-    } else if (fraction.type === FractionTypeEnum.TsIsInNext) {
-      let tsNextUnit =
-        timeSpec === TimeSpecEnum.Timestamps
-          ? FractionTsUnitEnum.Minutes
-          : timeSpec;
+    } else if (fraction.type === 'TsIsInNext') {
+      let tsNextUnit: FractionTsUnit =
+        timeSpec === 'timestamps' ? 'minutes' : timeSpec;
 
       let mBrick = `f\`next ${fraction.tsNextValue} ${tsNextUnit}\``;
 
       let newFraction: Fraction = {
         brick: mBrick,
         parentBrick: mBrick,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: fraction.type,
         tsNextValue: fraction.tsNextValue,
         tsNextUnit: tsNextUnit
@@ -1228,7 +1186,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendSetFavoriteRequest['input'] = {
       projectId: nav.projectId,
-      type: FavoriteTypeEnum.Report,
+      type: 'Report',
       targetId: reportId,
       isFavorite: isFavorite === false
     };
@@ -1303,13 +1261,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   checkAutoRun() {
     let newQueries = this.report.rows.filter(
-      row => isDefined(row.query) && row.query.status === QueryStatusEnum.New
+      row => isDefined(row.query) && row.query.status === 'New'
     );
 
     if (
       this.isAutoRun === true &&
       newQueries.length > 0 &&
-      (this.report?.timeRangeFraction.type !== FractionTypeEnum.TsIsBetween ||
+      (this.report?.timeRangeFraction.type !== 'TsIsBetween' ||
         this.report?.rangeStart < this.report?.rangeEnd)
     ) {
       setTimeout(() => {
@@ -1379,8 +1337,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
         if (
           this.notEmptySelectQueriesLength > 0 &&
-          (this.report?.timeRangeFraction.type !==
-            FractionTypeEnum.TsIsBetween ||
+          (this.report?.timeRangeFraction.type !== 'TsIsBetween' ||
             this.report?.rangeStart < this.report?.rangeEnd)
         ) {
           this.run();

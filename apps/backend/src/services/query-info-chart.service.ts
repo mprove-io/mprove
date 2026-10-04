@@ -23,11 +23,9 @@ import { MalloyService } from '#backend/services/malloy.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { QueryOperation } from '#common/types/backend/parts/query-operation';
+import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
 import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
 
 @Injectable()
@@ -73,7 +71,7 @@ export class QueryInfoChartService {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -109,7 +107,7 @@ export class QueryInfoChartService {
     let newQuery: QueryTab;
     let isError = false;
 
-    if (model.type === ModelTypeEnum.Store) {
+    if (model.type === 'Store') {
       chartMconfig.timezone = timezone;
 
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
@@ -127,9 +125,9 @@ export class QueryInfoChartService {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
-    } else if (model.type === ModelTypeEnum.Malloy) {
+    } else if (model.type === 'Malloy') {
       let queryOperation: QueryOperation = {
-        type: QueryOperationTypeEnum.Get,
+        type: 'Get',
         timezone: timezone
       };
 

@@ -8,8 +8,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { calculateDiskShard } from '#backend/functions/calculate-disk-shard';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
+
 import { zToBlockmlOperationRegistry } from '#common/types/blockml/request/to-blockml-operation-registry';
 import type { ToBlockmlRequest } from '#common/types/blockml/request/to-blockml-request';
 import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
@@ -130,7 +129,7 @@ export class RpcService implements OnModuleDestroy {
         sub.quit();
         reject(
           new ServerError({
-            message: ErEnum.BACKEND_RPC_TIMEOUT,
+            message: 'BACKEND_RPC_TIMEOUT',
             customData: { timeout: `${timeout} ms` }
           })
         );
@@ -148,7 +147,7 @@ export class RpcService implements OnModuleDestroy {
           } catch {
             reject(
               new ServerError({
-                message: ErEnum.BACKEND_RPC_INVALID_RESPONSE_FORMAT
+                message: 'BACKEND_RPC_INVALID_RESPONSE_FORMAT'
               })
             );
           }
@@ -171,13 +170,13 @@ export class RpcService implements OnModuleDestroy {
         );
     } catch {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        message: 'BACKEND_WRONG_REQUEST_PARAMS'
       });
     }
 
     if (validationResult.success === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        message: 'BACKEND_WRONG_REQUEST_PARAMS'
       });
     }
 
@@ -195,7 +194,7 @@ export class RpcService implements OnModuleDestroy {
 
     let response: ToBlockmlResponseForOperation<TRequest['operation']> =
       await this.request<ToBlockmlResponseForOperation<TRequest['operation']>>({
-        namespace: RpcNamespacesEnum.RpcBlockml.toString(),
+        namespace: 'rpc-blockml'.toString(),
         groupId: groupId,
         message: request,
         timeout: this.rpcBlockmlTimeoutMs
@@ -222,7 +221,7 @@ export class RpcService implements OnModuleDestroy {
       let error: { code: string; displayData?: unknown } = response.error;
 
       throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+        message: 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML',
         originalError: new ServerError({
           message: error.code,
           displayData: error.displayData
@@ -249,13 +248,13 @@ export class RpcService implements OnModuleDestroy {
         );
     } catch {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        message: 'BACKEND_WRONG_REQUEST_PARAMS'
       });
     }
 
     if (validationResult.success === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+        message: 'BACKEND_WRONG_REQUEST_PARAMS'
       });
     }
 
@@ -364,7 +363,7 @@ export class RpcService implements OnModuleDestroy {
 
     let response: ToDiskResponseForOperation<TRequest['operation']> =
       await this.request<ToDiskResponseForOperation<TRequest['operation']>>({
-        namespace: `${RpcNamespacesEnum.RpcDisk}-${diskShard}`,
+        namespace: `rpc-disk-${diskShard}`,
         groupId: groupId,
         message: request,
         timeout: this.rpcDiskTimeoutMs
@@ -395,7 +394,7 @@ export class RpcService implements OnModuleDestroy {
       let error: { code: string; displayData?: unknown } = response.error;
 
       throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+        message: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
         originalError: new ServerError({
           message: error.code,
           displayData: error.displayData

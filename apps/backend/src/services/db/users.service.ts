@@ -13,13 +13,13 @@ import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
-import { SelectedGiven } from '#common/types/backend/parts/selected-given';
 import type { User } from '#common/types/backend/parts/user';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -237,7 +237,7 @@ export class UsersService {
 
     if (isUndefined(user.passwordHash)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_SIGN_UP_TO_SET_PASSWORD
+        message: 'BACKEND_SIGN_UP_TO_SET_PASSWORD'
       });
     }
   }
@@ -253,7 +253,7 @@ export class UsersService {
 
     if (isUndefined(user)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: 'BACKEND_USER_DOES_NOT_EXIST'
       });
     }
 
@@ -265,7 +265,7 @@ export class UsersService {
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
+        message: 'BACKEND_RESTRICTED_USER'
       });
     }
   }
@@ -288,7 +288,7 @@ export class UsersService {
 
     if (isUndefined(user)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: 'BACKEND_USER_DOES_NOT_EXIST'
       });
     }
 
@@ -411,7 +411,7 @@ export class UsersService {
 
     if (isUndefined(alias)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
+        message: 'BACKEND_USER_ALIAS_IS_UNDEFINED'
       });
     }
 

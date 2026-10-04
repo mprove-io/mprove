@@ -12,12 +12,12 @@ import {
   MCP_TOOL_GET_SAMPLE,
   MCP_TOOL_GET_SAMPLE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import {
   type McpToolGetSampleInput,
   zMcpToolGetSampleInput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-input';
 import { zMcpToolGetSampleOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-output';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
 @McpController()
@@ -42,9 +42,9 @@ export class GetConnectionSampleTool {
   ) {
     let user = (request as any).user as UserTab;
 
-    let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
+    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
 
-    if (apiKeyType === ApiKeyTypeEnum.SK) {
+    if (apiKeyType === 'SK') {
       this.toolService.validateSessionEnvId({
         envId: item.envId,
         request: request

@@ -1,18 +1,20 @@
 import { z } from 'zod';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import type { EnumValues } from '#common/types/enum-values';
+import {
+  type QueryStatus,
+  zQueryStatus
+} from '#common/types/blockml/parts/query/query-status';
 
 export type RunQuery = {
   queryId: string;
-  status: EnumValues<typeof QueryStatusEnum>;
+  status: QueryStatus;
   lastErrorMessage?: string;
 };
 
 export let zRunQuery = z
   .object({
     queryId: z.string(),
-    status: z.enum(QueryStatusEnum),
+    status: zQueryStatus,
     lastErrorMessage: z.string().nullish()
   })
   .meta({ id: 'RunQuery' });

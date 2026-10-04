@@ -9,12 +9,12 @@ import {
   TemporalFilterExpression
 } from '@malloydata/malloy-filter';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { getMalloyFilterBooleanFractions } from '#node-common/functions/malloy/get-malloy-filter-boolean-fractions/get-malloy-filter-boolean-fractions';
 import { getMalloyFilterNumberFractions } from '#node-common/functions/malloy/get-malloy-filter-number-fractions/get-malloy-filter-number-fractions';
 import { getMalloyFilterStringFractions } from '#node-common/functions/malloy/get-malloy-filter-string-fractions/get-malloy-filter-string-fractions';
@@ -22,11 +22,11 @@ import { getMalloyFilterTsFractions } from '#node-common/functions/malloy/get-ma
 
 export function bricksToFractions(item: {
   filterBricks: string[];
-  result: FieldResultEnum;
+  result: FieldResult;
   // parameters below do not affect validation
   isGetTimeRange?: boolean;
-  timeSpec?: TimeSpecEnum;
-  weekStart?: ProjectWeekStartEnum;
+  timeSpec?: TimeSpec;
+  weekStart?: ProjectWeekStart;
   timezone?: string;
   fractions?: Fraction[];
 }): {
@@ -73,13 +73,13 @@ export function bricksToFractions(item: {
       let brickPart = brick.slice(2, -1);
 
       parseResult =
-        result === FieldResultEnum.Ts || result === FieldResultEnum.Date
+        result === 'ts' || result === 'date'
           ? TemporalFilterExpression.parse(brickPart)
-          : result === FieldResultEnum.String
+          : result === 'string'
             ? StringFilterExpression.parse(brickPart)
-            : result === FieldResultEnum.Number
+            : result === 'number'
               ? NumberFilterExpression.parse(brickPart)
-              : result === FieldResultEnum.Boolean
+              : result === 'boolean'
                 ? BooleanFilterExpression.parse(brickPart)
                 : undefined;
     }
@@ -93,7 +93,7 @@ export function bricksToFractions(item: {
         rangeStart?: number;
         rangeEnd?: number;
       } =
-        result === FieldResultEnum.Ts || result === FieldResultEnum.Date
+        result === 'ts' || result === 'date'
           ? getMalloyFilterTsFractions({
               parentBrick: brick,
               parsed: parseResult?.parsed as TemporalFilter,
@@ -102,17 +102,17 @@ export function bricksToFractions(item: {
               weekStart: weekStart,
               timeSpec: timeSpec
             })
-          : result === FieldResultEnum.String
+          : result === 'string'
             ? getMalloyFilterStringFractions({
                 parentBrick: brick,
                 parsed: parseResult?.parsed as StringFilter
               })
-            : result === FieldResultEnum.Number
+            : result === 'number'
               ? getMalloyFilterNumberFractions({
                   parentBrick: brick,
                   parsed: parseResult?.parsed as NumberFilter
                 })
-              : result === FieldResultEnum.Boolean
+              : result === 'boolean'
                 ? getMalloyFilterBooleanFractions({
                     parentBrick: brick,
                     parsed: parseResult?.parsed as BooleanFilter

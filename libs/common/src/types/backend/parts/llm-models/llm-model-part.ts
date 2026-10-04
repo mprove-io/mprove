@@ -1,11 +1,15 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ModelDevStatus,
+  zModelDevStatus
+} from '#common/types/backend/parts/llm-models/model-dev-status';
 
 export type LlmModelPart = {
   modelId: string;
   catalogName: string;
   providerModelInfo?: Record<string, unknown>;
-  modelsDevStatus?: 'alpha' | 'beta' | 'deprecated';
+  modelsDevStatus?: ModelDevStatus;
   contextLimit?: number;
   inputLimit?: number;
   outputLimit?: number;
@@ -20,7 +24,7 @@ export let zLlmModelPart = z
     modelId: z.string().trim().min(1),
     catalogName: z.string().trim().min(1),
     providerModelInfo: z.record(z.string(), z.unknown()).nullish(),
-    modelsDevStatus: z.enum(['alpha', 'beta', 'deprecated']).nullish(),
+    modelsDevStatus: zModelDevStatus.nullish(),
     contextLimit: z.number().int().positive().nullish(),
     inputLimit: z.number().int().positive().nullish(),
     outputLimit: z.number().int().positive().nullish(),

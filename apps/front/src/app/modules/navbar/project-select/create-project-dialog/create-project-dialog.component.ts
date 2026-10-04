@@ -27,7 +27,8 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
+
 import type { ToBackendCreateProjectRequest } from '#common/types/backend/routes/projects/create-project/create-project-request';
 import type { ToBackendCreateProjectResponse } from '#common/types/backend/routes/projects/create-project/create-project-response';
 import type { ToBackendGenerateProjectRemoteKeyRequest } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
@@ -56,8 +57,7 @@ export class CreateProjectDialogComponent implements OnInit {
 
   createProjectForm: FormGroup;
 
-  projectRemoteRepoTypeEnum = ProjectRemoteTypeEnum;
-  projectRemoteRepoType: ProjectRemoteTypeEnum = ProjectRemoteTypeEnum.GitClone;
+  projectRemoteRepoType: ProjectRemoteType = 'GitClone';
 
   noteId: string;
   publicKey: string;
@@ -139,7 +139,7 @@ export class CreateProjectDialogComponent implements OnInit {
     }
 
     if (
-      this.projectRemoteRepoType === ProjectRemoteTypeEnum.GitClone &&
+      this.projectRemoteRepoType === 'GitClone' &&
       !this.createProjectForm.controls['projectGitUrl'].valid
     ) {
       return;
@@ -188,11 +188,11 @@ export class CreateProjectDialogComponent implements OnInit {
   }
 
   managedOnClick() {
-    this.projectRemoteRepoType = ProjectRemoteTypeEnum.Managed;
+    this.projectRemoteRepoType = 'Managed';
   }
 
   gitCloneOnClick() {
-    this.projectRemoteRepoType = ProjectRemoteTypeEnum.GitClone;
+    this.projectRemoteRepoType = 'GitClone';
   }
 
   isDeployKeyAddedOnClick(event: any) {

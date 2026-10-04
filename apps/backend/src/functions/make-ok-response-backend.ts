@@ -2,7 +2,6 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { makeOkResponse } from '#backend/functions/make-ok-response';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 
 export function makeOkResponseBackend(item: {
   body: any;
@@ -29,6 +28,6 @@ export function makeOkResponseBackend(item: {
     logIsJson: cs.get<BackendConfig['backendLogIsJson']>('backendLogIsJson'),
     logger: logger,
     useLoggerOnlyForErrorLevel:
-      cs.get<BackendConfig['backendEnv']>('backendEnv') !== BackendEnvEnum.PROD
+      cs.get<BackendConfig['backendEnv']>('backendEnv') !== 'PROD'
   });
 }

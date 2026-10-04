@@ -1,5 +1,5 @@
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { ReportField } from '#common/types/blockml/parts/report-field';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { ReportField } from '#common/types/blockml/parts/report/report-field';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export type ReportSt = {

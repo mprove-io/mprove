@@ -35,7 +35,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -91,7 +91,7 @@ export class SpecialRebuildStructsController {
 
     if (isUndefinedOrEmpty(specialKey) || specialKey !== envSpecialKey) {
       throw new ServerError({
-        message: ErEnum.BACKEND_WRONG_SPECIAL_KEY
+        message: 'BACKEND_WRONG_SPECIAL_KEY'
       });
     }
 

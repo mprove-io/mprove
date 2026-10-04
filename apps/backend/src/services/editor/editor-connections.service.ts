@@ -15,7 +15,7 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MalloyConfigPart } from '#common/types/backend/parts/malloy-config-part';
 import { EnvsService } from '../db/envs.service';
@@ -94,7 +94,7 @@ export class EditorConnectionsService {
       let config: MalloyConfigPart;
 
       switch (connection.type) {
-        case ConnectionTypeEnum.PostgreSQL: {
+        case 'PostgreSQL': {
           if (isDefined(connection.options.postgres)) {
             config = this.pgService.makeMalloyConfigPart({
               connection: connection,
@@ -103,7 +103,7 @@ export class EditorConnectionsService {
           }
           break;
         }
-        case ConnectionTypeEnum.MySQL: {
+        case 'MySQL': {
           if (isDefined(connection.options.mysql)) {
             config = this.mysqlService.makeMalloyConfigPart({
               connection: connection,
@@ -112,7 +112,7 @@ export class EditorConnectionsService {
           }
           break;
         }
-        case ConnectionTypeEnum.BigQuery: {
+        case 'BigQuery': {
           if (isDefined(connection.options.bigquery)) {
             config = this.bigQueryService.makeMalloyConfigPart({
               connection: connection,
@@ -121,7 +121,7 @@ export class EditorConnectionsService {
           }
           break;
         }
-        case ConnectionTypeEnum.SnowFlake: {
+        case 'SnowFlake': {
           if (isDefined(connection.options.snowflake)) {
             config = this.snowFlakeService.makeMalloyConfigPart({
               connection: connection,
@@ -130,7 +130,7 @@ export class EditorConnectionsService {
           }
           break;
         }
-        case ConnectionTypeEnum.MotherDuck: {
+        case 'MotherDuck': {
           if (isDefined(connection.options.motherduck)) {
             config = this.duckDbService.makeMalloyConfigPart({
               connection: connection,
@@ -139,7 +139,7 @@ export class EditorConnectionsService {
           }
           break;
         }
-        case ConnectionTypeEnum.Databricks: {
+        case 'Databricks': {
           if (isDefined(connection.options.databricks)) {
             config = this.databricksService.makeMalloyConfigPart({
               connection: connection,
@@ -148,7 +148,7 @@ export class EditorConnectionsService {
           }
           break;
         }
-        case ConnectionTypeEnum.Trino: {
+        case 'Trino': {
           if (isDefined(connection.options.trino)) {
             config = this.trinoService.makeMalloyConfigPart({
               connection: connection,
@@ -157,7 +157,7 @@ export class EditorConnectionsService {
           }
           break;
         }
-        case ConnectionTypeEnum.Presto: {
+        case 'Presto': {
           if (isDefined(connection.options.presto)) {
             config = this.prestoService.makeMalloyConfigPart({
               connection: connection,

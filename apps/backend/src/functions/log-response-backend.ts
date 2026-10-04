@@ -1,17 +1,16 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
+import type { LogLevel } from '#common/types/node-common/logging/log-level';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 import { WrappedError } from '#node-common/functions/wrap-error/wrap-error';
 
 export function logResponseBackend(item: {
   wrappedError?: WrappedError;
   response: ToBackendResponse;
-  logLevel: LogLevelEnum;
+  logLevel: LogLevel;
   cs: ConfigService;
   logger: Logger;
 }) {
@@ -43,8 +42,7 @@ export function logResponseBackend(item: {
       logger: logger,
       logLevel: logLevel,
       useLoggerOnlyForErrorLevel:
-        cs.get<BackendConfig['backendEnv']>('backendEnv') !==
-        BackendEnvEnum.PROD
+        cs.get<BackendConfig['backendEnv']>('backendEnv') !== 'PROD'
     });
   }
 }

@@ -3,10 +3,10 @@ import {
   MPROVE_USERS_FOLDER
 } from '#common/constants/top';
 import { EMPTY_SPACE_NAME } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { Space } from '#common/types/blockml/parts/space';
 
 export function makeUnitDisplayPath(item: {
@@ -17,7 +17,7 @@ export function makeUnitDisplayPath(item: {
   unitId: string;
   filePath: string;
   unitSpace: string;
-  extension: FileExtensionEnum;
+  extension: FileExtension;
   spaces: Space[];
 }) {
   let {
@@ -63,7 +63,7 @@ export function makeUnitDisplayPath(item: {
 
       let selectedSpaceFileName = selectedSpaceFilePathParts[
         selectedSpaceFilePathParts.length - 1
-      ].replace(FileExtensionEnum.Space, '');
+      ].replace('.space', '');
 
       let spaceParts = selectedSpace.space.split('.');
 
@@ -84,15 +84,15 @@ export function makeUnitDisplayPath(item: {
 
   let unitFolder: string;
 
-  if (extension === FileExtensionEnum.Chart) {
+  if (extension === '.chart') {
     unitFolder = 'charts';
   }
 
-  if (extension === FileExtensionEnum.Report) {
+  if (extension === '.report') {
     unitFolder = 'reports';
   }
 
-  if (extension === FileExtensionEnum.Dashboard) {
+  if (extension === '.dashboard') {
     unitFolder = 'dashboards';
   }
 

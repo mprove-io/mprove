@@ -11,8 +11,7 @@ import { ExplorerChartRebuildService } from '#backend/services/explorer/explorer
 import { ExplorerEventsMakerService } from '#backend/services/explorer/explorer-events-maker.service';
 import { SessionDrainService } from '#backend/services/session/session-drain.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendProduceExplorerChartOutput } from '#common/types/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-output';
 
@@ -63,12 +62,12 @@ export class ProduceExplorerChartService {
     });
 
     if (session.userId !== user.userId) {
-      throw new ServerError({ message: ErEnum.BACKEND_UNAUTHORIZED });
+      throw new ServerError({ message: 'BACKEND_UNAUTHORIZED' });
     }
 
-    if (session.type !== SessionTypeEnum.Explorer) {
+    if (session.type !== 'Explorer') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EXPLORER
+        message: 'BACKEND_SESSION_TYPE_IS_NOT_EXPLORER'
       });
     }
 

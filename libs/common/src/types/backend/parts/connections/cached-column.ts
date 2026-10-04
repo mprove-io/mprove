@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type CachedColumnStatus,
+  zCachedColumnStatus
+} from '#common/types/backend/parts/connections/cached-column-status';
 
 export type CachedColumn = {
   projectId: string;
@@ -9,7 +13,7 @@ export type CachedColumn = {
   tableName: string;
   columnName: string;
   requestedByUserId?: string;
-  status: 'running' | 'completed' | 'error';
+  status: CachedColumnStatus;
   errorMessage?: string;
   startedTs: number;
   completedTs?: number;
@@ -29,7 +33,7 @@ export let zCachedColumn = z.object({
   tableName: z.string(),
   columnName: z.string(),
   requestedByUserId: z.string().nullish(),
-  status: z.enum(['running', 'completed', 'error']),
+  status: zCachedColumnStatus,
   errorMessage: z.string().nullish(),
   startedTs: z.number(),
   completedTs: z.number().nullish(),

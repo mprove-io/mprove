@@ -1,17 +1,11 @@
 import { add, fromUnixTime, getUnixTime, sub } from 'date-fns';
-import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 import { getUnitDuration } from '#node-common/functions/get-unit-duration/get-unit-duration';
+import type { RelativeDayDirection } from '#node-common/functions/malloy/get-malloy-filter-ts-fractions/get-start/get-unix-time-from-day-of-week/relative-day-direction';
+import type { WeekdayName } from '#node-common/functions/malloy/get-malloy-filter-ts-fractions/get-start/get-unix-time-from-day-of-week/weekday-name';
 
 export function getUnixTimeFromDayOfWeek(item: {
-  lastNext: 'last' | 'next';
-  weekday:
-    | 'sunday'
-    | 'monday'
-    | 'tuesday'
-    | 'wednesday'
-    | 'thursday'
-    | 'friday'
-    | 'saturday';
+  lastNext: RelativeDayDirection;
+  weekday: WeekdayName;
   currentUnitStartTs: number;
 }) {
   let { lastNext, weekday, currentUnitStartTs } = item;
@@ -48,7 +42,7 @@ export function getUnixTimeFromDayOfWeek(item: {
 
   let duration = getUnitDuration({
     value: daysDiff > 0 ? daysDiff : -daysDiff,
-    unit: FractionTsUnitEnum.Days
+    unit: 'days'
   });
 
   let unixTime =

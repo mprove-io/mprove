@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import { ChartQuery } from '../queries/chart.query';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { StructQuery, StructState } from '../queries/struct.query';
@@ -66,7 +66,7 @@ export class StructService {
       queryId: newQueryId,
       modelId: this.model.modelId,
       modelType: this.model.type,
-      parentType: MconfigParentTypeEnum.Chart,
+      parentType: 'Chart',
       parentId: undefined,
       dateRangeIncludesRightSide: this.model.dateRangeIncludesRightSide,
       storePart: undefined,

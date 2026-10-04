@@ -31,7 +31,7 @@ import { RolesService } from '#backend/services/db/roles.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditMemberOutput } from '#common/types/backend/routes/members/edit-member/edit-member-output';
@@ -77,7 +77,7 @@ export class EditMemberController {
 
     if (memberId === user.userId && isAdmin === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
+        message: 'BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS'
       });
     }
 

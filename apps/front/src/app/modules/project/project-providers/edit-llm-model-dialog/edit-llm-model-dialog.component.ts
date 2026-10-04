@@ -18,13 +18,13 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { finalize, take, tap } from 'rxjs/operators';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendEditLlmModelRequest } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 import type { ToBackendEditLlmModelResponse } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-response';
 import type { ToBackendGetLlmModelPartsOutput } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
@@ -66,7 +66,7 @@ export class EditLlmModelDialogComponent implements OnInit {
 
   modelForm: FormGroup;
   model: LlmModel;
-  providerTypeEnum = ProviderTypeEnum;
+
   animatedDestination?: 'isExplorer' | 'isBuilder';
   destinationAnimationTimer?: ReturnType<typeof setTimeout>;
   variants: LlmModelVariant[] = [];
@@ -86,7 +86,7 @@ export class EditLlmModelDialogComponent implements OnInit {
 
   ngOnInit() {
     let isManualModel: boolean =
-      this.ref.data.provider.type === ProviderTypeEnum.OpenAICompatible ||
+      this.ref.data.provider.type === 'OpenAICompatible' ||
       this.ref.data.model.isManual === true;
 
     this.model = {
@@ -404,7 +404,7 @@ export class EditLlmModelDialogComponent implements OnInit {
     }
 
     let isManualModel: boolean =
-      provider.type === ProviderTypeEnum.OpenAICompatible ||
+      provider.type === 'OpenAICompatible' ||
       this.ref.data.model.isManual === true;
 
     let isInputLimitInvalid: boolean =
@@ -438,7 +438,7 @@ export class EditLlmModelDialogComponent implements OnInit {
       providerId: provider.providerId,
       modelId: this.ref.data.model.modelId,
       name:
-        provider.type === ProviderTypeEnum.OpenAICompatible ||
+        provider.type === 'OpenAICompatible' ||
         this.ref.data.model.isManual === true
           ? value.name?.trim()
           : this.ref.data.model.name?.trim(),

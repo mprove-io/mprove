@@ -15,7 +15,7 @@
     >
       <div
         *ngIf="
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          ref.data.provider.type !== 'OpenAICompatible' &&
           ref.data.model.isManual !== true
         "
         class="min-w-0 text-base"
@@ -28,7 +28,7 @@
 
       <ng-container
         *ngIf="
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          ref.data.provider.type !== 'OpenAICompatible' &&
           ref.data.model.isManual === true
         "
       >
@@ -113,11 +113,11 @@
       <div
         class="flex flex-col gap-4"
         [class.mt-2]="
-          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
+          ref.data.provider.type === 'OpenAICompatible' ||
           ref.data.model.isManual === true
         "
         [class.mt-6]="
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          ref.data.provider.type !== 'OpenAICompatible' &&
           ref.data.model.isManual !== true
         "
       >
@@ -171,7 +171,7 @@
         [isExplorer]="modelForm.controls['isExplorer'].value === true"
         [isBuilder]="modelForm.controls['isBuilder'].value === true"
         [allowManualVariants]="
-          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
+          ref.data.provider.type === 'OpenAICompatible' ||
           ref.data.model.isManual === true
         "
         (variantsChange)="variants = $event"
@@ -210,7 +210,7 @@
     <div class="flex min-h-[16rem] min-w-0 flex-col overflow-hidden">
       <div
         *ngIf="
-          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          ref.data.provider.type !== 'OpenAICompatible' &&
           ref.data.model.isManual !== true
         "
         class="mb-3 flex h-9 flex-shrink-0 items-center justify-end"
@@ -244,7 +244,7 @@
 
       <div class="relative min-h-0 flex-1">
         <div
-          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          *ngIf="ref.data.provider.type === 'OpenAICompatible'"
           class="absolute inset-0 flex flex-col overflow-y-auto pl-4 pr-px pt-px"
         >
           <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
@@ -329,7 +329,7 @@
 
         <div
           *ngIf="
-            ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+            ref.data.provider.type !== 'OpenAICompatible' &&
             ref.data.model.isManual === true
           "
           data-cy="editLlmModelDialogManualModelInfo"
@@ -340,7 +340,7 @@
 
         <div
           *ngIf="
-            ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+            ref.data.provider.type !== 'OpenAICompatible' &&
             ref.data.model.isManual !== true
           "
           class="border-s300 bg-s100 absolute inset-0 flex flex-col rounded border p-4 text-sm"
@@ -352,8 +352,7 @@
             </ng-container>
             <ng-container
               *ngIf="
-                ref.data.provider.type === providerTypeEnum.OpenAI &&
-                model.modelsDevStatus
+                ref.data.provider.type === 'OpenAI' && model.modelsDevStatus
               "
             >
               <div class="text-s400">models.dev status</div>

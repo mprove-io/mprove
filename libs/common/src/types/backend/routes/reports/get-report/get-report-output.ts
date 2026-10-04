@@ -1,8 +1,14 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { type Member, zMember } from '#common/types/backend/parts/member';
-import { type ReportX, zReportX } from '#common/types/backend/parts/report-x';
-import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
+import {
+  type ReportX,
+  zReportX
+} from '#common/types/backend/parts/report/report-x';
+import {
+  type StructX,
+  zStructX
+} from '#common/types/backend/parts/struct/struct-x';
 
 export type ToBackendGetReportOutput = {
   needValidate: boolean;

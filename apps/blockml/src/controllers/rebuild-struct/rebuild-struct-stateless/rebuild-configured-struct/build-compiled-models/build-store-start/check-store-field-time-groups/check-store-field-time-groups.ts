@@ -5,29 +5,26 @@ import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MF } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFieldTimeGroup } from '#common/types/blockml/parts/internal/file-store-field-time-group';
 
-let func = FuncEnum.CheckStoreFieldTimeGroups;
+let func: Func = 'build-store-start/check-store-field-time-groups';
 
 export function checkStoreFieldTimeGroups(
   item: {
     stores: FileStore[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newStores: FileStore[] = [];
 
@@ -44,8 +41,8 @@ export function checkStoreFieldTimeGroups(
       if (isDefined(fieldTimeGroup) && fieldTimeGroup.constructor !== Object) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.FIELD_TIME_GROUP_IS_NOT_A_DICTIONARY,
-            message: `found at least one ${ParameterEnum.FieldTimeGroups} element that is not a dictionary`,
+            title: 'FIELD_TIME_GROUP_IS_NOT_A_DICTIONARY',
+            message: `found at least one field_time_groups element that is not a dictionary`,
             lines: [
               {
                 line: x.field_time_groups_line_num,
@@ -62,16 +59,14 @@ export function checkStoreFieldTimeGroups(
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            [
-              ParameterEnum.Time.toString(),
-              ParameterEnum.Group.toString(),
-              ParameterEnum.Label.toString()
-            ].indexOf(parameter) < 0
+            ['time'.toString(), 'group'.toString(), 'label'.toString()].indexOf(
+              parameter
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNKNOWN_FIELD_TIME_GROUP_PARAMETER,
-                message: `parameter "${parameter}" cannot be used in ${ParameterEnum.FieldTimeGroups} element`,
+                title: 'UNKNOWN_FIELD_TIME_GROUP_PARAMETER',
+                message: `parameter "${parameter}" cannot be used in field_time_groups element`,
                 lines: [
                   {
                     line: fieldTimeGroup[
@@ -93,7 +88,7 @@ export function checkStoreFieldTimeGroups(
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_LIST,
+                title: 'UNEXPECTED_LIST',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -115,7 +110,7 @@ export function checkStoreFieldTimeGroups(
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+                title: 'UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -143,8 +138,8 @@ export function checkStoreFieldTimeGroups(
 
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_TIME,
-              message: `${ParameterEnum.FieldTimeGroups} element must have "${ParameterEnum.Time}" parameter`,
+              title: 'MISSING_TIME',
+              message: `field_time_groups element must have "time" parameter`,
               lines: [
                 {
                   line: Math.min(...fieldTimeGroupKeysLineNums),
@@ -181,8 +176,8 @@ export function checkStoreFieldTimeGroups(
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_GROUP,
-              message: `specified ${ParameterEnum.Group} "${fieldTimeGroup.group}" is not found in ${ParameterEnum.FieldGroups}`,
+              title: 'WRONG_GROUP',
+              message: `specified group "${fieldTimeGroup.group}" is not found in field_groups`,
               lines: [
                 {
                   line: fieldTimeGroup.group_line_num,
@@ -202,8 +197,8 @@ export function checkStoreFieldTimeGroups(
         if (timeElement.timeLineNums.length > 1) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.DUPLICATE_TIME_NAMES,
-              message: `"${ParameterEnum.Time}" value must be unique across ${ParameterEnum.FieldTimeGroups} elements`,
+              title: 'DUPLICATE_TIME_NAMES',
+              message: `"time" value must be unique across field_time_groups elements`,
               lines: timeElement.timeLineNums.map(l => ({
                 line: l,
                 name: x.fileName,
@@ -232,7 +227,7 @@ export function checkStoreFieldTimeGroups(
 
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHARS_IN_TIME_NAME,
+              title: 'WRONG_CHARS_IN_TIME_NAME',
               message: `Characters "${timeWrongCharsString}" cannot be used for time (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
@@ -253,8 +248,8 @@ export function checkStoreFieldTimeGroups(
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, newStores);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_stores.log', newStores);
 
   return newStores;
 }

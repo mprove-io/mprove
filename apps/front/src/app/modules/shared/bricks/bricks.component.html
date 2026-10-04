@@ -78,10 +78,9 @@
                 <div *ngIf="isFirst === true"></div>
                 <div *ngIf="isFirst === false">
                   {{
-                    fraction.operator === fractionOperatorEnum.Or
+                    fraction.operator === 'Or'
                       ? 'OR'
-                      : !isFirst &&
-                          fraction.operator === fractionOperatorEnum.And
+                      : !isFirst && fraction.operator === 'And'
                         ? 'AND'
                         : ''
                   }}
@@ -133,10 +132,10 @@
                   >
                     <div>{{ control.label || control.name }}</div>
                     <div class="ml-5">{{
-                      control.controlClass === controlClassDatePicker &&
+                      control.controlClass === 'date_picker' &&
                       control.value.split('$METRICS_DATE_FROM').length > 1
                         ? metricsStartDateYYYYMMDD
-                        : control.controlClass === controlClassDatePicker &&
+                        : control.controlClass === 'date_picker' &&
                             control.value.split('$METRICS_DATE_TO').length > 1
                           ? getMetricsEndDateYYYYMMDD(filter.field.store)
                           : control.value

@@ -36,8 +36,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repos/merge-repo/merge-repo-output';
@@ -95,9 +94,9 @@ export class MergeRepoController {
       allowProdRepo: false
     });
 
-    if (repoType === RepoTypeEnum.Session) {
+    if (repoType === 'session') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_BRANCH_CANNOT_BE_MERGED
+        message: 'BACKEND_SESSION_BRANCH_CANNOT_BE_MERGED'
       });
     }
 

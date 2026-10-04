@@ -11,13 +11,10 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
-import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 import type { ToBackendSeedRecordsInputProvidersItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-providers-item';
 import type { ToBackendCreateEditorSessionRequest } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-request';
 import type { ToBackendCreateEditorSessionResponse } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-response';
@@ -96,7 +93,7 @@ export async function forTestsRunEditorSessionE2x(item: {
             orgId,
             projectId,
             name: projectName,
-            remoteType: ProjectRemoteTypeEnum.Managed,
+            remoteType: 'Managed',
             defaultBranch: BRANCH_MAIN,
             e2bApiKey: item.projectApiKeys.e2bApiKey
           }
@@ -132,7 +129,7 @@ export async function forTestsRunEditorSessionE2x(item: {
       idempotencyKey: makeId(),
       input: {
         projectId: projectId,
-        sandboxType: SandboxTypeEnum.E2B,
+        sandboxType: 'E2B',
         providerId: item.provider.providerId,
         modelId: item.modelId,
         agent: 'plan',
@@ -199,7 +196,7 @@ export async function forTestsRunEditorSessionE2x(item: {
       idempotencyKey: makeId(),
       input: {
         sessionId: sessionId,
-        interactionType: InteractionTypeEnum.Message,
+        interactionType: 'Message',
         message: 'hello, what model is used?',
         agent: 'plan',
         providerId: item.provider.providerId,
@@ -236,7 +233,7 @@ export async function forTestsRunEditorSessionE2x(item: {
       idempotencyKey: makeId(),
       input: {
         sessionId: sessionId,
-        interactionType: InteractionTypeEnum.Message,
+        interactionType: 'Message',
         message: 'what is 2 + 2?',
         agent: 'plan',
         providerId: item.provider.providerId,
@@ -272,7 +269,7 @@ export async function forTestsRunEditorSessionE2x(item: {
     }
     logToConsoleBackend({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep.logger,
       cs: prep.cs
     });
@@ -319,7 +316,7 @@ export async function forTestsRunEditorSessionE2x(item: {
       } catch (er) {
         logToConsoleBackend({
           log: er,
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: prep.logger,
           cs: prep.cs
         });

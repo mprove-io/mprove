@@ -2,16 +2,15 @@ import { Injectable } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 import { exhaustMap, take, tap } from 'rxjs/operators';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
-import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
-import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
+import type { SessionPartApi } from '#common/types/backend/parts/session/session-part-api';
 import type { ToBackendCreateSessionSseTicketRequest } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-request';
 import type { ToBackendCreateSessionSseTicketResponse } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-response';
 import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/sessions/get-session/get-session-output';
 import type { ToBackendGetSessionRequest } from '#common/types/backend/routes/sessions/get-session/get-session-request';
 import type { ToBackendGetSessionResponse } from '#common/types/backend/routes/sessions/get-session/get-session-response';
-import type { ErrorData } from '#common/types/front/error-data';
+import type { ErrorData } from '#common/types/front/ui/error-data';
 import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
@@ -25,13 +24,8 @@ import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SessionEventsService } from '#front/app/services/session-events.service';
+import type { SsePhase } from '#front/app/services/sse-phase';
 import { environment } from '#front/environments/environment';
-
-type SsePhase =
-  | 'idle'
-  | 'fetching-ticket'
-  | 'connected'
-  | 'waiting-to-reconnect';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
@@ -278,25 +272,19 @@ export class SessionService {
 
     let session = this.sessionQuery.getValue();
 
-    if (session.status === SessionStatusEnum.New && !this.pollSubscription) {
+    if (session.status === 'New' && !this.pollSubscription) {
       this.startPolling({ sessionId: session.sessionId });
     }
 
-    if (session.status !== SessionStatusEnum.New && this.pollSubscription) {
+    if (session.status !== 'New' && this.pollSubscription) {
       this.stopPolling();
     }
 
-    if (
-      session.status !== SessionStatusEnum.Active &&
-      this.ssePhase !== 'idle'
-    ) {
+    if (session.status !== 'Active' && this.ssePhase !== 'idle') {
       this.closeSse();
     }
 
-    if (
-      session.status === SessionStatusEnum.Active &&
-      this.ssePhase === 'idle'
-    ) {
+    if (session.status === 'Active' && this.ssePhase === 'idle') {
       if (isGetSessionForPhaseIdle === true) {
         this.getSessionAndConnectSse({
           sessionId: session.sessionId
@@ -521,10 +509,7 @@ export class SessionService {
 
       let session = this.sessionQuery.getValue();
 
-      if (
-        session?.sessionId === sessionId &&
-        session?.status === SessionStatusEnum.Active
-      ) {
+      if (session?.sessionId === sessionId && session?.status === 'Active') {
         this.getSessionAndConnectSse({
           sessionId: sessionId
         });
@@ -567,7 +552,7 @@ export class SessionService {
             // Connect SSE BEFORE store updates to prevent re-entry
             // (store updates trigger managePollingAndSse synchronously;
             //  connectSse sets ssePhase='fetching-ticket' which blocks re-entry)
-            if (output.session.status === SessionStatusEnum.Active) {
+            if (output.session.status === 'Active') {
               this.connectSse({ sessionId: sessionId });
             }
 

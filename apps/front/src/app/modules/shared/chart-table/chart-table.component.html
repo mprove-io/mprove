@@ -9,10 +9,10 @@
           [ngClass]="{
             'min-w-[200px]': isTableHeaderWide === false,
             'min-w-[240px]': isTableHeaderWide === true,
-            'bg-m150': column.fieldClass === fieldClassDimension,
+            'bg-m150': column.fieldClass === 'dimension',
             'bg-g2':
-              column.fieldClass === fieldClassMeasure ||
-              column.fieldClass === fieldClassCalculation
+              column.fieldClass === 'measure' ||
+              column.fieldClass === 'calculation'
           }"
           *ngFor="let column of mconfigFields; let columnIndex = index"
         >
@@ -50,7 +50,7 @@
             [ngClass]="{
               'min-w-[200px]': isTableHeaderWide === false,
               'min-w-[240px]': isTableHeaderWide === true,
-              'text-right': column.result === fieldResultNumber
+              'text-right': column.result === 'number'
             }"
           >
             {{

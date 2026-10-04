@@ -12,24 +12,21 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ReportX } from '#common/types/backend/parts/report-x';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
-import type { Listener } from '#common/types/blockml/parts/listener';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { Report } from '#common/types/blockml/parts/report';
-import type { Row } from '#common/types/blockml/parts/row';
-import type { ReportX2 } from '#common/types/front/report-x-2';
-import type { RowX2 } from '#common/types/front/row-x-2';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { Report } from '#common/types/blockml/parts/report/report';
+import type { Listener } from '#common/types/blockml/parts/report/row/listener';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+import type { ReportX2 } from '#common/types/front/report/report-x-2';
+import type { RowX2 } from '#common/types/front/report/row/row-x-2';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -56,8 +53,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
       element?.close();
     });
   }
-
-  rowTypeMetric = RowTypeEnum.Metric;
 
   spinnerName = 'reportEditListen';
 
@@ -169,12 +164,12 @@ export class ReportEditListenersDialogComponent implements OnInit {
                       ? [
                           emptyField,
                           ...model.fields.filter(y =>
-                            y.fieldClass === FieldClassEnum.Filter
+                            y.fieldClass === 'filter'
                               ? y.id === reportField.storeFilter
                               : false
                           )
                         ]
-                      : model.type !== ModelTypeEnum.Store &&
+                      : model.type !== 'Store' &&
                           isUndefined(reportField.storeModel)
                         ? [
                             emptyField,
@@ -294,7 +289,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     reportService.modifyRows({
       report: this.report,
-      changeType: ChangeTypeEnum.EditListeners,
+      changeType: 'EditListeners',
       rowChange: undefined,
       rowIds: undefined,
       reportFields: this.report.fields,

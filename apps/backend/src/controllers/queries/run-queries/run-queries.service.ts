@@ -39,10 +39,7 @@ import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -173,7 +170,7 @@ export class RunQueriesService {
     let startedQueryIds: string[] = [];
 
     let googleApiConnectionIds = queries
-      .filter(query => query.connectionType === ConnectionTypeEnum.GoogleApi)
+      .filter(query => query.connectionType === 'GoogleApi')
       .map(query => query.connectionId);
 
     let uniqueGoogleApiConnectionIdsWithAnyEnvId = [
@@ -271,7 +268,7 @@ export class RunQueriesService {
             connectionId: query.connectionId
           });
 
-        if (connection.type === ConnectionTypeEnum.BigQuery) {
+        if (connection.type === 'BigQuery') {
           query = await this.bigqueryService.runQuery({
             userId: user.userId,
             query: query,
@@ -292,7 +289,7 @@ export class RunQueriesService {
             getRetryOption(this.cs, this.logger)
           );
         } else {
-          query.status = QueryStatusEnum.Running;
+          query.status = 'Running';
           query.queryJobId = makeId();
           query.lastRunBy = user.userId;
           query.lastRunTs = makeTsNumber();
@@ -311,7 +308,7 @@ export class RunQueriesService {
             getRetryOption(this.cs, this.logger)
           );
 
-          if (connection.type === ConnectionTypeEnum.SnowFlake) {
+          if (connection.type === 'SnowFlake') {
             await this.snowflakeService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -327,7 +324,7 @@ export class RunQueriesService {
             //     querySql: query.sql,
             //     projectId: projectId
             //   });
-          } else if (connection.type === ConnectionTypeEnum.PostgreSQL) {
+          } else if (connection.type === 'PostgreSQL') {
             await this.pgService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -335,7 +332,7 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === ConnectionTypeEnum.MySQL) {
+          } else if (connection.type === 'MySQL') {
             await this.mysqlService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -343,7 +340,7 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+          } else if (connection.type === 'MotherDuck') {
             await this.duckdbService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -351,7 +348,7 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === ConnectionTypeEnum.Presto) {
+          } else if (connection.type === 'Presto') {
             await this.prestoService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -359,7 +356,7 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === ConnectionTypeEnum.Trino) {
+          } else if (connection.type === 'Trino') {
             await this.trinoService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -367,7 +364,7 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === ConnectionTypeEnum.Databricks) {
+          } else if (connection.type === 'Databricks') {
             await this.databricksService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -375,11 +372,7 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (
-            [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
-              connection.type
-            ) > -1
-          ) {
+          } else if (['Api', 'GoogleApi'].indexOf(connection.type) > -1) {
             let mconfig = mconfigs.find(x => x.queryId === query.queryId);
             let model = models.find(x => x.modelId === mconfig.modelId);
 
@@ -395,10 +388,10 @@ export class RunQueriesService {
       }).catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_RUN_QUERIES_POOL_ERROR,
+            message: 'BACKEND_RUN_QUERIES_POOL_ERROR',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -432,7 +425,7 @@ export class RunQueriesService {
             connectionId: query.connectionId
           });
 
-        if (connection.type === ConnectionTypeEnum.BigQuery) {
+        if (connection.type === 'BigQuery') {
           query = await this.bigqueryService.runQuery({
             userId: user.userId,
             query: query,
@@ -455,7 +448,7 @@ export class RunQueriesService {
 
           runningQueries.push(query);
         } else {
-          query.status = QueryStatusEnum.Running;
+          query.status = 'Running';
           query.queryJobId = makeId();
           query.lastRunBy = user.userId;
           query.lastRunTs = makeTsNumber();
@@ -476,7 +469,7 @@ export class RunQueriesService {
 
           runningQueries.push(query);
 
-          if (connection.type === ConnectionTypeEnum.SnowFlake) {
+          if (connection.type === 'SnowFlake') {
             this.snowflakeService
               .runQuery({
                 connection: connection,
@@ -488,10 +481,10 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_SNOWFLAKE_ERROR,
+                    message: 'BACKEND_RUN_QUERY_SNOWFLAKE_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });
@@ -516,7 +509,7 @@ export class RunQueriesService {
             //         cs: this.cs
             //       });
             //     });
-          } else if (connection.type === ConnectionTypeEnum.PostgreSQL) {
+          } else if (connection.type === 'PostgreSQL') {
             this.pgService
               .runQuery({
                 connection: connection,
@@ -528,15 +521,15 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_POSTGRES_ERROR,
+                    message: 'BACKEND_RUN_QUERY_POSTGRES_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (connection.type === ConnectionTypeEnum.MySQL) {
+          } else if (connection.type === 'MySQL') {
             this.mysqlService
               .runQuery({
                 connection: connection,
@@ -548,15 +541,15 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_MYSQL_ERROR,
+                    message: 'BACKEND_RUN_QUERY_MYSQL_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (connection.type === ConnectionTypeEnum.Presto) {
+          } else if (connection.type === 'Presto') {
             this.prestoService
               .runQuery({
                 connection: connection,
@@ -568,15 +561,15 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_PRESTO_ERROR,
+                    message: 'BACKEND_RUN_QUERY_PRESTO_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (connection.type === ConnectionTypeEnum.Trino) {
+          } else if (connection.type === 'Trino') {
             this.trinoService
               .runQuery({
                 connection: connection,
@@ -588,15 +581,15 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_TRINO_ERROR,
+                    message: 'BACKEND_RUN_QUERY_TRINO_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+          } else if (connection.type === 'MotherDuck') {
             this.duckdbService
               .runQuery({
                 connection: connection,
@@ -608,15 +601,15 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_DUCKDB_ERROR,
+                    message: 'BACKEND_RUN_QUERY_DUCKDB_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (connection.type === ConnectionTypeEnum.Databricks) {
+          } else if (connection.type === 'Databricks') {
             this.databricksService
               .runQuery({
                 connection: connection,
@@ -628,19 +621,15 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_DATABRICKS_ERROR,
+                    message: 'BACKEND_RUN_QUERY_DATABRICKS_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (
-            [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
-              connection.type
-            ) > -1
-          ) {
+          } else if (['Api', 'GoogleApi'].indexOf(connection.type) > -1) {
             let mconfig = mconfigs.find(x => x.queryId === query.queryId);
             let model = models.find(x => x.modelId === mconfig.modelId);
 
@@ -655,10 +644,10 @@ export class RunQueriesService {
               .catch(e => {
                 logToConsoleBackend({
                   log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_API_ERROR,
+                    message: 'BACKEND_RUN_QUERY_API_ERROR',
                     originalError: e
                   }),
-                  logLevel: LogLevelEnum.Error,
+                  logLevel: 'Error',
                   logger: this.logger,
                   cs: this.cs
                 });

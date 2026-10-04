@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendGetDashboardsRequest } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-request';
 import type { ToBackendGetDashboardsResponse } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
@@ -93,7 +93,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
             return true;
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

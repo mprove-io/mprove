@@ -18,21 +18,19 @@ import {
   MPROVE_USERS_FOLDER,
   MY_CHARTS_SPACE_TITLE
 } from '#common/constants/top';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Member } from '#common/types/backend/parts/member';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { SpaceFolder } from '#common/types/backend/parts/space-folder';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
-import type { Chart } from '#common/types/blockml/parts/chart';
-import type { Query } from '#common/types/blockml/parts/query';
+import type { Chart } from '#common/types/blockml/parts/chart/chart';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import type { Space } from '#common/types/blockml/parts/space';
 import { HashService } from '../hash.service';
 import { SpaceService } from '../space.service';
@@ -114,7 +112,7 @@ export class ChartsService {
     let favoriteChartIds = await this.favoritesService.getFavoriteTargetIds({
       projectId: projectId,
       userId: user.userId,
-      type: FavoriteTypeEnum.Chart,
+      type: 'Chart',
       targetIds: savedCharts.map(chart => chart.chartId)
     });
 
@@ -299,7 +297,7 @@ export class ChartsService {
     return apiChart;
   }
 
-  apiToTab(item: { apiChart: Chart; chartType: ChartTypeEnum }): ChartTab {
+  apiToTab(item: { apiChart: Chart; chartType: ChartType }): ChartTab {
     let { apiChart, chartType } = item;
 
     if (isUndefined(apiChart)) {
@@ -353,13 +351,13 @@ export class ChartsService {
 
     if (isUndefined(chart)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST
+        message: 'BACKEND_CHART_DOES_NOT_EXIST'
       });
     }
 
     if (chart.draft === true && chart.creatorId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CHART_CREATOR_ID_MISMATCH
+        message: 'BACKEND_CHART_CREATOR_ID_MISMATCH'
       });
     }
 
@@ -386,7 +384,7 @@ export class ChartsService {
 
     if (hasChartAccess === false && hasModelAccess === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_MODEL
+        message: 'BACKEND_FORBIDDEN_MODEL'
       });
     }
 
@@ -409,7 +407,7 @@ export class ChartsService {
       filePathArray[usersFolderIndex + 1] !== item.userAlias
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_CHART_PATH
+        message: 'BACKEND_FORBIDDEN_CHART_PATH'
       });
     }
   }

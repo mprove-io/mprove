@@ -45,10 +45,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
@@ -177,7 +174,7 @@ export class CancelQueriesController {
 
     await asyncPool(
       8,
-      queries.filter(q => q.status === QueryStatusEnum.Running),
+      queries.filter(q => q.status === 'Running'),
       async (query: QueryTab) => {
         let apiEnvs = await this.envsService.getApiEnvs({
           projectId: query.projectId
@@ -196,10 +193,10 @@ export class CancelQueriesController {
 
         if (isUndefined(connection)) {
           throw new ServerError({
-            message: ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+            message: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
           });
         }
-        if (connection.type === ConnectionTypeEnum.BigQuery) {
+        if (connection.type === 'BigQuery') {
           let bigquery = new BigQuery({
             projectId: connection.options.bigquery.googleCloudProject,
             credentials: connection.options.bigquery.serviceAccountCredentials
@@ -211,26 +208,24 @@ export class CancelQueriesController {
           bigqueryQueryJob.cancel().catch((e: any) => {
             logToConsoleBackend({
               log: new ServerError({
-                message: ErEnum.BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL,
+                message: 'BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL',
                 originalError: e
               }),
-              logLevel: LogLevelEnum.Error,
+              logLevel: 'Error',
               logger: this.logger,
               cs: this.cs
             });
           });
         }
 
-        query.status = QueryStatusEnum.Canceled;
+        query.status = 'Canceled';
         query.data = [];
         query.lastCancelTs = makeTsNumber();
         query.queryJobId = undefined;
       }
     );
 
-    let canceledQueries = queries.filter(
-      x => x.status === QueryStatusEnum.Canceled
-    );
+    let canceledQueries = queries.filter(x => x.status === 'Canceled');
 
     if (canceledQueries.length > 0) {
       await retry(

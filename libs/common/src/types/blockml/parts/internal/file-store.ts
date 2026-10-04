@@ -1,11 +1,12 @@
-import type { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
-import type { FileBasic } from '#common/types/blockml/parts/internal/file-basic';
+import type { FileBasic } from '#common/types/blockml/parts/internal/file/file-basic';
 import type { FileStoreBuildMetric } from '#common/types/blockml/parts/internal/file-store-build-metric';
 import type { FileStoreFieldGroup } from '#common/types/blockml/parts/internal/file-store-field-group';
 import type { FileStoreFieldTimeGroup } from '#common/types/blockml/parts/internal/file-store-field-time-group';
 import type { FileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
-import type { EnumValues } from '#common/types/enum-values';
+
 import type { Extend } from '#common/types/extend';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 
@@ -44,7 +45,7 @@ export type FileStore = Extend<
     fields?: FieldAny[];
     fields_line_num?: number;
     connectionId?: string;
-    connectionType?: EnumValues<typeof ConnectionTypeEnum>;
+    connectionType?: ConnectionType;
     fieldsDeps?: Record<string, Record<string, number>>;
     fieldsDepsAfterSingles?: Record<string, Record<string, number>>;
   }

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
-import type { ReportUnit } from '#common/types/backend/parts/report-unit';
+import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import { spaceUnitToReportUnit } from '#front/app/functions/space/space-unit-to-report-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -58,7 +58,7 @@ export class ReportOptionsComponent {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: 0
     });

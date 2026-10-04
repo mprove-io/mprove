@@ -1,0 +1,161 @@
+import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+const fileParameterValues = [
+  'name',
+  'path',
+  'ext',
+  //
+  'fieldClass',
+  //
+  'week_start',
+  'default_timezone',
+  'allow_timezones',
+  'case_sensitive_string_filters',
+  //
+  'access_roles',
+  'as',
+  'build_metrics',
+  'connection',
+  'currency_prefix',
+  'currency_suffix',
+  'thousands_separator',
+  'dashboard',
+  'dimension',
+  'description',
+  'fields',
+  'filter',
+  'max_fractions',
+  'required',
+  'meta',
+  'controls',
+  'fraction_controls',
+  'fractions',
+  'logic',
+  'apply_to',
+  'format_number',
+  'formula',
+  'time_group',
+  'group',
+  'group_label',
+  'group_description',
+  'hidden',
+  'hide_fields',
+  'label',
+  'top_label',
+  'tree_double_underscore',
+  'limit',
+  'listen',
+  'measure',
+
+  'model',
+  'mprove_dir',
+  'percentile',
+  'report',
+  'space',
+  'tiles',
+  'result',
+  'fraction_types',
+  'folders',
+  'suggest_model_dimension',
+  'rows',
+  'query',
+  'select',
+
+  'input',
+  'list_input',
+  'switch',
+  'date_picker',
+  'selector',
+  'value',
+
+  'show_fields',
+  'sorts',
+  'time',
+  'detail',
+  'unit',
+  'timeframes',
+  'title',
+  'type',
+
+  'mod',
+  'location',
+
+  'store',
+  'store_model',
+  'store_filter',
+  'store_result',
+  'method',
+  'preset',
+  'request',
+  'response',
+  'results',
+  'date_range_includes_right_side',
+  'field_groups',
+  'field_time_groups',
+  'chart',
+  // row
+  'parameters',
+  'row_id',
+  'metric',
+  'show_chart',
+  // parameter
+  'conditions',
+  // chart axis
+  'data',
+  'options',
+  'plate',
+  // chart data
+  'x_field',
+  'y_fields',
+  'size_field',
+  'multi_field',
+  'pivot_rows',
+  'pivot_columns',
+  'pivot_values',
+  'field',
+  'aggregate',
+  // chart options
+  'format',
+  'pivot',
+  'show_totals',
+  'show_grand_total',
+  'default_expanded',
+  'show_menu',
+  'theme',
+  'first_column_width',
+  'value_columns_width',
+  'x_axis',
+  'y_axis',
+  'series',
+  // x_axis, y_axis
+  'scale',
+  // series
+  'data_field',
+  'data_row_id',
+  'y_axis_index',
+  // chart plate
+  'plate_width',
+  'plate_height',
+  'plate_x',
+  'plate_y',
+  //
+  'relationships',
+  'schema',
+  'table',
+  'tables',
+  'column',
+  'columns',
+  'example',
+  'cache_unique_values',
+  'to',
+  'to_schema'
+] as const;
+
+export type FileParameter = (typeof fileParameterValues)[number];
+
+export let zFileParameter = z.enum(fileParameterValues);
+
+assertTypesEqual<FileParameter, z.infer<typeof zFileParameter>>({
+  value: true
+});

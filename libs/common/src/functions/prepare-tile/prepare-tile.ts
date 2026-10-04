@@ -1,11 +1,10 @@
 import { DEFAULT_LIMIT, MALLOY_FILTER_ANY } from '#common/constants/top';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { toFileChartOptions } from '#common/functions/to-file-chart-options/to-file-chart-options';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { FileFraction } from '#common/types/blockml/parts/internal/file-fraction';
 import type { FileFractionControl } from '#common/types/blockml/parts/internal/file-fraction-control';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
@@ -28,7 +27,7 @@ export function prepareTile(item: {
         apply_to: x.fieldId
       };
 
-      if (mconfig.modelType === ModelTypeEnum.Store) {
+      if (mconfig.modelType === 'Store') {
         parameter.fractions = x.fractions.map(mconfigFraction => {
           let fileFraction: FileFraction = {};
 
@@ -44,23 +43,15 @@ export function prepareTile(item: {
             mconfigControl => {
               let newFileControl: FileFractionControl = {};
 
-              if (mconfigControl.controlClass === ControlClassEnum.Input) {
+              if (mconfigControl.controlClass === 'input') {
                 newFileControl.input = mconfigControl.name;
-              } else if (
-                mconfigControl.controlClass === ControlClassEnum.ListInput
-              ) {
+              } else if (mconfigControl.controlClass === 'list_input') {
                 newFileControl.list_input = mconfigControl.name;
-              } else if (
-                mconfigControl.controlClass === ControlClassEnum.Switch
-              ) {
+              } else if (mconfigControl.controlClass === 'switch') {
                 newFileControl.switch = mconfigControl.name;
-              } else if (
-                mconfigControl.controlClass === ControlClassEnum.DatePicker
-              ) {
+              } else if (mconfigControl.controlClass === 'date_picker') {
                 newFileControl.date_picker = mconfigControl.name;
-              } else if (
-                mconfigControl.controlClass === ControlClassEnum.Selector
-              ) {
+              } else if (mconfigControl.controlClass === 'selector') {
                 newFileControl.selector = mconfigControl.name;
               }
 
@@ -72,7 +63,7 @@ export function prepareTile(item: {
 
           return fileFraction;
         });
-      } else if (mconfig.modelType === ModelTypeEnum.Malloy) {
+      } else if (mconfig.modelType === 'Malloy') {
         let parentsBricksNoAny = x.fractions
           .filter(
             fraction =>

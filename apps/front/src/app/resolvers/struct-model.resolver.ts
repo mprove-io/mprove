@@ -14,7 +14,7 @@ import {
   PATH_ORG,
   PATH_PROJECT
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
 import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
@@ -123,7 +123,7 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
             }
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

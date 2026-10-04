@@ -12,21 +12,20 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
-import type { Dashboard } from '#common/types/blockml/parts/dashboard';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { DashboardX2 } from '#common/types/front/dashboard-x-2';
-import type { TileX2 } from '#common/types/front/tile-x-2';
+import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { DashboardX2 } from '#common/types/front/dashboard/dashboard-x-2';
+import type { TileX2 } from '#common/types/front/tile/tile-x-2';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -158,12 +157,12 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                       ? [
                           emptyField,
                           ...model.fields.filter(y =>
-                            y.fieldClass === FieldClassEnum.Filter
+                            y.fieldClass === 'filter'
                               ? y.id === dashField.storeFilter
                               : false
                           )
                         ]
-                      : model.type !== ModelTypeEnum.Store &&
+                      : model.type !== 'Store' &&
                           isUndefined(dashField.storeModel)
                         ? [
                             emptyField,

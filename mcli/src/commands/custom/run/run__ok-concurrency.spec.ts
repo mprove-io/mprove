@@ -3,9 +3,7 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { McliQueriesStats } from '#common/types/mcli/mcli-queries-stats';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
@@ -90,7 +88,7 @@ test('1', async () => {
               name: projectName,
               seedProjectId: 't5-mcli',
               defaultBranch: defaultBranch,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined,
@@ -114,7 +112,7 @@ test('1', async () => {
               projectId: projectId,
               connectionId: 'c1_postgres',
               envId: PROJECT_ENV_PROD,
-              type: ConnectionTypeEnum.PostgreSQL,
+              type: 'PostgreSQL',
               options: {
                 postgres: {
                   host: 'dwh-postgres',
@@ -136,7 +134,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -147,7 +145,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -187,7 +185,7 @@ test('1', async () => {
 
     logToConsoleMcli({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       context: undefined,
       isJson: false
     });

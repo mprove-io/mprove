@@ -74,12 +74,12 @@ import {
   DEFAULT_SRV_UI,
   PASSWORD_EXPIRES_OFFSET
 } from '#common/constants/top-backend';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BaseProject } from '#common/types/backend/parts/base-project';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendSeedRecordsInputCachedColumnsItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-cached-columns-item';
 import type { ToBackendSeedRecordsInputCachedPartsItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-cached-parts-item';
 import type { ToBackendSeedRecordsInputMembersItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-members-item';
@@ -245,7 +245,7 @@ export class SeedRecordsController {
             apiKeyPrefix: x.apiKeyPrefix,
             apiKeySecretHash: x.apiKeySecretHash,
             apiKeySalt: x.apiKeySalt,
-            sandboxType: SandboxTypeEnum.E2B,
+            sandboxType: 'E2B',
             providerId: OPENAI_PROVIDER_ID,
             modelId: 'gpt-5.1-codex-mini',
             lastMessageVariant: undefined,

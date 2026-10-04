@@ -14,9 +14,9 @@ import {
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Given } from '#common/types/backend/parts/given';
+import type { Given } from '#common/types/backend/parts/given/given';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendCreateRoleGivenRequest } from '#common/types/backend/routes/roles/create-role-given/create-role-given-request';
 import type { ToBackendCreateRoleGivenResponse } from '#common/types/backend/routes/roles/create-role-given/create-role-given-response';
@@ -51,7 +51,7 @@ export class AddRoleGivenDialogComponent implements OnInit {
 
   availableGivens: Given[] = [];
 
-  selectedGivenType: GivenTypeEnum;
+  selectedGivenType: GivenType;
   selectedGivenIsMultiple = false;
 
   constructor(

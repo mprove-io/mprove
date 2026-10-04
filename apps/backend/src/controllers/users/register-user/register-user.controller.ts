@@ -33,7 +33,7 @@ import {
   DEFAULT_SRV_UI,
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -106,7 +106,7 @@ export class RegisterUserController {
     if (isDefined(user)) {
       if (isDefined(user.passwordHash) && user.isEmailVerified === true) {
         throw new ServerError({
-          message: ErEnum.BACKEND_USER_ALREADY_REGISTERED
+          message: 'BACKEND_USER_ALREADY_REGISTERED'
         });
       } else {
         user.passwordHash = passwordHS.hash;
@@ -123,14 +123,14 @@ export class RegisterUserController {
 
       if (isRegisterOnlyInvitedUsers === true) {
         throw new ServerError({
-          message: ErEnum.BACKEND_USER_IS_NOT_INVITED
+          message: 'BACKEND_USER_IS_NOT_INVITED'
         });
       } else {
         let alias = await this.usersService.makeAlias(email);
 
         if (alias === RESTRICTED_USER_ALIAS) {
           throw new ServerError({
-            message: ErEnum.BACKEND_RESTRICTED_USER
+            message: 'BACKEND_RESTRICTED_USER'
           });
         }
 

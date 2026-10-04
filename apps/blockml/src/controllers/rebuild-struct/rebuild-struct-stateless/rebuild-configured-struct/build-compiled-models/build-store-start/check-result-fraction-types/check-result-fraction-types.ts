@@ -5,29 +5,26 @@ import { checkStoreFractionControls } from '#blockml/functions/check-store-fract
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFractionType } from '#common/types/blockml/parts/internal/file-store-fraction-type';
 
-let func = FuncEnum.CheckResultFractionTypes;
+let func: Func = 'build-store-start/check-result-fraction-types';
 
 export function checkResultFractionTypes(
   item: {
     stores: FileStore[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newStores: FileStore[] = [];
 
@@ -44,8 +41,8 @@ export function checkResultFractionTypes(
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.FRACTION_TYPES_ELEMENT_IS_NOT_A_DICTIONARY,
-              message: `found at least one ${ParameterEnum.FractionTypes} element that is not a dictionary`,
+              title: 'FRACTION_TYPES_ELEMENT_IS_NOT_A_DICTIONARY',
+              message: `found at least one fraction_types element that is not a dictionary`,
               lines: [
                 {
                   line: result.fraction_types_line_num,
@@ -63,16 +60,16 @@ export function checkResultFractionTypes(
           .forEach(parameter => {
             if (
               [
-                ParameterEnum.Type.toString(),
-                ParameterEnum.Label.toString(),
-                ParameterEnum.Meta.toString(),
-                ParameterEnum.Controls.toString()
+                'type'.toString(),
+                'label'.toString(),
+                'meta'.toString(),
+                'controls'.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNKNOWN_FRACTION_TYPES_ELEMENT_PARAMETER,
-                  message: `parameter "${parameter}" cannot be used in ${ParameterEnum.FractionTypes} element`,
+                  title: 'UNKNOWN_FRACTION_TYPES_ELEMENT_PARAMETER',
+                  message: `parameter "${parameter}" cannot be used in fraction_types element`,
                   lines: [
                     {
                       line: fractionTypesElement[
@@ -91,11 +88,11 @@ export function checkResultFractionTypes(
               Array.isArray(
                 fractionTypesElement[parameter as keyof FileStoreFractionType]
               ) &&
-              [ParameterEnum.Controls.toString()].indexOf(parameter) < 0
+              ['controls'.toString()].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNEXPECTED_LIST,
+                  title: 'UNEXPECTED_LIST',
                   message: `parameter "${parameter}" must have a single value`,
                   lines: [
                     {
@@ -114,11 +111,11 @@ export function checkResultFractionTypes(
             if (
               fractionTypesElement[parameter as keyof FileStoreFractionType]
                 ?.constructor === Object &&
-              [ParameterEnum.Meta.toString()].indexOf(parameter) < 0
+              ['meta'.toString()].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
-                  title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+                  title: 'UNEXPECTED_DICTIONARY',
                   message: `parameter "${parameter}" must have a single value`,
                   lines: [
                     {
@@ -145,8 +142,8 @@ export function checkResultFractionTypes(
           if (isUndefined(fractionTypesElement.type)) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.MISSING_TYPE,
-                message: `${ParameterEnum.FractionTypes} element must have "${ParameterEnum.Type}" parameter`,
+                title: 'MISSING_TYPE',
+                message: `fraction_types element must have "type" parameter`,
                 lines: [
                   {
                     line: Math.min(...fractionTypeElementKeyLineNums),
@@ -162,8 +159,8 @@ export function checkResultFractionTypes(
           if (isUndefined(fractionTypesElement.controls)) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.MISSING_CONTROLS,
-                message: `${ParameterEnum.FractionTypes} element must have "${ParameterEnum.Controls}" parameter`,
+                title: 'MISSING_CONTROLS',
+                message: `fraction_types element must have "controls" parameter`,
                 lines: [
                   {
                     line: Math.min(...fractionTypeElementKeyLineNums),
@@ -216,8 +213,8 @@ export function checkResultFractionTypes(
           if (frType.typeLineNums.length > 1) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.DUPLICATE_TYPES,
-                message: `"${ParameterEnum.Type}" value must be unique across ${ParameterEnum.FractionTypes} elements`,
+                title: 'DUPLICATE_TYPES',
+                message: `"type" value must be unique across fraction_types elements`,
                 lines: frType.typeLineNums.map(l => ({
                   line: l,
                   name: x.fileName,
@@ -246,7 +243,7 @@ export function checkResultFractionTypes(
 
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.WRONG_CHARS_IN_TYPE,
+                title: 'WRONG_CHARS_IN_TYPE',
                 message: `Characters "${typeWrongCharsString}" cannot be used for result (only snake_case "a...z0...9_" is allowed)`,
                 lines: [
                   {
@@ -268,8 +265,8 @@ export function checkResultFractionTypes(
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, newStores);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_stores.log', newStores);
 
   return newStores;
 }

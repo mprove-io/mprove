@@ -21,6 +21,7 @@ import type { ColumnCombinedReference } from '#common/types/backend/parts/connec
 import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
 import type { RawSchemaForeignKey } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-foreign-key';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
+import type { CachedColumnRefreshType } from '#common/types/backend/parts/connections/cached-column-refresh-type';
 import type { ToBackendClearCachedColumnResponse } from '#common/types/backend/routes/connections/clear-cached-column/clear-cached-column-response';
 import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';
 import type { ToBackendGetCachedColumnsResponse } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-response';
@@ -32,6 +33,7 @@ import type { ToBackendRefreshCachedColumnOutput } from '#common/types/backend/r
 import type { ToBackendRefreshCachedColumnResponse } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
 import type { ToBackendViewCachedColumnResponse } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-response';
+import type { SchemaNodeType } from '#front/app/modules/builder/builder-right/schemas/schema-node-type';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
@@ -46,7 +48,7 @@ interface SchemaTreeNode {
   name: string;
   searchName: string;
   children?: SchemaTreeNode[];
-  nodeType: 'connection' | 'table' | 'column' | 'index' | 'error';
+  nodeType: SchemaNodeType;
   connectionId?: string;
   schemaDisplayName?: string;
   tableName?: string;
@@ -756,7 +758,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
   refreshCachedColumn(item: {
     node: TreeNode;
     event: MouseEvent;
-    refreshType: 'full' | 'sample';
+    refreshType: CachedColumnRefreshType;
     sampleSize?: number;
   }) {
     let { node, event, refreshType, sampleSize } = item;

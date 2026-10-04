@@ -24,7 +24,7 @@ import {
   type StateReportItem,
   zStateReportItem
 } from '#common/types/backend/parts/state/state-report-item';
-import { type Repo, zRepo } from '#common/types/disk/parts/repo';
+import { type Repo, zRepo } from '#common/types/disk/parts/repo/repo';
 
 export type ToBackendGetStateOutput = {
   needValidate: boolean;

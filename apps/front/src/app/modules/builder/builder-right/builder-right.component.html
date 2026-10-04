@@ -4,23 +4,17 @@
 ></m-debug-events-panel>
 
 <m-sessions
-  *ngIf="
-    builderRight === builderRightSessions && !secondFileNodeId && !showEvents
-  "
+  *ngIf="builderRight === 'Sessions' && !secondFileNodeId && !showEvents"
   class="flex w-full"
 ></m-sessions>
 
 <m-schemas
-  *ngIf="
-    builderRight === builderRightSchema && !secondFileNodeId && !showEvents
-  "
+  *ngIf="builderRight === 'Schema' && !secondFileNodeId && !showEvents"
   class="flex w-full"
 ></m-schemas>
 
 <m-validation-status
-  *ngIf="
-    builderRight === builderRightValidation && !secondFileNodeId && !showEvents
-  "
+  *ngIf="builderRight === 'Validation' && !secondFileNodeId && !showEvents"
   class="flex w-full"
 ></m-validation-status>
 

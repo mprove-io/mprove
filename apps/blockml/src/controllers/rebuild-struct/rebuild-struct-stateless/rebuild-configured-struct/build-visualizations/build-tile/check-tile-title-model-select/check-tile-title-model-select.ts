@@ -4,21 +4,17 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 
-let func = FuncEnum.CheckTileTitleModelSelect;
+let func: Func = 'build-tile/check-tile-title-model-select';
 
 export function checkTileTitleModelSelect<T extends dcType>(item: {
   entities: T[];
@@ -26,14 +22,14 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
   apiModels: Model[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId, apiModels } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -52,8 +48,8 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
 
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_TILE_TITLE,
-            message: `tile must have ${ParameterEnum.Title} parameter`,
+            title: 'MISSING_TILE_TITLE',
+            message: `tile must have title parameter`,
             lines: [
               {
                 line: Math.min(...lineNums),
@@ -73,8 +69,8 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
       if (isUndefined(tile.model)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_TILE_MODEL,
-            message: `tile must have "${ParameterEnum.Model}" parameter`,
+            title: 'MISSING_TILE_MODEL',
+            message: `tile must have "model" parameter`,
             lines: [
               {
                 line: tile.title_line_num,
@@ -92,7 +88,7 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
       if (isUndefined(apiModel)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.WRONG_TILE_MODEL,
+            title: 'WRONG_TILE_MODEL',
             message: `model "${tile.model}" is missing or not valid`,
             lines: [
               {
@@ -108,15 +104,15 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
 
       let store;
 
-      if (apiModel.type === ModelTypeEnum.Store) {
+      if (apiModel.type === 'Store') {
         store = item.stores.find(m => m.name === tile.model);
       }
 
       if (isUndefined(tile.select)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.MISSING_TILE_SELECT,
-            message: `tile must have "${ParameterEnum.Select}" parameter`,
+            title: 'MISSING_TILE_SELECT',
+            message: `tile must have "select" parameter`,
             lines: [
               {
                 line: tile.title_line_num,
@@ -140,7 +136,7 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
 
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.DUPLICATE_TILE_TITLE,
+            title: 'DUPLICATE_TILE_TITLE',
             message:
               'Tile titles must be unique for dashboard. ' +
               `Found duplicate "${title.toLocaleLowerCase()}" title`,
@@ -155,9 +151,9 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

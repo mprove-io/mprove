@@ -10,9 +10,8 @@
         [ngClass]="{
           'h-11':
             fractions.length === 0 ||
-            [fractionTypeEnum.TsIsBetween].indexOf(fractions[0].type) < 0,
-          'h-[100px]':
-            [fractionTypeEnum.TsIsBetween].indexOf(fractions[0].type) > -1
+            ['TsIsBetween'].indexOf(fractions[0].type) < 0,
+          'h-[100px]': ['TsIsBetween'].indexOf(fractions[0].type) > -1
         }"
       >
         <div class="flex w-full flex-row items-center">
@@ -263,7 +262,7 @@
               class="text-r1 ml-4 flex h-8 w-8 flex-shrink-0"
               tp="The left boundary value of the time range must be less than the right boundary value"
               *ngIf="
-                report?.timeRangeFraction?.type === fractionTypeTsIsBetween &&
+                report?.timeRangeFraction?.type === 'TsIsBetween' &&
                 report?.rangeStart >= report?.rangeEnd
               "
             >
@@ -382,26 +381,22 @@
                   'bg-m600':
                     notEmptySelectQueriesLength > 0 &&
                     (report?.rangeStart < report?.rangeEnd ||
-                      report?.timeRangeFraction?.type !==
-                        fractionTypeTsIsBetween),
+                      report?.timeRangeFraction?.type !== 'TsIsBetween'),
                   'cursor-default':
                     notEmptySelectQueriesLength === 0 ||
                     isRunButtonPressed === true ||
                     (report?.rangeStart >= report?.rangeEnd &&
-                      report?.timeRangeFraction?.type ===
-                        fractionTypeTsIsBetween),
+                      report?.timeRangeFraction?.type === 'TsIsBetween'),
                   'bg-s400':
                     notEmptySelectQueriesLength === 0 ||
-                    (report?.timeRangeFraction?.type ===
-                      fractionTypeTsIsBetween &&
+                    (report?.timeRangeFraction?.type === 'TsIsBetween' &&
                       report?.rangeStart >= report?.rangeEnd)
                 }"
                 (click)="run()"
                 [disabled]="
                   notEmptySelectQueriesLength === 0 ||
                   isRunButtonPressed === true ||
-                  (report?.timeRangeFraction?.type ===
-                    fractionTypeTsIsBetween &&
+                  (report?.timeRangeFraction?.type === 'TsIsBetween' &&
                     report?.rangeStart >= report?.rangeEnd)
                 "
               >

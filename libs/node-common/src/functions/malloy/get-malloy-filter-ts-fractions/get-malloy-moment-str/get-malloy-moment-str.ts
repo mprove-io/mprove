@@ -6,8 +6,8 @@ import {
   WeekdayMoment,
   WhichdayMoment
 } from '@malloydata/malloy-filter';
-import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-moment-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { FractionTsMomentType } from '#common/types/blockml/parts/fraction/fraction-ts-moment-type';
 
 export function getMalloyMomentStr(moment: Moment) {
   let momentStr =
@@ -35,23 +35,23 @@ export function getMalloyMomentStr(moment: Moment) {
                   ? moment.moment
                   : moment.moment;
 
-  let momentType: FractionTsMomentTypeEnum =
+  let momentType: FractionTsMomentType =
     moment.moment === 'literal' && isUndefined(moment.units)
-      ? FractionTsMomentTypeEnum.Timestamp
+      ? 'Timestamp'
       : moment.moment === 'literal'
-        ? FractionTsMomentTypeEnum.Literal
+        ? 'Literal'
         : moment.moment === 'today'
-          ? FractionTsMomentTypeEnum.Today
+          ? 'Today'
           : moment.moment === 'yesterday'
-            ? FractionTsMomentTypeEnum.Yesterday
+            ? 'Yesterday'
             : moment.moment === 'tomorrow'
-              ? FractionTsMomentTypeEnum.Tomorrow
+              ? 'Tomorrow'
               : moment.moment === 'this'
-                ? FractionTsMomentTypeEnum.This
+                ? 'This'
                 : moment.moment === 'last'
-                  ? FractionTsMomentTypeEnum.Last
+                  ? 'Last'
                   : moment.moment === 'next'
-                    ? FractionTsMomentTypeEnum.Next
+                    ? 'Next'
                     : [
                           'monday',
                           'tuesday',
@@ -62,16 +62,16 @@ export function getMalloyMomentStr(moment: Moment) {
                           'sunday'
                         ].includes(moment.moment) === true
                       ? (moment as WeekdayMoment).which === 'last'
-                        ? FractionTsMomentTypeEnum.Last
+                        ? 'Last'
                         : (moment as WeekdayMoment).which === 'next'
-                          ? FractionTsMomentTypeEnum.Next
+                          ? 'Next'
                           : undefined
                       : moment.moment === 'ago'
-                        ? FractionTsMomentTypeEnum.Ago
+                        ? 'Ago'
                         : moment.moment === 'from_now'
-                          ? FractionTsMomentTypeEnum.FromNow
+                          ? 'FromNow'
                           : moment.moment === 'now'
-                            ? FractionTsMomentTypeEnum.Now
+                            ? 'Now'
                             : undefined;
 
   return { momentStr: momentStr, momentType: momentType };

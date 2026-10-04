@@ -1,5 +1,5 @@
 <div
-  *ngIf="builderLeft === builderLeftTree"
+  *ngIf="builderLeft === 'Tree'"
   class="bg-m0 flex w-full flex-grow rounded shadow"
 >
   <div class="text-s1 mt-6 flex w-full flex-col text-base">
@@ -38,17 +38,14 @@
             >Files can be edited by project members with FilesEditor role</div
           >
 
-          <div
-            *ngIf="
-              isEditor === true && nav?.repoType === repoTypeEnum.Production
-            "
+          <div *ngIf="isEditor === true && nav?.repoType === 'production'"
             >Switch branch from Production repo to Dev repo to edit files</div
           >
 
           <div
             *ngIf="
               isEditor === true &&
-              nav?.repoType !== repoTypeEnum.Production &&
+              nav?.repoType !== 'production' &&
               needSave === true
             "
             >Need to Save changes</div
@@ -59,7 +56,7 @@
           [tp]="templateNewFile"
           [tpIsEnabled]="
             isEditor === false ||
-            nav?.repoType === repoTypeEnum.Production ||
+            nav?.repoType === 'production' ||
             needSave === true
           "
           class="mr-9 flex-shrink-0"
@@ -71,17 +68,17 @@
             [ngClass]="{
               'border-s400 text-s500 hover:bg-s100':
                 isEditor === true &&
-                nav?.repoType !== repoTypeEnum.Production &&
+                nav?.repoType !== 'production' &&
                 needSave === false,
               'border-s300 text-s400 cursor-default':
                 isEditor === false ||
-                nav?.repoType === repoTypeEnum.Production ||
+                nav?.repoType === 'production' ||
                 needSave === true
             }"
             (click)="newFileClick.emit()"
             [disabled]="
               isEditor === false ||
-              nav?.repoType === repoTypeEnum.Production ||
+              nav?.repoType === 'production' ||
               needSave === true
             "
           >
@@ -99,7 +96,7 @@
 
       <div
         class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
-        *ngIf="builderLeft === builderLeftTree"
+        *ngIf="builderLeft === 'Tree'"
       >
         <ng-scrollbar
           class="ml-6"
@@ -261,11 +258,11 @@
 
                       <div
                         class="ml-3 h-9 w-9 flex-shrink-0"
-                        *ngIf="nav.repoType === repoTypeEnum.Production"
+                        *ngIf="nav.repoType === 'production'"
                       ></div>
 
                       <div
-                        *ngIf="nav.repoType !== repoTypeEnum.Production"
+                        *ngIf="nav.repoType !== 'production'"
                         class="text-s1 invisible ml-3 flex flex-shrink-0 group-hover:visible"
                       >
                         <m-folder-options
@@ -291,7 +288,7 @@
 </div>
 
 <div
-  *ngIf="builderLeft !== builderLeftTree && builderLeft !== builderLeftInfo"
+  *ngIf="builderLeft !== 'Tree' && builderLeft !== 'Info'"
   class="bg-m0 flex h-full w-full flex-grow rounded shadow"
 >
   <div class="text-s1 mt-6 flex w-full flex-col text-base">
@@ -304,9 +301,8 @@
           <div
             class="flex select-none items-center text-lg"
             [ngClass]="{
-              'text-m500 font-semibold':
-                builderLeft === builderLeftChangesToCommit,
-              'text-s500': builderLeft !== builderLeftChangesToCommit
+              'text-m500 font-semibold': builderLeft === 'ChangesToCommit',
+              'text-s500': builderLeft !== 'ChangesToCommit'
             }"
           >
             To commit ({{ repo?.changesToCommit?.length }})
@@ -331,9 +327,8 @@
           <div
             class="flex select-none items-center text-lg"
             [ngClass]="{
-              'text-m500 font-semibold':
-                builderLeft === builderLeftChangesToPush,
-              'text-s500': builderLeft !== builderLeftChangesToPush
+              'text-m500 font-semibold': builderLeft === 'ChangesToPush',
+              'text-s500': builderLeft !== 'ChangesToPush'
             }"
           >
             To push<ng-container *ngIf="!(repo?.changesToCommit?.length > 0)">
@@ -357,7 +352,7 @@
           <div
             class="mt-4 h-full w-full"
             *ngIf="
-              builderLeft === builderLeftChangesToCommit &&
+              builderLeft === 'ChangesToCommit' &&
               repo?.changesToCommit?.length > 0
             "
           >
@@ -408,8 +403,7 @@
           <div
             class="mt-4 h-full w-full"
             *ngIf="
-              builderLeft === builderLeftChangesToPush &&
-              repo?.changesToPush?.length > 0
+              builderLeft === 'ChangesToPush' && repo?.changesToPush?.length > 0
             "
           >
             <div
@@ -453,7 +447,7 @@
 
         <div
           *ngIf="
-            builderLeft === builderLeftChangesToCommit &&
+            builderLeft === 'ChangesToCommit' &&
             repo?.changesToCommit?.length === 0
           "
           class="flex h-full w-full flex-col items-center justify-center"
@@ -464,7 +458,7 @@
 
         <div
           *ngIf="
-            builderLeft === builderLeftChangesToPush &&
+            builderLeft === 'ChangesToPush' &&
             repo?.changesToPush?.length === 0 &&
             repo.repoStatus !== repoStatusNeedPush &&
             repo?.changesToCommit?.length > 0
@@ -476,7 +470,7 @@
 
         <div
           *ngIf="
-            builderLeft === builderLeftChangesToPush &&
+            builderLeft === 'ChangesToPush' &&
             repo?.changesToPush?.length === 0 &&
             repo.repoStatus !== repoStatusNeedPush &&
             !(repo?.changesToCommit?.length > 0)
@@ -489,7 +483,7 @@
 
         <div
           *ngIf="
-            builderLeft === builderLeftChangesToPush &&
+            builderLeft === 'ChangesToPush' &&
             repo?.changesToPush?.length === 0 &&
             repo.repoStatus === repoStatusNeedPush
           "
@@ -506,7 +500,7 @@
 </div>
 
 <m-session-info
-  *ngIf="builderLeft === builderLeftInfo"
+  *ngIf="builderLeft === 'Info'"
   class="flex h-full w-full flex-grow"
 ></m-session-info>
 

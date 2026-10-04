@@ -30,13 +30,13 @@
                 >Remote Repo Default Branch</div
               >
               <div
-                *ngIf="project?.remoteType === remoteTypeGitClone"
+                *ngIf="project?.remoteType === 'GitClone'"
                 class="flex h-16 select-none items-center justify-end font-semibold"
                 >Remote Repo Git Url</div
               >
               <div
                 class="flex h-16 select-none items-center justify-end font-semibold"
-                *ngIf="project?.remoteType === remoteTypeGitClone"
+                *ngIf="project?.remoteType === 'GitClone'"
                 >Remote Repo Deploy Public Key</div
               >
               <div class="flex items-center justify-end font-semibold"></div>
@@ -82,7 +82,7 @@
 
               <div
                 class="flex h-16 flex-row items-center"
-                *ngIf="project?.remoteType === remoteTypeGitClone"
+                *ngIf="project?.remoteType === 'GitClone'"
               >
                 <div
                   class="flex"
@@ -114,7 +114,7 @@
 
               <div
                 class="flex min-h-16 flex-row items-start pt-[18px]"
-                *ngIf="project?.remoteType === remoteTypeGitClone"
+                *ngIf="project?.remoteType === 'GitClone'"
               >
                 <div
                   class="flex items-center"

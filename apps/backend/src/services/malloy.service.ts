@@ -9,11 +9,9 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import type { QueryOperation } from '#common/types/backend/parts/query-operation';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { makeMalloyConnections } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { makeMalloyQuery } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
@@ -40,7 +38,7 @@ export class MalloyService {
     projectId: string;
     envId: string;
     structId: string;
-    mconfigParentType: MconfigParentTypeEnum;
+    mconfigParentType: MconfigParentType;
     mconfigParentId: string;
     user: UserTab;
     model: Model;
@@ -113,10 +111,10 @@ export class MalloyService {
       connection.close().catch(er => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_MALLOY_CONNECTION_CLOSE_ERROR,
+            message: 'BACKEND_MALLOY_CONNECTION_CLOSE_ERROR',
             originalError: er
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });

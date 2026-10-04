@@ -4,28 +4,24 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { STORE_FIELD_DETAIL_VALUES } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
-let func = FuncEnum.CheckStoreFieldDetail;
+let func: Func = 'build-field/check-store-field-detail';
 
 export function checkStoreFieldDetail(item: {
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileStore[], never> {
   let { caller, structId, cs } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newEntities: FileStore[] = [];
 
@@ -33,13 +29,13 @@ export function checkStoreFieldDetail(item: {
     let errorsOnStart = item.errors.length;
 
     x.fields
-      .filter(field => field.fieldClass !== FieldClassEnum.Filter)
+      .filter(field => field.fieldClass !== 'filter')
       .forEach(field => {
         if (isDefined(field.detail) && isUndefined(field.time_group)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.STORE_FIELD_DETAIL_WITHOUT_TIME_GROUP,
-              message: `store field ${ParameterEnum.TimeGroup} must be specified if field ${ParameterEnum.Detail} specified`,
+              title: 'STORE_FIELD_DETAIL_WITHOUT_TIME_GROUP',
+              message: `store field time_group must be specified if field detail specified`,
               lines: [
                 {
                   line: field.detail_line_num,
@@ -58,8 +54,8 @@ export function checkStoreFieldDetail(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.STORE_FIELD_WRONG_DETAIL,
-              message: `store field ${ParameterEnum.Detail} value "${field.detail}" is not valid`,
+              title: 'STORE_FIELD_WRONG_DETAIL',
+              message: `store field detail value "${field.detail}" is not valid`,
               lines: [
                 {
                   line: field.detail_line_num,
@@ -84,7 +80,7 @@ export function checkStoreFieldDetail(item: {
       x.fields
         .filter(
           field =>
-            field.fieldClass !== FieldClassEnum.Filter &&
+            field.fieldClass !== 'filter' &&
             isDefined(field.detail) &&
             isDefined(field.time_group)
         )
@@ -113,9 +109,8 @@ export function checkStoreFieldDetail(item: {
         .forEach(pair => {
           item.errors.push(
             new BmError({
-              title:
-                ErTitleEnum.STORE_FIELD_DUPLICATE_PAIR_OF_DETAIL_AND_TIME_GROUP,
-              message: `store field ${ParameterEnum.Detail} must be unique for each ${ParameterEnum.TimeGroup}`,
+              title: 'STORE_FIELD_DUPLICATE_PAIR_OF_DETAIL_AND_TIME_GROUP',
+              message: `store field detail must be unique for each time_group`,
               lines: [
                 ...pair.timeGroupLineNums.map(y => ({
                   line: y,
@@ -138,8 +133,8 @@ export function checkStoreFieldDetail(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

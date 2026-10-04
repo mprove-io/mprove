@@ -20,7 +20,7 @@ import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
 
@@ -114,7 +114,7 @@ export class GetQueryController {
 
     if (mconfig.queryId !== queryId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MCONFIG_QUERY_ID_MISMATCH
+        message: 'BACKEND_MCONFIG_QUERY_ID_MISMATCH'
       });
     }
 

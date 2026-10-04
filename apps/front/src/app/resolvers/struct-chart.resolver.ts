@@ -14,11 +14,10 @@ import {
   PATH_ORG,
   PATH_PROJECT
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
 import { MemberQuery } from '../queries/member.query';
@@ -47,7 +46,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let timezoneParam: TimeSpecEnum = route.queryParams?.timezone;
+    let timezoneParam: TimeSpec = route.queryParams?.timezone;
 
     let uiState = this.uiQuery.getValue();
     let structState = this.structQuery.getValue();
@@ -146,7 +145,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
             return true;
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

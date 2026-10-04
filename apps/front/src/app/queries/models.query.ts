@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import { BaseQuery } from './base.query';
 
 export class ModelsState {

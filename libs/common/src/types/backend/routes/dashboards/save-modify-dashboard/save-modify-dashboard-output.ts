@@ -3,11 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DashboardUnit,
   zDashboardUnit
-} from '#common/types/backend/parts/dashboard-unit';
+} from '#common/types/backend/parts/dashboard/dashboard-unit';
 import {
   type DashboardX,
   zDashboardX
-} from '#common/types/backend/parts/dashboard-x';
+} from '#common/types/backend/parts/dashboard/dashboard-x';
 import {
   type SpaceNode,
   zSpaceNode

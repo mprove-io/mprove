@@ -3,15 +3,15 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildField } from '#blockml/functions/build-field/build-field';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { buildMetricsNext } from './build-metrics-next/build-metrics-next';
@@ -62,7 +62,7 @@ export function buildCompiledModels(item: {
               projectId: v.projectId,
               errors: v.errors,
               structId: v.structId,
-              caller: CallerEnum.BuildModStart,
+              caller: 'BuildModStart',
               cs: v.cs
             })
     ),
@@ -76,7 +76,7 @@ export function buildCompiledModels(item: {
               presets: v.presets,
               structId: v.structId,
               errors: v.errors,
-              caller: CallerEnum.BuildStoreStart,
+              caller: 'BuildStoreStart',
               cs: v.cs
             })
     ),
@@ -90,7 +90,7 @@ export function buildCompiledModels(item: {
               projectConfig: v.projectConfig,
               structId: v.structId,
               errors: v.errors,
-              caller: CallerEnum.BuildStoreField,
+              caller: 'BuildStoreField',
               cs: v.cs
             })
     ),
@@ -104,7 +104,7 @@ export function buildCompiledModels(item: {
               spaces: v.spaces,
               structId: v.structId,
               errors: v.errors,
-              caller: CallerEnum.BuildStoreNext,
+              caller: 'BuildStoreNext',
               cs: v.cs
             })
     ),
@@ -132,7 +132,7 @@ export function buildCompiledModels(item: {
               stores: v.compiledStores,
               structId: v.structId,
               errors: v.errors,
-              caller: CallerEnum.BuildModelMetric,
+              caller: 'BuildModelMetric',
               cs: v.cs
             })
     ),

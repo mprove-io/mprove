@@ -1,4 +1,4 @@
-import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 
 export function spaceUnitToChartUnit(item: {

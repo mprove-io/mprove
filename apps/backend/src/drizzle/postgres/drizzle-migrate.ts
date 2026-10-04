@@ -5,13 +5,12 @@ import pg from 'pg';
 
 const { Client } = pg;
 import 'reflect-metadata';
-import { BoolEnum } from '#common/enums/bool.enum';
 
 async function start() {
   let clientConfig: ClientConfig = {
     connectionString: process.env.CLI_DRIZZLE_POSTGRES_DATABASE_URL,
     ssl:
-      process.env.CLI_DRIZZLE_IS_POSTGRES_TLS === BoolEnum.TRUE
+      process.env.CLI_DRIZZLE_IS_POSTGRES_TLS === 'TRUE'
         ? {
             rejectUnauthorized: false
           }

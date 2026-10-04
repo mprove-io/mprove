@@ -1,9 +1,8 @@
 import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BaseProject } from '#common/types/backend/parts/base-project';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToDiskCreateFolderRequest } from '#common/types/disk/routes/folders/create-folder/create-folder-request';
 import type { ToDiskCreateFolderResponse } from '#common/types/disk/routes/folders/create-folder/create-folder-response';
 import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
@@ -57,7 +56,7 @@ test('1', async t => {
     let baseProject: BaseProject = {
       orgId: orgId,
       projectId: projectId,
-      remoteType: ProjectRemoteTypeEnum.Managed,
+      remoteType: 'Managed',
       st: diskTabService.encrypt({ data: projectSt }),
       lt: diskTabService.encrypt({ data: projectLt })
     };
@@ -93,7 +92,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleDisk({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });

@@ -22,7 +22,7 @@ import { makeFullName } from '#backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';
 import type { ServerUsersMembershipItem } from '#common/types/backend/parts/users/server-users-membership-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -57,7 +57,7 @@ export class GetServerUsersController {
 
     if (user.email !== mproveAdminEmail) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_IS_NOT_SERVER_ADMIN
+        message: 'BACKEND_USER_IS_NOT_SERVER_ADMIN'
       });
     }
 

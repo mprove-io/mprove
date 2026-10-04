@@ -12,18 +12,14 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ModelMetricX } from '#common/types/backend/parts/model-metric-x';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -36,12 +32,12 @@ export class MetricNode {
   id: string;
   isTop: boolean;
   topLabel: string;
-  connectionType: ConnectionTypeEnum;
+  connectionType: ConnectionType;
   partNodeLabel: string;
   partFieldLabel: string;
   timeLabel: string;
   isField: boolean;
-  fieldResult: FieldResultEnum;
+  fieldResult: FieldResult;
   isSelected: boolean;
   metric: ModelMetricX;
   children: MetricNode[];
@@ -53,8 +49,6 @@ export class MetricNode {
   templateUrl: './metrics-tree.component.html'
 })
 export class MetricsTreeComponent implements AfterViewInit {
-  nodeClassMeasure = FieldClassEnum.Measure;
-
   metrics: ModelMetricX[];
 
   metricNodes: MetricNode[] = [];
@@ -198,7 +192,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   }
 
   nodeOnClick(node: TreeNode) {
-    if (node.data.nodeClass === FieldClassEnum.Filter) {
+    if (node.data.nodeClass === 'filter') {
       return;
     }
     node.toggleActivated();
@@ -221,14 +215,14 @@ export class MetricsTreeComponent implements AfterViewInit {
         reportSelectedNodes.length === 1
           ? reportSelectedNodes[0].data.rowId
           : undefined,
-      rowType: RowTypeEnum.Metric,
+      rowType: 'metric',
       metricId: node.data.metric.metricId,
       showChart: false
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.AddMetric,
+      changeType: 'AddMetric',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -251,7 +245,7 @@ export class MetricsTreeComponent implements AfterViewInit {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: fieldLineNumber
     });

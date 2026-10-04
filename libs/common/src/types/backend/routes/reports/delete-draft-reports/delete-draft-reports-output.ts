@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ReportUnit,
   zReportUnit
-} from '#common/types/backend/parts/report-unit';
+} from '#common/types/backend/parts/report/report-unit';
 
 export type ToBackendDeleteDraftReportsOutput = {
   reportUnitDrafts: ReportUnit[];

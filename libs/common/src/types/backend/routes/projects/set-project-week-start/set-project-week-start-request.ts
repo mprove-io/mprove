@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+import { zProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 
 export type ToBackendSetProjectWeekStartRequest = {
   operation: 'setProjectWeekStart';
@@ -8,7 +9,7 @@ export type ToBackendSetProjectWeekStartRequest = {
   idempotencyKey: string;
   input: {
     projectId: string;
-    weekStart: ProjectWeekStartEnum.Sunday | ProjectWeekStartEnum.Monday;
+    weekStart: ProjectWeekStart;
   };
 };
 
@@ -20,7 +21,7 @@ export let zToBackendSetProjectWeekStartRequest = z
     input: z
       .object({
         projectId: z.string(),
-        weekStart: z.enum(ProjectWeekStartEnum)
+        weekStart: zProjectWeekStart
       })
       .meta({ id: 'ToBackendSetProjectWeekStartInput' })
   })

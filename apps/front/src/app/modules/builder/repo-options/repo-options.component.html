@@ -32,16 +32,16 @@
 
     <div
       tp="Not available for Session repos"
-      [tpIsEnabled]="nav?.repoType === repoTypeSession"
+      [tpIsEnabled]="nav?.repoType === 'session'"
     >
       <button
         data-cy="repoOptionsRevertRepoToRemoteButton"
         class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'text-s400 cursor-default':
-            needSave === true || nav?.repoType === repoTypeSession
+            needSave === true || nav?.repoType === 'session'
         }"
-        [disabled]="needSave === true || nav?.repoType === repoTypeSession"
+        [disabled]="needSave === true || nav?.repoType === 'session'"
         (click)="t1.hide(); revertToRemote($event)"
         >Revert to Remote</button
       >

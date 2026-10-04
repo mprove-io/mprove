@@ -12,10 +12,6 @@ import {
   PATH_SESSION
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { BuilderRightEnum } from '#common/enums/builder-right.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetRepoRequest } from '#common/types/backend/routes/repos/get-repo/get-repo-request';
 import type { ToBackendGetRepoResponse } from '#common/types/backend/routes/repos/get-repo/get-repo-response';
@@ -23,6 +19,8 @@ import type { ToBackendPullRepoRequest } from '#common/types/backend/routes/repo
 import type { ToBackendPullRepoResponse } from '#common/types/backend/routes/repos/pull-repo/pull-repo-response';
 import type { ToBackendPushRepoRequest } from '#common/types/backend/routes/repos/push-repo/push-repo-request';
 import type { ToBackendPushRepoResponse } from '#common/types/backend/routes/repos/push-repo/push-repo-response';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
+import type { BuilderRight } from '#common/types/front/builder/builder-right';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -48,15 +46,6 @@ import { CHAT_SCOPE } from '../chat/chat-scope.token';
 })
 export class BuilderComponent implements OnInit, OnDestroy {
   pageTitle = BUILDER_PAGE_TITLE;
-
-  builderLeftTree = BuilderLeftEnum.Tree;
-  builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
-  builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
-  builderLeftInfo = BuilderLeftEnum.Info;
-
-  repoTypeEnum = RepoTypeEnum;
-
-  archiveReasonCommit = ArchiveReasonEnum.Commit;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -124,22 +113,18 @@ export class BuilderComponent implements OnInit, OnDestroy {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  builderLeft = BuilderLeftEnum.Tree;
+  builderLeft: BuilderLeft = 'Tree';
   builderLeft$ = this.uiQuery.builderLeft$.pipe(
     tap(x => (this.builderLeft = x))
   );
 
-  builderRight = BuilderRightEnum.Validation;
+  builderRight: BuilderRight = 'Validation';
   builderRight$ = this.uiQuery.builderRight$.pipe(
     tap(x => {
       this.builderRight = x;
       this.cd.detectChanges();
     })
   );
-
-  builderRightSessions = BuilderRightEnum.Sessions;
-  builderRightSchema = BuilderRightEnum.Schema;
-  builderRightValidation = BuilderRightEnum.Validation;
 
   isEditor: boolean;
   isEditor$ = this.memberQuery.isEditor$.pipe(
@@ -224,8 +209,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
     this.isSessionRoute = ar.includes(PATH_SESSION);
 
     let urlTree = this.router.parseUrl(this.router.url);
-    let left: BuilderLeftEnum = urlTree.queryParams['left'];
-    let right: BuilderRightEnum = urlTree.queryParams['right'];
+    let left: BuilderLeft = urlTree.queryParams['left'];
+    let right: BuilderRight = urlTree.queryParams['right'];
 
     if (isDefined(left)) {
       this.uiQuery.updatePart({ builderLeft: left });
@@ -235,29 +220,29 @@ export class BuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  setBuilderRight(tab: BuilderRightEnum) {
+  setBuilderRight(tab: BuilderRight) {
     if (this.secondFileNodeId) {
       this.uiQuery.updatePart({ secondFileNodeId: undefined });
     }
 
     let isChangesLeft =
-      (this.builderLeft === BuilderLeftEnum.ChangesToCommit ||
-        this.builderLeft === BuilderLeftEnum.ChangesToPush) &&
+      (this.builderLeft === 'ChangesToCommit' ||
+        this.builderLeft === 'ChangesToPush') &&
       isDefined(this.file.fileId);
 
     let urlTree = this.router.parseUrl(this.router.url);
 
     if (tab === this.builderRight) {
       if (isChangesLeft) {
-        this.uiQuery.updatePart({ builderLeft: BuilderLeftEnum.Tree });
-        urlTree.queryParams['left'] = BuilderLeftEnum.Tree;
+        this.uiQuery.updatePart({ builderLeft: 'Tree' });
+        urlTree.queryParams['left'] = 'Tree';
         this.location.replaceState(this.router.serializeUrl(urlTree));
       }
     } else {
       if (isChangesLeft) {
         this.uiQuery.updatePart({
           builderRight: tab,
-          builderLeft: BuilderLeftEnum.Tree
+          builderLeft: 'Tree'
         });
       } else {
         this.uiQuery.updatePart({ builderRight: tab });
@@ -265,7 +250,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
       urlTree.queryParams['right'] = tab;
       if (isChangesLeft) {
-        urlTree.queryParams['left'] = BuilderLeftEnum.Tree;
+        urlTree.queryParams['left'] = 'Tree';
       }
       this.location.replaceState(this.router.serializeUrl(urlTree));
     }
@@ -274,13 +259,13 @@ export class BuilderComponent implements OnInit, OnDestroy {
   changesOnClick() {
     let hasChangesToPush = this.repo?.changesToPush?.length > 0;
     if (hasChangesToPush) {
-      this.setBuilderLeft(BuilderLeftEnum.ChangesToPush);
+      this.setBuilderLeft('ChangesToPush');
     } else {
-      this.setBuilderLeft(BuilderLeftEnum.ChangesToCommit);
+      this.setBuilderLeft('ChangesToCommit');
     }
   }
 
-  setBuilderLeft(x: BuilderLeftEnum) {
+  setBuilderLeft(x: BuilderLeft) {
     if (this.needSave === true) {
       return;
     }
@@ -299,9 +284,9 @@ export class BuilderComponent implements OnInit, OnDestroy {
       let urlTree = this.router.parseUrl(this.router.url);
       urlTree.queryParams['left'] = x;
       this.location.replaceState(this.router.serializeUrl(urlTree));
-    } else if (x === BuilderLeftEnum.Tree || x === BuilderLeftEnum.Info) {
+    } else if (x === 'Tree' || x === 'Info') {
       if (
-        this.nav.repoType === RepoTypeEnum.Session &&
+        this.nav.repoType === 'session' &&
         isDefined(this.session?.sessionId)
       ) {
         this.navigateService.navigateToSession({

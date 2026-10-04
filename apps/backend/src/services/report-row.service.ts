@@ -4,17 +4,16 @@ import { clearRowsCache } from '#backend/functions/clear-rows-cache';
 import { processRowIds } from '#backend/functions/process-row-ids';
 import { rowIdLetterToNumber } from '#backend/functions/row-id-letter-to-number';
 import { rowIdNumberToLetter } from '#backend/functions/row-id-number-to-letter';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Listener } from '#common/types/blockml/parts/listener';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
-import type { Parameter } from '#common/types/blockml/parts/parameter';
-import type { ReportField } from '#common/types/blockml/parts/report-field';
-import type { Row } from '#common/types/blockml/parts/row';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
+import type { ReportField } from '#common/types/blockml/parts/report/report-field';
+import type { ChangeType } from '#common/types/blockml/parts/report/row/change-type';
+import type { Listener } from '#common/types/blockml/parts/report/row/listener';
+import type { Parameter } from '#common/types/blockml/parts/report/row/parameter';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 @Injectable()
 export class ReportRowService {
@@ -25,9 +24,9 @@ export class ReportRowService {
     rowIds: string[];
     metrics: ModelMetric[];
     rows: Row[];
-    changeType: ChangeTypeEnum;
+    changeType: ChangeType;
     timezone: string;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
     struct: StructTab;
     newReportFields: ReportField[];
@@ -49,7 +48,7 @@ export class ReportRowService {
 
     let processedRows: Row[] = rows.map(row => Object.assign({}, row));
 
-    if (changeType === ChangeTypeEnum.AddEmpty) {
+    if (changeType === 'AddEmpty') {
       let targetIndex: number;
 
       if (isDefined(rowChange.rowId)) {
@@ -69,7 +68,7 @@ export class ReportRowService {
 
       let newRow: Row = {
         rowId: rowId,
-        rowType: RowTypeEnum.Empty,
+        rowType: 'empty',
         name: undefined,
         metricId: undefined,
         modelId: undefined,
@@ -116,7 +115,7 @@ export class ReportRowService {
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === ChangeTypeEnum.AddHeader) {
+    } else if (changeType === 'AddHeader') {
       let targetIndex: number;
 
       if (isDefined(rowChange.rowId)) {
@@ -136,7 +135,7 @@ export class ReportRowService {
 
       let newRow: Row = {
         rowId: rowId,
-        rowType: RowTypeEnum.Header,
+        rowType: 'header',
         name: rowChange.name,
         metricId: undefined,
         modelId: undefined,
@@ -183,7 +182,7 @@ export class ReportRowService {
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === ChangeTypeEnum.AddFormula) {
+    } else if (changeType === 'AddFormula') {
       let targetIndex: number;
 
       if (isDefined(rowChange.rowId)) {
@@ -203,7 +202,7 @@ export class ReportRowService {
 
       let newRow: Row = {
         rowId: rowId,
-        rowType: RowTypeEnum.Formula,
+        rowType: 'formula',
         name: rowChange.name,
         metricId: undefined,
         modelId: undefined,
@@ -250,7 +249,7 @@ export class ReportRowService {
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === ChangeTypeEnum.AddMetric) {
+    } else if (changeType === 'AddMetric') {
       let targetIndex: number;
 
       if (isDefined(rowChange.rowId)) {
@@ -321,7 +320,7 @@ export class ReportRowService {
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === ChangeTypeEnum.EditInfo) {
+    } else if (changeType === 'EditInfo') {
       let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
       let editRow: Row = Object.assign({}, pRow, <Row>{
@@ -343,7 +342,7 @@ export class ReportRowService {
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );
-    } else if (changeType === ChangeTypeEnum.EditFormula) {
+    } else if (changeType === 'EditFormula') {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [rowChange.rowId],
@@ -368,7 +367,7 @@ export class ReportRowService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === ChangeTypeEnum.EditParameters) {
+    } else if (changeType === 'EditParameters') {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [],
@@ -397,7 +396,7 @@ export class ReportRowService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === ChangeTypeEnum.EditListeners) {
+    } else if (changeType === 'EditListeners') {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [],
@@ -475,7 +474,7 @@ export class ReportRowService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === ChangeTypeEnum.Delete) {
+    } else if (changeType === 'Delete') {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: rowIds,
@@ -493,7 +492,7 @@ export class ReportRowService {
         targetRowIds: processedRows.map(pRow => pRow.rowId),
         replaceWithUndef: rowIds
       });
-    } else if (changeType === ChangeTypeEnum.Move) {
+    } else if (changeType === 'Move') {
       processedRows = processRowIds({
         rows: processedRows,
         targetRowIds: rowIds

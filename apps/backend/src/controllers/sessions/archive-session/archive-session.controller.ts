@@ -13,9 +13,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { SessionArchiveService } from '#backend/services/session/session-archive.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendArchiveSessionOutput } from '#common/types/backend/routes/sessions/archive-session/archive-session-output';
 
@@ -50,13 +48,13 @@ export class ArchiveSessionController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 
-    if (session.type !== SessionTypeEnum.Editor) {
+    if (session.type !== 'Editor') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EDITOR
+        message: 'BACKEND_SESSION_TYPE_IS_NOT_EDITOR'
       });
     }
 
@@ -66,7 +64,7 @@ export class ArchiveSessionController {
 
     let sessionApi = await this.sessionArchiveService.archiveSession({
       session: session,
-      archiveReason: ArchiveReasonEnum.User,
+      archiveReason: 'User',
       e2bApiKey: project.e2bApiKey
     });
 

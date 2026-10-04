@@ -28,7 +28,7 @@
         <div
           class="ml-1 truncate"
           [ngClass]="{
-            'text-yellow-700': item.operator === fractionOperatorEnum.And
+            'text-yellow-700': item.operator === 'And'
           }"
           >{{ item.label }}</div
         >
@@ -38,7 +38,7 @@
         <div
           class="flex flex-row"
           [ngClass]="{
-            'text-yellow-700': item.operator === fractionOperatorEnum.And
+            'text-yellow-700': item.operator === 'And'
           }"
         >
           <div class="ml-1">{{ item.operator | uppercase }} -</div>
@@ -51,8 +51,8 @@
   <form
     [formGroup]="numberValuesForm"
     *ngIf="
-      fraction.type === fractionTypeEnum.NumberIsEqualTo ||
-      fraction.type === fractionTypeEnum.NumberIsNotEqualTo
+      fraction.type === 'NumberIsEqualTo' ||
+      fraction.type === 'NumberIsNotEqualTo'
     "
   >
     <div
@@ -83,14 +83,14 @@
   <form
     [formGroup]="numberSingleValueForm"
     *ngIf="
-      fraction.type === fractionTypeEnum.NumberIsGreaterThan ||
-      fraction.type === fractionTypeEnum.NumberIsNotGreaterThan ||
-      fraction.type === fractionTypeEnum.NumberIsGreaterThanOrEqualTo ||
-      fraction.type === fractionTypeEnum.NumberIsNotGreaterThanOrEqualTo ||
-      fraction.type === fractionTypeEnum.NumberIsLessThan ||
-      fraction.type === fractionTypeEnum.NumberIsNotLessThan ||
-      fraction.type === fractionTypeEnum.NumberIsLessThanOrEqualTo ||
-      fraction.type === fractionTypeEnum.NumberIsNotLessThanOrEqualTo
+      fraction.type === 'NumberIsGreaterThan' ||
+      fraction.type === 'NumberIsNotGreaterThan' ||
+      fraction.type === 'NumberIsGreaterThanOrEqualTo' ||
+      fraction.type === 'NumberIsNotGreaterThanOrEqualTo' ||
+      fraction.type === 'NumberIsLessThan' ||
+      fraction.type === 'NumberIsNotLessThan' ||
+      fraction.type === 'NumberIsLessThanOrEqualTo' ||
+      fraction.type === 'NumberIsNotLessThanOrEqualTo'
     "
   >
     <div
@@ -121,8 +121,8 @@
 
   <div
     *ngIf="
-      fraction.type === fractionTypeEnum.NumberIsBetween ||
-      fraction.type === fractionTypeEnum.NumberIsNotBetween
+      fraction.type === 'NumberIsBetween' ||
+      fraction.type === 'NumberIsNotBetween'
     "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
@@ -164,8 +164,8 @@
   <form
     [formGroup]="numberBetweenForm"
     *ngIf="
-      fraction.type === fractionTypeEnum.NumberIsBetween ||
-      fraction.type === fractionTypeEnum.NumberIsNotBetween
+      fraction.type === 'NumberIsBetween' ||
+      fraction.type === 'NumberIsNotBetween'
     "
     class="flex flex-row space-x-5"
   >

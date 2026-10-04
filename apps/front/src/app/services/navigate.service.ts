@@ -26,8 +26,8 @@ import {
   PATH_SELECT_FILE,
   PATH_SESSION
 } from '#common/constants/top';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { makeQueryParams } from '../functions/make-query-params';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -82,7 +82,7 @@ export class NavigateService {
   async navigateToBuilder(item?: {
     repoId?: string;
     branchId?: string;
-    left?: BuilderLeftEnum;
+    left?: BuilderLeft;
     right?: string;
     newSession?: boolean;
   }) {
@@ -91,9 +91,7 @@ export class NavigateService {
     let left = item?.left || uiState.builderLeft;
     let right = item?.right || uiState.builderRight;
 
-    let isLeftChanges =
-      left === BuilderLeftEnum.ChangesToCommit ||
-      left === BuilderLeftEnum.ChangesToPush;
+    let isLeftChanges = left === 'ChangesToCommit' || left === 'ChangesToPush';
 
     let centerPath =
       item?.newSession === true
@@ -164,7 +162,7 @@ export class NavigateService {
   }
 
   async navigateToFileLine(item: {
-    builderLeft?: BuilderLeftEnum;
+    builderLeft?: BuilderLeft;
     encodedFileId: string;
     lineNumber?: number;
   }) {
@@ -423,7 +421,7 @@ export class NavigateService {
     repoId: string;
     branchId: string;
     envId: string;
-    left?: BuilderLeftEnum;
+    left?: BuilderLeft;
     right?: string;
   }) {
     let { sessionId, repoId, branchId, envId } = item;

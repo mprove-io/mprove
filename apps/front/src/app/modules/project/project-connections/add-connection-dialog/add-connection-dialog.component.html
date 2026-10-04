@@ -108,7 +108,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addBigqueryForm"
-      *ngIf="addForm.controls['type'].value === typeBigQuery"
+      *ngIf="addForm.controls['type'].value === 'BigQuery'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -277,7 +277,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addMotherduckForm"
-      *ngIf="addForm.controls['type'].value === typeMotherDuck"
+      *ngIf="addForm.controls['type'].value === 'MotherDuck'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -383,7 +383,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addPostgresForm"
-      *ngIf="addForm.controls['type'].value === typePostgreSQL"
+      *ngIf="addForm.controls['type'].value === 'PostgreSQL'"
     >
       <div>
         <div class="mb-6 flex flex-row items-center">
@@ -554,7 +554,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addMysqlForm"
-      *ngIf="addForm.controls['type'].value === typeMySQL"
+      *ngIf="addForm.controls['type'].value === 'MySQL'"
     >
       <div>
         <div class="flex flex-row items-center">
@@ -708,7 +708,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addTrinoForm"
-      *ngIf="addForm.controls['type'].value === typeTrino"
+      *ngIf="addForm.controls['type'].value === 'Trino'"
     >
       <div>
         <div class="flex flex-row items-center">
@@ -845,7 +845,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addPrestoForm"
-      *ngIf="addForm.controls['type'].value === typePresto"
+      *ngIf="addForm.controls['type'].value === 'Presto'"
     >
       <div>
         <div class="flex flex-row items-center">
@@ -1024,7 +1024,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addSnowflakeForm"
-      *ngIf="addForm.controls['type'].value === typeSnowFlake"
+      *ngIf="addForm.controls['type'].value === 'SnowFlake'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Account</div>
@@ -1142,7 +1142,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addDatabricksForm"
-      *ngIf="addForm.controls['type'].value === typeDatabricks"
+      *ngIf="addForm.controls['type'].value === 'Databricks'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
@@ -1222,10 +1222,7 @@
       </div>
 
       <ng-container
-        *ngIf="
-          addDatabricksForm.controls['authType'].value ===
-          databricksAuthTypeOAuthM2M
-        "
+        *ngIf="addDatabricksForm.controls['authType'].value === 'OAuthM2M'"
       >
         <div class="flex flex-row items-center">
           <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -1280,7 +1277,7 @@
       <div
         class="flex flex-row items-center"
         *ngIf="
-          addDatabricksForm.controls['authType'].value === databricksAuthTypePAT
+          addDatabricksForm.controls['authType'].value === 'PersonalAccessToken'
         "
       >
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Token</div>
@@ -1359,7 +1356,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addApiForm"
-      *ngIf="addForm.controls['type'].value === typeApi"
+      *ngIf="addForm.controls['type'].value === 'Api'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Base URL</div>
@@ -1442,7 +1439,7 @@
     <form
       class="flex w-80 flex-col text-base"
       [formGroup]="addGoogleApiForm"
-      *ngIf="addForm.controls['type'].value === typeGoogleApi"
+      *ngIf="addForm.controls['type'].value === 'GoogleApi'"
     >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -1624,8 +1621,8 @@
 
       <div
         *ngIf="
-          addForm.controls['type'].value !== typeGoogleApi &&
-          addForm.controls['type'].value !== typeApi
+          addForm.controls['type'].value !== 'GoogleApi' &&
+          addForm.controls['type'].value !== 'Api'
         "
         class="ml-5 flex flex-shrink-0 flex-col items-end gap-2"
       >

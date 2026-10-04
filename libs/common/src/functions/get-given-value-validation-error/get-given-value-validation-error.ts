@@ -1,7 +1,7 @@
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
 
 export function getGivenValueValidationError(item: {
-  type: GivenTypeEnum;
+  type: GivenType;
   isMultiple: boolean;
   values: string[];
 }) {
@@ -17,13 +17,13 @@ export function getGivenValueValidationError(item: {
 
   let invalidValue = values.find(value => {
     switch (type) {
-      case GivenTypeEnum.String:
+      case 'String':
         return false;
-      case GivenTypeEnum.Number:
+      case 'Number':
         return !/^-?(\d+(\.\d+)?|\.\d+)([eE][+-]?\d+)?$/.test(value);
-      case GivenTypeEnum.Boolean:
+      case 'Boolean':
         return value !== 'true' && value !== 'false';
-      case GivenTypeEnum.Date: {
+      case 'Date': {
         let date = new Date(`${value}T00:00:00.000Z`);
 
         return (
@@ -31,7 +31,7 @@ export function getGivenValueValidationError(item: {
           date.toISOString().slice(0, 10) !== value
         );
       }
-      case GivenTypeEnum.Timestamp: {
+      case 'Timestamp': {
         let hasTimezoneOffset = /Z$|[+-]\d{2}:?\d{2}$/.test(value);
         if (hasTimezoneOffset) {
           return true;
@@ -70,15 +70,15 @@ export function getGivenValueValidationError(item: {
   }
 
   switch (type) {
-    case GivenTypeEnum.String:
+    case 'String':
       return undefined;
-    case GivenTypeEnum.Number:
+    case 'Number':
       return `Expected numeric value, got '${invalidValue}'`;
-    case GivenTypeEnum.Boolean:
+    case 'Boolean':
       return `Expected 'true' or 'false', got '${invalidValue}'`;
-    case GivenTypeEnum.Date:
+    case 'Date':
       return `Expected date as YYYY-MM-DD, got '${invalidValue}'`;
-    case GivenTypeEnum.Timestamp:
+    case 'Timestamp':
       return `Expected timestamp YYYY-MM-DD HH:MM:SS, got '${invalidValue}'`;
   }
 }

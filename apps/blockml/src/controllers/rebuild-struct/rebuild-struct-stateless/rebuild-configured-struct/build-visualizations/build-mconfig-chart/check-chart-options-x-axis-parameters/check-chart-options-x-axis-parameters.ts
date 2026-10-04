@@ -5,30 +5,27 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartOptionsXAxisElement } from '#common/types/blockml/parts/internal/file-chart-options-x-axis';
 
-let func = FuncEnum.CheckChartOptionsXAxisParameters;
+let func: Func = 'build-mconfig-chart/check-chart-options-x-axis-parameters';
 
 export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -43,10 +40,10 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
       Object.keys(tile.options.x_axis)
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if ([ParameterEnum.Scale.toString()].indexOf(parameter) < 0) {
+          if (['scale'.toString()].indexOf(parameter) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_X_AXIS_UNKNOWN_PARAMETER,
+                title: 'OPTIONS_X_AXIS_UNKNOWN_PARAMETER',
                 message:
                   `parameter "${parameter}" cannot be used ` +
                   'inside x_axis element',
@@ -74,7 +71,7 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_X_AXIS_UNEXPECTED_LIST,
+                title: 'OPTIONS_X_AXIS_UNEXPECTED_LIST',
                 message: `parameter "${parameter}" cannot be a list`,
                 lines: [
                   {
@@ -97,7 +94,7 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_X_AXIS_UNEXPECTED_DICTIONARY,
+                title: 'OPTIONS_X_AXIS_UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" cannot be a dictionary`,
                 lines: [
                   {
@@ -115,7 +112,7 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
           }
 
           if (
-            [ParameterEnum.Scale.toString()].indexOf(parameter) > -1 &&
+            ['scale'.toString()].indexOf(parameter) > -1 &&
             !tile.options.x_axis[
               parameter as keyof FileChartOptionsXAxisElement
             ]
@@ -124,7 +121,7 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
+                title: 'OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE',
                 message: `parameter "${parameter}" must be 'true' or 'false' if specified`,
                 lines: [
                   {
@@ -149,8 +146,8 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
-              message: `parameter "${ParameterEnum.Scale}" must be 'true' or 'false' if specified`,
+              title: 'OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE',
+              message: `parameter "scale" must be 'true' or 'false' if specified`,
               lines: [
                 {
                   line: tile.options.x_axis.scale_line_num,
@@ -170,9 +167,9 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

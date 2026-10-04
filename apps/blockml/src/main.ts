@@ -10,7 +10,7 @@ import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { APP_NAME_BLOCKML } from '#common/constants/top-blockml';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { AppModule } from './app.module';
@@ -19,10 +19,10 @@ import { getConfig } from './config/get.config';
 async function bootstrap() {
   listenProcessEvents({
     tracerNodeSdk: tracerNodeSdk,
-    appTerminated: ErEnum.BLOCKML_APP_TERMINATED,
-    uncaughtException: ErEnum.BLOCKML_UNCAUGHT_EXCEPTION,
-    unhandledRejectionReason: ErEnum.BLOCKML_UNHANDLED_REJECTION_REASON,
-    unhandledRejection: ErEnum.BLOCKML_UNHANDLED_REJECTION_ERROR,
+    appTerminated: 'BLOCKML_APP_TERMINATED',
+    uncaughtException: 'BLOCKML_UNCAUGHT_EXCEPTION',
+    unhandledRejectionReason: 'BLOCKML_UNHANDLED_REJECTION_REASON',
+    unhandledRejection: 'BLOCKML_UNHANDLED_REJECTION_ERROR',
     logToConsoleFn: logToConsoleBlockml
   });
 

@@ -8,12 +8,12 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
-import type { ChartSeriesWithField } from '#common/types/front/chart-series-with-field';
-import type { EventChartSeriesElementUpdate } from '#common/types/front/event-chart-series-element-update';
-import type { EventChartToggleSeries } from '#common/types/front/event-chart-toggle-series';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig/mconfig-chart-series';
+import type { ChartSeriesWithField } from '#common/types/front/chart/chart-series-with-field';
+import type { EventChartSeriesElementUpdate } from '#common/types/front/chart/events/event-chart-series-element-update';
+import type { EventChartToggleSeries } from '#common/types/front/chart/events/event-chart-toggle-series';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartTypeItem } from '../../models/models.component';
 
@@ -44,17 +44,15 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
   seriesTypesList: ChartTypeItem[] = [
     {
       label: 'Line',
-      value: ChartTypeEnum.Line,
+      value: 'line',
       iconPath: 'assets/charts/line.svg'
     },
     {
       label: 'Bar',
-      value: ChartTypeEnum.Bar,
+      value: 'bar',
       iconPath: 'assets/charts/bar_vertical.svg'
     }
   ];
-
-  seriesTypeEnum = ChartTypeEnum;
 
   seriesTypeForm: FormGroup = this.fb.group({
     seriesType: [undefined]
@@ -78,7 +76,7 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
     });
   }
 
-  seriesTypeChange(newSeriesTypeValue?: ChartTypeEnum) {
+  seriesTypeChange(newSeriesTypeValue?: ChartType) {
     (document.activeElement as HTMLElement).blur();
 
     if (isDefined(newSeriesTypeValue)) {

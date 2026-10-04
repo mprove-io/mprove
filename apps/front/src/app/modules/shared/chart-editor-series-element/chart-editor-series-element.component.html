@@ -55,10 +55,7 @@
   <div *ngIf="isExpanded === true" class="flex flex-col">
     <div
       class="mb-5 ml-[32px] flex flex-row items-center"
-      *ngIf="
-        [seriesTypeEnum.Line, seriesTypeEnum.Bar].indexOf(seriesElement.type) >
-        -1
-      "
+      *ngIf="['line', 'bar'].indexOf(seriesElement.type) > -1"
     >
       <div class="text-s1 flex h-9 w-[50px] select-none items-center text-base"
         >Type</div
@@ -68,19 +65,19 @@
       <m-chart-line-icon
         class="h-6 w-6 cursor-pointer"
         [ngClass]="{
-          'text-m500': seriesElement?.type === seriesTypeEnum.Line,
-          'text-s500': seriesElement?.type !== seriesTypeEnum.Line
+          'text-m500': seriesElement?.type === 'line',
+          'text-s500': seriesElement?.type !== 'line'
         }"
-        (click)="seriesTypeChange(seriesTypeEnum.Line)"
+        (click)="seriesTypeChange('line')"
       ></m-chart-line-icon>
 
       <m-chart-bar-icon
         class="h-6 w-6 cursor-pointer"
         [ngClass]="{
-          'text-m500': seriesElement?.type === seriesTypeEnum.Bar,
-          'text-s500': seriesElement?.type !== seriesTypeEnum.Bar
+          'text-m500': seriesElement?.type === 'bar',
+          'text-s500': seriesElement?.type !== 'bar'
         }"
-        (click)="seriesTypeChange(seriesTypeEnum.Bar)"
+        (click)="seriesTypeChange('bar')"
       ></m-chart-bar-icon>
     </div> -->
 
@@ -126,13 +123,7 @@
     </div>
 
     <div
-      *ngIf="
-        [
-          seriesTypeEnum.Line,
-          seriesTypeEnum.Bar,
-          seriesTypeEnum.Scatter
-        ].indexOf(seriesElement.type) > -1
-      "
+      *ngIf="['line', 'bar', 'scatter'].indexOf(seriesElement.type) > -1"
       class="mb-5 ml-[32px] flex flex-row items-center"
     >
       <div class="text-s1 flex h-9 w-[50px] select-none items-center text-base"

@@ -1,34 +1,32 @@
-import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+import type { DetailUnit } from '#common/types/blockml/parts/field/detail-unit';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 export function getTimeSpecDetail(item: {
-  timeSpec: TimeSpecEnum;
-  weekStart: ProjectWeekStartEnum;
+  timeSpec: TimeSpec;
+  weekStart: ProjectWeekStart;
 }) {
   let { timeSpec, weekStart } = item;
 
-  let timeSpecDetail =
-    timeSpec === TimeSpecEnum.Years
-      ? DetailUnitEnum.Years
-      : timeSpec === TimeSpecEnum.Quarters
-        ? DetailUnitEnum.Quarters
-        : timeSpec === TimeSpecEnum.Months
-          ? DetailUnitEnum.Months
-          : timeSpec === TimeSpecEnum.Weeks &&
-              weekStart === ProjectWeekStartEnum.Monday
-            ? DetailUnitEnum.WeeksMonday
-            : timeSpec === TimeSpecEnum.Weeks &&
-                weekStart === ProjectWeekStartEnum.Sunday
-              ? DetailUnitEnum.WeeksSunday
-              : timeSpec === TimeSpecEnum.Days
-                ? DetailUnitEnum.Days
-                : timeSpec === TimeSpecEnum.Hours
-                  ? DetailUnitEnum.Hours
-                  : timeSpec === TimeSpecEnum.Minutes
-                    ? DetailUnitEnum.Minutes
-                    : timeSpec === TimeSpecEnum.Timestamps
-                      ? DetailUnitEnum.Timestamps
+  let timeSpecDetail: DetailUnit =
+    timeSpec === 'years'
+      ? 'years'
+      : timeSpec === 'quarters'
+        ? 'quarters'
+        : timeSpec === 'months'
+          ? 'months'
+          : timeSpec === 'weeks' && weekStart === 'Monday'
+            ? 'weeksMonday'
+            : timeSpec === 'weeks' && weekStart === 'Sunday'
+              ? 'weeksSunday'
+              : timeSpec === 'days'
+                ? 'days'
+                : timeSpec === 'hours'
+                  ? 'hours'
+                  : timeSpec === 'minutes'
+                    ? 'minutes'
+                    : timeSpec === 'timestamps'
+                      ? 'timestamps'
                       : undefined;
 
   return timeSpecDetail;

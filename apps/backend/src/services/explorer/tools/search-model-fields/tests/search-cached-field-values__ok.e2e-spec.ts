@@ -7,9 +7,7 @@ import type { Prep } from '#backend/interfaces/prep';
 import { SearchCachedFieldValuesService } from '#backend/services/explorer/tools/search-model-fields/search-cached-field-values.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 
 let testId = 'search-cached-field-values__ok';
@@ -88,10 +86,10 @@ test('1', async t => {
             {
               structId: structId,
               modelId: modelId,
-              modelType: ModelTypeEnum.Malloy,
+              modelType: 'Malloy',
               connectionId: connectionId,
               fieldId: fieldId,
-              fieldResult: FieldResultEnum.String,
+              fieldResult: 'string',
               schemaNameLc: 'public',
               tableNameLc: 'orders',
               columnNameLc: 'status'
@@ -144,7 +142,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -156,7 +154,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

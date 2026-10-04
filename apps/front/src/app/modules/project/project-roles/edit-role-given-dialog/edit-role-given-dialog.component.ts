@@ -13,8 +13,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { GivenTypeEnum } from '#common/enums/given-type.enum';
-import type { Given } from '#common/types/backend/parts/given';
+import type { Given } from '#common/types/backend/parts/given/given';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendEditRoleGivenRequest } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-request';
@@ -49,7 +49,7 @@ export class EditRoleGivenDialogComponent implements OnInit {
 
   editRoleGivenForm: FormGroup;
 
-  givenType: GivenTypeEnum;
+  givenType: GivenType;
   givenIsMultiple = false;
 
   constructor(

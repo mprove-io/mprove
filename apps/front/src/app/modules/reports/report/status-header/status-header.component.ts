@@ -4,7 +4,7 @@ import { IHeaderParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DataRow } from '#common/types/front/data-row';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { UiQuery } from '#front/app/queries/ui.query';
 
 @Component({

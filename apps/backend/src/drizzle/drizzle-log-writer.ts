@@ -2,7 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { LogWriter } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
 
 export class DrizzleLogWriter implements LogWriter {
   constructor(
@@ -14,7 +13,7 @@ export class DrizzleLogWriter implements LogWriter {
   write(message: string) {
     logToConsoleBackend({
       log: `[${this.prefix}] ${message}`,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logger: this.logger,
       cs: this.cs
     });

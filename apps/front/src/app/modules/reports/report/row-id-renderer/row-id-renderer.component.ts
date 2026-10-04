@@ -2,9 +2,9 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs/operators';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import type { ReportX } from '#common/types/backend/parts/report-x';
-import type { DataRow } from '#common/types/front/data-row';
+
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ReportService } from '#front/app/services/report.service';
@@ -61,7 +61,7 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: ChangeTypeEnum.Delete,
+      changeType: 'Delete',
       rowChange: undefined,
       rowIds: [this.reportSelectedNode.data.rowId],
       reportFields: this.report.fields,

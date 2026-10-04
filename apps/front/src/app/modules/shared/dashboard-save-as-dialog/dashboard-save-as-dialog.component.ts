@@ -16,13 +16,12 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendSaveCreateDashboardRequest } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-request';
 import type { ToBackendSaveCreateDashboardResponse } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
@@ -30,10 +29,11 @@ import type { ToBackendSaveModifyDashboardRequest } from '#common/types/backend/
 import type { ToBackendSaveModifyDashboardResponse } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
-import type { Dashboard } from '#common/types/blockml/parts/dashboard';
+import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
+import type { DashboardSaveAs } from '#front/app/modules/shared/dashboard-save-as-dialog/dashboard-save-as';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -42,11 +42,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-
-enum DashboardSaveAsEnum {
-  NEW_DASHBOARD = 'NEW_DASHBOARD',
-  REPLACE_EXISTING_DASHBOARD = 'REPLACE_EXISTING_DASHBOARD'
-}
 
 export interface DashboardSaveAsDialogData {
   apiService: ApiService;
@@ -80,15 +75,13 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   emptySpaceName = EMPTY_SPACE_NAME;
 
-  dashboardSaveAsEnum = DashboardSaveAsEnum;
-
   spinnerName = 'dashboardSaveAs';
 
   dashboard: DashboardX;
 
   newDashboardId = makeId();
 
-  saveAs: DashboardSaveAsEnum = DashboardSaveAsEnum.NEW_DASHBOARD;
+  saveAs: DashboardSaveAs = 'NEW_DASHBOARD';
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -273,14 +266,12 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       let newTitle = this.titleForm.controls['title'].value;
       let roles = [...this.selectedAccessRoles];
 
-      if (this.saveAs === DashboardSaveAsEnum.NEW_DASHBOARD) {
+      if (this.saveAs === 'NEW_DASHBOARD') {
         this.saveAsNewDashboard({
           newTitle: newTitle,
           roles: roles
         });
-      } else if (
-        this.saveAs === DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
-      ) {
+      } else if (this.saveAs === 'REPLACE_EXISTING_DASHBOARD') {
         this.saveAsExistingDashboard({
           newTitle: newTitle,
           roles: roles
@@ -290,7 +281,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   newDashboardOnClick() {
-    this.saveAs = DashboardSaveAsEnum.NEW_DASHBOARD;
+    this.saveAs = 'NEW_DASHBOARD';
 
     this.titleForm.controls['title'].setValue(undefined);
     this.selectedDashboardId = undefined;
@@ -302,7 +293,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   existingDashboardOnClick() {
-    this.saveAs = DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD;
+    this.saveAs = 'REPLACE_EXISTING_DASHBOARD';
     this.selectedDashboardId = undefined;
     this.selectedDashboardPath = '';
     this.titleForm.controls['title'].setValue(undefined);
@@ -459,7 +450,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       unitId: this.newDashboardId,
       filePath: undefined,
       unitSpace: EMPTY_SPACE_NAME,
-      extension: FileExtensionEnum.Dashboard,
+      extension: '.dashboard',
       spaces: this.struct.spaces
     });
 
@@ -484,7 +475,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         unitId: selectedDashboard.dashboardId,
         filePath: selectedDashboard.filePath,
         unitSpace: selectedDashboard.space,
-        extension: FileExtensionEnum.Dashboard,
+        extension: '.dashboard',
         spaces: this.struct.spaces
       });
     }

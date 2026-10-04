@@ -26,7 +26,7 @@ import {
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -126,13 +126,13 @@ export class MembersService {
 
     if (isUndefined(member)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
       });
     }
 
     if (member.isAdmin !== true) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
+        message: 'BACKEND_MEMBER_IS_NOT_ADMIN'
       });
     }
 
@@ -156,13 +156,13 @@ export class MembersService {
 
     if (isUndefined(member)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
       });
     }
 
     if (member.isEditor !== true && member.isAdmin !== true) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
       });
     }
 
@@ -183,13 +183,13 @@ export class MembersService {
 
     if (isUndefined(member)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
       });
     }
 
     if (member.isEditor !== true) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
+        message: 'BACKEND_MEMBER_IS_NOT_EDITOR'
       });
     }
 
@@ -210,7 +210,7 @@ export class MembersService {
 
     if (isUndefined(member)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
       });
     }
 
@@ -229,7 +229,7 @@ export class MembersService {
 
     if (isDefined(member)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_ALREADY_EXISTS
+        message: 'BACKEND_MEMBER_ALREADY_EXISTS'
       });
     }
   }

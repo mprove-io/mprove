@@ -12,13 +12,13 @@ import {
   MCP_TOOL_RUN,
   MCP_TOOL_RUN_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolRunInput,
   zMcpToolRunInput
 } from '#common/types/backend/mcp-tools/mcp-tool-run/mcp-tool-run-input';
 import { zMcpToolRunOutput } from '#common/types/backend/mcp-tools/mcp-tool-run/mcp-tool-run-output';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendRunOutput } from '#common/types/backend/routes/run/run/run-output';
 
 @McpController()
@@ -42,14 +42,14 @@ export class RunTool {
     @McpRawRequest() request: Request
   ) {
     let user = (request as any).user as UserTab;
-    let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
+    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
 
-    if (apiKeyType === ApiKeyTypeEnum.PK) {
+    if (apiKeyType === 'PK') {
       this.toolService.validateUserRepoId({
         repoId: item.repoId,
         userId: user.userId
       });
-    } else if (apiKeyType === ApiKeyTypeEnum.SK) {
+    } else if (apiKeyType === 'SK') {
       this.toolService.validateSessionProjectId({
         projectId: item.projectId,
         request: request

@@ -9,7 +9,7 @@ import type { FileChartOptions } from '#common/types/blockml/parts/internal/file
 import type { FileChartOptionsSeriesElement } from '#common/types/blockml/parts/internal/file-chart-options-series';
 import type { FileChartOptionsXAxisElement } from '#common/types/blockml/parts/internal/file-chart-options-x-axis';
 import type { FileChartOptionsYAxisElement } from '#common/types/blockml/parts/internal/file-chart-options-y-axis';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 
 export function toFileChartOptions(item: {
   chart: MconfigChart;

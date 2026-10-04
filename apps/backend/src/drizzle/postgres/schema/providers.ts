@@ -9,8 +9,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-lt';
 import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';
 
@@ -22,7 +22,7 @@ export const providersTable = pgTable(
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     providerId: varchar('provider_id', { length: 32 }).notNull(), // name
-    type: varchar('type').$type<ProviderTypeEnum>().notNull(),
+    type: varchar('type').$type<ProviderType>().notNull(),
     isEnabled: boolean('is_enabled').notNull(),
     models: json('models').$type<LlmModel[]>().notNull(),
     st: json('st')

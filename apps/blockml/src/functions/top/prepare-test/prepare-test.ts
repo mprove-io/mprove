@@ -9,11 +9,10 @@ import { getConfig } from '#blockml/config/get.config';
 import { RebuildStructService } from '#blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerService } from '#blockml/services/consumer/consumer.service';
 import { APP_NAME_BLOCKML } from '#common/constants/top-blockml';
-import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import type { FuncEnum } from '#common/enums/special/func.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
 import { resolveTestSourceDir } from './resolve-test-source-dir/resolve-test-source-dir';
 
@@ -29,8 +28,8 @@ export type PrepareTestOutput = {
 };
 
 export async function prepareTest(item: {
-  caller: CallerEnum;
-  func: FuncEnum;
+  caller: Caller;
+  func: Func;
   testId: string;
   testsDir: string;
   connection?: ProjectConnection;
@@ -39,7 +38,7 @@ export async function prepareTest(item: {
   let { caller, func, testId, connection, overrideConfigOptions } = item;
 
   let extraOverride: Partial<BlockmlConfig> = {
-    blockmlEnv: BlockmlEnvEnum.TEST,
+    blockmlEnv: 'TEST',
     // blockmlLogResponseOk: true,
     blockmlLogResponseError: true
   };

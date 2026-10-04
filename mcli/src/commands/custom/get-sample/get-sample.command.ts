@@ -1,8 +1,7 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import type { ToBackendGetConnectionSampleRequest } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-request';
@@ -78,7 +77,7 @@ export class GetSampleCommand extends CustomCommand {
 
     if (isUndefined(this.projectId)) {
       let serverError = new ServerError({
-        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
         originalError: null
       });
       throw serverError;
@@ -105,7 +104,7 @@ export class GetSampleCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: getSampleOutput,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       context: this.context,
       isJson: this.json
     });

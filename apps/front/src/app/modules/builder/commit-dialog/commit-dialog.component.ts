@@ -18,11 +18,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
 import type { ToBackendCommitRepoResponse } from '#common/types/backend/routes/repos/commit-repo/commit-repo-response';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -34,9 +34,9 @@ export interface CommitDialogDialogData {
   apiService: ApiService;
   projectId: string;
   repoId: string;
-  repoType: RepoTypeEnum;
+  repoType: RepoType;
   branchId: string;
-  builderLeft: BuilderLeftEnum;
+  builderLeft: BuilderLeft;
   fileId: string;
 }
 
@@ -70,7 +70,7 @@ export class CommitDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.isSessionRepo = this.ref.data.repoType === RepoTypeEnum.Session;
+    this.isSessionRepo = this.ref.data.repoType === 'session';
 
     let epochTs = Math.floor(new Date().getTime() / 1000);
 

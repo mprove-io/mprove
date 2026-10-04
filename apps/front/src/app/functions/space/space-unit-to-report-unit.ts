@@ -1,4 +1,4 @@
-import type { ReportUnit } from '#common/types/backend/parts/report-unit';
+import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 
 export function spaceUnitToReportUnit(item: {

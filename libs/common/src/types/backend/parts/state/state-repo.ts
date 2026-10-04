@@ -7,15 +7,15 @@ import {
 import {
   type DiskCatalogNode,
   zDiskCatalogNode
-} from '#common/types/disk/parts/disk-catalog-node';
+} from '#common/types/disk/parts/catalog/disk-catalog-node';
 import {
   type RepoError,
   zRepoError
-} from '#common/types/disk/parts/repo-error';
+} from '#common/types/disk/parts/repo/repo-error';
 import {
   type RepoStatus,
   zRepoStatus
-} from '#common/types/disk/parts/repo-status';
+} from '#common/types/disk/parts/repo/repo-status';
 
 export type StateRepo = {
   orgId: string;

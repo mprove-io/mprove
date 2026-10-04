@@ -1,6 +1,6 @@
 import axios, { type AxiosResponse } from 'axios';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeToBackendRequest } from '#common/functions/make-to-backend-request/make-to-backend-request';
 import type { ToBackendInputForRoute } from '#common/types/backend/request/to-backend-input-for-route';
@@ -38,7 +38,7 @@ export async function mreq<TRoute extends ToBackendRoute>(item: {
 
   if (resp.data?.type !== 'Success') {
     throw new ServerError({
-      message: ErEnum.MCLI_ERROR_RESPONSE_FROM_BACKEND,
+      message: 'MCLI_ERROR_RESPONSE_FROM_BACKEND',
       originalError: resp.data?.error
     });
   }

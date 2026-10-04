@@ -14,13 +14,13 @@ import {
   MCP_TOOL_VALIDATE,
   MCP_TOOL_VALIDATE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput
 } from '#common/types/backend/mcp-tools/mcp-tool-validate-files/mcp-tool-validate-files-input';
 import { zMcpToolValidateFilesOutput } from '#common/types/backend/mcp-tools/mcp-tool-validate-files/mcp-tool-validate-files-output';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
 @McpController()
@@ -46,14 +46,14 @@ export class ValidateFilesTool {
   ) {
     let user = (request as any).user as UserTab;
 
-    let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
+    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
 
-    if (apiKeyType === ApiKeyTypeEnum.PK) {
+    if (apiKeyType === 'PK') {
       this.toolService.validateUserRepoId({
         repoId: item.repoId,
         userId: user.userId
       });
-    } else if (apiKeyType === ApiKeyTypeEnum.SK) {
+    } else if (apiKeyType === 'SK') {
       this.toolService.validateSessionRepoId({
         repoId: item.repoId,
         request: request

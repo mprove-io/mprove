@@ -2,24 +2,19 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FilterX } from '#common/types/backend/parts/filter-x';
-import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
-import type { ReportX } from '#common/types/backend/parts/report-x';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
-import type { Parameter } from '#common/types/blockml/parts/parameter';
-import type { RowChange } from '#common/types/blockml/parts/row-change';
-import type { DataRow } from '#common/types/front/data-row';
-import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
+import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
+import type { Parameter } from '#common/types/blockml/parts/report/row/parameter';
+import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
+import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -91,7 +86,7 @@ export class RowFiltersComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditParameters,
+      changeType: 'EditParameters',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -114,7 +109,7 @@ export class RowFiltersComponent {
       .getValue()
       .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
-    if (metric.modelType === ModelTypeEnum.Store) {
+    if (metric.modelType === 'Store') {
       let store = this.modelsQuery
         .getValue()
         .models.find(m => m.modelId === metric.modelId).storeContent;
@@ -122,19 +117,19 @@ export class RowFiltersComponent {
       let field = filterExtended.field;
 
       let storeFilter =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? store.fields.find(f => f.name === field.id)
           : undefined;
 
       let storeResultFirstTypeFraction =
-        field.fieldClass === FieldClassEnum.Filter
+        field.fieldClass === 'filter'
           ? undefined
           : store.results.find(r => r.result === field.result)
               .fraction_types[0];
 
-      let logicGroup = isUndefined(storeResultFirstTypeFraction)
+      let logicGroup: FractionLogic = isUndefined(storeResultFirstTypeFraction)
         ? undefined
-        : FractionLogicEnum.Or;
+        : 'OR';
 
       let storeFractionSubTypeOptions = isUndefined(
         storeResultFirstTypeFraction
@@ -146,16 +141,16 @@ export class RowFiltersComponent {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.Or,
+                logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.AndNot,
-                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: 'AND_NOT',
+                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -166,20 +161,20 @@ export class RowFiltersComponent {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === 'OR' ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFirstTypeFraction?.meta,
         operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === FractionLogicEnum.Or
-            ? FractionOperatorEnum.Or
-            : FractionOperatorEnum.And,
+          : logicGroup === 'OR'
+            ? 'Or'
+            : 'And',
         logicGroup: logicGroup,
         brick: undefined,
         parentBrick: undefined,
-        type: FractionTypeEnum.StoreFraction,
+        type: 'StoreFraction',
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFirstTypeFraction?.type,
@@ -218,18 +213,18 @@ export class RowFiltersComponent {
               return newControl;
             })
       };
-    } else if (metric.modelType === ModelTypeEnum.Malloy) {
+    } else if (metric.modelType === 'Malloy') {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(filterExtended.field.result)
       };
     } else {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(filterExtended.field.result)
       };
     }
@@ -255,7 +250,7 @@ export class RowFiltersComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditParameters,
+      changeType: 'EditParameters',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -303,7 +298,7 @@ export class RowFiltersComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditParameters,
+      changeType: 'EditParameters',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -332,7 +327,7 @@ export class RowFiltersComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.EditParameters,
+      changeType: 'EditParameters',
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,

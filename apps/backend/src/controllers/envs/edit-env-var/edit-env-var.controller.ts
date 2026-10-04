@@ -29,7 +29,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditEnvVarOutput } from '#common/types/backend/routes/envs/edit-env-var/edit-env-var-output';
@@ -90,7 +90,7 @@ export class EditEnvVarController {
 
     if (isUndefined(ev)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_EV_DOES_NOT_EXIST
+        message: 'BACKEND_EV_DOES_NOT_EXIST'
       });
     }
 

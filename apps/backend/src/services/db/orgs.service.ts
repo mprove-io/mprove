@@ -9,7 +9,7 @@ import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { Org } from '#common/types/backend/parts/org';
@@ -65,7 +65,7 @@ export class OrgsService {
 
     if (isUndefined(org)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ORG_DOES_NOT_EXIST
+        message: 'BACKEND_ORG_DOES_NOT_EXIST'
       });
     }
 
@@ -77,7 +77,7 @@ export class OrgsService {
 
     if (org.ownerId !== userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ONLY_ORG_OWNER_CAN_ACCESS
+        message: 'BACKEND_ONLY_ORG_OWNER_CAN_ACCESS'
       });
     }
 

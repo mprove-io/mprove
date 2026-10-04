@@ -39,8 +39,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRefreshCachedColumnOutput } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
@@ -143,13 +142,13 @@ export class RefreshCachedColumnController {
 
     if (isUndefined(connection)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
+        message: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
       });
     }
 
     if (isUndefined(connection.rawSchema)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND
+        message: 'BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND'
       });
     }
 
@@ -162,11 +161,11 @@ export class RefreshCachedColumnController {
     );
 
     if (isSchemaFound === false) {
-      throw new ServerError({ message: ErEnum.BACKEND_WRONG_SCHEMA_NAME });
+      throw new ServerError({ message: 'BACKEND_WRONG_SCHEMA_NAME' });
     }
 
     if (isUndefined(schemaTable)) {
-      throw new ServerError({ message: ErEnum.BACKEND_WRONG_TABLE_NAME });
+      throw new ServerError({ message: 'BACKEND_WRONG_TABLE_NAME' });
     }
 
     let isColumnFound = schemaTable.columns.some(
@@ -174,7 +173,7 @@ export class RefreshCachedColumnController {
     );
 
     if (isColumnFound === false) {
-      throw new ServerError({ message: ErEnum.BACKEND_WRONG_COLUMN_NAME });
+      throw new ServerError({ message: 'BACKEND_WRONG_COLUMN_NAME' });
     }
 
     let cacheLimit = this.cs.get<
@@ -475,7 +474,7 @@ export class RefreshCachedColumnController {
       cacheLimit
     } = item;
 
-    if (connection.type === ConnectionTypeEnum.PostgreSQL) {
+    if (connection.type === 'PostgreSQL') {
       return await this.pgService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -484,7 +483,7 @@ export class RefreshCachedColumnController {
         sampleSize: sampleSize,
         cacheLimit: cacheLimit
       });
-    } else if (connection.type === ConnectionTypeEnum.MySQL) {
+    } else if (connection.type === 'MySQL') {
       return await this.mysqlService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -493,7 +492,7 @@ export class RefreshCachedColumnController {
         sampleSize: sampleSize,
         cacheLimit: cacheLimit
       });
-    } else if (connection.type === ConnectionTypeEnum.SnowFlake) {
+    } else if (connection.type === 'SnowFlake') {
       return await this.snowFlakeService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -502,7 +501,7 @@ export class RefreshCachedColumnController {
         sampleSize: sampleSize,
         cacheLimit: cacheLimit
       });
-    } else if (connection.type === ConnectionTypeEnum.Databricks) {
+    } else if (connection.type === 'Databricks') {
       return await this.databricksService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -511,7 +510,7 @@ export class RefreshCachedColumnController {
         sampleSize: sampleSize,
         cacheLimit: cacheLimit
       });
-    } else if (connection.type === ConnectionTypeEnum.BigQuery) {
+    } else if (connection.type === 'BigQuery') {
       return await this.bigQueryService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -520,7 +519,7 @@ export class RefreshCachedColumnController {
         sampleSize: sampleSize,
         cacheLimit: cacheLimit
       });
-    } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+    } else if (connection.type === 'MotherDuck') {
       return await this.duckDbService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -529,7 +528,7 @@ export class RefreshCachedColumnController {
         sampleSize: sampleSize,
         cacheLimit: cacheLimit
       });
-    } else if (connection.type === ConnectionTypeEnum.Presto) {
+    } else if (connection.type === 'Presto') {
       return await this.prestoService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -538,7 +537,7 @@ export class RefreshCachedColumnController {
         sampleSize: sampleSize,
         cacheLimit: cacheLimit
       });
-    } else if (connection.type === ConnectionTypeEnum.Trino) {
+    } else if (connection.type === 'Trino') {
       return await this.trinoService.fetchCachedParts({
         connection: connection,
         schemaName: schemaName,
@@ -550,7 +549,7 @@ export class RefreshCachedColumnController {
     }
 
     throw new ServerError({
-      message: ErEnum.BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE
+      message: 'BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE'
     });
   }
 }

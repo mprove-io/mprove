@@ -44,13 +44,12 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
-import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
+import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveCreateDashboardOutput } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-output';
 import type { ToDiskCreateFileOutput } from '#common/types/disk/routes/files/create-file/create-file-output';
@@ -129,7 +128,7 @@ export class SaveCreateDashboardController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -147,7 +146,7 @@ export class SaveCreateDashboardController {
       userMember.isEditor === false
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
       });
     }
 
@@ -184,7 +183,7 @@ export class SaveCreateDashboardController {
       targetFolder: 'dashboards'
     });
 
-    let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
+    let fileName = `${newDashboardId}.dashboard`;
 
     let dashFileText: string;
 
@@ -393,7 +392,7 @@ export class SaveCreateDashboardController {
       let filePath = fileIdAr.join('/');
 
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
+        message: 'BACKEND_CREATE_DASHBOARD_FAIL',
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: tempStruct.errors

@@ -2,26 +2,24 @@ import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import { drcType } from '#common/types/blockml/parts/internal/drc-type';
 
-let func = FuncEnum.CheckAccess;
+let func: Func = 'extra/check-access';
 
 export function checkAccess<T extends drcType>(
   item: {
     entities: T[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newEntities: T[] = [];
 
@@ -33,7 +31,7 @@ export function checkAccess<T extends drcType>(
         if (typeof u !== 'string' && !(<any>u instanceof String)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_ACCESS_ROLES_ELEMENT,
+              title: 'WRONG_ACCESS_ROLES_ELEMENT',
               message: 'found array element that is not a single value',
               lines: [
                 {
@@ -54,8 +52,8 @@ export function checkAccess<T extends drcType>(
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return newEntities;
 }

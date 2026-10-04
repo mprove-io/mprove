@@ -2,9 +2,7 @@ import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import deepEqual from 'fast-deep-equal';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -87,7 +85,7 @@ export class SyncCommand extends CustomCommand {
 
     if (isUndefined(this.projectId)) {
       let serverError = new ServerError({
-        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
         originalError: null
       });
       throw serverError;
@@ -125,7 +123,7 @@ export class SyncCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId = apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+    let repoId = apiKey.startsWith(`SK-`)
       ? apiKey.split('-')[2].toLowerCase()
       : apiKey.split('-')[2];
 
@@ -249,13 +247,13 @@ export class SyncCommand extends CustomCommand {
           localChangesToCommit: localChangesToCommit,
           devChangesToCommit: devChangesToCommit
         },
-        logLevel: LogLevelEnum.Info,
+        logLevel: 'Info',
         context: this.context,
         isJson: this.json
       });
 
       let serverError = new ServerError({
-        message: ErEnum.MCLI_SYNC_FAILED
+        message: 'MCLI_SYNC_FAILED'
       });
       throw serverError;
     }
@@ -312,7 +310,7 @@ export class SyncCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       context: this.context,
       isJson: this.json
     });

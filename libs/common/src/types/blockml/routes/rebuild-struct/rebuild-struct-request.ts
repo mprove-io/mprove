@@ -4,16 +4,16 @@ import type { BaseConnection } from '#common/types/backend/parts/base-connection
 import { zBaseConnection } from '#common/types/backend/parts/base-connection';
 import type { Ev } from '#common/types/backend/parts/ev';
 import { zEv } from '#common/types/backend/parts/ev';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
+import { zSelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import { zMproveConfig } from '#common/types/backend/parts/mprove-config';
-import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
-import { zSelectedGiven } from '#common/types/backend/parts/selected-given';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
-import { zBmlFile } from '#common/types/blockml/parts/bml-file';
-import type { Model } from '#common/types/blockml/parts/model';
-import { zModel } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
-import { zModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import { zBmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import { zModel } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
+import { zModelMetric } from '#common/types/blockml/parts/model/model-metric';
 
 export type ToBlockmlRebuildStructRequest = {
   operation: 'rebuildStruct';

@@ -10,16 +10,15 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { UsersService } from '#backend/services/db/users.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
-import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CodexAuthOpenai } from '#common/types/backend/parts/codex-auth-openai';
+import type { CodexAuthOpenai } from '#common/types/backend/parts/codex/codex-auth-openai';
+import type { CodexDeviceAuthStatus } from '#common/types/backend/parts/codex/codex-device-auth-status';
 import {
   type CodexModel,
   zCodexModel
-} from '#common/types/backend/parts/codex-model';
+} from '#common/types/backend/parts/codex/codex-model';
 
 // Reference: external/opencode/packages/opencode/src/plugin/codex.ts
 const CODEX_CLIENT_ID = 'app_EMoamEEZ73f0CkXaXp7hrann';
@@ -253,7 +252,7 @@ export class CodexService {
 
       let isSignInRequired: boolean =
         error instanceof ServerError &&
-        error.message === ErEnum.BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED;
+        error.message === 'BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED';
 
       let errorDetail: string = isInvalidResponse
         ? 'Codex returned an invalid models response'
@@ -283,13 +282,13 @@ export class CodexService {
 
     if (isUndefined(expiresIn)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_MISSING
+        message: 'BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_MISSING'
       });
     }
 
     if (expiresIn < CODEX_AUTH_REFRESH_BUFFER_SEC) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_TOO_SHORT,
+        message: 'BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_TOO_SHORT',
         customData: {
           expiresInSec: expiresIn,
           minExpiresInSec: CODEX_AUTH_REFRESH_BUFFER_SEC
@@ -310,7 +309,7 @@ export class CodexService {
 
     if (isUndefined(user.codexAuth)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
+        message: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET'
       });
     }
 
@@ -335,7 +334,7 @@ export class CodexService {
       let bodyText = await response.text().catch(() => '<failed to read body>');
 
       throw new ServerError({
-        message: ErEnum.BACKEND_CODEX_DEVICE_AUTH_START_FAILED,
+        message: 'BACKEND_CODEX_DEVICE_AUTH_START_FAILED',
         customData: {
           status: response.status,
           body: bodyText
@@ -366,7 +365,7 @@ export class CodexService {
     userId: string;
     deviceAuthId: string;
     userCode: string;
-  }): Promise<CodexDeviceAuthStatusEnum> {
+  }): Promise<CodexDeviceAuthStatus> {
     let { userId, deviceAuthId, userCode } = item;
 
     let response = await fetch(
@@ -385,11 +384,11 @@ export class CodexService {
     );
 
     if (response.status === 403 || response.status === 404) {
-      return CodexDeviceAuthStatusEnum.Pending;
+      return 'Pending';
     }
 
     if (!response.ok) {
-      return CodexDeviceAuthStatusEnum.Failed;
+      return 'Failed';
     }
 
     let parsed = (await response.json()) as {
@@ -416,7 +415,7 @@ export class CodexService {
       newState: newState
     });
 
-    return CodexDeviceAuthStatusEnum.Authorized;
+    return 'Authorized';
   }
 
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 546-556
@@ -442,7 +441,7 @@ export class CodexService {
       let bodyText = await response.text().catch(() => '<failed to read body>');
 
       throw new ServerError({
-        message: ErEnum.BACKEND_CODEX_DEVICE_AUTH_START_FAILED,
+        message: 'BACKEND_CODEX_DEVICE_AUTH_START_FAILED',
         customData: {
           status: response.status,
           body: bodyText
@@ -483,8 +482,8 @@ export class CodexService {
 
       throw new ServerError({
         message: isSignInRequired
-          ? ErEnum.BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED
-          : ErEnum.BACKEND_PROMPT_FAILED,
+          ? 'BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED'
+          : 'BACKEND_PROMPT_FAILED',
         customData: {
           status: response.status,
           body: body

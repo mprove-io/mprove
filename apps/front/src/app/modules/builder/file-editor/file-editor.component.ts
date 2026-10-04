@@ -45,22 +45,20 @@ import {
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Member } from '#common/types/backend/parts/member';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
 import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/files/save-file/save-file-request';
 import type { ToBackendSaveFileResponse } from '#common/types/backend/routes/files/save-file/save-file-response';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -70,10 +68,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { ConfirmService } from '#front/app/services/confirm.service';
 import { FileService } from '#front/app/services/file.service';
-import {
-  HighLightService,
-  PlaceNameEnum
-} from '#front/app/services/highlight.service';
+import { HighLightService } from '#front/app/services/highlight.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -91,11 +86,7 @@ export const malloyCommentToggle = Annotation.define<'toggle'>();
   templateUrl: './file-editor.component.html'
 })
 export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
-  repoTypeEnum = RepoTypeEnum;
-
   isEditorOptionsInitComplete = false;
-
-  builderLeftTree = BuilderLeftEnum.Tree;
 
   @ViewChild('codeEditor', { static: false })
   codeEditorRef: CodeEditor;
@@ -444,13 +435,13 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   cachedCanDeactivateAnswerNoTimestamp: number;
 
-  builderLeft: BuilderLeftEnum;
+  builderLeft: BuilderLeft;
   builderLeft$ = this.uiQuery.builderLeft$.pipe(
     tap(x => {
       this.builderLeft = x;
       this.cd.detectChanges();
 
-      if (this.builderLeft === BuilderLeftEnum.Tree) {
+      if (this.builderLeft === 'Tree') {
         this.cleanupSyncScroll();
       }
     })
@@ -506,8 +497,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       };
 
       if (
-        (this.builderLeft === BuilderLeftEnum.ChangesToCommit ||
-          this.builderLeft === BuilderLeftEnum.ChangesToPush) &&
+        (this.builderLeft === 'ChangesToCommit' ||
+          this.builderLeft === 'ChangesToPush') &&
         isDefined(this.file.fileId)
       ) {
         this.setupDiffEditorSyncScroll();
@@ -520,16 +511,16 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       // console.log('fileEditor - file$ - updateDocText ');
 
       this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.Main,
+        placeName: 'Main',
         docText: x.content,
         shikiLanguage: this.lang?.toLowerCase(),
         shikiTheme: 'light-plus-extended',
         isThrottle: false
       });
 
-      if (this.builderLeft !== BuilderLeftEnum.Tree) {
+      if (this.builderLeft !== 'Tree') {
         this.highLightService.updateDocText({
-          placeName: PlaceNameEnum.Original,
+          placeName: 'Original',
           docText: x.originalContent,
           shikiLanguage: this.lang?.toLowerCase(),
           shikiTheme: 'light-plus-extended',
@@ -621,9 +612,9 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.workerTaskCompletedSubscription.add(
       this.highLightService.workerTaskCompleted.subscribe(eventData => {
-        if (eventData.placeName === PlaceNameEnum.Original) {
+        if (eventData.placeName === 'Original') {
           this.updateDockAndDispatchOriginal();
-        } else if (eventData.placeName === PlaceNameEnum.Main) {
+        } else if (eventData.placeName === 'Main') {
           this.updateDockAndDispatch();
         }
       })
@@ -632,11 +623,11 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   initEditorOptions() {
     let mainLanguagesResult = this.highLightService.getLanguages({
-      placeName: PlaceNameEnum.Main
+      placeName: 'Main'
     });
 
     let originalLanguagesResult = this.highLightService.getLanguages({
-      placeName: PlaceNameEnum.Original
+      placeName: 'Original'
     });
 
     this.languages = mainLanguagesResult.languages;
@@ -787,19 +778,19 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? nav.repoType === RepoTypeEnum.Production
+        ? nav.repoType === 'production'
           ? LIGHT_PLUS_THEME_EXTRA_SINGLE_READ
           : LIGHT_PLUS_THEME_EXTRA_SINGLE
-        : nav.repoType === RepoTypeEnum.Production
+        : nav.repoType === 'production'
           ? VS_LIGHT_THEME_EXTRA_SINGLE_READ
           : VS_LIGHT_THEME_EXTRA_SINGLE;
 
     let themeDIff =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? nav.repoType === RepoTypeEnum.Production
+        ? nav.repoType === 'production'
           ? LIGHT_PLUS_THEME_EXTRA_DIFF_READ
           : LIGHT_PLUS_THEME_EXTRA_DIFF
-        : nav.repoType === RepoTypeEnum.Production
+        : nav.repoType === 'production'
           ? VS_LIGHT_THEME_EXTRA_DIFF_READ
           : VS_LIGHT_THEME_EXTRA_DIFF;
 
@@ -863,7 +854,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   removeMarkers() {
-    if (this.builderLeft !== BuilderLeftEnum.Tree) {
+    if (this.builderLeft !== 'Tree') {
       return;
     }
 
@@ -872,7 +863,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   refreshMarkers() {
-    if (this.builderLeft !== BuilderLeftEnum.Tree) {
+    if (this.builderLeft !== 'Tree') {
       return;
     }
 
@@ -977,9 +968,9 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   onOriginalTextChanged() {
     // console.log('fileEditor - onOriginalTextChanged');
 
-    if (this.builderLeft !== BuilderLeftEnum.Tree) {
+    if (this.builderLeft !== 'Tree') {
       this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.Original,
+        placeName: 'Original',
         docText: this.originalContent,
         shikiLanguage: this.lang?.toLowerCase(),
         shikiTheme: 'light-plus-extended',
@@ -1010,7 +1001,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.highLightService.updateDocText({
-      placeName: PlaceNameEnum.Main,
+      placeName: 'Main',
       docText: this.content,
       shikiLanguage: this.lang?.toLowerCase(),
       shikiTheme: 'light-plus-extended',
@@ -1022,7 +1013,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // console.log('fileEditor - updateDockAndDispatchOriginal - updateDocText');
 
     this.highLightService.updateDocText({
-      placeName: PlaceNameEnum.Original,
+      placeName: 'Original',
       docText: this.originalContent,
       shikiLanguage: this.lang?.toLowerCase(),
       shikiTheme: 'light-plus-extended',
@@ -1048,7 +1039,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // console.log('fileEditor - updateDockAndDispatch - updateDocText');
 
     this.highLightService.updateDocText({
-      placeName: PlaceNameEnum.Main,
+      placeName: 'Main',
       docText: this.content,
       shikiLanguage: this.lang?.toLowerCase(),
       shikiTheme: 'light-plus-extended',
@@ -1056,7 +1047,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     let editorV =
-      this.builderLeft === BuilderLeftEnum.Tree
+      this.builderLeft === 'Tree'
         ? this.codeEditorRef.view
         : this.diffEditorRef.mergeView.b;
 
@@ -1121,11 +1112,11 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
             this.uiQuery.updatePart({
               needSave: false,
-              builderLeft: BuilderLeftEnum.Tree
+              builderLeft: 'Tree'
             });
 
             this.navigateService.navigateToFileLine({
-              builderLeft: BuilderLeftEnum.Tree,
+              builderLeft: 'Tree',
               encodedFileId: this.file.fileId
             });
 
@@ -1156,7 +1147,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // console.log('fileEditor - cancel - updateDocText');
 
     this.highLightService.updateDocText({
-      placeName: PlaceNameEnum.Main,
+      placeName: 'Main',
       docText: this.content,
       shikiLanguage: this.lang?.toLowerCase(),
       shikiTheme: 'light-plus-extended',
@@ -1215,12 +1206,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     let id = ar.join('.');
     let dotExt = `.${ext}`;
 
-    if (dotExt === FileExtensionEnum.Store) {
+    if (dotExt === '.store') {
       this.navigateService.navigateToChart({
         modelId: id,
         chartId: EMPTY_CHART_ID
       });
-    } else if (dotExt === FileExtensionEnum.Malloy) {
+    } else if (dotExt === '.malloy') {
       this.spinner.show(APP_SPINNER_NAME);
 
       let models: ModelX[] = [];
@@ -1268,13 +1259,13 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           })
         )
         .toPromise();
-    } else if (dotExt === FileExtensionEnum.Report) {
+    } else if (dotExt === '.report') {
       this.navigateService.navigateToReport({ reportId: id });
-    } else if (dotExt === FileExtensionEnum.Dashboard) {
+    } else if (dotExt === '.dashboard') {
       this.navigateService.navigateToDashboard({
         dashboardId: id
       });
-    } else if (dotExt === FileExtensionEnum.Chart) {
+    } else if (dotExt === '.chart') {
       let nav = this.navQuery.getValue();
 
       let payload: ToBackendGetChartRequest['input'] = {

@@ -4,31 +4,28 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 
-let func = FuncEnum.CheckSorts;
+let func: Func = 'build-tile/check-sorts';
 
 export function checkSorts<T extends dcType>(item: {
   entities: T[];
   apiModels: Model[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -52,9 +49,9 @@ export function checkSorts<T extends dcType>(item: {
         if (isUndefined(r)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TILE_WRONG_SORTS_SYNTAX,
+              title: 'TILE_WRONG_SORTS_SYNTAX',
               message:
-                `Model "${ParameterEnum.Sorts}" can contain selected ` +
+                `Model "sorts" can contain selected ` +
                 'fields in form of "field_path [desc]" separated by comma',
               lines: [
                 {
@@ -74,11 +71,11 @@ export function checkSorts<T extends dcType>(item: {
         if (tile.select.findIndex(y => y === sorter) < 0) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.TILE_SORTS_REFS_UNSELECTED_FIELD,
+              title: 'TILE_SORTS_REFS_UNSELECTED_FIELD',
               message:
                 'Only selected fields can be sorted.' +
-                `Found field "${sorter}" in "${ParameterEnum.Sorts}" that ` +
-                `is not in "${ParameterEnum.Select}". `,
+                `Found field "${sorter}" in "sorts" that ` +
+                `is not in "select". `,
               lines: [
                 {
                   line: tile.sorts_line_num,
@@ -103,9 +100,9 @@ export function checkSorts<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

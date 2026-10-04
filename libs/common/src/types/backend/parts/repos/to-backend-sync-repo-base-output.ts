@@ -7,11 +7,11 @@ import {
 import {
   type BmlError,
   zBmlError
-} from '#common/types/blockml/parts/bml-error';
+} from '#common/types/blockml/diagnostics/bml-error';
 import {
   type DiskFileChange,
   zDiskFileChange
-} from '#common/types/disk/parts/disk-file-change';
+} from '#common/types/disk/parts/file/disk-file-change';
 
 export type ToBackendSyncRepoBaseOutput = {
   orgId: string;

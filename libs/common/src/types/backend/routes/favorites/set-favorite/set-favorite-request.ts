@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { FavoriteType } from '#common/types/backend/parts/favorite/favorite-type';
+import { zFavoriteType } from '#common/types/backend/parts/favorite/favorite-type';
 
 export type ToBackendSetFavoriteRequest = {
   operation: 'setFavorite';
@@ -8,10 +9,7 @@ export type ToBackendSetFavoriteRequest = {
   idempotencyKey: string;
   input: {
     projectId: string;
-    type:
-      | FavoriteTypeEnum.Report
-      | FavoriteTypeEnum.Dashboard
-      | FavoriteTypeEnum.Chart;
+    type: FavoriteType;
     targetId: string;
     isFavorite: boolean;
   };
@@ -25,7 +23,7 @@ export let zToBackendSetFavoriteRequest = z
     input: z
       .object({
         projectId: z.string(),
-        type: z.enum(FavoriteTypeEnum),
+        type: zFavoriteType,
         targetId: z.string(),
         isFavorite: z.boolean()
       })

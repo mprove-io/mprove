@@ -5,7 +5,7 @@ import { MySQLConnection } from '@malloydata/db-mysql';
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { SnowflakeConnection } from '@malloydata/db-snowflake';
 import { PrestoConnection, TrinoConnection } from '@malloydata/db-trino';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 
@@ -40,11 +40,11 @@ export function makeMalloyConnections(item: {
     }
 
     let mConnection =
-      x.type === ConnectionTypeEnum.PostgreSQL
+      x.type === 'PostgreSQL'
         ? new PostgresConnection(x.connectionId, () => ({}), {
             connectionString: pgConnectionString
           })
-        : x.type === ConnectionTypeEnum.MySQL
+        : x.type === 'MySQL'
           ? new MySQLConnection(
               x.connectionId,
               {
@@ -58,12 +58,12 @@ export function makeMalloyConnections(item: {
               },
               {}
             )
-          : x.type === ConnectionTypeEnum.BigQuery
+          : x.type === 'BigQuery'
             ? new BigQueryConnection(x.connectionId, () => ({}), {
                 credentials: x.options.bigquery?.serviceAccountCredentials,
                 projectId: x.options.bigquery?.googleCloudProject
               })
-            : x.type === ConnectionTypeEnum.Trino
+            : x.type === 'Trino'
               ? new TrinoConnection(
                   x.connectionId,
                   {},
@@ -79,7 +79,7 @@ export function makeMalloyConnections(item: {
                     extraConfig: x.options.trino?.extraConfig
                   }
                 )
-              : x.type === ConnectionTypeEnum.Presto
+              : x.type === 'Presto'
                 ? new PrestoConnection(
                     x.connectionId,
                     {},
@@ -97,7 +97,7 @@ export function makeMalloyConnections(item: {
                       extraConfig: x.options.presto?.extraConfig
                     }
                   )
-                : x.type === ConnectionTypeEnum.SnowFlake
+                : x.type === 'SnowFlake'
                   ? new SnowflakeConnection(x.connectionId, {
                       connOptions: {
                         account: x.options.snowflake?.account,
@@ -108,7 +108,7 @@ export function makeMalloyConnections(item: {
                         sfRetryMaxLoginRetries: 0
                       }
                     })
-                  : x.type === ConnectionTypeEnum.MotherDuck
+                  : x.type === 'MotherDuck'
                     ? new DuckDBConnection({
                         name: x.connectionId,
                         databasePath: isDefined(x.options.motherduck?.database)
@@ -116,7 +116,7 @@ export function makeMalloyConnections(item: {
                           : `md:`,
                         motherDuckToken: x.options.motherduck?.motherduckToken
                       })
-                    : x.type === ConnectionTypeEnum.Databricks
+                    : x.type === 'Databricks'
                       ? new DatabricksConnection(x.connectionId, {
                           host:
                             x.options.databricks?.internalHost ||

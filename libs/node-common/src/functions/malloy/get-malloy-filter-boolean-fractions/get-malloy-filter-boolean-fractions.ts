@@ -1,9 +1,8 @@
 import { BooleanFilter, Null } from '@malloydata/malloy-filter';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 
 export function getMalloyFilterBooleanFractions(item: {
   parsed: BooleanFilter;
@@ -22,15 +21,15 @@ export function getMalloyFilterBooleanFractions(item: {
     let fraction: Fraction = {
       brick: MALLOY_FILTER_ANY,
       parentBrick: parentBrick,
-      operator: FractionOperatorEnum.And, // "And" isntead of "Or"
-      type: FractionTypeEnum.BooleanIsAnyValue
+      operator: 'And', // "And" isntead of "Or"
+      type: 'BooleanIsAnyValue'
     };
 
     fractions.push(fraction);
   }
 
   booleanFilters.forEach(booleanFilter => {
-    let fractionOperator = FractionOperatorEnum.And;
+    let fractionOperator: FractionOperator = 'And';
 
     let isNot = (booleanFilter as { not: boolean })?.not === true;
 
@@ -40,10 +39,7 @@ export function getMalloyFilterBooleanFractions(item: {
         brick: isNot === false ? 'f`null`' : 'f`not null`',
         parentBrick: parentBrick,
         operator: fractionOperator,
-        type:
-          isNot === false
-            ? FractionTypeEnum.BooleanIsNull
-            : FractionTypeEnum.BooleanIsNotNull
+        type: isNot === false ? 'BooleanIsNull' : 'BooleanIsNotNull'
       };
 
       fractions.push(fraction);
@@ -75,20 +71,20 @@ export function getMalloyFilterBooleanFractions(item: {
         type:
           booleanFilter.operator === '=true'
             ? isNot === false
-              ? FractionTypeEnum.BooleanIsTrue
-              : FractionTypeEnum.BooleanIsNotTrue
+              ? 'BooleanIsTrue'
+              : 'BooleanIsNotTrue'
             : booleanFilter.operator === 'true'
               ? isNot === false
-                ? FractionTypeEnum.BooleanIsTruthy
-                : FractionTypeEnum.BooleanIsNotTruthy
+                ? 'BooleanIsTruthy'
+                : 'BooleanIsNotTruthy'
               : booleanFilter.operator === '=false'
                 ? isNot === false
-                  ? FractionTypeEnum.BooleanIsFalse
-                  : FractionTypeEnum.BooleanIsNotFalse
+                  ? 'BooleanIsFalse'
+                  : 'BooleanIsNotFalse'
                 : booleanFilter.operator === 'false'
                   ? isNot === false
-                    ? FractionTypeEnum.BooleanIsFalsy
-                    : FractionTypeEnum.BooleanIsNotFalsy
+                    ? 'BooleanIsFalsy'
+                    : 'BooleanIsNotFalsy'
                   : undefined
       };
 

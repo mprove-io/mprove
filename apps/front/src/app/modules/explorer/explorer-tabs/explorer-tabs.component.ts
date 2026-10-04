@@ -5,7 +5,7 @@ import {
   Input,
   Output
 } from '@angular/core';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+
 import type { ExplorerTab } from '../explorer-tab.interface';
 
 @Component({
@@ -15,8 +15,6 @@ import type { ExplorerTab } from '../explorer-tab.interface';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExplorerTabsComponent {
-  chartTypeEnum = ChartTypeEnum;
-
   @Input() tabs: ExplorerTab[] = [];
   @Input() activeTabId: string | null = null;
 

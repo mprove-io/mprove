@@ -3,28 +3,27 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 
-let func = FuncEnum.BuildSpaceAccessRoles;
+let func: Func = 'build-spaces/build-space-access-roles';
 
 export function buildSpaceAccessRoles(item: {
   spaces: FilePartSpace[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FilePartSpace[], never> {
   let { cs, ...logItem } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, logItem);
+  log(cs, caller, func, structId, 'input.log', logItem);
 
   item.spaces.forEach(space => {
     let accessRolesInherited: AccessRoleCombined[] = [];
@@ -63,9 +62,9 @@ export function buildSpaceAccessRoles(item: {
     });
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Spaces, item.spaces);
+  log(cs, caller, func, structId, 'out_spaces.log', item.spaces);
 
   return Result.succeed(item.spaces);
 }

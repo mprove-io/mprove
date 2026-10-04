@@ -4,29 +4,26 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
 
-let func = FuncEnum.CheckStoreResults;
+let func: Func = 'build-store-start/check-store-results';
 
 export function checkStoreResults(
   item: {
     stores: FileStore[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newStores: FileStore[] = [];
 
@@ -36,8 +33,8 @@ export function checkStoreResults(
     if (isUndefined(x.results)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.MISSING_RESULTS,
-          message: `parameter "${ParameterEnum.Results}" is required for ${x.fileExt} file`,
+          title: 'MISSING_RESULTS',
+          message: `parameter "results" is required for ${x.fileExt} file`,
           lines: [
             {
               line: 0,
@@ -56,7 +53,7 @@ export function checkStoreResults(
       if (isDefined(resultElement) && resultElement.constructor !== Object) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.RESULTS_ELEMENT_IS_NOT_A_DICTIONARY,
+            title: 'RESULTS_ELEMENT_IS_NOT_A_DICTIONARY',
             message:
               'found at least one results element that is not a dictionary',
             lines: [
@@ -75,14 +72,13 @@ export function checkStoreResults(
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            [
-              ParameterEnum.Result.toString(),
-              ParameterEnum.FractionTypes.toString()
-            ].indexOf(parameter) < 0
+            ['result'.toString(), 'fraction_types'.toString()].indexOf(
+              parameter
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNKNOWN_RESULTS_ELEMENT_PARAMETER,
+                title: 'UNKNOWN_RESULTS_ELEMENT_PARAMETER',
                 message: `parameter "${parameter}" cannot be used in results element`,
                 lines: [
                   {
@@ -100,11 +96,11 @@ export function checkStoreResults(
 
           if (
             Array.isArray(resultElement[parameter as keyof FileStoreResult]) &&
-            [ParameterEnum.FractionTypes.toString()].indexOf(parameter) < 0
+            ['fraction_types'.toString()].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_LIST,
+                title: 'UNEXPECTED_LIST',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -126,7 +122,7 @@ export function checkStoreResults(
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+                title: 'UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -151,8 +147,8 @@ export function checkStoreResults(
         if (isUndefined(resultElement.result)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_RESULT,
-              message: `results element must have "${ParameterEnum.Result}" parameter`,
+              title: 'MISSING_RESULT',
+              message: `results element must have "result" parameter`,
               lines: [
                 {
                   line: Math.min(...resultsElementKeyLineNums),
@@ -168,8 +164,8 @@ export function checkStoreResults(
         if (isUndefined(resultElement.fraction_types)) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_FRACTION_TYPES,
-              message: `results element must have "${ParameterEnum.FractionTypes}" parameter`,
+              title: 'MISSING_FRACTION_TYPES',
+              message: `results element must have "fraction_types" parameter`,
               lines: [
                 {
                   line: Math.min(...resultsElementKeyLineNums),
@@ -204,8 +200,8 @@ export function checkStoreResults(
         if (result.resultLineNums.length > 1) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.DUPLICATE_RESULTS,
-              message: `"${ParameterEnum.Result}" value must be unique across results elements`,
+              title: 'DUPLICATE_RESULTS',
+              message: `"result" value must be unique across results elements`,
               lines: result.resultLineNums.map(l => ({
                 line: l,
                 name: x.fileName,
@@ -234,7 +230,7 @@ export function checkStoreResults(
 
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHARS_IN_RESULT,
+              title: 'WRONG_CHARS_IN_RESULT',
               message: `Characters "${resultWrongCharsString}" cannot be used for result (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
@@ -255,8 +251,8 @@ export function checkStoreResults(
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, newStores);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_stores.log', newStores);
 
   return newStores;
 }

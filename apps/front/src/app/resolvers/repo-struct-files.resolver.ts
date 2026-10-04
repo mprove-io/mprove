@@ -9,7 +9,7 @@ import {
   PATH_ORG,
   PATH_PROJECT
 } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendGetRepoRequest } from '#common/types/backend/routes/repos/get-repo/get-repo-request';
 import type { ToBackendGetRepoResponse } from '#common/types/backend/routes/repos/get-repo/get-repo-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
@@ -81,7 +81,7 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
             return true;
           } else if (
             resp?.type === 'Failure' &&
-            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([
               PATH_ORG,

@@ -8,8 +8,9 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { QueryStatus } from '#common/types/blockml/parts/query/query-status';
+
 import type { QueryLt } from '#common/types/shared/st-lt/queries/query-lt';
 import type { QuerySt } from '#common/types/shared/st-lt/queries/query-st';
 
@@ -21,13 +22,13 @@ export const queriesTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(),
     connectionId: varchar('connection_id', { length: 32 }).notNull(),
     connectionType: varchar('connection_type')
-      .$type<ConnectionTypeEnum>()
+      .$type<ConnectionType>()
       .notNull(),
     reportId: varchar('report_id', { length: 32 }),
     reportStructId: varchar('report_struct_id', { length: 32 }),
     queryJobId: varchar('query_job_id'),
     bigqueryQueryJobId: varchar('bigquery_query_job_id'),
-    status: varchar('status').$type<QueryStatusEnum>().notNull(),
+    status: varchar('status').$type<QueryStatus>().notNull(),
     lastRunBy: varchar('last_run_by'),
     lastRunTs: bigint('last_run_ts', { mode: 'number' }),
     lastCancelTs: bigint('last_cancel_ts', { mode: 'number' }),

@@ -8,9 +8,7 @@ import { logStruct } from '#blockml/controllers/rebuild-struct/rebuild-struct-st
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
@@ -25,8 +23,8 @@ import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileSchema } from '#common/types/blockml/parts/internal/file-schema';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
@@ -58,7 +56,7 @@ export async function finalizeRebuildStruct(item: {
       apiModels: item.apiModels,
       errors: item.errors,
       structId: item.structId,
-      caller: CallerEnum.BuildCheckVmdSuggestModelDimension
+      caller: 'BuildCheckVmdSuggestModelDimension'
     },
     item.cs
   );
@@ -72,7 +70,7 @@ export async function finalizeRebuildStruct(item: {
       reports: item.reports,
       charts: item.charts,
       structId: item.structId,
-      caller: CallerEnum.RebuildStruct
+      caller: 'RebuildStruct'
     },
     item.cs
   );
@@ -88,10 +86,10 @@ export async function finalizeRebuildStruct(item: {
     connection.close().catch(error => {
       logToConsoleBlockml({
         log: new ServerError({
-          message: ErEnum.BLOCKML_MALLOY_CONNECTION_CLOSE_ERROR,
+          message: 'BLOCKML_MALLOY_CONNECTION_CLOSE_ERROR',
           originalError: error
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: item.logger,
         cs: item.cs
       });

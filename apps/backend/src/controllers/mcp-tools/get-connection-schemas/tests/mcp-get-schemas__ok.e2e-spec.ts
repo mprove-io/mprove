@@ -10,9 +10,7 @@ import { PrepTest } from '#backend/interfaces/prep-test';
 import { MCP_TOOL_GET_SCHEMAS } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-connections-item';
@@ -47,7 +45,7 @@ test('1', async t => {
         envId: PROJECT_ENV_PROD,
         projectId: projectId,
         connectionId: 'c1_postgres',
-        type: ConnectionTypeEnum.PostgreSQL,
+        type: 'PostgreSQL',
         options: {
           postgres: {
             host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
@@ -98,7 +96,7 @@ test('1', async t => {
               seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.Managed
+              remoteType: 'Managed'
             }
           ],
           members: [
@@ -151,7 +149,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prepTest?.logger,
         cs: prepTest?.cs
       });
@@ -167,7 +165,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prepTest?.logger,
       cs: prepTest?.cs
     });

@@ -1,5 +1,4 @@
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 
 export function makeTitle(session: SessionApi): string {
   if (
@@ -10,10 +9,7 @@ export function makeTitle(session: SessionApi): string {
   ) {
     return session.title;
   }
-  if (
-    session.status === SessionStatusEnum.New ||
-    session.status === SessionStatusEnum.Active
-  ) {
+  if (session.status === 'New' || session.status === 'Active') {
     return 'Untitled';
   }
   return 'No title';

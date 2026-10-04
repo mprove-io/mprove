@@ -23,17 +23,13 @@ import {
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
 } from '#common/constants/top-front';
-import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
+
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { ReportX } from '#common/types/backend/parts/report-x';
-import type { Row } from '#common/types/blockml/parts/row';
-import type { DataRow } from '#common/types/front/data-row';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+import type { DataRow } from '#common/types/front/report/row/data-row';
 import { getTimeSpecWord } from '#front/app/functions/get-timespec-word';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -109,21 +105,15 @@ export class ReportComponent {
           metricsTimeColumnsNarrowWidth:
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsNarrowWidth
-              : [
-                    TimeSpecEnum.Timestamps,
-                    TimeSpecEnum.Minutes,
-                    TimeSpecEnum.Hours
-                  ].indexOf(uiState.timeSpec) > -1
+              : ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) >
+                  -1
                 ? uiState.metricsTimeColumnsNarrowWidth
                 : paramsColumn.getActualWidth(),
           metricsTimeColumnsWideWidth:
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsWideWidth
-              : [
-                    TimeSpecEnum.Timestamps,
-                    TimeSpecEnum.Minutes,
-                    TimeSpecEnum.Hours
-                  ].indexOf(uiState.timeSpec) > -1
+              : ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) >
+                  -1
                 ? paramsColumn.getActualWidth()
                 : uiState.metricsTimeColumnsWideWidth
         });
@@ -234,11 +224,7 @@ export class ReportComponent {
             cellRenderer: DataRendererComponent,
             type: 'numericColumn',
             width:
-              [
-                TimeSpecEnum.Timestamps,
-                TimeSpecEnum.Minutes,
-                TimeSpecEnum.Hours
-              ].indexOf(uiState.timeSpec) > -1
+              ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) > -1
                 ? Math.max(
                     DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
                     timeColumnsWideWidth
@@ -248,11 +234,7 @@ export class ReportComponent {
                     timeColumnsNarrowWidth
                   ),
             minWidth:
-              [
-                TimeSpecEnum.Timestamps,
-                TimeSpecEnum.Minutes,
-                TimeSpecEnum.Hours
-              ].indexOf(uiState.timeSpec) > -1
+              ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) > -1
                 ? 220
                 : 155,
             maxWidth: 300,
@@ -315,7 +297,7 @@ export class ReportComponent {
         let runningQueriesLength = this.report.rows
           .filter(row => isDefined(row.query))
           .map(row => row.query.status)
-          .filter(status => status === QueryStatusEnum.Running).length;
+          .filter(status => status === 'Running').length;
 
         this.statusColumn.type =
           runningQueriesLength > 0 ? 'running' : undefined;
@@ -468,7 +450,7 @@ export class ReportComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: ChangeTypeEnum.Move,
+      changeType: 'Move',
       rowChange: undefined,
       rowIds: rowIds,
       reportFields: report.fields,
@@ -498,18 +480,16 @@ export class ReportComponent {
       });
 
       let timeFieldIdSpec =
-        metric.modelType === ModelTypeEnum.Malloy
-          ? timeSpecDetail === DetailUnitEnum.Timestamps
+        metric.modelType === 'Malloy'
+          ? timeSpecDetail === 'timestamps'
             ? `${metric.timeFieldId}_ts`
-            : [DetailUnitEnum.WeeksSunday, DetailUnitEnum.WeeksMonday].indexOf(
-                  timeSpecDetail
-                ) > -1
+            : ['weeksSunday', 'weeksMonday'].indexOf(timeSpecDetail) > -1
               ? `${metric.timeFieldId}_week`
               : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`
           : `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
       let extendedFilters =
-        metric.modelType === ModelTypeEnum.Store
+        metric.modelType === 'Store'
           ? params.data.mconfig.extendedFilters
           : params.data.mconfig.extendedFilters.filter(
               filter => filter.fieldId !== timeFieldIdSpec

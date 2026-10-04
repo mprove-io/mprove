@@ -9,9 +9,7 @@ import { Prep } from '#backend/interfaces/prep';
 import { MCP_TOOL_GET_STATE } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
@@ -67,7 +65,7 @@ test('1', async t => {
               orgId: orgId,
               projectId: projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -128,7 +126,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -141,13 +139,13 @@ test('1', async t => {
     assert.equal(response.body.result.isError, true);
     let errorText = response.body.result.content[0].text;
     let errorObj = JSON.parse(errorText);
-    assert.equal(errorObj.error, ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER);
+    assert.equal(errorObj.error, 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

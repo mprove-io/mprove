@@ -12,12 +12,12 @@ import {
   MCP_TOOL_GET_MODEL,
   MCP_TOOL_GET_MODEL_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import {
   type McpToolGetModelInput,
   zMcpToolGetModelInput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-model/mcp-tool-get-model-input';
 import { zMcpToolGetModelOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-model/mcp-tool-get-model-output';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 @McpController()
@@ -42,14 +42,14 @@ export class GetModelTool {
   ) {
     let user = (request as any).user as UserTab;
 
-    let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
+    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
 
-    if (apiKeyType === ApiKeyTypeEnum.PK) {
+    if (apiKeyType === 'PK') {
       this.toolService.validateUserRepoId({
         repoId: item.repoId,
         userId: user.userId
       });
-    } else if (apiKeyType === ApiKeyTypeEnum.SK) {
+    } else if (apiKeyType === 'SK') {
       this.toolService.validateSessionProjectId({
         projectId: item.projectId,
         request: request

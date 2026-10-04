@@ -1,7 +1,10 @@
 import { z } from 'zod';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import type { EnumValues } from '#common/types/enum-values';
+import {
+  type ProjectWeekStart,
+  zProjectWeekStart
+} from '#common/types/backend/parts/project/project-week-start';
+
 import {
   type TimezoneString,
   zTimezone
@@ -10,7 +13,7 @@ import {
 export type MproveConfig = {
   mproveDirValue?: string;
   caseSensitiveStringFilters?: boolean;
-  weekStart?: EnumValues<typeof ProjectWeekStartEnum>;
+  weekStart?: ProjectWeekStart;
   allowTimezones?: boolean;
   defaultTimezone?: TimezoneString;
   formatNumber?: string;
@@ -23,7 +26,7 @@ export let zMproveConfig = z
   .object({
     mproveDirValue: z.string().nullish(),
     caseSensitiveStringFilters: z.boolean().nullish(),
-    weekStart: z.enum(ProjectWeekStartEnum).nullish(),
+    weekStart: zProjectWeekStart.nullish(),
     allowTimezones: z.boolean().nullish(),
     defaultTimezone: zTimezone.nullish(),
     formatNumber: z.string().nullish(),

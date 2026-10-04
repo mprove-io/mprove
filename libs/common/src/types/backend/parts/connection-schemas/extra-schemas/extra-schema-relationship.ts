@@ -1,22 +1,19 @@
 import { z } from 'zod';
-import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
+import { zRelationshipType } from '#common/types/shared/schema/relationship-type';
 
 export type ExtraSchemaRelationship = {
   to: string;
   toSchema?: string;
-  type:
-    | RelationshipTypeEnum.OneToOne
-    | RelationshipTypeEnum.OneToMany
-    | RelationshipTypeEnum.ManyToOne
-    | RelationshipTypeEnum.ManyToMany;
+  type: RelationshipType;
 };
 
 export let zExtraSchemaRelationship = z
   .object({
     to: z.string(),
     toSchema: z.string().nullish(),
-    type: z.enum(RelationshipTypeEnum)
+    type: zRelationshipType
   })
   .meta({ id: 'ExtraSchemaRelationship' });
 

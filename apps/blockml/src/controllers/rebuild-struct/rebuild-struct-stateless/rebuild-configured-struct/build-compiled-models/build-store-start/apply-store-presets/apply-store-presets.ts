@@ -2,17 +2,15 @@ import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { Preset } from '#common/types/blockml/parts/preset';
 
-let func = FuncEnum.ApplyStorePresets;
+let func: Func = 'build-store-start/apply-store-presets';
 
 export function applyStorePresets(
   item: {
@@ -20,12 +18,12 @@ export function applyStorePresets(
     presets: Preset[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId, presets } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newStores: FileStore[] = [];
 
@@ -38,7 +36,7 @@ export function applyStorePresets(
       if (presetIds.indexOf(x.preset) < 0) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.WRONG_PRESET,
+            title: 'WRONG_PRESET',
             message: `Preset "${x.preset}" not found`,
             lines: [
               {
@@ -70,8 +68,8 @@ export function applyStorePresets(
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, newStores);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_stores.log', newStores);
 
   return newStores;
 }

@@ -6,7 +6,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
+import type { FavoriteType } from '#common/types/backend/parts/favorite/favorite-type';
 
 export const favoritesTable = pgTable(
   'favorites',
@@ -16,7 +16,7 @@ export const favoritesTable = pgTable(
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     userId: varchar('user_id', { length: 32 }).notNull(),
-    type: varchar('type').$type<FavoriteTypeEnum>().notNull(),
+    type: varchar('type').$type<FavoriteType>().notNull(),
     targetId: varchar('target_id', { length: 32 }).notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

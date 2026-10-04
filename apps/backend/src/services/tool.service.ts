@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import type { Request } from 'express';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
 
 @Injectable()
 export class ToolService {
@@ -11,7 +10,7 @@ export class ToolService {
 
     if (repoId !== userId && repoId !== PROD_REPO_ID) {
       throw new ServerError({
-        message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER
+        message: 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER'
       });
     }
   }
@@ -24,7 +23,7 @@ export class ToolService {
 
     if (projectId !== apiKeyToValidateProjectId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROJECT_ID_DOES_NOT_MATCH_SESSION
+        message: 'BACKEND_PROJECT_ID_DOES_NOT_MATCH_SESSION'
       });
     }
   }
@@ -37,7 +36,7 @@ export class ToolService {
 
     if (repoId !== apiKeyToValidateSessionId && repoId !== PROD_REPO_ID) {
       throw new ServerError({
-        message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION
+        message: 'BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION'
       });
     }
   }
@@ -50,7 +49,7 @@ export class ToolService {
 
     if (envId !== apiKeyToValidateEnvId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION
+        message: 'BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION'
       });
     }
   }
@@ -63,7 +62,7 @@ export class ToolService {
 
     if (branchId !== apiKeyToValidateBranchId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION
+        message: 'BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION'
       });
     }
   }

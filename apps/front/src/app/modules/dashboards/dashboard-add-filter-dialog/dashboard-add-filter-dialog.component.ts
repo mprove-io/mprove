@@ -25,19 +25,11 @@ import { take, tap } from 'rxjs/operators';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
 import { EMPTY_MCONFIG_FIELD, RESULTS_LIST } from '#common/constants/top-front';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { StoreFilterForEnum } from '#common/enums/store-filter-for.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { SuggestField } from '#common/types/backend/parts/suggest-field';
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
 import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
@@ -45,12 +37,16 @@ import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/mod
 import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import type { ToBackendGetSuggestFieldsRequest } from '#common/types/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-request';
 import type { ToBackendGetSuggestFieldsResponse } from '#common/types/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-response';
-import type { DashboardField } from '#common/types/blockml/parts/dashboard-field';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { SelectItem } from '#common/types/front/select-item';
+import type { DashboardField } from '#common/types/blockml/parts/dashboard/dashboard-field';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
+import type { StoreFilterFor } from '#common/types/blockml/parts/store/store-filter-for';
+import type { SelectItem } from '#common/types/front/ui/select-item';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -66,7 +62,7 @@ export interface DashboardAddFilterDialogData {
 }
 
 export class StoreFilterForItem {
-  value: StoreFilterForEnum;
+  value: StoreFilterFor;
   label: string;
 }
 
@@ -111,13 +107,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   malloyResultsList = RESULTS_LIST;
   storeResultsList: string[] = [];
 
-  modelTypeStore = ModelTypeEnum.Store;
-  modelTypeMalloy = ModelTypeEnum.Malloy;
-  storeFilterForFilter = StoreFilterForEnum.Filter;
-  storeFilterForResult = StoreFilterForEnum.Result;
-  fieldResultString = FieldResultEnum.String;
-
-  fieldResult = FieldResultEnum.String;
+  fieldResult: FieldResult = 'string';
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -133,14 +123,14 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     modelType: [undefined]
   });
 
-  modelTypesList: SelectItem<ModelTypeEnum>[] = [
+  modelTypesList: SelectItem<ModelType>[] = [
     {
       label: 'Malloy',
-      value: ModelTypeEnum.Malloy
+      value: 'Malloy'
     },
     {
       label: 'Store',
-      value: ModelTypeEnum.Store
+      value: 'Store'
     }
   ];
 
@@ -163,11 +153,11 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   storeFilterForList: StoreFilterForItem[] = [
     {
       label: 'Filter',
-      value: StoreFilterForEnum.Filter
+      value: 'Filter'
     },
     {
       label: 'Result',
-      value: StoreFilterForEnum.Result
+      value: 'Result'
     }
   ];
 
@@ -199,7 +189,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   }>;
 
   fieldResultForm: FormGroup<{
-    fieldResult: FormControl<FieldResultEnum>;
+    fieldResult: FormControl<FieldResult>;
   }>;
 
   suggestFieldForm: FormGroup<{
@@ -238,13 +228,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       suggestField: [this.emptySuggestField]
     });
 
-    this.modelTypeForm.controls['modelType'].setValue(ModelTypeEnum.Malloy);
+    this.modelTypeForm.controls['modelType'].setValue('Malloy');
 
     setTimeout(() => {
-      if (
-        this.fieldResult === FieldResultEnum.String &&
-        this.suggestFieldsLoaded === false
-      ) {
+      if (this.fieldResult === 'string' && this.suggestFieldsLoaded === false) {
         this.loadSuggestFields();
       }
     }, 0);
@@ -280,15 +267,11 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.formsError = undefined;
 
-    if (
-      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
-    ) {
+    if (this.modelTypeForm.controls['modelType'].value === 'Store') {
       this.storeModelSet = false;
 
       this.storeModelForm.controls['storeModel'].setValue(undefined);
-      this.storeFilterForForm.controls['storeFilterFor'].setValue(
-        StoreFilterForEnum.Filter
-      );
+      this.storeFilterForForm.controls['storeFilterFor'].setValue('Filter');
       this.storeFilterForm.controls['storeFilter'].setValue(undefined);
       this.fieldResultForm.controls['fieldResult'].setValue(undefined);
       this.suggestFieldForm.controls['suggestField'].setValue(undefined);
@@ -297,9 +280,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         this.loadStoreModels();
       }
     } else {
-      this.fieldResultForm.controls['fieldResult'].setValue(
-        FieldResultEnum.String
-      );
+      this.fieldResultForm.controls['fieldResult'].setValue('string');
     }
   }
 
@@ -321,14 +302,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.formsError = undefined;
 
-    if (
-      this.storeFilterForForm.controls['storeFilterFor'].value ===
-      StoreFilterForEnum.Result
-    ) {
-      if (this.storeResultsList.indexOf(FieldResultEnum.String) > -1) {
-        this.fieldResultForm.controls['fieldResult'].setValue(
-          FieldResultEnum.String
-        );
+    if (this.storeFilterForForm.controls['storeFilterFor'].value === 'Result') {
+      if (this.storeResultsList.indexOf('string') > -1) {
+        this.fieldResultForm.controls['fieldResult'].setValue('string');
       } else {
         this.fieldResultForm.controls['fieldResult'].setValue(undefined);
       }
@@ -343,15 +319,12 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     this.formsError = undefined;
   }
 
-  resultChange(fieldResult: FieldResultEnum) {
+  resultChange(fieldResult: FieldResult) {
     this.formsError = undefined;
 
     this.fieldResult = fieldResult;
 
-    if (
-      this.fieldResult === FieldResultEnum.String &&
-      this.suggestFieldsLoaded === false
-    ) {
+    if (this.fieldResult === 'string' && this.suggestFieldsLoaded === false) {
       this.loadSuggestFields();
     }
     this.cd.detectChanges();
@@ -391,7 +364,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         tap((resp: ToBackendGetModelsResponse) => {
           if (resp?.type === 'Success') {
             this.storeModels = resp.output.models.filter(
-              model => model.type === ModelTypeEnum.Store
+              model => model.type === 'Store'
             );
 
             this.storeModelsList = this.storeModels.map(model => {
@@ -453,7 +426,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
             this.storeModel = resp.output.model;
 
             this.storeFiltersList = resp.output.model.fields
-              .filter(x => x.fieldClass === FieldClassEnum.Filter)
+              .filter(x => x.fieldClass === 'filter')
               .map(field => {
                 let storeFiltersItem: StoreFiltersItem = {
                   value: field.id,
@@ -499,7 +472,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       repoId: nav.repoId,
       envId: nav.envId,
       parentId: this.dashboard.dashboardId,
-      parentType: MconfigParentTypeEnum.Dashboard
+      parentType: 'Dashboard'
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -538,17 +511,14 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       return;
     }
 
-    if (
-      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
-    ) {
+    if (this.modelTypeForm.controls['modelType'].value === 'Store') {
       if (isUndefined(this.storeModelForm.controls['storeModel'].value)) {
         this.formsError = 'Model must be selected';
         return;
       }
 
       if (
-        this.storeFilterForForm.controls['storeFilterFor'].value ===
-          StoreFilterForEnum.Filter &&
+        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter' &&
         isUndefined(this.storeFilterForm.controls['storeFilter'].value)
       ) {
         this.formsError = 'Filter must be selected';
@@ -556,8 +526,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       }
 
       if (
-        this.storeFilterForForm.controls['storeFilterFor'].value ===
-          StoreFilterForEnum.Result &&
+        this.storeFilterForForm.controls['storeFilterFor'].value === 'Result' &&
         isUndefined(this.fieldResultForm.controls['fieldResult'].value)
       ) {
         this.formsError = 'Result must be selected';
@@ -577,29 +546,25 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     let storeFilter;
 
-    if (
-      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
-    ) {
+    if (this.modelTypeForm.controls['modelType'].value === 'Store') {
       storeFilter =
-        this.storeFilterForForm.controls['storeFilterFor'].value ===
-        StoreFilterForEnum.Filter
+        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter'
           ? this.storeModel.storeContent.fields.find(
               f => f.name === this.storeFilterForm.controls['storeFilter'].value
             )
           : undefined;
 
       let storeResultFraction =
-        this.storeFilterForForm.controls['storeFilterFor'].value ===
-        StoreFilterForEnum.Filter
+        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter'
           ? undefined
           : this.storeModel.storeContent.results.find(
               r =>
                 r.result === this.fieldResultForm.controls['fieldResult'].value
             ).fraction_types[0];
 
-      let logicGroup = isUndefined(storeResultFraction)
+      let logicGroup: FractionLogic = isUndefined(storeResultFraction)
         ? undefined
-        : FractionLogicEnum.Or;
+        : 'OR';
 
       let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
@@ -612,16 +577,16 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.Or,
+                logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: FractionLogicEnum.AndNot,
-                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: 'AND_NOT',
+                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -632,7 +597,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === 'OR' ? -1 : 1;
             });
 
       let controls = isUndefined(storeResultFraction)
@@ -670,13 +635,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         meta: storeResultFraction?.meta,
         operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === FractionLogicEnum.Or
-            ? FractionOperatorEnum.Or
-            : FractionOperatorEnum.And,
+          : logicGroup === 'OR'
+            ? 'Or'
+            : 'And',
         logicGroup: logicGroup,
         brick: undefined,
         parentBrick: undefined,
-        type: FractionTypeEnum.StoreFraction,
+        type: 'StoreFraction',
         storeResult: this.fieldResultForm.controls['fieldResult'].value,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFraction?.type,
@@ -691,13 +656,11 @@ export class DashboardAddFilterDialogComponent implements OnInit {
             : undefined,
         controls: controls
       };
-    } else if (
-      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Malloy
-    ) {
+    } else if (this.modelTypeForm.controls['modelType'].value === 'Malloy') {
       fraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(
           this.fieldResultForm.controls['fieldResult'].value
         )
@@ -706,7 +669,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       fraction = {
         brick: 'any',
         parentBrick: 'any',
-        operator: FractionOperatorEnum.Or,
+        operator: 'Or',
         type: getFractionTypeForAny(
           this.fieldResultForm.controls['fieldResult'].value
         )
@@ -723,25 +686,21 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         ? Number(storeFilter.max_fractions)
         : undefined,
       storeModel:
-        this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
+        this.modelTypeForm.controls['modelType'].value === 'Store'
           ? this.storeModelForm.controls['storeModel'].value
           : undefined,
       storeFilter:
-        this.modelTypeForm.controls['modelType'].value ===
-          ModelTypeEnum.Store &&
-        this.storeFilterForForm.controls['storeFilterFor'].value ===
-          StoreFilterForEnum.Filter
+        this.modelTypeForm.controls['modelType'].value === 'Store' &&
+        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter'
           ? this.storeFilterForm.controls['storeFilter'].value
           : undefined,
       storeResult:
-        this.modelTypeForm.controls['modelType'].value ===
-          ModelTypeEnum.Store &&
-        this.storeFilterForForm.controls['storeFilterFor'].value ===
-          StoreFilterForEnum.Result
+        this.modelTypeForm.controls['modelType'].value === 'Store' &&
+        this.storeFilterForForm.controls['storeFilterFor'].value === 'Result'
           ? this.fieldResultForm.controls['fieldResult'].value
           : undefined,
       result:
-        this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Malloy
+        this.modelTypeForm.controls['modelType'].value === 'Malloy'
           ? this.fieldResultForm.controls['fieldResult'].value
           : undefined,
       suggestModelDimension: isDefined(suggestField?.modelFieldRef)

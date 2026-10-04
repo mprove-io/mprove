@@ -1,7 +1,6 @@
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { Sorting } from '#common/types/blockml/parts/sorting';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { Sorting } from '#common/types/blockml/parts/query/sorting';
 
 export function sortChartFieldsOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;
@@ -15,7 +14,7 @@ export function sortChartFieldsOnSelectChange<T extends Mconfig>(item: {
     mconfig.select.forEach((fieldId: string) => {
       let field = fields.find(f => f.id === fieldId);
 
-      if (field.fieldClass === FieldClassEnum.Dimension) {
+      if (field.fieldClass === 'dimension') {
         selectDimensions.push(field.id);
       }
     });

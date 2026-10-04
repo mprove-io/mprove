@@ -1,6 +1,10 @@
 import type Anthropic from '@anthropic-ai/sdk';
+import {
+  type AnthropicModelVariant,
+  zAnthropicModelVariant
+} from '#backend/types/anthropic-model-variant';
 
-export type AnthropicModelVariant = 'low' | 'medium' | 'high' | 'xhigh' | 'max';
+export type { AnthropicModelVariant } from '#backend/types/anthropic-model-variant';
 
 export type AnthropicVariantOptions =
   | {
@@ -43,13 +47,7 @@ export function getAnthropicModelVariants(item: {
     return ['high', 'max'];
   }
 
-  let efforts: AnthropicModelVariant[] = [
-    'low',
-    'medium',
-    'high',
-    'xhigh',
-    'max'
-  ];
+  let efforts: AnthropicModelVariant[] = zAnthropicModelVariant.options;
 
   let variants: AnthropicModelVariant[] = efforts.filter(effort => {
     let effortCapabilities = anthropicModel.capabilities?.effort;

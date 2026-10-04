@@ -29,13 +29,12 @@ import { ProvidersService } from '#backend/services/db/providers.service';
 import { LlmModelService } from '#backend/services/llm-model.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateLlmModelOutput } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-output';
 import type { ToBackendCreateLlmModelRequest } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-request';
@@ -108,17 +107,14 @@ export class CreateLlmModelController {
     let model: LlmModel = await this.llmModelService.refreshModel({
       providerType: provider.type,
       apiKey:
-        provider.type === ProviderTypeEnum.OpenAICodex
-          ? undefined
-          : provider.options.apiKey,
+        provider.type === 'OpenAICodex' ? undefined : provider.options.apiKey,
       userId: user.userId,
       isCodexAuthSet: isCodexAuthSet,
       variants: variants,
       modelInput: {
         modelId: modelId,
         name: modelName,
-        isManual:
-          provider.type === ProviderTypeEnum.OpenAICodex && isManual === true,
+        isManual: provider.type === 'OpenAICodex' && isManual === true,
         contextLimit: contextLimit,
         inputLimit: inputLimit,
         outputLimit: outputLimit,
@@ -129,7 +125,7 @@ export class CreateLlmModelController {
 
     if (isBuilder === true && model.isOpencodeSupported === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER
+        message: 'BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER'
       });
     }
 

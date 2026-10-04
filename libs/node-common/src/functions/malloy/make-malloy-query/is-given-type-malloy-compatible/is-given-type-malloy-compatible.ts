@@ -1,7 +1,7 @@
-import { GivenTypeEnum } from '#common/enums/given-type.enum';
+import type { GivenType } from '#common/types/backend/parts/given/given-type';
 
 export function isGivenTypeMalloyCompatible(item: {
-  givenType: GivenTypeEnum;
+  givenType: GivenType;
   isMultiple: boolean;
   malloyType: {
     type: string;
@@ -13,19 +13,19 @@ export function isGivenTypeMalloyCompatible(item: {
   let expectedType: string;
 
   switch (givenType) {
-    case GivenTypeEnum.String:
+    case 'String':
       expectedType = 'string';
       break;
-    case GivenTypeEnum.Number:
+    case 'Number':
       expectedType = 'number';
       break;
-    case GivenTypeEnum.Boolean:
+    case 'Boolean':
       expectedType = 'boolean';
       break;
-    case GivenTypeEnum.Date:
+    case 'Date':
       expectedType = 'date';
       break;
-    case GivenTypeEnum.Timestamp:
+    case 'Timestamp':
       expectedType = 'timestamp';
       break;
     // case GivenTypeEnum.TimestampTz:

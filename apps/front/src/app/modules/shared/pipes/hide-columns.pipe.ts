@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
+import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
 
 @Pipe({ standalone: false, name: 'hideColumns' })
 export class HideColumnsPipe implements PipeTransform {

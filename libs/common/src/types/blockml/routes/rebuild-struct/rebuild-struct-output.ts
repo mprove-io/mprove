@@ -11,21 +11,27 @@ import {
 import {
   type BmlError,
   zBmlError
-} from '#common/types/blockml/parts/bml-error';
-import { type Chart, zChart } from '#common/types/blockml/parts/chart';
+} from '#common/types/blockml/diagnostics/bml-error';
+import { type Chart, zChart } from '#common/types/blockml/parts/chart/chart';
 import {
   type Dashboard,
   zDashboard
-} from '#common/types/blockml/parts/dashboard';
-import { type Mconfig, zMconfig } from '#common/types/blockml/parts/mconfig';
-import { type Model, zModel } from '#common/types/blockml/parts/model';
+} from '#common/types/blockml/parts/dashboard/dashboard';
+import {
+  type Mconfig,
+  zMconfig
+} from '#common/types/blockml/parts/mconfig/mconfig';
+import { type Model, zModel } from '#common/types/blockml/parts/model/model';
 import {
   type ModelMetric,
   zModelMetric
-} from '#common/types/blockml/parts/model-metric';
+} from '#common/types/blockml/parts/model/model-metric';
 import { type Preset, zPreset } from '#common/types/blockml/parts/preset';
-import { type Query, zQuery } from '#common/types/blockml/parts/query';
-import { type Report, zReport } from '#common/types/blockml/parts/report';
+import { type Query, zQuery } from '#common/types/blockml/parts/query/query';
+import {
+  type Report,
+  zReport
+} from '#common/types/blockml/parts/report/report';
 import { type Space, zSpace } from '#common/types/blockml/parts/space';
 
 export type ToBlockmlRebuildStructOutput = {

@@ -7,7 +7,7 @@ import {
 import {
   type RepoStatus,
   zRepoStatus
-} from '#common/types/disk/parts/repo-status';
+} from '#common/types/disk/parts/repo/repo-status';
 
 export type ValidateFilesRepo = {
   orgId: string;

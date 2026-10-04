@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
+import { zSessionStatus } from '#common/types/backend/parts/session/session-status';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
+import { zSessionType } from '#common/types/backend/parts/session/session-type';
 
 export type ToBackendSeedRecordsInputSessionsItem = {
   sessionId: string;
@@ -11,14 +13,8 @@ export type ToBackendSeedRecordsInputSessionsItem = {
   apiKeyPrefix: string;
   apiKeySecretHash: string;
   apiKeySalt: string;
-  status:
-    | SessionStatusEnum.New
-    | SessionStatusEnum.Active
-    | SessionStatusEnum.Paused
-    | SessionStatusEnum.Error
-    | SessionStatusEnum.Archived
-    | SessionStatusEnum.Deleted;
-  type: SessionTypeEnum.Explorer | SessionTypeEnum.Editor;
+  status: SessionStatus;
+  type: SessionType;
   repoId: string;
   branchId: string;
   envId: string;
@@ -33,8 +29,8 @@ export let zToBackendSeedRecordsInputSessionsItem = z
     apiKeyPrefix: z.string(),
     apiKeySecretHash: z.string(),
     apiKeySalt: z.string(),
-    status: z.enum(SessionStatusEnum),
-    type: z.enum(SessionTypeEnum),
+    status: zSessionStatus,
+    type: zSessionType,
     repoId: z.string(),
     branchId: z.string(),
     envId: z.string()

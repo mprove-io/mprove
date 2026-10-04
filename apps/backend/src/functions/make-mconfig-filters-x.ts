@@ -1,8 +1,8 @@
-import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FilterX } from '#common/types/backend/parts/filter-x';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
+import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 
 export function makeMconfigFiltersX(item: {
   modelFields: ModelField[];
@@ -17,9 +17,9 @@ export function makeMconfigFiltersX(item: {
       let filterX: FilterX = {
         fieldId: x.fieldId,
         fractions: x.fractions.sort((a, b) => {
-          let getPriority = (op: FractionOperatorEnum): number => {
-            if (op === FractionOperatorEnum.Or) return 0;
-            if (op === FractionOperatorEnum.And) return 1;
+          let getPriority = (op: FractionOperator): number => {
+            if (op === 'Or') return 0;
+            if (op === 'And') return 1;
             return 2;
           };
 

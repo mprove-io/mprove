@@ -17,9 +17,7 @@ import { SessionArchiveService } from '#backend/services/session/session-archive
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/repos/commit-repo/commit-repo-output';
 import type { ToDiskCommitRepoOutput } from '#common/types/disk/routes/repos/commit-repo/commit-repo-output';
@@ -60,9 +58,9 @@ export class CommitRepoController {
       allowProdRepo: true
     });
 
-    if (repoType === RepoTypeEnum.Production) {
+    if (repoType === 'production') {
       throw new ServerError({
-        message: ErEnum.BACKEND_MANUAL_COMMIT_TO_PRODUCTION_REPO_IS_FORBIDDEN
+        message: 'BACKEND_MANUAL_COMMIT_TO_PRODUCTION_REPO_IS_FORBIDDEN'
       });
     }
 
@@ -110,14 +108,14 @@ export class CommitRepoController {
       repo: diskCommitRepoOutput.repo
     };
 
-    if (repoType === RepoTypeEnum.Session) {
+    if (repoType === 'session') {
       let session = await this.sessionsService.getSessionByIdCheckExists({
         sessionId: repoId
       });
 
       let sessionApi = await this.sessionArchiveService.archiveSession({
         session: session,
-        archiveReason: ArchiveReasonEnum.Commit,
+        archiveReason: 'Commit',
         e2bApiKey: project.e2bApiKey
       });
 

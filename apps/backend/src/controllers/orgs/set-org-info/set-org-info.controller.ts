@@ -25,7 +25,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetOrgInfoOutput } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-output';
@@ -67,7 +67,7 @@ export class SetOrgInfoController {
     if (isDefined(name)) {
       if (name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()) {
         throw new ServerError({
-          message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME
+          message: 'BACKEND_RESTRICTED_ORGANIZATION_NAME'
         });
       }
 

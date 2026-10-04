@@ -1,7 +1,10 @@
 import { z } from 'zod';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import type { EnumValues } from '#common/types/enum-values';
+import {
+  type ChartType,
+  zChartType
+} from '#common/types/blockml/parts/chart/chart-type';
+
 import {
   type AccessRoleCombined,
   zAccessRoleCombined
@@ -22,7 +25,7 @@ export type SpaceUnit = {
   spaceFullTitle: string;
   modelId?: string;
   modelLabel?: string;
-  chartType?: EnumValues<typeof ChartTypeEnum>;
+  chartType?: ChartType;
   iconPath?: string;
 };
 
@@ -42,7 +45,7 @@ export let zSpaceUnit = z
     spaceFullTitle: z.string(),
     modelId: z.string().nullish(),
     modelLabel: z.string().nullish(),
-    chartType: z.enum(ChartTypeEnum).nullish(),
+    chartType: zChartType.nullish(),
     iconPath: z.string().nullish()
   })
   .meta({ id: 'SpaceUnit' });

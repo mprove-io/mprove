@@ -3,17 +3,15 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Model } from '#common/types/blockml/parts/model/model';
 
-let func = FuncEnum.CheckSelectElements;
+let func: Func = 'build-tile/check-select-elements';
 
 export function checkSelectElements<T extends dcType>(item: {
   entities: T[];
@@ -21,14 +19,14 @@ export function checkSelectElements<T extends dcType>(item: {
   stores: FileStore[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -46,7 +44,7 @@ export function checkSelectElements<T extends dcType>(item: {
           if (isUndefined(modelField)) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_WRONG_SELECT_MODEL_FIELD,
+                title: 'TILE_WRONG_SELECT_MODEL_FIELD',
                 message: `found element "${element}" references missing or not valid field`,
                 lines: [
                   {
@@ -63,7 +61,7 @@ export function checkSelectElements<T extends dcType>(item: {
           if (modelField.isTimeframeBase === true) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.FIELD_GROUP_T_FIELD_CANNOT_BE_SELECTED,
+                title: 'FIELD_GROUP_T_FIELD_CANNOT_BE_SELECTED',
                 message: `field "${element}" cannot be selected. Use _ts field instead`,
                 lines: [
                   {
@@ -84,9 +82,9 @@ export function checkSelectElements<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

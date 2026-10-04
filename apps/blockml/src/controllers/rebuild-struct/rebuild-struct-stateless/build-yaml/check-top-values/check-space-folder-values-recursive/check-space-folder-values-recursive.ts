@@ -1,5 +1,5 @@
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
+
 import { checkSpaceValue } from './check-space-value/check-space-value';
 
 export function checkSpaceFolderValuesRecursive(item: {
@@ -18,13 +18,13 @@ export function checkSpaceFolderValuesRecursive(item: {
       return;
     }
 
-    if (folder[ParameterEnum.Space.toString()]) {
+    if (folder['space'.toString()]) {
       checkSpaceValue({
         file: Object.assign({}, folder, {
           name: rootFile.name,
           path: rootFile.path
         }),
-        parameter: ParameterEnum.Space.toString(),
+        parameter: 'space'.toString(),
         errors: errors,
         isAllowDots: false
       });

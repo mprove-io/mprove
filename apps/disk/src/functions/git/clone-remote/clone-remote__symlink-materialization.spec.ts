@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import test from 'ava';
 import fse from 'fs-extra';
 import { simpleGit } from 'simple-git';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { cloneRemote } from '#disk/functions/git/clone-remote/clone-remote';
 
 let workspaceDir = path.join(
@@ -55,7 +55,7 @@ test('cloneRemote must not materialise user-controlled symlinks on disk', async 
       projectId: projectId,
       repoId: repoId,
       orgPath: orgPath,
-      remoteType: ProjectRemoteTypeEnum.GitClone,
+      remoteType: 'GitClone',
       gitUrl: bareDir,
       keyDir: keyDir,
       privateKeyEncrypted: '',

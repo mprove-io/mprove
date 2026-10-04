@@ -5,14 +5,13 @@ import {
   MPROVE_TAG_FIELD_GROUP,
   NO_CAPITALIZE_LIST
 } from '#common/constants/top';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { ModelNode } from '#common/types/blockml/parts/model-node';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
 
 type FieldItemFieldWithAtomicType = FlatMalloyFieldItem['field'] & {
   type: AtomicType & { timeframe?: string };
@@ -37,32 +36,32 @@ export function wrapFlatMalloyFieldItem(item: {
 
   let typeKind = fieldType.kind;
 
-  let result =
+  let result: FieldResult =
     typeKind === 'string_type'
-      ? FieldResultEnum.String
+      ? 'string'
       : typeKind === 'number_type'
-        ? FieldResultEnum.Number
+        ? 'number'
         : typeKind === 'boolean_type'
-          ? FieldResultEnum.Boolean
+          ? 'boolean'
           : typeKind === 'timestamp_type' || typeKind === 'timestamptz_type'
-            ? FieldResultEnum.Ts
+            ? 'ts'
             : typeKind === 'date_type'
-              ? FieldResultEnum.Date
+              ? 'date'
               : typeKind === 'array_type'
-                ? FieldResultEnum.Array
+                ? 'array'
                 : typeKind === 'record_type'
-                  ? FieldResultEnum.Record
+                  ? 'record'
                   : typeKind === 'json_type'
-                    ? FieldResultEnum.Json
+                    ? 'json'
                     : typeKind === 'sql_native_type'
-                      ? FieldResultEnum.SqlNative
+                      ? 'sql_native'
                       : undefined;
 
-  let fieldClass =
+  let fieldClass: FieldClass =
     flatMalloyFieldItem.field.kind === 'dimension'
-      ? FieldClassEnum.Dimension
+      ? 'dimension'
       : flatMalloyFieldItem.field.kind === 'measure'
-        ? FieldClassEnum.Measure
+        ? 'measure'
         : undefined;
 
   let fieldLabel = flatMalloyFieldItem.field.name
@@ -118,18 +117,13 @@ export function wrapFlatMalloyFieldItem(item: {
         required: false,
         isField: false,
         children: [fieldNode],
-        nodeClass: FieldClassEnum.Dimension
+        nodeClass: 'dimension'
       };
 
       topNode.children.push(newGroupNode);
     }
   } else if (
-    [
-      FieldResultEnum.String,
-      FieldResultEnum.Number,
-      FieldResultEnum.Boolean,
-      FieldResultEnum.Ts
-    ].indexOf(fieldNode.fieldResult) > -1
+    ['string', 'number', 'boolean', 'ts'].indexOf(fieldNode.fieldResult) > -1
   ) {
     topNode.children.push(fieldNode);
   }
@@ -137,20 +131,18 @@ export function wrapFlatMalloyFieldItem(item: {
   let formatNumberTag = mproveTags?.find(tag => tag.key === 'format_number');
 
   let currencyPrefixTag = mproveTags?.find(
-    tag => tag.key === ParameterEnum.CurrencyPrefix
+    tag => tag.key === 'currency_prefix'
   );
 
   let currencySuffixTag = mproveTags?.find(
-    tag => tag.key === ParameterEnum.CurrencySuffix
+    tag => tag.key === 'currency_suffix'
   );
 
-  let buildMetricsTag = mproveTags?.find(
-    tag => tag.key === ParameterEnum.BuildMetrics
-  );
+  let buildMetricsTag = mproveTags?.find(tag => tag.key === 'build_metrics');
 
   let isTimeframeBase =
     flatMalloyFieldItem.field.name.endsWith('_t') &&
-    [FieldResultEnum.Ts, FieldResultEnum.Date].indexOf(result) > -1;
+    ['ts', 'date'].indexOf(result) > -1;
 
   let sourceExpression = flatMalloyFieldItem.sourceExpression;
 

@@ -17,8 +17,7 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
@@ -320,7 +319,7 @@ export class PrestoService {
         } catch (e: any) {
           logToConsoleBackend({
             log: `Presto fetchSchema skipping catalog "${cat}": ${e.message}`,
-            logLevel: LogLevelEnum.Info,
+            logLevel: 'Info',
             logger: this.logger,
             cs: this.cs
           });
@@ -405,7 +404,7 @@ export class PrestoService {
           .then(x => this.tabService.queryEntToTab(x));
 
         if (isDefined(q)) {
-          q.status = QueryStatusEnum.Completed;
+          q.status = 'Completed';
           q.queryJobId = undefined;
           q.data = data;
           q.lastCompleteTs = makeTsNumber();
@@ -457,7 +456,7 @@ export class PrestoService {
       .then(x => this.tabService.queryEntToTab(x));
 
     if (isDefined(q)) {
-      q.status = QueryStatusEnum.Error;
+      q.status = 'Error';
       q.data = [];
       q.queryJobId = undefined;
       q.lastErrorMessage = e.cause?.message ?? e.message; // presto specific

@@ -4,11 +4,11 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
-import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
@@ -16,8 +16,8 @@ import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileSchema } from '#common/types/blockml/parts/internal/file-schema';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { Model } from '#common/types/blockml/parts/model';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Model } from '#common/types/blockml/parts/model/model';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import type { BuildCompiledModelsOutput } from './build-compiled-models/build-compiled-models';
 import { buildCompiledModels } from './build-compiled-models/build-compiled-models';
@@ -63,7 +63,7 @@ export function rebuildConfiguredStruct(item: {
           files: v.files,
           errors: v.errors,
           structId: v.structId,
-          caller: CallerEnum.RebuildStruct,
+          caller: 'RebuildStruct',
           cs: v.cs
         })
     ),

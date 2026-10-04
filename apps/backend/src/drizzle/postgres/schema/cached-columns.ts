@@ -10,10 +10,11 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import type { CachedColumnStatus } from '#common/types/backend/parts/connections/cached-column-status';
 import type { CachedColumnLt } from '#common/types/shared/st-lt/cached-columns/cached-column-lt';
 import type { CachedColumnSt } from '#common/types/shared/st-lt/cached-columns/cached-column-st';
 
-export type CachedColumnStatus = 'running' | 'completed' | 'error';
+export type { CachedColumnStatus } from '#common/types/backend/parts/connections/cached-column-status';
 
 export const cachedColumnsTable = pgTable(
   'cached_columns',

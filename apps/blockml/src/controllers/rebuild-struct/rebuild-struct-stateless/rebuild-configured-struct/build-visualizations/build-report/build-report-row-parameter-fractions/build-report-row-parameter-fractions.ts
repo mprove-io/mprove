@@ -3,16 +3,15 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
-let func = FuncEnum.BuildReportRowParameterFractions;
+let func: Func = 'build-report/build-report-row-parameter-fractions';
 
 export function buildReportRowParameterFractions(item: {
   caseSensitiveStringFilters: boolean;
@@ -20,14 +19,14 @@ export function buildReportRowParameterFractions(item: {
   metrics: ModelMetric[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileReport[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId, metrics, caseSensitiveStringFilters } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newReports: FileReport[] = [];
 
@@ -77,9 +76,9 @@ export function buildReportRowParameterFractions(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newReports);
+  log(cs, caller, func, structId, 'out_entities.log', newReports);
 
   return Result.succeed(newReports);
 }

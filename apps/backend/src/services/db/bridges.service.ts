@@ -5,7 +5,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -69,7 +69,7 @@ export class BridgesService {
 
     if (isUndefined(bridge)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST
+        message: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST'
       });
     }
 

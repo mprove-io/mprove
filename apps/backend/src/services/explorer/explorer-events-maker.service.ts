@@ -15,9 +15,9 @@ import {
   SESSION_TAB_CREATED_EVENT_TYPE,
   SESSION_TITLE_UPDATED_EVENT_TYPE
 } from '#common/constants/top';
-import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import type { MproveSessionTitleUpdatedEvent } from '#common/types/backend/parts/session-stream-event';
-import type { SessionTabCreatedEvent } from '#common/types/backend/parts/session-tab-created-event';
+import type { MproveSessionTitleUpdatedEvent } from '#common/types/backend/parts/session/session-stream-event';
+import type { SessionTabCreatedEvent } from '#common/types/backend/parts/session/session-tab-created-event';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 
 @Injectable()
 export class ExplorerEventsMakerService {
@@ -421,7 +421,7 @@ export class ExplorerEventsMakerService {
   makeChartTabEvent(item: {
     tabId: string;
     chartId: string;
-    chartType: ChartTypeEnum;
+    chartType: ChartType;
     title: string;
     modelId: string;
   }): SessionTabCreatedEvent {

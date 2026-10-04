@@ -36,8 +36,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRevertRepoToRemoteOutput } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
@@ -88,9 +87,9 @@ export class RevertRepoToRemoteController {
       allowProdRepo: true
     });
 
-    if (repoType === RepoTypeEnum.Session) {
+    if (repoType === 'session') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_REPO_CANNOT_BE_REVERTED_TO_REMOTE
+        message: 'BACKEND_SESSION_REPO_CANNOT_BE_REVERTED_TO_REMOTE'
       });
     }
 

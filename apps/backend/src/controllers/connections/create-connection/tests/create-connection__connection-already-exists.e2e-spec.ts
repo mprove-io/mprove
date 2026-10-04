@@ -7,10 +7,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendCreateConnectionRequest } from '#common/types/backend/routes/connections/create-connection/create-connection-request';
 import type { ToBackendCreateConnectionResponse } from '#common/types/backend/routes/connections/create-connection/create-connection-response';
@@ -68,7 +65,7 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              remoteType: ProjectRemoteTypeEnum.Managed,
+              remoteType: 'Managed',
               defaultBranch: BRANCH_MAIN
             }
           ],
@@ -87,7 +84,7 @@ test('1', async t => {
               connectionId: connectionId,
               envId: PROJECT_ENV_PROD,
               projectId: projectId,
-              type: ConnectionTypeEnum.PostgreSQL,
+              type: 'PostgreSQL',
               options: {}
             }
           ]
@@ -103,7 +100,7 @@ test('1', async t => {
           connectionId: connectionId,
           envId: PROJECT_ENV_PROD,
           projectId: projectId,
-          type: ConnectionTypeEnum.PostgreSQL,
+          type: 'PostgreSQL',
           options: {}
         }
       };
@@ -119,7 +116,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -129,13 +126,13 @@ test('1', async t => {
     }
 
     assert.ok(resp.type === 'Failure');
-    assert.equal(resp.error.code, ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS);
+    assert.equal(resp.error.code, 'BACKEND_CONNECTION_ALREADY_EXISTS');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

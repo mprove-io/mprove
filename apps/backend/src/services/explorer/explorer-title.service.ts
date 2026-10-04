@@ -5,8 +5,7 @@ import { streamText } from 'ai';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { ExplorerModelsService } from './explorer-models.service';
 import { ExplorerPromptsService } from './explorer-prompts.service';
 
@@ -80,10 +79,10 @@ export class ExplorerTitleService {
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_PROMPT_FAILED,
+          message: 'BACKEND_PROMPT_FAILED',
           originalError: e
         }),
-        logLevel: LogLevelEnum.Info,
+        logLevel: 'Info',
         logger: this.logger,
         cs: this.cs
       });

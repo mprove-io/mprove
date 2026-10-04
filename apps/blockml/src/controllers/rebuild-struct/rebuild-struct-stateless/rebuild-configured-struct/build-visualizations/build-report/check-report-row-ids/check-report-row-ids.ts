@@ -4,28 +4,26 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 
-let func = FuncEnum.CheckReportRowIds;
+let func: Func = 'build-report/check-report-row-ids';
 
 export function checkReportRowIds(item: {
   reports: FileReport[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileReport[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newReports: FileReport[] = [];
 
@@ -57,7 +55,7 @@ export function checkReportRowIds(item: {
 
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.DUPLICATE_ROW_IDS,
+            title: 'DUPLICATE_ROW_IDS',
             message: 'Each row must have a unique row_id',
             lines: lines
           })
@@ -71,8 +69,8 @@ export function checkReportRowIds(item: {
         if (!!row.row_id.match(MyRegex.CONTAINS_A_to_Z()) === false) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_CHARS_IN_ROW_ID,
-              message: `parameter "${ParameterEnum.RowId}" must consist of characters A-Z`,
+              title: 'WRONG_CHARS_IN_ROW_ID',
+              message: `parameter "row_id" must consist of characters A-Z`,
               lines: [
                 {
                   line: row.row_id_line_num,
@@ -92,9 +90,9 @@ export function checkReportRowIds(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newReports);
+  log(cs, caller, func, structId, 'out_entities.log', newReports);
 
   return Result.succeed(newReports);
 }

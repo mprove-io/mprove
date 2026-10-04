@@ -46,8 +46,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -135,7 +134,7 @@ export class SaveCreateChartController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -145,7 +144,7 @@ export class SaveCreateChartController {
       userMember.isEditor === false
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
       });
     }
 
@@ -188,7 +187,7 @@ export class SaveCreateChartController {
       targetFolder: 'charts'
     });
 
-    let fileName = `${newChartId}${FileExtensionEnum.Chart}`;
+    let fileName = `${newChartId}.chart`;
 
     let { chartFileText } = makeChartFileText({
       mconfig: mconfig,
@@ -313,7 +312,7 @@ export class SaveCreateChartController {
       let filePath = fileIdAr.join('/');
 
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_CHART_FAIL,
+        message: 'BACKEND_CREATE_CHART_FAIL',
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: tempStruct.errors

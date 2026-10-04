@@ -28,9 +28,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/providers/edit-provider/edit-provider-output';
 import type { ToBackendEditProviderRequest } from '#common/types/backend/routes/providers/edit-provider/edit-provider-request';
@@ -82,7 +82,7 @@ export class EditProviderController {
       });
 
     if (
-      provider.type === ProviderTypeEnum.OpenAICompatible &&
+      provider.type === 'OpenAICompatible' &&
       'baseURL' in options &&
       'name' in bodyPayload
     ) {
@@ -100,25 +100,19 @@ export class EditProviderController {
         headers: options.headers,
         queryParams: options.queryParams
       };
-    } else if (
-      provider.type === ProviderTypeEnum.OpenAI &&
-      'apiKey' in options
-    ) {
+    } else if (provider.type === 'OpenAI' && 'apiKey' in options) {
       provider.options = {
         apiKey: isDefinedAndNotEmpty(options.apiKey)
           ? options.apiKey
           : undefined
       };
-    } else if (
-      provider.type === ProviderTypeEnum.Anthropic &&
-      'apiKey' in options
-    ) {
+    } else if (provider.type === 'Anthropic' && 'apiKey' in options) {
       provider.options = {
         apiKey: isDefinedAndNotEmpty(options.apiKey)
           ? options.apiKey
           : undefined
       };
-    } else if (provider.type === ProviderTypeEnum.OpenAICodex) {
+    } else if (provider.type === 'OpenAICodex') {
       provider.options = {};
     }
 

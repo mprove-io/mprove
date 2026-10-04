@@ -10,14 +10,9 @@ import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import { ProjectsService } from '../db/projects.service';
 import { SessionsService } from '../db/sessions.service';
 import { TabService } from '../tab.service';
@@ -73,7 +68,7 @@ export class EditorSandboxService {
   }
 
   async stopSandbox(item: {
-    sandboxType: SandboxTypeEnum;
+    sandboxType: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
   }): Promise<void> {
@@ -83,19 +78,19 @@ export class EditorSandboxService {
     }
 
     switch (item.sandboxType) {
-      case SandboxTypeEnum.E2B:
+      case 'E2B':
         await Sandbox.kill(item.sandboxId, { apiKey: item.e2bApiKey });
 
         break;
       default:
         throw new ServerError({
-          message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
+          message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
         });
     }
   }
 
   async pauseSandbox(item: {
-    sandboxType: SandboxTypeEnum;
+    sandboxType: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
   }): Promise<void> {
@@ -105,25 +100,25 @@ export class EditorSandboxService {
     }
 
     switch (item.sandboxType) {
-      case SandboxTypeEnum.E2B:
+      case 'E2B':
         await Sandbox.betaPause(item.sandboxId, { apiKey: item.e2bApiKey });
 
         break;
       default:
         throw new ServerError({
-          message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
+          message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
         });
     }
   }
 
   async resumeSandbox(item: {
-    sandboxType: SandboxTypeEnum;
+    sandboxType: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
     timeoutMs: number;
   }): Promise<void> {
     switch (item.sandboxType) {
-      case SandboxTypeEnum.E2B:
+      case 'E2B':
         await Sandbox.connect(item.sandboxId, { apiKey: item.e2bApiKey });
 
         await Sandbox.setTimeout(item.sandboxId, item.timeoutMs, {
@@ -133,7 +128,7 @@ export class EditorSandboxService {
         break;
       default:
         throw new ServerError({
-          message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
+          message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
         });
     }
   }
@@ -149,8 +144,8 @@ export class EditorSandboxService {
     let sessionsToPause = await this.db.drizzle.query.sessionsTable
       .findMany({
         where: and(
-          eq(sessionsTable.type, SessionTypeEnum.Editor),
-          eq(sessionsTable.status, SessionStatusEnum.Active),
+          eq(sessionsTable.type, 'Editor'),
+          eq(sessionsTable.status, 'Active'),
           lt(sessionsTable.lastActivityTs, pauseThresholdTs)
         )
       })
@@ -168,15 +163,15 @@ export class EditorSandboxService {
 
   async pauseSessionById(item: {
     sessionId: string;
-    pauseReason: PauseReasonEnum;
+    pauseReason: PauseReason;
   }): Promise<void> {
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: item.sessionId
     });
 
     if (
-      session.type !== SessionTypeEnum.Editor ||
-      session.status !== SessionStatusEnum.Active ||
+      session.type !== 'Editor' ||
+      session.status !== 'Active' ||
       !session.sandboxId
     ) {
       return;
@@ -191,14 +186,14 @@ export class EditorSandboxService {
     }
 
     await this.pauseSandbox({
-      sandboxType: session.sandboxType as SandboxTypeEnum,
+      sandboxType: session.sandboxType as SandboxType,
       sandboxId: session.sandboxId,
       e2bApiKey: project.e2bApiKey
     });
 
     let updatedSession: SessionTab = {
       ...session,
-      status: SessionStatusEnum.Paused,
+      status: 'Paused',
       pauseReason: item.pauseReason
     };
 
@@ -217,11 +212,8 @@ export class EditorSandboxService {
     let sessions = await this.db.drizzle.query.sessionsTable
       .findMany({
         where: and(
-          eq(sessionsTable.type, SessionTypeEnum.Editor),
-          inArray(sessionsTable.status, [
-            SessionStatusEnum.Active,
-            SessionStatusEnum.Paused
-          ])
+          eq(sessionsTable.type, 'Editor'),
+          inArray(sessionsTable.status, ['Active', 'Paused'])
         )
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
@@ -253,11 +245,10 @@ export class EditorSandboxService {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message:
-              ErEnum.BACKEND_SCHEDULER_SYNC_EDITOR_SESSIONS_STATUS_FAILED,
+            message: 'BACKEND_SCHEDULER_SYNC_EDITOR_SESSIONS_STATUS_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });
@@ -288,8 +279,7 @@ export class EditorSandboxService {
 
         let needsStatusChange =
           !sandboxInfo ||
-          (session.status === SessionStatusEnum.Active &&
-            sandboxInfo.state === 'paused');
+          (session.status === 'Active' && sandboxInfo.state === 'paused');
 
         if (needsStatusChange === false) {
           return;
@@ -306,10 +296,9 @@ export class EditorSandboxService {
               sessionId: session.sessionId
             });
 
-          let isActiveOrPaused = [
-            SessionStatusEnum.Active,
-            SessionStatusEnum.Paused
-          ].includes(freshSession.status);
+          let isActiveOrPaused = ['Active', 'Paused'].includes(
+            freshSession.status
+          );
 
           if (isActiveOrPaused === false || !freshSession.sandboxId) {
             return;
@@ -324,8 +313,8 @@ export class EditorSandboxService {
             // Sandbox no longer exists
             let updatedSession: SessionTab = {
               ...freshSession,
-              status: SessionStatusEnum.Archived,
-              archiveReason: ArchiveReasonEnum.Expire
+              status: 'Archived',
+              archiveReason: 'Expire'
             };
 
             await this.db.drizzle.transaction(async tx => {
@@ -337,13 +326,13 @@ export class EditorSandboxService {
               });
             });
           } else if (
-            freshSession.status === SessionStatusEnum.Active &&
+            freshSession.status === 'Active' &&
             sandboxInfo.state === 'paused'
           ) {
             let updatedSession: SessionTab = {
               ...freshSession,
-              status: SessionStatusEnum.Paused,
-              pauseReason: PauseReasonEnum.External,
+              status: 'Paused',
+              pauseReason: 'External',
               sandboxStartTs: sandboxInfo.startedAt.getTime(),
               sandboxEndTs: sandboxInfo.endAt.getTime(),
               sandboxInfo: sandboxInfo
@@ -370,10 +359,10 @@ export class EditorSandboxService {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_SYNC_EDITOR_SESSION_STATUS_FAILED,
+            message: 'BACKEND_SCHEDULER_SYNC_EDITOR_SESSION_STATUS_FAILED',
             originalError: e
           }),
-          logLevel: LogLevelEnum.Error,
+          logLevel: 'Error',
           logger: this.logger,
           cs: this.cs
         });

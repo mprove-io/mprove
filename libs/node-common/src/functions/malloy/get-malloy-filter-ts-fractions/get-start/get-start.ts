@@ -5,10 +5,10 @@ import type {
   WhichdayMoment
 } from '@malloydata/malloy-filter';
 import { add, type Duration, fromUnixTime, getUnixTime, sub } from 'date-fns';
-import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
-import type { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { getCurrentUnitStartTs } from '#node-common/functions/get-current-unit-start-ts/get-current-unit-start-ts';
 import { getUnitDuration } from '#node-common/functions/get-unit-duration/get-unit-duration';
 import { getTimeSpecUnitStartTs as getTimeSpecUnitMomentStartTs } from '#node-common/functions/malloy/get-malloy-filter-ts-fractions/get-start/get-timespec-unit-start-ts/get-timespec-unit-start-ts';
@@ -19,15 +19,15 @@ export type GetStartOutput = {
   timeSpecOneUnitDuration: Duration;
   timeSpecMomentRangeStart: number;
   momentRangeStart: number;
-  momentUnit: FractionTsUnitEnum;
+  momentUnit: FractionTsUnit;
   momentOneUnitDuration: Duration;
 };
 
 export function getStart(item: {
   currentTs: number;
-  timeSpec: TimeSpecEnum;
+  timeSpec: TimeSpec;
   moment: Moment;
-  weekStart: ProjectWeekStartEnum;
+  weekStart: ProjectWeekStart;
   timezone: string;
   agoFromNowQuantity: number;
   year: string;
@@ -50,15 +50,15 @@ export function getStart(item: {
     minute
   } = item;
 
-  let momentUnit =
+  let momentUnit: FractionTsUnit =
     (moment as TemporalLiteral).units === 'year'
-      ? FractionTsUnitEnum.Years
+      ? 'years'
       : (moment as TemporalLiteral).units === 'quarter'
-        ? FractionTsUnitEnum.Quarters
+        ? 'quarters'
         : (moment as TemporalLiteral).units === 'month'
-          ? FractionTsUnitEnum.Months
+          ? 'months'
           : (moment as TemporalLiteral).units === 'week'
-            ? FractionTsUnitEnum.Weeks
+            ? 'weeks'
             : (moment as TemporalLiteral).units === 'day' ||
                 ['today', 'yesterday', 'tomorrow'].indexOf(
                   (moment as WhichdayMoment).moment
@@ -72,28 +72,28 @@ export function getStart(item: {
                   'friday',
                   'saturday'
                 ].indexOf((moment as WeekdayMoment).moment) > -1
-              ? FractionTsUnitEnum.Days
+              ? 'days'
               : (moment as TemporalLiteral).units === 'hour'
-                ? FractionTsUnitEnum.Hours
+                ? 'hours'
                 : (moment as TemporalLiteral).units === 'minute'
-                  ? FractionTsUnitEnum.Minutes
+                  ? 'minutes'
                   : undefined;
 
-  let timeSpecUnit: FractionTsUnitEnum =
-    timeSpec === TimeSpecEnum.Years
-      ? FractionTsUnitEnum.Years
-      : timeSpec === TimeSpecEnum.Quarters
-        ? FractionTsUnitEnum.Quarters
-        : timeSpec === TimeSpecEnum.Months
-          ? FractionTsUnitEnum.Months
-          : timeSpec === TimeSpecEnum.Weeks
-            ? FractionTsUnitEnum.Weeks
-            : timeSpec === TimeSpecEnum.Days
-              ? FractionTsUnitEnum.Days
-              : timeSpec === TimeSpecEnum.Hours
-                ? FractionTsUnitEnum.Hours
-                : timeSpec === TimeSpecEnum.Minutes
-                  ? FractionTsUnitEnum.Minutes
+  let timeSpecUnit: FractionTsUnit =
+    timeSpec === 'years'
+      ? 'years'
+      : timeSpec === 'quarters'
+        ? 'quarters'
+        : timeSpec === 'months'
+          ? 'months'
+          : timeSpec === 'weeks'
+            ? 'weeks'
+            : timeSpec === 'days'
+              ? 'days'
+              : timeSpec === 'hours'
+                ? 'hours'
+                : timeSpec === 'minutes'
+                  ? 'minutes'
                   : undefined;
 
   let momentCurrentUnitStartTs = getCurrentUnitStartTs({
@@ -122,7 +122,7 @@ export function getStart(item: {
       ? currentTs
       : moment.moment === 'literal' && isUndefined(moment.units)
         ? getUnixTime(new Date(moment.literal))
-        : momentUnit === FractionTsUnitEnum.Days &&
+        : momentUnit === 'days' &&
             [
               'sunday',
               'monday',
@@ -137,18 +137,16 @@ export function getStart(item: {
               lastNext: (moment as WeekdayMoment).which,
               currentUnitStartTs: momentCurrentUnitStartTs
             })
-          : momentUnit === FractionTsUnitEnum.Days && moment.moment === 'today'
+          : momentUnit === 'days' && moment.moment === 'today'
             ? momentCurrentUnitStartTs
-            : momentUnit === FractionTsUnitEnum.Days &&
-                moment.moment === 'yesterday'
+            : momentUnit === 'days' && moment.moment === 'yesterday'
               ? getUnixTime(
                   sub(
                     fromUnixTime(momentCurrentUnitStartTs),
                     momentOneUnitDuration
                   )
                 )
-              : momentUnit === FractionTsUnitEnum.Days &&
-                  moment.moment === 'tomorrow'
+              : momentUnit === 'days' && moment.moment === 'tomorrow'
                 ? getUnixTime(
                     add(
                       fromUnixTime(momentCurrentUnitStartTs),

@@ -52,10 +52,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -143,7 +140,7 @@ export class SaveModifyChartController {
 
     if (userMember.isExplorer === false) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
       });
     }
 
@@ -221,11 +218,11 @@ export class SaveModifyChartController {
       userMember.isEditor === false
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
       });
     }
 
-    let chartFileName = `${chartId}${FileExtensionEnum.Chart}`;
+    let chartFileName = `${chartId}.chart`;
 
     let isSpaceChanged = currentChartSpace !== space;
 
@@ -390,7 +387,7 @@ export class SaveModifyChartController {
       let filePath = fileIdAr.join('/');
 
       throw new ServerError({
-        message: ErEnum.BACKEND_MODIFY_CHART_FAIL,
+        message: 'BACKEND_MODIFY_CHART_FAIL',
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: tempStruct.errors
@@ -416,12 +413,12 @@ export class SaveModifyChartController {
 
     let isError = false;
 
-    if (model.type === ModelTypeEnum.Store) {
+    if (model.type === 'Store') {
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: tempStruct,
         project: project,
         envId: envId,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentType: 'Chart',
         mconfigParentId: chartId,
         model: model,
         mconfig: newMconfig,

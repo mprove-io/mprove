@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { StructX } from '#common/types/backend/parts/struct-x';
+import type { StructX } from '#common/types/backend/parts/struct/struct-x';
 import { BaseQuery } from './base.query';
 
 export type StructState = StructX;

@@ -1,6 +1,6 @@
 import type { Logger } from '@nestjs/common';
 import { getToBackendOperation } from '#backend/functions/get-to-backend-operation';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
@@ -50,7 +50,7 @@ export function makeOkResponse(item: {
 
     logToConsole({
       log: log,
-      logLevel: LogLevelEnum.Info,
+      logLevel: 'Info',
       logIsJson: logIsJson,
       logger: logger,
       useLoggerOnlyForErrorLevel: useLoggerOnlyForErrorLevel

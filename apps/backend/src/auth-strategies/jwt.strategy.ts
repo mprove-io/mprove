@@ -9,7 +9,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
@@ -36,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (isUndefined(user)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: 'BACKEND_USER_DOES_NOT_EXIST'
       });
     }
 
@@ -45,7 +45,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       Number(user.jwtMinIat) > payload.iat * 1000
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_NOT_AUTHORIZED
+        message: 'BACKEND_NOT_AUTHORIZED'
       });
     }
 

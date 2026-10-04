@@ -6,46 +6,43 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import type { FilePartTileExtra } from '#blockml/types/file-part-tile-extra';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { QueryOperation } from '#common/types/backend/parts/query-operation';
-import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
-import type { Mconfig } from '#common/types/blockml/parts/mconfig';
-import type { Model } from '#common/types/blockml/parts/model';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import type { Model } from '#common/types/blockml/parts/model/model';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { makeMalloyQuery } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
 
-let func = FuncEnum.FetchSql;
+let func: Func = 'build-tile/fetch-sql';
 
 export async function fetchSql<T extends dcType>(item: {
   envId: string;
   projectId: string;
   entities: T[];
-  mconfigParentType: MconfigParentTypeEnum;
+  mconfigParentType: MconfigParentType;
   apiModels: Model[];
   malloyConnections: MalloyConnection[];
   projectConnections: ProjectConnection[];
-  weekStart: ProjectWeekStartEnum;
+  weekStart: ProjectWeekStart;
   timezone: string;
   caseSensitiveStringFilters: boolean;
   selectedGivens: SelectedGiven[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.ResultAsync<T[], never> {
   let { cs, ...input } = item;
@@ -53,16 +50,16 @@ export async function fetchSql<T extends dcType>(item: {
   let { caller, structId, timezone, envId, projectId, mconfigParentType } =
     item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let tiles: FilePartTileExtra[] = [];
 
   item.entities.forEach(x => {
     x.tiles.forEach(tile => {
       (tile as FilePartTileExtra).mconfigParentId =
-        mconfigParentType === MconfigParentTypeEnum.Chart
+        mconfigParentType === 'Chart'
           ? (x as FileChart).chart
-          : mconfigParentType === MconfigParentTypeEnum.Dashboard
+          : mconfigParentType === 'Dashboard'
             ? (x as FileDashboard).dashboard
             : undefined;
       (tile as FilePartTileExtra).filePath = x.filePath;
@@ -78,7 +75,7 @@ export async function fetchSql<T extends dcType>(item: {
   await asyncPool(concurrencyLimit, tiles, async (tile: FilePartTileExtra) => {
     let apiModel = item.apiModels.find(y => y.modelId === tile.model);
 
-    if (apiModel.type === ModelTypeEnum.Malloy) {
+    if (apiModel.type === 'Malloy') {
       let newMconfigId = makeId();
       let newQueryId = makeId();
 
@@ -150,25 +147,25 @@ export async function fetchSql<T extends dcType>(item: {
             queryOperations: [
               ...tile.select.map(x => {
                 let op: QueryOperation = {
-                  type: QueryOperationTypeEnum.GroupOrAggregate,
+                  type: 'GroupOrAggregate',
                   timezone: timezone,
                   fieldId: x
                 };
                 return op;
               }),
               {
-                type: QueryOperationTypeEnum.Limit,
+                type: 'Limit',
                 timezone: timezone,
                 limit: Number(tile.limit)
               },
               {
-                type: QueryOperationTypeEnum.WhereOrHaving,
+                type: 'WhereOrHaving',
                 timezone: timezone,
                 filters: mFilters
               },
               ...tile.sortingsAry.map(x => {
                 let op: QueryOperation = {
-                  type: QueryOperationTypeEnum.Sort,
+                  type: 'Sort',
                   sortFieldId: x.fieldId,
                   desc: x.desc,
                   timezone: timezone
@@ -192,9 +189,9 @@ export async function fetchSql<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, item.entities);
+  log(cs, caller, func, structId, 'out_entities.log', item.entities);
 
   return Result.succeed(item.entities);
 }

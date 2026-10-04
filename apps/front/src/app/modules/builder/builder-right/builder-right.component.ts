@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { BuilderRightEnum } from '#common/enums/builder-right.enum';
+import type { BuilderRight } from '#common/types/front/builder/builder-right';
+
 import { UiQuery } from '#front/app/queries/ui.query';
 
 @Component({
@@ -9,11 +10,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
   templateUrl: './builder-right.component.html'
 })
 export class BuilderRightComponent {
-  builderRightSessions = BuilderRightEnum.Sessions;
-  builderRightSchema = BuilderRightEnum.Schema;
-  builderRightValidation = BuilderRightEnum.Validation;
-
-  builderRight = BuilderRightEnum.Validation;
+  builderRight: BuilderRight = 'Validation';
   builderRight$ = this.uiQuery.builderRight$.pipe(
     tap(x => {
       this.builderRight = x;

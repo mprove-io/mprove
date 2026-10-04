@@ -19,7 +19,7 @@ import {
   PATH_SELECT_FILE,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
 import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
@@ -46,8 +46,6 @@ export class EnvSelectComponent {
   onEscKeyUp() {
     this.envSelectElement?.close();
   }
-
-  repoTypeEnum = RepoTypeEnum;
 
   projectEnvProd = PROJECT_ENV_PROD;
 
@@ -156,10 +154,7 @@ export class EnvSelectComponent {
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
 
-    if (
-      this.nav.repoType === RepoTypeEnum.Session &&
-      urlParts[12] !== PATH_FILE
-    ) {
+    if (this.nav.repoType === 'session' && urlParts[12] !== PATH_FILE) {
       this.router.navigate([...baseNavArray, PATH_BUILDER, PATH_SELECT_FILE], {
         queryParams: queryParams
       });

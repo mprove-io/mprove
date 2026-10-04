@@ -20,13 +20,11 @@ import { EditorStreamService } from '#backend/services/editor/editor-stream.serv
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
-import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
-import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
+import type { SessionPartApi } from '#common/types/backend/parts/session/session-part-api';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/sessions/get-session/get-session-output';
 
@@ -68,17 +66,17 @@ export class GetSessionController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 
-    if (session.status === SessionStatusEnum.Deleted) {
+    if (session.status === 'Deleted') {
       throw new ServerError({
-        message: ErEnum.BACKEND_SESSION_NOT_FOUND
+        message: 'BACKEND_SESSION_NOT_FOUND'
       });
     }
 
-    if (session.sandboxId && session.status !== SessionStatusEnum.Archived) {
+    if (session.sandboxId && session.status !== 'Archived') {
       let sandboxInfo = await this.editorSandboxService.getSandboxInfo({
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey
@@ -86,10 +84,10 @@ export class GetSessionController {
 
       if (!sandboxInfo || sandboxInfo.state === 'paused') {
         if (!sandboxInfo) {
-          session.status = SessionStatusEnum.Archived;
-          session.archiveReason = ArchiveReasonEnum.Expire;
+          session.status = 'Archived';
+          session.archiveReason = 'Expire';
         } else if (sandboxInfo.state === 'paused') {
-          session.status = SessionStatusEnum.Paused;
+          session.status = 'Paused';
         }
 
         await this.db.drizzle.transaction(async tx => {
@@ -103,10 +101,7 @@ export class GetSessionController {
       }
     }
 
-    if (
-      session.status === SessionStatusEnum.Active &&
-      session.opencodeSessionId
-    ) {
+    if (session.status === 'Active' && session.opencodeSessionId) {
       let isStreamStartedFresh =
         await this.editorStreamService.startEventStream({
           sessionId: sessionId,

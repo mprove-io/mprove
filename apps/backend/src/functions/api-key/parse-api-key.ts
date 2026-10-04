@@ -1,6 +1,5 @@
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 
 export function parseApiKey(item: { fullKey: string }) {
   let { fullKey } = item;
@@ -9,15 +8,15 @@ export function parseApiKey(item: { fullKey: string }) {
 
   if (parts.length !== 4) {
     throw new ServerError({
-      message: ErEnum.BACKEND_WRONG_API_KEY_FORMAT
+      message: 'BACKEND_WRONG_API_KEY_FORMAT'
     });
   }
 
-  let type = parts[0] as ApiKeyTypeEnum;
+  let type = parts[0] as ApiKeyType;
 
   let prefix = parts[1];
 
-  let entityId = type === ApiKeyTypeEnum.SK ? parts[2].toLowerCase() : parts[2];
+  let entityId = type === 'SK' ? parts[2].toLowerCase() : parts[2];
 
   let secret = parts[3];
 

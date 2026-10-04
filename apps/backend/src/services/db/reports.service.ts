@@ -19,26 +19,23 @@ import {
   MPROVE_USERS_FOLDER,
   MY_REPORTS_SPACE_TITLE
 } from '#common/constants/top';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { Member } from '#common/types/backend/parts/member';
-import type { ModelX } from '#common/types/backend/parts/model-x';
-import type { ReportUnit } from '#common/types/backend/parts/report-unit';
-import type { ReportX } from '#common/types/backend/parts/report-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
+import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
-import type { Column } from '#common/types/blockml/parts/column';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { Report } from '#common/types/blockml/parts/report';
-import type { ReportField } from '#common/types/blockml/parts/report-field';
-import type { Row } from '#common/types/blockml/parts/row';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { Column } from '#common/types/blockml/parts/report/column';
+import type { Report } from '#common/types/blockml/parts/report/report';
+import type { ReportField } from '#common/types/blockml/parts/report/report-field';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { HashService } from '../hash.service';
 import { SpaceService } from '../space.service';
 import { TabService } from '../tab.service';
@@ -120,7 +117,7 @@ export class ReportsService {
     let favoriteReportIds = await this.favoritesService.getFavoriteTargetIds({
       projectId: projectId,
       userId: user.userId,
-      type: FavoriteTypeEnum.Report,
+      type: 'Report',
       targetIds: reportTargetIds
     });
 
@@ -220,7 +217,7 @@ export class ReportsService {
     member: Member;
     models: ModelX[];
     timezone: string;
-    timeSpec: TimeSpecEnum;
+    timeSpec: TimeSpec;
     timeRangeFraction: Fraction;
     rangeStart: number;
     rangeEnd: number;
@@ -366,7 +363,7 @@ export class ReportsService {
 
     if (isUndefined(report)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_REPORT_DOES_NOT_EXIST
+        message: 'BACKEND_REPORT_DOES_NOT_EXIST'
       });
     }
 
@@ -384,7 +381,7 @@ export class ReportsService {
 
     let chart = makeCopy(DEFAULT_CHART);
 
-    chart.type = ChartTypeEnum.Line;
+    chart.type = 'line';
 
     let emptyReport = this.makeReport({
       structId: undefined,
@@ -416,7 +413,7 @@ export class ReportsService {
 
     if (isUndefined(report)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_REPORT_NOT_FOUND
+        message: 'BACKEND_REPORT_NOT_FOUND'
       });
     }
 
@@ -426,7 +423,7 @@ export class ReportsService {
       report.creatorId !== user.userId
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_REPORT_CREATOR_ID_MISMATCH
+        message: 'BACKEND_REPORT_CREATOR_ID_MISMATCH'
       });
     }
 
@@ -439,7 +436,7 @@ export class ReportsService {
 
       if (isAccessGranted === false) {
         throw new ServerError({
-          message: ErEnum.BACKEND_FORBIDDEN_REPORT
+          message: 'BACKEND_FORBIDDEN_REPORT'
         });
       }
     }

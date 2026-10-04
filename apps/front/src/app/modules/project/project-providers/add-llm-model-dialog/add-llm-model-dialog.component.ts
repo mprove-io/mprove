@@ -19,12 +19,12 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { delay, take, tap } from 'rxjs/operators';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
-import type { Provider } from '#common/types/backend/parts/provider';
+import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendCreateLlmModelRequest } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-request';
 import type { ToBackendCreateLlmModelResponse } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-response';
 import type { ToBackendGetLlmModelPartsRequest } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
@@ -70,7 +70,7 @@ export class AddLlmModelDialogComponent implements OnInit {
   }
 
   modelForm: FormGroup;
-  providerTypeEnum = ProviderTypeEnum;
+
   modelParts: SelectableLlmModelPart[] = [];
   selectedModelPart?: SelectableLlmModelPart;
   isManualEntry = false;
@@ -92,11 +92,9 @@ export class AddLlmModelDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let isOpenAICompatible =
-      this.ref.data.provider.type === ProviderTypeEnum.OpenAICompatible;
+    let isOpenAICompatible = this.ref.data.provider.type === 'OpenAICompatible';
 
-    let isOpenAICodex =
-      this.ref.data.provider.type === ProviderTypeEnum.OpenAICodex;
+    let isOpenAICodex = this.ref.data.provider.type === 'OpenAICodex';
 
     let isCodexAuthSet: boolean =
       this.userQuery.getValue().isCodexAuthSet === true;
@@ -415,7 +413,7 @@ export class AddLlmModelDialogComponent implements OnInit {
     }
 
     let isManualModel: boolean =
-      provider.type === ProviderTypeEnum.OpenAICompatible || this.isManualEntry;
+      provider.type === 'OpenAICompatible' || this.isManualEntry;
 
     let isInputLimitInvalid: boolean =
       isManualModel &&
@@ -448,8 +446,7 @@ export class AddLlmModelDialogComponent implements OnInit {
       providerId: provider.providerId,
       modelId: value.modelId.trim(),
       name: value.name?.trim(),
-      isManual:
-        provider.type === ProviderTypeEnum.OpenAICodex && this.isManualEntry,
+      isManual: provider.type === 'OpenAICodex' && this.isManualEntry,
       contextLimit: isManualModel ? value.contextLimit : undefined,
       inputLimit: isManualModel ? value.inputLimit || undefined : undefined,
       outputLimit: isManualModel ? value.outputLimit || undefined : undefined,

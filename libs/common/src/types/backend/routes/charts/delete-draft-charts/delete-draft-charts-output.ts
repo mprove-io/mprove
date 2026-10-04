@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ChartUnit,
   zChartUnit
-} from '#common/types/backend/parts/chart-unit';
+} from '#common/types/backend/parts/chart/chart-unit';
 
 export type ToBackendDeleteDraftChartsOutput = {
   chartUnitDrafts: ChartUnit[];

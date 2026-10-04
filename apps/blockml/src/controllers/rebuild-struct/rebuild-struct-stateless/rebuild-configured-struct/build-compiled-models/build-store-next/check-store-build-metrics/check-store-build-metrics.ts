@@ -4,31 +4,27 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreBuildMetric } from '#common/types/blockml/parts/internal/file-store-build-metric';
 
-let func = FuncEnum.CheckStoreBuildMetrics;
+let func: Func = 'build-store-next/check-store-build-metrics';
 
 export function checkStoreBuildMetrics(
   item: {
     stores: FileStore[];
     errors: BmError[];
     structId: string;
-    caller: CallerEnum;
+    caller: Caller;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, 'input.log', item);
 
   let newStores: FileStore[] = [];
 
@@ -43,15 +39,14 @@ export function checkStoreBuildMetrics(
       x.build_metrics.length > 0 &&
       x.fields.filter(
         field =>
-          field.fieldClass !== FieldClassEnum.Filter &&
+          field.fieldClass !== 'filter' &&
           toBooleanFromLowercaseString(field.required) === true
       ).length > 0
     ) {
       item.errors.push(
         new BmError({
-          title:
-            ErTitleEnum.BUILD_METRICS_AND_REQUIRED_FIELDS_DO_NOT_WORK_TOGETHER,
-          message: `${ParameterEnum.BuildMetrics} cannot be used in store when there are fields with "required" set to true`,
+          title: 'BUILD_METRICS_AND_REQUIRED_FIELDS_DO_NOT_WORK_TOGETHER',
+          message: `build_metrics cannot be used in store when there are fields with "required" set to true`,
           lines: [
             {
               line: x.build_metrics_line_num,
@@ -79,8 +74,8 @@ export function checkStoreBuildMetrics(
       if (isDefined(buildMetric) && buildMetric.constructor !== Object) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.BUILD_METRICS_ELEMENT_IS_NOT_A_DICTIONARY,
-            message: `found at least one ${ParameterEnum.BuildMetrics} element that is not a dictionary`,
+            title: 'BUILD_METRICS_ELEMENT_IS_NOT_A_DICTIONARY',
+            message: `found at least one build_metrics element that is not a dictionary`,
             lines: [
               {
                 line: x.build_metrics_line_num,
@@ -96,11 +91,11 @@ export function checkStoreBuildMetrics(
       Object.keys(buildMetric)
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if ([ParameterEnum.Time.toString()].indexOf(parameter) < 0) {
+          if (['time'.toString()].indexOf(parameter) < 0) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNKNOWN_BUILD_METRIC_PARAMETER,
-                message: `parameter "${parameter}" cannot be used in ${ParameterEnum.BuildMetrics} element`,
+                title: 'UNKNOWN_BUILD_METRIC_PARAMETER',
+                message: `parameter "${parameter}" cannot be used in build_metrics element`,
                 lines: [
                   {
                     line: buildMetric[
@@ -120,7 +115,7 @@ export function checkStoreBuildMetrics(
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_LIST,
+                title: 'UNEXPECTED_LIST',
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -142,7 +137,7 @@ export function checkStoreBuildMetrics(
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_DICTIONARY,
+                title: 'UNEXPECTED_DICTIONARY',
                 message: `parameter "${parameter}" must not be a dictionary`,
                 lines: [
                   {
@@ -168,8 +163,8 @@ export function checkStoreBuildMetrics(
 
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.MISSING_TIME,
-              message: `${ParameterEnum.BuildMetrics} element must have "${ParameterEnum.Time}" parameter`,
+              title: 'MISSING_TIME',
+              message: `build_metrics element must have "time" parameter`,
               lines: [
                 {
                   line: Math.min(...buildMetricKeysLineNums),
@@ -198,8 +193,8 @@ export function checkStoreBuildMetrics(
         ) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.WRONG_TIME,
-              message: `specified ${ParameterEnum.Time} "${buildMetric.time}" is not found in ${ParameterEnum.FieldTimeGroups}`,
+              title: 'WRONG_TIME',
+              message: `specified time "${buildMetric.time}" is not found in field_time_groups`,
               lines: [
                 {
                   line: buildMetric.time_line_num,
@@ -219,8 +214,8 @@ export function checkStoreBuildMetrics(
         if (timeName.timeNameLineNums.length > 1) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.DUPLICATE_TIME_NAMES,
-              message: `"${ParameterEnum.Time}" value must be unique across ${ParameterEnum.BuildMetrics} elements`,
+              title: 'DUPLICATE_TIME_NAMES',
+              message: `"time" value must be unique across build_metrics elements`,
               lines: timeName.timeNameLineNums.map(l => ({
                 line: l,
                 name: x.fileName,
@@ -238,8 +233,8 @@ export function checkStoreBuildMetrics(
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
-  log(cs, caller, func, structId, LogTypeEnum.Stores, newStores);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
+  log(cs, caller, func, structId, 'out_stores.log', newStores);
 
   return newStores;
 }

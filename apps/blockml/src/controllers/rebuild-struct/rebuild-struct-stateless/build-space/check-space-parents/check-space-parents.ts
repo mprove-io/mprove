@@ -3,27 +3,25 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 
-let func = FuncEnum.CheckSpaceParents;
+let func: Func = 'build-spaces/check-space-parents';
 
 export function checkSpaceParents(item: {
   spaces: FilePartSpace[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FilePartSpace[], never> {
   let { cs, ...logItem } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, logItem);
+  log(cs, caller, func, structId, 'input.log', logItem);
 
   let newSpaces: FilePartSpace[] = [];
 
@@ -44,7 +42,7 @@ export function checkSpaceParents(item: {
       if (isUndefined(parentSpace)) {
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.SPACE_PARENT_DOES_NOT_EXIST,
+            title: 'SPACE_PARENT_DOES_NOT_EXIST',
             message: `space "${space.space}" requires parent space "${parentSpaceName}"`,
             lines: [
               {
@@ -65,9 +63,9 @@ export function checkSpaceParents(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Spaces, newSpaces);
+  log(cs, caller, func, structId, 'out_spaces.log', newSpaces);
 
   return Result.succeed(newSpaces);
 }

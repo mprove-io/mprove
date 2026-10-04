@@ -14,16 +14,15 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DiskFileLine } from '#common/types/disk/parts/disk-file-line';
-import type { BmlErrorExtra } from '#common/types/front/bml-error-extra';
+import type { DiskFileLine } from '#common/types/disk/parts/file/disk-file-line';
+import type { BmlErrorExtra } from '#common/types/front/diagnostics/bml-error-extra';
 import { getFileExtension } from '#front/app/functions/get-file-extension';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -260,19 +259,19 @@ export class BlockmlErrorsComponent implements OnDestroy {
     switch (ext) {
       case 'other':
         return 1;
-      case FileExtensionEnum.Yml:
+      case '.yml':
         return 2;
-      case FileExtensionEnum.Md:
+      case '.md':
         return 3;
-      case FileExtensionEnum.Space:
+      case '.space':
         return 4;
-      case FileExtensionEnum.Store:
+      case '.store':
         return 5;
-      case FileExtensionEnum.Report:
+      case '.report':
         return 6;
-      case FileExtensionEnum.Dashboard:
+      case '.dashboard':
         return 7;
-      case FileExtensionEnum.Chart:
+      case '.chart':
         return 8;
       default:
         return 0;
@@ -289,7 +288,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
       let fileId = encodeFilePath({ filePath: filePath });
 
       this.navigateService.navigateToFileLine({
-        builderLeft: BuilderLeftEnum.Tree,
+        builderLeft: 'Tree',
         encodedFileId: fileId,
         lineNumber: line.lineNumber
       });

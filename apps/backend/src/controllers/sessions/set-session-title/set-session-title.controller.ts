@@ -13,8 +13,7 @@ import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Sessions')
@@ -48,11 +47,11 @@ export class SetSessionTitleController {
 
     if (session.userId !== user.userId) {
       throw new ServerError({
-        message: ErEnum.BACKEND_UNAUTHORIZED
+        message: 'BACKEND_UNAUTHORIZED'
       });
     }
 
-    if (session.type === SessionTypeEnum.Editor) {
+    if (session.type === 'Editor') {
       // Type Editor: proxy to OpenCode
       let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
         sessionId: sessionId

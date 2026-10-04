@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { z } from 'zod';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 
@@ -35,16 +34,16 @@ export function zodParseOrThrow<T extends z.ZodType>(item: {
 
   if (
     [
-      ErEnum.BACKEND_WRONG_ENV_VALUES,
-      ErEnum.BLOCKML_WRONG_ENV_VALUES,
-      ErEnum.DISK_WRONG_ENV_VALUES
+      'BACKEND_WRONG_ENV_VALUES',
+      'BLOCKML_WRONG_ENV_VALUES',
+      'DISK_WRONG_ENV_VALUES'
     ].indexOf(errorMessage) > -1
   ) {
     logToConsole({
       log: serverError,
       logIsJson: isDefined(logIsJson) ? logIsJson : false,
       logger: logger,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       useLoggerOnlyForErrorLevel: false
     });
   }

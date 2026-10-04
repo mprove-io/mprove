@@ -12,6 +12,7 @@ import {
 } from 'e2b';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 
 const { forEachSeries } = pIteration;
 
@@ -27,11 +28,7 @@ import { getOpenAiVariantOptions } from '#backend/functions/openai-model-variant
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 
@@ -83,7 +80,7 @@ export class EditorOpencodeService {
           return;
         }
 
-        if (provider.type === ProviderTypeEnum.OpenAICodex) {
+        if (provider.type === 'OpenAICodex') {
           if (item.isUserCodexAuthSet === false) {
             return;
           }
@@ -118,7 +115,7 @@ export class EditorOpencodeService {
 
         let apiKey = provider.options.apiKey;
 
-        if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+        if (provider.type === 'OpenAICompatible') {
           let prefix = `MPROVE_LLM_${index}`;
 
           let apiKeyEnv = `${prefix}_API_KEY`;
@@ -167,7 +164,7 @@ export class EditorOpencodeService {
           return;
         }
 
-        if (provider.type === ProviderTypeEnum.OpenAI) {
+        if (provider.type === 'OpenAI') {
           let apiKeyEnv = 'MPROVE_OPENAI_API_KEY';
           envs[apiKeyEnv] = apiKey;
           config[OPENCODE_PROJECT_OPENAI_PROVIDER_ID] = {
@@ -186,7 +183,7 @@ export class EditorOpencodeService {
           return;
         }
 
-        if (provider.type === ProviderTypeEnum.Anthropic) {
+        if (provider.type === 'Anthropic') {
           envs.ANTHROPIC_API_KEY = apiKey;
           config.anthropic = {
             whitelist: modelIds,
@@ -272,7 +269,7 @@ export class EditorOpencodeService {
   }
 
   async startOpencodeServer(item: {
-    sandboxType: SandboxTypeEnum;
+    sandboxType: SandboxType;
     sandboxTimeoutMs: number;
     sandboxEnvs: Record<string, string>;
     sandboxFiles: { path: string; data: string }[];
@@ -283,7 +280,7 @@ export class EditorOpencodeService {
       let createSandboxResult: CreateSandboxResult;
 
       switch (item.sandboxType) {
-        case SandboxTypeEnum.E2B: {
+        case 'E2B': {
           let templateName =
             this.cs.get<BackendConfig['e2bPublicTemplate']>(
               'e2bPublicTemplate'
@@ -298,7 +295,7 @@ export class EditorOpencodeService {
 
           await sandbox.commands.run('mkdir -p /home/user/project');
 
-          if (item.project.remoteType === ProjectRemoteTypeEnum.GitClone) {
+          if (item.project.remoteType === 'GitClone') {
             await this.cloneRepoInSandbox({
               sandbox: sandbox,
               gitUrl: item.project.gitUrl,
@@ -364,14 +361,14 @@ export class EditorOpencodeService {
         }
         default:
           throw new ServerError({
-            message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
+            message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
           });
       }
 
       return createSandboxResult;
     } catch (e) {
       throw new ServerError({
-        message: ErEnum.BACKEND_SANDBOX_CREATE_FAILED,
+        message: 'BACKEND_SANDBOX_CREATE_FAILED',
         originalError: e
       });
     }
@@ -379,7 +376,7 @@ export class EditorOpencodeService {
 
   async restartOpencodeServer(item: {
     sessionId: string;
-    sandboxType: SandboxTypeEnum;
+    sandboxType: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
     sandboxBaseUrl: string;
@@ -389,7 +386,7 @@ export class EditorOpencodeService {
   }): Promise<void> {
     try {
       switch (item.sandboxType) {
-        case SandboxTypeEnum.E2B: {
+        case 'E2B': {
           let sandbox: Sandbox = await Sandbox.connect(item.sandboxId, {
             apiKey: item.e2bApiKey
           });
@@ -451,12 +448,12 @@ export class EditorOpencodeService {
         }
         default:
           throw new ServerError({
-            message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
+            message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
           });
       }
     } catch (e) {
       throw new ServerError({
-        message: ErEnum.BACKEND_SANDBOX_OPENCODE_REFRESH_FAILED,
+        message: 'BACKEND_SANDBOX_OPENCODE_REFRESH_FAILED',
         originalError: e
       });
     }
@@ -495,7 +492,7 @@ export class EditorOpencodeService {
         } else {
         }
       } catch (e: any) {
-        if (backendEnv !== BackendEnvEnum.PROD) {
+        if (backendEnv !== 'PROD') {
           console.log(
             `[healthCheckOpenCode] health check attempt ${i + 1}/${maxAttempts} failed: ${e?.message}`
           );
@@ -507,7 +504,7 @@ export class EditorOpencodeService {
 
     if (!healthy) {
       throw new ServerError({
-        message: ErEnum.BACKEND_SANDBOX_HEALTH_CHECK_FAILED
+        message: 'BACKEND_SANDBOX_HEALTH_CHECK_FAILED'
       });
     }
   }
@@ -560,7 +557,7 @@ export class EditorOpencodeService {
 
       if (cloneResult.exitCode !== 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_SANDBOX_GIT_CLONE_FAILED,
+          message: 'BACKEND_SANDBOX_GIT_CLONE_FAILED',
           originalError: cloneResult.stderr
         });
       }
@@ -571,7 +568,7 @@ export class EditorOpencodeService {
 
       if (checkoutResult.exitCode !== 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_SANDBOX_GIT_CHECKOUT_FAILED,
+          message: 'BACKEND_SANDBOX_GIT_CHECKOUT_FAILED',
           originalError: checkoutResult.stderr
         });
       }

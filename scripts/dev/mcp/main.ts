@@ -1,5 +1,16 @@
 import { styleText } from 'node:util';
 
+const terminalColorValues = [
+  'cyan',
+  'green',
+  'yellow',
+  'dim',
+  'magenta',
+  'gray'
+] as const;
+
+export type TerminalColor = (typeof terminalColorValues)[number];
+
 let toolNames: string[] = [
   'run',
   'get-state',
@@ -158,13 +169,7 @@ run executes data warehouse queries; validate rebuilds project files.`);
       ? formattedResponse.replace(
           /"(?:\\.|[^"\\])*"(?:\s*:)?|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|\b(?:true|false|null)\b|[{}\[\],:]/g,
           token => {
-            let color:
-              | 'cyan'
-              | 'green'
-              | 'yellow'
-              | 'dim'
-              | 'magenta'
-              | 'gray' = token.startsWith('"')
+            let color: TerminalColor = token.startsWith('"')
               ? token.endsWith(':')
                 ? 'cyan'
                 : 'green'

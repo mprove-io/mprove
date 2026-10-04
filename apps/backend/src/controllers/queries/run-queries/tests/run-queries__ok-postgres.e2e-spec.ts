@@ -8,10 +8,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { PrepTest } from '#backend/interfaces/prep-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD, UTC } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import { spaceUnitToChartUnit } from '#common/functions/space-unit-to-chart-unit/space-unit-to-chart-unit';
@@ -54,7 +51,7 @@ test('1', async t => {
         envId: PROJECT_ENV_PROD,
         projectId: projectId,
         connectionId: 'c1_postgres',
-        type: ConnectionTypeEnum.PostgreSQL,
+        type: 'PostgreSQL',
         options: {
           postgres: {
             host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
@@ -105,7 +102,7 @@ test('1', async t => {
               seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.Managed
+              remoteType: 'Managed'
             }
           ],
           members: [
@@ -224,7 +221,7 @@ test('1', async t => {
 
           let status = unwrapBackendResponseOutput({ response: respGetQuery })
             .query?.status;
-          if (status !== QueryStatusEnum.Running) {
+          if (status !== 'Running') {
             break;
           }
 
@@ -237,7 +234,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prepTest?.logger,
         cs: prepTest?.cs
       });
@@ -252,7 +249,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prepTest?.logger,
       cs: prepTest?.cs
     });

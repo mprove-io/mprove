@@ -3,29 +3,25 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 
-let func = FuncEnum.CheckChartTilesExist;
+let func: Func = 'build-chart/check-chart-tiles-exist';
 
 export function checkChartTilesExist(item: {
   charts: FileChart[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileChart[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = input;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newCharts: FileChart[] = [];
 
@@ -35,10 +31,8 @@ export function checkChartTilesExist(item: {
     if (isUndefined(x.tiles)) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.CHART_MISSING_TILES,
-          message:
-            `${FileExtensionEnum.Chart} must have ` +
-            `"${ParameterEnum.Tiles}" parameter`,
+          title: 'CHART_MISSING_TILES',
+          message: `.chart must have ` + `"tiles" parameter`,
           lines: [
             {
               line: x.chart_line_num,
@@ -55,8 +49,8 @@ export function checkChartTilesExist(item: {
     if (x.tiles.length > 1) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.CHART_TOO_MANY_TILES,
-          message: `${FileExtensionEnum.Chart} must have exactly one tile`,
+          title: 'CHART_TOO_MANY_TILES',
+          message: `.chart must have exactly one tile`,
           lines: [
             {
               line: x.chart_line_num,
@@ -75,9 +69,9 @@ export function checkChartTilesExist(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Charts, newCharts);
+  log(cs, caller, func, structId, 'out_charts.log', newCharts);
 
   return Result.succeed(newCharts);
 }

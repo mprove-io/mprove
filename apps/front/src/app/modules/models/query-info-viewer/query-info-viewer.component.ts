@@ -19,19 +19,16 @@ import {
   VS_LIGHT_THEME_EXTRA_SINGLE_READ
 } from '#common/constants/code-themes/themes';
 import { LIGHT_PLUS_LANGUAGES } from '#common/constants/top-front';
-import { QueryPartEnum } from '#common/enums/query-part.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { prepareTile } from '#common/functions/prepare-tile/prepare-tile';
 import { toYaml } from '#common/functions/to-yaml/to-yaml';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
+import type { QueryPart } from '#common/types/front/query-info/query-part';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { UiQuery } from '#front/app/queries/ui.query';
-import {
-  HighLightService,
-  PlaceNameEnum
-} from '#front/app/services/highlight.service';
+import { HighLightService } from '#front/app/services/highlight.service';
 
 @Component({
   standalone: false,
@@ -40,7 +37,7 @@ import {
 })
 export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
   @Input()
-  queryPart: QueryPartEnum;
+  queryPart: QueryPart;
 
   @Input()
   modelFileText: string;
@@ -100,7 +97,7 @@ export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
 
     this.workerTaskCompletedSubscription.add(
       this.highLightService.workerTaskCompleted.subscribe(eventData => {
-        if (eventData.placeName === PlaceNameEnum.QueryInfo) {
+        if (eventData.placeName === 'QueryInfo') {
           let prevContent = this.content;
           this.content = this.content + ' ';
           this.cd.detectChanges();
@@ -133,7 +130,7 @@ export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
 
   initEditorOptions() {
     let res = this.highLightService.getLanguages({
-      placeName: PlaceNameEnum.QueryInfo
+      placeName: 'QueryInfo'
     });
 
     this.languages = res.languages;
@@ -157,22 +154,21 @@ export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     this.lang =
-      this.queryPart === QueryPartEnum.SqlMalloy ||
-      this.queryPart === QueryPartEnum.SqlMain
+      this.queryPart === 'SqlMalloy' || this.queryPart === 'SqlMain'
         ? 'SQL'
-        : this.queryPart === QueryPartEnum.JsonAppliedGivens ||
-            this.queryPart === QueryPartEnum.MalloyCompiledQuery ||
-            this.queryPart === QueryPartEnum.JsonStoreRequestParts ||
-            this.queryPart === QueryPartEnum.JsonResults
+        : this.queryPart === 'JsonAppliedGivens' ||
+            this.queryPart === 'MalloyCompiledQuery' ||
+            this.queryPart === 'JsonStoreRequestParts' ||
+            this.queryPart === 'JsonResults'
           ? 'JSON'
-          : this.queryPart === QueryPartEnum.MalloyQuery ||
-              this.queryPart === QueryPartEnum.MalloySource
+          : this.queryPart === 'MalloyQuery' ||
+              this.queryPart === 'MalloySource'
             ? 'Malloy'
-            : this.queryPart === QueryPartEnum.JavascriptStoreRequestFunction
+            : this.queryPart === 'JavascriptStoreRequestFunction'
               ? 'JavaScript'
-              : this.queryPart === QueryPartEnum.YamlTile ||
-                  this.queryPart === QueryPartEnum.YamlStore ||
-                  this.queryPart === QueryPartEnum.YamlModel
+              : this.queryPart === 'YamlTile' ||
+                  this.queryPart === 'YamlStore' ||
+                  this.queryPart === 'YamlModel'
                 ? 'YAML'
                 : undefined;
 
@@ -181,33 +177,28 @@ export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
         ? LIGHT_PLUS_THEME_EXTRA_SINGLE_READ
         : VS_LIGHT_THEME_EXTRA_SINGLE_READ;
 
-    if (this.queryPart === QueryPartEnum.JsonAppliedGivens) {
+    if (this.queryPart === 'JsonAppliedGivens') {
       let appliedGivens = this.chart.tiles[0].mconfig.appliedGivens;
       this.content = isDefined(appliedGivens)
         ? JSON.stringify(appliedGivens, null, 2)
         : '';
-    } else if (this.queryPart === QueryPartEnum.MalloyQuery) {
+    } else if (this.queryPart === 'MalloyQuery') {
       this.content = this.chart.tiles[0].mconfig.malloyQueryExtra;
-    } else if (this.queryPart === QueryPartEnum.MalloyCompiledQuery) {
+    } else if (this.queryPart === 'MalloyCompiledQuery') {
       let parsed = this.chart.tiles[0].mconfig.compiledQuery;
       delete parsed.sql;
 
       this.content = isDefined(parsed) ? JSON.stringify(parsed, null, 2) : '';
-    } else if (this.queryPart === QueryPartEnum.JsonResults) {
+    } else if (this.queryPart === 'JsonResults') {
       let parsed = this.chart.tiles[0].query.data;
 
       this.content = isDefined(parsed) ? JSON.stringify(parsed, null, 2) : '';
-    } else if (
-      this.queryPart === QueryPartEnum.SqlMalloy ||
-      this.queryPart === QueryPartEnum.SqlMain
-    ) {
+    } else if (this.queryPart === 'SqlMalloy' || this.queryPart === 'SqlMain') {
       this.content = this.chart.tiles[0].query.sql;
-    } else if (
-      this.queryPart === QueryPartEnum.JavascriptStoreRequestFunction
-    ) {
+    } else if (this.queryPart === 'JavascriptStoreRequestFunction') {
       this.content = `// Function to make Request urlPath and body
 ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
-    } else if (this.queryPart === QueryPartEnum.JsonStoreRequestParts) {
+    } else if (this.queryPart === 'JsonStoreRequestParts') {
       try {
         let jsonParts = this.chart.tiles[0].mconfig.storePart?.reqJsonParts;
 
@@ -220,7 +211,7 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
       } catch (error: any) {
         this.content = 'Invalid JSON: ' + error.message;
       }
-    } else if (this.queryPart === QueryPartEnum.YamlTile) {
+    } else if (this.queryPart === 'YamlTile') {
       let filePartTile: FilePartTile = prepareTile({
         isForDashboard: false,
         mconfig: this.chart.tiles[0].mconfig
@@ -228,11 +219,7 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
 
       this.content = toYaml({ tiles: [filePartTile] });
     } else if (
-      [
-        QueryPartEnum.MalloySource,
-        QueryPartEnum.YamlStore,
-        QueryPartEnum.YamlModel
-      ].indexOf(this.queryPart) > -1
+      ['MalloySource', 'YamlStore', 'YamlModel'].indexOf(this.queryPart) > -1
     ) {
       this.content = this.modelFileText;
     }
@@ -240,7 +227,7 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
     let docText = this.content ?? '';
 
     this.highLightService.updateDocText({
-      placeName: PlaceNameEnum.QueryInfo,
+      placeName: 'QueryInfo',
       docText: docText,
       shikiLanguage: this.lang.toLowerCase(),
       shikiTheme: 'light-plus-extended',

@@ -1,12 +1,11 @@
 import type { Logger } from '@nestjs/common';
 import { getToBackendOperation } from '#backend/functions/get-to-backend-operation';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseMetadata } from '#common/types/backend/response/to-backend-response-metadata';
+import { zEr } from '#common/types/shared/errors/er';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 import {
   type WrappedError,
@@ -55,15 +54,13 @@ export function makeErrorResponse(item: {
   if (isDefined(operation)) {
     let code: string =
       wrappedError.message === 'ThrottlerException: Too Many Requests'
-        ? ErEnum.TOO_MANY_REQUESTS_ERROR
+        ? 'TOO_MANY_REQUESTS_ERROR'
         : wrappedError.name === 'ThrottlerException'
-          ? ErEnum.THROTTLER_ERROR
-          : wrappedError.message === ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+          ? 'THROTTLER_ERROR'
+          : wrappedError.message === 'BACKEND_WRONG_REQUEST_PARAMS'
             ? 'BACKEND_INVALID_REQUEST'
             : typeof wrappedError.message === 'string' &&
-                Object.values(ErEnum).some(
-                  value => value === wrappedError.message
-                )
+                zEr.options.some(value => value === wrappedError.message)
               ? wrappedError.message
               : 'BACKEND_INTERNAL';
 
@@ -80,8 +77,8 @@ export function makeErrorResponse(item: {
               ? (wrappedError.displayData ?? [])
               : wrappedError.displayData,
         originalError:
-          (code === ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK ||
-            code === ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML) &&
+          (code === 'BACKEND_ERROR_RESPONSE_FROM_DISK' ||
+            code === 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML') &&
           isDefined(wrappedError.originalError)
             ? {
                 code: wrappedError.originalError.message,
@@ -115,7 +112,7 @@ export function makeErrorResponse(item: {
 
     logToConsole({
       log: log,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logIsJson: logIsJson,
       logger: logger,
       useLoggerOnlyForErrorLevel: useLoggerOnlyForErrorLevel

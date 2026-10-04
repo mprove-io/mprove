@@ -1,6 +1,7 @@
-import type { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import type { FileBasic } from '#common/types/blockml/parts/internal/file-basic';
-import type { EnumValues } from '#common/types/enum-values';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
+
+import type { FileBasic } from '#common/types/blockml/parts/internal/file/file-basic';
+
 import type { Extend } from '#common/types/extend';
 
 export type FileProjectConf = Extend<
@@ -10,7 +11,7 @@ export type FileProjectConf = Extend<
     mprove_dir_line_num?: number;
     case_sensitive_string_filters?: string;
     case_sensitive_string_filters_line_num?: number;
-    week_start?: EnumValues<typeof ProjectWeekStartEnum>;
+    week_start?: ProjectWeekStart;
     week_start_line_num?: number;
     default_timezone?: string;
     default_timezone_line_num?: number;

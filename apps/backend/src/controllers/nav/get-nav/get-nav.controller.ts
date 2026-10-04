@@ -27,13 +27,13 @@ import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/types/backend/parts/member';
-import type { StructX } from '#common/types/backend/parts/struct-x';
+import type { StructX } from '#common/types/backend/parts/struct/struct-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetNavOutput } from '#common/types/backend/routes/nav/get-nav/get-nav-output';
-import type { Repo } from '#common/types/disk/parts/repo';
+import type { Repo } from '#common/types/disk/parts/repo/repo';
 import type { ToDiskGetCatalogNodesOutput } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 
 @ApiTags('Nav')
@@ -204,7 +204,7 @@ export class GetNavController {
       projectName: resultProject?.name,
       projectDefaultBranch: resultProject?.defaultBranch,
       repoId: PROD_REPO_ID,
-      repoType: RepoTypeEnum.Production,
+      repoType: 'production',
       branchId: resultProject?.defaultBranch,
       envId: PROJECT_ENV_PROD,
       needValidate: isDefined(bridge) ? bridge.needValidate : false,

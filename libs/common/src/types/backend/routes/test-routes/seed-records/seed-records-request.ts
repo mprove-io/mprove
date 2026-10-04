@@ -44,8 +44,11 @@ import {
   type ToBackendSeedRecordsInputUsersItem,
   zToBackendSeedRecordsInputUsersItem
 } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-users-item';
-import { type Mconfig, zMconfig } from '#common/types/blockml/parts/mconfig';
-import { type Query, zQuery } from '#common/types/blockml/parts/query';
+import {
+  type Mconfig,
+  zMconfig
+} from '#common/types/blockml/parts/mconfig/mconfig';
+import { type Query, zQuery } from '#common/types/blockml/parts/query/query';
 
 export type ToBackendSeedRecordsRequest = {
   operation: 'seedRecords';

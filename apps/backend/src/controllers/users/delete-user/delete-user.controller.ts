@@ -35,7 +35,7 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Users')
@@ -74,7 +74,7 @@ export class DeleteUserController {
 
     if (ownerOrgs.length > 0) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_IS_ORG_OWNER,
+        message: 'BACKEND_USER_IS_ORG_OWNER',
         displayData: {
           orgIds: ownerOrgs.map(x => x.orgId)
         }
@@ -111,7 +111,7 @@ export class DeleteUserController {
 
     if (erProjectIds.length > 0) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN,
+        message: 'BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN',
         displayData: {
           projectIds: erProjectIds
         }

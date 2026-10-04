@@ -19,8 +19,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_TELEMETRY } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import type { ToBackendTelemetryRoute } from '#common/types/backend/request/to-backend-telemetry-route';
 
 @ApiTags('Telemetry')
@@ -78,10 +77,10 @@ export class TelemetryMetricsController {
     } catch (er) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_FORWARD_TELEMETRY_METRICS_ERROR,
+          message: 'BACKEND_FORWARD_TELEMETRY_METRICS_ERROR',
           originalError: er
         }),
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: this.logger,
         cs: this.cs
       });

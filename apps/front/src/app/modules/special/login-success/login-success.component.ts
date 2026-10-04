@@ -13,9 +13,9 @@ import {
   PATH_REPORTS,
   PATH_REPORTS_LIST
 } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { AuthService } from '#front/app/services/auth.service';
@@ -46,7 +46,7 @@ export class LoginSuccessComponent implements OnInit {
     let orgId: string;
     let projectId: string;
     let repoId: string;
-    let repoType: RepoTypeEnum;
+    let repoType: RepoType;
     let branchId;
     let envId;
     this.navQuery

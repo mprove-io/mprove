@@ -1,5 +1,5 @@
 import type { MproveValidationError } from '#common/types/backend/parts/state/mprove-validation-error';
-import type { BmlError } from '#common/types/blockml/parts/bml-error';
+import type { BmlError } from '#common/types/blockml/diagnostics/bml-error';
 
 export function mapBmlErrorsToMproveValidationErrors(item: {
   errors: BmlError[];

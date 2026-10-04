@@ -1,8 +1,7 @@
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM, LINE_NUMBERS } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 
@@ -28,7 +27,7 @@ export function processLineNumbersRecursive(item: {
     if (isUndefined(item.hash[oldPar])) {
       item.errors.push(
         new BmError({
-          title: ErTitleEnum.UNDEFINED_VALUE,
+          title: 'UNDEFINED_VALUE',
           message:
             'if parameters are specified, they cannot have undefined values',
           lines: [
@@ -63,7 +62,7 @@ export function processLineNumbersRecursive(item: {
         if (element === null) {
           item.errors.push(
             new BmError({
-              title: ErTitleEnum.ARRAY_ELEMENT_IS_NULL,
+              title: 'ARRAY_ELEMENT_IS_NULL',
               message: 'array element cannot be empty',
               lines: [
                 {
@@ -122,9 +121,9 @@ export function processLineNumbersRecursive(item: {
       // remove whitespaces
       let reg3 =
         [
-          ParameterEnum.CurrencyPrefix.toString(),
-          ParameterEnum.CurrencySuffix.toString(),
-          ParameterEnum.ThousandsSeparator.toString()
+          'currency_prefix'.toString(),
+          'currency_suffix'.toString(),
+          'thousands_separator'.toString()
         ].indexOf(newPar) > -1
           ? MyRegex.CAPTURE_WITH_EDGE_WHITESPACES()
           : MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
@@ -149,7 +148,7 @@ export function processLineNumbersRecursive(item: {
 
         item.errors.push(
           new BmError({
-            title: ErTitleEnum.DUPLICATE_PARAMETERS,
+            title: 'DUPLICATE_PARAMETERS',
             message: `found duplicate "${p}:" parameters`,
             lines: lines
           })

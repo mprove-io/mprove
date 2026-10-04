@@ -4,7 +4,8 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { favoritesTable } from '#backend/drizzle/postgres/schema/favorites';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
+import type { FavoriteType } from '#common/types/backend/parts/favorite/favorite-type';
+
 import { HashService } from '../hash.service';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class FavoritesService {
   makeFavoriteFullId(item: {
     userId: string;
     projectId: string;
-    type: FavoriteTypeEnum;
+    type: FavoriteType;
     targetId: string;
   }) {
     let { userId, projectId, type, targetId } = item;
@@ -33,7 +34,7 @@ export class FavoritesService {
   async setFavorite(item: {
     projectId: string;
     userId: string;
-    type: FavoriteTypeEnum;
+    type: FavoriteType;
     targetId: string;
     isFavorite: boolean;
   }) {
@@ -68,7 +69,7 @@ export class FavoritesService {
   async getFavoriteTargetIds(item: {
     projectId: string;
     userId: string;
-    type: FavoriteTypeEnum;
+    type: FavoriteType;
     targetIds: string[];
   }) {
     let { projectId, userId, type, targetIds } = item;

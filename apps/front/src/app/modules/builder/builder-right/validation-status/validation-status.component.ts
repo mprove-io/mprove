@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+
 import type { ToBackendValidateFilesRequest } from '#common/types/backend/routes/files/validate-files/validate-files-request';
 import type { ToBackendValidateFilesResponse } from '#common/types/backend/routes/files/validate-files/validate-files-response';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -16,8 +16,6 @@ import { ApiService } from '#front/app/services/api.service';
   templateUrl: './validation-status.component.html'
 })
 export class ValidationStatusComponent {
-  repoTypeEnum = RepoTypeEnum;
-
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {

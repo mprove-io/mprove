@@ -1,20 +1,11 @@
 import { z } from 'zod';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import { zConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 
 export type ConnectionItem = {
   connectionId: string;
-  type:
-    | ConnectionTypeEnum.PostgreSQL
-    | ConnectionTypeEnum.MySQL
-    | ConnectionTypeEnum.SnowFlake
-    | ConnectionTypeEnum.BigQuery
-    | ConnectionTypeEnum.Databricks
-    | ConnectionTypeEnum.MotherDuck
-    | ConnectionTypeEnum.Presto
-    | ConnectionTypeEnum.Trino
-    | ConnectionTypeEnum.GoogleApi
-    | ConnectionTypeEnum.Api;
+  type: ConnectionType;
   baseUrl?: string;
   headerKeys?: string[];
   googleAuthScopes?: string[];
@@ -23,7 +14,7 @@ export type ConnectionItem = {
 export let zConnectionItem = z
   .object({
     connectionId: z.string(),
-    type: z.enum(ConnectionTypeEnum),
+    type: zConnectionType,
     baseUrl: z.string().nullish(),
     headerKeys: z.array(z.string()).nullish(),
     googleAuthScopes: z.array(z.string()).nullish()

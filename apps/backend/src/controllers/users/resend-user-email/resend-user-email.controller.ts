@@ -15,7 +15,7 @@ import { EmailService } from '#backend/services/email.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendResendUserEmailOutput } from '#common/types/backend/routes/users/resend-user-email/resend-user-email-output';
@@ -67,7 +67,7 @@ export class ResendUserEmailController {
 
     if (isUndefined(user)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
+        message: 'BACKEND_USER_DOES_NOT_EXIST'
       });
     }
 

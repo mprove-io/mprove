@@ -4,8 +4,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendValidateFilesRequest } from '#common/types/backend/routes/files/validate-files/validate-files-request';
 import type { ToBackendValidateFilesResponse } from '#common/types/backend/routes/files/validate-files/validate-files-response';
@@ -17,7 +15,8 @@ import type { ToBackendRevertRepoToLastCommitRequest } from '#common/types/backe
 import type { ToBackendRevertRepoToLastCommitResponse } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 import type { ToBackendRevertRepoToRemoteRequest } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
 import type { ToBackendRevertRepoToRemoteResponse } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
-import type { RepoStatus } from '#common/types/disk/parts/repo-status';
+import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
@@ -37,7 +36,6 @@ export class RepoOptionsComponent {
   node: TreeNode;
 
   repoStatusNeedCommit: RepoStatus = 'NeedCommit';
-  repoTypeSession = RepoTypeEnum.Session;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -58,7 +56,7 @@ export class RepoOptionsComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  builderLeft = BuilderLeftEnum.Tree;
+  builderLeft: BuilderLeft = 'Tree';
   builderLeft$ = this.uiQuery.builderLeft$.pipe(
     tap(x => (this.builderLeft = x))
   );

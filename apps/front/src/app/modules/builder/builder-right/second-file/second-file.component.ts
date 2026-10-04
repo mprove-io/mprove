@@ -21,12 +21,11 @@ import {
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
 import type { ToBackendGetFileRequest } from '#common/types/backend/routes/files/get-file/get-file-request';
@@ -41,10 +40,7 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import {
-  HighLightService,
-  PlaceNameEnum
-} from '#front/app/services/highlight.service';
+import { HighLightService } from '#front/app/services/highlight.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -186,7 +182,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
     this.workerTaskCompletedSubscription.add(
       this.highLightService.workerTaskCompleted.subscribe(eventData => {
-        if (eventData.placeName === PlaceNameEnum.Right) {
+        if (eventData.placeName === 'Right') {
           let prevSecondFileContent = this.secondFileContent;
           this.secondFileContent = this.secondFileContent + ' ';
           this.cd.detectChanges();
@@ -213,7 +209,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
   initEditorOptions() {
     let res = this.highLightService.getLanguages({
-      placeName: PlaceNameEnum.Right
+      placeName: 'Right'
     });
 
     this.languages = res.languages;
@@ -239,12 +235,12 @@ export class SecondFileComponent implements OnInit, OnDestroy {
     let id = ar.join('.');
     let dotExt = `.${ext}`;
 
-    if (dotExt === FileExtensionEnum.Store) {
+    if (dotExt === '.store') {
       this.navigateService.navigateToChart({
         modelId: id,
         chartId: EMPTY_CHART_ID
       });
-    } else if (dotExt === FileExtensionEnum.Malloy) {
+    } else if (dotExt === '.malloy') {
       this.spinner.show(APP_SPINNER_NAME);
 
       let models: ModelX[] = [];
@@ -292,13 +288,13 @@ export class SecondFileComponent implements OnInit, OnDestroy {
           })
         )
         .toPromise();
-    } else if (dotExt === FileExtensionEnum.Report) {
+    } else if (dotExt === '.report') {
       this.navigateService.navigateToReport({ reportId: id });
-    } else if (dotExt === FileExtensionEnum.Dashboard) {
+    } else if (dotExt === '.dashboard') {
       this.navigateService.navigateToDashboard({
         dashboardId: id
       });
-    } else if (dotExt === FileExtensionEnum.Chart) {
+    } else if (dotExt === '.chart') {
       let nav = this.navQuery.getValue();
 
       let payload: ToBackendGetChartRequest['input'] = {
@@ -392,7 +388,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
           branchId: nav.branchId,
           envId: nav.envId,
           fileNodeId: this.secondFileNodeId,
-          builderLeft: BuilderLeftEnum.Tree
+          builderLeft: 'Tree'
         };
 
         this.isShowSpinner = true;
@@ -426,7 +422,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
                 this.setLanguage();
 
                 this.highLightService.updateDocText({
-                  placeName: PlaceNameEnum.Right,
+                  placeName: 'Right',
                   docText: this.secondFileContent,
                   shikiLanguage: this.lang?.toLowerCase(),
                   shikiTheme: 'light-plus-extended',
@@ -512,7 +508,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

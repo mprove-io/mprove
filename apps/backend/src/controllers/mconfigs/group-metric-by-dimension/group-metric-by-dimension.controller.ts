@@ -41,13 +41,13 @@ import { MalloyService } from '#backend/services/malloy.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
-import type { QueryOperation } from '#common/types/backend/parts/query-operation';
+import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGroupMetricByDimensionOutput } from '#common/types/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-output';
 
@@ -171,7 +171,7 @@ export class GroupMetricByDimensionController {
 
     let queryOperation: QueryOperation;
 
-    if (apiMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (apiMconfig.modelType === 'Malloy') {
       let { queryOperationType, sortFieldId, desc } = sortFieldsOnSelectChange({
         mconfig: apiMconfig,
         selectFieldId: groupByFieldId,
@@ -209,7 +209,7 @@ export class GroupMetricByDimensionController {
     let newQuery: QueryTab;
     let isError = false;
 
-    if (model.type === ModelTypeEnum.Store) {
+    if (model.type === 'Store') {
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
         project: project,
@@ -235,7 +235,7 @@ export class GroupMetricByDimensionController {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
-    } else if (model.type === ModelTypeEnum.Malloy) {
+    } else if (model.type === 'Malloy') {
       let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
         envId: envId,

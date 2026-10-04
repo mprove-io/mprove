@@ -2,7 +2,6 @@ import test from 'ava';
 import { ANTHROPIC_CLAUDE_SONNET_5_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/tests/fixtures/anthropic-claude-sonnet-5-model-info.fixture';
 import { forTestsRunEditorSessionE2x } from '#backend/functions/for-tests/for-tests-run-editor-session-e2x';
 import { ANTHROPIC_PROVIDER_ID } from '#common/constants/providers';
-import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
@@ -26,7 +25,7 @@ test('1', async t => {
     },
     provider: {
       providerId: ANTHROPIC_PROVIDER_ID,
-      type: ProviderTypeEnum.Anthropic,
+      type: 'Anthropic',
       isEnabled: true,
       models: [
         {

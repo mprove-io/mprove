@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BaseProject } from '#common/types/backend/parts/base-project';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToDiskDeleteDevRepoOutput } from '#common/types/disk/routes/repos/delete-dev-repo/delete-dev-repo-output';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';

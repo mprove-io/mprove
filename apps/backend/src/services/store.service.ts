@@ -16,22 +16,16 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { getYYYYMMDDCurrentDateByTimezone } from '#backend/functions/get-yyyymmdd-current-date-by-timezone';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { StoreMethodEnum } from '#common/enums/store-method.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type { Filter } from '#common/types/blockml/parts/filter';
-import type { Fraction } from '#common/types/blockml/parts/fraction';
-import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import { TabService } from './tab.service';
 import { UrlService } from './url.service';
@@ -83,7 +77,7 @@ export class StoreService {
 
     // add required filters
     model.storeContent.fields
-      .filter(x => x.fieldClass === FieldClassEnum.Filter)
+      .filter(x => x.fieldClass === 'filter')
       .forEach(storeFilter => {
         if (toBooleanFromLowercaseString(storeFilter.required) === true) {
           let selectedFilter = newMconfig.filters.find(
@@ -92,7 +86,7 @@ export class StoreService {
 
           if (isUndefined(selectedFilter)) {
             let newFraction: Fraction = {
-              type: FractionTypeEnum.StoreFraction,
+              type: 'StoreFraction',
               controls: [] as any[],
               brick: undefined as any,
               parentBrick: undefined as any,
@@ -141,9 +135,7 @@ export class StoreService {
           )
           .forEach(control => {
             let storeFilt = model.storeContent.fields
-              .filter(
-                storeField => storeField.fieldClass === FieldClassEnum.Filter
-              )
+              .filter(storeField => storeField.fieldClass === 'filter')
               .find(storeField => storeField.name === filter.fieldId);
 
             let newValue =
@@ -165,7 +157,7 @@ export class StoreService {
 
               if (
                 reference === 'METRICS_DATE_FROM' &&
-                control.controlClass === ControlClassEnum.DatePicker
+                control.controlClass === 'date_picker'
               ) {
                 target = isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
@@ -175,7 +167,7 @@ export class StoreService {
                     });
               } else if (
                 reference === 'METRICS_DATE_TO' &&
-                control.controlClass === ControlClassEnum.DatePicker
+                control.controlClass === 'date_picker'
               ) {
                 target = isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
@@ -198,8 +190,7 @@ export class StoreService {
             }
 
             control.value =
-              control.controlClass === ControlClassEnum.Switch &&
-              typeof newValue === 'string'
+              control.controlClass === 'switch' && typeof newValue === 'string'
                 ? toBooleanFromLowercaseString(newValue)
                 : newValue;
           });
@@ -211,7 +202,7 @@ export class StoreService {
     model.storeContent.fields
       .filter(
         storeField =>
-          storeField.fieldClass !== FieldClassEnum.Filter &&
+          storeField.fieldClass !== 'filter' &&
           toBooleanFromLowercaseString(storeField.required) === true
       )
       .forEach(field => {
@@ -229,7 +220,7 @@ export class StoreService {
     input: string;
     mconfig: MconfigTab;
     storeModel: ModelTab;
-    storeParam: ParameterEnum;
+    storeParam: FileParameter;
     caseSensitiveStringFilters: boolean;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
@@ -252,11 +243,11 @@ export class StoreService {
     let refError;
 
     let selectedDimensions = storeModel.storeContent.fields
-      .filter(field => field.fieldClass === FieldClassEnum.Dimension)
+      .filter(field => field.fieldClass === 'dimension')
       .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
     let selectedMeasures = storeModel.storeContent.fields
-      .filter(field => field.fieldClass === FieldClassEnum.Measure)
+      .filter(field => field.fieldClass === 'measure')
       .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
     let orderByElements: {
@@ -380,7 +371,7 @@ ${inputSub}
       } else if (reference === 'STORE_FIELDS') {
         target = JSON.stringify(store.fields);
       } else {
-        refError = `Unknown reference in store.${ParameterEnum.Response}: $${reference}`;
+        refError = `Unknown reference in store.response: $${reference}`;
         break;
       }
 
@@ -444,11 +435,11 @@ ${inputSub}
 
       let response;
 
-      if (connection.type === ConnectionTypeEnum.Api) {
+      if (connection.type === 'Api') {
         connection.options.storeApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
-      } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
+      } else if (connection.type === 'GoogleApi') {
         connection.options.storeGoogleApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
@@ -460,9 +451,9 @@ ${inputSub}
       }
 
       response =
-        queryStart.apiMethod === StoreMethodEnum.Post
+        queryStart.apiMethod === 'POST'
           ? await axios.post(url, body, { headers: headers })
-          : queryStart.apiMethod === StoreMethodEnum.Get
+          : queryStart.apiMethod === 'GET'
             ? await axios.get(url, { headers: headers })
             : { message: 'method must be POST or GET' };
 
@@ -478,13 +469,13 @@ ${inputSub}
 
       if (isDefined(q)) {
         if (response.status !== 200 && response.status !== 201) {
-          q.status = QueryStatusEnum.Error;
+          q.status = 'Error';
           q.data = [];
           q.queryJobId = undefined;
           q.lastErrorMessage = `response status code "${response.status}" is not 200 or 201`;
           q.lastErrorTs = makeTsNumber();
         } else if (isUndefined(response.data)) {
-          q.status = QueryStatusEnum.Error;
+          q.status = 'Error';
           q.data = [];
           q.queryJobId = undefined;
           q.lastErrorMessage = `response has no data`;
@@ -497,13 +488,13 @@ ${inputSub}
             });
 
           if (isDefined(dataResult.errorMessage)) {
-            q.status = QueryStatusEnum.Error;
+            q.status = 'Error';
             q.data = [];
             q.queryJobId = undefined;
             q.lastErrorMessage = `store response data processing Error: ${dataResult.errorMessage}`;
             q.lastErrorTs = makeTsNumber();
           } else {
-            q.status = QueryStatusEnum.Completed;
+            q.status = 'Completed';
             q.queryJobId = undefined;
             q.data = isDefined(dataResult.result)
               ? JSON.parse(dataResult.result) || []
@@ -541,7 +532,7 @@ ${inputSub}
         .then(x => this.tabService.queryEntToTab(x));
 
       if (isDefined(q)) {
-        q.status = QueryStatusEnum.Error;
+        q.status = 'Error';
         q.data = [];
         q.queryJobId = undefined;
         q.lastErrorMessage = isDefined(e?.response?.data)

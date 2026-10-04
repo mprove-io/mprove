@@ -1,5 +1,5 @@
-import type { DashboardField } from '#common/types/blockml/parts/dashboard-field';
-import type { Tile } from '#common/types/blockml/parts/tile';
+import type { DashboardField } from '#common/types/blockml/parts/dashboard/dashboard-field';
+import type { Tile } from '#common/types/blockml/parts/tile/tile';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export type DashboardSt = {

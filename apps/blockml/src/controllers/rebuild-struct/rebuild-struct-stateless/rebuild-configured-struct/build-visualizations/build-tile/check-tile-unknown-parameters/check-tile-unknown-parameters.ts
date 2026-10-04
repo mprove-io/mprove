@@ -5,29 +5,26 @@ import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import type { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 
-let func = FuncEnum.CheckTileUnknownParameters;
+let func: Func = 'build-tile/check-tile-unknown-parameters';
 
 export function checkTileUnknownParameters<T extends dcType>(item: {
   entities: T[];
   errors: BmError[];
   structId: string;
-  caller: CallerEnum;
+  caller: Caller;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
   let { cs, ...input } = item;
 
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+  log(cs, caller, func, structId, 'input.log', input);
 
   let newEntities: T[] = [];
 
@@ -40,23 +37,23 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
         .forEach(parameter => {
           if (
             [
-              ParameterEnum.Title.toString(),
-              ParameterEnum.Description.toString(),
-              ParameterEnum.Query.toString(),
-              ParameterEnum.Model.toString(),
-              ParameterEnum.Select.toString(),
-              ParameterEnum.Sorts.toString(),
-              ParameterEnum.Limit.toString(),
-              ParameterEnum.Type.toString(),
-              ParameterEnum.Parameters.toString(),
-              ParameterEnum.Data.toString(),
-              ParameterEnum.Options.toString(),
-              ParameterEnum.Plate.toString()
+              'title'.toString(),
+              'description'.toString(),
+              'query'.toString(),
+              'model'.toString(),
+              'select'.toString(),
+              'sorts'.toString(),
+              'limit'.toString(),
+              'type'.toString(),
+              'parameters'.toString(),
+              'data'.toString(),
+              'options'.toString(),
+              'plate'.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNKNOWN_TILE_PARAMETER,
+                title: 'UNKNOWN_TILE_PARAMETER',
                 message: `parameter "${parameter}" cannot be used inside Tile`,
                 lines: [
                   {
@@ -73,15 +70,13 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
           }
 
           if (
-            [
-              ParameterEnum.Select.toString(),
-              ParameterEnum.Parameters.toString()
-            ].indexOf(parameter) < 0 &&
+            ['select'.toString(), 'parameters'.toString()].indexOf(parameter) <
+              0 &&
             Array.isArray(tile[parameter as keyof FilePartTile])
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_LIST_IN_TILE_PARAMETERS,
+                title: 'UNEXPECTED_LIST_IN_TILE_PARAMETERS',
                 message: `parameter "${parameter}" cannot be a list`,
                 lines: [
                   {
@@ -100,14 +95,14 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
           if (
             tile[parameter as keyof FilePartTile]?.constructor === Object &&
             [
-              ParameterEnum.Data.toString(),
-              ParameterEnum.Options.toString(),
-              ParameterEnum.Plate.toString()
+              'data'.toString(),
+              'options'.toString(),
+              'plate'.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.UNEXPECTED_DICTIONARY_IN_TILE_PARAMETERS,
+                title: 'UNEXPECTED_DICTIONARY_IN_TILE_PARAMETERS',
                 message: `parameter "${parameter}" cannot be a dictionary`,
                 lines: [
                   {
@@ -124,15 +119,13 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
           }
 
           if (
-            [
-              ParameterEnum.Select.toString(),
-              ParameterEnum.Parameters.toString()
-            ].indexOf(parameter) > -1 &&
+            ['select'.toString(), 'parameters'.toString()].indexOf(parameter) >
+              -1 &&
             !Array.isArray(tile[parameter as keyof FilePartTile])
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_PARAMETER_MUST_BE_A_LIST,
+                title: 'TILE_PARAMETER_MUST_BE_A_LIST',
                 message: `parameter "${parameter}" must be a list`,
                 lines: [
                   {
@@ -152,14 +145,14 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
             isDefined(tile[parameter as keyof FilePartTile]) &&
             tile[parameter as keyof FilePartTile].constructor !== Object &&
             [
-              ParameterEnum.Data.toString(),
-              ParameterEnum.Options.toString(),
-              ParameterEnum.Plate.toString()
+              'data'.toString(),
+              'options'.toString(),
+              'plate'.toString()
             ].indexOf(parameter) > -1
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.TILE_PARAMETER_MUST_BE_A_DICTIONARY,
+                title: 'TILE_PARAMETER_MUST_BE_A_DICTIONARY',
                 message: `parameter "${parameter}" must be a dictionary`,
                 lines: [
                   {
@@ -182,9 +175,9 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
     }
   });
 
-  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, 'out_errors.log', item.errors);
 
-  log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
+  log(cs, caller, func, structId, 'out_entities.log', newEntities);
 
   return Result.succeed(newEntities);
 }

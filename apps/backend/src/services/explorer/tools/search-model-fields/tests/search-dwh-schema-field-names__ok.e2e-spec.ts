@@ -9,10 +9,7 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names.service';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendSeedRecordsRequest } from '#common/types/backend/routes/test-routes/seed-records/seed-records-request';
 
@@ -72,7 +69,7 @@ test('1', async t => {
               seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
-              remoteType: ProjectRemoteTypeEnum.Managed
+              remoteType: 'Managed'
             }
           ],
           members: [
@@ -90,7 +87,7 @@ test('1', async t => {
               projectId: projectId,
               envId: envId,
               connectionId: connectionId,
-              type: ConnectionTypeEnum.PostgreSQL,
+              type: 'PostgreSQL',
               options: {},
               rawSchema: {
                 lastRefreshedTs: Date.now(),
@@ -140,7 +137,7 @@ test('1', async t => {
             {
               structId: bridge.structId,
               modelId: modelId,
-              modelType: ModelTypeEnum.Malloy,
+              modelType: 'Malloy',
               connectionId: connectionId,
               fieldId: 'order_status',
               schemaNameLc: 'public',
@@ -188,7 +185,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleBackend({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         logger: prep?.logger,
         cs: prep?.cs
       });
@@ -200,7 +197,7 @@ test('1', async t => {
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: prep?.logger,
       cs: prep?.cs
     });

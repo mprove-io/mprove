@@ -10,10 +10,9 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 import { TabService } from '../tab.service';
 
 @Injectable()
@@ -104,10 +103,10 @@ export class SessionSseService {
         } catch (err) {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_SSE_POLL_DB_FAILED,
+              message: 'BACKEND_SSE_POLL_DB_FAILED',
               originalError: err
             }),
-            logLevel: LogLevelEnum.Error,
+            logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
           });

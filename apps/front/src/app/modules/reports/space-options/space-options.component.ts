@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import type { SpaceFolder } from '#common/types/backend/parts/space-folder';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -34,7 +34,7 @@ export class SpaceOptionsComponent {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      builderLeft: BuilderLeftEnum.Tree,
+      builderLeft: 'Tree',
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: 0
     });

@@ -1,5 +1,5 @@
 import test from 'ava';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
 import type { ToDiskIsOrgExistRequest } from '#common/types/disk/routes/orgs/is-org-exist/is-org-exist-request';
 import type { ToDiskIsOrgExistResponse } from '#common/types/disk/routes/orgs/is-org-exist/is-org-exist-response';
@@ -47,7 +47,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleDisk({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });

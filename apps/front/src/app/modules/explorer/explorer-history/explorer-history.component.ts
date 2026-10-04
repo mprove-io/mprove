@@ -13,12 +13,11 @@ import {
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendGetSessionsListRequest } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
 import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
-import type { SessionApiX } from '#common/types/front/session-api-x';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+import type { SessionApiX } from '#common/types/front/session/session-api-x';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -58,7 +57,7 @@ export class ExplorerHistoryComponent implements OnInit {
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
       this.sessions = x
-        .filter(s => s.type === SessionTypeEnum.Explorer)
+        .filter(s => s.type === 'Explorer')
         .map(s =>
           Object.assign({}, s, <SessionApiX>{ displayTitle: makeTitle(s) })
         )
@@ -105,12 +104,12 @@ export class ExplorerHistoryComponent implements OnInit {
 
   makeSessionRepoBranchName(item: { session: SessionApiX }) {
     let user = this.userQuery.getValue();
-    let repoType =
+    let repoType: RepoType =
       item.session.repoId === PROD_REPO_ID
-        ? RepoTypeEnum.Production
+        ? 'production'
         : item.session.repoId === user.userId
-          ? RepoTypeEnum.Dev
-          : RepoTypeEnum.Session;
+          ? 'dev'
+          : 'session';
 
     return makeBranchExtraName({
       repoType: repoType,
@@ -178,7 +177,7 @@ export class ExplorerHistoryComponent implements OnInit {
     let payload: ToBackendGetSessionsListRequest['input'] = {
       projectId: projectId,
       currentSessionId: currentSessionId,
-      sessionType: SessionTypeEnum.Explorer
+      sessionType: 'Explorer'
     };
 
     this.isRefreshing = true;

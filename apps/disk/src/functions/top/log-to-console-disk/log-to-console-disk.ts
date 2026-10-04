@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { DiskEnv } from '#common/types/node-common/env/disk-env';
+import type { LogLevel } from '#common/types/node-common/logging/log-level';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getConfig } from '#disk/config/get.config';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
@@ -10,13 +10,13 @@ import { logToConsole } from '#node-common/functions/log-to-console/log-to-conso
 export function logToConsoleDisk(item: {
   log: any;
   logger: Logger;
-  logLevel: LogLevelEnum;
+  logLevel: LogLevel;
   cs: ConfigService;
 }) {
   let { log, logger, logLevel, cs } = item;
 
   let logIsJson: boolean;
-  let diskEnv: DiskEnvEnum;
+  let diskEnv: DiskEnv;
 
   if (isDefined(cs)) {
     logIsJson = cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson');
@@ -32,6 +32,6 @@ export function logToConsoleDisk(item: {
     logIsJson: logIsJson,
     logger: logger,
     logLevel: logLevel,
-    useLoggerOnlyForErrorLevel: diskEnv !== DiskEnvEnum.PROD
+    useLoggerOnlyForErrorLevel: diskEnv !== 'PROD'
   });
 }

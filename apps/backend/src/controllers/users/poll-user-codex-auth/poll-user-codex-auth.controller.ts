@@ -11,7 +11,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
+
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPollUserCodexAuthOutput } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-output';
 
@@ -50,7 +50,7 @@ export class PollUserCodexAuthController {
 
     let payload: ToBackendPollUserCodexAuthOutput;
 
-    if (status === CodexDeviceAuthStatusEnum.Authorized) {
+    if (status === 'Authorized') {
       let freshUser = await this.usersService.getUserCheckExists({
         userId: user.userId
       });

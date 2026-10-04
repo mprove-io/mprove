@@ -2,7 +2,7 @@ import { expect, test } from 'bun:test';
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
@@ -31,7 +31,7 @@ test('1', async () => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: LogLevelEnum.Error,
+        logLevel: 'Error',
         context: context,
         isJson: true
       });
@@ -48,7 +48,7 @@ test('1', async () => {
 
     logToConsoleMcli({
       log: er,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       context: undefined,
       isJson: false
     });

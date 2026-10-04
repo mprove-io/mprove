@@ -7,10 +7,7 @@ import {
   REPORT_FIELD_DEFAULT_HIDDEN,
   REPORT_ROW_DEFAULT_SHOW_CHART
 } from '#common/constants/top';
-import { ControlClassEnum } from '#common/enums/control-class.enum';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
@@ -21,10 +18,10 @@ import type { FileFractionControl } from '#common/types/blockml/parts/internal/f
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileReportRow } from '#common/types/blockml/parts/internal/file-report-row';
 import type { FileReportRowParameter } from '#common/types/blockml/parts/internal/file-report-row-parameter';
-import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
-import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
-import type { ReportField } from '#common/types/blockml/parts/report-field';
-import type { Row } from '#common/types/blockml/parts/row';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
+import type { ReportField } from '#common/types/blockml/parts/report/report-field';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
 
 export function makeReportFileText(item: {
   reportId: string;
@@ -105,36 +102,24 @@ export function makeReportFileText(item: {
                     mconfigControl => {
                       let newFileControl: FileFractionControl = {};
 
-                      if (
-                        mconfigControl.controlClass === ControlClassEnum.Input
-                      ) {
+                      if (mconfigControl.controlClass === 'input') {
                         newFileControl.input = mconfigControl.name;
-                      } else if (
-                        mconfigControl.controlClass ===
-                        ControlClassEnum.ListInput
-                      ) {
+                      } else if (mconfigControl.controlClass === 'list_input') {
                         newFileControl.list_input = mconfigControl.name;
-                      } else if (
-                        mconfigControl.controlClass === ControlClassEnum.Switch
-                      ) {
+                      } else if (mconfigControl.controlClass === 'switch') {
                         newFileControl.switch = mconfigControl.name;
                       } else if (
-                        mconfigControl.controlClass ===
-                        ControlClassEnum.DatePicker
+                        mconfigControl.controlClass === 'date_picker'
                       ) {
                         newFileControl.date_picker = mconfigControl.name;
-                      } else if (
-                        mconfigControl.controlClass ===
-                        ControlClassEnum.Selector
-                      ) {
+                      } else if (mconfigControl.controlClass === 'selector') {
                         newFileControl.selector = mconfigControl.name;
                       }
 
                       let newValue = mconfigControl.value;
 
                       newFileControl.value =
-                        newFileControl.controlClass ===
-                          ControlClassEnum.Switch &&
+                        newFileControl.controlClass === 'switch' &&
                         typeof newValue === 'string'
                           ? toBooleanFromLowercaseString(newValue)
                           : newValue;
@@ -158,7 +143,7 @@ export function makeReportFileText(item: {
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
     rows: rows.map(x => {
       let metric =
-        x.rowType === RowTypeEnum.Metric
+        x.rowType === 'metric'
           ? metrics.find(m => m.metricId === x.metricId)
           : undefined;
 
@@ -170,9 +155,7 @@ export function makeReportFileText(item: {
         row_id: x.rowId,
         type: x.rowType,
         name:
-          x.rowType === RowTypeEnum.Empty || x.rowType === RowTypeEnum.Metric
-            ? undefined
-            : x.name,
+          x.rowType === 'empty' || x.rowType === 'metric' ? undefined : x.name,
         metric: x.metricId,
         formula: isDefined(x.formula) ? x.formula : undefined,
         show_chart:
@@ -181,44 +164,39 @@ export function makeReportFileText(item: {
             ? <any>x.showChart
             : undefined,
         format_number:
-          x.rowType === RowTypeEnum.Metric &&
-          metric.formatNumber === x.formatNumber
+          x.rowType === 'metric' && metric.formatNumber === x.formatNumber
             ? undefined
             : struct.mproveConfig.formatNumber === x.formatNumber
               ? undefined
               : x.formatNumber,
         currency_prefix:
-          x.rowType === RowTypeEnum.Metric &&
-          metric.currencyPrefix === x.currencyPrefix
+          x.rowType === 'metric' && metric.currencyPrefix === x.currencyPrefix
             ? undefined
             : struct.mproveConfig.currencyPrefix === x.currencyPrefix
               ? undefined
               : x.currencyPrefix,
         currency_suffix:
-          x.rowType === RowTypeEnum.Metric &&
-          metric.currencySuffix === x.currencySuffix
+          x.rowType === 'metric' && metric.currencySuffix === x.currencySuffix
             ? undefined
             : struct.mproveConfig.currencySuffix === x.currencySuffix
               ? undefined
               : x.currencySuffix,
         parameters:
-          [RowTypeEnum.Metric].indexOf(x.rowType) < 0
+          ['metric'].indexOf(x.rowType) < 0
             ? undefined
             : isDefined(x.parameters)
               ? x.parameters.map(parameter => {
                   let p: FileReportRowParameter = {
                     apply_to: parameter.apply_to,
                     conditions:
-                      isDefined(parameter.listen) ||
-                      model?.type === ModelTypeEnum.Store
+                      isDefined(parameter.listen) || model?.type === 'Store'
                         ? undefined
                         : isDefined(parameter.fractions) &&
                             parameter.fractions.length > 0
                           ? parameter.fractions.map(fraction => fraction.brick)
                           : undefined,
                     fractions:
-                      model?.type === ModelTypeEnum.Store &&
-                      isUndefined(parameter.listen)
+                      model?.type === 'Store' && isUndefined(parameter.listen)
                         ? parameter.fractions.map(apiFraction => {
                             let fileFraction: FileFraction = {};
 
@@ -235,31 +213,24 @@ export function makeReportFileText(item: {
                               mconfigControl => {
                                 let newFileControl: FileFractionControl = {};
 
-                                if (
-                                  mconfigControl.controlClass ===
-                                  ControlClassEnum.Input
-                                ) {
+                                if (mconfigControl.controlClass === 'input') {
                                   newFileControl.input = mconfigControl.name;
                                 } else if (
-                                  mconfigControl.controlClass ===
-                                  ControlClassEnum.ListInput
+                                  mconfigControl.controlClass === 'list_input'
                                 ) {
                                   newFileControl.list_input =
                                     mconfigControl.name;
                                 } else if (
-                                  mconfigControl.controlClass ===
-                                  ControlClassEnum.Switch
+                                  mconfigControl.controlClass === 'switch'
                                 ) {
                                   newFileControl.switch = mconfigControl.name;
                                 } else if (
-                                  mconfigControl.controlClass ===
-                                  ControlClassEnum.DatePicker
+                                  mconfigControl.controlClass === 'date_picker'
                                 ) {
                                   newFileControl.date_picker =
                                     mconfigControl.name;
                                 } else if (
-                                  mconfigControl.controlClass ===
-                                  ControlClassEnum.Selector
+                                  mconfigControl.controlClass === 'selector'
                                 ) {
                                   newFileControl.selector = mconfigControl.name;
                                 }
@@ -271,8 +242,7 @@ export function makeReportFileText(item: {
                                     ? model.storeContent.fields
                                         .find(
                                           field =>
-                                            field.fieldClass ===
-                                              FieldClassEnum.Filter &&
+                                            field.fieldClass === 'filter' &&
                                             field.name === parameter.apply_to
                                         )
                                         .fraction_controls.find(
@@ -280,7 +250,7 @@ export function makeReportFileText(item: {
                                             control.name === mconfigControl.name
                                         ).value
                                     : newFileControl.controlClass ===
-                                          ControlClassEnum.Switch &&
+                                          'switch' &&
                                         typeof newValue === 'string'
                                       ? toBooleanFromLowercaseString(newValue)
                                       : newValue;

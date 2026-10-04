@@ -12,18 +12,16 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { replaceChartField } from '#common/functions/replace-chart-field/replace-chart-field';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
-import type { ChartX } from '#common/types/backend/parts/chart-x';
-import type { ModelField } from '#common/types/blockml/parts/model-field';
-import type { ModelFieldY } from '#common/types/blockml/parts/model-field-y';
+import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-y';
 import { ApiService } from '#front/app/services/api.service';
 import { ChartService } from '#front/app/services/chart.service';
 import { StructService } from '#front/app/services/struct.service';
@@ -86,11 +84,10 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
     this.matchFields = this.fields
       .filter(x =>
         x.hidden === false &&
-        x.fieldClass !== FieldClassEnum.Filter &&
-        this.currentField.fieldClass === FieldClassEnum.Dimension
-          ? x.fieldClass === FieldClassEnum.Dimension
-          : x.fieldClass === FieldClassEnum.Measure ||
-            x.fieldClass === FieldClassEnum.Calculation
+        x.fieldClass !== 'filter' &&
+        this.currentField.fieldClass === 'dimension'
+          ? x.fieldClass === 'dimension'
+          : x.fieldClass === 'measure' || x.fieldClass === 'calculation'
       )
       .map(y =>
         Object.assign({}, y, {
@@ -122,13 +119,13 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === 'Malloy') {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: QueryOperationTypeEnum.Replace,
+          type: 'Replace',
           fieldId: this.currentField.id,
           replaceWithFieldId: this.newColumnFieldId,
           timezone: newMconfig.timezone

@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import { getToBackendOperation } from '#backend/functions/get-to-backend-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { ErEnum } from '#common/enums/er.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
 import { zToBackendOperationRegistry } from '#common/types/backend/request/to-backend-operation-registry';
@@ -16,7 +16,7 @@ export function validateToBackendRequest(item: {
   let operation: ToBackendOperation = getToBackendOperation({ path: path });
 
   if (isUndefined(operation)) {
-    throw new ServerError({ message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS });
+    throw new ServerError({ message: 'BACKEND_WRONG_REQUEST_PARAMS' });
   }
 
   let validation: z.ZodSafeParseResult<ToBackendRequest> =
@@ -24,7 +24,7 @@ export function validateToBackendRequest(item: {
 
   if (validation.success === false) {
     throw new ServerError({
-      message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS,
+      message: 'BACKEND_WRONG_REQUEST_PARAMS',
       displayData: validation.error.issues.map(issue => ({
         path: issue.path.join('.'),
         message: issue.message,

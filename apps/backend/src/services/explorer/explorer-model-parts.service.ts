@@ -12,7 +12,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+
 import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
 import type { ToDiskGetCatalogFilesRequest } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-request';
 import type { ExplorerModelPart } from './types/explorer-model-part';
@@ -122,7 +122,7 @@ export class ExplorerModelPartsService {
       });
 
       let malloySource =
-        model.type === ModelTypeEnum.Malloy
+        model.type === 'Malloy'
           ? {
               source: model.source,
               filePath: catalogFile?.pathString ?? model.filePath,

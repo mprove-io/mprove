@@ -1,10 +1,11 @@
 import { signal, WritableSignal } from '@angular/core';
 import initVizdom, { DirectedGraph, RankDir } from '@vizdom/vizdom-ts-web';
 import { Edge, Node } from 'ngx-vflow';
-import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
 import type { CombinedSchemaTable } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-table';
 import type { RawSchemaIndex } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-index';
+import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
+import type { SchemaGraphNodeColor } from '#front/app/modules/builder/builder-right/schemas/schema-graph-dialog/schema-graph-node-color';
 
 let NODE_WIDTH = 250;
 let HEADER_HEIGHT = 40;
@@ -18,7 +19,7 @@ export interface MapNodeData {
   tableDescription: string;
   columns: CombinedSchemaColumn[];
   indexes: RawSchemaIndex[];
-  color: 'orange' | 'gray';
+  color: SchemaGraphNodeColor;
   selectedColumnName: string;
   onSelect: () => void;
   onHover: () => void;
@@ -62,7 +63,7 @@ export function tableKey(item: {
 }
 
 function getEdgeMarkers(item: {
-  relationshipType: RelationshipTypeEnum;
+  relationshipType: RelationshipType;
   isReversed: boolean;
 }): { markerStartId: string; markerEndId: string; className: string } {
   let { relationshipType, isReversed } = item;
@@ -70,25 +71,25 @@ function getEdgeMarkers(item: {
   let reversedSuffix = isReversed ? 'Reversed' : '';
 
   switch (relationshipType) {
-    case RelationshipTypeEnum.OneToOne:
+    case 'one_to_one':
       return {
         markerStartId: undefined,
         markerEndId: undefined,
         className: `has-one-edge${isReversed ? '-reversed' : ''}`
       };
-    case RelationshipTypeEnum.OneToMany:
+    case 'one_to_many':
       return {
         markerStartId: undefined,
         markerEndId: `hasMany${reversedSuffix}`,
         className: `has-many-edge${isReversed ? '-reversed' : ''}`
       };
-    case RelationshipTypeEnum.ManyToOne:
+    case 'many_to_one':
       return {
         markerStartId: `hasMany${reversedSuffix}`,
         markerEndId: undefined,
         className: `has-many-edge${isReversed ? '-reversed' : ''}`
       };
-    case RelationshipTypeEnum.ManyToMany:
+    case 'many_to_many':
       return {
         markerStartId: `hasMany${reversedSuffix}`,
         markerEndId: `hasMany${reversedSuffix}`,
@@ -185,7 +186,7 @@ export async function buildAllTablesGraph(item: {
     targetKey: string;
     sourceColumn: string;
     targetColumn: string;
-    relationshipType: RelationshipTypeEnum;
+    relationshipType: RelationshipType;
     isForeignKey: boolean;
   }
 

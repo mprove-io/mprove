@@ -1,10 +1,11 @@
 import { z } from 'zod';
-import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type BaseProject,
   zBaseProject
-} from '#common/types/backend/parts/base-project';
+} from '#common/types/backend/parts/project/base-project';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
+import { zBuilderLeft } from '#common/types/front/builder/builder-left';
 
 export type ToDiskGetFileRequest = {
   operation: 'getFile';
@@ -14,11 +15,7 @@ export type ToDiskGetFileRequest = {
     repoId: string;
     branch: string;
     fileNodeId: string;
-    builderLeft:
-      | BuilderLeftEnum.Tree
-      | BuilderLeftEnum.ChangesToCommit
-      | BuilderLeftEnum.ChangesToPush
-      | BuilderLeftEnum.Info;
+    builderLeft: BuilderLeft;
   };
 };
 
@@ -32,7 +29,7 @@ export let zToDiskGetFileRequest = z
         repoId: z.string(),
         branch: z.string(),
         fileNodeId: z.string(),
-        builderLeft: z.enum(BuilderLeftEnum)
+        builderLeft: zBuilderLeft
       })
       .meta({ id: 'ToDiskGetFileRequestInput' })
   })

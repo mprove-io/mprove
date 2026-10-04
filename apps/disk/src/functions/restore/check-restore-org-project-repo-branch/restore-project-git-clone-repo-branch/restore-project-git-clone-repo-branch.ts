@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import type { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { DiskRestoreProjectGitCloneRepoBranchError } from '#common/types/disk/function-errors/disk-restore-project-git-clone-repo-branch-error';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
@@ -11,7 +11,7 @@ import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 
 export function restoreProjectGitCloneRepoBranch(item: {
-  remoteType: ProjectRemoteTypeEnum.GitClone;
+  remoteType: 'GitClone';
   projectId: string;
   projectDir: string;
   projectLt: ProjectLt;

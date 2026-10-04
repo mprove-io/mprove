@@ -5,15 +5,13 @@ import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FuncEnum } from '#common/enums/special/func.enum';
-import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 
-let caller = CallerEnum.BuildSpace;
-let func = FuncEnum.BuildSpaceAccessRoles;
+let caller: Caller = 'BuildSpace';
+let func: Func = 'build-spaces/build-space-access-roles';
 let testId = 'v__space-folders-access-roles-combined';
 
 test('1', async t => {
@@ -53,15 +51,15 @@ test('1', async t => {
       overrideTimezone: undefined
     });
 
-    errors = await readLog(fromDir, LogTypeEnum.Errors);
-    spaces = await readLog(fromDir, LogTypeEnum.Spaces);
+    errors = await readLog(fromDir, 'out_errors.log');
+    spaces = await readLog(fromDir, 'out_spaces.log');
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
   } catch (e) {
     logToConsoleBlockml({
       log: e,
-      logLevel: LogLevelEnum.Error,
+      logLevel: 'Error',
       logger: wLogger,
       cs: configService
     });
