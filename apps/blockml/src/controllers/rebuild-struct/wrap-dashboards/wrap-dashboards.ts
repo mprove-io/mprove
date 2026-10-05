@@ -1,6 +1,5 @@
 import { wrapTiles } from '#blockml/functions/wrap-tiles/wrap-tiles';
 import { TRIPLE_UNDERSCORE } from '#common/constants/top';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
@@ -8,6 +7,7 @@ import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard'
 import type { DashboardField } from '#common/types/blockml/parts/dashboard/dashboard-field';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
 import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileFractionControl } from '#common/types/blockml/parts/internal/file-fraction-control';
@@ -80,14 +80,14 @@ export function wrapDashboards(item: {
                       let optionOr: FractionSubTypeOption = {
                         logicGroup: 'OR',
                         typeValue: ft.type,
-                        value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                        value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                         label: ft.label
                       };
                       options.push(optionOr);
 
                       let optionAndNot: FractionSubTypeOption = {
                         logicGroup: 'AND_NOT',
-                        value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                        value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                         typeValue: ft.type,
                         label: ft.label
                       };

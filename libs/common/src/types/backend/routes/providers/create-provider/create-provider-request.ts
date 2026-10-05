@@ -5,7 +5,6 @@ import {
   OPENAI_PROVIDER_ID,
   RESERVED_PROVIDER_IDS
 } from '#common/constants/providers';
-
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type ProviderOptionsAnthropic,
@@ -23,6 +22,7 @@ import {
   type ProviderOptionsOpenAICompatible,
   zProviderOptionsOpenAICompatible
 } from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { Extend } from '#common/types/extend';
 
 export type ToBackendCreateProviderRequest = {
@@ -75,7 +75,7 @@ export let zToBackendCreateProviderRequest = z
     input: z
       .discriminatedUnion('type', [
         z.strictObject({
-          type: z.literal('OpenAI'),
+          type: z.literal('OpenAI' satisfies ProviderType),
           projectId: z.string(),
           providerId: z.literal(OPENAI_PROVIDER_ID),
           options: zProviderOptionsOpenAI.extend({
@@ -83,7 +83,7 @@ export let zToBackendCreateProviderRequest = z
           })
         }),
         z.strictObject({
-          type: z.literal('Anthropic'),
+          type: z.literal('Anthropic' satisfies ProviderType),
           projectId: z.string(),
           providerId: z.literal(ANTHROPIC_PROVIDER_ID),
           options: zProviderOptionsAnthropic.extend({
@@ -91,7 +91,7 @@ export let zToBackendCreateProviderRequest = z
           })
         }),
         z.strictObject({
-          type: z.literal('OpenAICompatible'),
+          type: z.literal('OpenAICompatible' satisfies ProviderType),
           name: z.string().trim().min(1).max(100),
           projectId: z.string(),
           providerId: z
@@ -107,7 +107,7 @@ export let zToBackendCreateProviderRequest = z
           options: zProviderOptionsOpenAICompatible
         }),
         z.strictObject({
-          type: z.literal('OpenAICodex'),
+          type: z.literal('OpenAICodex' satisfies ProviderType),
           projectId: z.string(),
           providerId: z.literal(CODEX_PROVIDER_ID),
           options: zProviderOptionsCodex

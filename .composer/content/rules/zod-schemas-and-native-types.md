@@ -12,10 +12,44 @@ contract composition, not merely because a native type exists.
 
 Do not define the native type using `z.infer`.
 
-Exception: finite domain string unions use their canonical `as const` tuple, a
-native type `(typeof tuple)[number]`, and a schema `z.enum(tuple)`. Preserve the
+Example in `member.ts` (imports omitted):
+
+```ts
+export type Member = {
+  id: string;
+  nickname?: string;
+};
+
+export const zMember = z.object({
+  id: z.string(),
+  nickname: z.string().nullish()
+});
+
+assertTypesEqual<Member, z.infer<typeof zMember>>({
+  value: true
+});
+```
+
+Exception: finite domain string unions follow "Canonical values" under "Domain
+literals". Use their canonical `as const` tuple, a native type
+`(typeof tuple)[number]`, and a schema `z.enum(tuple)`. Preserve the
 `assertTypesEqual<Type, z.infer<typeof schema>>` equality assertion.
 
 For every Zod `.extend()`, define the native type using `Extend` from
 `#common/types/extend`; do not use TypeScript `extends` or intersection types
 for this purpose.
+
+Example in a separate `member-with-label.ts`, using imported `Member`,
+`zMember`, and `Extend` (imports omitted):
+
+```ts
+export type MemberWithLabel = Extend<Member, { label: string }>;
+
+export const zMemberWithLabel = zMember.extend({
+  label: z.string()
+});
+
+assertTypesEqual<MemberWithLabel, z.infer<typeof zMemberWithLabel>>({
+  value: true
+});
+```

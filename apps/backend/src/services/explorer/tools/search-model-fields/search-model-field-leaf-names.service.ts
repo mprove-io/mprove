@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
-
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
 import type { SearchFieldMatch } from './search-model-fields.types';
 
 type SearchModelFieldLeafNameRow = {
@@ -79,7 +78,7 @@ matched_fields AS (
     OR model_field_leafs.label_lc LIKE search_terms.search_pattern ESCAPE '\'
     OR model_field_leafs.description_lc LIKE search_terms.search_pattern ESCAPE '\'
   WHERE model_field_leafs.struct_id = ${structId}
-    AND model_field_leafs.model_type = ${'Malloy'}
+    AND model_field_leafs.model_type = ${'Malloy' satisfies ModelType}
 ),
 ranked_fields AS (
   SELECT

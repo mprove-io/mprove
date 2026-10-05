@@ -4,17 +4,20 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { RELATIONSHIP_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileSchema } from '#common/types/blockml/parts/internal/file-schema';
 import type { FileSchemaColumn } from '#common/types/blockml/parts/internal/file-schema-column';
 import type { FileSchemaRelationship } from '#common/types/blockml/parts/internal/file-schema-relationship';
 import type { FileSchemaTable } from '#common/types/blockml/parts/internal/file-schema-table';
-import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
+import {
+  type RelationshipType,
+  relationshipTypeValues
+} from '#common/types/shared/schema/relationship-type';
 import { getExpectedMirrorType } from './get-expected-mirror-type/get-expected-mirror-type';
 
 let func: Func = 'build-yaml/check-schema';
@@ -37,11 +40,11 @@ export function checkSchema(item: {
     );
 
     // Validate schema value exists
-    if (schemaParameters.indexOf('schema'.toString()) < 0) {
+    if (schemaParameters.indexOf('schema' satisfies FileParameter) < 0) {
       item.errors.push(
         new BmError({
           title: 'MISSING_SCHEMA',
-          message: `parameter "schema" is required`,
+          message: `parameter "${'schema' satisfies FileParameter}" is required`,
           lines: [
             {
               line: 0,
@@ -61,7 +64,7 @@ export function checkSchema(item: {
       item.errors.push(
         new BmError({
           title: 'WRONG_SCHEMA_FORMAT',
-          message: `"schema" value "${schemaValue}" must contain a dot to separate connection name from schema name`,
+          message: `"${'schema' satisfies FileParameter}" value "${schemaValue}" must contain a dot to separate connection name from schema name`,
           lines: [
             {
               line: schema.schema_line_num,
@@ -75,11 +78,11 @@ export function checkSchema(item: {
     }
 
     // Validate tables exists
-    if (schemaParameters.indexOf('tables'.toString()) < 0) {
+    if (schemaParameters.indexOf('tables' satisfies FileParameter) < 0) {
       item.errors.push(
         new BmError({
           title: 'MISSING_TABLES',
-          message: `parameter "tables" is required`,
+          message: `parameter "${'tables' satisfies FileParameter}" is required`,
           lines: [
             {
               line: 0,
@@ -96,7 +99,7 @@ export function checkSchema(item: {
       item.errors.push(
         new BmError({
           title: 'SCHEMA_TABLES_IS_NOT_A_LIST',
-          message: `parameter "tables" must be a List`,
+          message: `parameter "${'tables' satisfies FileParameter}" must be a List`,
           lines: [
             {
               line: schema.tables_line_num,
@@ -138,11 +141,9 @@ export function checkSchema(item: {
 
       tableParameters.forEach(parameter => {
         if (
-          [
-            'table'.toString(),
-            'description'.toString(),
-            'columns'.toString()
-          ].indexOf(parameter) < 0
+          (
+            ['table', 'description', 'columns'] satisfies FileParameter[]
+          ).findIndex(candidate => candidate === parameter) < 0
         ) {
           item.errors.push(
             new BmError({
@@ -165,7 +166,7 @@ export function checkSchema(item: {
 
         if (
           Array.isArray(tableElement[parameter as keyof FileSchemaTable]) &&
-          ['columns'.toString()].indexOf(parameter) < 0
+          parameter !== ('columns' satisfies FileParameter)
         ) {
           item.errors.push(
             new BmError({
@@ -189,7 +190,7 @@ export function checkSchema(item: {
         if (
           tableElement[parameter as keyof FileSchemaTable]?.constructor ===
             Object &&
-          ['columns'.toString()].indexOf(parameter) < 0
+          parameter !== ('columns' satisfies FileParameter)
         ) {
           item.errors.push(
             new BmError({
@@ -215,11 +216,11 @@ export function checkSchema(item: {
         return;
       }
 
-      if (tableParameters.indexOf('table'.toString()) < 0) {
+      if (tableParameters.indexOf('table' satisfies FileParameter) < 0) {
         item.errors.push(
           new BmError({
             title: 'MISSING_SCHEMA_TABLE',
-            message: `parameter "table" is required for tables element`,
+            message: `parameter "${'table' satisfies FileParameter}" is required for tables element`,
             lines: [
               {
                 line: schema.tables_line_num,
@@ -240,7 +241,7 @@ export function checkSchema(item: {
         item.errors.push(
           new BmError({
             title: 'SCHEMA_COLUMNS_IS_NOT_A_LIST',
-            message: `parameter "columns" must be a List`,
+            message: `parameter "${'columns' satisfies FileParameter}" must be a List`,
             lines: [
               {
                 line: tableElement.columns_line_num,
@@ -280,13 +281,15 @@ export function checkSchema(item: {
 
         columnParameters.forEach(parameter => {
           if (
-            [
-              'column'.toString(),
-              'example'.toString(),
-              'cache_unique_values'.toString(),
-              'description'.toString(),
-              'relationships'.toString()
-            ].indexOf(parameter) < 0
+            (
+              [
+                'column',
+                'example',
+                'cache_unique_values',
+                'description',
+                'relationships'
+              ] satisfies FileParameter[]
+            ).findIndex(candidate => candidate === parameter) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -309,7 +312,7 @@ export function checkSchema(item: {
 
           if (
             Array.isArray(columnElement[parameter as keyof FileSchemaColumn]) &&
-            ['relationships'.toString()].indexOf(parameter) < 0
+            parameter !== ('relationships' satisfies FileParameter)
           ) {
             item.errors.push(
               new BmError({
@@ -333,7 +336,7 @@ export function checkSchema(item: {
           if (
             columnElement[parameter as keyof FileSchemaColumn]?.constructor ===
               Object &&
-            ['relationships'.toString()].indexOf(parameter) < 0
+            parameter !== ('relationships' satisfies FileParameter)
           ) {
             item.errors.push(
               new BmError({
@@ -355,7 +358,7 @@ export function checkSchema(item: {
           }
 
           if (
-            parameter === 'cache_unique_values'.toString() &&
+            parameter === ('cache_unique_values' satisfies FileParameter) &&
             !columnElement[parameter as keyof FileSchemaColumn]
               .toString()
               .match(MyRegex.TRUE_FALSE())
@@ -384,11 +387,11 @@ export function checkSchema(item: {
           return;
         }
 
-        if (columnParameters.indexOf('column'.toString()) < 0) {
+        if (columnParameters.indexOf('column' satisfies FileParameter) < 0) {
           item.errors.push(
             new BmError({
               title: 'MISSING_SCHEMA_COLUMN',
-              message: `parameter "column" is required for columns element`,
+              message: `parameter "${'column' satisfies FileParameter}" is required for columns element`,
               lines: [
                 {
                   line: tableElement.columns_line_num,
@@ -409,7 +412,7 @@ export function checkSchema(item: {
           item.errors.push(
             new BmError({
               title: 'SCHEMA_RELATIONSHIPS_IS_NOT_A_LIST',
-              message: `parameter "relationships" must be a List`,
+              message: `parameter "${'relationships' satisfies FileParameter}" must be a List`,
               lines: [
                 {
                   line: columnElement.relationships_line_num,
@@ -451,11 +454,9 @@ export function checkSchema(item: {
 
           relParameters.forEach(parameter => {
             if (
-              [
-                'to'.toString(),
-                'to_schema'.toString(),
-                'type'.toString()
-              ].indexOf(parameter) < 0
+              (['to', 'to_schema', 'type'] satisfies FileParameter[]).findIndex(
+                candidate => candidate === parameter
+              ) < 0
             ) {
               item.errors.push(
                 new BmError({
@@ -528,11 +529,11 @@ export function checkSchema(item: {
             return;
           }
 
-          if (relParameters.indexOf('to'.toString()) < 0) {
+          if (relParameters.indexOf('to' satisfies FileParameter) < 0) {
             item.errors.push(
               new BmError({
                 title: 'MISSING_SCHEMA_RELATIONSHIP_TO',
-                message: `parameter "to" is required for relationships element`,
+                message: `parameter "${'to' satisfies FileParameter}" is required for relationships element`,
                 lines: [
                   {
                     line: columnElement.relationships_line_num,
@@ -545,11 +546,11 @@ export function checkSchema(item: {
             return;
           }
 
-          if (relParameters.indexOf('type'.toString()) < 0) {
+          if (relParameters.indexOf('type' satisfies FileParameter) < 0) {
             item.errors.push(
               new BmError({
                 title: 'MISSING_SCHEMA_RELATIONSHIP_TYPE',
-                message: `parameter "type" is required for relationships element`,
+                message: `parameter "${'type' satisfies FileParameter}" is required for relationships element`,
                 lines: [
                   {
                     line: columnElement.relationships_line_num,
@@ -562,16 +563,17 @@ export function checkSchema(item: {
             return;
           }
 
-          let typeValue = relElement.type.toString();
-          let isValidType =
-            RELATIONSHIP_TYPE_VALUES.map(x => x.toString()).indexOf(typeValue) >
-            -1;
+          let typeValue: string = relElement.type.toString();
 
-          if (!isValidType) {
+          if (
+            relationshipTypeValues.findIndex(
+              candidate => candidate === typeValue
+            ) < 0
+          ) {
             item.errors.push(
               new BmError({
                 title: 'WRONG_SCHEMA_RELATIONSHIP_TYPE',
-                message: `"type" value "${typeValue}" is not valid. Use one of: ${RELATIONSHIP_TYPE_VALUES.join(', ')}`,
+                message: `"${'type' satisfies FileParameter}" value "${typeValue}" is not valid. Use one of: ${relationshipTypeValues.join(', ')}`,
                 lines: [
                   {
                     line: relElement.type_line_num,
@@ -591,7 +593,7 @@ export function checkSchema(item: {
             item.errors.push(
               new BmError({
                 title: 'WRONG_SCHEMA_RELATIONSHIP_TO_FORMAT',
-                message: `"to" value "${toValue}" must be in "table.column" format`,
+                message: `"${'to' satisfies FileParameter}" value "${toValue}" must be in "table.column" format`,
                 lines: [
                   {
                     line: relElement.to_line_num,
@@ -612,7 +614,7 @@ export function checkSchema(item: {
               item.errors.push(
                 new BmError({
                   title: 'WRONG_SCHEMA_RELATIONSHIP_TO_SCHEMA_FORMAT',
-                  message: `"to_schema" value "${toSchemaValue}" must contain a dot to separate connection name from schema name`,
+                  message: `"${'to_schema' satisfies FileParameter}" value "${toSchemaValue}" must contain a dot to separate connection name from schema name`,
                   lines: [
                     {
                       line: relElement.to_schema_line_num,
@@ -638,7 +640,7 @@ export function checkSchema(item: {
               item.errors.push(
                 new BmError({
                   title: 'WRONG_SCHEMA_RELATIONSHIP_TO_SCHEMA_CONNECTION',
-                  message: `"to_schema" connection "${toSchemaConnectionId}" must match "schema" connection "${schemaConnectionId}"`,
+                  message: `"${'to_schema' satisfies FileParameter}" connection "${toSchemaConnectionId}" must match "${'schema' satisfies FileParameter}" connection "${schemaConnectionId}"`,
                   lines: [
                     {
                       line: relElement.to_schema_line_num,

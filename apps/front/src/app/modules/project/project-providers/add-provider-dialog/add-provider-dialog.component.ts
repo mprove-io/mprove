@@ -97,25 +97,26 @@ export class AddProviderDialogComponent implements OnInit {
     this.providerTypes = [
       {
         value: 'Anthropic',
-        label: PROVIDER_TYPE_NAME_BY_TYPE['Anthropic'],
+        label: PROVIDER_TYPE_NAME_BY_TYPE['Anthropic' satisfies ProviderType],
         disabled: isAnthropicAlreadySelected,
         isAlreadySelected: isAnthropicAlreadySelected
       },
       {
         value: 'OpenAI',
-        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAI'],
+        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAI' satisfies ProviderType],
         disabled: isOpenAIAlreadySelected,
         isAlreadySelected: isOpenAIAlreadySelected
       },
       {
         value: 'OpenAICodex',
-        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAICodex'],
+        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAICodex' satisfies ProviderType],
         disabled: isOpenAICodexAlreadySelected,
         isAlreadySelected: isOpenAICodexAlreadySelected
       },
       {
         value: 'OpenAICompatible',
-        label: PROVIDER_TYPE_NAME_BY_TYPE['OpenAICompatible'],
+        label:
+          PROVIDER_TYPE_NAME_BY_TYPE['OpenAICompatible' satisfies ProviderType],
         disabled: false,
         isAlreadySelected: false
       }
@@ -131,7 +132,7 @@ export class AddProviderDialogComponent implements OnInit {
             : 'OpenAICompatible';
 
     this.addProviderForm = this.fb.group({
-      type: ['OpenAI', [Validators.required]],
+      type: ['OpenAI' satisfies ProviderType, [Validators.required]],
       name: [OPENAI_PROVIDER_NAME],
       providerId: [OPENAI_PROVIDER_ID],
       baseURL: [undefined],

@@ -6,6 +6,8 @@ import { log } from '#blockml/functions/log/log';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 
 let func: Func = 'build-chart/check-chart-tiles-exist';
@@ -32,7 +34,9 @@ export function checkChartTilesExist(item: {
       item.errors.push(
         new BmError({
           title: 'CHART_MISSING_TILES',
-          message: `.chart must have ` + `"tiles" parameter`,
+          message:
+            `${'.chart' satisfies FileExtension} must have ` +
+            `"${'tiles' satisfies FileParameter}" parameter`,
           lines: [
             {
               line: x.chart_line_num,
@@ -50,7 +54,7 @@ export function checkChartTilesExist(item: {
       item.errors.push(
         new BmError({
           title: 'CHART_TOO_MANY_TILES',
-          message: `.chart must have exactly one tile`,
+          message: `${'.chart' satisfies FileExtension} must have exactly one tile`,
           lines: [
             {
               line: x.chart_line_num,

@@ -39,11 +39,13 @@ import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
+
+const apiConnectionTypes = ['Api', 'GoogleApi'] satisfies ConnectionType[];
 
 const { forEachSeries } = pIteration;
 
@@ -372,7 +374,11 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (['Api', 'GoogleApi'].indexOf(connection.type) > -1) {
+          } else if (
+            apiConnectionTypes.findIndex(
+              candidate => candidate === connection.type
+            ) > -1
+          ) {
             let mconfig = mconfigs.find(x => x.queryId === query.queryId);
             let model = models.find(x => x.modelId === mconfig.modelId);
 
@@ -629,7 +635,11 @@ export class RunQueriesService {
                   cs: this.cs
                 });
               });
-          } else if (['Api', 'GoogleApi'].indexOf(connection.type) > -1) {
+          } else if (
+            apiConnectionTypes.findIndex(
+              candidate => candidate === connection.type
+            ) > -1
+          ) {
             let mconfig = mconfigs.find(x => x.queryId === query.queryId);
             let model = models.find(x => x.modelId === mconfig.modelId);
 

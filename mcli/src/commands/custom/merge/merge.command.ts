@@ -1,9 +1,9 @@
 import { Command, Option } from 'clipanion';
 import { ServerError } from '#common/classes/server-error/server-error';
-
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repos/merge-repo/merge-repo-output';
 import type { ToBackendMergeRepoRequest } from '#common/types/backend/routes/repos/merge-repo/merge-repo-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
@@ -80,7 +80,7 @@ export class MergeCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId = apiKey.startsWith(`SK-`)
+    let repoId = apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
       ? apiKey.split('-')[2].toLowerCase()
       : apiKey.split('-')[2];
 

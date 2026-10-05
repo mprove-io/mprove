@@ -9,6 +9,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFieldTimeGroup } from '#common/types/blockml/parts/internal/file-store-field-time-group';
 
@@ -42,7 +43,7 @@ export function checkStoreFieldTimeGroups(
         item.errors.push(
           new BmError({
             title: 'FIELD_TIME_GROUP_IS_NOT_A_DICTIONARY',
-            message: `found at least one field_time_groups element that is not a dictionary`,
+            message: `found at least one ${'field_time_groups' satisfies FileParameter} element that is not a dictionary`,
             lines: [
               {
                 line: x.field_time_groups_line_num,
@@ -59,14 +60,14 @@ export function checkStoreFieldTimeGroups(
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            ['time'.toString(), 'group'.toString(), 'label'.toString()].indexOf(
-              parameter
+            (['time', 'group', 'label'] satisfies FileParameter[]).findIndex(
+              candidate => candidate === parameter
             ) < 0
           ) {
             item.errors.push(
               new BmError({
                 title: 'UNKNOWN_FIELD_TIME_GROUP_PARAMETER',
-                message: `parameter "${parameter}" cannot be used in field_time_groups element`,
+                message: `parameter "${parameter}" cannot be used in ${'field_time_groups' satisfies FileParameter} element`,
                 lines: [
                   {
                     line: fieldTimeGroup[
@@ -139,7 +140,7 @@ export function checkStoreFieldTimeGroups(
           item.errors.push(
             new BmError({
               title: 'MISSING_TIME',
-              message: `field_time_groups element must have "time" parameter`,
+              message: `${'field_time_groups' satisfies FileParameter} element must have "${'time' satisfies FileParameter}" parameter`,
               lines: [
                 {
                   line: Math.min(...fieldTimeGroupKeysLineNums),
@@ -177,7 +178,7 @@ export function checkStoreFieldTimeGroups(
           item.errors.push(
             new BmError({
               title: 'WRONG_GROUP',
-              message: `specified group "${fieldTimeGroup.group}" is not found in field_groups`,
+              message: `specified ${'group' satisfies FileParameter} "${fieldTimeGroup.group}" is not found in ${'field_groups' satisfies FileParameter}`,
               lines: [
                 {
                   line: fieldTimeGroup.group_line_num,
@@ -198,7 +199,7 @@ export function checkStoreFieldTimeGroups(
           item.errors.push(
             new BmError({
               title: 'DUPLICATE_TIME_NAMES',
-              message: `"time" value must be unique across field_time_groups elements`,
+              message: `"${'time' satisfies FileParameter}" value must be unique across ${'field_time_groups' satisfies FileParameter} elements`,
               lines: timeElement.timeLineNums.map(l => ({
                 line: l,
                 name: x.fileName,

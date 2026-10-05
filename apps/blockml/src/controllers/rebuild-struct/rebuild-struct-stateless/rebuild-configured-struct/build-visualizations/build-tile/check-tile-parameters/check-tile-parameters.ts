@@ -11,6 +11,8 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
@@ -61,7 +63,7 @@ export function checkTileParameters<T extends dcType>(item: {
           item.errors.push(
             new BmError({
               title: 'MISSING_APPLY_TO',
-              message: `parameter "apply_to" is required`,
+              message: `parameter "${'apply_to' satisfies FileParameter}" is required`,
               lines: [
                 {
                   line: Math.min(...pKeysLineNums),
@@ -83,8 +85,8 @@ export function checkTileParameters<T extends dcType>(item: {
             new BmError({
               title: 'MISSING_LISTEN_OR_CONDITIONS',
               message:
-                `"listen" or ` +
-                `"conditions" must be specified for a tile parameter`,
+                `"${'listen' satisfies FileParameter}" or ` +
+                `"${'conditions' satisfies FileParameter}" must be specified for a tile parameter`,
               lines: [
                 {
                   line: Math.min(...pKeysLineNums),
@@ -106,8 +108,8 @@ export function checkTileParameters<T extends dcType>(item: {
             new BmError({
               title: 'MISSING_LISTEN_OR_FRACTIONS',
               message:
-                `"listen" or ` +
-                `"conditions" must be specified for a tile parameter`,
+                `"${'listen' satisfies FileParameter}" or ` +
+                `"${'conditions' satisfies FileParameter}" must be specified for a tile parameter`,
               lines: [
                 {
                   line: Math.min(...pKeysLineNums),
@@ -186,7 +188,8 @@ export function checkTileParameters<T extends dcType>(item: {
                 new BmError({
                   title: 'CHART_TILE_PARAMETER_CANNOT_HAVE_LISTEN',
                   message:
-                    `.chart does not support ` + `"listen" parameter for tiles`,
+                    `${'.chart' satisfies FileExtension} does not support ` +
+                    `"${'listen' satisfies FileParameter}" parameter for tiles`,
                   lines: [
                     {
                       line: p.listen_line_num,
@@ -256,7 +259,7 @@ export function checkTileParameters<T extends dcType>(item: {
                 item.errors.push(
                   new BmError({
                     title: 'PARAMETER_WRONG_COMBINATION_STORE',
-                    message: `found that both parameters "fractions" and "listen" are specified`,
+                    message: `found that both parameters "${'fractions' satisfies FileParameter}" and "${'listen' satisfies FileParameter}" are specified`,
                     lines: [
                       {
                         line: p.listen_line_num,
@@ -494,7 +497,7 @@ export function checkTileParameters<T extends dcType>(item: {
                 item.errors.push(
                   new BmError({
                     title: 'PARAMETER_WRONG_COMBINATION',
-                    message: `found that both parameters "conditions" and "listen" are specified`,
+                    message: `found that both parameters "${'conditions' satisfies FileParameter}" and "${'listen' satisfies FileParameter}" are specified`,
                     lines: [
                       {
                         line: p.listen_line_num,
@@ -544,7 +547,7 @@ export function checkTileParameters<T extends dcType>(item: {
                       title: 'APPLY_TO_WRONG_CONDITIONS',
                       message:
                         `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
-                        `for result "${pResult}" `,
+                        `for ${'result' satisfies FileParameter} "${pResult}" `,
                       lines: [
                         {
                           line: p.conditions_line_num,

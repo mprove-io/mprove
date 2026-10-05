@@ -15,9 +15,9 @@ import type { Prep } from '#backend/interfaces/prep';
 import { TabService } from '#backend/services/tab.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { ToBackendDeleteLlmModelRequest } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
 import type { ToBackendDeleteLlmModelResponse } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 
@@ -186,7 +186,7 @@ test('1', async t => {
     assert.deepEqual(providerWithoutServerTs, {
       projectId: projectId,
       providerId: providerId,
-      type: 'OpenAICompatible',
+      type: 'OpenAICompatible' satisfies ProviderType,
       name: 'Custom LLM',
       isEnabled: true,
       models: [],

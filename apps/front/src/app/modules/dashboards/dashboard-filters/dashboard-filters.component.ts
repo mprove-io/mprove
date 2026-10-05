@@ -106,14 +106,14 @@ export class DashboardFiltersComponent {
               let optionOr: FractionSubTypeOption = {
                 logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
                 logicGroup: 'AND_NOT',
-                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -181,7 +181,7 @@ export class DashboardFiltersComponent {
         brick: 'any',
         parentBrick: 'any',
         operator: 'Or',
-        type: getFractionTypeForAny(dashboardField.result)
+        type: getFractionTypeForAny({ result: dashboardField.result })
       };
     }
 

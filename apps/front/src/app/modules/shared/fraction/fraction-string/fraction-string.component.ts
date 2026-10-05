@@ -22,7 +22,6 @@ import {
 } from 'rxjs';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
@@ -30,6 +29,7 @@ import type { ToBackendSuggestDimensionValuesOutput } from '#common/types/backen
 import type { ToBackendSuggestDimensionValuesRequest } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
 import type { ToBackendSuggestDimensionValuesResponse } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -42,6 +42,8 @@ import { FractionTypeItem } from '../fraction.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionStringComponent implements OnInit, OnDestroy {
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
   @ViewChild('fractionStringTypeSelect', { static: false })
   fractionStringTypeSelectElement: NgSelectComponent;
 

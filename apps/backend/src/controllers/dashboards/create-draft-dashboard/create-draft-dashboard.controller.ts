@@ -47,13 +47,13 @@ import {
   UTC
 } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateDraftDashboardOutput } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-output';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
 @ApiTags('Dashboards')
@@ -183,7 +183,7 @@ export class CreateDraftDashboardController {
     fromDashboardX.tiles = yTiles;
     fromDashboardX.fields = newDashboardFields;
 
-    let fileName = `${newDashboardId}.dashboard`;
+    let fileName = `${newDashboardId}${'.dashboard' satisfies FileExtension}`;
 
     let mdir = currentStruct.mproveConfig.mproveDirValue;
 

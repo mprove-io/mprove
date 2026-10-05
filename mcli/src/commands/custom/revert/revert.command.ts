@@ -5,16 +5,20 @@ import { PROD_REPO_ID } from '#common/constants/top';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendRevertRepoToLastCommitOutput } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-output';
 import type { ToBackendRevertRepoToLastCommitRequest } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
 import type { ToBackendRevertRepoToRemoteOutput } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
 import type { ToBackendRevertRepoToRemoteRequest } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
-import { zRepoType } from '#common/types/disk/parts/repo/repo-type';
+import {
+  type RepoType,
+  zRepoType
+} from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
+import { type To, zTo } from '#mcli/commands/custom/revert/to';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
-import { zTo } from './to';
 
 export class RevertCommand extends CustomCommand {
   static paths = [['revert']];
@@ -37,7 +41,7 @@ export class RevertCommand extends CustomCommand {
   to = Option.String('--to', {
     required: true,
     validator: t.isEnum(zTo.options),
-    description: `(required, "last-commit" or "remote")`
+    description: `(required, "${'last-commit' satisfies To}" or "${'remote' satisfies To}")`
   });
 
   projectId = Option.String('--project-id', {
@@ -47,7 +51,7 @@ export class RevertCommand extends CustomCommand {
   repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(zRepoType.options),
-    description: `(required, "dev", "production" or "session")`
+    description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 
   branch = Option.String('--branch', {
@@ -95,7 +99,7 @@ export class RevertCommand extends CustomCommand {
     let repoId =
       this.repoType === 'production'
         ? PROD_REPO_ID
-        : apiKey.startsWith(`SK-`)
+        : apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 

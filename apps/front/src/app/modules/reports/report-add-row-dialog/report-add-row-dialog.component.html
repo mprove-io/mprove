@@ -142,7 +142,7 @@
     </div>
 
     <div
-      *ngIf="['header', 'formula'].indexOf(rowType) > -1"
+      *ngIf="namedRowTypes.includes(rowType)"
       class="flex h-11 max-w-[600px] flex-row items-center"
     >
       <div

@@ -24,7 +24,6 @@ import {
   ASTViewOperation
 } from '@malloydata/malloy-query-builder';
 import { ServerError } from '#common/classes/server-error/server-error';
-// import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -36,6 +35,8 @@ import type { AppliedGivenValue } from '#common/types/backend/parts/given/applie
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { SelectedGivenValue } from '#common/types/backend/parts/given/selected-given-value';
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
+import type { QueryOperationType } from '#common/types/backend/parts/query-operation/query-operation-type';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
@@ -142,9 +143,12 @@ export async function makeMalloyQuery(item: {
 
   queryOperations.forEach(queryOperation => {
     if (
-      ['GroupOrAggregate', 'GroupOrAggregatePlusSort'].indexOf(
-        queryOperation.type
-      ) > -1
+      (
+        [
+          'GroupOrAggregate',
+          'GroupOrAggregatePlusSort'
+        ] satisfies QueryOperationType[]
+      ).some(candidate => candidate === queryOperation.type)
     ) {
       if (isUndefined(queryOperation.fieldId)) {
         isError = true;
@@ -162,16 +166,16 @@ export async function makeMalloyQuery(item: {
       let fieldPath: string[] = modelField.malloyFieldPath;
       let fieldRename = modelField.sqlName;
 
-      if (['measure', 'dimension'].indexOf(modelField.fieldClass) < 0) {
+      if (
+        (['measure', 'dimension'] satisfies FieldClass[]).findIndex(
+          candidate => candidate === modelField.fieldClass
+        ) < 0
+      ) {
         isError = true;
         errorMessage = `wrong modelField.fieldClass`;
       }
 
-      let selectIndex = mconfig.select.findIndex(
-        x => x === queryOperation.fieldId
-      );
-
-      if (selectIndex < 0) {
+      if (mconfig.select.findIndex(x => x === queryOperation.fieldId) < 0) {
         if (modelField.fieldClass === 'measure') {
           if (fieldPath.length > 0) {
             segment0.addAggregate(fieldName, fieldPath, fieldRename);
@@ -403,9 +407,13 @@ export async function makeMalloyQuery(item: {
 
     // not else
     if (
-      ['GroupOrAggregatePlusSort', 'Remove', 'Sort'].indexOf(
-        queryOperation.type
-      ) > -1 &&
+      (
+        [
+          'GroupOrAggregatePlusSort',
+          'Remove',
+          'Sort'
+        ] satisfies QueryOperationType[]
+      ).some(candidate => candidate === queryOperation.type) &&
       isDefined(queryOperation.sortFieldId)
     ) {
       let fieldNameUnderscore = queryOperation.sortFieldId
@@ -741,14 +749,15 @@ export async function makeMalloyQuery(item: {
   };
 
   if (
-    queryOperations.filter(
-      queryOperation =>
+    queryOperations.filter(queryOperation =>
+      (
         [
           'GroupOrAggregate',
           'GroupOrAggregatePlusSort',
           'Replace',
           'Remove'
-        ].indexOf(queryOperation.type) > -1
+        ] satisfies QueryOperationType[]
+      ).some(candidate => candidate === queryOperation.type)
     ).length > 0
   ) {
     newMconfig = setChartTitleOnSelectChange({
@@ -757,10 +766,11 @@ export async function makeMalloyQuery(item: {
     });
   }
 
-  if (
-    queryOperations.length === 1 &&
-    ['Replace'].indexOf(queryOperations[0].type) > -1
-  ) {
+  let isReplaceOperation = (['Replace'] satisfies QueryOperationType[]).some(
+    candidate => candidate === queryOperations[0]?.type
+  );
+
+  if (queryOperations.length === 1 && isReplaceOperation) {
     let replaceWithModelField = model.fields.find(
       x => x.id === queryOperations[0].replaceWithFieldId
     );
@@ -774,14 +784,15 @@ export async function makeMalloyQuery(item: {
   }
 
   if (
-    queryOperations.filter(
-      queryOperation =>
+    queryOperations.filter(queryOperation =>
+      (
         [
           'GroupOrAggregate',
           'GroupOrAggregatePlusSort',
           'Replace',
           'Remove'
-        ].indexOf(queryOperation.type) > -1
+        ] satisfies QueryOperationType[]
+      ).some(candidate => candidate === queryOperation.type)
     ).length > 0
   ) {
     newMconfig = setChartFields({

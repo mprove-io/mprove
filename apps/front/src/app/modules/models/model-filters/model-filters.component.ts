@@ -6,6 +6,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
@@ -109,12 +110,12 @@ export class ModelFiltersComponent {
       let field = filterExtended.field;
 
       let storeFilter =
-        field.fieldClass === 'filter'
+        field.fieldClass === ('filter' satisfies FieldClass)
           ? this.storeContent.fields.find(f => f.name === field.id)
           : undefined;
 
       let storeResultFirstTypeFraction =
-        field.fieldClass === 'filter'
+        field.fieldClass === ('filter' satisfies FieldClass)
           ? undefined
           : this.storeContent.results.find(r => r.result === field.result)
               .fraction_types[0];
@@ -135,14 +136,14 @@ export class ModelFiltersComponent {
               let optionOr: FractionSubTypeOption = {
                 logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
                 logicGroup: 'AND_NOT',
-                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -210,14 +211,14 @@ export class ModelFiltersComponent {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
         operator: 'Or',
-        type: getFractionTypeForAny(filterExtended.field.result)
+        type: getFractionTypeForAny({ result: filterExtended.field.result })
       };
     } else {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
         operator: 'Or',
-        type: getFractionTypeForAny(filterExtended.field.result)
+        type: getFractionTypeForAny({ result: filterExtended.field.result })
       };
     }
 

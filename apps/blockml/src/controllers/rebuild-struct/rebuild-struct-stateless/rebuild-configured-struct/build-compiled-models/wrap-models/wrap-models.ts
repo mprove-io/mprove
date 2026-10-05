@@ -7,18 +7,23 @@ import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
+import type { ModelNodeIdSuffix } from '#common/types/blockml/parts/model/model-node-id-suffix';
+import type { ModelNodeLabel } from '#common/types/blockml/parts/model/model-node-label';
 import type { ModelType } from '#common/types/blockml/parts/model/model-type';
 import type { KeyValuePair } from '#common/types/blockml/parts/tag/key-value-pair';
 import { applyTreeDoubleUnderscore } from './apply-tree-double-underscore/apply-tree-double-underscore';
 import { wrapField } from './wrap-field/wrap-field';
 import { wrapFlatMalloyFieldItem } from './wrap-flat-malloy-field-item/wrap-flat-malloy-field-item';
+
 // import fse from 'fs-extra';
 
 export function wrapModels(item: {
@@ -66,10 +71,14 @@ export function wrapModels(item: {
         mproveTags = tagsResult.mproveTags;
         malloyTags = tagsResult.malloyTags;
 
-        labelTag = mproveTags.find(tag => tag.key === 'label');
-        topLabelTag = mproveTags.find(tag => tag.key === 'top_label');
+        labelTag = mproveTags.find(
+          tag => tag.key === ('label' satisfies FileParameter)
+        );
+        topLabelTag = mproveTags.find(
+          tag => tag.key === ('top_label' satisfies FileParameter)
+        );
         treeDoubleUnderscore = mproveTags.some(
-          tag => tag.key === 'tree_double_underscore'
+          tag => tag.key === ('tree_double_underscore' satisfies FileParameter)
         );
 
         let flatMalloyFieldItems = (x as FileMod).flatMalloyFieldItems;
@@ -129,8 +138,9 @@ export function wrapModels(item: {
             });
 
             if (
-              ['string', 'number', 'boolean', 'ts'].indexOf(apiField.result) >
-              -1
+              (
+                ['string', 'number', 'boolean', 'ts'] satisfies FieldResult[]
+              ).some(candidate => candidate === apiField.result)
             ) {
               apiFields.push(apiField);
             }
@@ -278,8 +288,8 @@ export function wrapModels(item: {
 
         if (sortedMeasures.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.measures`,
-            label: 'Measures',
+            id: `${node.id}.${'measures' satisfies ModelNodeIdSuffix}`,
+            label: 'Measures' satisfies ModelNodeLabel,
             description: undefined,
             hidden: false,
             required: false,
@@ -293,8 +303,8 @@ export function wrapModels(item: {
 
         if (sortedCalculations.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.calculations`,
-            label: 'Calculations',
+            id: `${node.id}.${'calculations' satisfies ModelNodeIdSuffix}`,
+            label: 'Calculations' satisfies ModelNodeLabel,
             description: undefined,
             hidden: false,
             required: false,
@@ -308,8 +318,8 @@ export function wrapModels(item: {
 
         if (sortedDimensions.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.dimensions`,
-            label: 'Dimensions',
+            id: `${node.id}.${'dimensions' satisfies ModelNodeIdSuffix}`,
+            label: 'Dimensions' satisfies ModelNodeLabel,
             description: undefined,
             hidden: false,
             required: false,
@@ -323,8 +333,8 @@ export function wrapModels(item: {
 
         if (sortedFilters.length > 0) {
           sortedChildren.push({
-            id: `${node.id}.filters`,
-            label: 'Filter-only fields',
+            id: `${node.id}.${'filters' satisfies ModelNodeIdSuffix}`,
+            label: 'Filter-only fields' satisfies ModelNodeLabel,
             description: undefined,
             hidden: false,
             required: false,

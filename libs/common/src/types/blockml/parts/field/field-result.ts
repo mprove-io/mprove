@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const fieldResultValues = [
+export const fieldResultValues = [
   'day_of_week',
   'day_of_week_index',
   'month_name',

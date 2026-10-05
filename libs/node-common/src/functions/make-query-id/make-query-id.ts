@@ -27,12 +27,14 @@ export function makeQueryId(item: {
   let text = projectId + envId + connectionId + mconfigParentType;
 
   if (
-    [
-      'Dashboard',
-      'Report',
-      'ChartDialogDashboard',
-      'ChartDialogReport'
-    ].indexOf(mconfigParentType) > -1
+    (
+      [
+        'Dashboard',
+        'Report',
+        'ChartDialogDashboard',
+        'ChartDialogReport'
+      ] satisfies MconfigParentType[]
+    ).findIndex(candidate => candidate === mconfigParentType) > -1
   ) {
     text = text + mconfigParentId;
   }

@@ -1,6 +1,7 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { LogLevel } from '#common/types/node-common/logging/log-level';
 import type { Er } from '#common/types/shared/errors/er';
 
 const signalsNames: NodeJS.Signals[] = ['SIGTERM', 'SIGINT', 'SIGHUP'];
@@ -34,7 +35,7 @@ export function listenProcessEvents(item: {
             signal: signal
           }
         }),
-        logLevel: 'Error',
+        logLevel: 'Error' satisfies LogLevel,
         logger: undefined,
         cs: undefined
       });
@@ -60,7 +61,7 @@ export function listenProcessEvents(item: {
         message: uncaughtException,
         originalError: e
       }),
-      logLevel: 'Error',
+      logLevel: 'Error' satisfies LogLevel,
       logger: undefined,
       cs: undefined
     });
@@ -74,7 +75,7 @@ export function listenProcessEvents(item: {
           reason: reason
         }
       }),
-      logLevel: 'Error',
+      logLevel: 'Error' satisfies LogLevel,
       logger: undefined,
       cs: undefined
     });
@@ -88,7 +89,7 @@ export function listenProcessEvents(item: {
               reason: reason
             }
           }),
-          logLevel: 'Error',
+          logLevel: 'Error' satisfies LogLevel,
           logger: undefined,
           cs: undefined
         });

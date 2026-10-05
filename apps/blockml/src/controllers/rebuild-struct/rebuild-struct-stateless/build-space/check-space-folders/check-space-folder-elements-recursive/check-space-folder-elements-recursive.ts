@@ -1,8 +1,14 @@
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
-
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
+
+const spaceArrayParameters = [
+  'access_roles',
+  'folders'
+] satisfies FileParameter[];
 
 export function checkSpaceFolderElementsRecursive(item: {
   file: FileSpace;
@@ -29,7 +35,7 @@ export function checkSpaceFolderElementsRecursive(item: {
       return;
     }
 
-    let spaceParameter = 'space'.toString();
+    let spaceParameter = ('space' satisfies FileParameter).toString();
     let firstParameter = Object.keys(folder).find(
       x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM())
     );
@@ -45,7 +51,7 @@ export function checkSpaceFolderElementsRecursive(item: {
       errors.push(
         new BmError({
           title: 'MISSING_SPACE_FOLDER_SPACE',
-          message: `parameter "${spaceParameter}" must exist in folders element of .space file`,
+          message: `parameter "${spaceParameter}" must exist in ${'folders' satisfies FileParameter} element of ${'.space' satisfies FileExtension} file`,
           lines: [
             {
               line: firstLine,
@@ -62,19 +68,21 @@ export function checkSpaceFolderElementsRecursive(item: {
       .filter(x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
-          [
-            'space'.toString(),
-            'title'.toString(),
-            'access_roles'.toString(),
-            'folders'.toString()
-          ].indexOf(parameter) < 0
+          (
+            [
+              'space',
+              'title',
+              'access_roles',
+              'folders'
+            ] satisfies FileParameter[]
+          ).findIndex(candidate => candidate === parameter) < 0
         ) {
           errors.push(
             new BmError({
               title: 'UNKNOWN_SPACE_PARAMETER',
               message:
                 `parameter "${parameter}" cannot be used in ` +
-                `folders element of .space file`,
+                `${'folders' satisfies FileParameter} element of ${'.space' satisfies FileExtension} file`,
               lines: [
                 {
                   line: folder[parameter + LINE_NUM],
@@ -87,12 +95,11 @@ export function checkSpaceFolderElementsRecursive(item: {
           return;
         }
 
-        let isUnexpectedList =
+        if (
           Array.isArray(folder[parameter]) &&
-          ['access_roles'.toString(), 'folders'.toString()].indexOf(parameter) <
-            0;
-
-        if (isUnexpectedList === true) {
+          spaceArrayParameters.findIndex(candidate => candidate === parameter) <
+            0
+        ) {
           errors.push(
             new BmError({
               title: 'UNEXPECTED_LIST',
@@ -109,12 +116,11 @@ export function checkSpaceFolderElementsRecursive(item: {
           return;
         }
 
-        let isParameterNotAList =
+        if (
           !Array.isArray(folder[parameter]) &&
-          ['access_roles'.toString(), 'folders'.toString()].indexOf(parameter) >
-            -1;
-
-        if (isParameterNotAList === true) {
+          spaceArrayParameters.findIndex(candidate => candidate === parameter) >
+            -1
+        ) {
           errors.push(
             new BmError({
               title: 'PARAMETER_IS_NOT_A_LIST',
@@ -150,7 +156,7 @@ export function checkSpaceFolderElementsRecursive(item: {
           return;
         }
 
-        if (parameter === 'folders'.toString()) {
+        if (parameter === ('folders' satisfies FileParameter).toString()) {
           checkSpaceFolderElementsRecursive({
             file: file,
             folders: folder[parameter],

@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
-import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
-
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import {
+  type ModelFieldLeafEnt,
+  modelFieldLeafsTable
+} from '#backend/drizzle/postgres/schema/model-field-leafs';
 import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
 import type { SearchFieldMatch } from './search-model-fields.types';
 

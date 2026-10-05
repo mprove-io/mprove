@@ -9,6 +9,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
 let func: Func = 'build-field/check-store-field-group';
@@ -36,7 +37,7 @@ export function checkStoreFieldGroup(item: {
           item.errors.push(
             new BmError({
               title: 'STORE_FIELD_MULTIPLE_GROUPS',
-              message: `store field can have only one of the parameters group or time_group`,
+              message: `store field can have only one of the parameters ${'group' satisfies FileParameter} or ${'time_group' satisfies FileParameter}`,
               lines: [
                 {
                   line: field.group_line_num,
@@ -62,7 +63,7 @@ export function checkStoreFieldGroup(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_STORE_FIELD_GROUP',
-              message: `field ${field.group} must be one of store field_groups`,
+              message: `field ${field.group} must be one of store ${'field_groups' satisfies FileParameter}`,
               lines: [
                 {
                   line: field.group_line_num,
@@ -84,7 +85,7 @@ export function checkStoreFieldGroup(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_STORE_FIELD_TIME_GROUP',
-              message: `field ${field.time_group} must be one of store field_time_groups`,
+              message: `field ${field.time_group} must be one of store ${'field_time_groups' satisfies FileParameter}`,
               lines: [
                 {
                   line: field.time_group_line_num,

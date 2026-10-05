@@ -3,11 +3,12 @@ import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { STORE_FIELD_DETAIL_VALUES } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import { detailUnitValues } from '#common/types/blockml/parts/field/detail-unit';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
 let func: Func = 'build-field/check-store-field-detail';
@@ -35,7 +36,7 @@ export function checkStoreFieldDetail(item: {
           item.errors.push(
             new BmError({
               title: 'STORE_FIELD_DETAIL_WITHOUT_TIME_GROUP',
-              message: `store field time_group must be specified if field detail specified`,
+              message: `store field ${'time_group' satisfies FileParameter} must be specified if field ${'detail' satisfies FileParameter} specified`,
               lines: [
                 {
                   line: field.detail_line_num,
@@ -50,12 +51,12 @@ export function checkStoreFieldDetail(item: {
 
         if (
           isDefined(field.detail) &&
-          STORE_FIELD_DETAIL_VALUES.indexOf(field.detail) < 0
+          detailUnitValues.indexOf(field.detail) < 0
         ) {
           item.errors.push(
             new BmError({
               title: 'STORE_FIELD_WRONG_DETAIL',
-              message: `store field detail value "${field.detail}" is not valid`,
+              message: `store field ${'detail' satisfies FileParameter} value "${field.detail}" is not valid`,
               lines: [
                 {
                   line: field.detail_line_num,
@@ -110,7 +111,7 @@ export function checkStoreFieldDetail(item: {
           item.errors.push(
             new BmError({
               title: 'STORE_FIELD_DUPLICATE_PAIR_OF_DETAIL_AND_TIME_GROUP',
-              message: `store field detail must be unique for each time_group`,
+              message: `store field ${'detail' satisfies FileParameter} must be unique for each ${'time_group' satisfies FileParameter}`,
               lines: [
                 ...pair.timeGroupLineNums.map(y => ({
                   line: y,

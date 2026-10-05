@@ -8,6 +8,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileStoreFractionControlOption } from '#common/types/blockml/parts/internal/file-store-fraction-control-option';
 
@@ -51,11 +52,15 @@ export function checkStoreFractionControlOptions(
     Object.keys(option)
       .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
-        if (['value'.toString(), 'label'.toString()].indexOf(parameter) < 0) {
+        if (
+          (['value', 'label'] satisfies FileParameter[]).findIndex(
+            candidate => candidate === parameter
+          ) < 0
+        ) {
           item.errors.push(
             new BmError({
               title: 'UNKNOWN_OPTIONS_ELEMENT_PARAMETER',
-              message: `parameter "${parameter}" cannot be used in options element`,
+              message: `parameter "${parameter}" cannot be used in ${'options' satisfies FileParameter} element`,
               lines: [
                 {
                   line: option[
@@ -128,7 +133,7 @@ export function checkStoreFractionControlOptions(
         item.errors.push(
           new BmError({
             title: 'MISSING_OPTION_VALUE',
-            message: `options element must have "value" parameter`,
+            message: `${'options' satisfies FileParameter} element must have "${'value' satisfies FileParameter}" parameter`,
             lines: [
               {
                 line: Math.min(...optionsElementKeyLineNums),

@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
-
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
 import type { SearchFieldMatch } from './search-model-fields.types';
 
 type SearchCachedFieldValueRow = {
@@ -82,8 +82,8 @@ matched_fields_base AS (
     AND cached_columns.column_name_lc = cached_parts.column_name_lc
   INNER JOIN ${modelFieldLeafsTable} AS model_field_leafs
     ON model_field_leafs.struct_id = ${structId}
-    AND model_field_leafs.model_type = ${'Malloy'}
-    AND model_field_leafs.field_result = ${'string'}
+    AND model_field_leafs.model_type = ${'Malloy' satisfies ModelType}
+    AND model_field_leafs.field_result = ${'string' satisfies FieldResult}
     AND model_field_leafs.column_name_lc IS NOT NULL
     AND model_field_leafs.connection_id = cached_parts.connection_id
     AND model_field_leafs.schema_name_lc = cached_parts.schema_name_lc

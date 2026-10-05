@@ -8,8 +8,14 @@ import { LINE_NUM } from '#common/constants/top-blockml';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileReportRowParameter } from '#common/types/blockml/parts/internal/file-report-row-parameter';
+
+const rowParamsArrayParameters = [
+  'conditions',
+  'fractions'
+] satisfies FileParameter[];
 
 let func: Func = 'build-report/check-report-row-unknown-params';
 
@@ -39,12 +45,14 @@ export function checkReportRowUnknownParams(item: {
             .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
             .forEach(parameter => {
               if (
-                [
-                  'apply_to'.toString(),
-                  'listen'.toString(),
-                  'conditions'.toString(),
-                  'fractions'.toString()
-                ].indexOf(parameter) < 0
+                (
+                  [
+                    'apply_to',
+                    'listen',
+                    'conditions',
+                    'fractions'
+                  ] satisfies FileParameter[]
+                ).findIndex(candidate => candidate === parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
@@ -65,8 +73,8 @@ export function checkReportRowUnknownParams(item: {
               }
 
               if (
-                ['conditions'.toString(), 'fractions'.toString()].indexOf(
-                  parameter
+                rowParamsArrayParameters.findIndex(
+                  candidate => candidate === parameter
                 ) < 0 &&
                 Array.isArray(param[parameter as keyof FileReportRowParameter])
               ) {
@@ -111,9 +119,9 @@ export function checkReportRowUnknownParams(item: {
               }
 
               if (
-                ['conditions'.toString(), 'fractions'.toString()].indexOf(
-                  parameter
-                ) > -1 &&
+                rowParamsArrayParameters.some(
+                  candidate => candidate === parameter
+                ) &&
                 !Array.isArray(param[parameter as keyof FileReportRowParameter])
               ) {
                 item.errors.push(

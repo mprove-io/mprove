@@ -15,10 +15,10 @@ import type { Prep } from '#backend/interfaces/prep';
 import { TabService } from '#backend/services/tab.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
 import type { ToBackendToggleProviderResponse } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-response';
 
@@ -213,7 +213,7 @@ test('1', async t => {
       {
         projectId: projectId,
         providerId: providerId,
-        type: 'OpenAICompatible',
+        type: 'OpenAICompatible' satisfies ProviderType,
         name: 'Custom LLM',
         isEnabled: false,
         models: [

@@ -14,6 +14,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
 import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
@@ -25,6 +26,8 @@ import type { EventFractionUpdate } from '#common/types/front/fraction/event-fra
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StoreFractionSubTypeComponent {
+  readonly fractionLogicOr: FractionLogic = 'OR';
+
   @ViewChild('fractionSubTypeSelect', { static: false })
   fractionSubTypeSelect: NgSelectComponent;
 

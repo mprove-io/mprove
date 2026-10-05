@@ -42,6 +42,7 @@ import {
   SHARED_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
+
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
@@ -60,7 +61,9 @@ import type { ToBackendGetReportRequest } from '#common/types/backend/routes/rep
 import type { ToBackendGetReportResponse } from '#common/types/backend/routes/reports/get-report/get-report-response';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
+import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
 import type { Query } from '#common/types/blockml/parts/query/query';
+import type { RowType } from '#common/types/blockml/parts/report/row/row-type';
 import type { DataPoint } from '#common/types/front/chart/data-point';
 import type { SeriesPart } from '#common/types/front/chart/series-part';
 import type { DataRow } from '#common/types/front/report/row/data-row';
@@ -88,6 +91,8 @@ import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { UiService } from '#front/app/services/ui.service';
 import { UnitsUiService } from '#front/app/services/units-ui.service';
 
+const valueRowTypes = ['metric', 'formula'] satisfies RowType[];
+
 export class TimeSpecItem {
   label: string;
   value: TimeSpec;
@@ -100,6 +105,8 @@ export class TimeSpecItem {
   styleUrls: ['reports.component.scss']
 })
 export class ReportsComponent implements OnInit, OnDestroy {
+  readonly timeRangeFractionTypes: FractionType[] = ['TsIsBetween'];
+
   personalSpaceId = PERSONAL_SPACE_ID;
   sharedSpaceId = SHARED_SPACE_ID;
 
@@ -488,7 +495,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.selectedDataRowsLength = repChartData.rows.filter(
           row =>
             row.showChart === true &&
-            ['metric', 'formula'].indexOf(row.rowType) > -1
+            valueRowTypes.some(candidate => candidate === row.rowType)
         ).length;
 
         this.eChartInitOpts = {
@@ -537,22 +544,21 @@ export class ReportsComponent implements OnInit, OnDestroy {
           },
           xAxis: {
             type: 'time',
-            axisLabel:
-              ['hours', 'minutes', 'timestamps'].indexOf(
-                this.uiQuery.getValue().timeSpec
-              ) > -1
-                ? { fontSize: 13 }
-                : {
-                    fontSize: 13,
-                    formatter: (value: any) => {
-                      let timeSpec = this.uiQuery.getValue().timeSpec;
+            axisLabel: (
+              ['hours', 'minutes', 'timestamps'] satisfies TimeSpec[]
+            ).some(candidate => candidate === this.uiQuery.getValue().timeSpec)
+              ? { fontSize: 13 }
+              : {
+                  fontSize: 13,
+                  formatter: (value: any) => {
+                    let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                      return frontFormatTsUnix({
-                        timeSpec: timeSpec,
-                        unixTimeZoned: value / 1000
-                      });
-                    }
+                    return frontFormatTsUnix({
+                      timeSpec: timeSpec,
+                      unixTimeZoned: value / 1000
+                    });
                   }
+                }
           },
           yAxis: yAxis.map(y => {
             (y as any).type = 'value';
@@ -569,7 +575,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
                     .filter(
                       row =>
                         row.showChart === true &&
-                        ['metric', 'formula'].indexOf(row.rowType) > -1
+                        valueRowTypes.some(
+                          candidate => candidate === row.rowType
+                        )
                     )
                     .find(row => row.rowId === chartSeriesElement.dataRowId);
 
@@ -907,7 +915,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     if (fraction.type === 'TsIsInLast') {
       let tsLastUnit: FractionTsUnit =
-        timeSpec === 'timestamps' ? 'minutes' : timeSpec;
+        timeSpec === ('timestamps' satisfies TimeSpec) ? 'minutes' : timeSpec;
 
       let mBrick =
         fraction.tsLastCompleteOption === 'CompleteWithCurrent'
@@ -932,7 +940,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       });
     } else if (fraction.type === 'TsIsInNext') {
       let tsNextUnit: FractionTsUnit =
-        timeSpec === 'timestamps' ? 'minutes' : timeSpec;
+        timeSpec === ('timestamps' satisfies TimeSpec) ? 'minutes' : timeSpec;
 
       let mBrick = `f\`next ${fraction.tsNextValue} ${tsNextUnit}\``;
 

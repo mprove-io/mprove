@@ -1,19 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, desc, eq, inArray, notInArray } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcSessionTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import {
-  SessionEnt,
+  type SessionEnt,
   sessionsTable
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { SessionType } from '#common/types/backend/parts/session/session-type';
@@ -34,7 +34,7 @@ export class SessionsService {
     branchId: string;
     userId: string;
     projectId: string;
-    sandboxType: string;
+    sandboxType: SandboxType;
     providerId: string;
     modelId: string;
     lastMessageVariant?: string;
@@ -278,7 +278,7 @@ export class SessionsService {
   }): Promise<SessionApi[]> {
     let { allEnts } = item;
 
-    let statusOrder: Record<string, number> = {
+    let statusOrder: Partial<Record<SessionStatus, number>> = {
       ['New']: 0,
       ['Active']: 1,
       ['Error']: 2,

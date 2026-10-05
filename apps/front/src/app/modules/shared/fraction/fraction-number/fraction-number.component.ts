@@ -29,6 +29,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionNumberComponent implements OnInit {
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
   @ViewChild('fractionNumberTypeSelect', { static: false })
   fractionNumberTypeSelectElement: NgSelectComponent;
 

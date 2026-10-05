@@ -1,8 +1,8 @@
 import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM, LINE_NUMBERS } from '#common/constants/top-blockml';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 
 export function processLineNumbersRecursive(item: {
@@ -120,11 +120,13 @@ export function processLineNumbersRecursive(item: {
       item.hash[newPar] = item.hash[newPar].toString().replace(npReg2, '');
       // remove whitespaces
       let reg3 =
-        [
-          'currency_prefix'.toString(),
-          'currency_suffix'.toString(),
-          'thousands_separator'.toString()
-        ].indexOf(newPar) > -1
+        (
+          [
+            'currency_prefix',
+            'currency_suffix',
+            'thousands_separator'
+          ] satisfies FileParameter[]
+        ).findIndex(candidate => candidate === newPar) > -1
           ? MyRegex.CAPTURE_WITH_EDGE_WHITESPACES()
           : MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();
       let r3 = reg3.exec(item.hash[newPar]);

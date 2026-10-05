@@ -6,7 +6,7 @@ import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
-
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 
@@ -70,7 +70,7 @@ export function checkReportRowIds(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_CHARS_IN_ROW_ID',
-              message: `parameter "row_id" must consist of characters A-Z`,
+              message: `parameter "${'row_id' satisfies FileParameter}" must consist of characters A-Z`,
               lines: [
                 {
                   line: row.row_id_line_num,

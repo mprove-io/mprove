@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { Query } from '#common/types/blockml/parts/query/query';
+import type { QueryStatus } from '#common/types/blockml/parts/query/query-status';
 import type { DeleteFilterFnItem } from '#common/types/front/filter/delete-filter-fn-item';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
@@ -102,14 +102,16 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes.query?.currentValue?.status === 'Running' &&
+      changes.query?.currentValue?.status ===
+        ('Running' satisfies QueryStatus) &&
       (isUndefined(changes.query?.previousValue?.status) ||
-        changes.query.previousValue.status !== 'Running')
+        changes.query.previousValue.status !==
+          ('Running' satisfies QueryStatus))
     ) {
       this.spinner.show(this.tile.title);
     } else if (
       !!changes.query?.currentValue?.status &&
-      changes.query?.currentValue?.status !== 'Running'
+      changes.query?.currentValue?.status !== ('Running' satisfies QueryStatus)
     ) {
       this.spinner.hide(this.tile.title);
     }

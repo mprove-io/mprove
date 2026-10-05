@@ -9,6 +9,8 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
@@ -32,7 +34,11 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (['BuildReportField', 'BuildDashboardField'].indexOf(caller) > -1) {
+      if (
+        (['BuildReportField', 'BuildDashboardField'] satisfies Caller[]).some(
+          candidate => candidate === caller
+        )
+      ) {
         if (isUndefined(field.result)) {
           switch (field.fieldClass) {
             case 'filter': {
@@ -44,7 +50,7 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
                 item.errors.push(
                   new BmError({
                     title: 'MISSING_FILTER_RESULT',
-                    message: `parameter result is required for filters`,
+                    message: `parameter ${'result' satisfies FileParameter} is required for filters`,
                     lines: [
                       {
                         line: field.name_line_num,
@@ -65,7 +71,7 @@ export function checkAndSetImplicitResult<T extends sdrType>(item: {
                 item.errors.push(
                   new BmError({
                     title: 'WRONG_FILTER_RESULT',
-                    message: `"${field.result}" is not valid result for filter`,
+                    message: `"${field.result}" is not valid result for ${'filter' satisfies FieldClass}`,
                     lines: [
                       {
                         line: field.result_line_num,

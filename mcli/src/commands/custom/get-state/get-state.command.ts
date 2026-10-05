@@ -3,9 +3,13 @@ import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendGetStateOutput } from '#common/types/backend/routes/state/get-state/get-state-output';
 import type { ToBackendGetStateRequest } from '#common/types/backend/routes/state/get-state/get-state-request';
-import { zRepoType } from '#common/types/disk/parts/repo/repo-type';
+import {
+  type RepoType,
+  zRepoType
+} from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -36,7 +40,7 @@ export class GetStateCommand extends CustomCommand {
   repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(zRepoType.options),
-    description: `(required, "dev", "production" or "session")`
+    description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 
   branch = Option.String('--branch', {
@@ -108,7 +112,7 @@ export class GetStateCommand extends CustomCommand {
     let repoId =
       this.repoType === 'production'
         ? PROD_REPO_ID
-        : apiKey.startsWith(`SK-`)
+        : apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 

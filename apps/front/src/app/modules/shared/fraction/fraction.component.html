@@ -18,7 +18,7 @@
     class="ml-5 flex flex-row items-start justify-start"
   >
     <m-fraction-number
-      *ngSwitchCase="'number'"
+      *ngSwitchCase="fieldResultNumber"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -27,7 +27,7 @@
     ></m-fraction-number>
 
     <m-fraction-string
-      *ngSwitchCase="'string'"
+      *ngSwitchCase="fieldResultString"
       [suggestModelDimension]="suggestModelDimension"
       [structId]="structId"
       [chartId]="chartId"
@@ -42,7 +42,7 @@
     ></m-fraction-string>
 
     <m-fraction-day-of-week
-      *ngSwitchCase="'day_of_week'"
+      *ngSwitchCase="fieldResultDayOfWeek"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -51,7 +51,7 @@
     ></m-fraction-day-of-week>
 
     <m-fraction-day-of-week-index
-      *ngSwitchCase="'day_of_week_index'"
+      *ngSwitchCase="fieldResultDayOfWeekIndex"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -60,7 +60,7 @@
     ></m-fraction-day-of-week-index>
 
     <m-fraction-month-name
-      *ngSwitchCase="'month_name'"
+      *ngSwitchCase="fieldResultMonthName"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -69,7 +69,7 @@
     ></m-fraction-month-name>
 
     <m-fraction-quarter-of-year
-      *ngSwitchCase="'quarter_of_year'"
+      *ngSwitchCase="fieldResultQuarterOfYear"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -78,7 +78,7 @@
     ></m-fraction-quarter-of-year>
 
     <m-fraction-ts
-      *ngSwitchCase="'ts'"
+      *ngSwitchCase="fieldResultTs"
       [fraction]="fraction"
       [fieldTimeframe]="fieldTimeframe"
       [isMetrics]="false"
@@ -89,7 +89,7 @@
     ></m-fraction-ts>
 
     <m-fraction-boolean
-      *ngSwitchCase="'boolean'"
+      *ngSwitchCase="fieldResultBoolean"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -98,7 +98,7 @@
     ></m-fraction-boolean>
 
     <m-fraction-yesno
-      *ngSwitchCase="'yesno'"
+      *ngSwitchCase="fieldResultYesno"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"

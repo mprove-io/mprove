@@ -13,7 +13,12 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
@@ -44,6 +49,7 @@ import {
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
@@ -120,6 +126,19 @@ export class ChartTypeItem {
   templateUrl: './models.component.html'
 })
 export class ModelsComponent implements OnInit, OnDestroy {
+  readonly chartTypeTable: ChartType = 'table';
+  readonly chartTypePivotTable: ChartType = 'pivot_table';
+  readonly chartTypeLine: ChartType = 'line';
+  readonly chartTypeBar: ChartType = 'bar';
+  readonly chartTypeScatter: ChartType = 'scatter';
+  readonly chartTypeSingle: ChartType = 'single';
+  readonly chartTypePie: ChartType = 'pie';
+  readonly modelDefinitionQueryParts: QueryPart[] = [
+    'YamlModel',
+    'YamlStore',
+    'MalloySource'
+  ];
+
   @ViewChild('chartTypeSelect', { static: false })
   chartTypeSelectElement: NgSelectComponent;
 
@@ -301,9 +320,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.model = x;
 
-      if (
-        isDefined(this.model.modelId) &&
-        ((this.model.type === 'Malloy' &&
+      let isUnsupportedMalloyQueryPart: boolean =
+        (
           [
             'JsonAppliedGivens',
             'MalloyQuery',
@@ -312,15 +330,30 @@ export class ModelsComponent implements OnInit, OnDestroy {
             'YamlTile',
             'MalloySource',
             'JsonResults'
-          ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
-          (this.model.type === 'Store' &&
-            [
-              'JsonStoreRequestParts',
-              'JavascriptStoreRequestFunction',
-              'YamlTile',
-              'YamlStore',
-              'JsonResults'
-            ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0))
+          ] satisfies QueryPart[]
+        ).findIndex(
+          queryPart =>
+            queryPart === this.queryPartForm.controls['queryPart'].value
+        ) < 0;
+
+      let isUnsupportedStoreQueryPart: boolean =
+        (
+          [
+            'JsonStoreRequestParts',
+            'JavascriptStoreRequestFunction',
+            'YamlTile',
+            'YamlStore',
+            'JsonResults'
+          ] satisfies QueryPart[]
+        ).findIndex(
+          queryPart =>
+            queryPart === this.queryPartForm.controls['queryPart'].value
+        ) < 0;
+
+      if (
+        isDefined(this.model.modelId) &&
+        ((this.model.type === 'Malloy' && isUnsupportedMalloyQueryPart) ||
+          (this.model.type === 'Store' && isUnsupportedStoreQueryPart))
       ) {
         let queryPart: QueryPart =
           this.model.type === 'Store'
@@ -600,8 +633,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     ]
   });
 
-  queryPartForm: FormGroup = this.fb.group({
-    queryPart: undefined
+  queryPartForm: FormGroup<{
+    queryPart: FormControl<QueryPart>;
+  }> = this.fb.group({
+    queryPart: this.fb.control<QueryPart>(undefined)
   });
 
   chartTypeForm: FormGroup = this.fb.group({
@@ -817,6 +852,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('JsonStoreRequestParts');
   }
 
@@ -824,6 +860,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('JsonAppliedGivens');
   }
 
@@ -831,6 +868,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('MalloyQuery');
   }
 
@@ -838,6 +876,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('MalloyCompiledQuery');
   }
 
@@ -845,6 +884,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('SqlMalloy');
   }
 
@@ -852,6 +892,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('SqlMain');
   }
 
@@ -859,6 +900,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('MalloySource');
   }
 
@@ -866,6 +908,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('YamlTile');
   }
 
@@ -873,6 +916,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('YamlStore');
   }
 
@@ -880,6 +924,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('YamlModel');
   }
 
@@ -887,6 +932,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue(
       'JavascriptStoreRequestFunction'
     );
@@ -896,6 +942,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
+
     this.queryPartForm.controls['queryPart'].setValue('JsonResults');
   }
 

@@ -9,6 +9,7 @@ import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
@@ -123,26 +124,34 @@ export function wrapFlatMalloyFieldItem(item: {
       topNode.children.push(newGroupNode);
     }
   } else if (
-    ['string', 'number', 'boolean', 'ts'].indexOf(fieldNode.fieldResult) > -1
+    (['string', 'number', 'boolean', 'ts'] satisfies FieldResult[]).some(
+      candidate => candidate === fieldNode.fieldResult
+    )
   ) {
     topNode.children.push(fieldNode);
   }
 
-  let formatNumberTag = mproveTags?.find(tag => tag.key === 'format_number');
+  let formatNumberTag = mproveTags?.find(
+    tag => tag.key === ('format_number' satisfies FileParameter)
+  );
 
   let currencyPrefixTag = mproveTags?.find(
-    tag => tag.key === 'currency_prefix'
+    tag => tag.key === ('currency_prefix' satisfies FileParameter)
   );
 
   let currencySuffixTag = mproveTags?.find(
-    tag => tag.key === 'currency_suffix'
+    tag => tag.key === ('currency_suffix' satisfies FileParameter)
   );
 
-  let buildMetricsTag = mproveTags?.find(tag => tag.key === 'build_metrics');
+  let buildMetricsTag = mproveTags?.find(
+    tag => tag.key === ('build_metrics' satisfies FileParameter)
+  );
 
   let isTimeframeBase =
     flatMalloyFieldItem.field.name.endsWith('_t') &&
-    ['ts', 'date'].indexOf(result) > -1;
+    (['ts', 'date'] satisfies FieldResult[]).some(
+      candidate => candidate === result
+    );
 
   let sourceExpression = flatMalloyFieldItem.sourceExpression;
 

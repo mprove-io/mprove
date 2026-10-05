@@ -14,7 +14,6 @@ import {
   SelectionChangedEvent,
   themeAlpine
 } from 'ag-grid-community';
-// import { MultiRowSelectionOptions } from 'ag-grid-community/dist/types/src/entities/gridOptions';
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
 import { TRIPLE_UNDERSCORE } from '#common/constants/top';
@@ -23,13 +22,14 @@ import {
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
 } from '#common/constants/top-front';
-
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { DetailUnit } from '#common/types/blockml/parts/field/detail-unit';
 import type { Row } from '#common/types/blockml/parts/report/row/row';
 import type { DataRow } from '#common/types/front/report/row/data-row';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { getTimeSpecWord } from '#front/app/functions/get-timespec-word';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -47,6 +47,8 @@ import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
+
+const subDayTimeSpecs = ['timestamps', 'minutes', 'hours'] satisfies TimeSpec[];
 
 @Component({
   standalone: false,
@@ -105,15 +107,17 @@ export class ReportComponent {
           metricsTimeColumnsNarrowWidth:
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsNarrowWidth
-              : ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) >
-                  -1
+              : subDayTimeSpecs.some(
+                    candidate => candidate === uiState.timeSpec
+                  )
                 ? uiState.metricsTimeColumnsNarrowWidth
                 : paramsColumn.getActualWidth(),
           metricsTimeColumnsWideWidth:
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsWideWidth
-              : ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) >
-                  -1
+              : subDayTimeSpecs.some(
+                    candidate => candidate === uiState.timeSpec
+                  )
                 ? paramsColumn.getActualWidth()
                 : uiState.metricsTimeColumnsWideWidth
         });
@@ -223,20 +227,22 @@ export class ReportComponent {
             headerName: column.label,
             cellRenderer: DataRendererComponent,
             type: 'numericColumn',
-            width:
-              ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) > -1
-                ? Math.max(
-                    DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
-                    timeColumnsWideWidth
-                  )
-                : Math.max(
-                    DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
-                    timeColumnsNarrowWidth
-                  ),
-            minWidth:
-              ['timestamps', 'minutes', 'hours'].indexOf(uiState.timeSpec) > -1
-                ? 220
-                : 155,
+            width: subDayTimeSpecs.some(
+              candidate => candidate === uiState.timeSpec
+            )
+              ? Math.max(
+                  DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
+                  timeColumnsWideWidth
+                )
+              : Math.max(
+                  DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
+                  timeColumnsNarrowWidth
+                ),
+            minWidth: subDayTimeSpecs.some(
+              candidate => candidate === uiState.timeSpec
+            )
+              ? 220
+              : 155,
             maxWidth: 300,
             resizable: true
           };
@@ -483,7 +489,9 @@ export class ReportComponent {
         metric.modelType === 'Malloy'
           ? timeSpecDetail === 'timestamps'
             ? `${metric.timeFieldId}_ts`
-            : ['weeksSunday', 'weeksMonday'].indexOf(timeSpecDetail) > -1
+            : (['weeksSunday', 'weeksMonday'] satisfies DetailUnit[]).some(
+                  candidate => candidate === timeSpecDetail
+                )
               ? `${metric.timeFieldId}_week`
               : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`
           : `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${timeSpecWord}`;

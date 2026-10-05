@@ -8,6 +8,8 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
@@ -46,7 +48,7 @@ export function checkAndSetImplicitFormatNumber<T extends sdrType>(item: {
             item.errors.push(
               new BmError({
                 title: 'WRONG_FORMAT_NUMBER',
-                message: ` format_number value "${field.format_number}" is not valid`,
+                message: ` ${'format_number' satisfies FileParameter} value "${field.format_number}" is not valid`,
                 lines: [
                   {
                     line: field.format_number_line_num,
@@ -75,8 +77,8 @@ export function checkAndSetImplicitFormatNumber<T extends sdrType>(item: {
             new BmError({
               title: 'MISUSE_OF_FORMAT_NUMBER',
               message:
-                `format_number can only be used with fields where result is "number". ` +
-                `Found field result "${field.result}".`,
+                `${'format_number' satisfies FileParameter} can only be used with fields where ${'result' satisfies FileParameter} is "${'number' satisfies FieldResult}". ` +
+                `Found field ${'result' satisfies FileParameter} "${field.result}".`,
               lines: [
                 {
                   line: field.format_number_line_num,
@@ -94,8 +96,8 @@ export function checkAndSetImplicitFormatNumber<T extends sdrType>(item: {
             new BmError({
               title: 'MISUSE_OF_CURRENCY_PREFIX',
               message:
-                `currency_prefix can only be used with fields where result is "number". ` +
-                `Found field result "${field.result}".`,
+                `${'currency_prefix' satisfies FileParameter} can only be used with fields where ${'result' satisfies FileParameter} is "${'number' satisfies FieldResult}". ` +
+                `Found field ${'result' satisfies FileParameter} "${field.result}".`,
               lines: [
                 {
                   line: field.currency_prefix_line_num,
@@ -113,8 +115,8 @@ export function checkAndSetImplicitFormatNumber<T extends sdrType>(item: {
             new BmError({
               title: 'MISUSE_OF_CURRENCY_SUFFIX',
               message:
-                `currency_suffix can only be used with fields where result is "number". ` +
-                `Found field result "${field.result}".`,
+                `${'currency_suffix' satisfies FileParameter} can only be used with fields where ${'result' satisfies FileParameter} is "${'number' satisfies FieldResult}". ` +
+                `Found field ${'result' satisfies FileParameter} "${field.result}".`,
               lines: [
                 {
                   line: field.currency_suffix_line_num,

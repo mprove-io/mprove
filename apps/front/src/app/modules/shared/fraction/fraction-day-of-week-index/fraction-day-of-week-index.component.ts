@@ -11,6 +11,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { ValidationService } from '#front/app/services/validation.service';
@@ -23,6 +24,8 @@ import { FractionTypeItem } from '../fraction.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionDayOfWeekIndexComponent implements OnInit {
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
   @ViewChild('fractionDayOfWeekIndexTypeSelect', { static: false })
   fractionDayOfWeekIndexTypeSelectElement: NgSelectComponent;
 

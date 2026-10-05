@@ -4,8 +4,7 @@ import retry from 'async-retry';
 import axios from 'axios';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   MconfigTab,
@@ -27,6 +26,7 @@ import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
+import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
 import { TabService } from './tab.service';
 import { UrlService } from './url.service';
 import { UserCodeService } from './user-code.service';
@@ -371,7 +371,7 @@ ${inputSub}
       } else if (reference === 'STORE_FIELDS') {
         target = JSON.stringify(store.fields);
       } else {
-        refError = `Unknown reference in store.response: $${reference}`;
+        refError = `Unknown reference in store.${'response' satisfies FileParameter}: $${reference}`;
         break;
       }
 
@@ -451,9 +451,9 @@ ${inputSub}
       }
 
       response =
-        queryStart.apiMethod === 'POST'
+        queryStart.apiMethod === ('POST' satisfies StoreMethod)
           ? await axios.post(url, body, { headers: headers })
-          : queryStart.apiMethod === 'GET'
+          : queryStart.apiMethod === ('GET' satisfies StoreMethod)
             ? await axios.get(url, { headers: headers })
             : { message: 'method must be POST or GET' };
 

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MconfigTab,
@@ -24,9 +23,9 @@ import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER
 } from '#common/constants/top';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BmlError } from '#common/types/blockml/diagnostics/bml-error';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
 export type ExplorerRebuildOk = {
@@ -127,7 +126,7 @@ export class ExplorerChartRebuildService {
         ? `${session.projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
         : `${session.projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${chartId}.chart`;
+    let fileName = `${chartId}${'.chart' satisfies FileExtension}`;
     let fileNodeId = `${parentNodeId}/${fileName}`;
 
     let fileIdAr = fileNodeId.split('/');

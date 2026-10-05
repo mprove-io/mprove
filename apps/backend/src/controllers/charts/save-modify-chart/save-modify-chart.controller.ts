@@ -52,12 +52,12 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveModifyChartOutput } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-output';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 
 const { forEachSeries } = pIteration;
@@ -222,7 +222,7 @@ export class SaveModifyChartController {
       });
     }
 
-    let chartFileName = `${chartId}.chart`;
+    let chartFileName = `${chartId}${'.chart' satisfies FileExtension}`;
 
     let isSpaceChanged = currentChartSpace !== space;
 

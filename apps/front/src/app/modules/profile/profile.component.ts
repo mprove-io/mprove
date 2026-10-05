@@ -9,7 +9,7 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendDeleteUserApiKeyResponse } from '#common/types/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
 import type { ToBackendDeleteUserCodexAuthResponse } from '#common/types/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
 import type { ToBackendGenerateUserApiKeyResponse } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
@@ -26,6 +26,8 @@ import { MyDialogService } from '#front/app/services/my-dialog.service';
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
+  readonly apiKeyTypePK: ApiKeyType = 'PK';
+
   restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
   pageTitle = PROFILE_PAGE_TITLE;

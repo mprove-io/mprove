@@ -37,8 +37,7 @@
             [tpIsEnabled]="
               node.required === true &&
               node.isSelected === true &&
-              ['dimension', 'measure', 'calculation'].indexOf(node.nodeClass) >
-                -1
+              selectableFieldClasses.includes(node.nodeClass)
             "
           >
             <div
@@ -49,9 +48,7 @@
                 'cursor-pointer':
                   (!node.isField && node.children?.length > 0) ||
                   (node.required === false &&
-                    ['dimension', 'measure', 'calculation'].indexOf(
-                      node.nodeClass
-                    ) > -1)
+                    selectableFieldClasses.includes(node.nodeClass))
               }"
               (click)="flatNodeOnClick(node)"
             >
@@ -63,14 +60,10 @@
                   'bg-m50':
                     node.isSelected === true &&
                     node.required === false &&
-                    ['join', 'dimension', 'measure', 'calculation'].indexOf(
-                      node.nodeClass
-                    ) > -1,
+                    expandableFieldClasses.includes(node.nodeClass),
                   'hover:bg-m50':
                     node.required === false &&
-                    ['join', 'dimension', 'measure', 'calculation'].indexOf(
-                      node.nodeClass
-                    ) > -1
+                    expandableFieldClasses.includes(node.nodeClass)
                 }"
               >
                 <div class="flex min-w-[2px] flex-row items-center">
@@ -274,18 +267,16 @@
             class="group-bar flex h-11 w-full flex-row"
             [ngClass]="{
               'pl-6 pr-5':
-                node.data.nodeClass === 'dimension' ||
-                node.data.nodeClass === 'measure' ||
-                node.data.nodeClass === 'calculation' ||
-                node.data.nodeClass === 'filter'
+                node.data.nodeClass === fieldClassDimension ||
+                node.data.nodeClass === fieldClassMeasure ||
+                node.data.nodeClass === fieldClassCalculation ||
+                node.data.nodeClass === fieldClassFilter
             }"
             tp="A required field cannot be deselected"
             [tpIsEnabled]="
               node.data.required === true &&
               node.data.isSelected === true &&
-              ['dimension', 'measure', 'calculation'].indexOf(
-                node.data.nodeClass
-              ) > -1
+              selectableFieldClasses.includes(node.data.nodeClass)
             "
           >
             <div
@@ -296,9 +287,7 @@
                 'cursor-pointer':
                   (!node.data.isField && node.hasChildren) ||
                   (node.data.required === false &&
-                    ['dimension', 'measure', 'calculation'].indexOf(
-                      node.data.nodeClass
-                    ) > -1)
+                    selectableFieldClasses.includes(node.data.nodeClass))
               }"
               (click)="nestedNodeOnClick(node)"
             >
@@ -310,26 +299,25 @@
                   'bg-m50':
                     node.data.isSelected === true &&
                     node.data.required === false &&
-                    ['join', 'dimension', 'measure', 'calculation'].indexOf(
-                      node.data.nodeClass
-                    ) > -1,
+                    expandableFieldClasses.includes(node.data.nodeClass),
                   'hover:bg-m50':
                     node.data.required === false &&
-                    ['join', 'dimension', 'measure', 'calculation'].indexOf(
-                      node.data.nodeClass
-                    ) > -1
+                    expandableFieldClasses.includes(node.data.nodeClass)
                 }"
               >
                 <div class="flex min-w-[2px] flex-row items-center">
                   <div
-                    *ngIf="!node.data.isField && node.data.nodeClass !== 'info'"
+                    *ngIf="
+                      !node.data.isField &&
+                      node.data.nodeClass !== fieldClassInfo
+                    "
                     class="flex flex-row items-center space-x-1"
                   >
                     <div
                       class="flex items-center"
                       [ngClass]="{
                         'ml-3':
-                          node.data.nodeClass === 'dimension' &&
+                          node.data.nodeClass === fieldClassDimension &&
                           node.data.isField === false
                       }"
                     >
@@ -349,29 +337,30 @@
                     [ngClass]="{
                       'ml-[10px]':
                         !node.hasChildren &&
-                        node.parent?.data.nodeClass !== 'dimension',
-                      'ml-[44px]': node.parent?.data.nodeClass === 'dimension'
+                        node.parent?.data.nodeClass !== fieldClassDimension,
+                      'ml-[44px]':
+                        node.parent?.data.nodeClass === fieldClassDimension
                     }"
                   >
                     <div
                       *ngIf="
                         node.data.isSelected === true &&
-                        node.data.nodeClass !== 'filter'
+                        node.data.nodeClass !== fieldClassFilter
                       "
                       data-cy="modelTreeSelectedSymbol"
                       class="h-[10px] w-[10px] rounded-full focus:outline-none"
                       [ngClass]="{
                         'bg-m600':
-                          node.data.nodeClass === 'measure' ||
-                          node.data.nodeClass === 'calculation' ||
-                          node.data.nodeClass === 'dimension'
+                          node.data.nodeClass === fieldClassMeasure ||
+                          node.data.nodeClass === fieldClassCalculation ||
+                          node.data.nodeClass === fieldClassDimension
                       }"
                     ></div>
 
                     <div
                       *ngIf="
                         node.data.isSelected === false ||
-                        node.data.nodeClass === 'filter'
+                        node.data.nodeClass === fieldClassFilter
                       "
                       class="h-[10px] w-[10px]"
                     ></div>
@@ -396,7 +385,7 @@
                   >
                     <span
                       class="truncate"
-                      *ngIf="node.data.nodeClass === 'info'"
+                      *ngIf="node.data.nodeClass === fieldClassInfo"
                       class="text-s500 font-semibold"
                     >
                       {{ node.data.label | uppercase }}
@@ -404,11 +393,11 @@
 
                     <span
                       class="truncate text-base"
-                      *ngIf="node.data.nodeClass !== 'info'"
+                      *ngIf="node.data.nodeClass !== fieldClassInfo"
                       [ngClass]="{
                         'ml-3':
                           node.hasChildren &&
-                          node.data.nodeClass === 'dimension'
+                          node.data.nodeClass === fieldClassDimension
                       }"
                     >
                       {{ node.data.joinLabel | capitalize }}
@@ -417,7 +406,7 @@
                     <span
                       class="truncate text-base font-semibold"
                       *ngIf="
-                        node.data.nodeClass !== 'info' &&
+                        node.data.nodeClass !== fieldClassInfo &&
                         model.type !== 'Malloy'
                       "
                     >
@@ -426,17 +415,17 @@
 
                     <span
                       class="truncate text-base font-semibold"
-                      *ngIf="node.data.nodeClass !== 'info'"
+                      *ngIf="node.data.nodeClass !== fieldClassInfo"
                       [ngClass]="{
                         'font-semibold':
                           node.data.children.length === 0 ||
-                          node.data.nodeClass === 'dimension',
+                          node.data.nodeClass === fieldClassDimension,
                         'ml-3':
                           node.hasChildren &&
-                          node.data.nodeClass !== 'dimension',
+                          node.data.nodeClass !== fieldClassDimension,
                         'ml-2':
                           node.hasChildren &&
-                          node.data.nodeClass === 'dimension' &&
+                          node.data.nodeClass === fieldClassDimension &&
                           modelTreeLevels !== 'Nested'
                       }"
                     >

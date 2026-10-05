@@ -55,6 +55,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
+import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateEditorSessionOutput } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-output';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
@@ -436,7 +437,7 @@ export class CreateEditorSessionController {
         if (currentSession.initialCommit) break;
         if (Date.now() - start >= retryMs) {
           await this.db.drizzle.execute(
-            sql`UPDATE sessions SET status = ${'Error'} WHERE session_id = ${sessionId}`
+            sql`UPDATE sessions SET status = ${'Error' satisfies SessionStatus} WHERE session_id = ${sessionId}`
           );
           logToConsoleBackend({
             log: new ServerError({
@@ -545,7 +546,7 @@ export class CreateEditorSessionController {
               await this.db.packer.write({
                 tx: tx,
                 rawQueries: [
-                  sql`UPDATE sessions SET status = ${'Error'} WHERE session_id = ${sessionId}`
+                  sql`UPDATE sessions SET status = ${'Error' satisfies SessionStatus} WHERE session_id = ${sessionId}`
                 ]
               })
           ),

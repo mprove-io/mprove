@@ -691,7 +691,7 @@
     </div>
 
     <div
-      *ngIf="isReport === false && ['table', 'single'].indexOf(chart?.type) < 0"
+      *ngIf="isReport === false && nonSeriesChartTypes.indexOf(chart?.type) < 0"
       class="text-s500 mt-7 flex h-12 w-fit cursor-pointer select-none flex-row items-start justify-start pr-5 font-semibold"
       (click)="toggleChartOptions()"
     >

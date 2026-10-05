@@ -8,6 +8,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { Model } from '#common/types/blockml/parts/model/model';
 
@@ -51,7 +52,7 @@ export function checkSorts<T extends dcType>(item: {
             new BmError({
               title: 'TILE_WRONG_SORTS_SYNTAX',
               message:
-                `Model "sorts" can contain selected ` +
+                `Model "${'sorts' satisfies FileParameter}" can contain selected ` +
                 'fields in form of "field_path [desc]" separated by comma',
               lines: [
                 {
@@ -74,8 +75,8 @@ export function checkSorts<T extends dcType>(item: {
               title: 'TILE_SORTS_REFS_UNSELECTED_FIELD',
               message:
                 'Only selected fields can be sorted.' +
-                `Found field "${sorter}" in "sorts" that ` +
-                `is not in "select". `,
+                `Found field "${sorter}" in "${'sorts' satisfies FileParameter}" that ` +
+                `is not in "${'select' satisfies FileParameter}". `,
               lines: [
                 {
                   line: tile.sorts_line_num,

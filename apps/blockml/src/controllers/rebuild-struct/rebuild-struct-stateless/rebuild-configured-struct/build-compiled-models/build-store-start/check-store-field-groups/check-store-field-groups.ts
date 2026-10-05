@@ -8,6 +8,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFieldGroup } from '#common/types/blockml/parts/internal/file-store-field-group';
 
@@ -57,7 +58,11 @@ export function checkStoreFieldGroups(
       Object.keys(fieldGroup)
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if (['group'.toString(), 'label'.toString()].indexOf(parameter) < 0) {
+          if (
+            (['group', 'label'] satisfies FileParameter[]).findIndex(
+              candidate => candidate === parameter
+            ) < 0
+          ) {
             item.errors.push(
               new BmError({
                 title: 'UNKNOWN_FIELD_GROUP_PARAMETER',
@@ -130,7 +135,7 @@ export function checkStoreFieldGroups(
           item.errors.push(
             new BmError({
               title: 'MISSING_GROUP',
-              message: `field group must have "group" parameter`,
+              message: `field group must have "${'group' satisfies FileParameter}" parameter`,
               lines: [
                 {
                   line: Math.min(...fieldGroupKeysLineNums),
@@ -164,7 +169,7 @@ export function checkStoreFieldGroups(
           item.errors.push(
             new BmError({
               title: 'DUPLICATE_GROUPS',
-              message: `"group" value must be unique across field_groups elements`,
+              message: `"${'group' satisfies FileParameter}" value must be unique across field_groups elements`,
               lines: group.groupLineNums.map(l => ({
                 line: l,
                 name: x.fileName,

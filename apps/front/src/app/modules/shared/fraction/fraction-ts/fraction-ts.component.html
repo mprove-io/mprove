@@ -1,8 +1,8 @@
 <div
   class="ml-2 flex flex-row space-x-5"
   [ngClass]="{
-    'h-16': ['TsIsBetween', 'TsIsNotBetween'].indexOf(fraction.type) < 0,
-    'h-32': ['TsIsBetween', 'TsIsNotBetween'].indexOf(fraction.type) > -1
+    'h-16': betweenRangeFractionTypes.indexOf(fraction.type) < 0,
+    'h-32': betweenRangeFractionTypes.includes(fraction.type)
   }"
 >
   <div
@@ -19,9 +19,7 @@
         class="fraction-type-select"
         [class.w-[180px]]="isMetrics === true"
         [class.w-[280px]]="isMetrics === false"
-        [class.mt-[32px]]="
-          ['TsIsBetween', 'TsIsNotBetween'].indexOf(fraction.type) > -1
-        "
+        [class.mt-[32px]]="betweenRangeFractionTypes.includes(fraction.type)"
         [items]="fractionTsTypesList"
         [clearable]="false"
         [searchable]="false"
@@ -42,9 +40,9 @@
           <div
             class="flex flex-row"
             [ngClass]="{
-              'text-yellow-700': item.operator === 'And',
+              'text-yellow-700': item.operator === fractionOperatorAnd,
               'text-s400':
-                item.operator !== 'And' &&
+                item.operator !== fractionOperatorAnd &&
                 item.timeframeLevel !== 0 &&
                 item.timeframeLevel < fieldTimeframeLevel
             }"
@@ -57,9 +55,9 @@
           <div
             class="flex flex-row"
             [ngClass]="{
-              'text-yellow-700': item.operator === 'And',
+              'text-yellow-700': item.operator === fractionOperatorAnd,
               'text-s400':
-                item.operator !== 'And' &&
+                item.operator !== fractionOperatorAnd &&
                 item.timeframeLevel !== 0 &&
                 item.timeframeLevel < fieldTimeframeLevel
             }"
@@ -138,16 +136,8 @@
 
   <div
     *ngIf="
-      [
-        'TsIsBefore',
-        'TsIsThrough',
-        'TsIsAfter',
-        'TsIsStarting',
-        'TsIsBeginFor',
-        'TsIsOnTimestamp',
-        'TsIsNotBeginFor',
-        'TsIsNotOnTimestamp'
-      ].indexOf(fraction.type) > -1 && fraction.tsMomentType === 'Timestamp'
+      singleBoundaryFractionTypes.includes(fraction.type) &&
+      fraction.tsMomentType === 'Timestamp'
     "
     class="flex flex-row space-x-5"
   >
@@ -183,18 +173,11 @@
 
   <div
     *ngIf="
-      ([
-        'TsIsBefore',
-        'TsIsThrough',
-        'TsIsAfter',
-        'TsIsStarting',
-        'TsIsBeginFor',
-        'TsIsNotBeginFor'
-      ].indexOf(fraction.type) > -1 &&
+      (timeBoundaryFractionTypes.includes(fraction.type) &&
         (fraction.tsMomentType === 'Literal' ||
-          ['This', 'Last', 'Next'].indexOf(fraction.tsMomentType) > -1)) ||
-      (['TsIsOnDay', 'TsIsNotOnDay'].indexOf(fraction.type) > -1 &&
-        ['Last', 'Next'].indexOf(fraction.tsMomentType) > -1)
+          relativePeriodMomentTypes.includes(fraction.tsMomentType))) ||
+      (dayEqualityFractionTypes.includes(fraction.type) &&
+        adjacentPeriodMomentTypes.includes(fraction.tsMomentType))
     "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
@@ -211,8 +194,8 @@
         fraction.tsMomentType !== 'Literal' && fraction.tsMomentType !== 'This'
       "
       [items]="
-        ['TsIsOnDay', 'TsIsNotOnDay'].indexOf(fraction.type) > -1 &&
-        ['Last', 'Next'].indexOf(fraction.tsMomentType) > -1
+        dayEqualityFractionTypes.includes(fraction.type) &&
+        adjacentPeriodMomentTypes.includes(fraction.tsMomentType)
           ? fractionTsOnDayUnitsList
           : fraction.tsMomentType === 'Literal'
             ? fractionTsLiteralUnitsList
@@ -265,29 +248,8 @@
 
   <div
     *ngIf="
-      [
-        'TsIsOnYear',
-        'TsIsOnQuarter',
-        'TsIsOnMonth',
-        'TsIsOnWeek',
-        'TsIsOnDay',
-        'TsIsOnHour',
-        'TsIsOnMinute',
-        'TsIsBefore',
-        'TsIsThrough',
-        'TsIsAfter',
-        'TsIsStarting',
-        'TsIsBeginFor',
-        'TsIsNotOnYear',
-        'TsIsNotOnQuarter',
-        'TsIsNotOnMonth',
-        'TsIsNotOnWeek',
-        'TsIsNotOnDay',
-        'TsIsNotOnHour',
-        'TsIsNotOnMinute',
-        'TsIsNotBeginFor'
-      ].indexOf(fraction.type) > -1 &&
-      ['Ago', 'FromNow'].indexOf(fraction.tsMomentType) > -1
+      calendarBoundaryFractionTypes.includes(fraction.type) &&
+      offsetMomentTypes.includes(fraction.tsMomentType)
     "
     class="flex flex-row space-x-5"
   >
@@ -327,15 +289,8 @@
 
   <div
     *ngIf="
-      [
-        'TsIsBefore',
-        'TsIsThrough',
-        'TsIsAfter',
-        'TsIsStarting',
-        'TsIsBeginFor',
-        'TsIsNotBeginFor'
-      ].indexOf(fraction.type) > -1 &&
-      ['Ago', 'FromNow'].indexOf(fraction.tsMomentType) > -1
+      timeBoundaryFractionTypes.includes(fraction.type) &&
+      offsetMomentTypes.includes(fraction.tsMomentType)
     "
   >
     <div
@@ -394,23 +349,8 @@
 
   <div
     *ngIf="
-      [
-        'TsIsOnYear',
-        'TsIsOnQuarter',
-        'TsIsOnMonth',
-        'TsIsOnWeek',
-        'TsIsOnDay',
-        'TsIsOnHour',
-        'TsIsOnMinute',
-        'TsIsNotOnYear',
-        'TsIsNotOnQuarter',
-        'TsIsNotOnMonth',
-        'TsIsNotOnWeek',
-        'TsIsNotOnDay',
-        'TsIsNotOnHour',
-        'TsIsNotOnMinute'
-      ].indexOf(fraction.type) > -1 &&
-      ['Ago', 'FromNow'].indexOf(fraction.tsMomentType) > -1
+      calendarEqualityFractionTypes.includes(fraction.type) &&
+      offsetMomentTypes.includes(fraction.tsMomentType)
     "
   >
     <div class="flex h-9 items-center">{{ fraction.tsMomentUnit + 's' }}</div>
@@ -419,7 +359,7 @@
   <!-- on year -->
   <div
     *ngIf="
-      ['TsIsOnYear', 'TsIsNotOnYear'].indexOf(fraction.type) > -1 &&
+      yearEqualityFractionTypes.includes(fraction.type) &&
       fraction.tsMomentType === 'Literal'
     "
     tp="Turn off formula to activate control"
@@ -439,7 +379,7 @@
   <!-- on quarter -->
   <div
     *ngIf="
-      ['TsIsOnQuarter', 'TsIsNotOnQuarter'].indexOf(fraction.type) > -1 &&
+      quarterEqualityFractionTypes.includes(fraction.type) &&
       fraction.tsMomentType === 'Literal'
     "
     tp="Turn off formula to activate control"
@@ -459,7 +399,7 @@
   <!-- on month -->
   <div
     *ngIf="
-      ['TsIsOnMonth', 'TsIsNotOnMonth'].indexOf(fraction.type) > -1 &&
+      monthEqualityFractionTypes.includes(fraction.type) &&
       fraction.tsMomentType === 'Literal'
     "
     tp="Turn off formula to activate control"
@@ -479,7 +419,7 @@
   <!-- on week -->
   <div
     *ngIf="
-      ['TsIsOnWeek', 'TsIsNotOnWeek'].indexOf(fraction.type) > -1 &&
+      weekEqualityFractionTypes.includes(fraction.type) &&
       fraction.tsMomentType === 'Literal'
     "
     tp="Turn off formula to activate control"
@@ -499,7 +439,7 @@
   <!-- on day -->
   <div
     *ngIf="
-      ['TsIsOnDay', 'TsIsNotOnDay'].indexOf(fraction.type) > -1 &&
+      dayEqualityFractionTypes.includes(fraction.type) &&
       fraction.tsMomentType === 'Literal'
     "
     tp="Turn off formula to activate control"
@@ -519,7 +459,7 @@
   <!-- on hour -->
   <div
     *ngIf="
-      ['TsIsOnHour', 'TsIsNotOnHour'].indexOf(fraction.type) > -1 &&
+      hourEqualityFractionTypes.includes(fraction.type) &&
       fraction.tsMomentType === 'Literal'
     "
     class="flex flex-row space-x-5"
@@ -558,7 +498,7 @@
   <!-- on minute -->
   <div
     *ngIf="
-      ['TsIsOnMinute', 'TsIsNotOnMinute'].indexOf(fraction.type) > -1 &&
+      minuteEqualityFractionTypes.includes(fraction.type) &&
       fraction.tsMomentType === 'Literal'
     "
     class="flex flex-row space-x-5"
@@ -596,7 +536,7 @@
 
   <!-- between -->
   <div
-    *ngIf="['TsIsBetween', 'TsIsNotBetween'].indexOf(fraction.type) > -1"
+    *ngIf="betweenRangeFractionTypes.includes(fraction.type)"
     class="flex flex-col"
   >
     <div class="flex h-16 flex-row space-x-5">
@@ -676,7 +616,7 @@
       </div>
 
       <div
-        *ngIf="['Ago', 'FromNow'].indexOf(fraction.tsFromMomentType) > -1"
+        *ngIf="offsetMomentTypes.includes(fraction.tsFromMomentType)"
         class="flex flex-row space-x-5"
       >
         <form [formGroup]="tsFromMomentAgoFromNowQuantityForm">
@@ -773,7 +713,7 @@
       <div
         *ngIf="
           fraction.tsFromMomentType === 'Literal' ||
-          ['This', 'Last', 'Next'].indexOf(fraction.tsFromMomentType) > -1
+          relativePeriodMomentTypes.includes(fraction.tsFromMomentType)
         "
         tp="Turn off formula to activate control"
         [tpIsEnabled]="isDisabled === true"
@@ -951,7 +891,7 @@
       </div>
 
       <div
-        *ngIf="['Ago', 'FromNow'].indexOf(fraction.tsToMomentType) > -1"
+        *ngIf="offsetMomentTypes.includes(fraction.tsToMomentType)"
         class="flex flex-row space-x-5"
       >
         <form [formGroup]="tsToMomentAgoFromNowQuantityForm">
@@ -1048,7 +988,7 @@
       <div
         *ngIf="
           fraction.tsToMomentType === 'Literal' ||
-          ['This', 'Last', 'Next'].indexOf(fraction.tsToMomentType) > -1
+          relativePeriodMomentTypes.includes(fraction.tsToMomentType)
         "
         tp="Turn off formula to activate control"
         [tpIsEnabled]="isDisabled === true"
@@ -1318,7 +1258,7 @@
 
   <!-- is begin for -->
   <div
-    *ngIf="['TsIsBeginFor', 'TsIsNotBeginFor'].indexOf(fraction.type) > -1"
+    *ngIf="durationRangeFractionTypes.includes(fraction.type)"
     class="flex flex-row space-x-5"
   >
     <div
@@ -1442,7 +1382,7 @@
 
   <!-- in last -->
   <div
-    *ngIf="['TsIsInLast', 'TsIsNotInLast'].indexOf(fraction.type) > -1"
+    *ngIf="pastRangeFractionTypes.includes(fraction.type)"
     class="flex flex-row space-x-5"
   >
     <form [formGroup]="tsLastValueForm">
@@ -1563,7 +1503,7 @@
 
   <!-- in next -->
   <div
-    *ngIf="['TsIsInNext', 'TsIsNotInNext'].indexOf(fraction.type) > -1"
+    *ngIf="futureRangeFractionTypes.includes(fraction.type)"
     class="flex flex-row space-x-5"
   >
     <form [formGroup]="tsNextValueForm">

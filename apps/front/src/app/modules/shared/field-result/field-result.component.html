@@ -48,12 +48,12 @@
   ></m-type-string-icon>
 
   <m-type-on-off-icon
-    *ngIf="['yesno', 'boolean'].indexOf(result) > -1"
+    *ngIf="booleanFieldResults.includes(result)"
     [size]="size"
   ></m-type-on-off-icon>
 
   <m-type-date-icon
-    *ngIf="['ts', 'date'].indexOf(result) > -1"
+    *ngIf="temporalFieldResults.includes(result)"
     [size]="size"
   ></m-type-date-icon>
 

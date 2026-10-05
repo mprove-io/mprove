@@ -10,6 +10,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 import type { FractionYesnoValue } from '#common/types/blockml/parts/fraction/fraction-yesno-value';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import {
@@ -24,6 +25,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionYesnoComponent {
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
   @ViewChild('fractionYesnoTypeSelect', { static: false })
   fractionYesnoTypeSelectElement: NgSelectComponent;
 

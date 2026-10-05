@@ -30,6 +30,7 @@ import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-
 import type { Parameter } from '#common/types/blockml/parts/report/row/parameter';
 import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
 import type { DataRow } from '#common/types/front/report/row/data-row';
+import type { Timeframe } from '#common/types/shared/time/timeframe';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -134,14 +135,14 @@ export class RowAddFilterDialogComponent implements OnInit {
                     `${metric.timeFieldId}_ts`
                   ]
                 : [
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}year`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}quarter`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}month`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}week`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}date`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}hour`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}minute`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}time`
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'year' satisfies Timeframe}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'quarter' satisfies Timeframe}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'month' satisfies Timeframe}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'week' satisfies Timeframe}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'date' satisfies Timeframe}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'hour' satisfies Timeframe}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'minute' satisfies Timeframe}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'time' satisfies Timeframe}`
                   ];
 
             this.sortedFieldsY = resp.output.model.fields
@@ -235,14 +236,14 @@ export class RowAddFilterDialogComponent implements OnInit {
               let optionOr: FractionSubTypeOption = {
                 logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
                 logicGroup: 'AND_NOT',
-                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -312,14 +313,14 @@ export class RowAddFilterDialogComponent implements OnInit {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
         operator: 'Or',
-        type: getFractionTypeForAny(field.result)
+        type: getFractionTypeForAny({ result: field.result })
       };
     } else {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
         operator: 'Or',
-        type: getFractionTypeForAny(field.result)
+        type: getFractionTypeForAny({ result: field.result })
       };
     }
 

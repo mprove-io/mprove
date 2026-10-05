@@ -59,6 +59,20 @@ export interface AddConnectionDialogData {
   ]
 })
 export class AddConnectionDialogComponent implements OnInit {
+  readonly connectionTypeBigQuery: ConnectionType = 'BigQuery';
+  readonly connectionTypeMotherDuck: ConnectionType = 'MotherDuck';
+  readonly connectionTypePostgreSQL: ConnectionType = 'PostgreSQL';
+  readonly connectionTypeMySQL: ConnectionType = 'MySQL';
+  readonly connectionTypeTrino: ConnectionType = 'Trino';
+  readonly connectionTypePresto: ConnectionType = 'Presto';
+  readonly connectionTypeSnowFlake: ConnectionType = 'SnowFlake';
+  readonly connectionTypeDatabricks: ConnectionType = 'Databricks';
+  readonly databricksAuthTypeOAuthM2M: DatabricksAuthType = 'OAuthM2M';
+  readonly databricksAuthTypePersonalAccessToken: DatabricksAuthType =
+    'PersonalAccessToken';
+  readonly connectionTypeApi: ConnectionType = 'Api';
+  readonly connectionTypeGoogleApi: ConnectionType = 'GoogleApi';
+
   @ViewChild('addConnectionDialogEnvSelect', { static: false })
   addConnectionDialogEnvSelectElement: NgSelectComponent;
 
@@ -136,7 +150,7 @@ export class AddConnectionDialogComponent implements OnInit {
         ]
       ],
       envId: [PROJECT_ENV_PROD],
-      type: ['PostgreSQL']
+      type: ['PostgreSQL' satisfies ConnectionType]
     });
 
     this.addBigqueryForm = this.fb.group({
@@ -220,7 +234,10 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addDatabricksForm = this.fb.group({
-      authType: ['OAuthM2M', [Validators.required]],
+      authType: [
+        'OAuthM2M' satisfies DatabricksAuthType,
+        [Validators.required]
+      ],
       host: [undefined, [Validators.required]],
       internalHost: [undefined, []],
       path: [undefined, [Validators.required]],
@@ -523,7 +540,9 @@ export class AddConnectionDialogComponent implements OnInit {
     }
 
     if (type !== 'Databricks') {
-      this.addDatabricksForm.controls['authType'].reset('OAuthM2M');
+      this.addDatabricksForm.controls['authType'].reset(
+        'OAuthM2M' satisfies DatabricksAuthType
+      );
       this.addDatabricksForm.controls['host'].reset();
       this.addDatabricksForm.controls['internalHost'].reset();
       this.addDatabricksForm.controls['path'].reset();
@@ -590,13 +609,13 @@ export class AddConnectionDialogComponent implements OnInit {
   isCurrentInternalPairInvalid() {
     let cType = this.addForm?.value?.type;
 
-    if (cType === 'PostgreSQL') {
+    if (cType === ('PostgreSQL' satisfies ConnectionType)) {
       return this.isPostgresInternalPairInvalid();
     }
-    if (cType === 'MySQL') {
+    if (cType === ('MySQL' satisfies ConnectionType)) {
       return this.isMysqlInternalPairInvalid();
     }
-    if (cType === 'Presto') {
+    if (cType === ('Presto' satisfies ConnectionType)) {
       return this.isPrestoInternalPairInvalid();
     }
     return false;
@@ -605,7 +624,7 @@ export class AddConnectionDialogComponent implements OnInit {
   getInternalPairErrorMessage() {
     let cType = this.addForm?.value?.type;
 
-    if (cType === 'Presto') {
+    if (cType === ('Presto' satisfies ConnectionType)) {
       return 'Set both Internal Server and Internal Port, or neither';
     }
     return 'Set both Internal Host and Internal Port, or neither';
@@ -614,28 +633,28 @@ export class AddConnectionDialogComponent implements OnInit {
   isInternalFieldsComplete() {
     let cType = this.addForm?.value?.type;
 
-    if (cType === 'PostgreSQL') {
+    if (cType === ('PostgreSQL' satisfies ConnectionType)) {
       let host = this.addPostgresForm?.value?.internalHost;
       let port = this.addPostgresForm?.value?.internalPort;
       return isDefined(host) && host !== '' && isDefined(port) && port !== '';
     }
-    if (cType === 'MySQL') {
+    if (cType === ('MySQL' satisfies ConnectionType)) {
       let host = this.addMysqlForm?.value?.internalHost;
       let port = this.addMysqlForm?.value?.internalPort;
       return isDefined(host) && host !== '' && isDefined(port) && port !== '';
     }
-    if (cType === 'Presto') {
+    if (cType === ('Presto' satisfies ConnectionType)) {
       let server = this.addPrestoForm?.value?.internalServer;
       let port = this.addPrestoForm?.value?.internalPort;
       return (
         isDefined(server) && server !== '' && isDefined(port) && port !== ''
       );
     }
-    if (cType === 'Trino') {
+    if (cType === ('Trino' satisfies ConnectionType)) {
       let server = this.addTrinoForm?.value?.internalServer;
       return isDefined(server) && server !== '';
     }
-    if (cType === 'Databricks') {
+    if (cType === ('Databricks' satisfies ConnectionType)) {
       let host = this.addDatabricksForm?.value?.internalHost;
       return isDefined(host) && host !== '';
     }
@@ -661,18 +680,27 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (
       !this.addForm.valid ||
-      (cType === 'BigQuery' && !this.addBigqueryForm.valid) ||
+      (cType === ('BigQuery' satisfies ConnectionType) &&
+        !this.addBigqueryForm.valid) ||
       // (cType === ConnectionTypeEnum.ClickHouse &&
       //   !this.addClickhouseForm.valid) ||
-      (cType === 'MotherDuck' && !this.addMotherduckForm.valid) ||
-      (cType === 'PostgreSQL' && !this.addPostgresForm.valid) ||
-      (cType === 'MySQL' && !this.addMysqlForm.valid) ||
-      (cType === 'Trino' && !this.addTrinoForm.valid) ||
-      (cType === 'Presto' && !this.addPrestoForm.valid) ||
-      (cType === 'SnowFlake' && !this.addSnowflakeForm.valid) ||
-      (cType === 'Databricks' && !this.addDatabricksForm.valid) ||
-      (cType === 'Api' && !this.addApiForm.valid) ||
-      (cType === 'GoogleApi' && !this.addGoogleApiForm.valid)
+      (cType === ('MotherDuck' satisfies ConnectionType) &&
+        !this.addMotherduckForm.valid) ||
+      (cType === ('PostgreSQL' satisfies ConnectionType) &&
+        !this.addPostgresForm.valid) ||
+      (cType === ('MySQL' satisfies ConnectionType) &&
+        !this.addMysqlForm.valid) ||
+      (cType === ('Trino' satisfies ConnectionType) &&
+        !this.addTrinoForm.valid) ||
+      (cType === ('Presto' satisfies ConnectionType) &&
+        !this.addPrestoForm.valid) ||
+      (cType === ('SnowFlake' satisfies ConnectionType) &&
+        !this.addSnowflakeForm.valid) ||
+      (cType === ('Databricks' satisfies ConnectionType) &&
+        !this.addDatabricksForm.valid) ||
+      (cType === ('Api' satisfies ConnectionType) && !this.addApiForm.valid) ||
+      (cType === ('GoogleApi' satisfies ConnectionType) &&
+        !this.addGoogleApiForm.valid)
     ) {
       return;
     }
@@ -682,9 +710,12 @@ export class AddConnectionDialogComponent implements OnInit {
     let prestoInternalPairInvalid = this.isPrestoInternalPairInvalid();
 
     if (
-      (cType === 'PostgreSQL' && postgresInternalPairInvalid) ||
-      (cType === 'MySQL' && mysqlInternalPairInvalid) ||
-      (cType === 'Presto' && prestoInternalPairInvalid)
+      (cType === ('PostgreSQL' satisfies ConnectionType) &&
+        postgresInternalPairInvalid) ||
+      (cType === ('MySQL' satisfies ConnectionType) &&
+        mysqlInternalPairInvalid) ||
+      (cType === ('Presto' satisfies ConnectionType) &&
+        prestoInternalPairInvalid)
     ) {
       return;
     }
@@ -703,7 +734,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     let options: ConnectionOptions = {
       bigquery:
-        cType === 'BigQuery'
+        cType === ('BigQuery' satisfies ConnectionType)
           ? {
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
@@ -728,7 +759,7 @@ export class AddConnectionDialogComponent implements OnInit {
       //       }
       //     : undefined,
       motherduck:
-        cType === 'MotherDuck'
+        cType === ('MotherDuck' satisfies ConnectionType)
           ? {
               motherduckToken: this.addMotherduckForm.value.motherduckToken,
               database: this.addMotherduckForm.value.database,
@@ -739,7 +770,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       postgres:
-        cType === 'PostgreSQL'
+        cType === ('PostgreSQL' satisfies ConnectionType)
           ? {
               host: this.addPostgresForm.value.host,
               internalHost:
@@ -759,7 +790,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       mysql:
-        cType === 'MySQL'
+        cType === ('MySQL' satisfies ConnectionType)
           ? {
               host: this.addMysqlForm.value.host,
               internalHost: this.addMysqlForm.value.internalHost || undefined,
@@ -777,7 +808,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       trino:
-        cType === 'Trino'
+        cType === ('Trino' satisfies ConnectionType)
           ? {
               server: this.addTrinoForm.value.server,
               internalServer:
@@ -789,7 +820,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       presto:
-        cType === 'Presto'
+        cType === ('Presto' satisfies ConnectionType)
           ? {
               server: this.addPrestoForm.value.server,
               internalServer:
@@ -809,7 +840,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       snowflake:
-        cType === 'SnowFlake'
+        cType === ('SnowFlake' satisfies ConnectionType)
           ? {
               account: this.addSnowflakeForm.value.account,
               warehouse: this.addSnowflakeForm.value.warehouse,
@@ -819,7 +850,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       databricks:
-        cType === 'Databricks'
+        cType === ('Databricks' satisfies ConnectionType)
           ? {
               authType: this.addDatabricksForm.value.authType,
               host: this.addDatabricksForm.value.host,
@@ -834,14 +865,14 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       storeApi:
-        cType === 'Api'
+        cType === ('Api' satisfies ConnectionType)
           ? {
               baseUrl: this.addApiForm.value.baseUrl.trim(),
               headers: this.addApiForm.value.headers
             }
           : undefined,
       storeGoogleApi:
-        cType === 'GoogleApi'
+        cType === ('GoogleApi' satisfies ConnectionType)
           ? {
               googleAccessToken: undefined,
               googleAccessTokenExpiryDate: undefined,
@@ -851,7 +882,8 @@ export class AddConnectionDialogComponent implements OnInit {
               baseUrl: this.addGoogleApiForm.value.baseUrl.trim(),
               headers: this.addGoogleApiForm.value.headers,
               googleAuthScopes:
-                ['GoogleApi'].indexOf(this.addForm.get('type').value) > -1
+                this.addForm.get('type').value ===
+                ('GoogleApi' satisfies ConnectionType)
                   ? this.addGoogleApiForm.value.scopes.map((x: any) => x.value)
                   : []
             }

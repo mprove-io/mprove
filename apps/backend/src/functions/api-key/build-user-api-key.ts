@@ -1,3 +1,5 @@
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
+
 export function buildUserApiKey(item: {
   prefix: string;
   userId: string;
@@ -5,5 +7,5 @@ export function buildUserApiKey(item: {
 }) {
   let { prefix, userId, secret } = item;
 
-  return `PK-${prefix}-${userId}-${secret}`;
+  return `${'PK' satisfies ApiKeyType}-${prefix}-${userId}-${secret}`;
 }

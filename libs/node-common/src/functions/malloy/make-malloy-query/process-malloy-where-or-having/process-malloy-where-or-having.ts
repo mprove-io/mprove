@@ -5,13 +5,25 @@ import {
   ASTWhereViewOperation
 } from '@malloydata/malloy-query-builder';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import { getMalloyFiltersFractions } from '#node-common/functions/malloy/make-malloy-query/process-malloy-where-or-having/get-malloy-filters-fractions/get-malloy-filters-fractions';
+
+const booleanFractionTypes = [
+  'BooleanIsTrue',
+  'BooleanIsTruthy',
+  'BooleanIsFalse',
+  'BooleanIsFalsy',
+  'BooleanIsNull',
+  'BooleanIsNotTrue',
+  'BooleanIsNotFalse',
+  'BooleanIsNotFalsy',
+  'BooleanIsNotNull'
+] satisfies FractionType[];
 
 export function processMalloyWhereOrHaving(item: {
   model: Model;
@@ -53,51 +65,27 @@ export function processMalloyWhereOrHaving(item: {
 
     let booleanValues = filter.fractions.filter(
       fraction =>
-        [
-          'BooleanIsTrue',
-          'BooleanIsTruthy',
-          'BooleanIsFalse',
-          'BooleanIsFalsy',
-          'BooleanIsNull',
-          'BooleanIsNotTrue',
-          'BooleanIsNotFalse',
-          'BooleanIsNotFalsy',
-          'BooleanIsNotNull'
-        ].indexOf(fraction.type) > -1
+        booleanFractionTypes.findIndex(
+          candidate => candidate === fraction.type
+        ) > -1
     );
 
     let ORs = filter.fractions.filter(
       fraction =>
         fraction.operator === 'Or' &&
         fraction.brick !== MALLOY_FILTER_ANY &&
-        [
-          'BooleanIsTrue',
-          'BooleanIsTruthy',
-          'BooleanIsFalse',
-          'BooleanIsFalsy',
-          'BooleanIsNull',
-          'BooleanIsNotTrue',
-          'BooleanIsNotFalse',
-          'BooleanIsNotFalsy',
-          'BooleanIsNotNull'
-        ].indexOf(fraction.type) < 0
+        booleanFractionTypes.findIndex(
+          candidate => candidate === fraction.type
+        ) < 0
     );
 
     let ANDs = filter.fractions.filter(
       fraction =>
         fraction.operator === 'And' &&
         fraction.brick !== MALLOY_FILTER_ANY &&
-        [
-          'BooleanIsTrue',
-          'BooleanIsTruthy',
-          'BooleanIsFalse',
-          'BooleanIsFalsy',
-          'BooleanIsNull',
-          'BooleanIsNotTrue',
-          'BooleanIsNotFalse',
-          'BooleanIsNotFalsy',
-          'BooleanIsNotNull'
-        ].indexOf(fraction.type) < 0
+        booleanFractionTypes.findIndex(
+          candidate => candidate === fraction.type
+        ) < 0
     );
 
     let filterModelFields = [modelField];

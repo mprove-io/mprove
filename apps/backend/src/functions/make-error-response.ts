@@ -5,7 +5,7 @@ import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseMetadata } from '#common/types/backend/response/to-backend-response-metadata';
-import { zEr } from '#common/types/shared/errors/er';
+import { type Er, zEr } from '#common/types/shared/errors/er';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 import {
   type WrappedError,
@@ -54,10 +54,11 @@ export function makeErrorResponse(item: {
   if (isDefined(operation)) {
     let code: string =
       wrappedError.message === 'ThrottlerException: Too Many Requests'
-        ? 'TOO_MANY_REQUESTS_ERROR'
+        ? ('TOO_MANY_REQUESTS_ERROR' satisfies Er)
         : wrappedError.name === 'ThrottlerException'
-          ? 'THROTTLER_ERROR'
-          : wrappedError.message === 'BACKEND_WRONG_REQUEST_PARAMS'
+          ? ('THROTTLER_ERROR' satisfies Er)
+          : wrappedError.message ===
+              ('BACKEND_WRONG_REQUEST_PARAMS' satisfies Er)
             ? 'BACKEND_INVALID_REQUEST'
             : typeof wrappedError.message === 'string' &&
                 zEr.options.some(value => value === wrappedError.message)
@@ -77,8 +78,8 @@ export function makeErrorResponse(item: {
               ? (wrappedError.displayData ?? [])
               : wrappedError.displayData,
         originalError:
-          (code === 'BACKEND_ERROR_RESPONSE_FROM_DISK' ||
-            code === 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML') &&
+          (code === ('BACKEND_ERROR_RESPONSE_FROM_DISK' satisfies Er) ||
+            code === ('BACKEND_ERROR_RESPONSE_FROM_BLOCKML' satisfies Er)) &&
           isDefined(wrappedError.originalError)
             ? {
                 code: wrappedError.originalError.message,

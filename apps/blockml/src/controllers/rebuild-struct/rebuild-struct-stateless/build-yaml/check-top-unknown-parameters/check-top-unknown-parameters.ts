@@ -8,6 +8,22 @@ import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
+
+const topLevelArrayParameters = [
+  'parameters',
+  'fields',
+  'tiles',
+  'build_metrics',
+  'field_groups',
+  'field_time_groups',
+  'results',
+  'rows',
+  'access_roles',
+  'folders',
+  'tables'
+] satisfies FileParameter[];
 
 let func: Func = 'build-yaml/check-top-unknown-parameters';
 
@@ -30,41 +46,43 @@ export function checkTopUnknownParameters(item: {
       .filter(x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
-          ['path'.toString(), 'ext'.toString(), 'name'.toString()].indexOf(
-            parameter
-          ) > -1
+          (['path', 'ext', 'name'] satisfies FileParameter[]).some(
+            candidate => candidate === parameter
+          )
         ) {
           return;
         }
 
         switch (file.ext) {
-          case '.store': {
+          case '.store' satisfies FileExtension: {
             if (
-              [
-                'store'.toString(),
-                'connection'.toString(),
-                'label'.toString(),
-                'space'.toString(),
-                'access_roles'.toString(),
-                'method'.toString(),
-                'preset'.toString(),
-                'request'.toString(),
-                'response'.toString(),
-                'date_range_includes_right_side'.toString(),
-                'parameters'.toString(),
-                'results'.toString(),
-                'build_metrics'.toString(),
-                'field_groups'.toString(),
-                'field_time_groups'.toString(),
-                'fields'.toString()
-              ].indexOf(parameter) < 0
+              (
+                [
+                  'store',
+                  'connection',
+                  'label',
+                  'space',
+                  'access_roles',
+                  'method',
+                  'preset',
+                  'request',
+                  'response',
+                  'date_range_includes_right_side',
+                  'parameters',
+                  'results',
+                  'build_metrics',
+                  'field_groups',
+                  'field_time_groups',
+                  'fields'
+                ] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: 'UNKNOWN_STORE_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `.store file`,
+                    `${'.store' satisfies FileExtension} file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -79,22 +97,24 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.dashboard': {
+          case '.dashboard' satisfies FileExtension: {
             if (
-              [
-                'dashboard'.toString(),
-                'title'.toString(),
-                'access_roles'.toString(),
-                'parameters'.toString(),
-                'tiles'.toString()
-              ].indexOf(parameter) < 0
+              (
+                [
+                  'dashboard',
+                  'title',
+                  'access_roles',
+                  'parameters',
+                  'tiles'
+                ] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: 'UNKNOWN_DASHBOARD_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `.dashboard file`,
+                    `${'.dashboard' satisfies FileExtension} file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -109,20 +129,18 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.chart': {
+          case '.chart' satisfies FileExtension: {
             if (
-              [
-                'chart'.toString(),
-                'access_roles'.toString(),
-                'tiles'.toString()
-              ].indexOf(parameter) < 0
+              (
+                ['chart', 'access_roles', 'tiles'] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: 'UNKNOWN_CHART_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `.chart file`,
+                    `${'.chart' satisfies FileExtension} file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -137,23 +155,25 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.report': {
+          case '.report' satisfies FileExtension: {
             if (
-              [
-                'report'.toString(),
-                'title'.toString(),
-                'parameters'.toString(),
-                'access_roles'.toString(),
-                'options'.toString(),
-                'rows'.toString()
-              ].indexOf(parameter) < 0
+              (
+                [
+                  'report',
+                  'title',
+                  'parameters',
+                  'access_roles',
+                  'options',
+                  'rows'
+                ] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: 'UNKNOWN_REPORT_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `.report file`,
+                    `${'.report' satisfies FileExtension} file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -168,20 +188,18 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.schema': {
+          case '.schema' satisfies FileExtension: {
             if (
-              [
-                'schema'.toString(),
-                'description'.toString(),
-                'tables'.toString()
-              ].indexOf(parameter) < 0
+              (
+                ['schema', 'description', 'tables'] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: 'UNKNOWN_SCHEMA_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `.schema file`,
+                    `${'.schema' satisfies FileExtension} file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -196,19 +214,20 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.yml': {
+          case '.yml' satisfies FileExtension: {
             if (
-              [
-                'mprove_dir'.toString(),
-                'week_start'.toString(),
-                // ParameterEnum.DefaultTimezone.toString(),
-                'allow_timezones'.toString(),
-                'format_number'.toString(),
-                'currency_prefix'.toString(),
-                'currency_suffix'.toString(),
-                'thousands_separator'.toString(),
-                'case_sensitive_string_filters'.toString()
-              ].indexOf(parameter) < 0
+              (
+                [
+                  'mprove_dir',
+                  'week_start',
+                  'allow_timezones',
+                  'format_number',
+                  'currency_prefix',
+                  'currency_suffix',
+                  'thousands_separator',
+                  'case_sensitive_string_filters'
+                ] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
@@ -230,21 +249,23 @@ export function checkTopUnknownParameters(item: {
             break;
           }
 
-          case '.space': {
+          case '.space' satisfies FileExtension: {
             if (
-              [
-                'space'.toString(),
-                'title'.toString(),
-                'access_roles'.toString(),
-                'folders'.toString()
-              ].indexOf(parameter) < 0
+              (
+                [
+                  'space',
+                  'title',
+                  'access_roles',
+                  'folders'
+                ] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: 'UNKNOWN_SPACE_PARAMETER',
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
-                    `.space file`,
+                    `${'.space' satisfies FileExtension} file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],
@@ -262,19 +283,9 @@ export function checkTopUnknownParameters(item: {
 
         if (
           Array.isArray(file[parameter]) &&
-          [
-            'parameters'.toString(),
-            'fields'.toString(),
-            'tiles'.toString(),
-            'build_metrics'.toString(),
-            'field_groups'.toString(),
-            'field_time_groups'.toString(),
-            'results'.toString(),
-            'rows'.toString(),
-            'access_roles'.toString(),
-            'folders'.toString(),
-            'tables'.toString()
-          ].indexOf(parameter) < 0
+          topLevelArrayParameters.findIndex(
+            candidate => candidate === parameter
+          ) < 0
         ) {
           item.errors.push(
             new BmError({
@@ -294,11 +305,9 @@ export function checkTopUnknownParameters(item: {
 
         if (
           file[parameter]?.constructor === Object &&
-          [
-            'options'.toString(),
-            'access_roles'.toString(),
-            'folders'.toString()
-          ].indexOf(parameter) < 0
+          (
+            ['options', 'access_roles', 'folders'] satisfies FileParameter[]
+          ).findIndex(candidate => candidate === parameter) < 0
         ) {
           item.errors.push(
             new BmError({
@@ -317,7 +326,7 @@ export function checkTopUnknownParameters(item: {
         }
 
         if (
-          ['options'.toString()].indexOf(parameter) > -1 &&
+          parameter === ('options' satisfies FileParameter) &&
           file[parameter]?.constructor !== Object
         ) {
           item.errors.push(
@@ -338,19 +347,7 @@ export function checkTopUnknownParameters(item: {
 
         if (
           !Array.isArray(file[parameter]) &&
-          [
-            'parameters'.toString(),
-            'fields'.toString(),
-            'tiles'.toString(),
-            'build_metrics'.toString(),
-            'field_groups'.toString(),
-            'field_time_groups'.toString(),
-            'results'.toString(),
-            'rows'.toString(),
-            'access_roles'.toString(),
-            'folders'.toString(),
-            'tables'.toString()
-          ].indexOf(parameter) > -1
+          topLevelArrayParameters.some(candidate => candidate === parameter)
         ) {
           item.errors.push(
             new BmError({

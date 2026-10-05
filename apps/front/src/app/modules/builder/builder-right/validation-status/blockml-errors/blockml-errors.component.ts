@@ -14,13 +14,13 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { DiskFileLine } from '#common/types/disk/parts/file/disk-file-line';
 import type { BmlErrorExtra } from '#common/types/front/diagnostics/bml-error-extra';
 import { getFileExtension } from '#front/app/functions/get-file-extension';
@@ -259,19 +259,19 @@ export class BlockmlErrorsComponent implements OnDestroy {
     switch (ext) {
       case 'other':
         return 1;
-      case '.yml':
+      case '.yml' satisfies FileExtension:
         return 2;
-      case '.md':
+      case '.md' satisfies FileExtension:
         return 3;
-      case '.space':
+      case '.space' satisfies FileExtension:
         return 4;
-      case '.store':
+      case '.store' satisfies FileExtension:
         return 5;
-      case '.report':
+      case '.report' satisfies FileExtension:
         return 6;
-      case '.dashboard':
+      case '.dashboard' satisfies FileExtension:
         return 7;
-      case '.chart':
+      case '.chart' satisfies FileExtension:
         return 8;
       default:
         return 0;

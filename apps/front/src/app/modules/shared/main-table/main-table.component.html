@@ -246,10 +246,10 @@
             'drag-handle': isEdit === true && canAccessModel !== false,
             'cursor-default': canAccessModel === false,
             'border-l': columnIndex === 0,
-            'bg-m150': column.fieldClass === 'dimension',
+            'bg-m150': column.fieldClass === fieldClassDimension,
             'bg-g2':
-              column.fieldClass === 'measure' ||
-              column.fieldClass === 'calculation'
+              column.fieldClass === fieldClassMeasure ||
+              column.fieldClass === fieldClassCalculation
           }"
           (cdkDragStarted)="onDragStart()"
           (cdkDragEnded)="onDragEnd()"

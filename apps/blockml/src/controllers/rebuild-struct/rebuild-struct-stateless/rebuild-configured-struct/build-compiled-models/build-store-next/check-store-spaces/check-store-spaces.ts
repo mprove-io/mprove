@@ -6,6 +6,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
@@ -34,7 +35,7 @@ export function checkStoreSpaces(
         item.errors.push(
           new BmError({
             title: 'SPACE_DOES_NOT_EXIST',
-            message: `store "${store.name}" references space "${store.space}" that does not exist`,
+            message: `${'store' satisfies FileParameter} "${store.name}" references space "${store.space}" that does not exist`,
             lines: [
               {
                 line: store.space_line_num,

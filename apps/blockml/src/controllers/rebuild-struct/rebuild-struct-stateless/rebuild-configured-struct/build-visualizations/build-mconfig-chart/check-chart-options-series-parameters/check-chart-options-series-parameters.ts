@@ -4,13 +4,14 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { CHART_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import { chartTypeValues } from '#common/types/blockml/parts/chart/chart-type';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { drcType } from '#common/types/blockml/parts/internal/drc-type';
 import type { FileChartOptionsSeriesElement } from '#common/types/blockml/parts/internal/file-chart-options-series';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
@@ -46,12 +47,14 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
           .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(parameter => {
             if (
-              [
-                'data_row_id'.toString(),
-                'data_field'.toString(),
-                'type'.toString(),
-                'y_axis_index'.toString()
-              ].indexOf(parameter) < 0
+              (
+                [
+                  'data_row_id',
+                  'data_field',
+                  'type',
+                  'y_axis_index'
+                ] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
@@ -136,15 +139,18 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             .filter(ln => ln !== 0);
 
           if (
-            ['BuildDashboardTileCharts', 'BuildChartTileCharts'].indexOf(
-              caller
-            ) > -1
+            (
+              [
+                'BuildDashboardTileCharts',
+                'BuildChartTileCharts'
+              ] satisfies Caller[]
+            ).some(candidate => candidate === caller)
           ) {
             if (isUndefined(seriesElement.data_field)) {
               item.errors.push(
                 new BmError({
                   title: 'OPTIONS_SERIES_MISSING_DATA_FIELD',
-                  message: `Series element must have "data_field" parameter`,
+                  message: `Series element must have "${'data_field' satisfies FileParameter}" parameter`,
                   lines: [
                     {
                       line: Math.min(...pKeysLineNums),
@@ -168,8 +174,8 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
                   new BmError({
                     title: 'OPTIONS_SERIES_WRONG_DATA_FIELD',
                     message:
-                      `"data_field" value must be one of ` +
-                      `"y_fields" elements`,
+                      `"${'data_field' satisfies FileParameter}" value must be one of ` +
+                      `"${'y_fields' satisfies FileParameter}" elements`,
                     lines: [
                       {
                         line: seriesElement.data_field_line_num,
@@ -187,7 +193,7 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
               item.errors.push(
                 new BmError({
                   title: 'OPTIONS_SERIES_WRONG_USE_OF_DATA_ROW_ID',
-                  message: `"data_row_id" can only be used inside report`,
+                  message: `"${'data_row_id' satisfies FileParameter}" can only be used inside report`,
                   lines: [
                     {
                       line: seriesElement.data_row_id_line_num,
@@ -206,7 +212,7 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
               item.errors.push(
                 new BmError({
                   title: 'OPTIONS_SERIES_MISSING_DATA_ROW_ID',
-                  message: `Series element must have "data_row_id" parameter`,
+                  message: `Series element must have "${'data_row_id' satisfies FileParameter}" parameter`,
                   lines: [
                     {
                       line: Math.min(...pKeysLineNums),
@@ -232,8 +238,8 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
                   new BmError({
                     title: 'OPTIONS_SERIES_WRONG_DATA_ROW_ID',
                     message:
-                      `"data_row_id" value must be one of ` +
-                      `row_ids with "show_chart" enabled`,
+                      `"${'data_row_id' satisfies FileParameter}" value must be one of ` +
+                      `row_ids with "${'show_chart' satisfies FileParameter}" enabled`,
                     lines: [
                       {
                         line: seriesElement.data_row_id_line_num,
@@ -251,7 +257,7 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
               item.errors.push(
                 new BmError({
                   title: 'OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD',
-                  message: `"data_field" can only be used inside dashboard or chart`,
+                  message: `"${'data_field' satisfies FileParameter}" can only be used inside dashboard or chart`,
                   lines: [
                     {
                       line: seriesElement.data_field_line_num,
@@ -275,7 +281,7 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
             item.errors.push(
               new BmError({
                 title: 'OPTIONS_SERIES_WRONG_Y_AXIS_INDEX',
-                message: `"y_axis_index" must be index of y_axis elements starting from 0`,
+                message: `"${'y_axis_index' satisfies FileParameter}" must be index of ${'y_axis' satisfies FileParameter} elements starting from 0`,
                 lines: [
                   {
                     line: seriesElement.y_axis_index_line_num,
@@ -290,12 +296,12 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
 
           if (
             isDefined(seriesElement.type) &&
-            CHART_TYPE_VALUES.indexOf(seriesElement.type) < 0
+            chartTypeValues.indexOf(seriesElement.type) < 0
           ) {
             item.errors.push(
               new BmError({
                 title: 'OPTIONS_SERIES_WRONG_TYPE',
-                message: `value "${seriesElement.type}" is not valid series "type"`,
+                message: `value "${seriesElement.type}" is not valid series "${'type' satisfies FileParameter}"`,
                 lines: [
                   {
                     line: seriesElement.type_line_num,

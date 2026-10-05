@@ -30,9 +30,9 @@ import {
 } from '#backend/services/explorer/explorer-chart-rebuild.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetExplorerChartTabOutput } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';
+import type { Er } from '#common/types/shared/errors/er';
 
 type GetExplorerChartTabErrors = Extract<
   ToBackendGetExplorerChartTabOutput,
@@ -174,7 +174,7 @@ export class GetExplorerChartTabService {
           rebuildErrors = [
             {
               title: 'Model does not exist',
-              message: 'BACKEND_MODEL_DOES_NOT_EXIST',
+              message: 'BACKEND_MODEL_DOES_NOT_EXIST' satisfies Er,
               lines: []
             }
           ];

@@ -9,6 +9,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { ControlClass } from '#common/types/blockml/parts/fraction/control-class';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FileStoreFractionControl } from '#common/types/blockml/parts/internal/file-store-fraction-control';
@@ -55,21 +56,23 @@ export function checkStoreFractionControls(
       .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
-          [
-            'input'.toString(),
-            'list_input'.toString(),
-            'switch'.toString(),
-            'date_picker'.toString(),
-            'selector'.toString(),
-            'options'.toString(),
-            'value'.toString(),
-            'label'.toString()
-          ].indexOf(parameter) < 0
+          (
+            [
+              'input',
+              'list_input',
+              'switch',
+              'date_picker',
+              'selector',
+              'options',
+              'value',
+              'label'
+            ] satisfies FileParameter[]
+          ).findIndex(candidate => candidate === parameter) < 0
         ) {
           item.errors.push(
             new BmError({
               title: 'UNKNOWN_CONTROLS_ELEMENT_PARAMETER',
-              message: `parameter "${parameter}" cannot be used in fraction_types element controls`,
+              message: `parameter "${parameter}" cannot be used in ${'fraction_types' satisfies FileParameter} element controls`,
               lines: [
                 {
                   line: control[
@@ -86,7 +89,7 @@ export function checkStoreFractionControls(
 
         if (
           Array.isArray(control[parameter as keyof FileStoreFractionControl]) &&
-          ['options'.toString()].indexOf(parameter) < 0
+          parameter !== ('options' satisfies FileParameter)
         ) {
           item.errors.push(
             new BmError({
@@ -142,7 +145,7 @@ export function checkStoreFractionControls(
         item.errors.push(
           new BmError({
             title: 'MISSING_OPTIONS',
-            message: `selector must have "options" parameter`,
+            message: `${'selector' satisfies FileParameter} must have "${'options' satisfies FileParameter}" parameter`,
             lines: [
               {
                 line: Math.min(...controlsElementKeyLineNums),
@@ -163,7 +166,7 @@ export function checkStoreFractionControls(
         item.errors.push(
           new BmError({
             title: 'OPTIONS_WITHOUT_SELECTOR',
-            message: `options can only be used with "selector" control`,
+            message: `${'options' satisfies FileParameter} can only be used with "${'selector' satisfies FileParameter}" control`,
             lines: [
               {
                 line: control.options_line_num,
@@ -195,22 +198,23 @@ export function checkStoreFractionControls(
         );
       }
 
-      let declarations: string[] = Object.keys(control).filter(
-        d =>
+      let declarations: string[] = Object.keys(control).filter(d =>
+        (
           [
-            'input'.toString(),
-            'list_input'.toString(),
-            'switch'.toString(),
-            'date_picker'.toString(),
-            'selector'.toString()
-          ].indexOf(d) > -1
+            'input',
+            'list_input',
+            'switch',
+            'date_picker',
+            'selector'
+          ] satisfies FileParameter[]
+        ).some(candidate => candidate === d)
       );
 
       if (declarations.length === 0) {
         item.errors.push(
           new BmError({
             title: 'MISSING_CONTROL_DECLARATION',
-            message: `control must contain one of parameters: input, switch, date_picker, selector`,
+            message: `control must contain one of parameters: ${'input' satisfies FileParameter}, ${'switch' satisfies FileParameter}, ${'date_picker' satisfies FileParameter}, ${'selector' satisfies FileParameter}`,
             lines: [
               {
                 line: Math.min(...controlsElementKeyLineNums),
@@ -227,7 +231,7 @@ export function checkStoreFractionControls(
         item.errors.push(
           new BmError({
             title: 'TOO_MANY_DECLARATIONS_FOR_ONE_CONTROL',
-            message: `control must contain only one of parameters:input, switch, date_picker, selector`,
+            message: `control must contain only one of parameters:${'input' satisfies FileParameter}, ${'switch' satisfies FileParameter}, ${'date_picker' satisfies FileParameter}, ${'selector' satisfies FileParameter}`,
             lines: [
               {
                 line: Math.min(...controlsElementKeyLineNums),

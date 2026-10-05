@@ -26,7 +26,6 @@ import {
   MIN_TIME_TO_SPIN,
   SPECIAL_ERROR
 } from '#common/constants/top-front';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeToBackendRequest } from '#common/functions/make-to-backend-request/make-to-backend-request';
@@ -38,7 +37,9 @@ import type { ToBackendResponseForRoute } from '#common/types/backend/response/t
 import type { ToBackendGetReportsOutput } from '#common/types/backend/routes/reports/get-reports/get-reports-output';
 import type { ToBackendGetReportsRequest } from '#common/types/backend/routes/reports/get-reports/get-reports-request';
 import type { ToBackendGetReportsResponse } from '#common/types/backend/routes/reports/get-reports/get-reports-response';
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import type { ErrorData } from '#common/types/front/ui/error-data';
+import type { Er } from '#common/types/shared/errors/er';
 import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
@@ -165,9 +166,9 @@ export class ApiService {
       response: Object.assign({}, res, { headers: undefined }),
       message:
         res.status !== 201
-          ? 'FRONT_RESPONSE_CODE_IS_NOT_201'
+          ? ('FRONT_RESPONSE_CODE_IS_NOT_201' satisfies Er)
           : res.body?.type !== 'Success'
-            ? 'FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK'
+            ? ('FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK' satisfies Er)
             : undefined
     };
 
@@ -176,20 +177,24 @@ export class ApiService {
 
     if (
       isDefined(errorData.message) &&
-      errorData.message === 'FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK'
+      errorData.message ===
+        ('FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK' satisfies Er)
     ) {
       if (
-        [
-          'BACKEND_UNAUTHORIZED',
-          'BACKEND_NOT_AUTHORIZED',
-          'BACKEND_USER_DOES_NOT_EXIST'
-        ].some(message => message === infoErrorMessage)
+        (
+          [
+            'BACKEND_UNAUTHORIZED',
+            'BACKEND_NOT_AUTHORIZED',
+            'BACKEND_USER_DOES_NOT_EXIST'
+          ] satisfies Er[]
+        ).some(message => message === infoErrorMessage)
       ) {
         this.authService.logout();
       }
 
       if (
-        infoErrorMessage === 'BACKEND_ERROR_RESPONSE_FROM_DISK' &&
+        infoErrorMessage ===
+          ('BACKEND_ERROR_RESPONSE_FROM_DISK' satisfies Er) &&
         errorData.response.body.error.originalError?.code ===
           'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH'
       ) {
@@ -227,7 +232,7 @@ export class ApiService {
               .then(() => {
                 this.router.navigate(arNext, {
                   queryParams: {
-                    left: 'Tree'
+                    left: 'Tree' satisfies BuilderLeft
                   }
                 });
               });
@@ -235,13 +240,15 @@ export class ApiService {
             this.myDialogService.showError({
               errorData: {
                 message:
-                  'FRONT_CANNOT_SWITCH_BRANCH_WHILE_SELECTED_REPO_HAS_UNCOMMITTED_CHANGES'
+                  'FRONT_CANNOT_SWITCH_BRANCH_WHILE_SELECTED_REPO_HAS_UNCOMMITTED_CHANGES' satisfies Er
               },
               isThrow: false
             });
           }, 0);
         }
-      } else if (infoErrorMessage === 'BACKEND_FORBIDDEN_DASHBOARD') {
+      } else if (
+        infoErrorMessage === ('BACKEND_FORBIDDEN_DASHBOARD' satisfies Er)
+      ) {
         errorData.description = `Check dashboard access rules`;
         errorData.leftButtonText = 'Go to dashboards';
         errorData.leftOnClickFnBindThis = (() => {
@@ -253,7 +260,9 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (infoErrorMessage === 'BACKEND_FORBIDDEN_REPORT') {
+      } else if (
+        infoErrorMessage === ('BACKEND_FORBIDDEN_REPORT' satisfies Er)
+      ) {
         errorData.description = `Check report access rules`;
         errorData.leftButtonText = 'Go to reports';
         errorData.leftOnClickFnBindThis = (() => {
@@ -265,7 +274,9 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (infoErrorMessage === 'BACKEND_FORBIDDEN_MODEL') {
+      } else if (
+        infoErrorMessage === ('BACKEND_FORBIDDEN_MODEL' satisfies Er)
+      ) {
         errorData.description = `Check model access rules`;
         errorData.leftButtonText = 'Go to charts';
         errorData.leftOnClickFnBindThis = (() => {
@@ -277,7 +288,9 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (infoErrorMessage === 'BACKEND_FORBIDDEN_REPO_ID') {
+      } else if (
+        infoErrorMessage === ('BACKEND_FORBIDDEN_REPO_ID' satisfies Er)
+      ) {
         errorData.message = 'Session is not found';
         errorData.leftButtonText = 'Ok';
         errorData.leftOnClickFnBindThis = (() => {
@@ -303,9 +316,12 @@ export class ApiService {
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
-        ['BACKEND_REPORT_DOES_NOT_EXIST', 'BACKEND_REPORT_NOT_FOUND'].some(
-          message => message === infoErrorMessage
-        )
+        (
+          [
+            'BACKEND_REPORT_DOES_NOT_EXIST',
+            'BACKEND_REPORT_NOT_FOUND'
+          ] satisfies Er[]
+        ).some(message => message === infoErrorMessage)
       ) {
         let uiState = this.uiQuery.getValue();
 
@@ -318,21 +334,9 @@ export class ApiService {
           .then(() => {
             this.navigateService.navigateToReports();
           });
-      } else if (infoErrorMessage === 'BACKEND_MODEL_DOES_NOT_EXIST') {
-        // console.log(infoErrorMessage);
-        this.router
-          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-          .then(() => {
-            this.navigateService.navigateToModels();
-          });
-      } else if (infoErrorMessage === 'BACKEND_DASHBOARD_DOES_NOT_EXIST') {
-        // console.log(infoErrorMessage);
-        this.router
-          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-          .then(() => {
-            this.navigateService.navigateToDashboards();
-          });
-      } else if (infoErrorMessage === 'BACKEND_CHART_DOES_NOT_EXIST') {
+      } else if (
+        infoErrorMessage === ('BACKEND_MODEL_DOES_NOT_EXIST' satisfies Er)
+      ) {
         // console.log(infoErrorMessage);
         this.router
           .navigateByUrl(orgProjectPath, { skipLocationChange: true })
@@ -340,12 +344,32 @@ export class ApiService {
             this.navigateService.navigateToModels();
           });
       } else if (
-        [
-          'BACKEND_MCONFIG_DOES_NOT_EXIST',
-          'BACKEND_QUERY_DOES_NOT_EXIST',
-          'BACKEND_STRUCT_ID_CHANGED',
-          'BACKEND_STRUCT_DOES_NOT_EXIST'
-        ].some(message => message === infoErrorMessage)
+        infoErrorMessage === ('BACKEND_DASHBOARD_DOES_NOT_EXIST' satisfies Er)
+      ) {
+        // console.log(infoErrorMessage);
+        this.router
+          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+          .then(() => {
+            this.navigateService.navigateToDashboards();
+          });
+      } else if (
+        infoErrorMessage === ('BACKEND_CHART_DOES_NOT_EXIST' satisfies Er)
+      ) {
+        // console.log(infoErrorMessage);
+        this.router
+          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+          .then(() => {
+            this.navigateService.navigateToModels();
+          });
+      } else if (
+        (
+          [
+            'BACKEND_MCONFIG_DOES_NOT_EXIST',
+            'BACKEND_QUERY_DOES_NOT_EXIST',
+            'BACKEND_STRUCT_ID_CHANGED',
+            'BACKEND_STRUCT_DOES_NOT_EXIST'
+          ] satisfies Er[]
+        ).some(message => message === infoErrorMessage)
       ) {
         errorData.description = `Reload to get changes`;
         errorData.leftButtonText = 'Reload';
@@ -369,16 +393,25 @@ export class ApiService {
         // }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (infoErrorMessage === 'BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED') {
+      } else if (
+        infoErrorMessage ===
+        ('BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED' satisfies Er)
+      ) {
         errorData.description = `Sign in to ChatGPT on user profile page to refresh auth`;
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (infoErrorMessage === 'BACKEND_RESTRICTED_USER') {
+      } else if (
+        infoErrorMessage === ('BACKEND_RESTRICTED_USER' satisfies Er)
+      ) {
         errorData.description = `Demo user is restricted. Sign Up at https://mprove.io to create your own project.`;
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (infoErrorMessage === 'BACKEND_RESTRICTED_PROJECT') {
+      } else if (
+        infoErrorMessage === ('BACKEND_RESTRICTED_PROJECT' satisfies Er)
+      ) {
         errorData.description = `Some actions of Demo project are restricted. Switch organization project to remove restrictions.`;
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (infoErrorMessage === 'BACKEND_ROLES_DO_NOT_EXIST') {
+      } else if (
+        infoErrorMessage === ('BACKEND_ROLES_DO_NOT_EXIST' satisfies Er)
+      ) {
         let missingRoles = errorData.response.body.error.displayData?.roles;
 
         let missingRolesText = Array.isArray(missingRoles)
@@ -392,14 +425,16 @@ export class ApiService {
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
-        [
-          'BACKEND_CREATE_DASHBOARD_FAIL',
-          'BACKEND_MODIFY_DASHBOARD_FAIL',
-          'BACKEND_CREATE_CHART_FAIL',
-          'BACKEND_MODIFY_CHART_FAIL',
-          'BACKEND_CREATE_REPORT_FAIL',
-          'BACKEND_MODIFY_REPORT_FAIL'
-        ].some(message => message === infoErrorMessage)
+        (
+          [
+            'BACKEND_CREATE_DASHBOARD_FAIL',
+            'BACKEND_MODIFY_DASHBOARD_FAIL',
+            'BACKEND_CREATE_CHART_FAIL',
+            'BACKEND_MODIFY_CHART_FAIL',
+            'BACKEND_CREATE_REPORT_FAIL',
+            'BACKEND_MODIFY_REPORT_FAIL'
+          ] satisfies Er[]
+        ).some(message => message === infoErrorMessage)
       ) {
         errorData.description = `The changes were saved to the file, but it failed the validation. It's probably a bug.`;
         errorData.leftButtonText = 'Go to File';
@@ -433,7 +468,8 @@ export class ApiService {
       return response;
     } else if (
       isDefined(errorData.message) &&
-      errorData.message !== 'FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK'
+      errorData.message !==
+        ('FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK' satisfies Er)
     ) {
       this.myDialogService.showError({ errorData, isThrow: true });
 
@@ -474,10 +510,10 @@ export class ApiService {
       originalError: e,
       message:
         e instanceof HttpErrorResponse
-          ? 'FRONT_INSTANCE_OF_HTTP_ERROR_RESPONSE'
+          ? ('FRONT_INSTANCE_OF_HTTP_ERROR_RESPONSE' satisfies Er)
           : e instanceof TimeoutError
-            ? 'FRONT_INSTANCE_OF_TIMEOUT_ERROR'
-            : 'FRONT_API_UNKNOWN_ERROR'
+            ? ('FRONT_INSTANCE_OF_TIMEOUT_ERROR' satisfies Er)
+            : ('FRONT_API_UNKNOWN_ERROR' satisfies Er)
     };
 
     this.myDialogService.showError({ errorData, isThrow: false });

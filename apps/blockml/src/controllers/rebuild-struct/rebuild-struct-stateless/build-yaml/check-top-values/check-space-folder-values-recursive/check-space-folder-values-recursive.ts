@@ -1,5 +1,5 @@
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
-
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import { checkSpaceValue } from './check-space-value/check-space-value';
 
 export function checkSpaceFolderValuesRecursive(item: {
@@ -18,13 +18,13 @@ export function checkSpaceFolderValuesRecursive(item: {
       return;
     }
 
-    if (folder['space'.toString()]) {
+    if (folder['space' satisfies FileParameter]) {
       checkSpaceValue({
         file: Object.assign({}, folder, {
           name: rootFile.name,
           path: rootFile.path
         }),
-        parameter: 'space'.toString(),
+        parameter: 'space' satisfies FileParameter,
         errors: errors,
         isAllowDots: false
       });

@@ -3,9 +3,13 @@ import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-output';
 import type { ToBackendGetQueryInfoRequest } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-request';
-import { zRepoType } from '#common/types/disk/parts/repo/repo-type';
+import {
+  type RepoType,
+  zRepoType
+} from '#common/types/disk/parts/repo/repo-type';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
@@ -40,7 +44,7 @@ export class GetQueryInfoCommand extends CustomCommand {
   repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(zRepoType.options),
-    description: `(required, "dev", "production" or "session")`
+    description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 
   branch = Option.String('--branch', {
@@ -129,7 +133,7 @@ export class GetQueryInfoCommand extends CustomCommand {
     let repoId =
       this.repoType === 'production'
         ? PROD_REPO_ID
-        : apiKey.startsWith(`SK-`)
+        : apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 

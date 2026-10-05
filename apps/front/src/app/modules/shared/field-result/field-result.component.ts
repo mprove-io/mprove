@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { ALL_RESULT_VALUES } from '#common/constants/top';
+
 import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
-import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import {
+  type FieldResult,
+  fieldResultValues
+} from '#common/types/blockml/parts/field/field-result';
 
 @Component({
   standalone: false,
@@ -9,7 +12,10 @@ import type { FieldResult } from '#common/types/blockml/parts/field/field-result
   templateUrl: './field-result.component.html'
 })
 export class FieldResultComponent {
-  allResultValues = ALL_RESULT_VALUES;
+  readonly booleanFieldResults: FieldResult[] = ['yesno', 'boolean'];
+  readonly temporalFieldResults: FieldResult[] = ['ts', 'date'];
+
+  allResultValues = fieldResultValues;
 
   @Input()
   fieldClass: FieldClass;

@@ -8,11 +8,11 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { UiSwitchModule } from 'ngx-ui-switch';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ChartPointsData } from '#common/types/front/chart/chart-points-data';
 import type { DataPoint } from '#common/types/front/chart/data-point';
 import type { DataRow } from '#common/types/front/report/row/data-row';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { DataService } from '#front/app/services/data.service';
@@ -93,22 +93,21 @@ export class ChartFormulaDialogComponent implements OnInit {
       },
       xAxis: {
         type: 'time',
-        axisLabel:
-          ['hours', 'minutes', 'timestamps'].indexOf(
-            this.uiQuery.getValue().timeSpec
-          ) > -1
-            ? { fontSize: 13 }
-            : {
-                fontSize: 13,
-                formatter: (value: any) => {
-                  let timeSpec = this.uiQuery.getValue().timeSpec;
+        axisLabel: (
+          ['hours', 'minutes', 'timestamps'] satisfies TimeSpec[]
+        ).some(candidate => candidate === this.uiQuery.getValue().timeSpec)
+          ? { fontSize: 13 }
+          : {
+              fontSize: 13,
+              formatter: (value: any) => {
+                let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                  return frontFormatTsUnix({
-                    timeSpec: timeSpec,
-                    unixTimeZoned: value / 1000
-                  });
-                }
+                return frontFormatTsUnix({
+                  timeSpec: timeSpec,
+                  unixTimeZoned: value / 1000
+                });
               }
+            }
       },
       yAxis: {
         type: 'value',

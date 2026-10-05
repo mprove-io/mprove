@@ -10,8 +10,8 @@
         [ngClass]="{
           'h-11':
             fractions.length === 0 ||
-            ['TsIsBetween'].indexOf(fractions[0].type) < 0,
-          'h-[100px]': ['TsIsBetween'].indexOf(fractions[0].type) > -1
+            timeRangeFractionTypes.indexOf(fractions[0].type) < 0,
+          'h-[100px]': timeRangeFractionTypes.includes(fractions[0].type)
         }"
       >
         <div class="flex w-full flex-row items-center">

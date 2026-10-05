@@ -11,8 +11,8 @@ import {
   ASTWhereViewOperation,
   ParsedFilter
 } from '@malloydata/malloy-query-builder';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import { getMalloyFilterBooleanFractions } from '#node-common/functions/malloy/get-malloy-filter-boolean-fractions/get-malloy-filter-boolean-fractions';
@@ -73,7 +73,9 @@ export function getMalloyFiltersFractions(item: {
                   parentBrick: parentBrick,
                   parsed: parsedFilter.parsed
                 }).fractions
-              : ['ts', 'date'].indexOf(field.result) > -1 &&
+              : (['ts', 'date'] satisfies FieldResult[]).findIndex(
+                    candidate => candidate === field.result
+                  ) > -1 &&
                   (parsedFilter.kind === 'timestamp' ||
                     parsedFilter.kind === 'date')
                 ? getMalloyFilterTsFractions({

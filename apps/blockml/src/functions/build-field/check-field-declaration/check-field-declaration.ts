@@ -8,7 +8,7 @@ import { LINE_NUM } from '#common/constants/top-blockml';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
-
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
@@ -32,7 +32,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
 
     x.parameters.forEach(field => {
       let declarations: string[] = Object.keys(field).filter(
-        d => ['filter'.toString()].indexOf(d) > -1
+        d => d === ('filter' satisfies FileParameter)
       );
 
       let fieldKeysLineNums: number[] = Object.keys(field)
@@ -44,7 +44,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
         item.errors.push(
           new BmError({
             title: 'MISSING_PARAMETER_DECLARATION',
-            message: `parameter must contain filter`,
+            message: `parameter must contain ${'filter' satisfies FileParameter}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -101,13 +101,10 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
     });
 
     x.fields.forEach(field => {
-      let declarations: string[] = Object.keys(field).filter(
-        d =>
-          [
-            'dimension'.toString(),
-            'time'.toString(),
-            'measure'.toString()
-          ].indexOf(d) > -1
+      let declarations: string[] = Object.keys(field).filter(d =>
+        (['dimension', 'time', 'measure'] satisfies FileParameter[]).some(
+          candidate => candidate === d
+        )
       );
 
       let fieldKeysLineNums: number[] = Object.keys(field)
@@ -118,7 +115,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
         item.errors.push(
           new BmError({
             title: 'MISSING_FIELD_DECLARATION',
-            message: `field must contain one of parameters: dimension, time, measure`,
+            message: `field must contain one of parameters: ${'dimension' satisfies FileParameter}, ${'time' satisfies FileParameter}, ${'measure' satisfies FileParameter}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -135,7 +132,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
         item.errors.push(
           new BmError({
             title: 'TOO_MANY_DECLARATIONS_FOR_ONE_FIELD',
-            message: `field must contain only one of parameters: dimension, time, measure`,
+            message: `field must contain only one of parameters: ${'dimension' satisfies FileParameter}, ${'time' satisfies FileParameter}, ${'measure' satisfies FileParameter}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -177,7 +174,7 @@ export function checkFieldDeclaration<T extends sdrType>(item: {
       let fieldName = field[fieldClass as keyof FieldAny] as string;
 
       if (
-        ['time'.toString()].indexOf(fieldClass) > -1 &&
+        fieldClass === ('time' satisfies FileParameter) &&
         caller === 'BuildStoreField'
       ) {
         item.errors.push(

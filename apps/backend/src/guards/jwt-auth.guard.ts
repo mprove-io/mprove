@@ -13,6 +13,7 @@ import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-sessi
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { SKIP_JWT } from '#common/constants/top-backend';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -54,7 +55,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (authHeader) {
       let bearer = authHeader.replace(/^Bearer\s+/i, '');
 
-      if (bearer.startsWith(`PK-`) || bearer.startsWith(`SK-`)) {
+      if (
+        bearer.startsWith(`${'PK' satisfies ApiKeyType}-`) ||
+        bearer.startsWith(`${'SK' satisfies ApiKeyType}-`)
+      ) {
         return this.validateApiKey(request, bearer);
       }
     }

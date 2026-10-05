@@ -2,14 +2,18 @@ import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { EventMessagePartUpdated, ToolPart } from '@opencode-ai/sdk/v2';
-import type { LanguageModelUsage, ModelMessage, ProviderMetadata } from 'ai';
-import { stepCountIs, streamText } from 'ai';
+import {
+  type LanguageModelUsage,
+  type ModelMessage,
+  type ProviderMetadata,
+  stepCountIs,
+  streamText
+} from 'ai';
 import { and, asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
@@ -25,6 +29,7 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
+import type { AiStreamCommand } from '#common/types/backend/parts/session/ai-stream-command';
 import { CodexService } from '../codex.service';
 import { ProjectsService } from '../db/projects.service';
 import { ProvidersService } from '../db/providers.service';
@@ -120,12 +125,12 @@ export class ExplorerStreamService implements OnModuleDestroy {
           return;
         }
 
-        if (command === 'stop') {
+        if (command === ('stop' satisfies AiStreamCommand)) {
           // console.log(`[ai-stream] received stop for sessionId=${sessionId}`);
 
           let ac = this.abortControllers.get(sessionId);
           ac.abort();
-        } else if (command === 'set-title') {
+        } else if (command === ('set-title' satisfies AiStreamCommand)) {
           // console.log(
           //   `[ai-stream] received set-title for sessionId=${sessionId}`
           // );
@@ -138,7 +143,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
             sessionId: sessionId,
             event: titleEvent
           });
-        } else if (command === 'interact') {
+        } else if (command === ('interact' satisfies AiStreamCommand)) {
           let { replyTo, payload } = parsed;
 
           // console.log(
@@ -194,7 +199,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_AI_STREAM_COMMAND,
       JSON.stringify({
-        command: 'stop',
+        command: 'stop' satisfies AiStreamCommand,
         sessionId: item.sessionId
       })
     );
@@ -222,7 +227,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_AI_STREAM_COMMAND,
       JSON.stringify({
-        command: 'interact',
+        command: 'interact' satisfies AiStreamCommand,
         sessionId: item.sessionId,
         replyTo: replyTo,
         payload: {
@@ -289,7 +294,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       await this.redisClient.publish(
         CHANNEL_AI_STREAM_COMMAND,
         JSON.stringify({
-          command: 'set-title',
+          command: 'set-title' satisfies AiStreamCommand,
           sessionId: item.sessionId,
           title: item.title
         })
@@ -303,7 +308,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         await this.redisClient.publish(
           CHANNEL_AI_STREAM_COMMAND,
           JSON.stringify({
-            command: 'set-title',
+            command: 'set-title' satisfies AiStreamCommand,
             sessionId: item.sessionId,
             title: item.title
           })

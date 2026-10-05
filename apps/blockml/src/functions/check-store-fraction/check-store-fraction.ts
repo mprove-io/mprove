@@ -3,12 +3,13 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { LOGIC_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
+import { fractionLogicValues } from '#common/types/blockml/parts/fraction/fraction-logic';
 import type { FieldStoreFilter } from '#common/types/blockml/parts/internal/field-store-filter';
 import type { FileFraction } from '#common/types/blockml/parts/internal/file-fraction';
 import type { FileStoreFractionType } from '#common/types/blockml/parts/internal/file-store-fraction-type';
@@ -61,16 +62,14 @@ export function checkStoreFraction(
       .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
-          [
-            'logic'.toString(),
-            'type'.toString(),
-            'controls'.toString()
-          ].indexOf(parameter) < 0
+          (['logic', 'type', 'controls'] satisfies FileParameter[]).findIndex(
+            candidate => candidate === parameter
+          ) < 0
         ) {
           item.errors.push(
             new BmError({
               title: 'UNKNOWN_FRACTIONS_ELEMENT_PARAMETER',
-              message: `parameter "${parameter}" cannot be used in fractions element`,
+              message: `parameter "${parameter}" cannot be used in ${'fractions' satisfies FileParameter} element`,
               lines: [
                 {
                   line: fraction[
@@ -87,7 +86,7 @@ export function checkStoreFraction(
 
         if (
           Array.isArray(fraction[parameter as keyof FileFraction]) &&
-          ['controls'.toString()].indexOf(parameter) < 0
+          parameter !== ('controls' satisfies FileParameter)
         ) {
           item.errors.push(
             new BmError({
@@ -131,7 +130,7 @@ export function checkStoreFraction(
       item.errors.push(
         new BmError({
           title: 'FRACTION_MISSING_LOGIC',
-          message: `parameter "logic" must be specified`,
+          message: `parameter "${'logic' satisfies FileParameter}" must be specified`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -148,7 +147,7 @@ export function checkStoreFraction(
       item.errors.push(
         new BmError({
           title: 'FRACTION_CANNOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER',
-          message: `parameter "logic" cannot be used with store filter`,
+          message: `parameter "${'logic' satisfies FileParameter}" cannot be used with store filter`,
           lines: [
             {
               line: fraction.logic_line_num,
@@ -165,7 +164,7 @@ export function checkStoreFraction(
       item.errors.push(
         new BmError({
           title: 'FRACTION_CANNOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER',
-          message: `parameter "type" cannot be used with store filter`,
+          message: `parameter "${'type' satisfies FileParameter}" cannot be used with store filter`,
           lines: [
             {
               line: fraction.type_line_num,
@@ -180,12 +179,12 @@ export function checkStoreFraction(
 
     if (
       isDefined(fraction.logic) &&
-      LOGIC_VALUES.map(v => v.toString()).indexOf(fraction.logic) < 0
+      fractionLogicValues.indexOf(fraction.logic) < 0
     ) {
       item.errors.push(
         new BmError({
           title: 'WRONG_LOGIC',
-          message: `logic value must be "OR" or "AND_NOT"`,
+          message: `${'logic' satisfies FileParameter} value must be "OR" or "AND_NOT"`,
           lines: [
             {
               line: fraction.logic_line_num,
@@ -202,7 +201,7 @@ export function checkStoreFraction(
       item.errors.push(
         new BmError({
           title: 'FRACTION_MISSING_TYPE',
-          message: `parameter "type" must be specified`,
+          message: `parameter "${'type' satisfies FileParameter}" must be specified`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -219,7 +218,7 @@ export function checkStoreFraction(
       item.errors.push(
         new BmError({
           title: 'FRACTION_MISSING_TYPE',
-          message: `parameter "type" must be specified`,
+          message: `parameter "${'type' satisfies FileParameter}" must be specified`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -236,7 +235,7 @@ export function checkStoreFraction(
       item.errors.push(
         new BmError({
           title: 'FRACTION_MISSING_CONTROLS',
-          message: `parameter "controls" is required`,
+          message: `parameter "${'controls' satisfies FileParameter}" is required`,
           lines: [
             {
               line: Math.min(...fractionLineNums),
@@ -258,7 +257,7 @@ export function checkStoreFraction(
         item.errors.push(
           new BmError({
             title: 'WRONG_TYPE',
-            message: `type references missing "${fraction.type}" of store result "${item.storeResult}"`,
+            message: `${'type' satisfies FileParameter} references missing "${fraction.type}" of store result "${item.storeResult}"`,
             lines: [
               {
                 line: fraction.type_line_num,

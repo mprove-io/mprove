@@ -8,6 +8,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { KeyValuePair } from '#common/types/blockml/parts/tag/key-value-pair';
@@ -32,9 +33,11 @@ export function checkModSpaces(item: {
     });
     let mproveTags = tagsResult.mproveTags;
 
-    let spaceTag: KeyValuePair = mproveTags.find(tag => tag.key === 'space');
+    let spaceTag: KeyValuePair = mproveTags.find(
+      tag => tag.key === ('space' satisfies FileParameter)
+    );
     let accessRolesTag: KeyValuePair = mproveTags.find(
-      tag => tag.key === 'access_roles'
+      tag => tag.key === ('access_roles' satisfies FileParameter)
     );
 
     mod.space = isDefined(spaceTag?.value) ? spaceTag.value.trim() : undefined;
@@ -51,7 +54,7 @@ export function checkModSpaces(item: {
         item.errors.push(
           new BmError({
             title: 'SPACE_DOES_NOT_EXIST',
-            message: `model "${mod.name}" references space "${mod.space}" that does not exist`,
+            message: `${'model' satisfies FileParameter} "${mod.name}" references space "${mod.space}" that does not exist`,
             lines: [
               {
                 line: 0,

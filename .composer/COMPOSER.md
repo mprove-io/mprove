@@ -29,9 +29,15 @@
 - rules/object-properties.md
 - rules/no-for-let-of-and-for-let-in.md
 - rules/type-only-imports.md
-- rules/domain-literal-unions.md
-- rules/domain-literal-type-checking.md
-- rules/domain-literal-interpolation.md
+- rules/domain-literals.md
+- rules/domain-literals/canonical-values.md
+- rules/domain-literals/named-declarations.md
+- rules/domain-literals/inline-checks.md
+- rules/domain-literals/typed-contexts.md
+- rules/domain-literals/angular-template-contexts.md
+- rules/domain-literals/interpolation.md
+- rules/domain-literals/collections.md
+- rules/domain-literals/angular-collections.md
 - rules/zod-optional-fields-use-nullish.md
 - rules/zod-schemas-and-native-types.md
 - rules/explicit-variable-types.md
@@ -40,6 +46,11 @@
 - rules/optional-typescript-properties.md
 - rules/discriminator-property-should-be-first.md
 - rules/condition-expressions.md
+- rules/condition-expressions/boolean-conditions.md
+- rules/condition-expressions/negated-comparisons.md
+- rules/condition-expressions/undefined-checks.md
+- rules/condition-expressions/non-boolean-results.md
+- rules/membership-checks.md
 - rules/function-folders-call-tree.md
 - rules/maintain-function-folder-call-trees.md
 

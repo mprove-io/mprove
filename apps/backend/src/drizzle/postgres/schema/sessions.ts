@@ -1,4 +1,4 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
@@ -10,9 +10,9 @@ import {
 } from 'drizzle-orm/pg-core';
 import type { ArchiveReason } from '#common/types/backend/parts/session/archive-reason';
 import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
+import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { SessionType } from '#common/types/backend/parts/session/session-type';
-
 import type { SessionLt } from '#common/types/shared/st-lt/sessions/session-lt';
 import type { SessionSt } from '#common/types/shared/st-lt/sessions/session-st';
 
@@ -26,7 +26,7 @@ export const sessionsTable = pgTable(
     envId: varchar('env_id', { length: 255 }).notNull(),
     userId: varchar('user_id', { length: 32 }).notNull(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
-    sandboxType: varchar('sandbox_type', { length: 32 }),
+    sandboxType: varchar('sandbox_type', { length: 32 }).$type<SandboxType>(),
     providerId: varchar('provider_id', { length: 64 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
     lastMessageVariant: varchar('last_message_variant', {

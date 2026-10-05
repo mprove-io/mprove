@@ -17,9 +17,9 @@ import { TrinoService } from '#backend/services/dwh/trino.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
 
 @Injectable()
@@ -114,16 +114,18 @@ export class GetConnectionSampleService {
     }
 
     if (
-      [
-        'PostgreSQL',
-        'MySQL',
-        'SnowFlake',
-        'BigQuery',
-        'Databricks',
-        'MotherDuck',
-        'Presto',
-        'Trino'
-      ].indexOf(connection.type) < 0
+      (
+        [
+          'PostgreSQL',
+          'MySQL',
+          'SnowFlake',
+          'BigQuery',
+          'Databricks',
+          'MotherDuck',
+          'Presto',
+          'Trino'
+        ] satisfies ConnectionType[]
+      ).findIndex(candidate => candidate === connection.type) < 0
     ) {
       throw new ServerError({
         message: 'BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE'

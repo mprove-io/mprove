@@ -9,8 +9,14 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { drcType } from '#common/types/blockml/parts/internal/drc-type';
 import type { FileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
+
+const columnWidthOptionParameters = [
+  'first_column_width',
+  'value_columns_width'
+] satisfies FileParameter[];
 
 let func: Func = 'build-mconfig-chart/check-chart-options-parameters';
 
@@ -43,14 +49,16 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            [
-              'format'.toString(),
-              'first_column_width'.toString(),
-              'value_columns_width'.toString(),
-              'x_axis'.toString(),
-              'y_axis'.toString(),
-              'series'.toString()
-            ].indexOf(parameter) < 0
+            (
+              [
+                'format',
+                'first_column_width',
+                'value_columns_width',
+                'x_axis',
+                'y_axis',
+                'series'
+              ] satisfies FileParameter[]
+            ).findIndex(candidate => candidate === parameter) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -71,7 +79,9 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            ['y_axis'.toString(), 'series'.toString()].indexOf(parameter) < 0 &&
+            (['y_axis', 'series'] satisfies FileParameter[]).findIndex(
+              candidate => candidate === parameter
+            ) < 0 &&
             Array.isArray(
               tile.options[parameter as keyof FileChartOptions] as any
             )
@@ -95,7 +105,7 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            ['x_axis'.toString()].indexOf(parameter) < 0 &&
+            parameter !== ('x_axis' satisfies FileParameter) &&
             (tile.options[parameter as keyof FileChartOptions] as any)
               ?.constructor === Object
           ) {
@@ -118,7 +128,7 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            ['format'.toString()].indexOf(parameter) > -1 &&
+            parameter === ('format' satisfies FileParameter) &&
             tileWithType.type === 'pivot_table'
           ) {
             item.errors.push(
@@ -140,10 +150,9 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            [
-              'first_column_width'.toString(),
-              'value_columns_width'.toString()
-            ].indexOf(parameter) > -1 &&
+            columnWidthOptionParameters.some(
+              candidate => candidate === parameter
+            ) &&
             tileWithType.type !== 'pivot_table'
           ) {
             item.errors.push(
@@ -165,7 +174,7 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            ['format'.toString()].indexOf(parameter) > -1 &&
+            parameter === ('format' satisfies FileParameter) &&
             !(tile.options[parameter as keyof FileChartOptions] as any)
               .toString()
               .match(MyRegex.TRUE_FALSE())
@@ -191,10 +200,9 @@ export function checkChartOptionsParameters<T extends drcType>(item: {
           }
 
           if (
-            [
-              'first_column_width'.toString(),
-              'value_columns_width'.toString()
-            ].indexOf(parameter) > -1 &&
+            columnWidthOptionParameters.some(
+              candidate => candidate === parameter
+            ) &&
             (!(tile.options[parameter as keyof FileChartOptions] as any)
               .toString()
               .match(MyRegex.CAPTURE_DIGITS_START_TO_END_G()) ||

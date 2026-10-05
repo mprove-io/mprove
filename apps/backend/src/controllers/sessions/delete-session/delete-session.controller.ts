@@ -46,6 +46,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
+import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Sessions')
@@ -112,7 +113,9 @@ export class DeleteSessionController {
 
       if (
         session.type === 'Editor' &&
-        ['Active', 'Paused'].indexOf(session.status) > -1
+        (['Active', 'Paused'] satisfies SessionStatus[]).findIndex(
+          candidate => candidate === session.status
+        ) > -1
       ) {
         await this.editorSandboxService.stopSandbox({
           sandboxType: session.sandboxType as SandboxType,

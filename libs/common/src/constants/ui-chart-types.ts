@@ -1,4 +1,25 @@
-export const UI_CHART_TYPES = {
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+
+type UiChartTypes = {
+  sizeField: ChartType[];
+  xField: ChartType[];
+  yField: ChartType[];
+  yFields: ChartType[];
+  nullableMultiField: ChartType[];
+  multiField: ChartType[];
+  pivotRows: ChartType[];
+  pivotColumns: ChartType[];
+  pivotValues: ChartType[];
+  format: ChartType[];
+  pivot: ChartType[];
+  xAxisGroup: ChartType[];
+  xAxis: { scale: ChartType[] };
+  yAxisGroup: ChartType[];
+  yAxis: { scale: ChartType[] };
+  seriesGroup: ChartType[];
+};
+
+export const UI_CHART_TYPES: UiChartTypes = {
   //
   // data
   //

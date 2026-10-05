@@ -8,13 +8,13 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { calculateDiskShard } from '#backend/functions/calculate-disk-shard';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
-
 import { zToBlockmlOperationRegistry } from '#common/types/blockml/request/to-blockml-operation-registry';
 import type { ToBlockmlRequest } from '#common/types/blockml/request/to-blockml-request';
 import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
 import { zToDiskOperationRegistry } from '#common/types/disk/request/to-disk-operation-registry';
 import type { ToDiskRequest } from '#common/types/disk/request/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/types/disk/response/to-disk-response-for-operation';
+import type { RpcNamespace } from '#common/types/node-common/rpc/rpc-namespace';
 import type { RpcRequestData } from '#common/types/node-common/rpc-request-data';
 
 type BlockmlSendItem<TRequest extends ToBlockmlRequest> = {
@@ -35,6 +35,11 @@ type DiskSendItem<TRequest extends ToDiskRequest> = {
 type DiskRoute = {
   shardKey: string;
   groupId: string;
+};
+
+type RpcResponseError = {
+  code: ServerError['message'];
+  displayData?: unknown;
 };
 
 type DiskSuccessOutput<TRequest extends ToDiskRequest> = Extract<
@@ -194,7 +199,7 @@ export class RpcService implements OnModuleDestroy {
 
     let response: ToBlockmlResponseForOperation<TRequest['operation']> =
       await this.request<ToBlockmlResponseForOperation<TRequest['operation']>>({
-        namespace: 'rpc-blockml'.toString(),
+        namespace: ('rpc-blockml' satisfies RpcNamespace).toString(),
         groupId: groupId,
         message: request,
         timeout: this.rpcBlockmlTimeoutMs
@@ -218,7 +223,7 @@ export class RpcService implements OnModuleDestroy {
       });
 
     if (response.type === 'Failure') {
-      let error: { code: string; displayData?: unknown } = response.error;
+      let error: RpcResponseError = response.error;
 
       throw new ServerError({
         message: 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML',
@@ -363,7 +368,7 @@ export class RpcService implements OnModuleDestroy {
 
     let response: ToDiskResponseForOperation<TRequest['operation']> =
       await this.request<ToDiskResponseForOperation<TRequest['operation']>>({
-        namespace: `rpc-disk-${diskShard}`,
+        namespace: `${'rpc-disk' satisfies RpcNamespace}-${diskShard}`,
         groupId: groupId,
         message: request,
         timeout: this.rpcDiskTimeoutMs
@@ -391,7 +396,7 @@ export class RpcService implements OnModuleDestroy {
       });
 
     if (response.type === 'Failure') {
-      let error: { code: string; displayData?: unknown } = response.error;
+      let error: RpcResponseError = response.error;
 
       throw new ServerError({
         message: 'BACKEND_ERROR_RESPONSE_FROM_DISK',

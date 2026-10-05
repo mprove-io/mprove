@@ -16,10 +16,10 @@ import { TabService } from '#backend/services/tab.service';
 import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { ToBackendEditLlmModelRequest } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 import type { ToBackendEditLlmModelResponse } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-response';
 
@@ -363,7 +363,7 @@ test('1', async t => {
     assert.deepEqual(providerWithoutServerTsAndModels, {
       projectId: projectId,
       providerId: providerId,
-      type: 'OpenAICompatible',
+      type: 'OpenAICompatible' satisfies ProviderType,
       name: 'Custom LLM',
       isEnabled: true,
       options: {

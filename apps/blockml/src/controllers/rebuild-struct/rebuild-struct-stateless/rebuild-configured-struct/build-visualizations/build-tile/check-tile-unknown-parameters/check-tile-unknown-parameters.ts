@@ -8,8 +8,17 @@ import { LINE_NUM } from '#common/constants/top-blockml';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
+
+const tileArrayParameters = ['select', 'parameters'] satisfies FileParameter[];
+
+const tileObjectParameters = [
+  'data',
+  'options',
+  'plate'
+] satisfies FileParameter[];
 
 let func: Func = 'build-tile/check-tile-unknown-parameters';
 
@@ -36,20 +45,22 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            [
-              'title'.toString(),
-              'description'.toString(),
-              'query'.toString(),
-              'model'.toString(),
-              'select'.toString(),
-              'sorts'.toString(),
-              'limit'.toString(),
-              'type'.toString(),
-              'parameters'.toString(),
-              'data'.toString(),
-              'options'.toString(),
-              'plate'.toString()
-            ].indexOf(parameter) < 0
+            (
+              [
+                'title',
+                'description',
+                'query',
+                'model',
+                'select',
+                'sorts',
+                'limit',
+                'type',
+                'parameters',
+                'data',
+                'options',
+                'plate'
+              ] satisfies FileParameter[]
+            ).findIndex(candidate => candidate === parameter) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -70,8 +81,9 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
           }
 
           if (
-            ['select'.toString(), 'parameters'.toString()].indexOf(parameter) <
-              0 &&
+            tileArrayParameters.findIndex(
+              candidate => candidate === parameter
+            ) < 0 &&
             Array.isArray(tile[parameter as keyof FilePartTile])
           ) {
             item.errors.push(
@@ -94,11 +106,9 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
 
           if (
             tile[parameter as keyof FilePartTile]?.constructor === Object &&
-            [
-              'data'.toString(),
-              'options'.toString(),
-              'plate'.toString()
-            ].indexOf(parameter) < 0
+            tileObjectParameters.findIndex(
+              candidate => candidate === parameter
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -119,8 +129,7 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
           }
 
           if (
-            ['select'.toString(), 'parameters'.toString()].indexOf(parameter) >
-              -1 &&
+            tileArrayParameters.some(candidate => candidate === parameter) &&
             !Array.isArray(tile[parameter as keyof FilePartTile])
           ) {
             item.errors.push(
@@ -144,11 +153,7 @@ export function checkTileUnknownParameters<T extends dcType>(item: {
           if (
             isDefined(tile[parameter as keyof FilePartTile]) &&
             tile[parameter as keyof FilePartTile].constructor !== Object &&
-            [
-              'data'.toString(),
-              'options'.toString(),
-              'plate'.toString()
-            ].indexOf(parameter) > -1
+            tileObjectParameters.some(candidate => candidate === parameter)
           ) {
             item.errors.push(
               new BmError({

@@ -27,6 +27,7 @@ import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-selec
 import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { ModelTreeLevel } from '#common/types/backend/parts/ui/model-tree-level';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
@@ -34,6 +35,8 @@ import type { FractionLogic } from '#common/types/blockml/parts/fraction/fractio
 import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 import type { ModelNode } from '#common/types/blockml/parts/model/model-node';
+import type { ModelNodeIdSuffix } from '#common/types/blockml/parts/model/model-node-id-suffix';
+import type { ModelNodeLabel } from '#common/types/blockml/parts/model/model-node-label';
 import type { ModelNodeExtra } from '#common/types/front/model/model-node-extra';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ChartQuery } from '#front/app/queries/chart.query';
@@ -45,6 +48,12 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { StructService } from '#front/app/services/struct.service';
 import { UiService } from '#front/app/services/ui.service';
 
+const selectableFieldClasses = [
+  'dimension',
+  'measure',
+  'calculation'
+] satisfies FieldClass[];
+
 @Component({
   standalone: false,
   selector: 'm-model-tree',
@@ -52,6 +61,19 @@ import { UiService } from '#front/app/services/ui.service';
   styleUrls: ['model-tree.component.scss']
 })
 export class ModelTreeComponent implements AfterViewInit {
+  readonly selectableFieldClasses: FieldClass[] = selectableFieldClasses;
+  readonly expandableFieldClasses: FieldClass[] = [
+    'join',
+    'dimension',
+    'measure',
+    'calculation'
+  ];
+  readonly fieldClassDimension: FieldClass = 'dimension';
+  readonly fieldClassMeasure: FieldClass = 'measure';
+  readonly fieldClassCalculation: FieldClass = 'calculation';
+  readonly fieldClassFilter: FieldClass = 'filter';
+  readonly fieldClassInfo: FieldClass = 'info';
+
   nodesExtra: ModelNodeExtra[] = [];
 
   @Output()
@@ -141,15 +163,19 @@ export class ModelTreeComponent implements AfterViewInit {
       nodeData.isField === true &&
       (nodeData.required === false ||
         nodeData.isSelected === false ||
-        ['dimension', 'measure', 'calculation'].indexOf(nodeData?.nodeClass) <
-          0)
+        selectableFieldClasses.findIndex(
+          candidate => candidate === nodeData?.nodeClass
+        ) < 0)
     ) {
       this.selectField(nodeData);
     }
   }
 
   nestedNodeOnClick(node: TreeNode) {
-    if (node.data.nodeClass === 'filter' || node.data.nodeClass === 'info') {
+    if (
+      node.data.nodeClass === ('filter' satisfies FieldClass) ||
+      node.data.nodeClass === ('info' satisfies FieldClass)
+    ) {
       return;
     }
 
@@ -161,8 +187,7 @@ export class ModelTreeComponent implements AfterViewInit {
       node.data.isField === true &&
       (node.data.required === false ||
         node.data.isSelected === false ||
-        ['dimension', 'measure', 'calculation'].indexOf(node.data?.nodeClass) <
-          0)
+        selectableFieldClasses.indexOf(node.data?.nodeClass) < 0)
     ) {
       this.selectField(node.data);
     }
@@ -278,14 +303,14 @@ export class ModelTreeComponent implements AfterViewInit {
                 let optionOr: FractionSubTypeOption = {
                   logicGroup: 'OR',
                   typeValue: ft.type,
-                  value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                  value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                   label: ft.label
                 };
                 options.push(optionOr);
 
                 let optionAndNot: FractionSubTypeOption = {
                   logicGroup: 'AND_NOT',
-                  value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                  value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                   typeValue: ft.type,
                   label: ft.label
                 };
@@ -355,7 +380,7 @@ export class ModelTreeComponent implements AfterViewInit {
           brick: 'any',
           parentBrick: 'any',
           operator: 'Or',
-          type: getFractionTypeForAny(node.data.fieldResult)
+          type: getFractionTypeForAny({ result: node.data.fieldResult })
         };
       }
 
@@ -441,8 +466,8 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesMeasures.length > 0) {
         flatNodes.push({
-          id: `measures`,
-          label: 'Measures',
+          id: `${'measures' satisfies ModelNodeIdSuffix}`,
+          label: 'Measures' satisfies ModelNodeLabel,
           description: undefined,
           hidden: false,
           required: false,
@@ -458,8 +483,8 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesCalculations.length > 0) {
         flatNodes.push({
-          id: `calculations`,
-          label: 'Calculations',
+          id: `${'calculations' satisfies ModelNodeIdSuffix}`,
+          label: 'Calculations' satisfies ModelNodeLabel,
           description: undefined,
           hidden: false,
           required: false,
@@ -475,8 +500,8 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesDimensions.length > 0) {
         flatNodes.push({
-          id: `dimensions`,
-          label: 'Dimensions',
+          id: `${'dimensions' satisfies ModelNodeIdSuffix}`,
+          label: 'Dimensions' satisfies ModelNodeLabel,
           description: undefined,
           hidden: false,
           required: false,
@@ -492,8 +517,8 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesFilters.length > 0) {
         flatNodes.push({
-          id: `filters`,
-          label: 'Filter-only fields',
+          id: `${'filters' satisfies ModelNodeIdSuffix}`,
+          label: 'Filter-only fields' satisfies ModelNodeLabel,
           description: undefined,
           hidden: false,
           required: false,

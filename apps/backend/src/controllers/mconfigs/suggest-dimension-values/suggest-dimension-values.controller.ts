@@ -48,6 +48,7 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 import type { ToBackendSuggestDimensionValuesOutput } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
 import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
+import type { ModelType } from '#common/types/blockml/parts/model/model-type';
 
 type CachedMatchedValueRow = {
   value: string | null;
@@ -208,7 +209,7 @@ FROM ${cachedColumnsTable} AS cached_columns
 INNER JOIN ${modelFieldLeafsTable} AS model_field_leafs
   ON model_field_leafs.struct_id = ${struct.structId}
   AND model_field_leafs.model_id = ${modelId}
-  AND model_field_leafs.model_type = ${'Malloy'}
+  AND model_field_leafs.model_type = ${'Malloy' satisfies ModelType}
   AND model_field_leafs.field_id = ${fieldId}
   AND model_field_leafs.connection_id = cached_columns.connection_id
   AND model_field_leafs.schema_name_lc = cached_columns.schema_name_lc
@@ -254,7 +255,7 @@ FROM ${cachedPartsTable} AS cached_parts
 INNER JOIN ${modelFieldLeafsTable} AS model_field_leafs
   ON model_field_leafs.struct_id = ${struct.structId}
   AND model_field_leafs.model_id = ${modelId}
-  AND model_field_leafs.model_type = ${'Malloy'}
+  AND model_field_leafs.model_type = ${'Malloy' satisfies ModelType}
   AND model_field_leafs.field_id = ${fieldId}
   AND model_field_leafs.connection_id = cached_parts.connection_id
   AND model_field_leafs.schema_name_lc = cached_parts.schema_name_lc

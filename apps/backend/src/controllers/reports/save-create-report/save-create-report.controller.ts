@@ -44,12 +44,12 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveCreateReportOutput } from '#common/types/backend/routes/reports/save-create-report/save-create-report-output';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { ToDiskCreateFileOutput } from '#common/types/disk/routes/files/create-file/create-file-output';
 
@@ -235,7 +235,7 @@ export class SaveCreateReportController {
       targetFolder: 'reports'
     });
 
-    let fileName = `${newReportId}.report`;
+    let fileName = `${newReportId}${'.report' satisfies FileExtension}`;
 
     let baseProject = this.tabService.projectTabToBaseProject({
       project: project

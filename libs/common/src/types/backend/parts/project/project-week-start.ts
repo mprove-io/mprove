@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const projectWeekStartValues = ['Sunday', 'Monday'] as const;
+export const projectWeekStartValues = ['Sunday', 'Monday'] as const;
 
 export type ProjectWeekStart = (typeof projectWeekStartValues)[number];
 

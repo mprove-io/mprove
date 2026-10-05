@@ -2,11 +2,11 @@ import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import deepEqual from 'fast-deep-equal';
 import { ServerError } from '#common/classes/server-error/server-error';
-
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendSyncRepoOutput } from '#common/types/backend/routes/repos/sync-repo/sync-repo-output';
 import type { ToBackendSyncRepoRequest } from '#common/types/backend/routes/repos/sync-repo/sync-repo-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
@@ -123,7 +123,7 @@ export class SyncCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId = apiKey.startsWith(`SK-`)
+    let repoId = apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
       ? apiKey.split('-')[2].toLowerCase()
       : apiKey.split('-')[2];
 

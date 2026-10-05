@@ -9,6 +9,8 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 
 let func: Func = 'build-yaml/check-connections';
 
@@ -26,16 +28,19 @@ export function checkConnections(item: {
   let newFilesAny: any[] = [];
 
   item.filesAny.forEach(file => {
-    if (['.store'].indexOf(file.ext) > -1) {
+    if (file.ext === ('.store' satisfies FileExtension)) {
       let parameters = Object.keys(file).filter(
         x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM())
       );
 
-      if (parameters.indexOf('connection'.toString()) < 0) {
+      if (
+        parameters.indexOf(('connection' satisfies FileParameter).toString()) <
+        0
+      ) {
         item.errors.push(
           new BmError({
             title: 'MISSING_CONNECTION',
-            message: `parameter "connection" must be specified`,
+            message: `parameter "${'connection' satisfies FileParameter}" must be specified`,
             lines: [
               {
                 line: 0,
@@ -48,7 +53,7 @@ export function checkConnections(item: {
         return;
       }
 
-      let connectionName = file['connection'];
+      let connectionName = file['connection' satisfies FileParameter];
 
       let connection = item.connections.find(
         c => c.connectionId === connectionName
@@ -61,7 +66,7 @@ export function checkConnections(item: {
             message: `project connection "${connectionName}" not found`,
             lines: [
               {
-                line: file['connection' + LINE_NUM],
+                line: file[('connection' satisfies FileParameter) + LINE_NUM],
                 name: file.name,
                 path: file.path
               }

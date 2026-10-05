@@ -9,6 +9,10 @@ import {
   zPauseReason
 } from '#common/types/backend/parts/session/pause-reason';
 import {
+  type SessionStatus,
+  zSessionStatus
+} from '#common/types/backend/parts/session/session-status';
+import {
   type SessionType,
   zSessionType
 } from '#common/types/backend/parts/session/session-type';
@@ -21,7 +25,7 @@ export type SessionApi = {
   agent: string;
   modelId: string;
   lastMessageVariant?: string;
-  status: string;
+  status: SessionStatus;
   archiveReason?: ArchiveReason;
   pauseReason?: PauseReason;
   repoId: string;
@@ -45,7 +49,7 @@ export let zSessionApi = z
     agent: z.string(),
     modelId: z.string(),
     lastMessageVariant: z.string().nullish(),
-    status: z.string(),
+    status: zSessionStatus,
     archiveReason: zArchiveReason.nullish(),
     pauseReason: zPauseReason.nullish(),
     repoId: z.string(),

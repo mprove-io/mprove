@@ -17,6 +17,7 @@ import {
   DEFAULT_PIVOT_FIRST_COLUMN_WIDTH
 } from '#common/constants/mconfig-chart';
 import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { PivotSortDirection } from '#front/app/modules/shared/chart-pivot-table/pivot-sort-direction';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -1107,7 +1108,7 @@ export class ChartPivotTableComponent implements OnChanges {
     this.pivotValueFieldIds.forEach(fieldId => {
       let field = this.mconfigFieldById.get(fieldId);
       let fieldThousandsSeparatorTag = field?.mproveTags?.find(
-        tag => tag.key === 'thousands_separator'
+        tag => tag.key === ('thousands_separator' satisfies FileParameter)
       );
       let thousandsSeparator =
         fieldThousandsSeparatorTag?.value ??

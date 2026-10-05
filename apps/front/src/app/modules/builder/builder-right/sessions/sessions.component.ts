@@ -4,7 +4,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
-
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendArchiveSessionRequest } from '#common/types/backend/routes/sessions/archive-session/archive-session-request';
@@ -292,6 +291,7 @@ export class SessionsComponent implements OnInit {
       // Move to archived section
       let others = sessions.filter(s => s.sessionId !== sessionId);
       let nonArchived = others.filter(s => s.status !== 'Archived');
+
       let archived = others.filter(s => s.status === 'Archived');
       let archivedSession = {
         ...session,

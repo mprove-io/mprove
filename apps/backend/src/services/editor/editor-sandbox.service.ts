@@ -4,8 +4,7 @@ import { and, eq, inArray, lt } from 'drizzle-orm';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -13,10 +12,13 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
+import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import { ProjectsService } from '../db/projects.service';
 import { SessionsService } from '../db/sessions.service';
 import { TabService } from '../tab.service';
 import { EditorSessionLockService } from './editor-session-lock.service';
+
+const activeOrPausedStatuses: SessionStatus[] = ['Active', 'Paused'];
 
 const { forEachSeries } = pIteration;
 
@@ -213,7 +215,7 @@ export class EditorSandboxService {
       .findMany({
         where: and(
           eq(sessionsTable.type, 'Editor'),
-          inArray(sessionsTable.status, ['Active', 'Paused'])
+          inArray(sessionsTable.status, activeOrPausedStatuses)
         )
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
@@ -296,7 +298,7 @@ export class EditorSandboxService {
               sessionId: session.sessionId
             });
 
-          let isActiveOrPaused = ['Active', 'Paused'].includes(
+          let isActiveOrPaused = activeOrPausedStatuses.includes(
             freshSession.status
           );
 

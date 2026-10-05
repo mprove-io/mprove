@@ -63,7 +63,7 @@ export function makeUnitDisplayPath(item: {
 
       let selectedSpaceFileName = selectedSpaceFilePathParts[
         selectedSpaceFilePathParts.length - 1
-      ].replace('.space', '');
+      ].replace('.space' satisfies FileExtension, '');
 
       let spaceParts = selectedSpace.space.split('.');
 

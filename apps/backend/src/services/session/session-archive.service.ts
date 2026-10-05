@@ -2,8 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -15,6 +14,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ArchiveReason } from '#common/types/backend/parts/session/archive-reason';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 
 @Injectable()
 export class SessionArchiveService {
@@ -51,7 +51,9 @@ export class SessionArchiveService {
         });
       }
 
-      let isActiveOrPaused = ['Active', 'Paused'].indexOf(session.status) > -1;
+      let isActiveOrPaused = (
+        ['Active', 'Paused'] satisfies SessionStatus[]
+      ).some(candidate => candidate === session.status);
 
       if (session.type === 'Editor' && isActiveOrPaused) {
         await this.editorSandboxService.stopSandbox({

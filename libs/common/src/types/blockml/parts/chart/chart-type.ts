@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const chartTypeValues = [
+export const chartTypeValues = [
   'table',
   'line',
   'bar',

@@ -45,12 +45,12 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveModifyReportOutput } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-output';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 
@@ -245,7 +245,7 @@ export class SaveModifyReportController {
       });
     }
 
-    let reportFileName = `${modReportId}.report`;
+    let reportFileName = `${modReportId}${'.report' satisfies FileExtension}`;
 
     let isSpaceChanged = currentReportSpace !== space;
 

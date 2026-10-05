@@ -63,7 +63,8 @@ import {
   PATH_USERS,
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
-
+import type { BuilderLeft } from '#common/types/front/builder/builder-left';
+import type { BuilderRight } from '#common/types/front/builder/builder-right';
 import { environment } from '#front/environments/environment';
 import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
@@ -321,7 +322,7 @@ export const appRoutes: Routes = [
                                       .split('?')[0] ?? '';
 
                                   return router.parseUrl(
-                                    `${currentPath}/${PATH_SELECT_FILE}?left=Tree&right=Validation`
+                                    `${currentPath}/${PATH_SELECT_FILE}?left=${'Tree' satisfies BuilderLeft}&right=${'Validation' satisfies BuilderRight}`
                                   );
                                 },
                                 pathMatch: 'full'

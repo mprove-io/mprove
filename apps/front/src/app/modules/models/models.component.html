@@ -829,31 +829,31 @@
                       <!-- <img [src]="c.iconPath" /> -->
 
                       <m-chart-table-icon
-                        *ngIf="itemChartType === 'table'"
+                        *ngIf="itemChartType === chartTypeTable"
                       ></m-chart-table-icon>
 
                       <m-chart-pivot-table-icon
-                        *ngIf="itemChartType === 'pivot_table'"
+                        *ngIf="itemChartType === chartTypePivotTable"
                       ></m-chart-pivot-table-icon>
 
                       <m-chart-line-icon
-                        *ngIf="itemChartType === 'line'"
+                        *ngIf="itemChartType === chartTypeLine"
                       ></m-chart-line-icon>
 
                       <m-chart-bar-icon
-                        *ngIf="itemChartType === 'bar'"
+                        *ngIf="itemChartType === chartTypeBar"
                       ></m-chart-bar-icon>
 
                       <m-chart-scatter-icon
-                        *ngIf="itemChartType === 'scatter'"
+                        *ngIf="itemChartType === chartTypeScatter"
                       ></m-chart-scatter-icon>
 
                       <m-chart-single-icon
-                        *ngIf="itemChartType === 'single'"
+                        *ngIf="itemChartType === chartTypeSingle"
                       ></m-chart-single-icon>
 
                       <m-chart-pie-icon
-                        *ngIf="itemChartType === 'pie'"
+                        *ngIf="itemChartType === chartTypePie"
                       ></m-chart-pie-icon>
                     </div>
 
@@ -1774,7 +1774,7 @@
                   </div>
 
                   <!-- <div
-                    *ngIf="model.type === modelTypeMalloy"
+                    *ngIf="model.type === 'Malloy'"
                     (click)="setShowMalloyCompiledQuery()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1853,9 +1853,9 @@
                     *ngIf="
                       rightIsShow === true &&
                       mconfig?.select.length > 0 &&
-                      ['YamlModel', 'YamlStore', 'MalloySource'].indexOf(
+                      modelDefinitionQueryParts.includes(
                         queryPartForm.controls['queryPart'].value
-                      ) > -1
+                      )
                     "
                   >
                     <button

@@ -1,7 +1,6 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
-
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
@@ -9,6 +8,7 @@ import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-selec
 import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 import type { Sorting } from '#common/types/blockml/parts/query/sorting';
 import { ChartQuery } from '#front/app/queries/chart.query';
@@ -27,6 +27,10 @@ import { StructService } from '#front/app/services/struct.service';
   styleUrls: ['main-table.component.scss']
 })
 export class MainTableComponent {
+  readonly fieldClassDimension: FieldClass = 'dimension';
+  readonly fieldClassMeasure: FieldClass = 'measure';
+  readonly fieldClassCalculation: FieldClass = 'calculation';
+
   @Input()
   isTableHeaderWide: boolean;
 

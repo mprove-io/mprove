@@ -6,7 +6,6 @@ import {
   CODEX_PROVIDER_ID,
   PROVIDER_NAME_BY_ID
 } from '#common/constants/providers';
-
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';

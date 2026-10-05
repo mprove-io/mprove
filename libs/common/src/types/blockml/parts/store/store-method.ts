@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const storeMethodValues = ['POST', 'GET'] as const;
+export const storeMethodValues = ['POST', 'GET'] as const;
 
 export type StoreMethod = (typeof storeMethodValues)[number];
 

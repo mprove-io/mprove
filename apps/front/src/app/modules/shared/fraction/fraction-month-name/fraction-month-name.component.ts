@@ -11,6 +11,7 @@ import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionMonthNameValue } from '#common/types/blockml/parts/fraction/fraction-month-name-value';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import {
   FractionMonthNameValueItem,
@@ -24,6 +25,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionMonthNameComponent {
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
   @ViewChild('fractionMonthNameTypeSelect', { static: false })
   fractionMonthNameTypeSelectElement: NgSelectComponent;
 

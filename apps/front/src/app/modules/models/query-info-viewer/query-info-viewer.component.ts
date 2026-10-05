@@ -219,7 +219,9 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
 
       this.content = toYaml({ tiles: [filePartTile] });
     } else if (
-      ['MalloySource', 'YamlStore', 'YamlModel'].indexOf(this.queryPart) > -1
+      (['MalloySource', 'YamlStore', 'YamlModel'] satisfies QueryPart[]).some(
+        candidate => candidate === this.queryPart
+      )
     ) {
       this.content = this.modelFileText;
     }

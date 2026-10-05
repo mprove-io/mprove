@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { ServerError } from '#common/classes/server-error/server-error';
+import type { Er } from '#common/types/shared/errors/er';
 
 export function zodParseOrThrowMcli<T extends z.ZodType>(item: {
   schema: T;
   object: unknown;
-  errorMessage: any;
+  errorMessage: Er;
 }): z.infer<T> {
   let { schema, object, errorMessage } = item;
 

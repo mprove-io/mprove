@@ -4,7 +4,6 @@ import {
   CODEX_PROVIDER_ID,
   OPENAI_PROVIDER_ID
 } from '#common/constants/providers';
-
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type ProviderOptionsAnthropic,
@@ -22,6 +21,7 @@ import {
   type ProviderOptionsOpenAICompatible,
   zProviderOptionsOpenAICompatible
 } from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import {
   type ToBackendSeedRecordsModel,
   zToBackendSeedRecordsModel
@@ -65,7 +65,7 @@ export type ToBackendSeedRecordsInputProvidersItem =
 export let zToBackendSeedRecordsInputProvidersItem = z
   .discriminatedUnion('type', [
     z.strictObject({
-      type: z.literal('OpenAI'),
+      type: z.literal('OpenAI' satisfies ProviderType),
       projectId: z.string(),
       providerId: z.literal(OPENAI_PROVIDER_ID),
       isEnabled: z.boolean(),
@@ -73,7 +73,7 @@ export let zToBackendSeedRecordsInputProvidersItem = z
       options: zProviderOptionsOpenAI
     }),
     z.strictObject({
-      type: z.literal('Anthropic'),
+      type: z.literal('Anthropic' satisfies ProviderType),
       projectId: z.string(),
       providerId: z.literal(ANTHROPIC_PROVIDER_ID),
       isEnabled: z.boolean(),
@@ -81,7 +81,7 @@ export let zToBackendSeedRecordsInputProvidersItem = z
       options: zProviderOptionsAnthropic
     }),
     z.strictObject({
-      type: z.literal('OpenAICompatible'),
+      type: z.literal('OpenAICompatible' satisfies ProviderType),
       projectId: z.string(),
       providerId: z.string(),
       name: z.string(),
@@ -90,7 +90,7 @@ export let zToBackendSeedRecordsInputProvidersItem = z
       options: zProviderOptionsOpenAICompatible
     }),
     z.strictObject({
-      type: z.literal('OpenAICodex'),
+      type: z.literal('OpenAICodex' satisfies ProviderType),
       projectId: z.string(),
       providerId: z.literal(CODEX_PROVIDER_ID),
       isEnabled: z.boolean(),

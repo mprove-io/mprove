@@ -3,11 +3,12 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { tap } from 'rxjs';
 import { TRIPLE_UNDERSCORE } from '#common/constants/top';
-
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
 import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
+import type { DetailUnit } from '#common/types/blockml/parts/field/detail-unit';
+import type { RowType } from '#common/types/blockml/parts/report/row/row-type';
 import type { DataRow } from '#common/types/front/report/row/data-row';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { getTimeSpecWord } from '#front/app/functions/get-timespec-word';
@@ -91,7 +92,9 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
           this.metric.modelType === 'Malloy'
             ? timeSpecDetail === 'timestamps'
               ? `${this.metric.timeFieldId}_ts`
-              : ['weeksSunday', 'weeksMonday'].indexOf(timeSpecDetail) > -1
+              : (['weeksSunday', 'weeksMonday'] satisfies DetailUnit[]).some(
+                    candidate => candidate === timeSpecDetail
+                  )
                 ? `${this.metric.timeFieldId}_week`
                 : `${this.metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`
             : `${this.metric.timeFieldId}${TRIPLE_UNDERSCORE}${timeSpecWord}`;
@@ -119,7 +122,11 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
   }
 
   showDialog(event?: MouseEvent) {
-    if (['header', 'empty'].indexOf(this.params.data.rowType) < 0) {
+    if (
+      (['header', 'empty'] satisfies RowType[]).findIndex(
+        candidate => candidate === this.params.data.rowType
+      ) < 0
+    ) {
       event.stopPropagation();
     }
 

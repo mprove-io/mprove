@@ -18,6 +18,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -192,7 +193,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   }
 
   nodeOnClick(node: TreeNode) {
-    if (node.data.nodeClass === 'filter') {
+    if (node.data.nodeClass === ('filter' satisfies FieldClass)) {
       return;
     }
     node.toggleActivated();

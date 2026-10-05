@@ -119,8 +119,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   dashboard: DashboardX;
 
-  modelTypeForm = this.fb.group({
-    modelType: [undefined]
+  modelTypeForm: FormGroup<{
+    modelType: FormControl<ModelType>;
+  }> = this.fb.group({
+    modelType: this.fb.control<ModelType>(undefined)
   });
 
   modelTypesList: SelectItem<ModelType>[] = [
@@ -146,8 +148,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     storeModel: [undefined]
   });
 
-  storeFilterForForm = this.fb.group({
-    storeFilterFor: [undefined]
+  storeFilterForForm: FormGroup<{
+    storeFilterFor: FormControl<StoreFilterFor>;
+  }> = this.fb.group({
+    storeFilterFor: this.fb.control<StoreFilterFor>(undefined)
   });
 
   storeFilterForList: StoreFilterForItem[] = [
@@ -267,11 +271,16 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.formsError = undefined;
 
-    if (this.modelTypeForm.controls['modelType'].value === 'Store') {
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      ('Store' satisfies ModelType)
+    ) {
       this.storeModelSet = false;
 
       this.storeModelForm.controls['storeModel'].setValue(undefined);
+
       this.storeFilterForForm.controls['storeFilterFor'].setValue('Filter');
+
       this.storeFilterForm.controls['storeFilter'].setValue(undefined);
       this.fieldResultForm.controls['fieldResult'].setValue(undefined);
       this.suggestFieldForm.controls['suggestField'].setValue(undefined);
@@ -302,8 +311,11 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.formsError = undefined;
 
-    if (this.storeFilterForForm.controls['storeFilterFor'].value === 'Result') {
-      if (this.storeResultsList.indexOf('string') > -1) {
+    if (
+      this.storeFilterForForm.controls['storeFilterFor'].value ===
+      ('Result' satisfies StoreFilterFor)
+    ) {
+      if (this.storeResultsList.includes('string' satisfies FieldResult)) {
         this.fieldResultForm.controls['fieldResult'].setValue('string');
       } else {
         this.fieldResultForm.controls['fieldResult'].setValue(undefined);
@@ -511,14 +523,18 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       return;
     }
 
-    if (this.modelTypeForm.controls['modelType'].value === 'Store') {
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      ('Store' satisfies ModelType)
+    ) {
       if (isUndefined(this.storeModelForm.controls['storeModel'].value)) {
         this.formsError = 'Model must be selected';
         return;
       }
 
       if (
-        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter' &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          ('Filter' satisfies StoreFilterFor) &&
         isUndefined(this.storeFilterForm.controls['storeFilter'].value)
       ) {
         this.formsError = 'Filter must be selected';
@@ -526,7 +542,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       }
 
       if (
-        this.storeFilterForForm.controls['storeFilterFor'].value === 'Result' &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          ('Result' satisfies StoreFilterFor) &&
         isUndefined(this.fieldResultForm.controls['fieldResult'].value)
       ) {
         this.formsError = 'Result must be selected';
@@ -546,16 +563,21 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     let storeFilter;
 
-    if (this.modelTypeForm.controls['modelType'].value === 'Store') {
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      ('Store' satisfies ModelType)
+    ) {
       storeFilter =
-        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter'
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+        ('Filter' satisfies StoreFilterFor)
           ? this.storeModel.storeContent.fields.find(
               f => f.name === this.storeFilterForm.controls['storeFilter'].value
             )
           : undefined;
 
       let storeResultFraction =
-        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter'
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+        ('Filter' satisfies StoreFilterFor)
           ? undefined
           : this.storeModel.storeContent.results.find(
               r =>
@@ -579,14 +601,14 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               let optionOr: FractionSubTypeOption = {
                 logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
                 logicGroup: 'AND_NOT',
-                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -656,23 +678,26 @@ export class DashboardAddFilterDialogComponent implements OnInit {
             : undefined,
         controls: controls
       };
-    } else if (this.modelTypeForm.controls['modelType'].value === 'Malloy') {
+    } else if (
+      this.modelTypeForm.controls['modelType'].value ===
+      ('Malloy' satisfies ModelType)
+    ) {
       fraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
         operator: 'Or',
-        type: getFractionTypeForAny(
-          this.fieldResultForm.controls['fieldResult'].value
-        )
+        type: getFractionTypeForAny({
+          result: this.fieldResultForm.controls['fieldResult'].value
+        })
       };
     } else {
       fraction = {
         brick: 'any',
         parentBrick: 'any',
         operator: 'Or',
-        type: getFractionTypeForAny(
-          this.fieldResultForm.controls['fieldResult'].value
-        )
+        type: getFractionTypeForAny({
+          result: this.fieldResultForm.controls['fieldResult'].value
+        })
       };
     }
 
@@ -686,21 +711,27 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         ? Number(storeFilter.max_fractions)
         : undefined,
       storeModel:
-        this.modelTypeForm.controls['modelType'].value === 'Store'
+        this.modelTypeForm.controls['modelType'].value ===
+        ('Store' satisfies ModelType)
           ? this.storeModelForm.controls['storeModel'].value
           : undefined,
       storeFilter:
-        this.modelTypeForm.controls['modelType'].value === 'Store' &&
-        this.storeFilterForForm.controls['storeFilterFor'].value === 'Filter'
+        this.modelTypeForm.controls['modelType'].value ===
+          ('Store' satisfies ModelType) &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          ('Filter' satisfies StoreFilterFor)
           ? this.storeFilterForm.controls['storeFilter'].value
           : undefined,
       storeResult:
-        this.modelTypeForm.controls['modelType'].value === 'Store' &&
-        this.storeFilterForForm.controls['storeFilterFor'].value === 'Result'
+        this.modelTypeForm.controls['modelType'].value ===
+          ('Store' satisfies ModelType) &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          ('Result' satisfies StoreFilterFor)
           ? this.fieldResultForm.controls['fieldResult'].value
           : undefined,
       result:
-        this.modelTypeForm.controls['modelType'].value === 'Malloy'
+        this.modelTypeForm.controls['modelType'].value ===
+        ('Malloy' satisfies ModelType)
           ? this.fieldResultForm.controls['fieldResult'].value
           : undefined,
       suggestModelDimension: isDefined(suggestField?.modelFieldRef)

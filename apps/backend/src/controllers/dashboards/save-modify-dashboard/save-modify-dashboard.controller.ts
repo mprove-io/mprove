@@ -46,13 +46,13 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveModifyDashboardOutput } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-output';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 
 const { forEachSeries } = pIteration;
@@ -296,7 +296,7 @@ export class SaveModifyDashboardController {
       });
     }
 
-    let dashboardFileName = `${toDashboardId}.dashboard`;
+    let dashboardFileName = `${toDashboardId}${'.dashboard' satisfies FileExtension}`;
 
     let isSpaceChanged = currentDashboardSpace !== targetDashboardSpace;
 

@@ -8,9 +8,22 @@ import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
-
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
+
+const visualizationFieldCallers = [
+  'BuildDashboardField',
+  'BuildReportField'
+] satisfies Caller[];
+
+const fieldArrayParameters = [
+  'timeframes',
+  'conditions',
+  'fractions',
+  'fraction_controls'
+] satisfies FileParameter[];
 
 let func: Func = 'build-field/check-field-unknown-parameters';
 
@@ -35,17 +48,19 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
         .filter(
           k =>
             !k.match(MyRegex.ENDS_WITH_LINE_NUM()) &&
-            ['name'.toString(), 'fieldClass'.toString()].indexOf(k) < 0
+            (['name', 'fieldClass'] satisfies FileParameter[]).findIndex(
+              candidate => candidate === k
+            ) < 0
         )
         .forEach(parameter => {
           if (
-            parameter === 'hidden' &&
+            parameter === ('hidden' satisfies FileParameter) &&
             !field[parameter].match(MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
                 title: 'WRONG_FIELD_HIDDEN',
-                message: `parameter "hidden" must be 'true' or 'false' if specified`,
+                message: `parameter "${'hidden' satisfies FileParameter}" must be 'true' or 'false' if specified`,
                 lines: [
                   {
                     line: field[
@@ -64,39 +79,44 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
             case 'dimension': {
               if (
                 (caller === 'BuildStoreField' &&
-                  [
-                    'dimension'.toString(),
-                    'label'.toString(),
-                    'description'.toString(),
-                    'group'.toString(),
-                    'time_group'.toString(),
-                    'detail'.toString(),
-                    'result'.toString(),
-                    'format_number'.toString(),
-                    'currency_prefix'.toString(),
-                    'currency_suffix'.toString(),
-                    'required'.toString(),
-                    'meta'.toString()
-                  ].indexOf(parameter) < 0) ||
-                (['BuildDashboardField', 'BuildReportField'].indexOf(caller) >
-                  -1 &&
-                  [
-                    'dimension'.toString(),
-                    'hidden'.toString(),
-                    'label'.toString(),
-                    'description'.toString(),
-                    'type'.toString(),
-                    'result'.toString(),
-                    'suggest_model_dimension'.toString(),
-                    'format_number'.toString(),
-                    'currency_prefix'.toString(),
-                    'currency_suffix'.toString()
-                  ].indexOf(parameter) < 0)
+                  (
+                    [
+                      'dimension',
+                      'label',
+                      'description',
+                      'group',
+                      'time_group',
+                      'detail',
+                      'result',
+                      'format_number',
+                      'currency_prefix',
+                      'currency_suffix',
+                      'required',
+                      'meta'
+                    ] satisfies FileParameter[]
+                  ).findIndex(candidate => candidate === parameter) < 0) ||
+                (visualizationFieldCallers.some(
+                  candidate => candidate === caller
+                ) &&
+                  (
+                    [
+                      'dimension',
+                      'hidden',
+                      'label',
+                      'description',
+                      'type',
+                      'result',
+                      'suggest_model_dimension',
+                      'format_number',
+                      'currency_prefix',
+                      'currency_suffix'
+                    ] satisfies FileParameter[]
+                  ).findIndex(candidate => candidate === parameter) < 0)
               ) {
                 item.errors.push(
                   new BmError({
                     title: 'UNKNOWN_DIMENSION_PARAMETER',
-                    message: `parameter "${parameter}" cannot be used with dimension in ${x.fileExt} file`,
+                    message: `parameter "${parameter}" cannot be used with ${'dimension' satisfies FieldClass} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -116,23 +136,25 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
             case 'measure': {
               if (
                 caller === 'BuildStoreField' &&
-                [
-                  'measure'.toString(),
-                  'label'.toString(),
-                  'description'.toString(),
-                  'result'.toString(),
-                  'group'.toString(),
-                  'format_number'.toString(),
-                  'currency_prefix'.toString(),
-                  'currency_suffix'.toString(),
-                  'required'.toString(),
-                  'meta'.toString()
-                ].indexOf(parameter) < 0
+                (
+                  [
+                    'measure',
+                    'label',
+                    'description',
+                    'result',
+                    'group',
+                    'format_number',
+                    'currency_prefix',
+                    'currency_suffix',
+                    'required',
+                    'meta'
+                  ] satisfies FileParameter[]
+                ).findIndex(candidate => candidate === parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
                     title: 'UNKNOWN_MEASURE_PARAMETER',
-                    message: `parameter "${parameter}" cannot be used with measure in ${x.fileExt} file`,
+                    message: `parameter "${parameter}" cannot be used with ${'measure' satisfies FieldClass} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -152,37 +174,42 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
             case 'filter': {
               if (
                 (caller === 'BuildStoreField' &&
-                  [
-                    'filter'.toString(),
-                    'label'.toString(),
-                    'description'.toString(),
-                    'max_fractions'.toString(),
-                    'required'.toString(),
-                    'fraction_controls'.toString()
-                  ].indexOf(parameter) < 0) ||
+                  (
+                    [
+                      'filter',
+                      'label',
+                      'description',
+                      'max_fractions',
+                      'required',
+                      'fraction_controls'
+                    ] satisfies FileParameter[]
+                  ).findIndex(candidate => candidate === parameter) < 0) ||
                 //
-                (['BuildStoreField'].indexOf(caller) > -1 &&
-                  ['conditions'.toString()].indexOf(parameter) > -1) ||
+                (caller === 'BuildStoreField' &&
+                  parameter === ('conditions' satisfies FileParameter)) ||
                 //
-                (['BuildDashboardField', 'BuildReportField'].indexOf(caller) >
-                  -1 &&
-                  [
-                    'filter'.toString(),
-                    'label'.toString(),
-                    'description'.toString(),
-                    'result'.toString(),
-                    'suggest_model_dimension'.toString(),
-                    'conditions'.toString(),
-                    'fractions'.toString(),
-                    'store_model'.toString(),
-                    'store_filter'.toString(),
-                    'store_result'.toString()
-                  ].indexOf(parameter) < 0)
+                (visualizationFieldCallers.some(
+                  candidate => candidate === caller
+                ) &&
+                  (
+                    [
+                      'filter',
+                      'label',
+                      'description',
+                      'result',
+                      'suggest_model_dimension',
+                      'conditions',
+                      'fractions',
+                      'store_model',
+                      'store_filter',
+                      'store_result'
+                    ] satisfies FileParameter[]
+                  ).findIndex(candidate => candidate === parameter) < 0)
               ) {
                 item.errors.push(
                   new BmError({
                     title: 'UNKNOWN_FILTER_PARAMETER',
-                    message: `parameter "${parameter}" cannot be used with filter in ${x.fileExt} file`,
+                    message: `parameter "${parameter}" cannot be used with ${'filter' satisfies FieldClass} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -202,12 +229,9 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
 
           if (
             Array.isArray(field[parameter as keyof FieldAny]) &&
-            [
-              'timeframes'.toString(),
-              'conditions'.toString(),
-              'fractions'.toString(),
-              'fraction_controls'.toString()
-            ].indexOf(parameter) < 0
+            fieldArrayParameters.findIndex(
+              candidate => candidate === parameter
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -229,7 +253,7 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
 
           if (
             field[parameter as keyof FieldAny]?.constructor === Object &&
-            ['meta'.toString()].indexOf(parameter) < 0
+            parameter !== ('meta' satisfies FileParameter)
           ) {
             item.errors.push(
               new BmError({
@@ -251,12 +275,7 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
 
           if (
             !Array.isArray(field[parameter as keyof FieldAny]) &&
-            [
-              'timeframes'.toString(),
-              'conditions'.toString(),
-              'fractions'.toString(),
-              'fraction_controls'.toString()
-            ].indexOf(parameter) > -1
+            fieldArrayParameters.some(candidate => candidate === parameter)
           ) {
             item.errors.push(
               new BmError({
@@ -278,7 +297,7 @@ export function checkFieldUnknownParameters<T extends sdrType>(item: {
 
           if (
             errorsOnStart === item.errors.length &&
-            parameter === 'fraction_controls'.toString()
+            parameter === ('fraction_controls' satisfies FileParameter)
           ) {
             checkStoreFractionControls(
               {

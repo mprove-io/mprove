@@ -158,14 +158,14 @@ export class ChartsAddFilterDialogComponent implements OnInit {
               let optionOr: FractionSubTypeOption = {
                 logicGroup: 'OR',
                 typeValue: ft.type,
-                value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
                 logicGroup: 'AND_NOT',
-                value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -235,14 +235,14 @@ export class ChartsAddFilterDialogComponent implements OnInit {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
         operator: 'Or',
-        type: getFractionTypeForAny(field.result)
+        type: getFractionTypeForAny({ result: field.result })
       };
     } else {
       newFraction = {
         brick: 'any',
         parentBrick: 'any',
         operator: 'Or',
-        type: getFractionTypeForAny(field.result)
+        type: getFractionTypeForAny({ result: field.result })
       };
     }
 

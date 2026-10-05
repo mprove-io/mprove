@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const boolValues = ['TRUE', 'FALSE'] as const;
+export const boolValues = ['TRUE', 'FALSE'] as const;
 
 export type Bool = (typeof boolValues)[number];
 

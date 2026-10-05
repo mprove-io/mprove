@@ -10,8 +10,8 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
-
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { FractionTypeItem } from '../fraction.component';
 
@@ -22,6 +22,8 @@ import { FractionTypeItem } from '../fraction.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionBooleanComponent {
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
   @ViewChild('fractionBooleanTypeSelect', { static: false })
   fractionBooleanTypeSelectElement: NgSelectComponent;
 

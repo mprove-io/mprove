@@ -26,12 +26,12 @@ import {
   UTC
 } from '#common/constants/top';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
-
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 import { UsersService } from './db/users.service';
 
@@ -95,7 +95,7 @@ export class QueryInfoDashboardService {
 
     let newDashboardId = fromDashboardX.dashboardId;
 
-    let fileName = `${newDashboardId}.dashboard`;
+    let fileName = `${newDashboardId}${'.dashboard' satisfies FileExtension}`;
 
     let mdir = currentStruct.mproveConfig.mproveDirValue;
 

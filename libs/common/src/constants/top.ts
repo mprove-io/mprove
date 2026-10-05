@@ -1,14 +1,8 @@
 import type { OptionsStoreGoogleApi } from '#common/types/backend/parts/connection-parts/options-store-google-api';
-import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
-import type { DetailUnit } from '#common/types/blockml/parts/field/detail-unit';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { FieldType } from '#common/types/blockml/parts/field/field-type';
-import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
-import type { RowType } from '#common/types/blockml/parts/report/row/row-type';
-import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
-import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
 
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
 export const MPROVE_EXPLORER_FILENAME = 'mprove-explorer.md';
@@ -19,15 +13,6 @@ export const MPROVE_CONFIG_DIR_DOT_SLASH = './';
 export const UTC = 'UTC';
 
 export const MALLOY_FILTER_ANY = 'f``';
-
-export const GIVEN_TYPES: GivenType[] = [
-  'String',
-  'Number',
-  'Boolean',
-  'Date',
-  'Timestamp'
-  // GivenTypeEnum.TimestampTz
-];
 
 export const EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE = 75;
 export const EXPLORER_CONTEXT_USAGE_BUFFER = 20_000;
@@ -242,21 +227,6 @@ export const METHOD_RPC = 'RPC';
 
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 
-export const FIELD_TYPE_VALUES: FieldType[] = [
-  'count_distinct',
-  'sum',
-  'sum_by_key',
-  'average',
-  'average_by_key',
-  'median_by_key',
-  'percentile_by_key',
-  'min',
-  'max',
-  'list',
-  'custom',
-  'yesno_is_true'
-];
-
 export const FIELD_RESULT_VALUES: FieldResult[] = [
   'string',
   'number',
@@ -284,23 +254,6 @@ export const MEASURE_TYPE_VALUES: FieldType[] = [
   'custom'
 ];
 
-export const ALL_RESULT_VALUES: FieldResult[] = [
-  'day_of_week',
-  'day_of_week_index',
-  'month_name',
-  'quarter_of_year',
-  'ts',
-  'yesno',
-  'string',
-  'number',
-  'date',
-  'boolean',
-  'array',
-  'record',
-  'json',
-  'sql_native'
-];
-
 export const DIMENSION_RESULT_VALUES: FieldResult[] = ['string', 'number'];
 
 export const MEASURE_RESULT_VALUES: FieldResult[] = ['string', 'number'];
@@ -318,56 +271,11 @@ export const FILTER_RESULT_VALUES: FieldResult[] = [
   'yesno'
 ];
 
-export const CHART_TYPE_VALUES: ChartType[] = [
-  'table',
-  'line',
-  'bar',
-  'scatter',
-  'single',
-  'pie',
-  'pivot_table'
-];
-
 export const Y_FIELDS_CHART_TYPE_VALUES: ChartType[] = [
   'line',
   'bar',
   'scatter'
 ];
-
-export const PROJECT_WEEK_START_VALUES: ProjectWeekStart[] = [
-  'Sunday',
-  'Monday'
-];
-
-export const RELATIONSHIP_TYPE_VALUES: RelationshipType[] = [
-  'one_to_one',
-  'one_to_many',
-  'many_to_one',
-  'many_to_many'
-];
-
-export const ROW_TYPE_VALUES: RowType[] = [
-  'empty',
-  'header',
-  'metric',
-  'formula'
-];
-
-export const STORE_METHOD_VALUES: StoreMethod[] = ['GET', 'POST'];
-
-export const STORE_FIELD_DETAIL_VALUES: DetailUnit[] = [
-  'years',
-  'quarters',
-  'months',
-  'weeksSunday',
-  'weeksMonday',
-  'days',
-  'hours',
-  'minutes',
-  'timestamps'
-];
-
-export const LOGIC_VALUES: FractionLogic[] = ['OR', 'AND_NOT'];
 
 export const RELOAD_SESSION_EVENT_TYPE = 'session.mprove-reload-session';
 export const SESSION_TITLE_UPDATED_EVENT_TYPE = 'session.mprove-title-updated';

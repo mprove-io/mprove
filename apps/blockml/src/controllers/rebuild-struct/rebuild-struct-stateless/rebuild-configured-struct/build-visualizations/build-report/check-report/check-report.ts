@@ -6,6 +6,7 @@ import { log } from '#blockml/functions/log/log';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 
 let func: Func = 'build-report/check-report';
@@ -32,7 +33,7 @@ export function checkReport(item: {
       item.errors.push(
         new BmError({
           title: 'MISSING_REPORT_TITLE',
-          message: `parameter "title" is required for report`,
+          message: `parameter "${'title' satisfies FileParameter}" is required for report`,
           lines: [
             {
               line: x.report_line_num,
@@ -49,7 +50,7 @@ export function checkReport(item: {
       item.errors.push(
         new BmError({
           title: 'MISSING_REPORT_ROWS',
-          message: `parameter "rows" is required for report`,
+          message: `parameter "${'rows' satisfies FileParameter}" is required for report`,
           lines: [
             {
               line: x.report_line_num,

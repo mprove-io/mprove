@@ -14,7 +14,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import type { TimeSpec } from '#common/types/shared/time/timespec';
 import '@vaadin/date-picker';
 import {
   DatePicker,
@@ -24,12 +23,18 @@ import {
 import '@vaadin/time-picker';
 import { TimePicker } from '@vaadin/time-picker';
 import { COMMON_I18N } from '#common/constants/top-front';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
+import {
+  type FractionTsMomentType,
+  fractionTsMomentTypeValues
+} from '#common/types/blockml/parts/fraction/fraction-ts-moment-type';
+import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { TimeService } from '#front/app/services/time.service';
 import { ValidationService } from '#front/app/services/validation.service';
@@ -41,6 +46,42 @@ import {
   FractionTypeItem
 } from '../fraction.component';
 
+const dayEqualityFractionTypes = [
+  'TsIsOnDay',
+  'TsIsNotOnDay'
+] satisfies FractionType[];
+
+const timeBoundaryFractionTypes = [
+  'TsIsBefore',
+  'TsIsThrough',
+  'TsIsAfter',
+  'TsIsStarting',
+  'TsIsBeginFor',
+  'TsIsNotBeginFor'
+] satisfies FractionType[];
+
+const offsetMomentTypes = ['Ago', 'FromNow'] satisfies FractionTsMomentType[];
+
+const pastRangeFractionTypes = [
+  'TsIsInLast',
+  'TsIsNotInLast'
+] satisfies FractionType[];
+
+const futureRangeFractionTypes = [
+  'TsIsInNext',
+  'TsIsNotInNext'
+] satisfies FractionType[];
+
+const durationRangeFractionTypes = [
+  'TsIsBeginFor',
+  'TsIsNotBeginFor'
+] satisfies FractionType[];
+
+const betweenRangeFractionTypes = [
+  'TsIsBetween',
+  'TsIsNotBetween'
+] satisfies FractionType[];
+
 @Component({
   standalone: false,
   selector: 'm-fraction-ts',
@@ -49,6 +90,114 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionTsComponent implements OnInit, OnChanges {
+  readonly betweenRangeFractionTypes: FractionType[] =
+    betweenRangeFractionTypes;
+
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
+  readonly singleBoundaryFractionTypes: FractionType[] = [
+    'TsIsBefore',
+    'TsIsThrough',
+    'TsIsAfter',
+    'TsIsStarting',
+    'TsIsBeginFor',
+    'TsIsOnTimestamp',
+    'TsIsNotBeginFor',
+    'TsIsNotOnTimestamp'
+  ];
+
+  readonly timeBoundaryFractionTypes: FractionType[] =
+    timeBoundaryFractionTypes;
+
+  readonly relativePeriodMomentTypes: FractionTsMomentType[] = [
+    'This',
+    'Last',
+    'Next'
+  ];
+
+  readonly dayEqualityFractionTypes: FractionType[] = dayEqualityFractionTypes;
+
+  readonly adjacentPeriodMomentTypes: FractionTsMomentType[] = ['Last', 'Next'];
+
+  readonly calendarBoundaryFractionTypes: FractionType[] = [
+    'TsIsOnYear',
+    'TsIsOnQuarter',
+    'TsIsOnMonth',
+    'TsIsOnWeek',
+    'TsIsOnDay',
+    'TsIsOnHour',
+    'TsIsOnMinute',
+    'TsIsBefore',
+    'TsIsThrough',
+    'TsIsAfter',
+    'TsIsStarting',
+    'TsIsBeginFor',
+    'TsIsNotOnYear',
+    'TsIsNotOnQuarter',
+    'TsIsNotOnMonth',
+    'TsIsNotOnWeek',
+    'TsIsNotOnDay',
+    'TsIsNotOnHour',
+    'TsIsNotOnMinute',
+    'TsIsNotBeginFor'
+  ];
+
+  readonly offsetMomentTypes: FractionTsMomentType[] = offsetMomentTypes;
+
+  readonly calendarEqualityFractionTypes: FractionType[] = [
+    'TsIsOnYear',
+    'TsIsOnQuarter',
+    'TsIsOnMonth',
+    'TsIsOnWeek',
+    'TsIsOnDay',
+    'TsIsOnHour',
+    'TsIsOnMinute',
+    'TsIsNotOnYear',
+    'TsIsNotOnQuarter',
+    'TsIsNotOnMonth',
+    'TsIsNotOnWeek',
+    'TsIsNotOnDay',
+    'TsIsNotOnHour',
+    'TsIsNotOnMinute'
+  ];
+
+  readonly yearEqualityFractionTypes: FractionType[] = [
+    'TsIsOnYear',
+    'TsIsNotOnYear'
+  ];
+
+  readonly quarterEqualityFractionTypes: FractionType[] = [
+    'TsIsOnQuarter',
+    'TsIsNotOnQuarter'
+  ];
+
+  readonly monthEqualityFractionTypes: FractionType[] = [
+    'TsIsOnMonth',
+    'TsIsNotOnMonth'
+  ];
+
+  readonly weekEqualityFractionTypes: FractionType[] = [
+    'TsIsOnWeek',
+    'TsIsNotOnWeek'
+  ];
+
+  readonly hourEqualityFractionTypes: FractionType[] = [
+    'TsIsOnHour',
+    'TsIsNotOnHour'
+  ];
+
+  readonly minuteEqualityFractionTypes: FractionType[] = [
+    'TsIsOnMinute',
+    'TsIsNotOnMinute'
+  ];
+
+  readonly durationRangeFractionTypes: FractionType[] =
+    durationRangeFractionTypes;
+
+  readonly pastRangeFractionTypes: FractionType[] = pastRangeFractionTypes;
+
+  readonly futureRangeFractionTypes: FractionType[] = futureRangeFractionTypes;
+
   @ViewChild('fractionTsTypeSelect', { static: false })
   fractionTsTypeSelectElement: NgSelectComponent;
 
@@ -713,8 +862,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.fractionTsTypesList =
       this.isMetrics === false
         ? this.fractionTsTypesFullList
-        : this.fractionTsTypesFullList.filter(
-            x =>
+        : this.fractionTsTypesFullList.filter(x =>
+            (
               [
                 'TsIsInLast',
                 'TsIsOnDay',
@@ -731,7 +880,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
                 'TsIsThrough',
                 'TsIsOnHour',
                 'TsIsOnMinute'
-              ].indexOf(x.value) > -1
+              ] satisfies FractionType[]
+            ).some(candidate => candidate === x.value)
           );
 
     let structState = this.structQuery.getValue();
@@ -817,36 +967,48 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
     if (isDefined(changes.fraction)) {
       if (
-        [
-          'TsIsOnYear',
-          'TsIsOnQuarter',
-          'TsIsOnMonth',
-          'TsIsOnWeek',
-          'TsIsOnHour',
-          'TsIsOnMinute',
-          'TsIsNotOnYear',
-          'TsIsNotOnQuarter',
-          'TsIsNotOnMonth',
-          'TsIsNotOnWeek',
-          'TsIsNotOnHour',
-          'TsIsNotOnMinute'
-        ].indexOf((changes.fraction.currentValue as Fraction).type) > -1
+        (
+          [
+            'TsIsOnYear',
+            'TsIsOnQuarter',
+            'TsIsOnMonth',
+            'TsIsOnWeek',
+            'TsIsOnHour',
+            'TsIsOnMinute',
+            'TsIsNotOnYear',
+            'TsIsNotOnQuarter',
+            'TsIsNotOnMonth',
+            'TsIsNotOnWeek',
+            'TsIsNotOnHour',
+            'TsIsNotOnMinute'
+          ] satisfies FractionType[]
+        ).some(
+          candidate =>
+            candidate === (changes.fraction.currentValue as Fraction).type
+        )
       ) {
         this.fractionTsMomentTypesList =
-          this.fractionTsMomentTypesFullList.filter(
-            x =>
-              ['Literal', 'This', 'Last', 'Next', 'Ago', 'FromNow'].indexOf(
-                x.value
-              ) > -1
+          this.fractionTsMomentTypesFullList.filter(x =>
+            (
+              [
+                'Literal',
+                'This',
+                'Last',
+                'Next',
+                'Ago',
+                'FromNow'
+              ] satisfies FractionTsMomentType[]
+            ).some(candidate => candidate === x.value)
           );
       } else if (
-        ['TsIsOnDay', 'TsIsNotOnDay'].indexOf(
-          (changes.fraction.currentValue as Fraction).type
-        ) > -1
+        dayEqualityFractionTypes.some(
+          candidate =>
+            candidate === (changes.fraction.currentValue as Fraction).type
+        )
       ) {
         this.fractionTsMomentTypesList =
-          this.fractionTsMomentTypesFullList.filter(
-            x =>
+          this.fractionTsMomentTypesFullList.filter(x =>
+            (
               [
                 'Literal',
                 'Today',
@@ -857,43 +1019,32 @@ export class FractionTsComponent implements OnInit, OnChanges {
                 'Next',
                 'Ago',
                 'FromNow'
-              ].indexOf(x.value) > -1
+              ] satisfies FractionTsMomentType[]
+            ).some(candidate => candidate === x.value)
           );
       } else if (
-        ['TsIsOnTimestamp', 'TsIsNotOnTimestamp'].indexOf(
-          (changes.fraction.currentValue as Fraction).type
-        ) > -1
+        (
+          ['TsIsOnTimestamp', 'TsIsNotOnTimestamp'] satisfies FractionType[]
+        ).some(
+          candidate =>
+            candidate === (changes.fraction.currentValue as Fraction).type
+        )
       ) {
         this.fractionTsMomentTypesList =
-          this.fractionTsMomentTypesFullList.filter(
-            x => ['Timestamp', 'Now'].indexOf(x.value) > -1
+          this.fractionTsMomentTypesFullList.filter(x =>
+            (['Timestamp', 'Now'] satisfies FractionTsMomentType[]).some(
+              candidate => candidate === x.value
+            )
           );
       } else if (
-        [
-          'TsIsBefore',
-          'TsIsThrough',
-          'TsIsAfter',
-          'TsIsStarting',
-          'TsIsBeginFor',
-          'TsIsNotBeginFor'
-        ].indexOf((changes.fraction.currentValue as Fraction).type) > -1
+        timeBoundaryFractionTypes.some(
+          candidate =>
+            candidate === (changes.fraction.currentValue as Fraction).type
+        )
       ) {
         this.fractionTsMomentTypesList =
-          this.fractionTsMomentTypesFullList.filter(
-            x =>
-              [
-                'Literal',
-                'Today',
-                'Yesterday',
-                'Tomorrow',
-                'This',
-                'Last',
-                'Next',
-                'Ago',
-                'FromNow',
-                'Now',
-                'Timestamp'
-              ].indexOf(x.value) > -1
+          this.fractionTsMomentTypesFullList.filter(x =>
+            fractionTsMomentTypeValues.includes(x.value)
           );
       } else {
         this.fractionTsMomentTypesList = this.fractionTsMomentTypesFullList;
@@ -2078,7 +2229,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
           ? this.fraction.tsMomentUnit
           : 'day';
 
-    if (['Ago', 'FromNow'].indexOf(this.fraction.tsMomentType) > -1) {
+    if (
+      offsetMomentTypes.some(
+        candidate => candidate === this.fraction.tsMomentType
+      )
+    ) {
       this.fraction.tsMomentAgoFromNowQuantity = 1;
     }
 
@@ -2090,7 +2245,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
       timeToStr: this.timeToStr
     });
 
-    if (['Ago', 'FromNow'].indexOf(this.fraction.tsMomentType) > -1) {
+    if (
+      offsetMomentTypes.some(
+        candidate => candidate === this.fraction.tsMomentType
+      )
+    ) {
       this.tsMomentAgoFromNowQuantityForm.controls[
         'tsMomentAgoFromNowQuantity'
       ].setValue(this.fraction.tsMomentAgoFromNowQuantity);
@@ -2120,7 +2279,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
           ? this.fraction.tsFromMomentUnit
           : 'day';
 
-    if (['Ago', 'FromNow'].indexOf(this.fraction.tsFromMomentType) > -1) {
+    if (
+      offsetMomentTypes.some(
+        candidate => candidate === this.fraction.tsFromMomentType
+      )
+    ) {
       this.fraction.tsFromMomentAgoFromNowQuantity = 1;
     }
 
@@ -2132,7 +2295,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
       timeToStr: this.timeToStr
     });
 
-    if (['Ago', 'FromNow'].indexOf(this.fraction.tsFromMomentType) > -1) {
+    if (
+      offsetMomentTypes.some(
+        candidate => candidate === this.fraction.tsFromMomentType
+      )
+    ) {
       this.tsFromMomentAgoFromNowQuantityForm.controls[
         'tsFromMomentAgoFromNowQuantity'
       ].setValue(this.fraction.tsFromMomentAgoFromNowQuantity);
@@ -2162,7 +2329,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
           ? this.fraction.tsToMomentUnit
           : 'day';
 
-    if (['Ago', 'FromNow'].indexOf(this.fraction.tsToMomentType) > -1) {
+    if (
+      offsetMomentTypes.some(
+        candidate => candidate === this.fraction.tsToMomentType
+      )
+    ) {
       this.fraction.tsToMomentAgoFromNowQuantity = 1;
     }
 
@@ -2174,7 +2345,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
       timeToStr: this.timeToStr
     });
 
-    if (['Ago', 'FromNow'].indexOf(this.fraction.tsToMomentType) > -1) {
+    if (
+      offsetMomentTypes.some(
+        candidate => candidate === this.fraction.tsToMomentType
+      )
+    ) {
       this.tsToMomentAgoFromNowQuantityForm.controls[
         'tsToMomentAgoFromNowQuantity'
       ].setValue(this.fraction.tsToMomentAgoFromNowQuantity);
@@ -2455,24 +2630,38 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   emitFractionUpdate() {
     if (
-      (['TsIsInLast', 'TsIsNotInLast'].indexOf(this.fraction.type) > -1 &&
+      (pastRangeFractionTypes.some(
+        candidate => candidate === this.fraction.type
+      ) &&
         this.tsLastValueForm.valid === false) ||
-      (['TsIsInNext', 'TsIsNotInNext'].indexOf(this.fraction.type) > -1 &&
+      (futureRangeFractionTypes.some(
+        candidate => candidate === this.fraction.type
+      ) &&
         this.tsNextValueForm.valid === false) ||
-      (['TsIsBeginFor', 'TsIsNotBeginFor'].indexOf(this.fraction.type) > -1 &&
+      (durationRangeFractionTypes.some(
+        candidate => candidate === this.fraction.type
+      ) &&
         this.tsForValueForm.valid === false) ||
       (this.fraction.tsMomentType === 'Timestamp' &&
         this.tsTimestampValueForm.valid === false) ||
-      (['Ago', 'FromNow'].indexOf(this.fraction.tsMomentType) > -1 &&
+      (offsetMomentTypes.some(
+        candidate => candidate === this.fraction.tsMomentType
+      ) &&
         this.tsMomentAgoFromNowQuantityForm.valid === false) ||
-      (['TsIsBetween', 'TsIsNotBetween'].indexOf(this.fraction.type) > -1 &&
+      (betweenRangeFractionTypes.some(
+        candidate => candidate === this.fraction.type
+      ) &&
         ((this.fraction.tsFromMomentType === 'Timestamp' &&
           this.tsFromTimestampValueForm.valid === false) ||
           (this.fraction.tsToMomentType === 'Timestamp' &&
             this.tsToTimestampValueForm.valid === false) ||
-          (['Ago', 'FromNow'].indexOf(this.fraction.tsFromMomentType) > -1 &&
+          (offsetMomentTypes.some(
+            candidate => candidate === this.fraction.tsFromMomentType
+          ) &&
             this.tsFromMomentAgoFromNowQuantityForm.valid === false) ||
-          (['Ago', 'FromNow'].indexOf(this.fraction.tsToMomentType) > -1 &&
+          (offsetMomentTypes.some(
+            candidate => candidate === this.fraction.tsToMomentType
+          ) &&
             this.tsToMomentAgoFromNowQuantityForm.valid === false)))
     ) {
       return;

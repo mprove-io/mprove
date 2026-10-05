@@ -6,8 +6,8 @@ import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
-
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { File2 } from '#common/types/blockml/parts/internal/file/file-2';
 
 let func: Func = 'build-yaml/remove-wrong-ext';
@@ -36,16 +36,18 @@ export function removeWrongExt(item: {
     let ext: any = r ? r[1] : ''; // any
 
     if (
-      [
-        '.store',
-        '.schema',
-        '.report',
-        '.dashboard',
-        '.chart',
-        '.space',
-        '.md',
-        '.yml'
-      ].indexOf(ext) > -1
+      (
+        [
+          '.store',
+          '.schema',
+          '.report',
+          '.dashboard',
+          '.chart',
+          '.space',
+          '.md',
+          '.yml'
+        ] satisfies FileExtension[]
+      ).includes(ext)
     ) {
       let f: File2 = file2s.find(y => y.name === x.name);
 

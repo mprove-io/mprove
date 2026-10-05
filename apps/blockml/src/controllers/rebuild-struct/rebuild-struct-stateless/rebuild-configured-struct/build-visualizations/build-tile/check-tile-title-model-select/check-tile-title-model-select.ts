@@ -8,6 +8,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
@@ -49,7 +50,7 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
         item.errors.push(
           new BmError({
             title: 'MISSING_TILE_TITLE',
-            message: `tile must have title parameter`,
+            message: `tile must have ${'title' satisfies FileParameter} parameter`,
             lines: [
               {
                 line: Math.min(...lineNums),
@@ -70,7 +71,7 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
         item.errors.push(
           new BmError({
             title: 'MISSING_TILE_MODEL',
-            message: `tile must have "model" parameter`,
+            message: `tile must have "${'model' satisfies FileParameter}" parameter`,
             lines: [
               {
                 line: tile.title_line_num,
@@ -112,7 +113,7 @@ export function checkTileTitleModelSelect<T extends dcType>(item: {
         item.errors.push(
           new BmError({
             title: 'MISSING_TILE_SELECT',
-            message: `tile must have "select" parameter`,
+            message: `tile must have "${'select' satisfies FileParameter}" parameter`,
             lines: [
               {
                 line: tile.title_line_num,

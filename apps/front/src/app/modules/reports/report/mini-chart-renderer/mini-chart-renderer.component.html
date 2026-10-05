@@ -1,6 +1,6 @@
 <div
   class="flex h-[40px] w-full flex-row"
-  *ngIf="['metric', 'formula'].indexOf(params.data.rowType) > -1"
+  *ngIf="valueRowTypes.includes(params.data.rowType)"
 >
   <div
     echarts

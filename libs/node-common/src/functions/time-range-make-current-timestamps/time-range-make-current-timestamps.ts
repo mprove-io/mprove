@@ -10,6 +10,7 @@ import {
   startOfYear
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
+import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 
 interface TimestampsResult {
   currentTs: number;
@@ -45,7 +46,7 @@ export function timeRangeMakeCurrentTimestamps(item: {
 
   let currentWeekStartTimestamp = getUnixTime(
     startOfWeek(currentDate, {
-      weekStartsOn: weekStart === 'Sunday' ? 0 : 1
+      weekStartsOn: weekStart === ('Sunday' satisfies ProjectWeekStart) ? 0 : 1
     })
   );
 

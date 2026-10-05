@@ -28,7 +28,7 @@
         <div
           class="ml-1 truncate"
           [ngClass]="{
-            'text-yellow-700': item.operator === 'And'
+            'text-yellow-700': item.operator === fractionOperatorAnd
           }"
           >{{ item.label }}</div
         >
@@ -38,7 +38,7 @@
         <div
           class="flex flex-row"
           [ngClass]="{
-            'text-yellow-700': item.operator === 'And'
+            'text-yellow-700': item.operator === fractionOperatorAnd
           }"
         >
           <div class="ml-1">{{ item.operator | uppercase }} -</div>

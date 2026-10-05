@@ -11,6 +11,7 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
+
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
 import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
@@ -33,6 +34,8 @@ export interface ReportAddRowDialogData {
   templateUrl: './report-add-row-dialog.component.html'
 })
 export class ReportAddRowDialogComponent implements OnInit {
+  readonly namedRowTypes: RowType[] = ['header', 'formula'];
+
   @ViewChild('newMetricSelect', { static: false })
   newMetricSelectElement: NgSelectComponent;
 

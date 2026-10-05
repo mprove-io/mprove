@@ -15,9 +15,9 @@ import type { Prep } from '#backend/interfaces/prep';
 import { TabService } from '#backend/services/tab.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
 import type { ToBackendCreateProviderResponse } from '#common/types/backend/routes/providers/create-provider/create-provider-response';
 
@@ -178,7 +178,7 @@ test('1', async t => {
     assert.deepEqual(unwrapBackendResponseOutput({ response: resp }).provider, {
       projectId: projectId,
       providerId: providerId,
-      type: 'OpenAICompatible',
+      type: 'OpenAICompatible' satisfies ProviderType,
       name: providerName,
       isEnabled: true,
       models: [],

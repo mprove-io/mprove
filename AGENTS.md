@@ -343,65 +343,131 @@ Why: the apps run via `@swc-node/register/esm-register`, which does not elide
 value-style imports of names that turn out to be type-only. Native Node ESM
 resolution then fails because the source file exports the name only as a `type`.
 
-## Domain literal unions
+## Domain literals
 
-Define each finite domain string union from one canonical `as const` tuple. Use
-that tuple for its type, schema when needed, and complete value lists. Export it
-when callers need the values; do not duplicate the complete set elsewhere.
+Keep domain string literals type checked using the rules below.
 
-Separate collections must have a distinct purpose, such as a subset, display
-order, or UI metadata. Give them explicit domain type annotations.
+### Canonical values
+
+Define each finite domain union from one canonical `as const` tuple. Reuse it
+for the type, schema when needed, and complete value lists. Export it when
+callers need the values; do not duplicate the complete set.
 
 Use `as const` only for canonical tuples or when downstream types require exact
-literal values. In the latter case, use `as const satisfies` to check an
-existing contract. `as const` alone does not validate domain membership.
+literals. For the latter, use `as const satisfies` with an existing contract.
+`as const` alone does not validate domain membership.
 
 ```ts
 export const taskStatusValues = ['queued', 'running', 'done'] as const;
 
 export type TaskStatus = (typeof taskStatusValues)[number];
-
-export const activeTaskStatuses: TaskStatus[] = ['queued', 'running'];
 ```
 
-## Domain literal type checking
+### Named declarations
 
-Use explicit domain type annotations for named variables, collections, objects,
-parameters, and return types. Do not widen domain types to `string`.
+Use explicit domain types for named variables, objects, parameters, and return
+types. Literal-array collections follow the "Collections" rule instead.
 
-Use `satisfies` for inline expressions without a typed context. Check the whole
-object against an existing contract when available; otherwise check individual
-domain literals. Already-typed contexts need no redundant checks.
-
-Import types with `import type`. Do not use `as` assertions to bypass checking.
+Do not widen domain types to `string`. Import types with `import type`; do not
+use `as` assertions to bypass checking.
 
 ```ts
-// correct
-let command: AiStreamCommand = 'set-title';
+let status: TaskStatus = 'queued';
+```
 
-JSON.stringify({
-  command: 'set-title' satisfies AiStreamCommand
-});
+### Inline checks
 
-// wrong: JSON.stringify does not check the domain type
+Use `satisfies` for inline expressions without a domain-checked context. Prefer
+checking the whole object or collection against an existing contract; otherwise
+check individual domain literals.
+
+```ts
 JSON.stringify({
-  command: 'set-title'
+  status: 'queued' satisfies TaskStatus
 });
 ```
 
-## Domain literal interpolation
+### Typed contexts
 
-In constructed strings, interpolate domain literals using `satisfies` with their
-existing string-literal union type, rather than embedding them as plain text.
+Do not add `satisfies` where the context already checks domain membership.
+Drizzle's `eq` and `inArray` check values against a column's
+`$type<DomainType>()`.
 
-Ordinary prose and already-typed expressions need no checks.
+Prefer typing the underlying column or contract when it represents a domain.
+Keep explicit checks where the context is `string`, `any`, or otherwise
+unchecked.
 
 ```ts
-// correct
-message: `parameter "${'method' satisfies FileParameter}" is required`,
+// tasksTable.status has .$type<TaskStatus>().
+inArray(tasksTable.status, ['queued', 'running']);
+```
 
-// wrong: domain token has no compiler validation
-message: `parameter "method" is required`,
+### Angular template contexts
+
+With `strictTemplates` enabled, keep domain literals inline in equality and
+inequality comparisons when Angular checks them against a finite domain union.
+Do not introduce component properties solely for already-checked comparisons.
+
+```html
+<!-- chartType is ChartType, so Angular checks the literal. -->
+<div *ngIf="chartType === 'table'"></div>
+```
+
+For comparisons against `any`, broad `string`, or otherwise unchecked values,
+prefer typing the underlying form control or template context with its domain
+type. If that is not practical, expose a `readonly` component property with an
+explicit domain type and use it in the template.
+
+Do not assume a template value is typed merely because its source collection is
+typed. Third-party `let-item` contexts and plain `ng-template` contexts may
+expose `any` even with `strictTemplates` enabled.
+
+This comparison rule does not apply to all template expressions. Legacy
+`*ngSwitchCase` does not check membership against the switch expression's
+domain, and concatenation does not check domain tokens. Use explicitly
+domain-typed component properties for those unchecked literals. Template
+collections follow the separate "Angular collections" rule; checking a
+membership argument does not validate every literal in an inline array against
+the domain.
+
+### Interpolation
+
+Interpolate domain literals using `satisfies` with their existing union type; do
+not embed domain tokens as unchecked plain text. Ordinary prose and
+already-typed expressions need no checks.
+
+```ts
+let message: string = `Task status must be "${'queued' satisfies TaskStatus}"`;
+```
+
+### Collections
+
+Separate collections must serve a distinct purpose: a subset, display order, or
+UI metadata. Complete value lists must reuse the canonical tuple.
+
+Keep one-off collections inline; use whole-array `satisfies DomainType[]` unless
+the context already checks membership. Do not extract a collection solely for
+type checking. Keep collections named when reused or required by templates.
+
+Use `satisfies DomainType[]` for named literal arrays to preserve inferred
+subset types. Use explicit domain-array types for collections initialized from
+other values, or when needed for `includes` or Angular template membership
+checks. Do not widen to `string[]` or use a cast.
+
+```ts
+export const activeTaskStatuses = ['queued', 'running'] satisfies TaskStatus[];
+```
+
+### Angular collections
+
+For template collections used with `indexOf` or `includes`, use an explicit
+domain-array annotation and call the method directly in the template.
+
+Do not add a helper or component method solely to work around a narrowed
+collection's membership argument type.
+
+```ts
+readonly activeTaskStatuses: TaskStatus[] = ['queued', 'running'];
 ```
 
 ## Zod optional fields — use `.nullish()`
@@ -434,13 +500,47 @@ contract composition, not merely because a native type exists.
 
 Do not define the native type using `z.infer`.
 
-Exception: finite domain string unions use their canonical `as const` tuple, a
-native type `(typeof tuple)[number]`, and a schema `z.enum(tuple)`. Preserve the
+Example in `member.ts` (imports omitted):
+
+```ts
+export type Member = {
+  id: string;
+  nickname?: string;
+};
+
+export const zMember = z.object({
+  id: z.string(),
+  nickname: z.string().nullish()
+});
+
+assertTypesEqual<Member, z.infer<typeof zMember>>({
+  value: true
+});
+```
+
+Exception: finite domain string unions follow "Canonical values" under "Domain
+literals". Use their canonical `as const` tuple, a native type
+`(typeof tuple)[number]`, and a schema `z.enum(tuple)`. Preserve the
 `assertTypesEqual<Type, z.infer<typeof schema>>` equality assertion.
 
 For every Zod `.extend()`, define the native type using `Extend` from
 `#common/types/extend`; do not use TypeScript `extends` or intersection types
 for this purpose.
+
+Example in a separate `member-with-label.ts`, using imported `Member`,
+`zMember`, and `Extend` (imports omitted):
+
+```ts
+export type MemberWithLabel = Extend<Member, { label: string }>;
+
+export const zMemberWithLabel = zMember.extend({
+  label: z.string()
+});
+
+assertTypesEqual<MemberWithLabel, z.infer<typeof zMemberWithLabel>>({
+  value: true
+});
+```
 
 ## Explicit variable types
 
@@ -576,50 +676,117 @@ first.
 
 ## Condition expressions
 
-Inline a boolean expression in a condition when a variable would only store the
-expression for that single condition. This includes function and method calls
-that return a boolean.
+Use the rules below for conditions. Collection membership follows the separate
+"Membership checks" rule.
 
-Use `isUndefined(value)` instead of `!isDefined(value)` when checking for an
-undefined value.
+### Boolean conditions
 
-When a function or method call returns a non-boolean value, assign its result to
-an explicitly typed variable before evaluating that value in a condition.
+Inline a boolean expression or boolean-returning call when a variable would only
+store it for one condition. Exception: name membership booleans in compound
+conditions as specified by "Membership checks".
 
-Start boolean variable names with `is`. In particular, use `isOutputInParent`,
-not `outputIsInParent`.
+Start boolean variable names with `is`: use `isOutputInParent`, not
+`outputIsInParent`.
 
 ```ts
-// correct: single-use boolean expression
-if (manifestPath === outputPath) {
+if (isDefined(member) && sourcePath !== outputPath) {
+  // Process the member.
+}
+```
 
-// correct: call returns a boolean
-if (isDefined(member)) {
+### Negated comparisons
 
-// correct: check for an undefined value
+When negating a single comparison, use the inverse comparison operator rather
+than wrapping the comparison in `!`. Prefer `!==` over `!(... === ...)`, `===`
+over `!(... !== ...)`, and inverse relational operators where equivalent.
+
+This rule does not require rewriting negated compound conditions or
+boolean-returning calls. Collection membership follows "Membership checks".
+
+```ts
+// correct
+if (parameter !== ('columns' satisfies FileParameter)) {
+  // Handle other parameters.
+}
+
+// wrong
+if (!(parameter === ('columns' satisfies FileParameter))) {
+  // Handle other parameters.
+}
+```
+
+### Undefined checks
+
+Use `isUndefined(value)`, not `!isDefined(value)`, when checking for an
+undefined value.
+
+```ts
 if (isUndefined(member)) {
+  // Handle the missing member.
+}
+```
 
-// wrong: negated isDefined
-if (!isDefined(member)) {
+### Non boolean results
 
-// correct: call returns a non-boolean value
-let member: unknown = this.membersService.getMember(memberId);
+Assign a non-boolean function or method result to an explicitly typed variable
+before evaluating it in a condition.
 
-if (!member) {
+Exception: compare membership indices directly as specified by "Membership
+checks"; do not store an index solely to test presence or absence.
 
-// wrong: unnecessary single-use boolean variable
-let pathsConflict: boolean = manifestPath === outputPath;
+```ts
+let member: Member = members.get(memberId);
 
-if (pathsConflict) {
+if (isUndefined(member)) {
+  // Handle the missing member.
+}
+```
 
-// correct: boolean variable starts with is
-let isOutputInParent: boolean = relativeOutputPath === '..';
+## Membership checks
 
-// wrong: is is in the middle
-let outputIsInParent: boolean = relativeOutputPath === '..';
+For value-based presence checks, use `.includes(value)` instead of
+`.indexOf(value) > -1`.
 
-// wrong: call returns a non-boolean value
-if (!this.membersService.getMember(memberId)) {
+For value-based absence checks, use `.indexOf(value) < 0` rather than negating
+`.includes(value)`.
+
+Use value-based checks when the argument type is accepted; for broader inputs or
+property comparisons, use callback-based checks.
+
+For callback-based presence checks, use `.some(callback)` instead of
+`.findIndex(callback) > -1`.
+
+For callback-based absence checks, use `.findIndex(callback) < 0` rather than
+negating `.some(callback)`.
+
+Compare membership indices directly with `0` or `-1`. Keep a named index only
+when the index itself is needed, such as for array access, insertion, or
+ordering.
+
+In compound conditions, name the membership boolean with a descriptive `is...`
+variable, even if used only once. Store the boolean, not a separate numeric
+index.
+
+```ts
+let isActiveTask = (['queued', 'running'] satisfies TaskStatus[]).some(
+  status => status === task.status
+);
+
+if (task.canRun && isActiveTask) {
+  // Handle active tasks.
+}
+
+if (tasks.findIndex(task => task.id === taskId) < 0) {
+  // Handle the missing task.
+}
+
+if (taskIds.includes(taskId)) {
+  // Handle the existing task.
+}
+
+if (taskIds.indexOf(taskId) < 0) {
+  // Handle the missing task.
+}
 ```
 
 ## Function folders call tree

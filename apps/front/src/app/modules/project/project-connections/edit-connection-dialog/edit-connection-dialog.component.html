@@ -1145,7 +1145,10 @@
       </div>
 
       <ng-container
-        *ngIf="editDatabricksForm.controls['authType'].value === 'OAuthM2M'"
+        *ngIf="
+          editDatabricksForm.controls['authType'].value ===
+          databricksAuthTypeOAuthM2M
+        "
       >
         <div class="flex flex-row items-center">
           <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
@@ -1201,7 +1204,7 @@
         class="flex flex-row items-center"
         *ngIf="
           editDatabricksForm.controls['authType'].value ===
-          'PersonalAccessToken'
+          databricksAuthTypePersonalAccessToken
         "
       >
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Token</div>

@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
-
 import type { ToDiskResponse } from '#common/types/disk/response/to-disk-response';
+import type { RpcNamespace } from '#common/types/node-common/rpc/rpc-namespace';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { MessageService } from '../message/message.service';
 
@@ -37,7 +37,7 @@ export class ConsumerService {
 
     this.queue = new Queue({
       redis: this.redisClient,
-      namespace: `rpc-disk-${diskShard}`
+      namespace: `${'rpc-disk' satisfies RpcNamespace}-${diskShard}`
     });
 
     let diskConcurrency =

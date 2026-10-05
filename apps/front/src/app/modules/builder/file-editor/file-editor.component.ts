@@ -58,6 +58,7 @@ import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/file
 import type { ToBackendSaveFileResponse } from '#common/types/backend/routes/files/save-file/save-file-response';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -831,8 +832,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0;
 
     let isMalloyFileWithModel =
-      dotExt === '.malloy' &&
-      (this.struct.modelFilePaths ?? []).indexOf(this.file.fileNodeId) >= 0;
+      dotExt === ('.malloy' satisfies FileExtension) &&
+      (this.struct.modelFilePaths ?? []).includes(this.file.fileNodeId);
 
     if (
       isMproveConfigFile ||
@@ -1206,12 +1207,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     let id = ar.join('.');
     let dotExt = `.${ext}`;
 
-    if (dotExt === '.store') {
+    if (dotExt === ('.store' satisfies FileExtension)) {
       this.navigateService.navigateToChart({
         modelId: id,
         chartId: EMPTY_CHART_ID
       });
-    } else if (dotExt === '.malloy') {
+    } else if (dotExt === ('.malloy' satisfies FileExtension)) {
       this.spinner.show(APP_SPINNER_NAME);
 
       let models: ModelX[] = [];
@@ -1259,13 +1260,13 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           })
         )
         .toPromise();
-    } else if (dotExt === '.report') {
+    } else if (dotExt === ('.report' satisfies FileExtension)) {
       this.navigateService.navigateToReport({ reportId: id });
-    } else if (dotExt === '.dashboard') {
+    } else if (dotExt === ('.dashboard' satisfies FileExtension)) {
       this.navigateService.navigateToDashboard({
         dashboardId: id
       });
-    } else if (dotExt === '.chart') {
+    } else if (dotExt === ('.chart' satisfies FileExtension)) {
       let nav = this.navQuery.getValue();
 
       let payload: ToBackendGetChartRequest['input'] = {

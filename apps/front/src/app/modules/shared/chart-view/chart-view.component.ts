@@ -153,12 +153,14 @@ export class ChartViewComponent implements OnChanges {
       isStoreModel: this.isStoreModel
     });
 
-    this.isSelectValid =
-      ['table', 'single', 'pivot_table', ...this.eChartsTypes].indexOf(
-        this.chart.type
-      ) > -1
-        ? checkSelectResult.isSelectValid
-        : false;
+    this.isSelectValid = [
+      'table' satisfies ChartType,
+      'single' satisfies ChartType,
+      'pivot_table' satisfies ChartType,
+      ...this.eChartsTypes
+    ].includes(this.chart.type)
+      ? checkSelectResult.isSelectValid
+      : false;
 
     this.errorMessage = checkSelectResult.errorMessage;
 

@@ -11,11 +11,11 @@ import {
   PATH_REPORTS
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendCheckLastNavRequest } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-request';
 import type { ToBackendCheckLastNavResponse } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-response';
+import type { BuilderRight } from '#common/types/front/builder/builder-right';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
@@ -143,7 +143,10 @@ export class NavbarComponent implements OnInit {
 
     this.navigateService.navigateToBuilder({
       left: 'Tree',
-      right: this.nav.repoType === 'session' ? 'Sessions' : 'Validation'
+      right:
+        this.nav.repoType === 'session'
+          ? ('Sessions' satisfies BuilderRight)
+          : ('Validation' satisfies BuilderRight)
     });
   }
 

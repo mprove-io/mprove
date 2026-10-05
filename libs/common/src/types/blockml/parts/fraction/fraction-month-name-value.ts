@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const fractionMonthNameValueValues = [
+// sorted
+export const fractionMonthNameValueValuesSorted = [
   'January',
   'February',
   'March',
@@ -17,9 +18,9 @@ const fractionMonthNameValueValues = [
 ] as const;
 
 export type FractionMonthNameValue =
-  (typeof fractionMonthNameValueValues)[number];
+  (typeof fractionMonthNameValueValuesSorted)[number];
 
-export let zFractionMonthNameValue = z.enum(fractionMonthNameValueValues);
+export let zFractionMonthNameValue = z.enum(fractionMonthNameValueValuesSorted);
 
 assertTypesEqual<
   FractionMonthNameValue,

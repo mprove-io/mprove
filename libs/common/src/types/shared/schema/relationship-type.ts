@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const relationshipTypeValues = [
+export const relationshipTypeValues = [
   'one_to_one',
   'one_to_many',
   'many_to_one',

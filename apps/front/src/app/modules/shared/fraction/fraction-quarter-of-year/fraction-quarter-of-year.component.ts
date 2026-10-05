@@ -10,6 +10,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
 import type { FractionQuarterOfYearValue } from '#common/types/blockml/parts/fraction/fraction-quarter-of-year-value';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import {
@@ -24,6 +25,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FractionQuarterOfYearComponent {
+  readonly fractionOperatorAnd: FractionOperator = 'And';
+
   @ViewChild('fractionQuarterOfYearTypeSelect', { static: false })
   fractionQuarterOfYearTypeSelectElement: NgSelectComponent;
 

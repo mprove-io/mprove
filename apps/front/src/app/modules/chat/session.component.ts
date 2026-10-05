@@ -6,9 +6,9 @@ import {
   ViewChild
 } from '@angular/core';
 import type {
+  SessionStatus as OcSessionStatus,
   PermissionRequest,
-  QuestionRequest,
-  SessionStatus
+  QuestionRequest
 } from '@opencode-ai/sdk/v2';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest } from 'rxjs';
@@ -434,7 +434,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
   }
 
-  makeRetryMessage(ocSessionStatus: SessionStatus): string {
+  makeRetryMessage(ocSessionStatus: OcSessionStatus): string {
     if (ocSessionStatus?.type === 'retry') {
       return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
     }

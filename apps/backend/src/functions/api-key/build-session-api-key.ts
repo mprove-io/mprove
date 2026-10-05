@@ -1,3 +1,5 @@
+import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
+
 export function buildSessionApiKey(item: {
   prefix: string;
   sessionId: string;
@@ -5,5 +7,5 @@ export function buildSessionApiKey(item: {
 }) {
   let { prefix, sessionId, secret } = item;
 
-  return `SK-${prefix}-${sessionId.toUpperCase()}-${secret}`;
+  return `${'SK' satisfies ApiKeyType}-${prefix}-${sessionId.toUpperCase()}-${secret}`;
 }

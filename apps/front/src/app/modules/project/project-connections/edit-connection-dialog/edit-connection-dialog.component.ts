@@ -54,6 +54,10 @@ export interface EditConnectionDialogData {
   ]
 })
 export class EditConnectionDialogComponent implements OnInit {
+  readonly databricksAuthTypeOAuthM2M: DatabricksAuthType = 'OAuthM2M';
+  readonly databricksAuthTypePersonalAccessToken: DatabricksAuthType =
+    'PersonalAccessToken';
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.ref.close();

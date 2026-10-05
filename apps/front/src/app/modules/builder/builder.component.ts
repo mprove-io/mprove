@@ -235,7 +235,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     if (tab === this.builderRight) {
       if (isChangesLeft) {
         this.uiQuery.updatePart({ builderLeft: 'Tree' });
-        urlTree.queryParams['left'] = 'Tree';
+        urlTree.queryParams['left'] = 'Tree' satisfies BuilderLeft;
         this.location.replaceState(this.router.serializeUrl(urlTree));
       }
     } else {
@@ -250,7 +250,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
       urlTree.queryParams['right'] = tab;
       if (isChangesLeft) {
-        urlTree.queryParams['left'] = 'Tree';
+        urlTree.queryParams['left'] = 'Tree' satisfies BuilderLeft;
       }
       this.location.replaceState(this.router.serializeUrl(urlTree));
     }

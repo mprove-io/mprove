@@ -15,6 +15,7 @@ import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
 import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction/fraction-sub-type-option';
 import type { FileFractionControl } from '#common/types/blockml/parts/internal/file-fraction-control';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
@@ -147,14 +148,14 @@ export function wrapTiles(item: {
                       let optionOr: FractionSubTypeOption = {
                         logicGroup: 'OR',
                         typeValue: ft.type,
-                        value: `OR${TRIPLE_UNDERSCORE}${ft.type}`,
+                        value: `${'OR' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                         label: ft.label
                       };
                       options.push(optionOr);
 
                       let optionAndNot: FractionSubTypeOption = {
                         logicGroup: 'AND_NOT',
-                        value: `AND_NOT${TRIPLE_UNDERSCORE}${ft.type}`,
+                        value: `${'AND_NOT' satisfies FractionLogic}${TRIPLE_UNDERSCORE}${ft.type}`,
                         typeValue: ft.type,
                         label: ft.label
                       };

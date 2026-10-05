@@ -1,5 +1,6 @@
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 
 export function getContentFromFileName(item: { fileName: string }): string {
   let { fileName } = item;
@@ -15,28 +16,28 @@ export function getContentFromFileName(item: { fileName: string }): string {
   let ext: string = MyRegex.CAPTURE_EXT().exec(fileNameLowercase)?.[1] ?? '';
 
   switch (ext) {
-    case '.store':
+    case '.store' satisfies FileExtension:
       content = `store: ${part}`;
       break;
-    case '.schema':
+    case '.schema' satisfies FileExtension:
       content = `schema: ${part}`;
       break;
-    case '.dashboard':
+    case '.dashboard' satisfies FileExtension:
       content = `dashboard: ${part}`;
       break;
-    case '.chart':
+    case '.chart' satisfies FileExtension:
       content = `chart: ${part}`;
       break;
-    case '.report':
+    case '.report' satisfies FileExtension:
       content = `report: ${part}`;
       break;
-    case '.space':
+    case '.space' satisfies FileExtension:
       content = `space: ${part}`;
       break;
-    case '.yml':
+    case '.yml' satisfies FileExtension:
       content = fileName === MPROVE_CONFIG_FILENAME ? 'mprove_dir: ./' : '';
       break;
-    case '.md':
+    case '.md' satisfies FileExtension:
       content = '';
       break;
     default:

@@ -9,6 +9,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreBuildMetric } from '#common/types/blockml/parts/internal/file-store-build-metric';
 
@@ -46,7 +47,7 @@ export function checkStoreBuildMetrics(
       item.errors.push(
         new BmError({
           title: 'BUILD_METRICS_AND_REQUIRED_FIELDS_DO_NOT_WORK_TOGETHER',
-          message: `build_metrics cannot be used in store when there are fields with "required" set to true`,
+          message: `${'build_metrics' satisfies FileParameter} cannot be used in store when there are fields with "required" set to true`,
           lines: [
             {
               line: x.build_metrics_line_num,
@@ -75,7 +76,7 @@ export function checkStoreBuildMetrics(
         item.errors.push(
           new BmError({
             title: 'BUILD_METRICS_ELEMENT_IS_NOT_A_DICTIONARY',
-            message: `found at least one build_metrics element that is not a dictionary`,
+            message: `found at least one ${'build_metrics' satisfies FileParameter} element that is not a dictionary`,
             lines: [
               {
                 line: x.build_metrics_line_num,
@@ -91,11 +92,11 @@ export function checkStoreBuildMetrics(
       Object.keys(buildMetric)
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if (['time'.toString()].indexOf(parameter) < 0) {
+          if (parameter !== ('time' satisfies FileParameter)) {
             item.errors.push(
               new BmError({
                 title: 'UNKNOWN_BUILD_METRIC_PARAMETER',
-                message: `parameter "${parameter}" cannot be used in build_metrics element`,
+                message: `parameter "${parameter}" cannot be used in ${'build_metrics' satisfies FileParameter} element`,
                 lines: [
                   {
                     line: buildMetric[
@@ -164,7 +165,7 @@ export function checkStoreBuildMetrics(
           item.errors.push(
             new BmError({
               title: 'MISSING_TIME',
-              message: `build_metrics element must have "time" parameter`,
+              message: `${'build_metrics' satisfies FileParameter} element must have "${'time' satisfies FileParameter}" parameter`,
               lines: [
                 {
                   line: Math.min(...buildMetricKeysLineNums),
@@ -194,7 +195,7 @@ export function checkStoreBuildMetrics(
           item.errors.push(
             new BmError({
               title: 'WRONG_TIME',
-              message: `specified time "${buildMetric.time}" is not found in field_time_groups`,
+              message: `specified ${'time' satisfies FileParameter} "${buildMetric.time}" is not found in ${'field_time_groups' satisfies FileParameter}`,
               lines: [
                 {
                   line: buildMetric.time_line_num,
@@ -215,7 +216,7 @@ export function checkStoreBuildMetrics(
           item.errors.push(
             new BmError({
               title: 'DUPLICATE_TIME_NAMES',
-              message: `"time" value must be unique across build_metrics elements`,
+              message: `"${'time' satisfies FileParameter}" value must be unique across ${'build_metrics' satisfies FileParameter} elements`,
               lines: timeName.timeNameLineNums.map(l => ({
                 line: l,
                 name: x.fileName,

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const fractionLogicValues = ['OR', 'AND_NOT'] as const;
+export const fractionLogicValues = ['OR', 'AND_NOT'] as const;
 
 export type FractionLogic = (typeof fractionLogicValues)[number];
 

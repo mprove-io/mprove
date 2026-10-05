@@ -7,6 +7,7 @@ import { yamlToObjects } from '#blockml/functions/yaml-to-objects/yaml-to-object
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { File2 } from '#common/types/blockml/parts/internal/file/file-2';
 import type { File3 } from '#common/types/blockml/parts/internal/file/file-3';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
@@ -77,15 +78,17 @@ export function buildYaml(item: {
         yamlToObjects({
           file3s: v.file3s.filter(
             x =>
-              [
-                '.store',
-                '.schema',
-                '.report',
-                '.dashboard',
-                '.chart',
-                '.space',
-                '.yml'
-              ].indexOf(x.ext) > -1
+              (
+                [
+                  '.store',
+                  '.schema',
+                  '.report',
+                  '.dashboard',
+                  '.chart',
+                  '.space',
+                  '.yml'
+                ] satisfies FileExtension[]
+              ).findIndex(candidate => candidate === x.ext) > -1
           ),
           structId: v.structId,
           errors: v.errors,

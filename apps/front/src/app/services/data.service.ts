@@ -16,6 +16,8 @@ import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-f
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
+import { fractionMonthNameValueValuesSorted } from '#common/types/blockml/parts/fraction/fraction-month-name-value';
 import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig/mconfig-chart-series';
 import type { ModelType } from '#common/types/blockml/parts/model/model-type';
 import type { Query } from '#common/types/blockml/parts/query/query';
@@ -301,7 +303,7 @@ export class DataService {
         : 'seconds';
 
     let fieldThousandsSeparatorTag = field?.mproveTags?.find(
-      tag => tag.key === 'thousands_separator'
+      tag => tag.key === ('thousands_separator' satisfies FileParameter)
     );
 
     let thousandsSeparator =
@@ -724,21 +726,6 @@ export class DataService {
             'Saturday'
           ];
 
-    let sortedMonthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-
     let sortedQuartersOfYear = ['Q1', 'Q2', 'Q3', 'Q4'];
 
     let seriesData: SeriesDataElement[] = ySeries.map(ySeriesElement =>
@@ -772,11 +759,19 @@ export class DataService {
                         ? -1
                         : 0
                     : xField?.result === 'month_name'
-                      ? sortedMonthNames.indexOf(a.xValue as string) >
-                        sortedMonthNames.indexOf(b.xValue as string)
+                      ? fractionMonthNameValueValuesSorted.findIndex(
+                          candidate => candidate === a.xValue
+                        ) >
+                        fractionMonthNameValueValuesSorted.findIndex(
+                          candidate => candidate === b.xValue
+                        )
                         ? 1
-                        : sortedMonthNames.indexOf(b.xValue as string) >
-                            sortedMonthNames.indexOf(a.xValue as string)
+                        : fractionMonthNameValueValuesSorted.findIndex(
+                              candidate => candidate === b.xValue
+                            ) >
+                            fractionMonthNameValueValuesSorted.findIndex(
+                              candidate => candidate === a.xValue
+                            )
                           ? -1
                           : 0
                       : xField?.result === 'quarter_of_year'
@@ -854,8 +849,10 @@ export class DataService {
     return ms;
   }
 
-  getTimeSpecByFieldSqlName(fieldSqlName: string) {
-    return fieldSqlName.match(/(?:___year)$/g)
+  getTimeSpecByFieldSqlName(item: { fieldSqlName: string }): TimeSpec {
+    let { fieldSqlName } = item;
+
+    let timeSpec: TimeSpec = fieldSqlName.match(/(?:___year)$/g)
       ? 'years'
       : fieldSqlName.match(/(?:___quarter)$/g)
         ? 'quarters'
@@ -882,30 +879,35 @@ export class DataService {
                             : fieldSqlName.match(/(?:___ts)$/g)
                               ? 'timestamps'
                               : 'minutes';
+
+    return timeSpec;
   }
 
-  getTimeSpecByMalloyTimeframe(item: { timeframe: string }) {
+  getTimeSpecByMalloyTimeframe(item: { timeframe: string }): TimeSpec {
     let { timeframe } = item;
 
     // export type TimestampTimeframe = 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
 
-    return timeframe === 'year'
-      ? 'years'
-      : timeframe === 'quarter'
-        ? 'quarters'
-        : timeframe === 'month'
-          ? 'months'
-          : timeframe === 'week'
-            ? 'weeks'
-            : timeframe === 'day'
-              ? 'days'
-              : timeframe === 'hour'
-                ? 'hours'
-                : timeframe === 'minute'
-                  ? 'minutes'
-                  : timeframe === 'second'
-                    ? 'seconds'
-                    : 'timestamps';
+    let timeSpec: TimeSpec =
+      timeframe === 'year'
+        ? 'years'
+        : timeframe === 'quarter'
+          ? 'quarters'
+          : timeframe === 'month'
+            ? 'months'
+            : timeframe === 'week'
+              ? 'weeks'
+              : timeframe === 'day'
+                ? 'days'
+                : timeframe === 'hour'
+                  ? 'hours'
+                  : timeframe === 'minute'
+                    ? 'minutes'
+                    : timeframe === 'second'
+                      ? 'seconds'
+                      : 'timestamps';
+
+    return timeSpec;
   }
 
   private getDateFromDate(rValue: string) {

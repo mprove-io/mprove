@@ -8,6 +8,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig/mconfig-chart-series';
@@ -24,6 +25,9 @@ import { ChartTypeItem } from '../../models/models.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChartEditorSeriesElementComponent implements OnChanges {
+  readonly stackableChartTypes: ChartType[] = ['line', 'bar'];
+  readonly cartesianChartTypes: ChartType[] = ['line', 'bar', 'scatter'];
+
   @Input()
   seriesElement: ChartSeriesWithField;
 

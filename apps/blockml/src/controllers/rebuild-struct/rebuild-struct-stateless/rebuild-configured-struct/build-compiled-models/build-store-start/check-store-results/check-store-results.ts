@@ -8,6 +8,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
 
@@ -34,7 +35,7 @@ export function checkStoreResults(
       item.errors.push(
         new BmError({
           title: 'MISSING_RESULTS',
-          message: `parameter "results" is required for ${x.fileExt} file`,
+          message: `parameter "${'results' satisfies FileParameter}" is required for ${x.fileExt} file`,
           lines: [
             {
               line: 0,
@@ -72,8 +73,8 @@ export function checkStoreResults(
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            ['result'.toString(), 'fraction_types'.toString()].indexOf(
-              parameter
+            (['result', 'fraction_types'] satisfies FileParameter[]).findIndex(
+              candidate => candidate === parameter
             ) < 0
           ) {
             item.errors.push(
@@ -96,7 +97,7 @@ export function checkStoreResults(
 
           if (
             Array.isArray(resultElement[parameter as keyof FileStoreResult]) &&
-            ['fraction_types'.toString()].indexOf(parameter) < 0
+            parameter !== ('fraction_types' satisfies FileParameter)
           ) {
             item.errors.push(
               new BmError({
@@ -148,7 +149,7 @@ export function checkStoreResults(
           item.errors.push(
             new BmError({
               title: 'MISSING_RESULT',
-              message: `results element must have "result" parameter`,
+              message: `results element must have "${'result' satisfies FileParameter}" parameter`,
               lines: [
                 {
                   line: Math.min(...resultsElementKeyLineNums),
@@ -165,7 +166,7 @@ export function checkStoreResults(
           item.errors.push(
             new BmError({
               title: 'MISSING_FRACTION_TYPES',
-              message: `results element must have "fraction_types" parameter`,
+              message: `results element must have "${'fraction_types' satisfies FileParameter}" parameter`,
               lines: [
                 {
                   line: Math.min(...resultsElementKeyLineNums),
@@ -201,7 +202,7 @@ export function checkStoreResults(
           item.errors.push(
             new BmError({
               title: 'DUPLICATE_RESULTS',
-              message: `"result" value must be unique across results elements`,
+              message: `"${'result' satisfies FileParameter}" value must be unique across results elements`,
               lines: result.resultLineNums.map(l => ({
                 line: l,
                 name: x.fileName,

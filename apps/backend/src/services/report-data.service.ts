@@ -3,13 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-import type { TimeSpec } from '#common/types/shared/time/timespec';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   KitTab,
   MconfigTab,
@@ -29,7 +24,6 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
-
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -39,14 +33,17 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { Member } from '#common/types/backend/parts/member';
+import type { DetailUnit } from '#common/types/blockml/parts/field/detail-unit';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
+import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
 import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Sorting } from '#common/types/blockml/parts/query/sorting';
 import type { Parameter } from '#common/types/blockml/parts/report/row/parameter';
 import type { RowRecord } from '#common/types/blockml/parts/report/row/row-record';
 import type { Rq } from '#common/types/blockml/parts/report/row/rq';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { MconfigsService } from './db/mconfigs.service';
 import { ModelsService } from './db/models.service';
 import { QueriesService } from './db/queries.service';
@@ -55,6 +52,8 @@ import { DocService } from './doc.service';
 import { MalloyService } from './malloy.service';
 import { ReportTimeColumnsService } from './report-time-columns.service';
 import { TabService } from './tab.service';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class ReportDataService {
@@ -312,7 +311,10 @@ export class ReportDataService {
               let fieldId =
                 timeSpecDetail === 'timestamps'
                   ? `${metric.timeFieldId}_ts`
-                  : ['weeksSunday', 'weeksMonday'].indexOf(timeSpecDetail) > -1
+                  : (
+                        ['weeksSunday', 'weeksMonday'] satisfies DetailUnit[]
+                      ).findIndex(candidate => candidate === timeSpecDetail) >
+                      -1
                     ? `${metric.timeFieldId}_week`
                     : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`;
 
@@ -323,7 +325,9 @@ export class ReportDataService {
           }
 
           let isDesc =
-            ['TsIsBefore', 'TsIsThrough'].indexOf(timeRangeFraction.type) > -1
+            (['TsIsBefore', 'TsIsThrough'] satisfies FractionType[]).findIndex(
+              candidate => candidate === timeRangeFraction.type
+            ) > -1
               ? true
               : false;
 

@@ -14,8 +14,7 @@ import { and, eq, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -33,6 +32,7 @@ import {
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { InteractionType } from '#common/types/backend/parts/session/interaction-type';
+import type { OpencodeStreamCommand } from '#common/types/backend/parts/session/opencode-stream-command';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
@@ -113,7 +113,7 @@ export class EditorStreamService implements OnModuleDestroy {
           return;
         }
 
-        if (command === 'stop') {
+        if (command === ('stop' satisfies OpencodeStreamCommand)) {
           // console.log(`[oc-stream] received stop for sessionId=${sessionId}`);
 
           this.stopEventStream({ sessionId: sessionId }).catch(e => {
@@ -127,7 +127,7 @@ export class EditorStreamService implements OnModuleDestroy {
               cs: this.cs
             });
           });
-        } else if (command === 'interact') {
+        } else if (command === ('interact' satisfies OpencodeStreamCommand)) {
           let { replyTo, payload } = parsed;
 
           // console.log(
@@ -167,7 +167,7 @@ export class EditorStreamService implements OnModuleDestroy {
                 )
                 .catch(() => {});
             });
-        } else if (command === 'fetch') {
+        } else if (command === ('fetch' satisfies OpencodeStreamCommand)) {
           let { replyTo, payload } = parsed;
 
           // console.log(
@@ -223,7 +223,7 @@ export class EditorStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_OPENCODE_STREAM_COMMAND,
       JSON.stringify({
-        command: 'stop',
+        command: 'stop' satisfies OpencodeStreamCommand,
         sessionId: item.sessionId
       })
     );
@@ -988,7 +988,7 @@ export class EditorStreamService implements OnModuleDestroy {
     await this.redisClient.publish(
       CHANNEL_OPENCODE_STREAM_COMMAND,
       JSON.stringify({
-        command: 'interact',
+        command: 'interact' satisfies OpencodeStreamCommand,
         sessionId: item.sessionId,
         replyTo: replyTo,
         payload: {
@@ -1070,7 +1070,7 @@ export class EditorStreamService implements OnModuleDestroy {
       await this.redisClient.publish(
         CHANNEL_OPENCODE_STREAM_COMMAND,
         JSON.stringify({
-          command: 'fetch',
+          command: 'fetch' satisfies OpencodeStreamCommand,
           sessionId: item.sessionId,
           replyTo: replyTo,
           payload: {

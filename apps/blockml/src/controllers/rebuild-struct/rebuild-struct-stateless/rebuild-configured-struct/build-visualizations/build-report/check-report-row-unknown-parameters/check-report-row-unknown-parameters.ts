@@ -7,7 +7,7 @@ import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
-
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileReportRow } from '#common/types/blockml/parts/internal/file-report-row';
 
@@ -36,18 +36,20 @@ export function checkReportRowUnknownParameters(item: {
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            [
-              'row_id'.toString(),
-              'type'.toString(),
-              'name'.toString(),
-              'metric'.toString(),
-              'show_chart'.toString(),
-              'formula'.toString(),
-              'parameters'.toString(),
-              'format_number'.toString(),
-              'currency_prefix'.toString(),
-              'currency_suffix'.toString()
-            ].indexOf(parameter) < 0
+            (
+              [
+                'row_id',
+                'type',
+                'name',
+                'metric',
+                'show_chart',
+                'formula',
+                'parameters',
+                'format_number',
+                'currency_prefix',
+                'currency_suffix'
+              ] satisfies FileParameter[]
+            ).findIndex(candidate => candidate === parameter) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -68,7 +70,7 @@ export function checkReportRowUnknownParameters(item: {
           }
 
           if (
-            ['parameters'.toString()].indexOf(parameter) < 0 &&
+            parameter !== ('parameters' satisfies FileParameter) &&
             Array.isArray(row[parameter as keyof FileReportRow])
           ) {
             item.errors.push(
@@ -109,7 +111,7 @@ export function checkReportRowUnknownParameters(item: {
           }
 
           if (
-            ['parameters'.toString()].indexOf(parameter) > -1 &&
+            parameter === ('parameters' satisfies FileParameter) &&
             !Array.isArray(row[parameter as keyof FileReportRow])
           ) {
             item.errors.push(
@@ -131,7 +133,7 @@ export function checkReportRowUnknownParameters(item: {
           }
 
           if (
-            ['show_chart'.toString()].indexOf(parameter) > -1 &&
+            parameter === ('show_chart' satisfies FileParameter) &&
             !(row[parameter as keyof FileReportRow] as any)
               .toString()
               .match(MyRegex.TRUE_FALSE())

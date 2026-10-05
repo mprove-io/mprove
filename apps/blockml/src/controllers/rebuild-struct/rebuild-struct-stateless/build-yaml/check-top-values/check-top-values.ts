@@ -7,7 +7,8 @@ import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
-
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import { checkSpaceFolderValuesRecursive } from './check-space-folder-values-recursive/check-space-folder-values-recursive';
 
 let func: Func = 'build-yaml/check-top-values';
@@ -31,22 +32,24 @@ export function checkTopValues(item: {
       .filter(x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM()))
       .forEach(parameter => {
         if (
-          ['path'.toString(), 'ext'.toString(), 'name'.toString()].indexOf(
-            parameter
-          ) > -1
+          (['path', 'ext', 'name'] satisfies FileParameter[]).some(
+            candidate => candidate === parameter
+          )
         ) {
           return;
         }
 
         if (
-          [
-            'model'.toString(),
-            'mod'.toString(),
-            'store'.toString(),
-            'report'.toString(),
-            'dashboard'.toString(),
-            'chart'.toString()
-          ].indexOf(parameter) > -1 &&
+          (
+            [
+              'model',
+              'mod',
+              'store',
+              'report',
+              'dashboard',
+              'chart'
+            ] satisfies FileParameter[]
+          ).some(candidate => candidate === parameter) &&
           file[parameter]
             .toString()
             .match(MyRegex.CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G())
@@ -69,8 +72,8 @@ export function checkTopValues(item: {
         }
 
         if (
-          'space'.toString() === parameter &&
-          file.ext !== '.space' &&
+          ('space' satisfies FileParameter) === parameter &&
+          file.ext !== ('.space' satisfies FileExtension) &&
           !file[parameter].toString().match(/^[a-z][a-z0-9_.]*$/)
         ) {
           item.errors.push(
@@ -91,8 +94,8 @@ export function checkTopValues(item: {
         }
 
         if (
-          'space'.toString() === parameter &&
-          file.ext === '.space' &&
+          ('space' satisfies FileParameter) === parameter &&
+          file.ext === ('.space' satisfies FileExtension) &&
           !file[parameter].toString().match(/^[a-z][a-z0-9_]*$/)
         ) {
           item.errors.push(
@@ -113,7 +116,7 @@ export function checkTopValues(item: {
         }
       });
 
-    if (file.ext === '.space') {
+    if (file.ext === ('.space' satisfies FileExtension)) {
       checkSpaceFolderValuesRecursive({
         file: file,
         rootFile: file,

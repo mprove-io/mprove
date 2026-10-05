@@ -8,8 +8,16 @@ import { LINE_NUM } from '#common/constants/top-blockml';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartPlate } from '#common/types/blockml/parts/internal/file-chart-plate';
+
+const allowedPlateParameters = [
+  'plate_width',
+  'plate_height',
+  'plate_x',
+  'plate_y'
+] satisfies FileParameter[];
 
 let func: Func = 'build-mconfig-chart/check-chart-plate-parameters';
 
@@ -40,12 +48,9 @@ export function checkChartPlateParameters<T extends dcType>(item: {
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
-            [
-              'plate_width'.toString(),
-              'plate_height'.toString(),
-              'plate_x'.toString(),
-              'plate_y'.toString()
-            ].indexOf(parameter) < 0
+            allowedPlateParameters.findIndex(
+              candidate => candidate === parameter
+            ) < 0
           ) {
             item.errors.push(
               new BmError({
@@ -111,12 +116,7 @@ export function checkChartPlateParameters<T extends dcType>(item: {
           }
 
           if (
-            [
-              'plate_width'.toString(),
-              'plate_height'.toString(),
-              'plate_x'.toString(),
-              'plate_y'.toString()
-            ].indexOf(parameter) > -1 &&
+            allowedPlateParameters.some(candidate => candidate === parameter) &&
             !(tile.plate[parameter as keyof FileChartPlate] as any).match(
               MyRegex.CAPTURE_DIGITS_START_TO_END_G()
             )

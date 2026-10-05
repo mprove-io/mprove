@@ -11,6 +11,8 @@ import {
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
@@ -58,8 +60,8 @@ export function splitFiles(item: {
     let filePath = file.path;
 
     switch (file.ext) {
-      case '.store': {
-        if (file.name === file.store + '.store') {
+      case '.store' satisfies FileExtension: {
+        if (file.name === file.store + ('.store' satisfies FileExtension)) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -97,8 +99,11 @@ export function splitFiles(item: {
         break;
       }
 
-      case '.dashboard': {
-        if (file.name === file.dashboard + '.dashboard') {
+      case '.dashboard' satisfies FileExtension: {
+        if (
+          file.name ===
+          file.dashboard + ('.dashboard' satisfies FileExtension)
+        ) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -129,8 +134,8 @@ export function splitFiles(item: {
         break;
       }
 
-      case '.report': {
-        if (file.name === file.report + '.report') {
+      case '.report' satisfies FileExtension: {
+        if (file.name === file.report + ('.report' satisfies FileExtension)) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -161,8 +166,8 @@ export function splitFiles(item: {
         break;
       }
 
-      case '.chart': {
-        if (file.name === file.chart + '.chart') {
+      case '.chart' satisfies FileExtension: {
+        if (file.name === file.chart + ('.chart' satisfies FileExtension)) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -179,7 +184,7 @@ export function splitFiles(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_CHART_NAME',
-              message: `filename ${file.name} does not match "chart: ${file.chart}"`,
+              message: `filename ${file.name} does not match "${'chart' satisfies FileParameter}: ${file.chart}"`,
               lines: [
                 {
                   line: file.chart_line_num,
@@ -193,7 +198,7 @@ export function splitFiles(item: {
         break;
       }
 
-      case '.space': {
+      case '.space' satisfies FileExtension: {
         let pathParts = file.path
           .split('/')
           .filter((part: string) => part !== '');
@@ -202,7 +207,8 @@ export function splitFiles(item: {
 
         let parentFolderName = folderParts[folderParts.length - 1];
 
-        let isFileNameMatch = file.name === file.space + '.space';
+        let isFileNameMatch =
+          file.name === file.space + ('.space' satisfies FileExtension);
 
         let isParentFolderNameMatch = parentFolderName === file.space;
         let isInsideMproveUsersFolder = pathParts.includes(MPROVE_USERS_FOLDER);
@@ -241,7 +247,7 @@ export function splitFiles(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_SPACE_NAME',
-              message: `filename ${file.name} does not match "space: ${file.space}"`,
+              message: `filename ${file.name} does not match "${'space' satisfies FileParameter}: ${file.space}"`,
               lines: [
                 {
                   line: file.space_line_num,
@@ -255,7 +261,7 @@ export function splitFiles(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_SPACE_PARENT_FOLDER_NAME',
-              message: `parent folder ${parentFolderName} does not match "space: ${file.space}"`,
+              message: `parent folder ${parentFolderName} does not match "${'space' satisfies FileParameter}: ${file.space}"`,
               lines: [
                 {
                   line: file.space_line_num,
@@ -269,8 +275,8 @@ export function splitFiles(item: {
         break;
       }
 
-      case '.schema': {
-        if (file.name === file.schema + '.schema') {
+      case '.schema' satisfies FileExtension: {
+        if (file.name === file.schema + ('.schema' satisfies FileExtension)) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -287,7 +293,7 @@ export function splitFiles(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_SCHEMA_NAME',
-              message: `filename ${file.name} does not match "schema: ${file.schema}"`,
+              message: `filename ${file.name} does not match "${'schema' satisfies FileParameter}: ${file.schema}"`,
               lines: [
                 {
                   line: file.schema_line_num,
@@ -301,7 +307,7 @@ export function splitFiles(item: {
         break;
       }
 
-      case '.yml': {
+      case '.yml' satisfies FileExtension: {
         if (file.name === MPROVE_CONFIG_FILENAME) {
           delete file.ext;
           delete file.name;

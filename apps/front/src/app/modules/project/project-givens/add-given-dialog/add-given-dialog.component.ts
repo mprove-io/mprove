@@ -15,8 +15,10 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
-import { GIVEN_TYPES } from '#common/constants/top';
-
+import {
+  type GivenType,
+  givenTypeValues
+} from '#common/types/backend/parts/given/given-type';
 import type { ToBackendCreateGivenRequest } from '#common/types/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateGivenResponse } from '#common/types/backend/routes/givens/create-given/create-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -53,7 +55,7 @@ export class AddGivenDialogComponent implements OnInit {
 
   addGivenForm: FormGroup;
 
-  givenTypes = GIVEN_TYPES;
+  givenTypes = givenTypeValues;
 
   constructor(
     public ref: DialogRef<AddGivenDialogData>,
@@ -72,7 +74,7 @@ export class AddGivenDialogComponent implements OnInit {
           Validators.maxLength(32)
         ]
       ],
-      type: ['String', [Validators.required]],
+      type: ['String' satisfies GivenType, [Validators.required]],
       isMultiple: [false],
       values: [
         undefined,

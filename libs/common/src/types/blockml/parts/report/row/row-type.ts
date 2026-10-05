@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const rowTypeValues = ['empty', 'header', 'metric', 'formula'] as const;
+export const rowTypeValues = ['empty', 'header', 'metric', 'formula'] as const;
 
 export type RowType = (typeof rowTypeValues)[number];
 

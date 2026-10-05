@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionDayOfWeekValue } from '#common/types/blockml/parts/fraction/fraction-day-of-week-value';
@@ -76,6 +75,16 @@ export class FractionNumberBetweenOptionItem {
   templateUrl: './fraction.component.html'
 })
 export class FractionComponent {
+  readonly fieldResultNumber: FieldResult = 'number';
+  readonly fieldResultString: FieldResult = 'string';
+  readonly fieldResultDayOfWeek: FieldResult = 'day_of_week';
+  readonly fieldResultDayOfWeekIndex: FieldResult = 'day_of_week_index';
+  readonly fieldResultMonthName: FieldResult = 'month_name';
+  readonly fieldResultQuarterOfYear: FieldResult = 'quarter_of_year';
+  readonly fieldResultTs: FieldResult = 'ts';
+  readonly fieldResultBoolean: FieldResult = 'boolean';
+  readonly fieldResultYesno: FieldResult = 'yesno';
+
   @Input() storeContent: FileStore;
 
   @Input() suggestModelDimension: string;

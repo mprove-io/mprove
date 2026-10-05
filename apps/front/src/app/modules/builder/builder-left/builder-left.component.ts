@@ -408,7 +408,7 @@ export class BuilderLeftComponent implements OnDestroy {
               .then(() => {
                 this.router.navigate(arNext, {
                   queryParams: {
-                    left: 'Tree'
+                    left: 'Tree' satisfies BuilderLeft
                   }
                 });
               });

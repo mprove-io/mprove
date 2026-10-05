@@ -7,7 +7,6 @@ import {
   REPORT_FIELD_DEFAULT_HIDDEN,
   REPORT_ROW_DEFAULT_SHOW_CHART
 } from '#common/constants/top';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
@@ -181,93 +180,90 @@ export function makeReportFileText(item: {
             : struct.mproveConfig.currencySuffix === x.currencySuffix
               ? undefined
               : x.currencySuffix,
-        parameters:
-          ['metric'].indexOf(x.rowType) < 0
-            ? undefined
-            : isDefined(x.parameters)
-              ? x.parameters.map(parameter => {
-                  let p: FileReportRowParameter = {
-                    apply_to: parameter.apply_to,
-                    conditions:
-                      isDefined(parameter.listen) || model?.type === 'Store'
-                        ? undefined
-                        : isDefined(parameter.fractions) &&
-                            parameter.fractions.length > 0
-                          ? parameter.fractions.map(fraction => fraction.brick)
-                          : undefined,
-                    fractions:
-                      model?.type === 'Store' && isUndefined(parameter.listen)
-                        ? parameter.fractions.map(apiFraction => {
-                            let fileFraction: FileFraction = {};
-
-                            if (isDefined(apiFraction.logicGroup)) {
-                              fileFraction.logic = apiFraction.logicGroup;
-                            }
-
-                            if (isDefined(apiFraction.storeFractionSubType)) {
-                              fileFraction.type =
-                                apiFraction.storeFractionSubType;
-                            }
-
-                            fileFraction.controls = apiFraction.controls.map(
-                              mconfigControl => {
-                                let newFileControl: FileFractionControl = {};
-
-                                if (mconfigControl.controlClass === 'input') {
-                                  newFileControl.input = mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass === 'list_input'
-                                ) {
-                                  newFileControl.list_input =
-                                    mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass === 'switch'
-                                ) {
-                                  newFileControl.switch = mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass === 'date_picker'
-                                ) {
-                                  newFileControl.date_picker =
-                                    mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass === 'selector'
-                                ) {
-                                  newFileControl.selector = mconfigControl.name;
-                                }
-
-                                let newValue = mconfigControl.value;
-
-                                newFileControl.value =
-                                  mconfigControl.isMetricsDate === true
-                                    ? model.storeContent.fields
-                                        .find(
-                                          field =>
-                                            field.fieldClass === 'filter' &&
-                                            field.name === parameter.apply_to
-                                        )
-                                        .fraction_controls.find(
-                                          control =>
-                                            control.name === mconfigControl.name
-                                        ).value
-                                    : newFileControl.controlClass ===
-                                          'switch' &&
-                                        typeof newValue === 'string'
-                                      ? toBooleanFromLowercaseString(newValue)
-                                      : newValue;
-
-                                return newFileControl;
-                              }
-                            );
-
-                            return fileFraction;
-                          })
+        parameters: !(x.rowType === 'metric')
+          ? undefined
+          : isDefined(x.parameters)
+            ? x.parameters.map(parameter => {
+                let p: FileReportRowParameter = {
+                  apply_to: parameter.apply_to,
+                  conditions:
+                    isDefined(parameter.listen) || model?.type === 'Store'
+                      ? undefined
+                      : isDefined(parameter.fractions) &&
+                          parameter.fractions.length > 0
+                        ? parameter.fractions.map(fraction => fraction.brick)
                         : undefined,
-                    listen: parameter.listen
-                  };
+                  fractions:
+                    model?.type === 'Store' && isUndefined(parameter.listen)
+                      ? parameter.fractions.map(apiFraction => {
+                          let fileFraction: FileFraction = {};
 
-                  return p;
-                })
-              : []
+                          if (isDefined(apiFraction.logicGroup)) {
+                            fileFraction.logic = apiFraction.logicGroup;
+                          }
+
+                          if (isDefined(apiFraction.storeFractionSubType)) {
+                            fileFraction.type =
+                              apiFraction.storeFractionSubType;
+                          }
+
+                          fileFraction.controls = apiFraction.controls.map(
+                            mconfigControl => {
+                              let newFileControl: FileFractionControl = {};
+
+                              if (mconfigControl.controlClass === 'input') {
+                                newFileControl.input = mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass === 'list_input'
+                              ) {
+                                newFileControl.list_input = mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass === 'switch'
+                              ) {
+                                newFileControl.switch = mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass === 'date_picker'
+                              ) {
+                                newFileControl.date_picker =
+                                  mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass === 'selector'
+                              ) {
+                                newFileControl.selector = mconfigControl.name;
+                              }
+
+                              let newValue = mconfigControl.value;
+
+                              newFileControl.value =
+                                mconfigControl.isMetricsDate === true
+                                  ? model.storeContent.fields
+                                      .find(
+                                        field =>
+                                          field.fieldClass === 'filter' &&
+                                          field.name === parameter.apply_to
+                                      )
+                                      .fraction_controls.find(
+                                        control =>
+                                          control.name === mconfigControl.name
+                                      ).value
+                                  : newFileControl.controlClass === 'switch' &&
+                                      typeof newValue === 'string'
+                                    ? toBooleanFromLowercaseString(newValue)
+                                    : newValue;
+
+                              return newFileControl;
+                            }
+                          );
+
+                          return fileFraction;
+                        })
+                      : undefined,
+                  listen: parameter.listen
+                };
+
+                return p;
+              })
+            : []
       };
 
       return row;

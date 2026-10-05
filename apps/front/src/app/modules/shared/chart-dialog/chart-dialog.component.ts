@@ -39,6 +39,7 @@ import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-y';
 import type { Query } from '#common/types/blockml/parts/query/query';
+import type { Timeframe } from '#common/types/shared/time/timeframe';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -422,14 +423,14 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
             `${metric.timeFieldId}_ts`
           ]
         : [
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}year`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}quarter`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}month`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}week`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}date`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}hour`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}minute`,
-            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}time`
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'year' satisfies Timeframe}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'quarter' satisfies Timeframe}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'month' satisfies Timeframe}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'week' satisfies Timeframe}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'date' satisfies Timeframe}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'hour' satisfies Timeframe}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'minute' satisfies Timeframe}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'time' satisfies Timeframe}`
           ];
 
     this.fieldsListLoading = true;

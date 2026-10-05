@@ -9,6 +9,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartOptionsXAxisElement } from '#common/types/blockml/parts/internal/file-chart-options-x-axis';
 
@@ -40,7 +41,7 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
       Object.keys(tile.options.x_axis)
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if (['scale'.toString()].indexOf(parameter) < 0) {
+          if (parameter !== ('scale' satisfies FileParameter)) {
             item.errors.push(
               new BmError({
                 title: 'OPTIONS_X_AXIS_UNKNOWN_PARAMETER',
@@ -112,7 +113,7 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
           }
 
           if (
-            ['scale'.toString()].indexOf(parameter) > -1 &&
+            parameter === 'scale' &&
             !tile.options.x_axis[
               parameter as keyof FileChartOptionsXAxisElement
             ]
@@ -147,7 +148,7 @@ export function checkChartOptionsXAxisParameters<T extends dcType>(item: {
           item.errors.push(
             new BmError({
               title: 'OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE',
-              message: `parameter "scale" must be 'true' or 'false' if specified`,
+              message: `parameter "${'scale' satisfies FileParameter}" must be 'true' or 'false' if specified`,
               lines: [
                 {
                   line: tile.options.x_axis.scale_line_num,

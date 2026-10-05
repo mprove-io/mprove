@@ -35,9 +35,15 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
 import type { Column } from '#common/types/blockml/parts/report/column';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
+
+const upperBoundTimeFractionTypes = [
+  'TsIsBefore',
+  'TsIsThrough'
+] satisfies FractionType[];
 
 @Injectable()
 export class ReportTimeColumnsService {
@@ -175,10 +181,10 @@ export class ReportTimeColumnsService {
       isTimeColumnsLimitExceeded = true;
 
       if (
-        [
-          'TsIsBefore', // maybe no such case
-          'TsIsThrough' // maybe no such case
-        ].indexOf(timeRangeFraction.type) > -1
+        // maybe no such case
+        upperBoundTimeFractionTypes.findIndex(
+          candidate => candidate === timeRangeFraction.type
+        ) > -1
       ) {
         startDate = sub(
           endDate,
@@ -304,7 +310,11 @@ export class ReportTimeColumnsService {
     }
 
     if (timeSpec !== 'timestamps' && timeColumns.length > timeColumnsLimit) {
-      if (['TsIsBefore', 'TsIsThrough'].indexOf(timeRangeFraction.type) > -1) {
+      if (
+        upperBoundTimeFractionTypes.findIndex(
+          candidate => candidate === timeRangeFraction.type
+        ) > -1
+      ) {
         timeColumns.shift(); // detail "years" is before calendar day "2025-01-02"
       } else {
         timeColumns.pop(); // detail "years" is after calendar day "2025-01-02"

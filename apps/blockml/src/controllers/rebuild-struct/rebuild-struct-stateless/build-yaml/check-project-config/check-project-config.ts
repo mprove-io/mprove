@@ -15,15 +15,16 @@ import {
   PROJECT_CONFIG_DEFAULT_TIMEZONE,
   PROJECT_CONFIG_FORMAT_NUMBER,
   PROJECT_CONFIG_THOUSANDS_SEPARATOR,
-  PROJECT_CONFIG_WEEK_START,
-  PROJECT_WEEK_START_VALUES
+  PROJECT_CONFIG_WEEK_START
 } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isTimezoneValid } from '#common/functions/is-timezone-valid/is-timezone-valid';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { projectWeekStartValues } from '#common/types/backend/parts/project/project-week-start';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 
 let func: Func = 'build-yaml/check-project-config';
@@ -63,11 +64,13 @@ export function checkProjectConfig(item: {
       x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM())
     );
 
-    if (parameters.indexOf('mprove_dir'.toString()) < 0) {
+    if (
+      parameters.indexOf(('mprove_dir' satisfies FileParameter).toString()) < 0
+    ) {
       item.errors.push(
         new BmError({
           title: 'MISSING_MPROVE_DIR',
-          message: `parameter "mprove_dir" must be specified`,
+          message: `parameter "${'mprove_dir' satisfies FileParameter}" must be specified`,
           lines: [
             {
               line: 0,
@@ -78,13 +81,13 @@ export function checkProjectConfig(item: {
         })
       );
     } else {
-      let mdir = conf['mprove_dir'].toString();
+      let mdir = conf['mprove_dir' satisfies FileParameter].toString();
 
       if (mdir.length <= 2 && mdir !== MPROVE_CONFIG_DIR_DOT_SLASH) {
         item.errors.push(
           new BmError({
             title: 'MPROVE_DIR_MUST_START_WITH_DOT_SLASH',
-            message: `mprove_dir must start with "./"`,
+            message: `${'mprove_dir' satisfies FileParameter} must start with "./"`,
             lines: [
               {
                 line: conf.mprove_dir_line_num,
@@ -104,7 +107,7 @@ export function checkProjectConfig(item: {
           item.errors.push(
             new BmError({
               title: 'MPROVE_DIR_HAS_DOT_AFTER_SLASH',
-              message: `mprove_dir must not have "." after "/"`,
+              message: `${'mprove_dir' satisfies FileParameter} must not have "." after "/"`,
               lines: [
                 {
                   line: conf.mprove_dir_line_num,
@@ -134,18 +137,20 @@ export function checkProjectConfig(item: {
 
     parameters.forEach(parameter => {
       if (
-        ['path'.toString(), 'ext'.toString(), 'name'.toString()].indexOf(
-          parameter
+        (['path', 'ext', 'name'] satisfies FileParameter[]).findIndex(
+          candidate => candidate === parameter
         ) > -1
       ) {
         return;
       }
 
       if (
-        [
-          'allow_timezones'.toString(),
-          'case_sensitive_string_filters'.toString()
-        ].indexOf(parameter) > -1 &&
+        (
+          [
+            'allow_timezones',
+            'case_sensitive_string_filters'
+          ] satisfies FileParameter[]
+        ).findIndex(candidate => candidate === parameter) > -1 &&
         !conf[parameter as keyof FileProjectConf]
           .toString()
           .match(MyRegex.TRUE_FALSE())
@@ -153,9 +158,13 @@ export function checkProjectConfig(item: {
         item.errors.push(
           new BmError({
             title:
-              parameter === 'allow_timezones'.toString()
+              parameter ===
+              ('allow_timezones' satisfies FileParameter).toString()
                 ? 'WRONG_ALLOW_TIMEZONES'
-                : parameter === 'case_sensitive_string_filters'.toString()
+                : parameter ===
+                    (
+                      'case_sensitive_string_filters' satisfies FileParameter
+                    ).toString()
                   ? 'WRONG_CASE_SENSITIVE_STRING_FILTERS'
                   : 'WRONG_PROJECT_CONFIG_PARAMETER',
 
@@ -175,15 +184,15 @@ export function checkProjectConfig(item: {
         return;
       }
 
-      if (parameter === 'week_start'.toString()) {
+      if (parameter === ('week_start' satisfies FileParameter).toString()) {
         let lowerCaseWeekStart = conf.week_start.toLowerCase();
 
         (<any>conf).week_start = capitalizeFirstLetter(lowerCaseWeekStart);
 
         if (
-          PROJECT_WEEK_START_VALUES.map(x => x.toString()).indexOf(
-            conf[parameter as keyof FileProjectConf].toString()
-          ) < 0
+          projectWeekStartValues
+            .map(x => x.toString())
+            .indexOf(conf[parameter as keyof FileProjectConf].toString()) < 0
         ) {
           item.errors.push(
             new BmError({
@@ -206,14 +215,14 @@ export function checkProjectConfig(item: {
       }
 
       if (
-        parameter === 'default_timezone'.toString() &&
+        parameter === ('default_timezone' satisfies FileParameter).toString() &&
         isTimezoneValid(conf[parameter as keyof FileProjectConf].toString()) ===
           false
       ) {
         item.errors.push(
           new BmError({
             title: 'WRONG_DEFAULT_TIMEZONE',
-            message: `wrong default_timezone value`,
+            message: `wrong ${'default_timezone' satisfies FileParameter} value`,
             lines: [
               {
                 line: conf[
@@ -229,7 +238,7 @@ export function checkProjectConfig(item: {
         return;
       }
 
-      if (parameter === 'format_number'.toString()) {
+      if (parameter === ('format_number' satisfies FileParameter).toString()) {
         let value = conf[parameter as keyof FileProjectConf].toString();
         try {
           formatSpecifier(value);
@@ -237,7 +246,7 @@ export function checkProjectConfig(item: {
           item.errors.push(
             new BmError({
               title: 'WRONG_FORMAT_NUMBER',
-              message: ` format_number value "${value}" is not valid`,
+              message: ` ${'format_number' satisfies FileParameter} value "${value}" is not valid`,
               lines: [
                 {
                   line: conf[

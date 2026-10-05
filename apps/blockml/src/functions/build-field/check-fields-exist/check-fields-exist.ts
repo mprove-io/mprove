@@ -6,6 +6,7 @@ import { log } from '#blockml/functions/log/log';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
 let func: Func = 'build-field/check-fields-exist';
@@ -26,11 +27,11 @@ export function checkFieldsExist<T extends sdrType>(item: {
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (isUndefined(x.fields) && ['.store'].indexOf(x.fileExt) > -1) {
+    if (isUndefined(x.fields) && x.fileExt === '.store') {
       item.errors.push(
         new BmError({
           title: 'MISSING_FIELDS',
-          message: `parameter "fields" is required for ${x.fileExt} file`,
+          message: `parameter "${'fields' satisfies FileParameter}" is required for ${x.fileExt} file`,
           lines: [
             {
               line: 0,

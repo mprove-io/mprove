@@ -1,8 +1,8 @@
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 import { checkGroupSuffix } from './check-group-suffix/check-group-suffix';
 
@@ -23,7 +23,7 @@ export function checkModBuildMetricsFieldGroups(item: {
     );
 
     let buildMetricsTag = tagsResult.mproveTags.find(
-      tag => tag.key === 'build_metrics'
+      tag => tag.key === ('build_metrics' satisfies FileParameter)
     );
 
     if (isUndefined(fieldGroupTag) || isUndefined(buildMetricsTag)) {

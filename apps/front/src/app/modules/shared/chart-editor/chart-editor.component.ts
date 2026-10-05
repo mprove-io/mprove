@@ -20,12 +20,15 @@ import {
   FORMAT_NUMBER_EXAMPLES
 } from '#common/constants/top-front';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
+
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { setChartSeries } from '#common/functions/set-chart-series/set-chart-series';
 import type { MconfigField } from '#common/types/backend/parts/mconfig/mconfig-field';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
+import type { FieldClass } from '#common/types/blockml/parts/field/field-class';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { MconfigChartPivotValue } from '#common/types/blockml/parts/mconfig/mconfig-chart-pivot-value';
@@ -46,12 +49,20 @@ import { FormatNumberService } from '#front/app/services/format-number.service';
 import { ReportService } from '#front/app/services/report.service';
 import { StructService } from '#front/app/services/struct.service';
 
+const selectableFieldClasses = [
+  'dimension',
+  'measure',
+  'calculation'
+] satisfies FieldClass[];
+
 @Component({
   standalone: false,
   selector: 'm-chart-editor',
   templateUrl: './chart-editor.component.html'
 })
 export class ChartEditorComponent implements OnChanges {
+  readonly nonSeriesChartTypes: ChartType[] = ['table', 'single'];
+
   @ViewChild('xFieldSelect', { static: false })
   xFieldSelectElement: NgSelectComponent;
 
@@ -208,14 +219,14 @@ export class ChartEditorComponent implements OnChanges {
         x => x.id === this.chart.xField
       )?.result;
 
-      this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
-        x => ['dimension', 'measure', 'calculation'].indexOf(x.fieldClass) > -1
+      this.dimensionsMeasuresCalculations = this.mconfigFields.filter(x =>
+        selectableFieldClasses.some(candidate => candidate === x.fieldClass)
       );
 
       this.numbersDimensionsMeasuresCalculations = this.mconfigFields.filter(
         x =>
           x.result === 'number' &&
-          ['dimension', 'measure', 'calculation'].indexOf(x.fieldClass) > -1
+          selectableFieldClasses.some(candidate => candidate === x.fieldClass)
       );
 
       this.numbersDimensionsMeasuresCalculationsPlusEmpty = [

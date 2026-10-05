@@ -55,7 +55,7 @@
   <div *ngIf="isExpanded === true" class="flex flex-col">
     <div
       class="mb-5 ml-[32px] flex flex-row items-center"
-      *ngIf="['line', 'bar'].indexOf(seriesElement.type) > -1"
+      *ngIf="stackableChartTypes.includes(seriesElement.type)"
     >
       <div class="text-s1 flex h-9 w-[50px] select-none items-center text-base"
         >Type</div
@@ -123,7 +123,7 @@
     </div>
 
     <div
-      *ngIf="['line', 'bar', 'scatter'].indexOf(seriesElement.type) > -1"
+      *ngIf="cartesianChartTypes.includes(seriesElement.type)"
       class="mb-5 ml-[32px] flex flex-row items-center"
     >
       <div class="text-s1 flex h-9 w-[50px] select-none items-center text-base"

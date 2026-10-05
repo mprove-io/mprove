@@ -9,6 +9,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { FileStoreFractionType } from '#common/types/blockml/parts/internal/file-store-fraction-type';
 
@@ -42,7 +43,7 @@ export function checkResultFractionTypes(
           item.errors.push(
             new BmError({
               title: 'FRACTION_TYPES_ELEMENT_IS_NOT_A_DICTIONARY',
-              message: `found at least one fraction_types element that is not a dictionary`,
+              message: `found at least one ${'fraction_types' satisfies FileParameter} element that is not a dictionary`,
               lines: [
                 {
                   line: result.fraction_types_line_num,
@@ -59,17 +60,14 @@ export function checkResultFractionTypes(
           .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
           .forEach(parameter => {
             if (
-              [
-                'type'.toString(),
-                'label'.toString(),
-                'meta'.toString(),
-                'controls'.toString()
-              ].indexOf(parameter) < 0
+              (
+                ['type', 'label', 'meta', 'controls'] satisfies FileParameter[]
+              ).findIndex(candidate => candidate === parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
                   title: 'UNKNOWN_FRACTION_TYPES_ELEMENT_PARAMETER',
-                  message: `parameter "${parameter}" cannot be used in fraction_types element`,
+                  message: `parameter "${parameter}" cannot be used in ${'fraction_types' satisfies FileParameter} element`,
                   lines: [
                     {
                       line: fractionTypesElement[
@@ -88,7 +86,7 @@ export function checkResultFractionTypes(
               Array.isArray(
                 fractionTypesElement[parameter as keyof FileStoreFractionType]
               ) &&
-              ['controls'.toString()].indexOf(parameter) < 0
+              parameter !== ('controls' satisfies FileParameter)
             ) {
               item.errors.push(
                 new BmError({
@@ -111,7 +109,7 @@ export function checkResultFractionTypes(
             if (
               fractionTypesElement[parameter as keyof FileStoreFractionType]
                 ?.constructor === Object &&
-              ['meta'.toString()].indexOf(parameter) < 0
+              parameter !== ('meta' satisfies FileParameter)
             ) {
               item.errors.push(
                 new BmError({
@@ -143,7 +141,7 @@ export function checkResultFractionTypes(
             item.errors.push(
               new BmError({
                 title: 'MISSING_TYPE',
-                message: `fraction_types element must have "type" parameter`,
+                message: `${'fraction_types' satisfies FileParameter} element must have "${'type' satisfies FileParameter}" parameter`,
                 lines: [
                   {
                     line: Math.min(...fractionTypeElementKeyLineNums),
@@ -160,7 +158,7 @@ export function checkResultFractionTypes(
             item.errors.push(
               new BmError({
                 title: 'MISSING_CONTROLS',
-                message: `fraction_types element must have "controls" parameter`,
+                message: `${'fraction_types' satisfies FileParameter} element must have "${'controls' satisfies FileParameter}" parameter`,
                 lines: [
                   {
                     line: Math.min(...fractionTypeElementKeyLineNums),
@@ -214,7 +212,7 @@ export function checkResultFractionTypes(
             item.errors.push(
               new BmError({
                 title: 'DUPLICATE_TYPES',
-                message: `"type" value must be unique across fraction_types elements`,
+                message: `"${'type' satisfies FileParameter}" value must be unique across ${'fraction_types' satisfies FileParameter} elements`,
                 lines: frType.typeLineNums.map(l => ({
                   line: l,
                   name: x.fileName,

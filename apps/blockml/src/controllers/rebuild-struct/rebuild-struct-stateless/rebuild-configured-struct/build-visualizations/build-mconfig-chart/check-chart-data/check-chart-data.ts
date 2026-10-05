@@ -8,6 +8,7 @@ import { LINE_NUM } from '#common/constants/top-blockml';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
+import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartData } from '#common/types/blockml/parts/internal/file-chart-data';
 
@@ -36,24 +37,27 @@ export function checkChartData<T extends dcType>(item: {
         return;
       }
 
-      let allowedParameters =
+      let allowedParameters: FileParameter[] =
         tile.type === 'pivot_table'
-          ? [
-              'pivot_rows'.toString(),
-              'pivot_columns'.toString(),
-              'pivot_values'.toString()
-            ]
-          : [
-              'x_field'.toString(),
-              'y_fields'.toString(),
-              'size_field'.toString(),
-              'multi_field'.toString()
-            ];
+          ? ([
+              'pivot_rows',
+              'pivot_columns',
+              'pivot_values'
+            ] satisfies FileParameter[])
+          : ([
+              'x_field',
+              'y_fields',
+              'size_field',
+              'multi_field'
+            ] satisfies FileParameter[]);
 
       Object.keys(tile.data)
         .filter(k => !k.match(MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if (allowedParameters.indexOf(parameter) < 0) {
+          if (
+            allowedParameters.findIndex(candidate => candidate === parameter) <
+            0
+          ) {
             item.errors.push(
               new BmError({
                 title: 'TILE_DATA_UNKNOWN_PARAMETER',
@@ -76,12 +80,14 @@ export function checkChartData<T extends dcType>(item: {
 
           if (
             Array.isArray(tile.data[parameter as keyof FileChartData] as any) &&
-            [
-              'y_fields'.toString(),
-              'pivot_rows'.toString(),
-              'pivot_columns'.toString(),
-              'pivot_values'.toString()
-            ].indexOf(parameter) < 0
+            (
+              [
+                'y_fields',
+                'pivot_rows',
+                'pivot_columns',
+                'pivot_values'
+              ] satisfies FileParameter[]
+            ).findIndex(candidate => candidate === parameter) < 0
           ) {
             item.errors.push(
               new BmError({
