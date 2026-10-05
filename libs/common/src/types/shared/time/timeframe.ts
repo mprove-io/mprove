@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 
 // 2019-06-27 12:32:02.230908+00
 const timeframeValues = [
-  // TODO: check timeframeEnum
+  // TODO: check supported timeframe values
   'date', // 2019-06-27
   'date_ts', //
   'day_of_month', // 27

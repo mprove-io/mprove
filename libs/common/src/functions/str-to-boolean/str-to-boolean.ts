@@ -1,7 +1,7 @@
 import { ServerError } from '#common/classes/server-error/server-error';
 import { type Bool, boolValues } from '#common/types/shared/bool';
 
-export function enumToBoolean(item: {
+export function strToBoolean(item: {
   value: string | Bool;
   name: string;
 }): boolean {
@@ -18,5 +18,7 @@ export function enumToBoolean(item: {
     });
   }
 
-  return value.toUpperCase() === ('TRUE' satisfies Bool) ? true : false;
+  let isTrue: boolean = value.toUpperCase() === ('TRUE' satisfies Bool);
+
+  return isTrue;
 }

@@ -483,14 +483,14 @@ export class FractionTsComponent implements OnInit, OnChanges {
     },
     // {
     //   label: 'is not after',
-    //   value: FractionTypeEnum.TsIsNotAfter, // is through
-    //   operator: FractionOperatorEnum.And,
+    //   value: 'TsIsNotAfter', // is through
+    //   operator: 'And',
     //   level: 0
     // },
     // {
     //   label: 'is not starting at',
-    //   value: FractionTypeEnum.TsIsNotStarting, // is before
-    //   operator: FractionOperatorEnum.And,
+    //   value: 'TsIsNotStarting', // is before
+    //   operator: 'And',
     //   level: 0
     // },
     {
@@ -501,14 +501,14 @@ export class FractionTsComponent implements OnInit, OnChanges {
     },
     // {
     //   label: 'is not before',
-    //   value: FractionTypeEnum.TsIsNotBefore, // is starting
-    //   operator: FractionOperatorEnum.And,
+    //   value: 'TsIsNotBefore', // is starting
+    //   operator: 'And',
     //   level: 0
     // },
     // {
     //   label: 'is not through',
-    //   value: FractionTypeEnum.TsIsNotThrough, // is after
-    //   operator: FractionOperatorEnum.And,
+    //   value: 'TsIsNotThrough', // is after
+    //   operator: 'And',
     //   level: 0
     // },
     {

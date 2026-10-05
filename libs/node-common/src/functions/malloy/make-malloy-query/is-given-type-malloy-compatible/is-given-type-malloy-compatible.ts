@@ -28,7 +28,8 @@ export function isGivenTypeMalloyCompatible(item: {
     case 'Timestamp':
       expectedType = 'timestamp';
       break;
-    // case GivenTypeEnum.TimestampTz:
+    //
+    // case 'TimestampTz':
     //   expectedType = 'timestamptz';
     //   break;
   }

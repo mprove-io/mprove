@@ -285,7 +285,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         // console.log(timeSpecWord);
 
         // let dimensionField = newMconfig.fields.find(
-        //   field => field.fieldClass === FieldClassEnum.Dimension
+        //   field => field.fieldClass === 'dimension'
         // );
 
         // let timeFieldFilter = newMconfig.filters.find(

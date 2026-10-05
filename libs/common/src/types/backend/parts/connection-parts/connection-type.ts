@@ -4,7 +4,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 const connectionTypeValues = [
   'PostgreSQL',
   'MySQL',
-  // ClickHouse = 'ClickHouse',
+  // 'ClickHouse',
   'SnowFlake',
   'BigQuery',
   'Databricks',

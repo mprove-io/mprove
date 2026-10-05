@@ -1,12 +1,12 @@
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { strToBoolean } from '#common/functions/str-to-boolean/str-to-boolean';
 import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { BlockmlEnv } from '#common/types/node-common/env/blockml-env';
 
 export function getDevConfig() {
   let devConfig: BlockmlConfig = {
-    isTelemetryEnabled: enumToBoolean({
+    isTelemetryEnabled: strToBoolean({
       value: process.env.IS_TELEMETRY_ENABLED,
       name: 'IS_TELEMETRY_ENABLED'
     }),
@@ -21,12 +21,12 @@ export function getDevConfig() {
 
     aesKey: process.env.BLOCKML_AES_KEY,
 
-    logIO: enumToBoolean({
+    logIO: strToBoolean({
       value: process.env.BLOCKML_LOG_IO,
       name: 'BLOCKML_LOG_IO'
     }),
     logFunc: <Func>process.env.BLOCKML_LOG_FUNC,
-    copyLogsToModels: enumToBoolean({
+    copyLogsToModels: strToBoolean({
       value: process.env.BLOCKML_COPY_LOGS_TO_MODELS,
       name: 'BLOCKML_COPY_LOGS_TO_MODELS'
     }),
@@ -54,15 +54,15 @@ export function getDevConfig() {
     blockmlTestsDwhPostgresDatabaseName:
       process.env.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME,
 
-    blockmlLogIsJson: enumToBoolean({
+    blockmlLogIsJson: strToBoolean({
       value: process.env.BLOCKML_LOG_IS_JSON,
       name: 'BLOCKML_LOG_IS_JSON'
     }),
-    blockmlLogResponseError: enumToBoolean({
+    blockmlLogResponseError: strToBoolean({
       value: process.env.BLOCKML_LOG_RESPONSE_ERROR,
       name: 'BLOCKML_LOG_RESPONSE_ERROR'
     }),
-    blockmlLogResponseOk: enumToBoolean({
+    blockmlLogResponseOk: strToBoolean({
       value: process.env.BLOCKML_LOG_RESPONSE_OK,
       name: 'BLOCKML_LOG_RESPONSE_OK'
     })

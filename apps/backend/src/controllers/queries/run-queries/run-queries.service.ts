@@ -318,7 +318,7 @@ export class RunQueriesService {
               querySql: query.sql,
               projectId: projectId
             });
-            // } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
+            // } else if (connection.type === 'ClickHouse') {
             //   await this.clickhouseService.runQuery({
             //     connection: connection,
             //     queryId: query.queryId,
@@ -495,7 +495,7 @@ export class RunQueriesService {
                   cs: this.cs
                 });
               });
-            // } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
+            // } else if (connection.type === 'ClickHouse') {
             //   this.clickhouseService
             //     .runQuery({
             //       connection: connection,
@@ -507,10 +507,10 @@ export class RunQueriesService {
             //     .catch(e => {
             //       logToConsoleBackend({
             //         log: new ServerError({
-            //           message: ErEnum.BACKEND_RUN_QUERY_CLICKHOUSE_ERROR,
+            //           message: 'BACKEND_RUN_QUERY_CLICKHOUSE_ERROR',
             //           originalError: e
             //         }),
-            //         logLevel: LogLevelEnum.Error,
+            //         logLevel: 'Error',
             //         logger: this.logger,
             //         cs: this.cs
             //       });

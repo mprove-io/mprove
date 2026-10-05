@@ -7,7 +7,7 @@ export const givenTypeValues = [
   'Boolean',
   'Date',
   'Timestamp'
-  // TimestampTz = 'TimestampTz'
+  // 'TimestampTz'
 ] as const;
 
 export type GivenType = (typeof givenTypeValues)[number];

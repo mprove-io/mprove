@@ -82,7 +82,7 @@ export class EditConnectionDialogComponent implements OnInit {
   isMotherduckAttachModeSingle = true;
   isMotherduckAccessModeReadOnly = true;
 
-  // typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  // typeClickHouse = 'ClickHouse';
 
   databricksAuthTypes: DatabricksAuthType[] = [
     'OAuthM2M',
@@ -577,7 +577,7 @@ export class EditConnectionDialogComponent implements OnInit {
 
     if (
       (cType === 'BigQuery' && !this.editBigqueryForm.valid) ||
-      // (cType === ConnectionTypeEnum.ClickHouse &&
+      // (cType === 'ClickHouse' &&
       //   !this.editClickhouseForm.valid) ||
       (cType === 'MotherDuck' && !this.editMotherduckForm.valid) ||
       (cType === 'PostgreSQL' && !this.editPostgresForm.valid) ||
@@ -631,7 +631,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       // clickhouse:
-      //   cType === ConnectionTypeEnum.ClickHouse
+      //   cType === 'ClickHouse'
       //     ? {
       //         host: this.editClickhouseForm.value.host,
       //         port: isDefined(this.editClickhouseForm.value.port)

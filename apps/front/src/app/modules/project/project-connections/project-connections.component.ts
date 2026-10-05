@@ -17,11 +17,11 @@ import { MyDialogService } from '#front/app/services/my-dialog.service';
   templateUrl: './project-connections.component.html'
 })
 export class ProjectConnectionsComponent implements OnInit {
-  // typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  // typeClickHouse = 'ClickHouse';
 
   pageTitle = PROJECT_CONNECTIONS_PAGE_TITLE;
 
-  // connectionTypeClickhouse = ConnectionTypeEnum.ClickHouse;
+  // connectionTypeClickhouse = 'ClickHouse';
 
   projectId: string;
   projectId$ = this.navQuery.projectId$.pipe(

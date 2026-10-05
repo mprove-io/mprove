@@ -102,7 +102,7 @@ export function wrapModels(item: {
           let topNode: ModelNode = {
             id: topId,
             label:
-              topId === MF // ModelNodeLabelEnum.ModelFields
+              topId === MF
                 ? modelType === 'Malloy' && isDefined(topLabelTag?.value)
                   ? topLabelTag?.value.trim()
                   : x.label
@@ -163,7 +163,7 @@ export function wrapModels(item: {
 
         let topNode: ModelNode = {
           id: MF,
-          label: x.label, // ModelNodeLabelEnum.ModelFields
+          label: x.label,
           description: undefined,
           hidden: false,
           required: false,

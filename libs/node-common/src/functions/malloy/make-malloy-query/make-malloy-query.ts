@@ -152,7 +152,7 @@ export async function makeMalloyQuery(item: {
     ) {
       if (isUndefined(queryOperation.fieldId)) {
         isError = true;
-        errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Select)`;
+        errorMessage = `queryOperation.fieldId is not defined (${queryOperation.type})`;
       }
 
       let modelField = model.fields.find(x => x.id === queryOperation.fieldId);
@@ -271,7 +271,7 @@ export async function makeMalloyQuery(item: {
     } else if (queryOperation.type === 'Remove') {
       if (isUndefined(queryOperation.fieldId)) {
         isError = true;
-        errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Remove)`;
+        errorMessage = `queryOperation.fieldId is not defined (${queryOperation.type})`;
       }
 
       let modelField = model.fields.find(x => x.id === queryOperation.fieldId);
@@ -300,12 +300,12 @@ export async function makeMalloyQuery(item: {
     } else if (queryOperation.type === 'Replace') {
       if (isUndefined(queryOperation.fieldId)) {
         isError = true;
-        errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Replace)`;
+        errorMessage = `queryOperation.fieldId is not defined (${queryOperation.type})`;
       }
 
       if (isUndefined(queryOperation.replaceWithFieldId)) {
         isError = true;
-        errorMessage = `queryOperation.replaceWithFieldId is not defined (QueryOperationTypeEnum.Replace)`;
+        errorMessage = `queryOperation.replaceWithFieldId is not defined (${queryOperation.type})`;
       }
 
       let replaceWithModelField = model.fields.find(

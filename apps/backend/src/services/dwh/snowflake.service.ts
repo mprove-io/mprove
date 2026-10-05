@@ -211,10 +211,10 @@ export class SnowFlakeService {
       //   if (destroyErr) {
       //     logToConsoleBackend({
       //       log: new ServerError({
-      //         message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
+      //         message: 'BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION',
       //         originalError: destroyErr
       //       }),
-      //       logLevel: LogLevelEnum.Error,
+      //       logLevel: 'Error',
       //       logger: this.logger,
       //       cs: this.cs
       //     });

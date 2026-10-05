@@ -7,6 +7,7 @@ import {
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { QueryOperationType } from '#common/types/backend/parts/query-operation/query-operation-type';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
@@ -49,7 +50,7 @@ export function processMalloyWhereOrHaving(item: {
   queryOperationFilters.forEach(filter => {
     if (isUndefined(filter.fieldId)) {
       isError = true;
-      errorMessage = `filter.fieldId is not defined (QueryOperationTypeEnum.WhereOrHaving)`;
+      errorMessage = `filter.fieldId is not defined (${'WhereOrHaving' satisfies QueryOperationType})`;
     }
 
     let modelField = model.fields.find(x => x.id === filter.fieldId);
@@ -143,17 +144,17 @@ export function processMalloyWhereOrHaving(item: {
 
       // if (ANDs.length > 0) {
       //   let fstrANDs =
-      //     filterModelField.result === FieldResultEnum.String
+      //     filterModelField.result === 'string'
       //       ? ANDs.map(y => y.brick.slice(2, -1)).join(', ')
-      //       : filterModelField.result === FieldResultEnum.Number
+      //       : filterModelField.result === 'number'
       //         ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-      //         : filterModelField.result === FieldResultEnum.Ts
+      //         : filterModelField.result === 'ts'
       //           ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-      //           : filterModelField.result === FieldResultEnum.Date
+      //           : filterModelField.result === 'date'
       //             ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
       //             : undefined;
 
-      //   if (modelField.fieldClass === FieldClassEnum.Dimension) {
+      //   if (modelField.fieldClass === 'dimension') {
       //     segment0.addWhere(filterFieldName, filterFieldPath, fstrANDs);
       //   } else {
       //     segment0.addHaving(filterFieldName, filterFieldPath, fstrANDs);

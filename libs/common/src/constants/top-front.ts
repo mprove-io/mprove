@@ -43,17 +43,17 @@ export const RESULTS_LIST: FieldResult[] = [
   'number',
   'boolean',
   'ts'
-  // FieldResultEnum.Date
+  // 'date'
   //
-  // FieldResultEnum.Array,
-  // FieldResultEnum.Record,
-  // FieldResultEnum.Json,
-  // FieldResultEnum.SqlNative,
+  // 'array',
+  // 'record',
+  // 'json',
+  // 'sql_native',
   //
-  // FieldResultEnum.DayOfWeek,
-  // FieldResultEnum.DayOfWeekIndex,
-  // FieldResultEnum.MonthName,
-  // FieldResultEnum.QuarterOfYear,
+  // 'day_of_week',
+  // 'day_of_week_index',
+  // 'month_name',
+  // 'quarter_of_year',
 ];
 
 export const APP_SPINNER_NAME = 'app';

@@ -143,8 +143,8 @@ export class TestConnectionController {
                           connection: testConnection
                         })
                       : undefined;
-    // testConnection.type === ConnectionTypeEnum.Api ||
-    //     testConnection.type === ConnectionTypeEnum.GoogleApi
+    // testConnection.type === 'Api' ||
+    //     testConnection.type === 'GoogleApi'
     //   ? await this.storeService.testConnection({
     //       connection: testConnection,
     //       storeMethod: storeMethod

@@ -8,7 +8,7 @@
 // import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 // import { getRetryOption } from '#backend/functions/get-retry-option';
 // import { makeTsNumber } from '#backend/functions/make-ts-number';
-// import { QueryStatusEnum } from '#common/enums/query-status.enum';
+// import type { QueryStatus } from '#common/types/blockml/parts/query/query-status';
 // import { isDefined } from '#common/functions/is-defined';
 // import { TabService } from '../tab.service';
 
@@ -83,7 +83,7 @@
 //             .then(x => this.tabService.queryEntToTab(x));
 
 //           if (isDefined(q)) {
-//             q.status = QueryStatusEnum.Completed;
+//             q.status = 'Completed' satisfies QueryStatus;
 //             q.queryJobId = undefined;
 //             q.data = data;
 //             q.lastCompleteTs = makeTsNumber();
@@ -121,7 +121,7 @@
 //             .then(x => this.tabService.queryEntToTab(x));
 
 //           if (isDefined(q)) {
-//             q.status = QueryStatusEnum.Error;
+//             q.status = 'Error' satisfies QueryStatus;
 //             q.data = [];
 //             q.queryJobId = undefined;
 //             q.lastErrorMessage = e.message

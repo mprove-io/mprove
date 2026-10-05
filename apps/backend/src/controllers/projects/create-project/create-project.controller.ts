@@ -128,7 +128,7 @@ export class CreateProjectController {
       remoteType: remoteType,
       projectId: makeId(),
       gitUrl: gitUrl,
-      publicKey: note?.publicKey, // note is undefined for ProjectRemoteTypeEnum.Managed
+      publicKey: note?.publicKey, // note is undefined for Managed git repo projects
       privateKey: note?.privateKey,
       publicKeyEncrypted: note?.publicKeyEncrypted,
       privateKeyEncrypted: note?.privateKeyEncrypted,

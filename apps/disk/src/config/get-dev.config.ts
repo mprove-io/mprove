@@ -1,11 +1,11 @@
-import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { strToBoolean } from '#common/functions/str-to-boolean/str-to-boolean';
 import type { DiskEnv } from '#common/types/node-common/env/disk-env';
 import type { DiskConfig } from '#disk/config/disk-config';
 
 export function getDevConfig() {
   let devConfig: DiskConfig = {
-    isTelemetryEnabled: enumToBoolean({
+    isTelemetryEnabled: strToBoolean({
       value: process.env.IS_TELEMETRY_ENABLED,
       name: 'IS_TELEMETRY_ENABLED'
     }),
@@ -36,22 +36,22 @@ export function getDevConfig() {
 
     diskTestLocalSourceGitUrl: process.env.DISK_TEST_LOCAL_SOURCE_GIT_URL,
 
-    diskLogIsJson: enumToBoolean({
+    diskLogIsJson: strToBoolean({
       value: process.env.DISK_LOG_IS_JSON,
       name: 'DISK_LOG_IS_JSON'
     }),
-    diskLogResponseError: enumToBoolean({
+    diskLogResponseError: strToBoolean({
       value: process.env.DISK_LOG_RESPONSE_ERROR,
       name: 'DISK_LOG_RESPONSE_ERROR'
     }),
-    diskLogResponseOk: enumToBoolean({
+    diskLogResponseOk: strToBoolean({
       value: process.env.DISK_LOG_RESPONSE_OK,
       name: 'DISK_LOG_RESPONSE_OK'
     }),
     diskIsCheckSymlinksOnStartup: isDefined(
       process.env.DISK_IS_CHECK_SYMLINKS_ON_STARTUP
     )
-      ? enumToBoolean({
+      ? strToBoolean({
           value: process.env.DISK_IS_CHECK_SYMLINKS_ON_STARTUP,
           name: 'DISK_IS_CHECK_SYMLINKS_ON_STARTUP'
         })

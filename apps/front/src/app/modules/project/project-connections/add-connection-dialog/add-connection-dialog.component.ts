@@ -113,7 +113,7 @@ export class AddConnectionDialogComponent implements OnInit {
     'MySQL',
     'Trino',
     'Presto',
-    // ConnectionTypeEnum.ClickHouse,
+    // 'ClickHouse',
     'SnowFlake',
     'BigQuery',
     'Databricks',
@@ -122,7 +122,7 @@ export class AddConnectionDialogComponent implements OnInit {
     'GoogleApi'
   ];
 
-  // typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  // typeClickHouse = 'ClickHouse';
 
   databricksAuthTypes: DatabricksAuthType[] = [
     'OAuthM2M',
@@ -479,7 +479,7 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addBigqueryForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
-    // if (type !== ConnectionTypeEnum.ClickHouse) {
+    // if (type !== 'ClickHouse') {
     //   this.addClickhouseForm.controls['host'].reset();
     //   this.addClickhouseForm.controls['port'].reset();
     //   this.addClickhouseForm.controls['username'].reset();
@@ -682,7 +682,7 @@ export class AddConnectionDialogComponent implements OnInit {
       !this.addForm.valid ||
       (cType === ('BigQuery' satisfies ConnectionType) &&
         !this.addBigqueryForm.valid) ||
-      // (cType === ConnectionTypeEnum.ClickHouse &&
+      // (cType === 'ClickHouse' &&
       //   !this.addClickhouseForm.valid) ||
       (cType === ('MotherDuck' satisfies ConnectionType) &&
         !this.addMotherduckForm.valid) ||
@@ -747,7 +747,7 @@ export class AddConnectionDialogComponent implements OnInit {
             }
           : undefined,
       // clickhouse:
-      //   cType === ConnectionTypeEnum.ClickHouse
+      //   cType === 'ClickHouse'
       //     ? {
       //         host: this.addClickhouseForm.value.host,
       //         port: isDefined(this.addClickhouseForm.value.port)

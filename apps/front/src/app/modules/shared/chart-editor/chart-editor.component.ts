@@ -342,7 +342,8 @@ export class ChartEditorComponent implements OnChanges {
   getIsValid() {
     let isChartValid = false;
 
-    // if (this.chart.type === ChartTypeEnum.BarVertical) {
+    // Legacy vertical bar chart validation (no longer a separate chart type):
+    // if (this.chart.type === 'bar') {
     //   isChartValid =
     //     (this.chart.legend === false ||
     //       this.legendTitleForm.controls['legendTitle'].valid) &&

@@ -135,8 +135,8 @@ export function createModelMetrics(
         .filter(
           x => x.buildMetrics === true && x.id.endsWith('_ts')
           // &&
-          // (x.result === FieldResultEnum.Ts ||
-          //   x.result === FieldResultEnum.Date)
+          // (x.result === 'ts' ||
+          //   x.result === 'date')
         )
         .forEach(x => {
           let timeId =

@@ -1,6 +1,6 @@
 import { BackendConfig } from '#backend/config/backend-config';
-import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { strToBoolean } from '#common/functions/str-to-boolean/str-to-boolean';
 import type { EmailTransport } from '#common/types/backend/config/email-transport';
 import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
 import type { BackendEnv } from '#common/types/node-common/env/backend-env';
@@ -9,12 +9,12 @@ export function getDevConfig() {
   let devConfig: BackendConfig = {
     mproveReleaseTag: <BackendEnv>process.env.MPROVE_RELEASE_TAG,
 
-    isTelemetryEnabled: enumToBoolean({
+    isTelemetryEnabled: strToBoolean({
       value: process.env.IS_TELEMETRY_ENABLED,
       name: 'IS_TELEMETRY_ENABLED'
     }),
 
-    isTraceDrizzleEnabled: enumToBoolean({
+    isTraceDrizzleEnabled: strToBoolean({
       value: process.env.BACKEND_IS_TRACE_DRIZZLE_ENABLED,
       name: 'BACKEND_IS_TRACE_DRIZZLE_ENABLED'
     }),
@@ -27,12 +27,12 @@ export function getDevConfig() {
 
     backendEnv: <BackendEnv>process.env.BACKEND_ENV,
 
-    isEncryptDb: enumToBoolean({
+    isEncryptDb: strToBoolean({
       value: process.env.BACKEND_IS_ENCRYPT_DB,
       name: 'BACKEND_IS_ENCRYPT_DB'
     }),
 
-    isEncryptMetadata: enumToBoolean({
+    isEncryptMetadata: strToBoolean({
       value: process.env.BACKEND_IS_ENCRYPT_METADATA,
       name: 'BACKEND_IS_ENCRYPT_METADATA'
     }),
@@ -57,7 +57,7 @@ export function getDevConfig() {
       ? Number(process.env.BACKEND_RPC_BLOCKML_TIMEOUT_MS)
       : undefined,
 
-    isScheduler: enumToBoolean({
+    isScheduler: strToBoolean({
       value: process.env.BACKEND_IS_SCHEDULER,
       name: 'BACKEND_IS_SCHEDULER'
     }),
@@ -72,7 +72,7 @@ export function getDevConfig() {
 
     specialKey: process.env.BACKEND_SPECIAL_KEY,
 
-    allowTestRoutes: enumToBoolean({
+    allowTestRoutes: strToBoolean({
       value: process.env.BACKEND_ALLOW_TEST_ROUTES,
       name: 'BACKEND_ALLOW_TEST_ROUTES'
     }),
@@ -106,7 +106,7 @@ export function getDevConfig() {
 
     apiAllowHosts: process.env.BACKEND_STORE_API_ALLOW_HOSTS,
 
-    seedDemoOrgAndProject: enumToBoolean({
+    seedDemoOrgAndProject: strToBoolean({
       value: process.env.BACKEND_SEED_DEMO_ORG_AND_PROJECT,
       name: 'BACKEND_SEED_DEMO_ORG_AND_PROJECT'
     }),
@@ -174,12 +174,12 @@ export function getDevConfig() {
 
     calcPostgresPassword: process.env.BACKEND_CALC_POSTGRES_PASSWORD,
 
-    allowUsersToCreateOrganizations: enumToBoolean({
+    allowUsersToCreateOrganizations: strToBoolean({
       value: process.env.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS,
       name: 'BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS'
     }),
 
-    registerOnlyInvitedUsers: enumToBoolean({
+    registerOnlyInvitedUsers: strToBoolean({
       value: process.env.BACKEND_REGISTER_ONLY_INVITED_USERS,
       name: 'BACKEND_REGISTER_ONLY_INVITED_USERS'
     }),
@@ -198,7 +198,7 @@ export function getDevConfig() {
       ? Number(process.env.BACKEND_SMTP_PORT)
       : undefined,
 
-    smtpSecure: enumToBoolean({
+    smtpSecure: strToBoolean({
       value: process.env.BACKEND_SMTP_SECURE,
       name: 'BACKEND_SMTP_SECURE'
     }),
@@ -207,7 +207,7 @@ export function getDevConfig() {
 
     smtpAuthPassword: process.env.BACKEND_SMTP_AUTH_PASSWORD,
 
-    backendIsForwardTelemetryEnabled: enumToBoolean({
+    backendIsForwardTelemetryEnabled: strToBoolean({
       value: process.env.BACKEND_IS_FORWARD_TELEMETRY_ENABLED,
       name: 'BACKEND_IS_FORWARD_TELEMETRY_ENABLED'
     }),
@@ -218,7 +218,7 @@ export function getDevConfig() {
 
     backendPostgresDatabaseUrl: process.env.BACKEND_POSTGRES_DATABASE_URL,
 
-    backendIsPostgresTls: enumToBoolean({
+    backendIsPostgresTls: strToBoolean({
       value: process.env.BACKEND_IS_POSTGRES_TLS,
       name: 'BACKEND_IS_POSTGRES_TLS'
     }),
@@ -227,37 +227,37 @@ export function getDevConfig() {
 
     backendRequestIpHeaderB: process.env.BACKEND_REQUEST_IP_HEADER_B,
 
-    backendThrottlePublicRoutesByIp: enumToBoolean({
+    backendThrottlePublicRoutesByIp: strToBoolean({
       value: process.env.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP,
       name: 'BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP'
     }),
 
-    backendThrottlePrivateRoutesByUserId: enumToBoolean({
+    backendThrottlePrivateRoutesByUserId: strToBoolean({
       value: process.env.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID,
       name: 'BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID'
     }),
 
-    backendLogThrottleTracker: enumToBoolean({
+    backendLogThrottleTracker: strToBoolean({
       value: process.env.BACKEND_LOG_THROTTLE_TRACKER,
       name: 'BACKEND_LOG_THROTTLE_TRACKER'
     }),
 
-    backendLogDrizzlePostgres: enumToBoolean({
+    backendLogDrizzlePostgres: strToBoolean({
       value: process.env.BACKEND_LOG_DRIZZLE_POSTGRES,
       name: 'BACKEND_LOG_DRIZZLE_POSTGRES'
     }),
 
-    backendLogIsJson: enumToBoolean({
+    backendLogIsJson: strToBoolean({
       value: process.env.BACKEND_LOG_IS_JSON,
       name: 'BACKEND_LOG_IS_JSON'
     }),
 
-    backendLogResponseError: enumToBoolean({
+    backendLogResponseError: strToBoolean({
       value: process.env.BACKEND_LOG_RESPONSE_ERROR,
       name: 'BACKEND_LOG_RESPONSE_ERROR'
     }),
 
-    backendLogResponseOk: enumToBoolean({
+    backendLogResponseOk: strToBoolean({
       value: process.env.BACKEND_LOG_RESPONSE_OK,
       name: 'BACKEND_LOG_RESPONSE_OK'
     }),
