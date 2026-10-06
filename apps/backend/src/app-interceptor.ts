@@ -18,6 +18,7 @@ import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
+import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import { WrappedError } from '#node-common/functions/wrap-error/wrap-error';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
@@ -43,15 +44,15 @@ export class AppInterceptor implements NestInterceptor {
   ): Promise<Observable<ToBackendResponse>> {
     let request = context.switchToHttp().getRequest();
 
+    let isTelemetryRoute: boolean = toBackendTelemetryRouteValues.some(
+      route => route === request?.originalUrl.substring(1)
+    );
+
     if (
       request?.originalUrl?.startsWith('/api/mcp') ||
       request?.originalUrl?.startsWith('/api/full-mcp.json') ||
       request?.originalUrl?.startsWith('/' + SSE_SESSION_EVENTS_PATH) ||
-      [
-        'api/ToBackendTelemetryLogs',
-        'api/ToBackendTelemetryMetrics',
-        'api/ToBackendTelemetryTraces'
-      ].indexOf(request?.originalUrl.substring(1)) > -1
+      isTelemetryRoute
     ) {
       return next.handle();
     }
