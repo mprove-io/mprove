@@ -5,7 +5,7 @@ import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseMetadata } from '#common/types/backend/response/to-backend-response-metadata';
-import { type Er, zEr } from '#common/types/shared/errors/er';
+import { type Er, erValues } from '#common/types/shared/errors/er';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 import {
   type WrappedError,
@@ -61,7 +61,7 @@ export function makeErrorResponse(item: {
               ('BACKEND_WRONG_REQUEST_PARAMS' satisfies Er)
             ? 'BACKEND_INVALID_REQUEST'
             : typeof wrappedError.message === 'string' &&
-                zEr.options.some(value => value === wrappedError.message)
+                erValues.some(value => value === wrappedError.message)
               ? wrappedError.message
               : 'BACKEND_INTERNAL';
 

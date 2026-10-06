@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const toValues = ['remote', 'last-commit'] as const;
+export const toValues = ['remote', 'last-commit'] as const;
 
 export type To = (typeof toValues)[number];
 

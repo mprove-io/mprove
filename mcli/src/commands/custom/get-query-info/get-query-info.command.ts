@@ -8,7 +8,7 @@ import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/q
 import type { ToBackendGetQueryInfoRequest } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-request';
 import {
   type RepoType,
-  zRepoType
+  repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
@@ -43,7 +43,7 @@ export class GetQueryInfoCommand extends CustomCommand {
 
   repoType = Option.String('--repo-type', {
     required: true,
-    validator: t.isEnum(zRepoType.options),
+    validator: t.isEnum(repoTypeValues),
     description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 

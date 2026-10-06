@@ -12,10 +12,10 @@ import type { ToBackendRevertRepoToRemoteOutput } from '#common/types/backend/ro
 import type { ToBackendRevertRepoToRemoteRequest } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
 import {
   type RepoType,
-  zRepoType
+  repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { type To, zTo } from '#mcli/commands/custom/revert/to';
+import { type To, toValues } from '#mcli/commands/custom/revert/to';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
@@ -40,7 +40,7 @@ export class RevertCommand extends CustomCommand {
 
   to = Option.String('--to', {
     required: true,
-    validator: t.isEnum(zTo.options),
+    validator: t.isEnum(toValues),
     description: `(required, "${'last-commit' satisfies To}" or "${'remote' satisfies To}")`
   });
 
@@ -50,7 +50,7 @@ export class RevertCommand extends CustomCommand {
 
   repoType = Option.String('--repo-type', {
     required: true,
-    validator: t.isEnum(zRepoType.options),
+    validator: t.isEnum(repoTypeValues),
     description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 

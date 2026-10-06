@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const erValues = [
+export const erValues = [
   // FRONT
 
   'FRONT_RESPONSE_CODE_IS_NOT_201',

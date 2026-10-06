@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const repoTypeValues = ['production', 'dev', 'session'] as const;
+export const repoTypeValues = ['production', 'dev', 'session'] as const;
 
 export type RepoType = (typeof repoTypeValues)[number];
 

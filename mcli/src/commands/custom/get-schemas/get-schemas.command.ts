@@ -8,7 +8,7 @@ import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/
 import type { ToBackendGetConnectionSchemasRequest } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
 import {
   type RepoType,
-  zRepoType
+  repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
@@ -40,7 +40,7 @@ export class GetSchemasCommand extends CustomCommand {
 
   repoType = Option.String('--repo-type', {
     required: true,
-    validator: t.isEnum(zRepoType.options),
+    validator: t.isEnum(repoTypeValues),
     description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 

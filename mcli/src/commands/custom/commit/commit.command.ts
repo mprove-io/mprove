@@ -9,7 +9,7 @@ import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/rep
 import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
 import {
   type RepoType,
-  zRepoType
+  repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
@@ -35,7 +35,7 @@ export class CommitCommand extends CustomCommand {
 
   repoType = Option.String('--repo-type', {
     required: true,
-    validator: t.isEnum(zRepoType.options),
+    validator: t.isEnum(repoTypeValues),
     description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 

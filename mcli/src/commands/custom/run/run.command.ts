@@ -8,7 +8,7 @@ import type { ToBackendRunOutput } from '#common/types/backend/routes/run/run/ru
 import type { ToBackendRunRequest } from '#common/types/backend/routes/run/run/run-request';
 import {
   type RepoType,
-  zRepoType
+  repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
@@ -42,7 +42,7 @@ export class RunCommand extends CustomCommand {
 
   repoType = Option.String('--repo-type', {
     required: true,
-    validator: t.isEnum(zRepoType.options),
+    validator: t.isEnum(repoTypeValues),
     description: `(required, "${'dev' satisfies RepoType}", "${'production' satisfies RepoType}" or "${'session' satisfies RepoType}")`
   });
 
