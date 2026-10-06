@@ -1,5 +1,5 @@
 import test from 'ava';
-import { OPENAI_GPT_5_6_SOL_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/tests/fixtures/openai-gpt-5-6-sol-model-info.fixture';
+import { OPENAI_GPT_5_6_SOL_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/_tests/fixtures/openai-gpt-5-6-sol-model-info.fixture';
 import { forTestsRunEditorSessionE2x } from '#backend/functions/for-tests/for-tests-run-editor-session-e2x';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 

@@ -92,13 +92,13 @@ main({
     {
       modelId: 'gpt-5.6-sol',
       outputPath:
-        'apps/backend/src/controllers/sessions/create-editor-session/tests/fixtures/openai-gpt-5-6-sol-model-info.fixture.ts',
+        'apps/backend/src/controllers/sessions/create-editor-session/_tests/fixtures/openai-gpt-5-6-sol-model-info.fixture.ts',
       exportName: 'OPENAI_GPT_5_6_SOL_MODEL_INFO'
     },
     {
       modelId: 'gpt-5.6-luna',
       outputPath:
-        'apps/backend/src/controllers/sessions/get-session/tests/fixtures/openai-gpt-5-6-luna-model-info.fixture.ts',
+        'apps/backend/src/controllers/sessions/get-session/_tests/fixtures/openai-gpt-5-6-luna-model-info.fixture.ts',
       exportName: 'OPENAI_GPT_5_6_LUNA_MODEL_INFO'
     }
   ]

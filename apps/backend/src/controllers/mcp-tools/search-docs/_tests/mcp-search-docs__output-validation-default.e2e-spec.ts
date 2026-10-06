@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
 import type { Response } from 'supertest';
-import { mockMcpSearchDocsOutput } from '#backend/controllers/mcp-tools/search-docs/tests/fixtures/mock-mcp-search-docs-output';
+import { mockMcpSearchDocsOutput } from '#backend/controllers/mcp-tools/search-docs/_tests/fixtures/mock-mcp-search-docs-output';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareSeed, prepareTest } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
@@ -17,7 +17,7 @@ import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-re
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 import type { ToBackendGenerateUserApiKeyResponse } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
 
-let testId = 'backend-mcp-search-docs__output-validation-enabled';
+let testId = 'backend-mcp-search-docs__output-validation-default';
 
 let traceId = testId;
 
@@ -35,9 +35,7 @@ test('1', async t => {
 
     try {
       prepTest = await prepareTest({
-        mcpOptions: {
-          isValidateResponse: true
-        }
+        mcpOptions: {}
       });
 
       mockMcpSearchDocsOutput({ prepTest: prepTest });

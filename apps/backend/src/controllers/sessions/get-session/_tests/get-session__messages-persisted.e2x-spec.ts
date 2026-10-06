@@ -1,5 +1,5 @@
 import test from 'ava';
-import { OPENAI_GPT_5_6_LUNA_MODEL_INFO } from '#backend/controllers/sessions/get-session/tests/fixtures/openai-gpt-5-6-luna-model-info.fixture';
+import { OPENAI_GPT_5_6_LUNA_MODEL_INFO } from '#backend/controllers/sessions/get-session/_tests/fixtures/openai-gpt-5-6-luna-model-info.fixture';
 import { forTestsConnectSse } from '#backend/functions/for-tests/for-tests-connect-sse';
 import { forTestsGetSseTicket } from '#backend/functions/for-tests/for-tests-get-sse-ticket';
 import { forTestsWaitForSessionActive } from '#backend/functions/for-tests/for-tests-wait-for-session-active';

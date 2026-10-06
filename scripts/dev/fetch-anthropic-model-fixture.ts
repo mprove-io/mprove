@@ -28,7 +28,7 @@ async function main(item: { modelId: string }): Promise<void> {
   let modelInfo: Record<string, unknown> = await response.json();
 
   let outputPath: string =
-    'apps/backend/src/controllers/sessions/create-editor-session/tests/fixtures/anthropic-claude-sonnet-5-model-info.fixture.ts';
+    'apps/backend/src/controllers/sessions/create-editor-session/_tests/fixtures/anthropic-claude-sonnet-5-model-info.fixture.ts';
 
   let modelInfoJson: string = JSON.stringify(modelInfo, null, 2);
 
