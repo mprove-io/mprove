@@ -8,7 +8,7 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, type FormControl, type FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
@@ -102,8 +102,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  timezoneForm = this.fb.group({
-    timezone: [undefined]
+  timezoneForm: FormGroup<{
+    timezone: FormControl<string>;
+  }> = this.fb.group({
+    timezone: this.fb.control<string>(undefined)
   });
 
   timezones = getTimezones();
@@ -318,8 +320,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  refreshForm = this.fb.group({
-    refresh: [undefined]
+  refreshForm: FormGroup<{
+    refresh: FormControl<number>;
+  }> = this.fb.group({
+    refresh: this.fb.control<number>(undefined)
   });
 
   refreshList: RefreshItem[] = REFRESH_LIST;

@@ -323,7 +323,7 @@ export class ValidationService {
     }
   }
 
-  static connectionNameWrongChars(control: FormControl) {
+  static connectionNameWrongChars(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }

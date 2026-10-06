@@ -7,7 +7,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, type FormControl, type FormGroup } from '@angular/forms';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
@@ -58,12 +58,16 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
     }
   ];
 
-  seriesTypeForm: FormGroup = this.fb.group({
-    seriesType: [undefined]
+  seriesTypeForm: FormGroup<{
+    seriesType: FormControl<ChartType>;
+  }> = this.fb.group({
+    seriesType: this.fb.control<ChartType>(undefined)
   });
 
-  yAxisIndexForm: FormGroup = this.fb.group({
-    yAxisIndex: [undefined]
+  yAxisIndexForm: FormGroup<{
+    yAxisIndex: FormControl<number>;
+  }> = this.fb.group({
+    yAxisIndex: this.fb.control<number>(undefined)
   });
 
   constructor(private fb: FormBuilder) {}
@@ -87,7 +91,8 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
       this.seriesTypeForm.controls['seriesType'].setValue(newSeriesTypeValue);
     }
 
-    let seriesType = this.seriesTypeForm.controls['seriesType'].value;
+    let seriesType: ChartType =
+      this.seriesTypeForm.controls['seriesType'].value;
 
     let newSeriesPart: MconfigChartSeries = {
       type: seriesType
@@ -103,7 +108,7 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
   yAxisIndexChange() {
     (document.activeElement as HTMLElement).blur();
 
-    let yAxisIndex = this.yAxisIndexForm.controls['yAxisIndex'].value;
+    let yAxisIndex: number = this.yAxisIndexForm.controls['yAxisIndex'].value;
 
     let newSeriesPart: MconfigChartSeries = {
       yAxisIndex: yAxisIndex

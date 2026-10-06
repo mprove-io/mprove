@@ -1,8 +1,8 @@
-import { AbstractControl } from '@angular/forms';
+import type { AbstractControl } from '@angular/forms';
 
-export function setValueAndMark(item: {
-  control: AbstractControl;
-  value: any;
+export function setValueAndMark<T>(item: {
+  control: AbstractControl<T>;
+  value: NoInfer<T>;
 }) {
   let { control, value } = item;
 

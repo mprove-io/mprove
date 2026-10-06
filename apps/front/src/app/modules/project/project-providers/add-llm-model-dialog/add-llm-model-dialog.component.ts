@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   type ValidatorFn,
@@ -69,7 +70,15 @@ export class AddLlmModelDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  modelForm: FormGroup;
+  modelForm: FormGroup<{
+    modelId: FormControl<string>;
+    name: FormControl<string>;
+    contextLimit: FormControl<number>;
+    inputLimit: FormControl<number>;
+    outputLimit: FormControl<number>;
+    isExplorer: FormControl<boolean>;
+    isBuilder: FormControl<boolean>;
+  }>;
 
   modelParts: SelectableLlmModelPart[] = [];
   selectedModelPart?: SelectableLlmModelPart;
@@ -107,20 +116,20 @@ export class AddLlmModelDialogComponent implements OnInit {
       isOpenAICompatible || this.isManualEntryRequired;
 
     this.modelForm = this.fb.group({
-      modelId: [undefined, [Validators.required]],
-      name: [undefined],
-      contextLimit: [
-        undefined,
-        [ValidationService.integerOrEmptyValidator, Validators.min(1)]
-      ],
-      inputLimit: [
-        undefined,
-        [ValidationService.integerOrEmptyValidator, Validators.min(1)]
-      ],
-      outputLimit: [
-        undefined,
-        [ValidationService.integerOrEmptyValidator, Validators.min(1)]
-      ],
+      modelId: this.fb.control<string>(undefined, [Validators.required]),
+      name: this.fb.control<string>(undefined),
+      contextLimit: this.fb.control<number>(undefined, [
+        ValidationService.integerOrEmptyValidator,
+        Validators.min(1)
+      ]),
+      inputLimit: this.fb.control<number>(undefined, [
+        ValidationService.integerOrEmptyValidator,
+        Validators.min(1)
+      ]),
+      outputLimit: this.fb.control<number>(undefined, [
+        ValidationService.integerOrEmptyValidator,
+        Validators.min(1)
+      ]),
       isExplorer: [isManualModel],
       isBuilder: [isManualModel]
     });

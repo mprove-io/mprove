@@ -10,7 +10,8 @@ import {
 import {
   FormArray,
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -85,11 +86,25 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addConnectionDialogTypeSelectElement?.close();
   }
 
-  addForm: FormGroup;
+  addForm: FormGroup<{
+    connectionId: FormControl<string>;
+    envId: FormControl<string>;
+    type: FormControl<ConnectionType>;
+  }>;
 
   addBigqueryForm: FormGroup;
   // addClickhouseForm: FormGroup;
-  addDatabricksForm: FormGroup;
+  addDatabricksForm: FormGroup<{
+    authType: FormControl<DatabricksAuthType>;
+    host: FormControl<string>;
+    internalHost: FormControl<string>;
+    path: FormControl<string>;
+    token: FormControl<string>;
+    oauthClientId: FormControl<string>;
+    oauthClientSecret: FormControl<string>;
+    defaultCatalog: FormControl<string>;
+    defaultSchema: FormControl<string>;
+  }>;
   addMotherduckForm: FormGroup;
   addPostgresForm: FormGroup;
   addMysqlForm: FormGroup;
@@ -141,16 +156,13 @@ export class AddConnectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addForm = this.fb.group({
-      connectionId: [
-        undefined,
-        [
-          Validators.required,
-          ValidationService.connectionNameWrongChars,
-          Validators.maxLength(255)
-        ]
-      ],
-      envId: [PROJECT_ENV_PROD],
-      type: ['PostgreSQL' satisfies ConnectionType]
+      connectionId: this.fb.control<string>(undefined, [
+        Validators.required,
+        ValidationService.connectionNameWrongChars,
+        Validators.maxLength(255)
+      ]),
+      envId: this.fb.control<string>(PROJECT_ENV_PROD),
+      type: this.fb.control<ConnectionType>('PostgreSQL')
     });
 
     this.addBigqueryForm = this.fb.group({
@@ -234,18 +246,19 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addDatabricksForm = this.fb.group({
-      authType: [
-        'OAuthM2M' satisfies DatabricksAuthType,
-        [Validators.required]
-      ],
-      host: [undefined, [Validators.required]],
-      internalHost: [undefined, []],
-      path: [undefined, [Validators.required]],
-      token: [undefined, []],
-      oauthClientId: [undefined, [Validators.required]],
-      oauthClientSecret: [undefined, [Validators.required]],
-      defaultCatalog: [undefined, []],
-      defaultSchema: [undefined, []]
+      authType: this.fb.control<DatabricksAuthType>('OAuthM2M', [
+        Validators.required
+      ]),
+      host: this.fb.control<string>(undefined, [Validators.required]),
+      internalHost: this.fb.control<string>(undefined, []),
+      path: this.fb.control<string>(undefined, [Validators.required]),
+      token: this.fb.control<string>(undefined, []),
+      oauthClientId: this.fb.control<string>(undefined, [Validators.required]),
+      oauthClientSecret: this.fb.control<string>(undefined, [
+        Validators.required
+      ]),
+      defaultCatalog: this.fb.control<string>(undefined, []),
+      defaultSchema: this.fb.control<string>(undefined, [])
     });
 
     this.addApiForm = this.fb.group({

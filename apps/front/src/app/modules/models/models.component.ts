@@ -16,7 +16,7 @@ import {
 import {
   FormBuilder,
   type FormControl,
-  FormGroup,
+  type FormGroup,
   Validators
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -564,8 +564,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  refreshForm = this.fb.group({
-    refresh: [undefined]
+  refreshForm: FormGroup<{
+    refresh: FormControl<number>;
+  }> = this.fb.group({
+    refresh: this.fb.control<number>(undefined)
   });
 
   refreshList: RefreshItem[] = REFRESH_LIST;
@@ -590,8 +592,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   runButtonTimerSubscription: Subscription;
   cancelButtonTimerSubscription: Subscription;
 
-  timezoneForm = this.fb.group({
-    timezone: [undefined]
+  timezoneForm: FormGroup<{
+    timezone: FormControl<string>;
+  }> = this.fb.group({
+    timezone: this.fb.control<string>(undefined)
   });
 
   timezones = getTimezones();
@@ -606,8 +610,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  modelForm = this.fb.group({
-    model: [undefined]
+  modelForm: FormGroup<{
+    model: FormControl<string>;
+  }> = this.fb.group({
+    model: this.fb.control<string>(undefined)
   });
 
   timeDiff: number;
@@ -621,16 +627,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   manualNavToChart = false;
 
-  limitForm: FormGroup = this.fb.group({
-    limit: [
-      undefined,
-      [
-        Validators.required,
-        ValidationService.integerOrEmptyValidator,
-        Validators.min(1),
-        Validators.max(500)
-      ]
-    ]
+  limitForm: FormGroup<{
+    limit: FormControl<number>;
+  }> = this.fb.group({
+    limit: this.fb.control<number>(undefined, [
+      Validators.required,
+      ValidationService.integerOrEmptyValidator,
+      Validators.min(1),
+      Validators.max(500)
+    ])
   });
 
   queryPartForm: FormGroup<{
@@ -639,12 +644,16 @@ export class ModelsComponent implements OnInit, OnDestroy {
     queryPart: this.fb.control<QueryPart>(undefined)
   });
 
-  chartTypeForm: FormGroup = this.fb.group({
-    chartType: [undefined]
+  chartTypeForm: FormGroup<{
+    chartType: FormControl<ChartType>;
+  }> = this.fb.group({
+    chartType: this.fb.control<ChartType>(undefined)
   });
 
-  chartTitleForm: FormGroup = this.fb.group({
-    chartTitle: [undefined, [Validators.required]]
+  chartTitleForm: FormGroup<{
+    chartTitle: FormControl<string>;
+  }> = this.fb.group({
+    chartTitle: this.fb.control<string>(undefined, [Validators.required])
   });
 
   chartTypesList: ChartTypeItem[] = [

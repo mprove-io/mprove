@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -64,7 +65,14 @@ export class EditLlmModelDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  modelForm: FormGroup;
+  modelForm: FormGroup<{
+    name: FormControl<string>;
+    contextLimit: FormControl<number>;
+    inputLimit: FormControl<number>;
+    outputLimit: FormControl<number>;
+    isExplorer: FormControl<boolean>;
+    isBuilder: FormControl<boolean>;
+  }>;
   model: LlmModel;
 
   animatedDestination?: 'isExplorer' | 'isBuilder';

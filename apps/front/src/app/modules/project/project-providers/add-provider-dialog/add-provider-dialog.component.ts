@@ -6,8 +6,9 @@ import {
   OnInit
 } from '@angular/core';
 import {
-  FormArray,
+  type FormArray,
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -46,6 +47,21 @@ type SelectableProviderType = {
   isAlreadySelected: boolean;
 };
 
+type ProviderKeyValueControls = {
+  key: FormControl<string>;
+  value: FormControl<string>;
+};
+
+type AddProviderFormValue = {
+  type: ProviderType;
+  name: string;
+  providerId: string;
+  baseURL: string;
+  apiKey: string;
+  headers: { key: string; value: string }[];
+  queryParams: { key: string; value: string }[];
+};
+
 @Component({
   selector: 'm-add-provider-dialog',
   templateUrl: './add-provider-dialog.component.html',
@@ -65,7 +81,15 @@ export class AddProviderDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  addProviderForm: FormGroup;
+  addProviderForm: FormGroup<{
+    type: FormControl<ProviderType>;
+    name: FormControl<string>;
+    providerId: FormControl<string>;
+    baseURL: FormControl<string>;
+    apiKey: FormControl<string>;
+    headers: FormArray<FormGroup<ProviderKeyValueControls>>;
+    queryParams: FormArray<FormGroup<ProviderKeyValueControls>>;
+  }>;
 
   providerTypes: SelectableProviderType[] = [];
 
@@ -132,13 +156,13 @@ export class AddProviderDialogComponent implements OnInit {
             : 'OpenAICompatible';
 
     this.addProviderForm = this.fb.group({
-      type: ['OpenAI' satisfies ProviderType, [Validators.required]],
-      name: [OPENAI_PROVIDER_NAME],
-      providerId: [OPENAI_PROVIDER_ID],
-      baseURL: [undefined],
-      apiKey: [undefined, [Validators.required]],
-      headers: this.fb.array([]),
-      queryParams: this.fb.array([])
+      type: this.fb.control<ProviderType>('OpenAI', [Validators.required]),
+      name: this.fb.control<string>(OPENAI_PROVIDER_NAME),
+      providerId: this.fb.control<string>(OPENAI_PROVIDER_ID),
+      baseURL: this.fb.control<string>(undefined),
+      apiKey: this.fb.control<string>(undefined, [Validators.required]),
+      headers: this.fb.array<FormGroup<ProviderKeyValueControls>>([]),
+      queryParams: this.fb.array<FormGroup<ProviderKeyValueControls>>([])
     });
 
     this.addProviderForm.controls['type'].valueChanges.subscribe(
@@ -168,8 +192,11 @@ export class AddProviderDialogComponent implements OnInit {
     );
   }
 
-  getHeaders(): FormArray {
-    return this.addProviderForm.controls['headers'] as FormArray;
+  getHeaders(): FormArray<FormGroup<ProviderKeyValueControls>> {
+    let headers: FormArray<FormGroup<ProviderKeyValueControls>> =
+      this.addProviderForm.controls['headers'];
+
+    return headers;
   }
 
   addHeader() {
@@ -182,8 +209,11 @@ export class AddProviderDialogComponent implements OnInit {
     this.getHeaders().removeAt(index);
   }
 
-  getQueryParams(): FormArray {
-    return this.addProviderForm.controls['queryParams'] as FormArray;
+  getQueryParams(): FormArray<FormGroup<ProviderKeyValueControls>> {
+    let queryParams: FormArray<FormGroup<ProviderKeyValueControls>> =
+      this.addProviderForm.controls['queryParams'];
+
+    return queryParams;
   }
 
   addQueryParam() {
@@ -203,7 +233,7 @@ export class AddProviderDialogComponent implements OnInit {
       return;
     }
 
-    let value = this.addProviderForm.getRawValue();
+    let value: AddProviderFormValue = this.addProviderForm.getRawValue();
     let type: ProviderType = value.type;
     let payload: ToBackendCreateProviderRequest['input'];
 
@@ -288,10 +318,17 @@ export class AddProviderDialogComponent implements OnInit {
   private applyProviderType(item: { type: ProviderType }) {
     let { type } = item;
 
-    let nameControl = this.addProviderForm.controls['name'];
-    let providerIdControl = this.addProviderForm.controls['providerId'];
-    let baseUrlControl = this.addProviderForm.controls['baseURL'];
-    let apiKeyControl = this.addProviderForm.controls['apiKey'];
+    let nameControl: FormControl<string> =
+      this.addProviderForm.controls['name'];
+
+    let providerIdControl: FormControl<string> =
+      this.addProviderForm.controls['providerId'];
+
+    let baseUrlControl: FormControl<string> =
+      this.addProviderForm.controls['baseURL'];
+
+    let apiKeyControl: FormControl<string> =
+      this.addProviderForm.controls['apiKey'];
 
     this.getHeaders().clear();
 
@@ -365,12 +402,17 @@ export class AddProviderDialogComponent implements OnInit {
     key?: string;
     value?: string;
     isValueRequired?: boolean;
-  }) {
+  }): FormGroup<ProviderKeyValueControls> {
     let { key, value, isValueRequired = true } = item;
 
-    return this.fb.group({
-      key: [key, [Validators.required]],
-      value: [value, isValueRequired === true ? [Validators.required] : []]
+    let group: FormGroup<ProviderKeyValueControls> = this.fb.group({
+      key: this.fb.control<string>(key, [Validators.required]),
+      value: this.fb.control<string>(
+        value,
+        isValueRequired === true ? [Validators.required] : []
+      )
     });
+
+    return group;
   }
 }

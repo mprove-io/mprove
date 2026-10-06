@@ -13,7 +13,12 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
@@ -200,8 +205,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     })
   );
 
-  refreshForm = this.fb.group({
-    refresh: [undefined]
+  refreshForm: FormGroup<{
+    refresh: FormControl<number>;
+  }> = this.fb.group({
+    refresh: this.fb.control<number>(undefined)
   });
 
   refreshList: RefreshItem[] = REFRESH_LIST;
@@ -305,8 +312,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     })
   );
 
-  timezoneForm = this.fb.group({
-    timezone: [undefined]
+  timezoneForm: FormGroup<{
+    timezone: FormControl<string>;
+  }> = this.fb.group({
+    timezone: this.fb.control<string>(undefined)
   });
 
   timezones = getTimezones();
@@ -321,8 +330,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     })
   );
 
-  timeSpecForm = this.fb.group({
-    timeSpec: [undefined]
+  timeSpecForm: FormGroup<{
+    timeSpec: FormControl<TimeSpec>;
+  }> = this.fb.group({
+    timeSpec: this.fb.control<TimeSpec>(undefined)
   });
 
   timeSpecList: TimeSpecItem[] = [

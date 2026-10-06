@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, type FormControl, type FormGroup } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import {
   DEFAULT_CHART_Y_AXIS,
@@ -169,20 +169,28 @@ export class ChartEditorComponent implements OnChanges {
 
   xFieldResult: FieldResult;
 
-  xFieldForm: FormGroup = this.fb.group({
-    xField: [undefined]
+  xFieldForm: FormGroup<{
+    xField: FormControl<string>;
+  }> = this.fb.group({
+    xField: this.fb.control<string>(undefined)
   });
 
-  yFieldForm: FormGroup = this.fb.group({
-    yField: [undefined]
+  yFieldForm: FormGroup<{
+    yField: FormControl<string>;
+  }> = this.fb.group({
+    yField: this.fb.control<string>(undefined)
   });
 
-  sizeFieldForm: FormGroup = this.fb.group({
-    sizeField: [undefined]
+  sizeFieldForm: FormGroup<{
+    sizeField: FormControl<string>;
+  }> = this.fb.group({
+    sizeField: this.fb.control<string>(undefined)
   });
 
-  multiFieldForm: FormGroup = this.fb.group({
-    multiField: [undefined]
+  multiFieldForm: FormGroup<{
+    multiField: FormControl<string>;
+  }> = this.fb.group({
+    multiField: this.fb.control<string>(undefined)
   });
 
   chartOptionsIsExpanded = false;
@@ -438,7 +446,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   xFieldChange() {
-    let xField = this.xFieldForm.controls['xField'].value;
+    let xField: string = this.xFieldForm.controls['xField'].value;
 
     let newChart: MconfigChart = <MconfigChart>{
       xField: xField
@@ -613,7 +621,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   yFieldChange() {
-    let yField = this.yFieldForm.controls['yField'].value;
+    let yField: string = this.yFieldForm.controls['yField'].value;
 
     let newChart: MconfigChart = <MconfigChart>{
       yFields: [yField]
@@ -623,7 +631,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   sizeFieldChange() {
-    let sizeField = this.sizeFieldForm.controls['sizeField'].value;
+    let sizeField: string = this.sizeFieldForm.controls['sizeField'].value;
 
     let newChart: MconfigChart = <MconfigChart>{
       sizeField: sizeField
@@ -633,7 +641,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   multiFieldChange() {
-    let multiField = this.multiFieldForm.controls['multiField'].value;
+    let multiField: string = this.multiFieldForm.controls['multiField'].value;
 
     let newChart: MconfigChart = <MconfigChart>{
       multiField: multiField

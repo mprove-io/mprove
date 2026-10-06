@@ -9,7 +9,8 @@ import {
 import {
   FormArray,
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -67,7 +68,17 @@ export class EditConnectionDialogComponent implements OnInit {
 
   editBigqueryForm: FormGroup;
   // editClickhouseForm: FormGroup;
-  editDatabricksForm: FormGroup;
+  editDatabricksForm: FormGroup<{
+    authType: FormControl<DatabricksAuthType>;
+    host: FormControl<string>;
+    internalHost: FormControl<string>;
+    path: FormControl<string>;
+    token: FormControl<string>;
+    oauthClientId: FormControl<string>;
+    oauthClientSecret: FormControl<string>;
+    defaultCatalog: FormControl<string>;
+    defaultSchema: FormControl<string>;
+  }>;
   editMotherduckForm: FormGroup;
   editPostgresForm: FormGroup;
   editMysqlForm: FormGroup;
