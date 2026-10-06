@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const fractionTsMixUnitValues = [
+export const fractionTsMixUnitValues = [
   'second',
   'minute',
   'hour',

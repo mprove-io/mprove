@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const syncDirectionValues = ['from-server', 'to-server'] as const;
+export const syncDirectionValues = ['from-server', 'to-server'] as const;
 
 export type SyncDirection = (typeof syncDirectionValues)[number];
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const modelDevStatusValues = ['alpha', 'beta', 'deprecated'] as const;
+export const modelDevStatusValues = ['alpha', 'beta', 'deprecated'] as const;
 
 export type ModelDevStatus = (typeof modelDevStatusValues)[number];
 

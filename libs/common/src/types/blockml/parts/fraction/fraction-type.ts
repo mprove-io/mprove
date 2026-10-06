@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const fractionTypeValues = [
+export const fractionTypeValues = [
   'StoreFraction',
   //
   'StringIsAnyValue',

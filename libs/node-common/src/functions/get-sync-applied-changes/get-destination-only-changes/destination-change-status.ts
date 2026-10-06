@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const destinationChangeStatusValues = ['deleted', 'modified', 'new'] as const;
+export const destinationChangeStatusValues = [
+  'deleted',
+  'modified',
+  'new'
+] as const;
 
 export type DestinationChangeStatus =
   (typeof destinationChangeStatusValues)[number];

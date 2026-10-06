@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 // 2019-06-27 12:32:02.230908+00
-const timeframeValues = [
+export const timeframeValues = [
   // TODO: check supported timeframe values
   'date', // 2019-06-27
   'date_ts', //

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const erTitleValues = [
+export const erTitleValues = [
   // yaml
   'DUPLICATE_FILE_NAMES',
   'DUPLICATE_MPROVE_EXPLORER_FILES',

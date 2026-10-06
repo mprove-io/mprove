@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const errorStoryValues = ['DefinedError', 'UnknownError'] as const;
+export const errorStoryValues = ['DefinedError', 'UnknownError'] as const;
 
 export type ErrorStory = (typeof errorStoryValues)[number];
 

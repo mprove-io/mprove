@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const queryStatusValues = [
+export const queryStatusValues = [
   'New',
   'Running',
   'Canceled',

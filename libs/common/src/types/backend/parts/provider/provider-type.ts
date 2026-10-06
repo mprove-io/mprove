@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const providerTypeValues = [
+export const providerTypeValues = [
   'Anthropic',
   'OpenAI',
   'OpenAICodex',

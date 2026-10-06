@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const metricTypeValues = ['Model'] as const;
+export const metricTypeValues = ['Model'] as const;
 
 export type MetricType = (typeof metricTypeValues)[number];
 

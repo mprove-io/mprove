@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const pauseReasonValues = ['User', 'Idle', 'Safe', 'External'] as const;
+export const pauseReasonValues = ['User', 'Idle', 'Safe', 'External'] as const;
 
 export type PauseReason = (typeof pauseReasonValues)[number];
 

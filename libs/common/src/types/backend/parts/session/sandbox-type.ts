@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const sandboxTypeValues = ['E2B'] as const;
+export const sandboxTypeValues = ['E2B'] as const;
 
 export type SandboxType = (typeof sandboxTypeValues)[number];
 

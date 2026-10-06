@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const pivotSortDirectionValues = ['asc', 'desc'] as const;
+export const pivotSortDirectionValues = ['asc', 'desc'] as const;
 
 export type PivotSortDirection = (typeof pivotSortDirectionValues)[number];
 

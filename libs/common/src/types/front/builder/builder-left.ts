@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const builderLeftValues = [
+export const builderLeftValues = [
   'Tree',
   'ChangesToCommit',
   'ChangesToPush',

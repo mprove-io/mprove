@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const funcValues = [
+export const funcValues = [
   'ALL',
 
   'build-chart/check-chart-tiles-exist',

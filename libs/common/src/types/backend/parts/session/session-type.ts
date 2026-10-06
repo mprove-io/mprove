@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const sessionTypeValues = ['Explorer', 'Editor'] as const;
+export const sessionTypeValues = ['Explorer', 'Editor'] as const;
 
 export type SessionType = (typeof sessionTypeValues)[number];
 

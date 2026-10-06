@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const pivotAxisValues = ['values', 'rows', 'columns'] as const;
+export const pivotAxisValues = ['values', 'rows', 'columns'] as const;
 
 export type PivotAxis = (typeof pivotAxisValues)[number];
 

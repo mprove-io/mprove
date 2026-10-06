@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const fractionYesnoValueValues = [
+export const fractionYesnoValueValues = [
   // TODO: yesno
   'Yes',
   'No'

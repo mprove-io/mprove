@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const editorPermissionReplyValues = ['always', 'once', 'reject'] as const;
+export const editorPermissionReplyValues = [
+  'always',
+  'once',
+  'reject'
+] as const;
 
 export type EditorPermissionReply =
   (typeof editorPermissionReplyValues)[number];

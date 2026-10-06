@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 // lowercase
-const controlClassValues = [
+export const controlClassValues = [
   'list_input',
   'input',
   'switch',

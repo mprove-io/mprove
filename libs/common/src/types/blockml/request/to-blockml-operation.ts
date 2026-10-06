@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const toBlockmlOperations = ['rebuildStruct'] as const;
+export const toBlockmlOperations = ['rebuildStruct'] as const;
 
 export type ToBlockmlOperation = (typeof toBlockmlOperations)[number];
 

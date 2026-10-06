@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const chatScopeValues = ['builder', 'explorer'] as const;
+export const chatScopeValues = ['builder', 'explorer'] as const;
 
 export type ChatScope = (typeof chatScopeValues)[number];
 

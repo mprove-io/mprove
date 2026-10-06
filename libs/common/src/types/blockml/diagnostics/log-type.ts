@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const logTypeValues = [
+export const logTypeValues = [
   'input.log',
   'in_views.log',
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const schemaGraphNodeColorValues = ['orange', 'gray'] as const;
+export const schemaGraphNodeColorValues = ['orange', 'gray'] as const;
 
 export type SchemaGraphNodeColor = (typeof schemaGraphNodeColorValues)[number];
 

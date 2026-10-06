@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const archiveReasonValues = ['User', 'Expire', 'Commit'] as const;
+export const archiveReasonValues = ['User', 'Expire', 'Commit'] as const;
 
 export type ArchiveReason = (typeof archiveReasonValues)[number];
 

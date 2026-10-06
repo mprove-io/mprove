@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const toBackendTelemetryRouteValues = [
+export const toBackendTelemetryRouteValues = [
   'api/ToBackendTelemetryLogs',
   'api/ToBackendTelemetryMetrics',
   'api/ToBackendTelemetryTraces'

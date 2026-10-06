@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const backendEnvValues = ['DEV', 'PROD', 'TEST'] as const;
+export const backendEnvValues = ['DEV', 'PROD', 'TEST'] as const;
 
 export type BackendEnv = (typeof backendEnvValues)[number];
 

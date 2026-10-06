@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const codexDeviceAuthStatusValues = [
+export const codexDeviceAuthStatusValues = [
   'Pending',
   'Authorized',
   'Failed'

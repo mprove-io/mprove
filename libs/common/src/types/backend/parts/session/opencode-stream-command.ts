@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const opencodeStreamCommandValues = ['interact', 'stop', 'fetch'] as const;
+export const opencodeStreamCommandValues = [
+  'interact',
+  'stop',
+  'fetch'
+] as const;
 
 export type OpencodeStreamCommand =
   (typeof opencodeStreamCommandValues)[number];

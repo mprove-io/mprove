@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const apiHostnameCheckPhaseValues = ['instant', 'resolved'] as const;
+export const apiHostnameCheckPhaseValues = ['instant', 'resolved'] as const;
 
 export type ApiHostnameCheckPhase =
   (typeof apiHostnameCheckPhaseValues)[number];

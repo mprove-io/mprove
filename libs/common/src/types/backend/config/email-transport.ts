@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const emailTransportValues = ['SMTP'] as const;
+export const emailTransportValues = ['SMTP'] as const;
 
 export type EmailTransport = (typeof emailTransportValues)[number];
 

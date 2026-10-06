@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const modelNodeLabelValues = [
+export const modelNodeLabelValues = [
   'Filter-only fields',
   'Dimensions',
   'Measures',

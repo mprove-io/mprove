@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const favoriteTypeValues = ['Report', 'Dashboard', 'Chart'] as const;
+export const favoriteTypeValues = ['Report', 'Dashboard', 'Chart'] as const;
 
 export type FavoriteType = (typeof favoriteTypeValues)[number];
 

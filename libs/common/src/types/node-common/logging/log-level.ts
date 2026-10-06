@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const logLevelValues = ['Error', 'Info'] as const;
+export const logLevelValues = ['Error', 'Info'] as const;
 
 export type LogLevel = (typeof logLevelValues)[number];
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const apiKeyTypeValues = ['PK', 'SK'] as const;
+export const apiKeyTypeValues = ['PK', 'SK'] as const;
 
 export type ApiKeyType = (typeof apiKeyTypeValues)[number];
 

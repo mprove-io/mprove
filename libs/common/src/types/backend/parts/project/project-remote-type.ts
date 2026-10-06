@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-const projectRemoteTypeValues = ['Managed', 'GitClone'] as const;
+export const projectRemoteTypeValues = ['Managed', 'GitClone'] as const;
 
 export type ProjectRemoteType = (typeof projectRemoteTypeValues)[number];
 
