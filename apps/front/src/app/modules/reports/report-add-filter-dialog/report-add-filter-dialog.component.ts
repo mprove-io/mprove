@@ -9,12 +9,12 @@ import {
   ViewChild
 } from '@angular/core';
 import {
-  AbstractControl,
+  type AbstractControl,
   FormBuilder,
-  FormControl,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
+  type ValidationErrors,
   Validators
 } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
@@ -142,8 +142,10 @@ export class ReportAddFilterDialogComponent implements OnInit {
   storeModelSet = false;
   storeModel: Model;
 
-  storeModelForm = this.fb.group({
-    storeModel: [undefined]
+  storeModelForm: FormGroup<{
+    storeModel: FormControl<string>;
+  }> = this.fb.group({
+    storeModel: this.fb.control<string>(undefined)
   });
 
   storeFilterForForm: FormGroup<{
@@ -167,8 +169,10 @@ export class ReportAddFilterDialogComponent implements OnInit {
   selectedModelLoading = false;
   selectedModelLoaded = false;
 
-  storeFilterForm = this.fb.group({
-    storeFilter: [undefined]
+  storeFilterForm: FormGroup<{
+    storeFilter: FormControl<string>;
+  }> = this.fb.group({
+    storeFilter: this.fb.control<string>(undefined)
   });
 
   suggestFields: SuggestField[] = [];
@@ -214,19 +218,22 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     this.labelForm = this.fb.group(
       {
-        label: [undefined, [Validators.required, Validators.maxLength(255)]]
+        label: this.fb.control<string>(undefined, [
+          Validators.required,
+          Validators.maxLength(255)
+        ])
       },
       {
-        validator: this.labelValidator.bind(this)
+        validators: this.labelValidator.bind(this)
       }
     );
 
     this.fieldResultForm = this.fb.group({
-      fieldResult: [this.fieldResult]
+      fieldResult: this.fb.control<FieldResult>(this.fieldResult)
     });
 
     this.suggestFieldForm = this.fb.group({
-      suggestField: [this.emptySuggestField]
+      suggestField: this.fb.control<SuggestField>(this.emptySuggestField)
     });
 
     this.modelTypeForm.controls['modelType'].setValue('Malloy');

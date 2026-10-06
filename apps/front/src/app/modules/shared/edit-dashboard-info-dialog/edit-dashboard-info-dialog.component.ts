@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators
@@ -90,8 +91,13 @@ export class EditDashboardInfoDialogComponent implements OnInit {
 
   dashboardPath: string;
 
-  titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.required, Validators.maxLength(255)]]
+  titleForm: FormGroup<{
+    title: FormControl<string>;
+  }> = this.fb.group({
+    title: this.fb.control<string>(undefined, [
+      Validators.required,
+      Validators.maxLength(255)
+    ])
   });
 
   roles: Role[] = [];

@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -53,7 +54,9 @@ export class CreateOrgDialogComponent implements OnInit {
 
   @ViewChild('orgName') orgNameElement: ElementRef;
 
-  createOrgForm: FormGroup;
+  createOrgForm: FormGroup<{
+    orgName: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<CreateOrgDialogData>,
@@ -67,7 +70,10 @@ export class CreateOrgDialogComponent implements OnInit {
     let orgName: string;
 
     this.createOrgForm = this.fb.group({
-      orgName: [orgName, [Validators.required, Validators.maxLength(255)]]
+      orgName: this.fb.control<string>(orgName, [
+        Validators.required,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

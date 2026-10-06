@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -43,7 +44,10 @@ export class AddEvDialogComponent implements OnInit {
 
   dataItem: AddEvDialogData = this.ref.data;
 
-  addEvForm: FormGroup;
+  addEvForm: FormGroup<{
+    evId: FormControl<string>;
+    val: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<AddEvDialogData>,
@@ -54,15 +58,12 @@ export class AddEvDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addEvForm = this.fb.group({
-      evId: [
-        undefined,
-        [
-          Validators.required,
-          ValidationService.envVariableNameWrongChars,
-          Validators.maxLength(128)
-        ]
-      ],
-      val: [undefined, [Validators.maxLength(255)]]
+      evId: this.fb.control<string>(undefined, [
+        Validators.required,
+        ValidationService.envVariableNameWrongChars,
+        Validators.maxLength(128)
+      ]),
+      val: this.fb.control<string>(undefined, [Validators.maxLength(255)])
     });
 
     setTimeout(() => {

@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators
@@ -89,8 +90,13 @@ export class EditChartInfoDialogComponent implements OnInit {
   emptySpaceName = EMPTY_SPACE_NAME;
   chartPath: string;
 
-  titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.required, Validators.maxLength(255)]]
+  titleForm: FormGroup<{
+    title: FormControl<string>;
+  }> = this.fb.group({
+    title: this.fb.control<string>(undefined, [
+      Validators.required,
+      Validators.maxLength(255)
+    ])
   });
 
   roles: Role[] = [];

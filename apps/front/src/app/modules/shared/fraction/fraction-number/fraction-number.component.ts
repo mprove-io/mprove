@@ -8,7 +8,12 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
@@ -54,9 +59,16 @@ export class FractionNumberComponent implements OnInit {
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
-  numberValuesForm: FormGroup;
-  numberSingleValueForm: FormGroup;
-  numberBetweenForm: FormGroup;
+  numberValuesForm: FormGroup<{
+    numberValues: FormControl<string>;
+  }>;
+  numberSingleValueForm: FormGroup<{
+    numberValue1: FormControl<string | number>;
+  }>;
+  numberBetweenForm: FormGroup<{
+    numberBetweenFirstValue: FormControl<string | number>;
+    numberBetweenSecondValue: FormControl<string | number>;
+  }>;
 
   fractionNumberTypesList: FractionTypeItem[] = [
     {
@@ -165,48 +177,45 @@ export class FractionNumberComponent implements OnInit {
 
   buildNumberValuesForm() {
     this.numberValuesForm = this.fb.group({
-      numberValues: [
-        this.fraction.numberValues,
-        [
-          Validators.required,
-          ValidationService.numberValuesOrEmptyValidator,
-          Validators.maxLength(255)
-        ]
-      ]
+      numberValues: this.fb.control<string>(this.fraction.numberValues, [
+        Validators.required,
+        ValidationService.numberValuesOrEmptyValidator,
+        Validators.maxLength(255)
+      ])
     });
   }
 
   buildNumberSingleValueForm() {
     this.numberSingleValueForm = this.fb.group({
-      numberValue1: [
+      numberValue1: this.fb.control<string | number>(
         this.fraction.numberValue1,
         [
           Validators.required,
           ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
         ]
-      ]
+      )
     });
   }
 
   buildNumberBetweenForm() {
     this.numberBetweenForm = this.fb.group({
-      numberBetweenFirstValue: [
+      numberBetweenFirstValue: this.fb.control<string | number>(
         this.fraction.numberValue1,
         [
           Validators.required,
           ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
         ]
-      ],
-      numberBetweenSecondValue: [
+      ),
+      numberBetweenSecondValue: this.fb.control<string | number>(
         this.fraction.numberValue2,
         [
           Validators.required,
           ValidationService.numberOrEmptyValidator,
           Validators.maxLength(255)
         ]
-      ]
+      )
     });
   }
 
@@ -233,7 +242,7 @@ export class FractionNumberComponent implements OnInit {
     return newFraction;
   }
 
-  getChangedSingleFraction(item: { value: number }) {
+  getChangedSingleFraction(item: { value: string | number }) {
     let { value } = item;
 
     let fractionType = this.fraction.type;

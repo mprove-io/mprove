@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators
@@ -88,8 +89,10 @@ export class CreateDashboardDialogComponent implements OnInit {
   dashboard: DashboardX;
   newDashboardPath: string;
 
-  titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.maxLength(255)]]
+  titleForm: FormGroup<{
+    title: FormControl<string>;
+  }> = this.fb.group({
+    title: this.fb.control<string>(undefined, [Validators.maxLength(255)])
   });
 
   roles: Role[] = [];

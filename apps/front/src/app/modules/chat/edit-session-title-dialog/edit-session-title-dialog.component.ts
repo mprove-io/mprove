@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -42,7 +43,9 @@ export class EditSessionTitleDialogComponent implements OnInit {
 
   @ViewChild('titleInput') titleInputElement: ElementRef;
 
-  editTitleForm: FormGroup;
+  editTitleForm: FormGroup<{
+    title: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<EditSessionTitleDialogData>,
@@ -53,10 +56,10 @@ export class EditSessionTitleDialogComponent implements OnInit {
 
   ngOnInit() {
     this.editTitleForm = this.fb.group({
-      title: [
-        this.ref.data.title,
-        [Validators.required, Validators.maxLength(255)]
-      ]
+      title: this.fb.control<string>(this.ref.data.title, [
+        Validators.required,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

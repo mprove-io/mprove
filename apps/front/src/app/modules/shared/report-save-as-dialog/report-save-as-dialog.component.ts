@@ -5,7 +5,12 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
@@ -79,8 +84,13 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   report: ReportX;
 
-  titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.required, Validators.maxLength(255)]]
+  titleForm: FormGroup<{
+    title: FormControl<string>;
+  }> = this.fb.group({
+    title: this.fb.control<string>(undefined, [
+      Validators.required,
+      Validators.maxLength(255)
+    ])
   });
 
   saveAs: ReportSaveAs = 'NEW_REPORT';

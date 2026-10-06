@@ -10,7 +10,12 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import {
   BehaviorSubject,
@@ -72,7 +77,9 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
-  fractionForm: FormGroup;
+  fractionForm: FormGroup<{
+    stringValue: FormControl<string>;
+  }>;
 
   fractionStringTypesList: FractionTypeItem[] = [
     {
@@ -334,10 +341,10 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
   buildFractionForm() {
     this.fractionForm = this.fb.group({
-      stringValue: [
+      stringValue: this.fb.control<string>(
         this.fraction.stringValue,
         Validators.compose([Validators.required, Validators.maxLength(255)])
-      ]
+      )
     });
   }
 

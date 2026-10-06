@@ -8,7 +8,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {
-  FormArray,
+  type FormArray,
   FormBuilder,
   type FormControl,
   type FormGroup,
@@ -39,6 +39,8 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
 import { ValidationService } from '#front/app/services/validation.service';
+import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
+import type { ScopeFormControls } from '#front/app/types/forms/scope-form-controls';
 
 export interface AddConnectionDialogData {
   apiService: ApiService;
@@ -92,7 +94,10 @@ export class AddConnectionDialogComponent implements OnInit {
     type: FormControl<ConnectionType>;
   }>;
 
-  addBigqueryForm: FormGroup;
+  addBigqueryForm: FormGroup<{
+    serviceAccountCredentials: FormControl<string>;
+    bigqueryQuerySizeLimitGb: FormControl<string | number>;
+  }>;
   // addClickhouseForm: FormGroup;
   addDatabricksForm: FormGroup<{
     authType: FormControl<DatabricksAuthType>;
@@ -105,14 +110,70 @@ export class AddConnectionDialogComponent implements OnInit {
     defaultCatalog: FormControl<string>;
     defaultSchema: FormControl<string>;
   }>;
-  addMotherduckForm: FormGroup;
-  addPostgresForm: FormGroup;
-  addMysqlForm: FormGroup;
-  addTrinoForm: FormGroup;
-  addPrestoForm: FormGroup;
-  addSnowflakeForm: FormGroup;
-  addApiForm: FormGroup;
-  addGoogleApiForm: FormGroup;
+  addMotherduckForm: FormGroup<{
+    motherduckToken: FormControl<string>;
+    database: FormControl<string>;
+  }>;
+
+  addPostgresForm: FormGroup<{
+    host: FormControl<string>;
+    internalHost: FormControl<string>;
+    port: FormControl<string | number>;
+    internalPort: FormControl<string | number>;
+    database: FormControl<string>;
+    username: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  addMysqlForm: FormGroup<{
+    host: FormControl<string>;
+    internalHost: FormControl<string>;
+    port: FormControl<string | number>;
+    internalPort: FormControl<string | number>;
+    database: FormControl<string>;
+    user: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  addTrinoForm: FormGroup<{
+    server: FormControl<string>;
+    internalServer: FormControl<string>;
+    catalog: FormControl<string>;
+    schema: FormControl<string>;
+    user: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  addPrestoForm: FormGroup<{
+    server: FormControl<string>;
+    internalServer: FormControl<string>;
+    port: FormControl<string | number>;
+    internalPort: FormControl<string | number>;
+    catalog: FormControl<string>;
+    schema: FormControl<string>;
+    user: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  addSnowflakeForm: FormGroup<{
+    account: FormControl<string>;
+    warehouse: FormControl<string>;
+    database: FormControl<string>;
+    username: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  addApiForm: FormGroup<{
+    baseUrl: FormControl<string>;
+    headers: FormArray<FormGroup<KeyValueFormControls>>;
+  }>;
+
+  addGoogleApiForm: FormGroup<{
+    serviceAccountCredentials: FormControl<string>;
+    baseUrl: FormControl<string>;
+    headers: FormArray<FormGroup<KeyValueFormControls>>;
+    scopes: FormArray<FormGroup<ScopeFormControls>>;
+  }>;
 
   envsList: EnvsItem[] = [];
   envsListLoading = false;
@@ -166,11 +227,13 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addBigqueryForm = this.fb.group({
-      serviceAccountCredentials: [undefined, [Validators.required]],
-      bigqueryQuerySizeLimitGb: [
-        1,
-        [ValidationService.integerOrEmptyValidator, Validators.required]
-      ]
+      serviceAccountCredentials: this.fb.control<string>(undefined, [
+        Validators.required
+      ]),
+      bigqueryQuerySizeLimitGb: this.fb.control<string | number>(1, [
+        ValidationService.integerOrEmptyValidator,
+        Validators.required
+      ])
     });
 
     // this.addClickhouseForm = this.fb.group({
@@ -184,65 +247,75 @@ export class AddConnectionDialogComponent implements OnInit {
     // });
 
     this.addMotherduckForm = this.fb.group({
-      motherduckToken: [undefined, [Validators.required]],
-      database: [undefined, [ValidationService.motherduckDatabaseWrongChars]]
+      motherduckToken: this.fb.control<string>(undefined, [
+        Validators.required
+      ]),
+      database: this.fb.control<string>(undefined, [
+        ValidationService.motherduckDatabaseWrongChars
+      ])
     });
 
     this.addPostgresForm = this.fb.group({
-      host: [undefined, [Validators.required]],
-      internalHost: [undefined, []],
-      port: [
-        undefined,
-        [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      internalPort: [undefined, [ValidationService.integerOrEmptyValidator]],
-      database: [undefined, [Validators.required]],
-      username: [undefined, [Validators.required]],
-      password: [undefined, [Validators.required]]
+      host: this.fb.control<string>(undefined, [Validators.required]),
+      internalHost: this.fb.control<string>(undefined, []),
+      port: this.fb.control<string | number>(undefined, [
+        ValidationService.integerOrEmptyValidator,
+        Validators.required
+      ]),
+      internalPort: this.fb.control<string | number>(undefined, [
+        ValidationService.integerOrEmptyValidator
+      ]),
+      database: this.fb.control<string>(undefined, [Validators.required]),
+      username: this.fb.control<string>(undefined, [Validators.required]),
+      password: this.fb.control<string>(undefined, [Validators.required])
     });
 
     this.addMysqlForm = this.fb.group({
-      host: [undefined, [Validators.required]],
-      internalHost: [undefined, []],
-      port: [
-        undefined,
-        [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      internalPort: [undefined, [ValidationService.integerOrEmptyValidator]],
-      database: [undefined, [Validators.required]],
-      user: [undefined, [Validators.required]],
-      password: [undefined, [Validators.required]]
+      host: this.fb.control<string>(undefined, [Validators.required]),
+      internalHost: this.fb.control<string>(undefined, []),
+      port: this.fb.control<string | number>(undefined, [
+        ValidationService.integerOrEmptyValidator,
+        Validators.required
+      ]),
+      internalPort: this.fb.control<string | number>(undefined, [
+        ValidationService.integerOrEmptyValidator
+      ]),
+      database: this.fb.control<string>(undefined, [Validators.required]),
+      user: this.fb.control<string>(undefined, [Validators.required]),
+      password: this.fb.control<string>(undefined, [Validators.required])
     });
 
     this.addTrinoForm = this.fb.group({
-      server: [undefined, [Validators.required]],
-      internalServer: [undefined, []],
-      catalog: [undefined, []],
-      schema: [undefined, []],
-      user: [undefined, [Validators.required]],
-      password: [undefined, []]
+      server: this.fb.control<string>(undefined, [Validators.required]),
+      internalServer: this.fb.control<string>(undefined, []),
+      catalog: this.fb.control<string>(undefined, []),
+      schema: this.fb.control<string>(undefined, []),
+      user: this.fb.control<string>(undefined, [Validators.required]),
+      password: this.fb.control<string>(undefined, [])
     });
 
     this.addPrestoForm = this.fb.group({
-      server: [undefined, [Validators.required]],
-      internalServer: [undefined, []],
-      port: [
-        undefined,
-        [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      internalPort: [undefined, [ValidationService.integerOrEmptyValidator]],
-      catalog: [undefined, []],
-      schema: [undefined, []],
-      user: [undefined, [Validators.required]],
-      password: [undefined, []]
+      server: this.fb.control<string>(undefined, [Validators.required]),
+      internalServer: this.fb.control<string>(undefined, []),
+      port: this.fb.control<string | number>(undefined, [
+        ValidationService.integerOrEmptyValidator,
+        Validators.required
+      ]),
+      internalPort: this.fb.control<string | number>(undefined, [
+        ValidationService.integerOrEmptyValidator
+      ]),
+      catalog: this.fb.control<string>(undefined, []),
+      schema: this.fb.control<string>(undefined, []),
+      user: this.fb.control<string>(undefined, [Validators.required]),
+      password: this.fb.control<string>(undefined, [])
     });
 
     this.addSnowflakeForm = this.fb.group({
-      account: [undefined, [Validators.required]],
-      warehouse: [undefined, [Validators.required]],
-      database: [undefined, []],
-      username: [undefined, [Validators.required]],
-      password: [undefined, [Validators.required]]
+      account: this.fb.control<string>(undefined, [Validators.required]),
+      warehouse: this.fb.control<string>(undefined, [Validators.required]),
+      database: this.fb.control<string>(undefined, []),
+      username: this.fb.control<string>(undefined, [Validators.required]),
+      password: this.fb.control<string>(undefined, [Validators.required])
     });
 
     this.addDatabricksForm = this.fb.group({
@@ -262,23 +335,27 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addApiForm = this.fb.group({
-      baseUrl: [
-        undefined,
-        [Validators.required, ValidationService.apiUrlValidator]
-      ],
-      headers: this.fb.array([])
+      baseUrl: this.fb.control<string>(undefined, [
+        Validators.required,
+        ValidationService.apiUrlValidator
+      ]),
+      headers: this.fb.array<FormGroup<KeyValueFormControls>>([])
     });
 
     this.addGoogleApiForm = this.fb.group({
-      serviceAccountCredentials: [undefined, [Validators.required]],
-      baseUrl: [
-        'https://analyticsdata.googleapis.com',
-        [Validators.required, ValidationService.apiUrlValidator]
-      ],
-      headers: this.fb.array([]),
-      scopes: this.fb.array([
+      serviceAccountCredentials: this.fb.control<string>(undefined, [
+        Validators.required
+      ]),
+      baseUrl: this.fb.control<string>('https://analyticsdata.googleapis.com', [
+        Validators.required,
+        ValidationService.apiUrlValidator
+      ]),
+      headers: this.fb.array<FormGroup<KeyValueFormControls>>([]),
+      scopes: this.fb.array<FormGroup<ScopeFormControls>>([
         this.fb.group({
-          value: 'https://www.googleapis.com/auth/analytics.readonly'
+          value: this.fb.control<string>(
+            'https://www.googleapis.com/auth/analytics.readonly'
+          )
         })
       ])
     });
@@ -385,13 +462,16 @@ export class AddConnectionDialogComponent implements OnInit {
 
   // scopes
 
-  getScopes(): FormArray {
-    return this.addGoogleApiForm.controls['scopes'] as FormArray;
+  getScopes(): FormArray<FormGroup<ScopeFormControls>> {
+    let scopes: FormArray<FormGroup<ScopeFormControls>> =
+      this.addGoogleApiForm.controls['scopes'];
+
+    return scopes;
   }
 
   addScope() {
-    let scopeGroup = this.fb.group({
-      value: ['']
+    let scopeGroup: FormGroup<ScopeFormControls> = this.fb.group({
+      value: this.fb.control<string>('')
     });
     this.getScopes().push(scopeGroup);
   }
@@ -402,14 +482,17 @@ export class AddConnectionDialogComponent implements OnInit {
 
   // googleApi
 
-  googleApiGetHeaders(): FormArray {
-    return this.addGoogleApiForm.controls['headers'] as FormArray;
+  googleApiGetHeaders(): FormArray<FormGroup<KeyValueFormControls>> {
+    let headers: FormArray<FormGroup<KeyValueFormControls>> =
+      this.addGoogleApiForm.controls['headers'];
+
+    return headers;
   }
 
   googleApiAddHeader() {
-    let headerGroup = this.fb.group({
-      key: [''],
-      value: ['']
+    let headerGroup: FormGroup<KeyValueFormControls> = this.fb.group({
+      key: this.fb.control<string>(''),
+      value: this.fb.control<string>('')
     });
     this.googleApiGetHeaders().push(headerGroup);
   }
@@ -420,14 +503,17 @@ export class AddConnectionDialogComponent implements OnInit {
 
   // api
 
-  apiGetHeaders(): FormArray {
-    return this.addApiForm.controls['headers'] as FormArray;
+  apiGetHeaders(): FormArray<FormGroup<KeyValueFormControls>> {
+    let headers: FormArray<FormGroup<KeyValueFormControls>> =
+      this.addApiForm.controls['headers'];
+
+    return headers;
   }
 
   apiAddHeader() {
-    let headerGroup = this.fb.group({
-      key: [''],
-      value: ['']
+    let headerGroup: FormGroup<KeyValueFormControls> = this.fb.group({
+      key: this.fb.control<string>(''),
+      value: this.fb.control<string>('')
     });
     this.apiGetHeaders().push(headerGroup);
   }
@@ -580,15 +666,19 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (type === 'GoogleApi') {
       this.addGoogleApiForm = this.fb.group({
-        serviceAccountCredentials: [undefined, [Validators.required]],
-        baseUrl: [
+        serviceAccountCredentials: this.fb.control<string>(undefined, [
+          Validators.required
+        ]),
+        baseUrl: this.fb.control<string>(
           'https://analyticsdata.googleapis.com',
           [Validators.required]
-        ],
-        headers: this.fb.array([]),
-        scopes: this.fb.array([
+        ),
+        headers: this.fb.array<FormGroup<KeyValueFormControls>>([]),
+        scopes: this.fb.array<FormGroup<ScopeFormControls>>([
           this.fb.group({
-            value: 'https://www.googleapis.com/auth/analytics.readonly'
+            value: this.fb.control<string>(
+              'https://www.googleapis.com/auth/analytics.readonly'
+            )
           })
         ])
       });
@@ -881,7 +971,10 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ('Api' satisfies ConnectionType)
           ? {
               baseUrl: this.addApiForm.value.baseUrl.trim(),
-              headers: this.addApiForm.value.headers
+              headers: this.addApiForm.value.headers.map(header => ({
+                key: header.key,
+                value: header.value
+              }))
             }
           : undefined,
       storeGoogleApi:
@@ -893,11 +986,14 @@ export class AddConnectionDialogComponent implements OnInit {
               googleCloudClientEmail: undefined,
               serviceAccountCredentials: googleApiCredentials,
               baseUrl: this.addGoogleApiForm.value.baseUrl.trim(),
-              headers: this.addGoogleApiForm.value.headers,
+              headers: this.addGoogleApiForm.value.headers.map(header => ({
+                key: header.key,
+                value: header.value
+              })),
               googleAuthScopes:
                 this.addForm.get('type').value ===
                 ('GoogleApi' satisfies ConnectionType)
-                  ? this.addGoogleApiForm.value.scopes.map((x: any) => x.value)
+                  ? this.addGoogleApiForm.value.scopes.map(x => x.value)
                   : []
             }
           : undefined

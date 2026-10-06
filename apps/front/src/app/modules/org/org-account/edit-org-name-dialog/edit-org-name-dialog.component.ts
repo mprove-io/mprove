@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -43,7 +44,9 @@ export class EditOrgNameDialogComponent implements OnInit {
 
   @ViewChild('orgName') orgNameElement: ElementRef;
 
-  editOrgNameForm: FormGroup;
+  editOrgNameForm: FormGroup<{
+    orgName: FormControl<string>;
+  }>;
 
   orgId: string;
 
@@ -56,7 +59,9 @@ export class EditOrgNameDialogComponent implements OnInit {
 
   ngOnInit() {
     this.editOrgNameForm = this.fb.group({
-      orgName: [this.ref.data.orgName, [Validators.maxLength(255)]]
+      orgName: this.fb.control<string>(this.ref.data.orgName, [
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

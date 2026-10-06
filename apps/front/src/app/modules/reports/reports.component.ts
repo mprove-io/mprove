@@ -644,12 +644,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
   reportSelectedNodes: any[] = [];
   reportSelectedNode: IRowNode<DataRow>;
 
-  formulaForm: FormGroup = this.fb.group({
-    formula: [undefined, [Validators.required]]
+  formulaForm: FormGroup<{
+    formula: FormControl<string>;
+  }> = this.fb.group({
+    formula: this.fb.control<string>(undefined, [Validators.required])
   });
 
-  nameForm: FormGroup = this.fb.group({
-    name: [undefined, [Validators.required]]
+  nameForm: FormGroup<{
+    name: FormControl<string>;
+  }> = this.fb.group({
+    name: this.fb.control<string>(undefined, [Validators.required])
   });
 
   uiQuery$ = this.uiQuery.select().pipe(

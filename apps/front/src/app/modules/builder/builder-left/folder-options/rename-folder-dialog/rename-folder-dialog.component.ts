@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -57,7 +58,9 @@ export class RenameFolderDialogComponent implements OnInit {
 
   @ViewChild('folderName') folderNameElement: ElementRef;
 
-  renameFolderForm: FormGroup;
+  renameFolderForm: FormGroup<{
+    folderName: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<RenameFolderDialogData>,
@@ -72,14 +75,11 @@ export class RenameFolderDialogComponent implements OnInit {
 
   ngOnInit() {
     this.renameFolderForm = this.fb.group({
-      folderName: [
-        this.ref.data.folderName,
-        [
-          Validators.required,
-          ValidationService.lowerCaseValidator,
-          Validators.maxLength(255)
-        ]
-      ]
+      folderName: this.fb.control<string>(this.ref.data.folderName, [
+        Validators.required,
+        ValidationService.lowerCaseValidator,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

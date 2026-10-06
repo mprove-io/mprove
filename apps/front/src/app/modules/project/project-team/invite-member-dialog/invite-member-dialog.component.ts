@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -41,7 +42,9 @@ export class InviteMemberDialogComponent implements OnInit {
 
   @ViewChild('email') emailElement: ElementRef;
 
-  inviteMemberForm: FormGroup;
+  inviteMemberForm: FormGroup<{
+    email: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<InviteMemberDialogData>,
@@ -51,10 +54,11 @@ export class InviteMemberDialogComponent implements OnInit {
 
   ngOnInit() {
     this.inviteMemberForm = this.fb.group({
-      email: [
-        undefined,
-        [Validators.required, Validators.email, Validators.maxLength(255)]
-      ]
+      email: this.fb.control<string>(undefined, [
+        Validators.required,
+        Validators.email,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

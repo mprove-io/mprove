@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -44,7 +45,9 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
   dataItem: AddEnvironmentDialogData = this.ref.data;
 
-  addEnvironmentForm: FormGroup;
+  addEnvironmentForm: FormGroup<{
+    envId: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<AddEnvironmentDialogData>,
@@ -55,7 +58,10 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addEnvironmentForm = this.fb.group({
-      envId: [undefined, [Validators.required, Validators.maxLength(255)]]
+      envId: this.fb.control<string>(undefined, [
+        Validators.required,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

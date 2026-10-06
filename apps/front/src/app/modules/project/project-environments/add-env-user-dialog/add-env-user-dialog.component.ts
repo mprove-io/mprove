@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -50,7 +51,9 @@ export class AddEnvUserDialogComponent implements OnInit {
     this.addEnvUserDialogEnvSelectElement?.close();
   }
 
-  addEnvUserForm: FormGroup;
+  addEnvUserForm: FormGroup<{
+    envUserId: FormControl<string>;
+  }>;
 
   env = this.ref.data.env;
 
@@ -70,7 +73,10 @@ export class AddEnvUserDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addEnvUserForm = this.fb.group({
-      envUserId: ['', [Validators.required, Validators.maxLength(255)]]
+      envUserId: this.fb.control<string>('', [
+        Validators.required,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

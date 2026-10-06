@@ -12,7 +12,12 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import '@vaadin/date-picker';
 import {
@@ -293,17 +298,35 @@ export class FractionTsComponent implements OnInit, OnChanges {
   @ViewChild('datePickerBetweenTo') datePickerBetweenTo: ElementRef<DatePicker>;
   @ViewChild('timePickerBetweenTo') timePickerBetweenTo: ElementRef<TimePicker>;
 
-  tsForValueForm: FormGroup;
-  tsLastValueForm: FormGroup;
-  tsNextValueForm: FormGroup;
+  tsForValueForm: FormGroup<{
+    tsForValue: FormControl<string | number>;
+  }>;
+  tsLastValueForm: FormGroup<{
+    tsLastValue: FormControl<string | number>;
+  }>;
+  tsNextValueForm: FormGroup<{
+    tsNextValue: FormControl<string | number>;
+  }>;
 
-  tsTimestampValueForm: FormGroup;
-  tsFromTimestampValueForm: FormGroup;
-  tsToTimestampValueForm: FormGroup;
+  tsTimestampValueForm: FormGroup<{
+    tsTimestampValue: FormControl<string>;
+  }>;
+  tsFromTimestampValueForm: FormGroup<{
+    tsFromTimestampValue: FormControl<string>;
+  }>;
+  tsToTimestampValueForm: FormGroup<{
+    tsToTimestampValue: FormControl<string>;
+  }>;
 
-  tsMomentAgoFromNowQuantityForm: FormGroup;
-  tsFromMomentAgoFromNowQuantityForm: FormGroup;
-  tsToMomentAgoFromNowQuantityForm: FormGroup;
+  tsMomentAgoFromNowQuantityForm: FormGroup<{
+    tsMomentAgoFromNowQuantity: FormControl<string | number>;
+  }>;
+  tsFromMomentAgoFromNowQuantityForm: FormGroup<{
+    tsFromMomentAgoFromNowQuantity: FormControl<string | number>;
+  }>;
+  tsToMomentAgoFromNowQuantityForm: FormGroup<{
+    tsToMomentAgoFromNowQuantity: FormControl<string | number>;
+  }>;
 
   fractionTsTypesList: FractionTypeItem[] = [];
   fractionTsTypesFullList: FractionTypeItem[] = [
@@ -1054,106 +1077,97 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   buildForValueForm() {
     this.tsForValueForm = this.fb.group({
-      tsForValue: [
-        this.fraction.tsForValue,
-        [
-          Validators.required,
-          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
-          Validators.min(0)
-        ]
-      ]
+      tsForValue: this.fb.control<string | number>(this.fraction.tsForValue, [
+        Validators.required,
+        ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
+        Validators.min(0)
+      ])
     });
   }
 
   buildLastValueForm() {
     this.tsLastValueForm = this.fb.group({
-      tsLastValue: [
-        this.fraction.tsLastValue,
-        [
-          Validators.required,
-          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
-          Validators.min(0)
-        ]
-      ]
+      tsLastValue: this.fb.control<string | number>(this.fraction.tsLastValue, [
+        Validators.required,
+        ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
+        Validators.min(0)
+      ])
     });
   }
 
   buildNextValueForm() {
     this.tsNextValueForm = this.fb.group({
-      tsNextValue: [
-        this.fraction.tsNextValue,
-        [
-          Validators.required,
-          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
-          Validators.min(0)
-        ]
-      ]
+      tsNextValue: this.fb.control<string | number>(this.fraction.tsNextValue, [
+        Validators.required,
+        ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
+        Validators.min(0)
+      ])
     });
   }
 
   buildTimestampValueForm() {
     this.tsTimestampValueForm = this.fb.group({
-      tsTimestampValue: [
+      tsTimestampValue: this.fb.control<string>(
         this.fraction.tsTimestampValue,
         [Validators.required, ValidationService.timestampValidator]
-      ]
+      )
     });
   }
 
   buildFromTimestampValueForm() {
     this.tsFromTimestampValueForm = this.fb.group({
-      tsFromTimestampValue: [
+      tsFromTimestampValue: this.fb.control<string>(
         this.fraction.tsFromTimestampValue,
         [Validators.required, ValidationService.timestampValidator]
-      ]
+      )
     });
   }
 
   buildToTimestampValueForm() {
     this.tsToTimestampValueForm = this.fb.group({
-      tsToTimestampValue: [
+      tsToTimestampValue: this.fb.control<string>(
         this.fraction.tsToTimestampValue,
         [Validators.required, ValidationService.timestampValidator]
-      ]
+      )
     });
   }
 
   buildMomentAgoFromNowQuantityForm() {
     this.tsMomentAgoFromNowQuantityForm = this.fb.group({
-      tsMomentAgoFromNowQuantity: [
+      tsMomentAgoFromNowQuantity: this.fb.control<string | number>(
         this.fraction.tsMomentAgoFromNowQuantity,
         [
           Validators.required,
           ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
-      ]
+      )
     });
   }
 
   buildFromMomentAgoFromNowQuantityForm() {
     this.tsFromMomentAgoFromNowQuantityForm = this.fb.group({
-      tsFromMomentAgoFromNowQuantity: [
+      tsFromMomentAgoFromNowQuantity: this.fb.control<string | number>(
         this.fraction.tsFromMomentAgoFromNowQuantity,
         [
           Validators.required,
           ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
-      ]
+      )
     });
   }
 
   buildToMomentAgoFromNowQuantityForm() {
     this.tsToMomentAgoFromNowQuantityForm = this.fb.group({
-      tsToMomentAgoFromNowQuantity: [
+      tsToMomentAgoFromNowQuantity: this.fb.control<string | number>(
         this.fraction.tsToMomentAgoFromNowQuantity,
         [
           Validators.required,
           ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
-      ]
+      )
     });
   }
 

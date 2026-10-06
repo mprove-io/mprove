@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -59,7 +60,9 @@ export class RenameFileDialogComponent implements OnInit {
 
   @ViewChild('fileName') fileNameElement: ElementRef;
 
-  renameFileForm: FormGroup;
+  renameFileForm: FormGroup<{
+    fileName: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<RenameFileDialogData>,
@@ -81,14 +84,11 @@ export class RenameFileDialogComponent implements OnInit {
     }
 
     this.renameFileForm = this.fb.group({
-      fileName: [
-        this.ref.data.fileName,
-        [
-          Validators.required,
-          ValidationService.lowerCaseValidator,
-          Validators.maxLength(255)
-        ]
-      ]
+      fileName: this.fb.control<string>(this.ref.data.fileName, [
+        Validators.required,
+        ValidationService.lowerCaseValidator,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

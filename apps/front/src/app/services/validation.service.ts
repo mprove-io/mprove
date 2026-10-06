@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import type {
-  AbstractControl,
-  FormControl,
-  ValidationErrors
-} from '@angular/forms';
+import type { AbstractControl, ValidationErrors } from '@angular/forms';
 import { formatSpecifier } from 'd3-format';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
@@ -85,7 +81,7 @@ export class ValidationService {
     return null;
   }
 
-  static dayOfWeekIndexValuesValidator(control: FormControl) {
+  static dayOfWeekIndexValuesValidator(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -97,7 +93,7 @@ export class ValidationService {
     }
   }
 
-  static lowerCaseValidator(control: FormControl) {
+  static lowerCaseValidator(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -109,7 +105,7 @@ export class ValidationService {
     }
   }
 
-  static numberValuesOrEmptyValidator(control: FormControl) {
+  static numberValuesOrEmptyValidator(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -121,7 +117,7 @@ export class ValidationService {
     }
   }
 
-  static timestampValidator(control: FormControl) {
+  static timestampValidator(control: AbstractControl<string>) {
     let value = control.value;
 
     if (isUndefinedOrEmpty(value)) {
@@ -165,7 +161,7 @@ export class ValidationService {
     }
   }
 
-  static formatNumberValidator(control: FormControl) {
+  static formatNumberValidator(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -193,7 +189,7 @@ export class ValidationService {
   }) {
     let { getType, getIsMultiple } = item;
 
-    return (control: AbstractControl): ValidationErrors | null => {
+    return (control: AbstractControl<string>): ValidationErrors | null => {
       let type = getType();
 
       if (type === undefined) {
@@ -216,7 +212,7 @@ export class ValidationService {
     };
   }
 
-  static numberOrEmptyValidator(control: FormControl) {
+  static numberOrEmptyValidator(control: AbstractControl<string | number>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -228,7 +224,7 @@ export class ValidationService {
     }
   }
 
-  static integerOrEmptyValidator(control: AbstractControl) {
+  static integerOrEmptyValidator(control: AbstractControl<string | number>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -240,7 +236,9 @@ export class ValidationService {
     }
   }
 
-  static apiUrlValidator(control: FormControl): ValidationErrors | null {
+  static apiUrlValidator(
+    control: AbstractControl<string>
+  ): ValidationErrors | null {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -262,7 +260,7 @@ export class ValidationService {
   }
 
   static openAiCompatibleBaseUrlValidator(
-    control: FormControl
+    control: AbstractControl<string>
   ): ValidationErrors | null {
     if (isUndefined(control.value) || control.value === '') {
       return null;
@@ -288,7 +286,9 @@ export class ValidationService {
     return null;
   }
 
-  static zeroToThreeDigitsIntegerOrEmptyValidator(control: FormControl) {
+  static zeroToThreeDigitsIntegerOrEmptyValidator(
+    control: AbstractControl<string | number>
+  ) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -302,7 +302,7 @@ export class ValidationService {
     }
   }
 
-  static fileNameWrongChars(control: FormControl) {
+  static fileNameWrongChars(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -344,7 +344,7 @@ export class ValidationService {
     }
   }
 
-  static providerNameWrongChars(control: AbstractControl) {
+  static providerNameWrongChars(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -358,7 +358,7 @@ export class ValidationService {
     }
   }
 
-  static envVariableNameWrongChars(control: FormControl) {
+  static envVariableNameWrongChars(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -379,7 +379,7 @@ export class ValidationService {
     }
   }
 
-  static givenIdWrongChars(control: FormControl) {
+  static givenIdWrongChars(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -393,7 +393,7 @@ export class ValidationService {
     }
   }
 
-  static roleIdWrongChars(control: FormControl) {
+  static roleIdWrongChars(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -407,7 +407,7 @@ export class ValidationService {
     }
   }
 
-  static notZeroOrEmptyValidator(control: FormControl) {
+  static notZeroOrEmptyValidator(control: AbstractControl<string | number>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -419,7 +419,7 @@ export class ValidationService {
     }
   }
 
-  static checkTextSize(control: FormControl) {
+  static checkTextSize(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -429,7 +429,7 @@ export class ValidationService {
       : { moreThenOneMB: true };
   }
 
-  static gitUrlNotStartWithGitAt(control: FormControl) {
+  static gitUrlNotStartWithGitAt(control: AbstractControl<string>) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -441,7 +441,7 @@ export class ValidationService {
     }
   }
 
-  static motherduckDatabaseWrongChars(control: FormControl) {
+  static motherduckDatabaseWrongChars(control: AbstractControl<string>) {
     let wrongChars: string[] = getMotherduckDatabaseWrongChars({
       databaseName: control.value
     });

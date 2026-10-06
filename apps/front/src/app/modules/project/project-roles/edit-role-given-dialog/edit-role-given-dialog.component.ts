@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -47,7 +48,9 @@ export class EditRoleGivenDialogComponent implements OnInit {
 
   dataItem: EditRoleGivenDialogData = this.ref.data;
 
-  editRoleGivenForm: FormGroup;
+  editRoleGivenForm: FormGroup<{
+    values: FormControl<string>;
+  }>;
 
   givenType: GivenType;
   givenIsMultiple = false;
@@ -68,16 +71,13 @@ export class EditRoleGivenDialogComponent implements OnInit {
     this.givenIsMultiple = given?.isMultiple === true;
 
     this.editRoleGivenForm = this.fb.group({
-      values: [
-        this.dataItem.gv.values.join('\n'),
-        [
-          Validators.maxLength(10000),
-          ValidationService.givenValuesValidator({
-            getType: () => this.givenType,
-            getIsMultiple: () => this.givenIsMultiple
-          })
-        ]
-      ]
+      values: this.fb.control<string>(this.dataItem.gv.values.join('\n'), [
+        Validators.maxLength(10000),
+        ValidationService.givenValuesValidator({
+          getType: () => this.givenType,
+          getIsMultiple: () => this.givenIsMultiple
+        })
+      ])
     });
 
     setTimeout(() => {

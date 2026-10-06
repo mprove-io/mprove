@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -43,7 +44,9 @@ export class EditProjectNameDialogComponent implements OnInit {
 
   @ViewChild('projectName') projectNameElement: ElementRef;
 
-  editProjectNameForm: FormGroup;
+  editProjectNameForm: FormGroup<{
+    projectName: FormControl<string>;
+  }>;
 
   projectId: string;
 
@@ -56,7 +59,9 @@ export class EditProjectNameDialogComponent implements OnInit {
 
   ngOnInit() {
     this.editProjectNameForm = this.fb.group({
-      projectName: [this.ref.data.projectName, [Validators.maxLength(255)]]
+      projectName: this.fb.control<string>(this.ref.data.projectName, [
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

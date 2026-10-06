@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -40,7 +41,9 @@ export class EditSandboxProviderDialogComponent implements OnInit {
   }
 
   @ViewChild('apiKeyInput') apiKeyInputElement: ElementRef;
-  editSandboxProviderForm: FormGroup;
+  editSandboxProviderForm: FormGroup<{
+    apiKey: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<EditSandboxProviderDialogData>,
@@ -50,7 +53,7 @@ export class EditSandboxProviderDialogComponent implements OnInit {
 
   ngOnInit() {
     this.editSandboxProviderForm = this.fb.group({
-      apiKey: ['', [Validators.maxLength(1000)]]
+      apiKey: this.fb.control<string>('', [Validators.maxLength(1000)])
     });
     setTimeout(() => this.apiKeyInputElement.nativeElement.focus(), 0);
   }

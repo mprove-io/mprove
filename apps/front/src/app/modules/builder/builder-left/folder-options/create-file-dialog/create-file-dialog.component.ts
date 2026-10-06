@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -52,7 +53,9 @@ export class CreateFileDialogComponent implements OnInit {
 
   @ViewChild('fileName') fileNameElement: ElementRef;
 
-  createFileForm: FormGroup;
+  createFileForm: FormGroup<{
+    fileName: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<CreateFileDialogData>,
@@ -68,14 +71,11 @@ export class CreateFileDialogComponent implements OnInit {
     let fileName: string;
 
     this.createFileForm = this.fb.group({
-      fileName: [
-        fileName,
-        [
-          Validators.required,
-          ValidationService.lowerCaseValidator,
-          Validators.maxLength(255)
-        ]
-      ]
+      fileName: this.fb.control<string>(fileName, [
+        Validators.required,
+        ValidationService.lowerCaseValidator,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -42,7 +43,9 @@ export class EditGivenDialogComponent implements OnInit {
 
   dataItem: EditGivenDialogData = this.ref.data;
 
-  editGivenForm: FormGroup;
+  editGivenForm: FormGroup<{
+    values: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<EditGivenDialogData>,
@@ -53,16 +56,13 @@ export class EditGivenDialogComponent implements OnInit {
 
   ngOnInit() {
     this.editGivenForm = this.fb.group({
-      values: [
-        this.dataItem.given.values.join('\n'),
-        [
-          Validators.maxLength(10000),
-          ValidationService.givenValuesValidator({
-            getType: () => this.dataItem.given.type,
-            getIsMultiple: () => this.dataItem.given.isMultiple
-          })
-        ]
-      ]
+      values: this.fb.control<string>(this.dataItem.given.values.join('\n'), [
+        Validators.maxLength(10000),
+        ValidationService.givenValuesValidator({
+          getType: () => this.dataItem.given.type,
+          getIsMultiple: () => this.dataItem.given.isMultiple
+        })
+      ])
     });
 
     setTimeout(() => {

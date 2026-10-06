@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -53,7 +54,12 @@ export class AddGivenDialogComponent implements OnInit {
 
   dataItem: AddGivenDialogData = this.ref.data;
 
-  addGivenForm: FormGroup;
+  addGivenForm: FormGroup<{
+    givenId: FormControl<string>;
+    type: FormControl<GivenType>;
+    isMultiple: FormControl<boolean>;
+    values: FormControl<string>;
+  }>;
 
   givenTypes = givenTypeValues;
 
@@ -66,27 +72,21 @@ export class AddGivenDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addGivenForm = this.fb.group({
-      givenId: [
-        undefined,
-        [
-          Validators.required,
-          ValidationService.givenIdWrongChars,
-          Validators.maxLength(32)
-        ]
-      ],
-      type: ['String' satisfies GivenType, [Validators.required]],
-      isMultiple: [false],
-      values: [
-        undefined,
-        [
-          Validators.maxLength(10000),
-          ValidationService.givenValuesValidator({
-            getType: () => this.addGivenForm?.controls['type'].value,
-            getIsMultiple: () =>
-              this.addGivenForm?.controls['isMultiple'].value === true
-          })
-        ]
-      ]
+      givenId: this.fb.control<string>(undefined, [
+        Validators.required,
+        ValidationService.givenIdWrongChars,
+        Validators.maxLength(32)
+      ]),
+      type: this.fb.control<GivenType>('String', [Validators.required]),
+      isMultiple: this.fb.control<boolean>(false),
+      values: this.fb.control<string>(undefined, [
+        Validators.maxLength(10000),
+        ValidationService.givenValuesValidator({
+          getType: () => this.addGivenForm?.controls['type'].value,
+          getIsMultiple: () =>
+            this.addGivenForm?.controls['isMultiple'].value === true
+        })
+      ])
     });
 
     this.addGivenForm.controls['type'].valueChanges.subscribe(() => {

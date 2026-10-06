@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -55,7 +56,10 @@ export class CreateProjectDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  createProjectForm: FormGroup;
+  createProjectForm: FormGroup<{
+    projectName: FormControl<string>;
+    projectGitUrl: FormControl<string>;
+  }>;
 
   projectRemoteRepoType: ProjectRemoteType = 'GitClone';
 
@@ -84,18 +88,15 @@ export class CreateProjectDialogComponent implements OnInit {
     this.spinner.show(this.spinnerName);
 
     this.createProjectForm = this.fb.group({
-      projectName: [
-        projectName,
-        [Validators.required, Validators.maxLength(255)]
-      ],
-      projectGitUrl: [
-        projectGitUrl,
-        [
-          Validators.required,
-          Validators.maxLength(255),
-          ValidationService.gitUrlNotStartWithGitAt
-        ]
-      ]
+      projectName: this.fb.control<string>(projectName, [
+        Validators.required,
+        Validators.maxLength(255)
+      ]),
+      projectGitUrl: this.fb.control<string>(projectGitUrl, [
+        Validators.required,
+        Validators.maxLength(255),
+        ValidationService.gitUrlNotStartWithGitAt
+      ])
     });
 
     let payload: ToBackendGenerateProjectRemoteKeyRequest['input'] = {

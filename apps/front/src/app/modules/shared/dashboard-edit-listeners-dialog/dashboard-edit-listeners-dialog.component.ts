@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewChildren
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, type FormGroup } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
@@ -67,7 +67,9 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     })
   );
 
-  listenForm: FormGroup = this.fb.group({});
+  listenForm: FormGroup<Record<string, FormControl<string>>> = this.fb.group(
+    {}
+  );
 
   constructor(
     public ref: DialogRef<DashboardEditListenersDialogData>,
@@ -185,7 +187,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                 swap[dFieldId].forEach((id, ind) => {
                   this.listenForm.addControl(
                     `${tileIndex}-----${dFieldId}-----${ind}`,
-                    new FormControl(id)
+                    new FormControl<string>(id)
                   );
                 });
               });
@@ -227,7 +229,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     this.listenForm.addControl(
       `${tileIndex}-----${dashboardFieldId}-----${tile.mconfigListenSwap[dashboardFieldId].length}`,
-      new FormControl(undefined)
+      new FormControl<string>(undefined)
     );
 
     tile.mconfigListenSwap[dashboardFieldId].push(undefined);

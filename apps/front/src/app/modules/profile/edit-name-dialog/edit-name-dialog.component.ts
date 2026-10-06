@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -37,7 +38,10 @@ export class EditNameDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  editNameForm: FormGroup;
+  editNameForm: FormGroup<{
+    firstName: FormControl<string>;
+    lastName: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<EditNameDialogData>,
@@ -61,8 +65,14 @@ export class EditNameDialogComponent implements OnInit {
       .subscribe();
 
     this.editNameForm = this.fb.group({
-      firstName: [firstName, [Validators.maxLength(255), Validators.required]],
-      lastName: [lastName, [Validators.maxLength(255), Validators.required]]
+      firstName: this.fb.control<string>(firstName, [
+        Validators.maxLength(255),
+        Validators.required
+      ]),
+      lastName: this.fb.control<string>(lastName, [
+        Validators.maxLength(255),
+        Validators.required
+      ])
     });
 
     setTimeout(() => {

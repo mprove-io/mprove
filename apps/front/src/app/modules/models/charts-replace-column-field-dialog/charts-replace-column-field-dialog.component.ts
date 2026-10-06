@@ -6,7 +6,12 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  ReactiveFormsModule
+} from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
@@ -59,7 +64,9 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
   fields: ModelField[];
   matchFields: ModelFieldY[];
 
-  addFieldForm: FormGroup;
+  addFieldForm: FormGroup<{
+    selectField: FormControl<string>;
+  }>;
 
   isFieldAlreadySelected = false;
   newColumnFieldId: string;
@@ -74,7 +81,7 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addFieldForm = this.fb.group({
-      selectField: [undefined]
+      selectField: this.fb.control<string>(undefined)
     });
 
     this.currentField = this.ref.data.currentField;

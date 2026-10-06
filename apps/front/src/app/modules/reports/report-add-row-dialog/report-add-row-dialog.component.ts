@@ -5,7 +5,12 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
@@ -46,12 +51,16 @@ export class ReportAddRowDialogComponent implements OnInit {
 
   rowType: RowType = 'metric';
 
-  newNameForm: FormGroup = this.fb.group({
-    name: [undefined, [Validators.required]]
+  newNameForm: FormGroup<{
+    name: FormControl<string>;
+  }> = this.fb.group({
+    name: this.fb.control<string>(undefined, [Validators.required])
   });
 
-  newFormulaForm: FormGroup = this.fb.group({
-    formula: [undefined, [Validators.required]]
+  newFormulaForm: FormGroup<{
+    formula: FormControl<string>;
+  }> = this.fb.group({
+    formula: this.fb.control<string>(undefined, [Validators.required])
   });
 
   metrics: ModelMetricX[];

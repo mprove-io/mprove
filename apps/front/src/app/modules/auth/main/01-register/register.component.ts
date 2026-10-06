@@ -1,5 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -25,15 +30,20 @@ import { ApiService } from '#front/app/services/api.service';
 export class RegisterComponent implements OnInit {
   pageTitle = SIGN_UP_PAGE_TITLE;
 
-  registerForm: FormGroup = this.fb.group({
-    email: [
-      '',
-      [Validators.required, Validators.email, Validators.maxLength(255)]
-    ],
-    password: [
-      '',
-      [Validators.required, Validators.minLength(6), Validators.maxLength(255)]
-    ]
+  registerForm: FormGroup<{
+    email: FormControl<string>;
+    password: FormControl<string>;
+  }> = this.fb.group({
+    email: this.fb.control<string>('', [
+      Validators.required,
+      Validators.email,
+      Validators.maxLength(255)
+    ]),
+    password: this.fb.control<string>('', [
+      Validators.required,
+      Validators.minLength(6),
+      Validators.maxLength(255)
+    ])
   });
 
   currentRoute: string;

@@ -8,7 +8,12 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
@@ -43,7 +48,9 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
-  dayOfWeekIndexValuesForm: FormGroup;
+  dayOfWeekIndexValuesForm: FormGroup<{
+    dayOfWeekIndexValues: FormControl<string>;
+  }>;
 
   fractionDayOfWeekIndexTypesList: FractionTypeItem[] = [
     {
@@ -81,14 +88,14 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
   buildDayOfWeekIndexValuesForm() {
     this.dayOfWeekIndexValuesForm = this.fb.group({
-      dayOfWeekIndexValues: [
+      dayOfWeekIndexValues: this.fb.control<string>(
         this.fraction.dayOfWeekIndexValues,
         [
           Validators.required,
           ValidationService.dayOfWeekIndexValuesValidator,
           Validators.maxLength(255)
         ]
-      ]
+      )
     });
   }
 

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -45,7 +46,9 @@ export class AddProjectRoleDialogComponent implements OnInit {
 
   dataItem: AddProjectRoleDialogData = this.ref.data;
 
-  addProjectRoleForm: FormGroup;
+  addProjectRoleForm: FormGroup<{
+    roleId: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<AddProjectRoleDialogData>,
@@ -56,14 +59,11 @@ export class AddProjectRoleDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addProjectRoleForm = this.fb.group({
-      roleId: [
-        undefined,
-        [
-          Validators.required,
-          ValidationService.roleIdWrongChars,
-          Validators.maxLength(32)
-        ]
-      ]
+      roleId: this.fb.control<string>(undefined, [
+        Validators.required,
+        ValidationService.roleIdWrongChars,
+        Validators.maxLength(32)
+      ])
     });
 
     setTimeout(() => {

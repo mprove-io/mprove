@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -57,7 +58,9 @@ export class MergeBranchDialogComponent implements OnInit {
     this.mergeBranchSelectElement?.close();
   }
 
-  mergeForm: FormGroup;
+  mergeForm: FormGroup<{
+    branch: FormControl<string>;
+  }>;
 
   branchesList: BranchItem[] = this.ref.data.branchesList.filter(
     (x: BranchItem) => x.repoType !== 'session'
@@ -80,7 +83,7 @@ export class MergeBranchDialogComponent implements OnInit {
     let branchId: string;
 
     this.mergeForm = this.fb.group({
-      branch: [undefined, [Validators.required]]
+      branch: this.fb.control<string>(undefined, [Validators.required])
     });
 
     this.branchesList = this.branchesList.filter(

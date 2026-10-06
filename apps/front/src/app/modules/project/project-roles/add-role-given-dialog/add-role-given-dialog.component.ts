@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -47,7 +48,10 @@ export class AddRoleGivenDialogComponent implements OnInit {
 
   dataItem: AddRoleGivenDialogData = this.ref.data;
 
-  addRoleGivenForm: FormGroup;
+  addRoleGivenForm: FormGroup<{
+    givenId: FormControl<string>;
+    values: FormControl<string>;
+  }>;
 
   availableGivens: Given[] = [];
 
@@ -69,17 +73,14 @@ export class AddRoleGivenDialogComponent implements OnInit {
     );
 
     this.addRoleGivenForm = this.fb.group({
-      givenId: [undefined, [Validators.required]],
-      values: [
-        undefined,
-        [
-          Validators.maxLength(10000),
-          ValidationService.givenValuesValidator({
-            getType: () => this.selectedGivenType,
-            getIsMultiple: () => this.selectedGivenIsMultiple
-          })
-        ]
-      ]
+      givenId: this.fb.control<string>(undefined, [Validators.required]),
+      values: this.fb.control<string>(undefined, [
+        Validators.maxLength(10000),
+        ValidationService.givenValuesValidator({
+          getType: () => this.selectedGivenType,
+          getIsMultiple: () => this.selectedGivenIsMultiple
+        })
+      ])
     });
 
     this.addRoleGivenForm.controls['givenId'].valueChanges.subscribe(

@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -48,7 +49,9 @@ export class CreateFolderDialogComponent implements OnInit {
 
   @ViewChild('folderName') folderNameElement: ElementRef;
 
-  createFolderForm: FormGroup;
+  createFolderForm: FormGroup<{
+    folderName: FormControl<string>;
+  }>;
 
   constructor(
     public ref: DialogRef<CreateFolderDialogData>,
@@ -62,14 +65,11 @@ export class CreateFolderDialogComponent implements OnInit {
     let folderName: string;
 
     this.createFolderForm = this.fb.group({
-      folderName: [
-        folderName,
-        [
-          Validators.required,
-          ValidationService.lowerCaseValidator,
-          Validators.maxLength(255)
-        ]
-      ]
+      folderName: this.fb.control<string>(folderName, [
+        Validators.required,
+        ValidationService.lowerCaseValidator,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

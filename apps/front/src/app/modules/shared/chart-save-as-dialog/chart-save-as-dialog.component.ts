@@ -6,10 +6,11 @@ import {
   ViewChild
 } from '@angular/core';
 import {
-  AbstractControl,
+  type AbstractControl,
   FormBuilder,
-  FormGroup,
-  ValidationErrors,
+  type FormControl,
+  type FormGroup,
+  type ValidationErrors,
   Validators
 } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
@@ -111,12 +112,17 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   newChartId = makeId();
 
-  titleForm: FormGroup = this.fb.group(
+  titleForm: FormGroup<{
+    title: FormControl<string>;
+  }> = this.fb.group(
     {
-      title: [undefined, [Validators.required, Validators.maxLength(255)]]
+      title: this.fb.control<string>(undefined, [
+        Validators.required,
+        Validators.maxLength(255)
+      ])
     },
     {
-      validator: this.titleValidator.bind(this)
+      validators: this.titleValidator.bind(this)
     }
   );
 

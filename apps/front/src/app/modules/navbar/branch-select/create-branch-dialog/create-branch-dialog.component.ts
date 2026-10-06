@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -63,7 +64,10 @@ export class CreateBranchDialogComponent implements OnInit {
     this.createBranchSelectElement?.close();
   }
 
-  createBranchForm: FormGroup;
+  createBranchForm: FormGroup<{
+    branchId: FormControl<string>;
+    fromBranch: FormControl<string>;
+  }>;
 
   user: UserState;
   user$ = this.userQuery.select().pipe(
@@ -110,8 +114,8 @@ export class CreateBranchDialogComponent implements OnInit {
     let branchId: string;
 
     this.createBranchForm = this.fb.group({
-      branchId: [branchId, [Validators.maxLength(255)]],
-      fromBranch: [this.selectedBranchExtraId]
+      branchId: this.fb.control<string>(branchId, [Validators.maxLength(255)]),
+      fromBranch: this.fb.control<string>(this.selectedBranchExtraId)
     });
 
     setTimeout(() => {

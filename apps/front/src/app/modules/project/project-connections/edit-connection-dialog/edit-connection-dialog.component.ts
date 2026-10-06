@@ -7,7 +7,7 @@ import {
   OnInit
 } from '@angular/core';
 import {
-  FormArray,
+  type FormArray,
   FormBuilder,
   type FormControl,
   type FormGroup,
@@ -34,6 +34,8 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
 import { ValidationService } from '#front/app/services/validation.service';
+import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
+import type { ScopeFormControls } from '#front/app/types/forms/scope-form-controls';
 
 export interface EditConnectionDialogData {
   apiService: ApiService;
@@ -66,7 +68,10 @@ export class EditConnectionDialogComponent implements OnInit {
 
   dataItem: EditConnectionDialogData = this.ref.data;
 
-  editBigqueryForm: FormGroup;
+  editBigqueryForm: FormGroup<{
+    serviceAccountCredentials: FormControl<string>;
+    bigqueryQuerySizeLimitGb: FormControl<string | number>;
+  }>;
   // editClickhouseForm: FormGroup;
   editDatabricksForm: FormGroup<{
     authType: FormControl<DatabricksAuthType>;
@@ -79,14 +84,70 @@ export class EditConnectionDialogComponent implements OnInit {
     defaultCatalog: FormControl<string>;
     defaultSchema: FormControl<string>;
   }>;
-  editMotherduckForm: FormGroup;
-  editPostgresForm: FormGroup;
-  editMysqlForm: FormGroup;
-  editTrinoForm: FormGroup;
-  editPrestoForm: FormGroup;
-  editSnowflakeForm: FormGroup;
-  editApiForm: FormGroup;
-  editGoogleApiForm: FormGroup;
+  editMotherduckForm: FormGroup<{
+    motherduckToken: FormControl<string>;
+    database: FormControl<string>;
+  }>;
+
+  editPostgresForm: FormGroup<{
+    host: FormControl<string>;
+    internalHost: FormControl<string>;
+    port: FormControl<string | number>;
+    internalPort: FormControl<string | number>;
+    database: FormControl<string>;
+    username: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  editMysqlForm: FormGroup<{
+    host: FormControl<string>;
+    internalHost: FormControl<string>;
+    port: FormControl<string | number>;
+    internalPort: FormControl<string | number>;
+    database: FormControl<string>;
+    user: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  editTrinoForm: FormGroup<{
+    server: FormControl<string>;
+    internalServer: FormControl<string>;
+    catalog: FormControl<string>;
+    schema: FormControl<string>;
+    user: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  editPrestoForm: FormGroup<{
+    server: FormControl<string>;
+    internalServer: FormControl<string>;
+    port: FormControl<string | number>;
+    internalPort: FormControl<string | number>;
+    catalog: FormControl<string>;
+    schema: FormControl<string>;
+    user: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  editSnowflakeForm: FormGroup<{
+    account: FormControl<string>;
+    warehouse: FormControl<string>;
+    database: FormControl<string>;
+    username: FormControl<string>;
+    password: FormControl<string>;
+  }>;
+
+  editApiForm: FormGroup<{
+    baseUrl: FormControl<string>;
+    headers: FormArray<FormGroup<KeyValueFormControls>>;
+  }>;
+
+  editGoogleApiForm: FormGroup<{
+    serviceAccountCredentials: FormControl<string>;
+    baseUrl: FormControl<string>;
+    headers: FormArray<FormGroup<KeyValueFormControls>>;
+    scopes: FormArray<FormGroup<ScopeFormControls>>;
+  }>;
 
   // isClickhouseSSL = true;
   isPostgresSSL = true;
@@ -130,14 +191,14 @@ export class EditConnectionDialogComponent implements OnInit {
         : false;
 
     this.editBigqueryForm = this.fb.group({
-      serviceAccountCredentials: [
+      serviceAccountCredentials: this.fb.control<string>(
         this.dataItem.connection.options.bigquery?.serviceAccountCredentials,
         [Validators.required]
-      ],
-      bigqueryQuerySizeLimitGb: [
+      ),
+      bigqueryQuerySizeLimitGb: this.fb.control<string | number>(
         this.dataItem.connection.options.bigquery?.bigqueryQuerySizeLimitGb,
         [ValidationService.integerOrEmptyValidator, Validators.required]
-      ]
+      )
     });
 
     // this.editClickhouseForm = this.fb.group({
@@ -179,14 +240,14 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.options.postgres?.internalHost,
         []
       ],
-      port: [
+      port: this.fb.control<string | number>(
         this.dataItem.connection.options.postgres?.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      internalPort: [
+      ),
+      internalPort: this.fb.control<string | number>(
         this.dataItem.connection.options.postgres?.internalPort,
         [ValidationService.integerOrEmptyValidator]
-      ],
+      ),
       database: [
         this.dataItem.connection.options.postgres?.database,
         [Validators.required]
@@ -207,14 +268,14 @@ export class EditConnectionDialogComponent implements OnInit {
         [Validators.required]
       ],
       internalHost: [this.dataItem.connection.options.mysql?.internalHost, []],
-      port: [
+      port: this.fb.control<string | number>(
         this.dataItem.connection.options.mysql?.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      internalPort: [
+      ),
+      internalPort: this.fb.control<string | number>(
         this.dataItem.connection.options.mysql?.internalPort,
         [ValidationService.integerOrEmptyValidator]
-      ],
+      ),
       database: [
         this.dataItem.connection.options.mysql?.database,
         [Validators.required]
@@ -256,14 +317,14 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.options.presto?.internalServer,
         []
       ],
-      port: [
+      port: this.fb.control<string | number>(
         this.dataItem.connection.options.presto?.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      internalPort: [
+      ),
+      internalPort: this.fb.control<string | number>(
         this.dataItem.connection.options.presto?.internalPort,
         [ValidationService.integerOrEmptyValidator]
-      ],
+      ),
       catalog: [this.dataItem.connection.options.presto?.catalog, []],
       schema: [this.dataItem.connection.options.presto?.schema, []],
       user: [
@@ -370,21 +431,22 @@ export class EditConnectionDialogComponent implements OnInit {
         isUndefined(this.dataItem.connection.options.storeApi?.headers)
           ? []
           : this.dataItem.connection.options.storeApi?.headers.map(header => {
-              let newHeader = {
-                key: header.key,
-                value: header.value ?? ''
-              };
-              return this.fb.group(newHeader);
+              let headerGroup: FormGroup<KeyValueFormControls> = this.fb.group({
+                key: this.fb.control<string>(header.key),
+                value: this.fb.control<string>(header.value ?? '')
+              });
+
+              return headerGroup;
             })
       )
     });
 
     this.editGoogleApiForm = this.fb.group({
-      serviceAccountCredentials: [
+      serviceAccountCredentials: this.fb.control<string>(
         this.dataItem.connection.options.storeGoogleApi
           ?.serviceAccountCredentials,
         [Validators.required]
-      ],
+      ),
       baseUrl: [
         this.dataItem.connection.options.storeGoogleApi?.baseUrl,
         [Validators.required]
@@ -394,11 +456,13 @@ export class EditConnectionDialogComponent implements OnInit {
           ? []
           : this.dataItem.connection.options.storeGoogleApi?.headers.map(
               header => {
-                let newHeader = {
-                  key: header.key,
-                  value: header.value ?? ''
-                };
-                return this.fb.group(newHeader);
+                let headerGroup: FormGroup<KeyValueFormControls> =
+                  this.fb.group({
+                    key: this.fb.control<string>(header.key),
+                    value: this.fb.control<string>(header.value ?? '')
+                  });
+
+                return headerGroup;
               }
             )
       ),
@@ -409,10 +473,11 @@ export class EditConnectionDialogComponent implements OnInit {
           ? []
           : this.dataItem.connection.options.storeGoogleApi?.googleAuthScopes.map(
               scope => {
-                let newScope = {
-                  value: scope
-                };
-                return this.fb.group(newScope);
+                let scopeGroup: FormGroup<ScopeFormControls> = this.fb.group({
+                  value: this.fb.control<string>(scope)
+                });
+
+                return scopeGroup;
               }
             )
       )
@@ -425,13 +490,16 @@ export class EditConnectionDialogComponent implements OnInit {
 
   // scopes
 
-  getScopes(): FormArray {
-    return this.editGoogleApiForm.controls['scopes'] as FormArray;
+  getScopes(): FormArray<FormGroup<ScopeFormControls>> {
+    let scopes: FormArray<FormGroup<ScopeFormControls>> =
+      this.editGoogleApiForm.controls['scopes'];
+
+    return scopes;
   }
 
   addScope() {
-    let scopeGroup = this.fb.group({
-      value: ['']
+    let scopeGroup: FormGroup<ScopeFormControls> = this.fb.group({
+      value: this.fb.control<string>('')
     });
     this.getScopes().push(scopeGroup);
   }
@@ -442,14 +510,17 @@ export class EditConnectionDialogComponent implements OnInit {
 
   // googleApi
 
-  googleApiGetHeaders(): FormArray {
-    return this.editGoogleApiForm.controls['headers'] as FormArray;
+  googleApiGetHeaders(): FormArray<FormGroup<KeyValueFormControls>> {
+    let headers: FormArray<FormGroup<KeyValueFormControls>> =
+      this.editGoogleApiForm.controls['headers'];
+
+    return headers;
   }
 
   googleApiAddHeader() {
-    let headerGroup = this.fb.group({
-      key: [''],
-      value: ['']
+    let headerGroup: FormGroup<KeyValueFormControls> = this.fb.group({
+      key: this.fb.control<string>(''),
+      value: this.fb.control<string>('')
     });
     this.googleApiGetHeaders().push(headerGroup);
   }
@@ -460,14 +531,17 @@ export class EditConnectionDialogComponent implements OnInit {
 
   // api
 
-  apiGetHeaders(): FormArray {
-    return this.editApiForm.controls['headers'] as FormArray;
+  apiGetHeaders(): FormArray<FormGroup<KeyValueFormControls>> {
+    let headers: FormArray<FormGroup<KeyValueFormControls>> =
+      this.editApiForm.controls['headers'];
+
+    return headers;
   }
 
   apiAddHeader() {
-    let headerGroup = this.fb.group({
-      key: [''],
-      value: ['']
+    let headerGroup: FormGroup<KeyValueFormControls> = this.fb.group({
+      key: this.fb.control<string>(''),
+      value: this.fb.control<string>('')
     });
     this.apiGetHeaders().push(headerGroup);
   }
@@ -764,7 +838,10 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === 'Api'
           ? {
               baseUrl: this.editApiForm.value.baseUrl,
-              headers: this.editApiForm.value.headers
+              headers: this.editApiForm.value.headers.map(header => ({
+                key: header.key,
+                value: header.value
+              }))
             }
           : undefined,
       storeGoogleApi:
@@ -776,9 +853,12 @@ export class EditConnectionDialogComponent implements OnInit {
               googleCloudClientEmail: undefined,
               serviceAccountCredentials: googleApiCredentials,
               baseUrl: this.editGoogleApiForm.value.baseUrl,
-              headers: this.editGoogleApiForm.value.headers,
+              headers: this.editGoogleApiForm.value.headers.map(header => ({
+                key: header.key,
+                value: header.value
+              })),
               googleAuthScopes: this.editGoogleApiForm.value.scopes.map(
-                (x: any) => x.value
+                x => x.value
               )
             }
           : undefined

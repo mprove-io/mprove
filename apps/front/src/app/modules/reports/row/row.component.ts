@@ -4,7 +4,12 @@ import {
   HostListener,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs/operators';
@@ -48,27 +53,41 @@ export class RowComponent {
     this.formatNumberSelectElement?.close();
   }
 
-  formulaForm: FormGroup = this.fb.group({
-    formula: [undefined, [Validators.required]]
+  formulaForm: FormGroup<{
+    formula: FormControl<string>;
+  }> = this.fb.group({
+    formula: this.fb.control<string>(undefined, [Validators.required])
   });
 
-  nameForm: FormGroup = this.fb.group({
-    name: [undefined, [Validators.required]]
+  nameForm: FormGroup<{
+    name: FormControl<string>;
+  }> = this.fb.group({
+    name: this.fb.control<string>(undefined, [Validators.required])
   });
 
-  formatNumberForm: FormGroup = this.fb.group({
-    formatNumber: [
-      undefined,
-      [ValidationService.formatNumberValidator, Validators.maxLength(255)]
-    ]
+  formatNumberForm: FormGroup<{
+    formatNumber: FormControl<string>;
+  }> = this.fb.group({
+    formatNumber: this.fb.control<string>(undefined, [
+      ValidationService.formatNumberValidator,
+      Validators.maxLength(255)
+    ])
   });
 
-  currencyPrefixForm: FormGroup = this.fb.group({
-    currencyPrefix: [undefined, [Validators.maxLength(255)]]
+  currencyPrefixForm: FormGroup<{
+    currencyPrefix: FormControl<string>;
+  }> = this.fb.group({
+    currencyPrefix: this.fb.control<string>(undefined, [
+      Validators.maxLength(255)
+    ])
   });
 
-  currencySuffixForm: FormGroup = this.fb.group({
-    currencySuffix: [undefined, [Validators.maxLength(255)]]
+  currencySuffixForm: FormGroup<{
+    currencySuffix: FormControl<string>;
+  }> = this.fb.group({
+    currencySuffix: this.fb.control<string>(undefined, [
+      Validators.maxLength(255)
+    ])
   });
 
   isShowFormatOptions = false;

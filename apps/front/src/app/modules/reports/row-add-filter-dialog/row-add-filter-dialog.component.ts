@@ -6,7 +6,12 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  ReactiveFormsModule
+} from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
@@ -69,7 +74,9 @@ export class RowAddFilterDialogComponent implements OnInit {
 
   sortedFieldsY: ModelFieldY[];
 
-  addFilterForm: FormGroup;
+  addFilterForm: FormGroup<{
+    field: FormControl<string>;
+  }>;
 
   isFieldAlreadyFiltered = false;
   newFieldId: string;
@@ -87,7 +94,7 @@ export class RowAddFilterDialogComponent implements OnInit {
 
   ngOnInit() {
     this.addFilterForm = this.fb.group({
-      field: [undefined]
+      field: this.fb.control<string>(undefined)
     });
 
     this.loadModel();

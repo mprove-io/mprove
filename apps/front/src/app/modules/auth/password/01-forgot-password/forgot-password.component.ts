@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -19,11 +24,14 @@ import { ApiService } from '#front/app/services/api.service';
 export class ForgotPasswordComponent implements OnInit {
   pageTitle = FORGOT_YOUR_PASSWORD_PAGE_TITLE;
 
-  resetPasswordForm: FormGroup = this.fb.group({
-    email: [
-      '',
-      [Validators.required, Validators.email, Validators.maxLength(255)]
-    ]
+  resetPasswordForm: FormGroup<{
+    email: FormControl<string>;
+  }> = this.fb.group({
+    email: this.fb.control<string>('', [
+      Validators.required,
+      Validators.email,
+      Validators.maxLength(255)
+    ])
   });
 
   constructor(

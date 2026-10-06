@@ -6,9 +6,9 @@ import {
   OnInit
 } from '@angular/core';
 import {
-  type AbstractControl,
-  FormArray,
+  type FormArray,
   FormBuilder,
+  type FormControl,
   type FormGroup,
   ReactiveFormsModule,
   Validators
@@ -24,6 +24,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 import { ValidationService } from '#front/app/services/validation.service';
+import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 
 export interface EditProviderDialogData {
   apiService: ApiService;
@@ -44,7 +45,13 @@ export class EditProviderDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  editProviderForm: FormGroup;
+  editProviderForm: FormGroup<{
+    name: FormControl<string>;
+    baseURL: FormControl<string>;
+    apiKey: FormControl<string>;
+    headers: FormArray<FormGroup<KeyValueFormControls>>;
+    queryParams: FormArray<FormGroup<KeyValueFormControls>>;
+  }>;
 
   get providerTypeLabel(): string {
     let providerTypeLabel: string =
@@ -68,7 +75,7 @@ export class EditProviderDialogComponent implements OnInit {
       ? (provider.options as ProviderOptionsOpenAICompatible)
       : undefined;
 
-    let headerGroups = compatibleOptions
+    let headerGroups: FormGroup<KeyValueFormControls>[] = compatibleOptions
       ? (compatibleOptions.headers ?? []).map(header =>
           this.makeKeyValueGroup({
             key: header.key,
@@ -78,7 +85,7 @@ export class EditProviderDialogComponent implements OnInit {
         )
       : [];
 
-    let queryParamGroups = compatibleOptions
+    let queryParamGroups: FormGroup<KeyValueFormControls>[] = compatibleOptions
       ? (compatibleOptions.queryParams ?? []).map(queryParam =>
           this.makeKeyValueGroup({
             key: queryParam.key,
@@ -88,13 +95,13 @@ export class EditProviderDialogComponent implements OnInit {
       : [];
 
     this.editProviderForm = this.fb.group({
-      name: [
+      name: this.fb.control<string>(
         provider.name,
         isOpenAICompatible
           ? [Validators.required, Validators.maxLength(100)]
           : []
-      ],
-      baseURL: [
+      ),
+      baseURL: this.fb.control<string>(
         compatibleOptions?.baseURL,
         isOpenAICompatible
           ? [
@@ -103,20 +110,23 @@ export class EditProviderDialogComponent implements OnInit {
               ValidationService.openAiCompatibleBaseUrlValidator
             ]
           : []
-      ],
-      apiKey: [
+      ),
+      apiKey: this.fb.control<string>(
         undefined,
         provider.type === 'OpenAI' || provider.type === 'Anthropic'
           ? [Validators.required]
           : []
-      ],
+      ),
       headers: this.fb.array(headerGroups),
       queryParams: this.fb.array(queryParamGroups)
     });
   }
 
-  getHeaders(): FormArray {
-    return this.editProviderForm.controls['headers'] as FormArray;
+  getHeaders(): FormArray<FormGroup<KeyValueFormControls>> {
+    let headers: FormArray<FormGroup<KeyValueFormControls>> =
+      this.editProviderForm.controls['headers'];
+
+    return headers;
   }
 
   addHeader() {
@@ -128,8 +138,11 @@ export class EditProviderDialogComponent implements OnInit {
     this.getHeaders().removeAt(index);
   }
 
-  getQueryParams(): FormArray {
-    return this.editProviderForm.controls['queryParams'] as FormArray;
+  getQueryParams(): FormArray<FormGroup<KeyValueFormControls>> {
+    let queryParams: FormArray<FormGroup<KeyValueFormControls>> =
+      this.editProviderForm.controls['queryParams'];
+
+    return queryParams;
   }
 
   addQueryParam() {
@@ -142,11 +155,14 @@ export class EditProviderDialogComponent implements OnInit {
   }
 
   getControl(item: {
-    group: AbstractControl;
-    controlName: string;
-  }): AbstractControl {
+    group: FormGroup<KeyValueFormControls>;
+    controlName: keyof KeyValueFormControls;
+  }): FormControl<string> {
     let { group, controlName } = item;
-    return group.get(controlName);
+
+    let control: FormControl<string> = group.controls[controlName];
+
+    return control;
   }
 
   save() {
@@ -168,14 +184,12 @@ export class EditProviderDialogComponent implements OnInit {
         options: {
           baseURL: this.editProviderForm.value.baseURL.trim(),
           apiKey: this.editProviderForm.value.apiKey?.trim() || undefined,
-          headers: this.editProviderForm.value.headers.map(
-            (header: { key: string; value: string }) => ({
-              key: header.key.trim(),
-              value: header.value
-            })
-          ),
+          headers: this.editProviderForm.value.headers.map(header => ({
+            key: header.key.trim(),
+            value: header.value
+          })),
           queryParams: this.editProviderForm.value.queryParams.map(
-            (queryParam: { key: string; value: string }) => ({
+            queryParam => ({
               key: queryParam.key.trim(),
               value: queryParam.value
             })
@@ -245,11 +259,17 @@ export class EditProviderDialogComponent implements OnInit {
     key?: string;
     value?: string;
     isValueRequired?: boolean;
-  }) {
+  }): FormGroup<KeyValueFormControls> {
     let { key, value, isValueRequired = true } = item;
-    return this.fb.group({
-      key: [key, [Validators.required]],
-      value: [value, isValueRequired === true ? [Validators.required] : []]
+
+    let group: FormGroup<KeyValueFormControls> = this.fb.group({
+      key: this.fb.control<string>(key, [Validators.required]),
+      value: this.fb.control<string>(
+        value,
+        isValueRequired === true ? [Validators.required] : []
+      )
     });
+
+    return group;
   }
 }

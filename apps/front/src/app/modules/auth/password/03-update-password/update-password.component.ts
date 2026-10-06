@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  Validators
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -23,20 +28,20 @@ export class UpdatePasswordComponent implements OnInit {
 
   passwordResetToken: string;
 
-  setPasswordForm: FormGroup = this.fb.group(
+  setPasswordForm: FormGroup<{
+    newPassword: FormControl<string>;
+    confirmPassword: FormControl<string>;
+  }> = this.fb.group(
     {
-      newPassword: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(255)
-        ]
-      ],
-      confirmPassword: ['', [Validators.required]]
+      newPassword: this.fb.control<string>('', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(255)
+      ]),
+      confirmPassword: this.fb.control<string>('', [Validators.required])
     },
     {
-      validator: ValidationService.passwordMatchValidator
+      validators: ValidationService.passwordMatchValidator
     }
   );
 

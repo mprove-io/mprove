@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -53,7 +54,9 @@ export class NewFileDialogComponent implements OnInit {
 
   @ViewChild('name') nameElement: ElementRef;
 
-  newForm: FormGroup;
+  newForm: FormGroup<{
+    name: FormControl<string>;
+  }>;
 
   isFolder = false;
 
@@ -71,14 +74,11 @@ export class NewFileDialogComponent implements OnInit {
     let name: string;
 
     this.newForm = this.fb.group({
-      name: [
-        name,
-        [
-          Validators.required,
-          ValidationService.lowerCaseValidator,
-          Validators.maxLength(255)
-        ]
-      ]
+      name: this.fb.control<string>(name, [
+        Validators.required,
+        ValidationService.lowerCaseValidator,
+        Validators.maxLength(255)
+      ])
     });
   }
 

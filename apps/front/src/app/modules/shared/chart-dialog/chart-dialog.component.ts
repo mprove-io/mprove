@@ -7,7 +7,12 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormControl,
+  type FormGroup,
+  ReactiveFormsModule
+} from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
@@ -86,7 +91,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
   title: string;
 
-  groupByFieldForm: FormGroup;
+  groupByFieldForm: FormGroup<{
+    groupByField: FormControl<string>;
+  }>;
 
   dimensionsPlusEmpty: ModelFieldY[] = [];
   fieldsListLoading = false;
@@ -150,7 +157,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.title = this.ref.data.mconfig.chart?.title;
 
     this.groupByFieldForm = this.fb.group({
-      groupByField: [undefined]
+      groupByField: this.fb.control<string>(undefined)
     });
 
     this.canAccessModel = this.ref.data.canAccessModel;

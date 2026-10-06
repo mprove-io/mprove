@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -55,7 +56,9 @@ export class CommitDialogComponent implements OnInit {
 
   @ViewChild('commitMessage') commitMessageElement: ElementRef;
 
-  commitForm: FormGroup;
+  commitForm: FormGroup<{
+    message: FormControl<string>;
+  }>;
 
   isSessionRepo = false;
 
@@ -75,7 +78,10 @@ export class CommitDialogComponent implements OnInit {
     let epochTs = Math.floor(new Date().getTime() / 1000);
 
     this.commitForm = this.fb.group({
-      message: [`c${epochTs}`, [Validators.required, Validators.maxLength(255)]]
+      message: this.fb.control<string>(`c${epochTs}`, [
+        Validators.required,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewChildren
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, type FormGroup } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
@@ -69,7 +69,9 @@ export class ReportEditListenersDialogComponent implements OnInit {
     })
   );
 
-  listenForm: FormGroup = this.fb.group({});
+  listenForm: FormGroup<Record<string, FormControl<string>>> = this.fb.group(
+    {}
+  );
 
   constructor(
     public ref: DialogRef<ReportEditListenersDialogData>,
@@ -192,7 +194,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
                 swap[dFieldId].forEach((id, ind) => {
                   this.listenForm.addControl(
                     `${rowIndex}-----${dFieldId}-----${ind}`,
-                    new FormControl(id)
+                    new FormControl<string>(id)
                   );
                 });
               });
@@ -230,7 +232,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     this.listenForm.addControl(
       `${rowIndex}-----${reportFieldId}-----${row.mconfigListenSwap[reportFieldId].length}`,
-      new FormControl(undefined)
+      new FormControl<string>(undefined)
     );
 
     row.mconfigListenSwap[reportFieldId].push(undefined);

@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -45,7 +46,9 @@ export class EditOrgOwnerDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  editOrgOwnerForm: FormGroup;
+  editOrgOwnerForm: FormGroup<{
+    ownerEmail: FormControl<string>;
+  }>;
 
   orgId: string;
 
@@ -59,10 +62,11 @@ export class EditOrgOwnerDialogComponent implements OnInit {
 
   ngOnInit() {
     this.editOrgOwnerForm = this.fb.group({
-      ownerEmail: [
-        this.ref.data.ownerEmail,
-        [Validators.required, Validators.email, Validators.maxLength(255)]
-      ]
+      ownerEmail: this.fb.control<string>(this.ref.data.ownerEmail, [
+        Validators.required,
+        Validators.email,
+        Validators.maxLength(255)
+      ])
     });
 
     setTimeout(() => {

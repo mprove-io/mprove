@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
+  type FormControl,
+  type FormGroup,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
@@ -41,7 +42,9 @@ export class AddRoleDialogComponent implements OnInit {
   onEscKeyUp() {
     this.ref.close();
   }
-  addRoleForm: FormGroup;
+  addRoleForm: FormGroup<{
+    role: FormControl<string>;
+  }>;
 
   projectId: string;
 
@@ -61,7 +64,7 @@ export class AddRoleDialogComponent implements OnInit {
     );
 
     this.addRoleForm = this.fb.group({
-      role: [undefined, [Validators.required]]
+      role: this.fb.control<string>(undefined, [Validators.required])
     });
 
     setTimeout(() => {
