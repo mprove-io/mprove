@@ -141,7 +141,6 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.type, 'Failure');
     assert.ok(resp.type === 'Failure');
     assert.equal(resp.error.code, 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER');
 

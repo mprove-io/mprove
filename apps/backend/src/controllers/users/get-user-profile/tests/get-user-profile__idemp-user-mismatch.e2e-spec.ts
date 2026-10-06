@@ -107,7 +107,6 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.type, 'Failure');
     assert.ok(resp2.type === 'Failure');
     assert.equal(resp2.error?.code, 'BACKEND_IDEMP_USER_MISMATCH');
 

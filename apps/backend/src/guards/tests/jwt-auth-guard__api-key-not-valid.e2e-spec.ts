@@ -100,7 +100,6 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.type, 'Failure');
     assert.ok(resp.type === 'Failure');
     assert.equal(resp.error.code, 'BACKEND_API_KEY_NOT_VALID');
 

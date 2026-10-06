@@ -91,7 +91,6 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.type, 'Failure');
     assert.ok(resp.type === 'Failure');
     assert.equal(resp.error.code, 'BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED');
 
