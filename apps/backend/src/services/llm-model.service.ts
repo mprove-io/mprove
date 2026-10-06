@@ -13,6 +13,7 @@ import {
   type CodexModelsResult,
   CodexService
 } from '#backend/services/codex.service';
+import type { ModelCatalogProviderType } from '#backend/types/model-catalog-provider-type';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
@@ -719,5 +720,3 @@ function isCodexModelSupportedByOpencode(item: { modelId: string }): boolean {
 
   return isSupported;
 }
-
-import type { ModelCatalogProviderType } from '#backend/types/model-catalog-provider-type';

@@ -9,6 +9,7 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { DataRow } from '#common/types/front/report/row/data-row';
 import { getTimeSpecWord } from '#front/app/functions/get-timespec-word';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -342,5 +343,3 @@ export class DataRendererComponent implements ICellRendererAngularComp {
     private timeService: TimeService
   ) {}
 }
-
-import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
