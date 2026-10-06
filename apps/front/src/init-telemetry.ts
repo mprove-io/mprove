@@ -13,6 +13,7 @@ import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
+import type { ToBackendTelemetryRoute } from '#common/types/backend/request/to-backend-telemetry-route';
 import { environment } from '#front/environments/environment';
 
 export function initTelemetry(): void {
@@ -26,7 +27,7 @@ export function initTelemetry(): void {
   });
 
   let traceExporter = new OTLPTraceExporter({
-    url: `${environment.httpUrl}/api/ToBackendTelemetryTraces`,
+    url: `${environment.httpUrl}/${'api/ToBackendTelemetryTraces' satisfies ToBackendTelemetryRoute}`,
     headers: async () => {
       let token = localStorage.getItem(LOCAL_STORAGE_TOKEN);
       return { Authorization: `Bearer ${token}` };

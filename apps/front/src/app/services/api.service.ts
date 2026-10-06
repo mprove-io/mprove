@@ -78,7 +78,7 @@ export class ApiService {
   }): Observable<ToBackendResponseForRoute<TRoute>> {
     let { route, payload, showSpinner } = item;
 
-    let bypassAuth: string[] = ['api/ToBackendLoginUser'];
+    let bypassAuth: ToBackendRoute[] = ['api/ToBackendLoginUser'];
 
     let headers: HttpHeaders = new HttpHeaders({
       'Content-Type': 'application/json',

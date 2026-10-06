@@ -13,6 +13,7 @@ import { RESTRICTED_USER_EMAIL } from '#common/constants/top';
 
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 
 @Injectable()
 export class ThrottlerUserIdGuard extends ThrottlerGuard {
@@ -31,14 +32,11 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
 
     let path = request.route?.path || request.url.split('?')[0]; // Get clean path
 
-    if (
-      [
-        'api/ToBackendTelemetryTraces',
-        'api/ToBackendTelemetryMetrics',
-        'api/ToBackendTelemetryLogs'
-      ].indexOf(path.slice(1)) > -1 &&
-      request.headers.authorization === 'Bearer null'
-    ) {
+    let isTelemetryRoute: boolean = toBackendTelemetryRouteValues.some(
+      route => route === path.slice(1)
+    );
+
+    if (isTelemetryRoute && request.headers.authorization === 'Bearer null') {
       // console.log('skip ThrottlerUserIdGuard');
       return true;
     }
