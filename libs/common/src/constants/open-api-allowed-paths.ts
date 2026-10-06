@@ -10,6 +10,5 @@ const telemetryRoutes: ToBackendTelemetryRoute[] = [
 export const OPEN_API_ALLOWED_PATHS: Set<string> = new Set([
   ...Object.keys(toBackendRouteOperations).map(route => `/${route}`),
   ...telemetryRoutes.map(route => `/${route}`),
-  '/api/ToBackendCheck',
   '/api/sse/session-events'
 ]);
