@@ -64,7 +64,7 @@ export class DeleteGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteGivenResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.givensQuery.update({ givens: resp.output.givens });
           }

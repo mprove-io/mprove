@@ -136,7 +136,7 @@ export class DashboardService {
       })
       .pipe(
         tap((resp: ToBackendCreateDraftDashboardResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             resp.output.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
                 mconfig: tile.mconfig,
@@ -220,7 +220,7 @@ export class DashboardService {
       })
       .pipe(
         tap((resp: ToBackendEditDraftDashboardResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             resp.output.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
                 mconfig: tile.mconfig,
@@ -257,7 +257,7 @@ export class DashboardService {
       })
       .pipe(
         tap((resp: ToBackendDeleteDraftDashboardsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.dashboardUnitsQuery.update({
               dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
               dashboardSpaceNodes:

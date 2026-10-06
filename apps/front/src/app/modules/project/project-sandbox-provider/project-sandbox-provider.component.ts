@@ -68,7 +68,7 @@ export class ProjectSandboxProviderComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetProjectSandboxProviderResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.projectQuery.update(resp.output.project);
           }
         }),

@@ -27,6 +27,7 @@ import {
   SPECIAL_ERROR
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeToBackendRequest } from '#common/functions/make-to-backend-request/make-to-backend-request';
 import type { ToBackendInputForRoute } from '#common/types/backend/request/to-backend-input-for-route';
@@ -164,13 +165,23 @@ export class ApiService {
             })
           : req.body,
       response: Object.assign({}, res, { headers: undefined }),
-      message:
-        res.status !== 201
+      message: isUndefined(res.body)
+        ? ('FRONT_RESPONSE_BODY_IS_EMPTY' satisfies Er)
+        : res.status !== 201
           ? ('FRONT_RESPONSE_CODE_IS_NOT_201' satisfies Er)
-          : res.body?.type !== 'Success'
+          : res.body.type !== 'Success'
             ? ('FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK' satisfies Er)
-            : undefined
+            : undefined,
+      description: isUndefined(res.body)
+        ? 'The API returned an empty response body.'
+        : undefined
     };
+
+    if (isUndefined(res.body)) {
+      this.myDialogService.showError({ errorData: errorData, isThrow: true });
+
+      throw new Error(SPECIAL_ERROR);
+    }
 
     let infoErrorMessage: string =
       res.body?.type === 'Failure' ? res.body.error.code : undefined;
@@ -545,7 +556,7 @@ export class ApiService {
       showSpinner: showSpinner
     }).pipe(
       map((resp: ToBackendGetReportsResponse) => {
-        if (resp?.type === 'Success') {
+        if (resp.type === 'Success') {
           let output: ToBackendGetReportsOutput = resp.output;
 
           this.memberQuery.update(output.userMember);
@@ -569,7 +580,7 @@ export class ApiService {
 
           return true;
         } else if (
-          resp?.type === 'Failure' &&
+          resp.type === 'Failure' &&
           resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
         ) {
           this.router.navigate([

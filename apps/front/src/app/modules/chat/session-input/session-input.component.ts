@@ -388,7 +388,7 @@ export class SessionInputComponent implements OnChanges {
       })
       .pipe(
         tap((resp: ToBackendGetLlmModelsWithProviderResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let state = this.sessionModelsQuery.getValue();
 
             let updatedModelsOpencode =

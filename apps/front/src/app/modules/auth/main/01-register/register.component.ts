@@ -88,7 +88,7 @@ export class RegisterComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCheckSignUpResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.isRegisterOnlyInvitedUsers =
               resp.output.isRegisterOnlyInvitedUsers;
 
@@ -132,7 +132,7 @@ export class RegisterComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendRegisterUserResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let user = resp.output.user;
 
             this.userQuery.update(user);

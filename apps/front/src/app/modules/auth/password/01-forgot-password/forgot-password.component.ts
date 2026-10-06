@@ -68,7 +68,7 @@ export class ForgotPasswordComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendResetUserPasswordResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             localStorage.setItem('PASSWORD_RESET_EMAIL', email);
             this.router.navigate([PATH_PASSWORD_RESET_SENT]);
           }

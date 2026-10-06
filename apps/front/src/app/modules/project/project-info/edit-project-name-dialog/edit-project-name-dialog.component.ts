@@ -93,7 +93,7 @@ export class EditProjectNameDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetProjectInfoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let project = resp.output.project;
             this.projectQuery.update(project);
             this.navQuery.updatePart({

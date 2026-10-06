@@ -113,7 +113,7 @@ export class EditRoleGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditRoleGivenResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.rolesQuery.update({ roles: resp.output.roles });
           }

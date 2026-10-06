@@ -100,7 +100,7 @@ export class EditPhotoDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetAvatarResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.navQuery.updatePart({
               avatarSmall: resp.output.avatarSmall,
               avatarBig: resp.output.avatarBig

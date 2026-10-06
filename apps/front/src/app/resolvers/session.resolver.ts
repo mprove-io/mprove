@@ -37,7 +37,7 @@ export class SessionResolver {
       })
       .pipe(
         map((resp: ToBackendGetSessionResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.sessionEventsService.resetAll();
 
             if (resp.output.sessions.length > 0) {

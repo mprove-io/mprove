@@ -266,7 +266,7 @@ export class EditReportInfoDialogComponent implements OnInit {
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyReportResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               if (isUndefined(resp.output.reportSpaceNodes)) {
                 this.spinner.hide(APP_SPINNER_NAME);
                 return;
@@ -308,7 +308,7 @@ export class EditReportInfoDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );

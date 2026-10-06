@@ -59,7 +59,7 @@ export class DeleteUserDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteUserResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.router.navigate([PATH_USER_DELETED]);
           }
         }),

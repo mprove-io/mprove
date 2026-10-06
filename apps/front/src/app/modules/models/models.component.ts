@@ -813,7 +813,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
               .pipe(
                 tap((resp: ToBackendGetQueryResponse) => {
                   if (
-                    resp?.type === 'Success' &&
+                    resp.type === 'Success' &&
                     this.isQueryIdTheSameAndStatusOrServerTsChanged(
                       resp.output.query
                     )
@@ -1245,7 +1245,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let { runningQueries } = resp.output;
 
             if (
@@ -1295,7 +1295,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesDryResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let { validQueryEstimates, errorQueries } = resp.output;
 
             if (errorQueries.length > 0) {
@@ -1347,7 +1347,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendCancelQueriesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let { queries } = resp.output;
             if (
               queries.length > 0 &&
@@ -1965,7 +1965,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp?.type === 'Success';
+          let isOk = resp.type === 'Success';
 
           if (isOk === false) {
             this.chartsQuery.updatePart({

@@ -71,7 +71,7 @@ export class DeleteProjectDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteProjectResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             localStorage.setItem(
               LOCAL_STORAGE_DELETED_PROJECT_NAME,
               this.ref.data.projectName

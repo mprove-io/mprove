@@ -196,7 +196,7 @@ export class ProjectMenuComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetUserGivensResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
 

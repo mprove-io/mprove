@@ -64,7 +64,7 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetOrgUsersResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.usersQuery.update({
               users: resp.output.orgUsersList,
               total: resp.output.total

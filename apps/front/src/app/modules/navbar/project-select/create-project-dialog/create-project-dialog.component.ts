@@ -112,7 +112,7 @@ export class CreateProjectDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGenerateProjectRemoteKeyResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.noteId = resp.output.noteId;
             this.publicKey = resp.output.publicKey;
             this.maskedPublicKey =
@@ -167,7 +167,7 @@ export class CreateProjectDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateProjectResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               resp.output.project.orgId,

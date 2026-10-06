@@ -186,7 +186,7 @@ export class CreateBranchDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateBranchResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               this.ref.data.orgId,

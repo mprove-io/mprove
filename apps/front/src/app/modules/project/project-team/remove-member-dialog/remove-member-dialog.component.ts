@@ -61,7 +61,7 @@ export class RemoveMemberDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteMemberResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let teamState = this.teamQuery.getValue();
 
             this.teamQuery.update({

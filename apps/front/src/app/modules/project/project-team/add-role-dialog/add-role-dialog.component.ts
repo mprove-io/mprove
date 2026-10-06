@@ -102,7 +102,7 @@ export class AddRoleDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let teamState = this.teamQuery.getValue();
 
             teamState.members[this.ref.data.i] = resp.output.member;

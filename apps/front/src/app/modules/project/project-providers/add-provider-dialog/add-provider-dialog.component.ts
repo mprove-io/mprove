@@ -297,7 +297,7 @@ export class AddProviderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateProviderResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
           let providers = this.providersQuery.getValue().providers;

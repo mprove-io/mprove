@@ -104,7 +104,7 @@ export class EditNameDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetUserNameResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let user = resp.output.user as User;
             this.userQuery.update(user);
           }

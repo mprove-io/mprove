@@ -71,7 +71,7 @@ export class DeleteOrgDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteOrgResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             localStorage.setItem(
               LOCAL_STORAGE_DELETED_ORG_NAME,
               this.ref.data.orgName

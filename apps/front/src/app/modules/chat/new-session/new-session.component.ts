@@ -120,7 +120,7 @@ export class NewSessionComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetBranchesListResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.branches = resp.output.branchesList
               .filter(b => b.repoType === 'production')
               .map(b => ({
@@ -157,7 +157,7 @@ export class NewSessionComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetEnvsListResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.envs = resp.output.envsList;
           }
           this.envsLoading = false;
@@ -318,7 +318,7 @@ export class NewSessionComponent implements OnInit {
       partId
     } = item;
 
-    if (resp?.type === 'Success') {
+    if (resp.type === 'Success') {
       let { sessionId, repoId, branchId, envId } = resp.output;
 
       if (!isSessionExplorer) {

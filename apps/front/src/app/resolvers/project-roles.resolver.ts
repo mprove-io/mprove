@@ -65,7 +65,7 @@ export class ProjectRolesResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetRolesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             let newSortedRoles = resp.output.roles.sort((a, b) =>

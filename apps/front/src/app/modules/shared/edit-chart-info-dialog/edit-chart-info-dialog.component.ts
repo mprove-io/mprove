@@ -260,7 +260,7 @@ export class EditChartInfoDialogComponent implements OnInit {
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyChartResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               let newChart = resp.output.chart;
 
               if (isDefined(newChart)) {
@@ -297,7 +297,7 @@ export class EditChartInfoDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );

@@ -97,7 +97,7 @@ export class EditGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditGivenResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.givensQuery.update({ givens: resp.output.givens });
           }

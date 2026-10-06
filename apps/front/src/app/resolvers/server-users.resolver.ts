@@ -35,7 +35,7 @@ export class ServerUsersResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetServerUsersResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.serverUsersQuery.update({
               serverUsers: resp.output.serverUsersList,
               total: resp.output.total

@@ -88,7 +88,7 @@ export class DeleteBranchDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteBranchResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               this.ref.data.orgId,

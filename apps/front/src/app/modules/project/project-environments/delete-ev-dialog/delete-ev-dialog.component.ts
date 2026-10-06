@@ -67,7 +67,7 @@ export class DeleteEvDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteEnvVarResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
               environments: resp.output.envs

@@ -93,7 +93,7 @@ export class AddEnvironmentDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateEnvResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
               environments: resp.output.envs

@@ -144,7 +144,7 @@ export class AddEnvUserDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateEnvUserResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendCreateEnvUserOutput = resp.output;
 
             this.memberQuery.update(output.userMember);

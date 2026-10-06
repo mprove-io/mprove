@@ -28,7 +28,7 @@ export class ProfileResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetUserProfileResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let user = resp.output.user;
             this.userQuery.update(user);
             return true;

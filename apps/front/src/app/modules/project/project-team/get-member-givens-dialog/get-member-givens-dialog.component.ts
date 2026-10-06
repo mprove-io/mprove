@@ -55,7 +55,7 @@ export class GetMemberGivensDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetMemberGivensResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberGivens = resp.output.memberGivens;
             this.cd.detectChanges();
           }

@@ -164,7 +164,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let runningQuery = resp.output.runningQueries[0];
 
             this.query = Object.assign(runningQuery, {
@@ -206,7 +206,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
           return of(undefined);
         }),
         tap((resp: ToBackendGetQueryResponse | undefined) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.query = resp.output.query;
             this.updateChartData();
 

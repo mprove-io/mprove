@@ -261,7 +261,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendGetModelsResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               models = resp.output.models.filter(
                 y => y.filePath === this.secondFileNodeId
               );
@@ -315,7 +315,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
         })
         .pipe(
           map((resp: ToBackendGetChartResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               this.memberQuery.update(resp.output.userMember);
 
               if (isDefined(resp.output.chart)) {
@@ -404,7 +404,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
           })
           .pipe(
             tap(async (resp: ToBackendGetFileResponse) => {
-              if (resp?.type === 'Success') {
+              if (resp.type === 'Success') {
                 let repoState = this.repoQuery.getValue();
                 // biome-ignore format: theme breaks
                 let newRepoState: RepoState = Object.assign(resp.output.repo, <RepoState>{

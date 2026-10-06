@@ -78,7 +78,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.models = resp.output.models.filter(y => y.hasAccess === true);
 
             this.spinner.hide(this.spinnerName);

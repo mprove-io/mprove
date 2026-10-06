@@ -131,7 +131,7 @@ export class AddGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateGivenResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.givensQuery.update({ givens: resp.output.givens });
           }

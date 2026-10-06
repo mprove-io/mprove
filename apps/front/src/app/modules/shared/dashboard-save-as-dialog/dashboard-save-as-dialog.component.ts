@@ -366,7 +366,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveCreateDashboardResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             if (isUndefined(resp.output.dashboardSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
@@ -423,7 +423,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveModifyDashboardResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             if (isUndefined(resp.output.dashboardSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
@@ -528,7 +528,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );

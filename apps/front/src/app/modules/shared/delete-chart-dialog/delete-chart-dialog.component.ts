@@ -79,7 +79,7 @@ export class DeleteChartDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteChartResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.chartsQuery.update({
               chartUnitDrafts: resp.output.chartUnitDrafts,
               chartSpaceNodes: resp.output.chartSpaceNodes

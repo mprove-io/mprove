@@ -101,7 +101,7 @@ export class RepoOptionsComponent {
       })
       .pipe(
         map((resp: ToBackendRevertRepoToLastCommitResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
@@ -149,7 +149,7 @@ export class RepoOptionsComponent {
       })
       .pipe(
         map((resp: ToBackendRevertRepoToRemoteResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
@@ -198,7 +198,7 @@ export class RepoOptionsComponent {
       })
       .pipe(
         map((resp: ToBackendGetRepoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
@@ -246,7 +246,7 @@ export class RepoOptionsComponent {
       })
       .pipe(
         map((resp: ToBackendPullRepoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
@@ -294,7 +294,7 @@ export class RepoOptionsComponent {
       })
       .pipe(
         map((resp: ToBackendValidateFilesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({

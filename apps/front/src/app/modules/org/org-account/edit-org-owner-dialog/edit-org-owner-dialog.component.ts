@@ -100,7 +100,7 @@ export class EditOrgOwnerDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetOrgOwnerResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let org = resp.output.org;
             localStorage.setItem(
               LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,

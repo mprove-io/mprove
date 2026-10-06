@@ -230,7 +230,7 @@ export class EditProviderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditProviderResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
 

@@ -678,7 +678,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   }) {
     let { resp } = item;
 
-    if (resp?.type !== 'Success') {
+    if (resp.type !== 'Success') {
       return;
     }
 

@@ -84,7 +84,7 @@ export class OrgUsersComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetOrgUsersResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.usersQuery.update({
               users: resp.output.orgUsersList,
               total: resp.output.total

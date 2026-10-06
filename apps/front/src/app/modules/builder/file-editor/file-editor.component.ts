@@ -1092,7 +1092,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       })
       .pipe(
         tap((resp: ToBackendSaveFileResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
@@ -1233,7 +1233,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         })
         .pipe(
           tap((resp: ToBackendGetModelsResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               models = resp.output.models.filter(
                 y => y.filePath === this.file.fileNodeId
               );
@@ -1287,7 +1287,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         })
         .pipe(
           map((resp: ToBackendGetChartResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               this.memberQuery.update(resp.output.userMember);
 
               if (isDefined(resp.output.chart)) {

@@ -112,7 +112,7 @@ export class ChartService {
       })
       .pipe(
         tap((resp: ToBackendCreateDraftChartResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let chart = resp.output.chart;
 
             let chartsState = this.chartsQuery.getValue();
@@ -161,7 +161,7 @@ export class ChartService {
         tap((resp: ToBackendEditDraftChartResponse) => {
           this.spinner.hide(APP_SPINNER_NAME);
 
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let chart = resp.output.chart;
 
             let chartsState = this.chartsQuery.getValue();
@@ -198,7 +198,7 @@ export class ChartService {
       })
       .pipe(
         tap((resp: ToBackendDeleteDraftChartsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let chartsState = this.chartsQuery.getValue();
 
             this.chartsQuery.update({

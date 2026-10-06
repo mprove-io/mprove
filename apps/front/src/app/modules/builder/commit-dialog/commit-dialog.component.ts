@@ -116,7 +116,7 @@ export class CommitDialogComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendCommitRepoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
 
             let respSession = resp.output.session;

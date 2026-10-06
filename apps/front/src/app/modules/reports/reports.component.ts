@@ -816,7 +816,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp: ToBackendGetReportResponse) => {
           if (
-            resp?.type === 'Success' &&
+            resp.type === 'Success' &&
             this.report.reportId === resp.output.report.reportId
           ) {
             this.memberQuery.update(resp.output.userMember);
@@ -858,7 +858,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let { runningQueries } = resp.output;
             if (
               runningQueries
@@ -1221,7 +1221,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp?.type === 'Success';
+          let isOk = resp.type === 'Success';
 
           if (isOk === false) {
             this.reportsQuery.updatePart({

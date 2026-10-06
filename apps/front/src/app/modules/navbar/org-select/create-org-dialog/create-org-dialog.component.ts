@@ -105,7 +105,7 @@ export class CreateOrgDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateOrgResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               resp.output.org.orgId,

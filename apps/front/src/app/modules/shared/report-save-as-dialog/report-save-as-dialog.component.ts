@@ -330,7 +330,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveCreateReportResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             if (isUndefined(resp.output.reportSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
@@ -400,7 +400,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveModifyReportResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             if (isUndefined(resp.output.reportSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
@@ -461,7 +461,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let newSortedRoles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );

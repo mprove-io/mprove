@@ -84,7 +84,7 @@ export class UpdatePasswordComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendUpdateUserPasswordResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.router.navigate([PATH_NEW_PASSWORD_WAS_SET]);
           }
         }),

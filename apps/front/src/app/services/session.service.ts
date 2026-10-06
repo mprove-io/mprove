@@ -339,7 +339,7 @@ export class SessionService {
           })
         ),
         tap((resp: ToBackendGetSessionResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendGetSessionOutput = resp.output;
 
             this.applySessionResponse({
@@ -390,7 +390,7 @@ export class SessionService {
 
           this.ssePhase = 'idle';
 
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             console.log('connectSse - get ticket - ok');
 
             this.connectSseWithTicket({
@@ -544,7 +544,7 @@ export class SessionService {
 
           this.ssePhase = 'idle';
 
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendGetSessionOutput = resp.output;
 
             this.lastProcessedEventIndex = output.lastEventIndex;

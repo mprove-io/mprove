@@ -359,7 +359,7 @@ export class AddLlmModelDialogComponent implements OnInit {
           );
 
           let modelParts: SelectableLlmModelPart[] =
-            resp?.type === 'Success'
+            resp.type === 'Success'
               ? resp.output.modelParts.map(modelPart => {
                   let isAlreadySelected: boolean = configuredModelIds.includes(
                     modelPart.modelId
@@ -388,7 +388,7 @@ export class AddLlmModelDialogComponent implements OnInit {
           this.modelParts = modelParts;
 
           this.modelsErrorMessage =
-            resp?.type === 'Success' ? resp.output.errorMessage : undefined;
+            resp.type === 'Success' ? resp.output.errorMessage : undefined;
 
           this.modelsLoading = false;
 
@@ -474,7 +474,7 @@ export class AddLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateLlmModelResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let provider: Provider = resp.output.provider;
 
             let providers: Provider[] = this.providersQuery

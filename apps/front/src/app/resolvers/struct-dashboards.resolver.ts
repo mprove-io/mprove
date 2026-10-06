@@ -76,7 +76,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetDashboardsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             this.structQuery.update(resp.output.struct);
@@ -92,7 +92,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
 
             return true;
           } else if (
-            resp?.type === 'Failure' &&
+            resp.type === 'Failure' &&
             resp.error.code === 'BACKEND_BRANCH_DOES_NOT_EXIST'
           ) {
             this.router.navigate([

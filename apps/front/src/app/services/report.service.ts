@@ -138,7 +138,7 @@ export class ReportService {
       })
       .pipe(
         tap((resp: ToBackendCreateDraftReportResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let report = resp.output.report;
 
             this.reportsQuery.update({
@@ -195,7 +195,7 @@ export class ReportService {
       })
       .pipe(
         tap((resp: ToBackendEditDraftReportResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             this.structQuery.update(resp.output.struct);
@@ -234,7 +234,7 @@ export class ReportService {
       })
       .pipe(
         tap((resp: ToBackendDeleteDraftReportsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.reportsQuery.update({
               reportUnitDrafts: resp.output.reportUnitDrafts,
               reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes

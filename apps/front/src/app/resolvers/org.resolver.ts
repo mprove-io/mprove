@@ -35,7 +35,7 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetOrgResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let org = resp.output.org;
 
             this.navQuery.updatePart({

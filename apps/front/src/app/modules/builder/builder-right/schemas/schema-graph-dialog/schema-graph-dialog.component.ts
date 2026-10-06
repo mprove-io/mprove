@@ -675,11 +675,11 @@ export class SchemaGraphDialogComponent implements OnInit {
         map((resp: ToBackendGetConnectionSampleResponse) => {
           setTimeout(() => {
             if (
-              resp?.type === 'Success' &&
+              resp.type === 'Success' &&
               isDefined(resp.output.errorMessage)
             ) {
               this.sampleErrorMessage = resp.output.errorMessage;
-            } else if (resp?.type === 'Success') {
+            } else if (resp.type === 'Success') {
               this.sampleColumnNames = resp.output.columnNames;
               this.sampleRows = resp.output.rows;
               this.sampleErrorMessage = undefined;

@@ -186,7 +186,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendDuplicateMconfigAndQueryResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               let { mconfig, query } = resp.output;
 
               this.mconfig = mconfig;
@@ -250,7 +250,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               })
               .pipe(
                 tap((resp: ToBackendGetQueryResponse) => {
-                  if (resp?.type === 'Success') {
+                  if (resp.type === 'Success') {
                     this.query = resp.output.query;
 
                     this.qData =
@@ -360,7 +360,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let { runningQueries } = resp.output;
 
             this.query = Object.assign(runningQueries[0], {
@@ -464,7 +464,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.dimensionsPlusEmpty = [
               emptyField,
               ...resp.output.model.fields
@@ -531,7 +531,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendGroupMetricByDimensionResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               let { mconfig, query } = resp.output;
 
               this.mconfig = this.setGroupMetricChartType({
@@ -582,7 +582,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendGetQueryResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               this.mconfig = newMconfig;
               this.query = resp.output.query;
 

@@ -66,7 +66,7 @@ export class ProjectEnvironmentsResolver
       })
       .pipe(
         map((resp: ToBackendGetEnvsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             let newSortedEnvironments = resp.output.envs.sort((a, b) =>

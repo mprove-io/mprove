@@ -123,7 +123,7 @@ export class LoginComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendLoginUserResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let user = resp.output.user;
             let token = resp.output.token;
 

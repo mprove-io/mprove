@@ -149,7 +149,7 @@ export class ProjectProvidersComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendToggleProviderResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
 

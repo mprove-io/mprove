@@ -63,7 +63,7 @@ export class ProjectInfoResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetProjectResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             this.projectQuery.update(resp.output.project);

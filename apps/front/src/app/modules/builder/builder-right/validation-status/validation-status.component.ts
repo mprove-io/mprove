@@ -85,7 +85,7 @@ export class ValidationStatusComponent {
       })
       .pipe(
         tap((resp: ToBackendValidateFilesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({

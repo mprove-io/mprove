@@ -93,7 +93,7 @@ export class EditOrgNameDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetOrgInfoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let org = resp.output.org;
             this.orgQuery.update(org);
             this.navQuery.updatePart({

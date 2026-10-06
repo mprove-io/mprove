@@ -97,7 +97,7 @@ export class AddEvDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateEnvVarResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
               environments: resp.output.envs

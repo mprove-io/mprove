@@ -116,7 +116,7 @@ export class ProjectTeamComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetMembersResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.teamQuery.update(resp.output);
             this.rolesQuery.update({
               roles: resp.output.roles
@@ -208,7 +208,7 @@ export class ProjectTeamComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let teamState = this.teamQuery.getValue();
             teamState.members[i] = resp.output.member;
             this.teamQuery.update({
@@ -264,7 +264,7 @@ export class ProjectTeamComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let teamState = this.teamQuery.getValue();
             teamState.members[i] = resp.output.member;
 

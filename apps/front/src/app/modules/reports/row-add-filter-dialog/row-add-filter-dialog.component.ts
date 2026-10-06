@@ -127,7 +127,7 @@ export class RowAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let restrictedFilterFieldIds =
               metric.modelType === 'Malloy'
                 ? [

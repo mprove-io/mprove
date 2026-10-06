@@ -124,7 +124,7 @@ export class UiService {
       })
       .pipe(
         tap((resp: ToBackendSetUserUiResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
           }
         }),
         take(1)

@@ -120,7 +120,7 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendResetUserPasswordResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             localStorage.setItem('PASSWORD_RESET_EMAIL', email);
             this.router.navigate([PATH_PASSWORD_RESET_SENT_AUTH]);
           }
@@ -160,7 +160,7 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGenerateUserApiKeyResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.userQuery.updatePart({
               apiKeyPrefix: resp.output.apiKeyPrefix
             });
@@ -185,7 +185,7 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteUserApiKeyResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.userQuery.updatePart({
               apiKeyPrefix: undefined
             });
@@ -219,7 +219,7 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteUserCodexAuthResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.userQuery.update(resp.output.user);
           }
         }),

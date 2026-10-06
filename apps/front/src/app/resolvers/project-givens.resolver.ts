@@ -63,7 +63,7 @@ export class ProjectGivensResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetGivensResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             let newSortedGivens = resp.output.givens.sort((a, b) =>

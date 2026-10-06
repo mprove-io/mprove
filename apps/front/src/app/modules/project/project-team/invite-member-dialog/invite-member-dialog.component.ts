@@ -90,7 +90,7 @@ export class InviteMemberDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateMemberResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let member = resp.output.member;
             let teamState = this.teamQuery.getValue();
 

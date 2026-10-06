@@ -380,7 +380,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.storeModels = resp.output.models.filter(
               model => model.type === 'Store'
             );
@@ -440,7 +440,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.storeModel = resp.output.model;
 
             this.storeFiltersList = resp.output.model.fields
@@ -504,7 +504,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetSuggestFieldsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.suggestFields = [
               this.emptySuggestField,
               ...resp.output.suggestFields

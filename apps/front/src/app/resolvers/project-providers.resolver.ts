@@ -63,7 +63,7 @@ export class ProjectProvidersResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetProvidersResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return false;
           }
 

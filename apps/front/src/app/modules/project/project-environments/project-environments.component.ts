@@ -138,7 +138,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteEnvUserResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
               environments: resp.output.envs
@@ -177,7 +177,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
               environments: resp.output.envs
@@ -206,7 +206,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
               environments: resp.output.envs
@@ -235,7 +235,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
               environments: resp.output.envs

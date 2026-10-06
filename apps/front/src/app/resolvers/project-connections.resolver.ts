@@ -65,7 +65,7 @@ export class ProjectConnectionsResolver
       })
       .pipe(
         map((resp: ToBackendGetConnectionsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             this.connectionsQuery.update({

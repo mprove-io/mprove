@@ -89,7 +89,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetNavResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let {
               avatarSmall,
               avatarBig,

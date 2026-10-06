@@ -1049,7 +1049,7 @@ export class AddConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.testConnectionResult = resp.output.testConnectionResult;
 
             this.cd.detectChanges();
@@ -1088,7 +1088,7 @@ export class AddConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.testInternalHostResult = resp.output.testConnectionResult;
 
             this.cd.detectChanges();
@@ -1126,7 +1126,7 @@ export class AddConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateConnectionResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let connection = resp.output.connection;
 
             let connections = this.connectionsQuery.getValue();

@@ -191,7 +191,7 @@ export class BranchSelectComponent {
       })
       .pipe(
         tap((resp: ToBackendGetBranchesListResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.sessionsList = resp.output.sessionsList;
 

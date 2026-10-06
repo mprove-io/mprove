@@ -150,7 +150,7 @@ export class RenameFileDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendRenameCatalogNodeResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({

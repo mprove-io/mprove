@@ -170,7 +170,7 @@ export class EditLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetLlmModelPartsResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
 
@@ -467,7 +467,7 @@ export class EditLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditLlmModelResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
 

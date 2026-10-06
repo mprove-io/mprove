@@ -95,7 +95,7 @@ export class AddProjectRoleDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateRoleResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
             this.rolesQuery.update({ roles: resp.output.roles });
           }

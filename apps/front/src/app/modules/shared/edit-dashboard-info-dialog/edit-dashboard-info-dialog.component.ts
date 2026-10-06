@@ -262,7 +262,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyDashboardResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               let newDashboard = resp.output.dashboard;
 
               if (isDefined(newDashboard)) {
@@ -299,7 +299,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );

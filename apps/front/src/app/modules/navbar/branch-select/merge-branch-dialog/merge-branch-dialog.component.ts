@@ -126,7 +126,7 @@ export class MergeBranchDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendMergeRepoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({

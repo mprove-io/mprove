@@ -58,7 +58,7 @@ export class DeleteProviderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteProviderResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
 

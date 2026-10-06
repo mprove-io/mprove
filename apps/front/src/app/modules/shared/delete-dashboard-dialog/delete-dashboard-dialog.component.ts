@@ -86,7 +86,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteDashboardResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.dashboardUnitsQuery.update({
               dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
               dashboardSpaceNodes: resp.output.dashboardSpaceNodes

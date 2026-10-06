@@ -94,7 +94,7 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
       .pipe(
         map((resp: ToBackendViewCachedColumnResponse) => {
           setTimeout(() => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               let output: ToBackendViewCachedColumnOutput = resp.output;
 
               if (isDefined(output.errorMessage)) {

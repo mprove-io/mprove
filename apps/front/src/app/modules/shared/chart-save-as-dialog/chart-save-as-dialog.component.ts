@@ -268,7 +268,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetDashboardsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.dashboardUnits = [
               ...resp.output.dashboardUnitDrafts,
               ...makeSpaceUnits({
@@ -446,7 +446,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
           let isSelectedDashboard =
             selectedDashboardId === this.selectedDashboardId;
 
-          if (resp?.type === 'Success' && isSelectedDashboard) {
+          if (resp.type === 'Success' && isSelectedDashboard) {
             this.selectedDashboard = resp.output.dashboard;
 
             this.selectedDashboardLoaded = true;
@@ -514,7 +514,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveCreateChartResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let newChart = resp.output.chart;
 
             if (isDefined(newChart)) {
@@ -583,7 +583,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveModifyDashboardResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.navigateService.navigateToDashboard({
               dashboardId: this.selectedDashboardId
             });
@@ -631,7 +631,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let newSortedRoles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );

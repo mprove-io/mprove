@@ -115,7 +115,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.spinner.hide(this.spinnerName);
 
             this.models = resp.output.models;

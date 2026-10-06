@@ -84,7 +84,7 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendStartUserCodexAuthResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.userCode = resp.output.userCode;
             this.verificationUrl = resp.output.verificationUrl;
             this.deviceAuthId = resp.output.deviceAuthId;
@@ -128,7 +128,7 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
           });
         }),
         tap((resp: ToBackendPollUserCodexAuthResponse) => {
-          if (!resp || resp?.type !== 'Success') {
+          if (!resp || resp.type !== 'Success') {
             return;
           }
 

@@ -91,7 +91,7 @@ export class CompleteRegistrationComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCompleteUserRegistrationResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let user = resp.output.user;
             let token = resp.output.token;
 

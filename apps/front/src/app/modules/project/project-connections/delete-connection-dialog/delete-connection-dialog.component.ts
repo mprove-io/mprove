@@ -64,7 +64,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteConnectionResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let connectionsState = this.connectionsQuery.getValue();
             this.connectionsQuery.update({
               connections: connectionsState.connections.filter(

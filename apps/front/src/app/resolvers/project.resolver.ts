@@ -64,7 +64,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetProjectResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let project = resp.output.project;
 
             this.navQuery.updatePart({

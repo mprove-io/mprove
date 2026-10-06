@@ -57,7 +57,7 @@ export class ConfirmEmailComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendConfirmUserEmailResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               let user = resp.output.user;
               let token = resp.output.token;
 

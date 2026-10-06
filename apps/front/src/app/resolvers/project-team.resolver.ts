@@ -68,7 +68,7 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetMembersResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.memberQuery.update(resp.output.userMember);
 
             this.teamQuery.update(resp.output);

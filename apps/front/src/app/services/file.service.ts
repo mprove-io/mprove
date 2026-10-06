@@ -94,7 +94,7 @@ export class FileService {
       })
       .pipe(
         map((resp: ToBackendGetFileResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let repoState = this.repoQuery.getValue();
             let newRepoState: RepoState = Object.assign(resp.output.repo, <
               RepoState

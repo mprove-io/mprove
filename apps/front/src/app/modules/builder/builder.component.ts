@@ -347,7 +347,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendPushRepoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
@@ -393,7 +393,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendPullRepoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
@@ -440,7 +440,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendGetRepoResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.repoQuery.update(resp.output.repo);
             this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({

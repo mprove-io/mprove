@@ -193,7 +193,7 @@ export class ExplorerHistoryComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let sessions = resp.output.sessions;
 
             if (currentSessionId) {

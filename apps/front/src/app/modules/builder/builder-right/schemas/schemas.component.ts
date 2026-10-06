@@ -175,7 +175,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendGetConnectionSchemasResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.combinedSchemaItems = resp.output.combinedSchemaItems;
 
             this.treeNodes = this.buildTreeNodes({
@@ -589,7 +589,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendGetCachedColumnsResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendGetCachedColumnsOutput = resp.output;
 
             let returnedColumnIds: Set<string> = new Set(
@@ -724,7 +724,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
             tableName: data.tableName
           };
 
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendViewCachedColumnOutput = resp.output;
 
             if (isDefined(output.errorMessage)) {
@@ -786,7 +786,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendRefreshCachedColumnResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendRefreshCachedColumnOutput = resp.output;
 
             this.updateCachedColumn({
@@ -859,7 +859,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendClearCachedColumnResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.updateCachedColumn({
               nodeId: data.id,
               cachedColumn: undefined
@@ -924,7 +924,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
             columnName: isColumn ? data.columnName : undefined
           };
 
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendGetConnectionSampleOutput = resp.output;
 
             if (isDefined(output.errorMessage)) {

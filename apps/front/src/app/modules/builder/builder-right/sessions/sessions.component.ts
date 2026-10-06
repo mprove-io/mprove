@@ -131,7 +131,7 @@ export class SessionsComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendGetSessionsListOutput = resp.output;
 
             let sessions = output.sessions;
@@ -356,7 +356,7 @@ export class SessionsComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let output: ToBackendGetSessionsListOutput = resp.output;
 
             let sessions = output.sessions;

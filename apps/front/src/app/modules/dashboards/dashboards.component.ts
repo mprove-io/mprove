@@ -655,7 +655,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp?.type === 'Success';
+          let isOk = resp.type === 'Success';
 
           if (isOk === false) {
             this.dashboardUnitsQuery.updatePart({
@@ -937,7 +937,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let { runningQueries } = resp.output;
 
             let newDashboard = Object.assign({}, this.dashboard, {
@@ -987,7 +987,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendGetQueriesResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let { queries } = resp.output;
 
             let newDashboard = Object.assign({}, this.dashboard, {

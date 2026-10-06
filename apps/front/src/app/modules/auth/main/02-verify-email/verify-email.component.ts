@@ -71,7 +71,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendResendUserEmailResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             let isEmailVerified = resp.output.isEmailVerified;
 
             if (isEmailVerified === true) {

@@ -129,7 +129,7 @@ export class NewFileDialogComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendCreateFolderResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               this.repoQuery.update(resp.output.repo);
               this.structQuery.update(resp.output.struct);
               this.navQuery.updatePart({
@@ -158,7 +158,7 @@ export class NewFileDialogComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendCreateFileResponse) => {
-            if (resp?.type === 'Success') {
+            if (resp.type === 'Success') {
               this.repoQuery.update(resp.output.repo);
               this.structQuery.update(resp.output.struct);
               this.navQuery.updatePart({

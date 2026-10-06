@@ -363,7 +363,7 @@ export class BuilderLeftComponent implements OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendMoveCatalogNodeResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             isMoveSuccess = true;
 
             this.repoQuery.update(resp.output.repo);

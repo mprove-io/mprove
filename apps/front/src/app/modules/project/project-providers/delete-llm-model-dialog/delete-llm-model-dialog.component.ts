@@ -63,7 +63,7 @@ export class DeleteLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteLlmModelResponse) => {
-          if (resp?.type !== 'Success') {
+          if (resp.type !== 'Success') {
             return;
           }
 

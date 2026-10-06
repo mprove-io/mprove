@@ -88,7 +88,7 @@ export class ServerUsersComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetServerUsersResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.serverUsersQuery.update({
               serverUsers: resp.output.serverUsersList,
               total: resp.output.total

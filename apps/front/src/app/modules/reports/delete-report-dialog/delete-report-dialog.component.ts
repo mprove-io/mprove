@@ -86,7 +86,7 @@ export class DeleteReportDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteReportResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.reportsQuery.update({
               reportUnitDrafts: resp.output.reportUnitDrafts,
               reportSpaceNodes: resp.output.reportSpaceNodes

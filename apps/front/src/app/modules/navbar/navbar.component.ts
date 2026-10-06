@@ -209,7 +209,7 @@ export class NavbarComponent implements OnInit {
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
             if (
-              resp?.type === 'Success' &&
+              resp.type === 'Success' &&
               resp.output.modelExists === true &&
               resp.output.chartExists === true
             ) {
@@ -264,7 +264,7 @@ export class NavbarComponent implements OnInit {
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
             if (
-              resp?.type === 'Success' &&
+              resp.type === 'Success' &&
               resp.output.dashboardExists === true
             ) {
               this.navigateService.navigateToDashboard({
@@ -322,7 +322,7 @@ export class NavbarComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
-            if (resp?.type === 'Success' && resp.output.reportExists === true) {
+            if (resp.type === 'Success' && resp.output.reportExists === true) {
               this.navigateService.navigateToReport({
                 reportId: pLink.reportId
               });

@@ -41,7 +41,7 @@ export class SessionModelsResolver {
       })
       .pipe(
         map((resp: ToBackendGetLlmModelsWithProviderResponse) => {
-          if (resp?.type === 'Success') {
+          if (resp.type === 'Success') {
             this.sessionModelsQuery.update({
               modelsOpencode: resp.output.modelsOpencode,
               modelsAi: resp.output.modelsAi
