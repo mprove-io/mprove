@@ -230,7 +230,7 @@ export class SyncRepoService {
           files: v.itemCatalog.files,
           mproveDir: v.itemCatalog.mproveDir,
           devChangesToCommit: v.repoStatus.changesToCommit,
-          repo:
+          syncRepo:
             v.getRepo === true
               ? {
                   orgId: v.orgId,

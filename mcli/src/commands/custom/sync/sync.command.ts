@@ -275,9 +275,7 @@ export class SyncCommand extends CustomCommand {
     };
 
     if (this.getRepo === true) {
-      let repo = syncRepoOutput.repo;
-
-      log.repo = repo;
+      log.syncRepo = syncRepoOutput.syncRepo;
     }
 
     if (this.getErrors === true) {

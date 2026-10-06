@@ -221,7 +221,7 @@ export class SyncRepoController {
       validationErrorsTotal: struct.errors.length,
       validationErrors: getErrors === true ? struct.errors : undefined,
       devChangesToCommit: diskSyncRepoOutput.devChangesToCommit,
-      repo: getRepo === true ? diskSyncRepoOutput.repo : undefined,
+      syncRepo: getRepo === true ? diskSyncRepoOutput.syncRepo : undefined,
       needValidate: debug === true ? currentBridge.needValidate : undefined,
       structId: debug === true ? struct.structId : undefined
     };

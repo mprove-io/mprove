@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ToBackendSyncRepoRepo,
-  zToBackendSyncRepoRepo
-} from '#common/types/backend/parts/repos/to-backend-sync-repo-repo';
-import {
   type BmlError,
   zBmlError
 } from '#common/types/blockml/diagnostics/bml-error';
@@ -12,6 +8,10 @@ import {
   type DiskFileChange,
   zDiskFileChange
 } from '#common/types/disk/parts/file/disk-file-change';
+import {
+  type SyncRepo,
+  zSyncRepo
+} from '#common/types/disk/parts/repo/sync-repo';
 
 export type ToBackendSyncRepoBaseOutput = {
   orgId: string;
@@ -19,7 +19,7 @@ export type ToBackendSyncRepoBaseOutput = {
   validationErrorsTotal: number;
   validationErrors?: BmlError[];
   devChangesToCommit: DiskFileChange[];
-  repo?: ToBackendSyncRepoRepo;
+  syncRepo?: SyncRepo;
   needValidate?: boolean;
   structId?: string;
 };
@@ -30,7 +30,7 @@ export let zToBackendSyncRepoBaseOutput = z.object({
   validationErrorsTotal: z.number(),
   validationErrors: z.array(zBmlError).nullish(),
   devChangesToCommit: z.array(zDiskFileChange),
-  repo: zToBackendSyncRepoRepo.nullish(),
+  syncRepo: zSyncRepo.nullish(),
   needValidate: z.boolean().nullish(),
   structId: z.string().nullish()
 });

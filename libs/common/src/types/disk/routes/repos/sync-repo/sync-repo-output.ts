@@ -12,7 +12,10 @@ import {
   type DiskSyncFile,
   zDiskSyncFile
 } from '#common/types/disk/parts/file/disk-sync-file';
-import { type ToDiskSyncRepoRepo, zToDiskSyncRepoRepo } from './sync-repo-repo';
+import {
+  type SyncRepo,
+  zSyncRepo
+} from '#common/types/disk/parts/repo/sync-repo';
 
 export type ToDiskSyncRepoOutput =
   | {
@@ -20,7 +23,7 @@ export type ToDiskSyncRepoOutput =
       files: DiskCatalogFile[];
       mproveDir: string;
       devChangesToCommit: DiskFileChange[];
-      repo?: ToDiskSyncRepoRepo;
+      syncRepo?: SyncRepo;
       changedFiles: DiskSyncFile[];
       deletedFiles: DiskSyncFile[];
     }
@@ -29,7 +32,7 @@ export type ToDiskSyncRepoOutput =
       files: DiskCatalogFile[];
       mproveDir: string;
       devChangesToCommit: DiskFileChange[];
-      repo?: ToDiskSyncRepoRepo;
+      syncRepo?: SyncRepo;
       appliedChangesOnServer: string[];
     };
 
@@ -40,7 +43,7 @@ export let zToDiskSyncRepoOutput = z
       files: z.array(zDiskCatalogFile),
       mproveDir: z.string(),
       devChangesToCommit: z.array(zDiskFileChange),
-      repo: zToDiskSyncRepoRepo.nullish(),
+      syncRepo: zSyncRepo.nullish(),
       changedFiles: z.array(zDiskSyncFile),
       deletedFiles: z.array(zDiskSyncFile)
     }),
@@ -49,7 +52,7 @@ export let zToDiskSyncRepoOutput = z
       files: z.array(zDiskCatalogFile),
       mproveDir: z.string(),
       devChangesToCommit: z.array(zDiskFileChange),
-      repo: zToDiskSyncRepoRepo.nullish(),
+      syncRepo: zSyncRepo.nullish(),
       appliedChangesOnServer: z.array(z.string())
     })
   ])
