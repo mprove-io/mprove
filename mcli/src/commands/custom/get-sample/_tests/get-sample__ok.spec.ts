@@ -1,0 +1,185 @@
+import { expect, test } from 'bun:test';
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
+import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
+
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendGetConnectionSchemasRequest } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
+import { GetSampleCommand } from '../get-sample.command';
+
+let testId = 'mcli__get-sample__ok';
+
+test('1', async () => {
+  let code: number;
+  let isPass: boolean;
+  let parsedOutput: any;
+  let context: CustomContext;
+
+  await retry(async (bail: any) => {
+    let defaultBranch = BRANCH_MAIN;
+
+    let projectId = makeId();
+    let commandLine = `get-sample \
+--project-id ${projectId} \
+--env prod \
+--connection-id c1_postgres \
+--schema ecommerce \
+--table order_items \
+--json`;
+
+    let userId = makeId();
+    let email = `${testId}@example.com`;
+    let password = '123123';
+    let apiKey = makeTestApiKey({ testId: testId, userId: userId });
+
+    let orgId = 't' + testId;
+    let orgName = testId;
+
+    let projectName = testId;
+
+    let config = getConfig();
+
+    try {
+      let { cli, mockContext } = await prepareTest({
+        command: GetSampleCommand,
+        config: config,
+        deletePack: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedPack: {
+          users: [
+            {
+              userId: userId,
+              email: email,
+              password: password,
+              isEmailVerified: true,
+              apiKey: apiKey
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId: orgId,
+              projectId: projectId,
+              name: projectName,
+              seedProjectId: 't5-mcli',
+              defaultBranch: defaultBranch,
+              remoteType: 'Managed',
+              gitUrl: undefined,
+              publicKey: undefined,
+              privateKey: undefined,
+              publicKeyEncrypted: undefined,
+              privateKeyEncrypted: undefined,
+              passPhrase: undefined
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email: email,
+              projectId: projectId,
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
+            }
+          ],
+          connections: [
+            {
+              projectId: projectId,
+              connectionId: 'c1_postgres',
+              envId: PROJECT_ENV_PROD,
+              type: 'PostgreSQL',
+              options: {
+                postgres: {
+                  host: 'dwh-postgres',
+                  port: 5436,
+                  database: 'p_db',
+                  username: config.mproveCliTestDwhPostgresUser,
+                  password: config.mproveCliTestDwhPostgresPassword,
+                  isSSL: false
+                }
+              }
+            }
+          ]
+        },
+        apiKey: apiKey
+      });
+
+      let repoId = apiKey.split('-')[2];
+
+      await mreq({
+        apiKey: apiKey,
+        route: 'api/ToBackendGetConnectionSchemas',
+        payload: {
+          projectId: projectId,
+          envId: PROJECT_ENV_PROD,
+          repoId: repoId,
+          branchId: defaultBranch,
+          isRefreshExistingCache: true
+        } as ToBackendGetConnectionSchemasRequest['input'],
+        host: config.mproveCliHost
+      });
+
+      context = mockContext as any;
+      code = await cli.run(commandLine.split(' '), context);
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: 'Error',
+        context: context,
+        isJson: true
+      });
+    }
+
+    try {
+      parsedOutput = JSON.parse(context.stdout.toString());
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: 'Error',
+        context: context,
+        isJson: true
+      });
+    }
+
+    assert.equal(code === 0, true, `code === 0`);
+    assert.equal(
+      isDefined(parsedOutput?.columnNames),
+      true,
+      `isDefined(parsedOutput?.columnNames)`
+    );
+
+    isPass = true;
+  }, MCLI_E2E_RETRY_OPTIONS).catch((er: any) => {
+    if (context) {
+      console.log(context.stdout.toString());
+      console.log(context.stderr.toString());
+    }
+
+    logToConsoleMcli({
+      log: er,
+      logLevel: 'Error',
+      context: undefined,
+      isJson: false
+    });
+  });
+
+  expect(isPass).toBe(true);
+});

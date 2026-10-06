@@ -1,0 +1,170 @@
+import { expect, test } from 'bun:test';
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
+import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
+import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
+import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/branches/create-branch/create-branch-output';
+import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
+import { DeleteBranchCommand } from '../delete-branch.command';
+
+let testId = 'mcli__delete-branch__ok';
+
+test('1', async () => {
+  let code: number;
+  let isPass: boolean;
+  let parsedOutput: any;
+  let context: CustomContext;
+
+  await retry(async (bail: any) => {
+    let defaultBranch = BRANCH_MAIN;
+
+    let repo: RepoType = 'dev';
+    let branch = 'b1';
+
+    let projectId = makeId();
+
+    let commandLine = `delete-branch \
+--project-id ${projectId} \
+--repo-type ${repo} \
+--branch ${branch} \
+--json`;
+
+    let userId = makeId();
+    let email = `${testId}@example.com`;
+    let password = '123123';
+    let apiKey = makeTestApiKey({ testId, userId });
+
+    let orgId = 't' + testId;
+    let orgName = testId;
+
+    let projectName = testId;
+
+    let config = getConfig();
+
+    try {
+      let { cli, mockContext } = await prepareTest({
+        command: DeleteBranchCommand,
+        config: config,
+        deletePack: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedPack: {
+          users: [
+            {
+              userId,
+              email: email,
+              password: password,
+              isEmailVerified: true,
+              apiKey: apiKey
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              name: projectName,
+              defaultBranch: defaultBranch,
+              remoteType: 'Managed',
+              gitUrl: undefined,
+              publicKey: undefined,
+              privateKey: undefined,
+              publicKeyEncrypted: undefined,
+              privateKeyEncrypted: undefined,
+              passPhrase: undefined
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
+            }
+          ]
+        },
+        apiKey: apiKey
+      });
+
+      context = mockContext as any;
+
+      let repoId = (repo as RepoType) === 'production' ? PROD_REPO_ID : userId;
+
+      let createBranchReqPayload: ToBackendCreateBranchRequest['input'] = {
+        projectId: projectId,
+        repoId: repoId,
+        newBranchId: branch,
+        fromBranchId: defaultBranch
+      };
+
+      let createBranchOutput: ToBackendCreateBranchOutput = await mreq({
+        apiKey: context.config.mproveCliApiKey,
+        route: 'api/ToBackendCreateBranch',
+        payload: createBranchReqPayload,
+        host: config.mproveCliHost
+      });
+
+      code = await cli.run(commandLine.split(' '), context);
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: 'Error',
+        context: context,
+        isJson: true
+      });
+    }
+
+    try {
+      parsedOutput = JSON.parse(context.stdout.toString());
+    } catch (e) {
+      logToConsoleMcli({
+        log: e,
+        logLevel: 'Error',
+        context: context,
+        isJson: true
+      });
+    }
+
+    assert.equal(code === 0, true, `code === 0`);
+    assert.equal(
+      parsedOutput?.message?.includes('Deleted branch'),
+      true,
+      `parsedOutput?.message?.includes('Deleted branch')`
+    );
+
+    isPass = true;
+  }, MCLI_E2E_RETRY_OPTIONS).catch((er: any) => {
+    if (context) {
+      console.log(context.stdout.toString());
+      console.log(context.stderr.toString());
+    }
+
+    logToConsoleMcli({
+      log: er,
+      logLevel: 'Error',
+      context: undefined,
+      isJson: false
+    });
+  });
+
+  expect(isPass).toBe(true);
+});
