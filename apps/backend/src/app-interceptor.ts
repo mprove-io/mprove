@@ -6,9 +6,10 @@ import {
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { Observable, of } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
@@ -16,16 +17,23 @@ import { logResponseBackend } from '#backend/functions/top/log-response-backend/
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
 import { makeOkResponseBackend } from '#backend/functions/top/make-ok-response-backend/make-ok-response-backend';
+import { makeSetProjectInfoResponse } from '#backend/functions/top/make-set-project-info-response/make-set-project-info-response';
 import { validateToBackendRequest } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendInternalError } from '#common/types/backend/errors/backend-internal-error';
+import type { SetProjectInfoError } from '#common/types/backend/function-errors/set-project-info-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
-import { WrappedError } from '#node-common/functions/wrap-error/wrap-error';
+import type { ToBackendSetProjectInfoOutput } from '#common/types/backend/routes/projects/set-project-info/set-project-info-output';
+import {
+  type WrappedError,
+  wrapError
+} from '#node-common/functions/wrap-error/wrap-error';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
 import { Idemp } from './interfaces/idemp';
 
@@ -165,10 +173,46 @@ export class AppInterceptor implements NestInterceptor {
       }
     }
 
-    return isUndefined(idemp)
-      ? next.handle().pipe(
-          mergeMap(async payload => {
-            let resp = makeOkResponseBackend({
+    // Explicit operation cutover: other endpoints retain their payload path.
+    // Do not infer the transport mode from the shape of the returned value.
+    let execution: Observable<ToBackendResponse>;
+
+    if (isUndefined(idemp)) {
+      if (req.operation === 'setProjectInfo') {
+        let resultExecution: Observable<
+          Result.Result<ToBackendSetProjectInfoOutput, SetProjectInfoError>
+        > = next.handle();
+
+        execution = resultExecution.pipe(
+          catchError((e: unknown) => {
+            wrappedError = wrapError(e);
+
+            let failure: Result.Result<never, BackendInternalError> =
+              Result.fail({ code: 'BACKEND_INTERNAL' });
+
+            let failureExecution: Observable<
+              Result.Result<never, BackendInternalError>
+            > = of(failure);
+
+            return failureExecution;
+          }),
+          map(result =>
+            makeSetProjectInfoResponse({
+              result: result,
+              traceId: req.traceId,
+              method: request.method,
+              mproveVersion:
+                this.cs.get<BackendConfig['mproveReleaseTag']>(
+                  'mproveReleaseTag'
+                ),
+              duration: Date.now() - request.start_ts
+            })
+          )
+        );
+      } else {
+        execution = next.handle().pipe(
+          map(payload =>
+            makeOkResponseBackend({
               payload: payload,
               path: request.url,
               method: request.method,
@@ -180,9 +224,22 @@ export class AppInterceptor implements NestInterceptor {
               body: req,
               cs: this.cs,
               logger: this.logger
-            });
+            })
+          )
+        );
+      }
+    }
 
-            if (isDefined(iKey)) {
+    return isUndefined(idemp)
+      ? execution.pipe(
+          mergeMap(async resp => {
+            if (
+              isDefined(iKey) &&
+              req.operation === resp.operation &&
+              (resp.type === 'Success' ||
+                (resp.error.code !== 'BACKEND_INVALID_REQUEST' &&
+                  resp.error.code !== 'BACKEND_IDEMP_USER_MISMATCH'))
+            ) {
               let idempB: Idemp = {
                 idempotencyKey: iKey,
                 stId: stId,
@@ -191,10 +248,31 @@ export class AppInterceptor implements NestInterceptor {
                 serverTs: makeTsNumber()
               };
 
-              await this.redisService.write({
-                id: `backend-api:${req.operation}:${idempB.idempotencyKey}`,
-                data: idempB
-              });
+              if (resp.type === 'Failure') {
+                try {
+                  await this.redisService.write({
+                    id: `backend-api:${req.operation}:${idempB.idempotencyKey}`,
+                    data: idempB
+                  });
+                } catch (e) {
+                  // Match AppFilter: a failure-cache outage must not replace the
+                  // original API failure. Keep diagnostics out of the envelope.
+                  logToConsoleBackend({
+                    log: {
+                      event: 'backend-failure-cache-write',
+                      error: wrapError(e)
+                    },
+                    logLevel: 'Error',
+                    logger: this.logger,
+                    cs: this.cs
+                  });
+                }
+              } else {
+                await this.redisService.write({
+                  id: `backend-api:${req.operation}:${idempB.idempotencyKey}`,
+                  data: idempB
+                });
+              }
             }
 
             resp.duration = Date.now() - request.start_ts; // update
@@ -204,6 +282,7 @@ export class AppInterceptor implements NestInterceptor {
           tap(x =>
             logResponseBackend({
               response: x,
+              wrappedError: wrappedError,
               logLevel: 'Info',
               cs: this.cs,
               logger: this.logger

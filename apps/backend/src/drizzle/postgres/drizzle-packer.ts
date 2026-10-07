@@ -1,21 +1,21 @@
 import {
-  ExtractTablesWithRelations,
+  type ExtractTablesWithRelations,
   eq,
   isNotNull,
-  SQLWrapper
+  type SQLWrapper
 } from 'drizzle-orm';
-import { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
-import { PgTransaction } from 'drizzle-orm/pg-core';
+import type { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
+import type { PgTransaction } from 'drizzle-orm/pg-core';
 import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
 
 import { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
-import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import { TabService } from '#backend/services/tab/tab.service';
-import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
+import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
+import type { TabService } from '#backend/services/tab/tab.service';
+import type { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';

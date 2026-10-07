@@ -1,7 +1,8 @@
+import * as crypto from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as crypto from 'crypto';
-import { BackendConfig } from '#backend/config/backend-config';
+import { Result } from '@praha/byethrow';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   AvatarTab,
   BranchTab,
@@ -65,10 +66,12 @@ import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import type { TabProps } from '#backend/types/tab-props';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
@@ -106,7 +109,28 @@ export class TabService {
       lt: { encrypted: string; decrypted: LT };
       keyTag: string;
     };
-  }) {
+  }): ST & LT {
+    let result: Result.Result<
+      TabProps<ST, LT>,
+      GetTabPropsResultError
+    > = this.getTabPropsResult<ST, LT>(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let props: ST & LT = result.value.props;
+
+    return props;
+  }
+
+  getTabPropsResult<ST, LT>(item: {
+    ent: {
+      st: { encrypted: string; decrypted: ST };
+      lt: { encrypted: string; decrypted: LT };
+      keyTag: string;
+    };
+  }): Result.Result<TabProps<ST, LT>, GetTabPropsResultError> {
     let { ent } = item;
 
     let isDefinedStAndUndefinedEncrypted =
@@ -125,8 +149,8 @@ export class TabService {
       (isDefinedStAndUndefinedEncrypted || isDefinedLtAndUndefinedEncrypted) &&
       (isDefinedStAndUndefinedDecrypted || isDefinedLtAndUndefinedDecrypted)
     ) {
-      throw new ServerError({
-        message: 'BACKEND_DB_RECORD_HAS_NO_DECRYPTED_AND_NO_ENCRYPTED_PROPS'
+      return Result.fail({
+        code: 'BACKEND_DB_RECORD_HAS_NO_DECRYPTED_AND_NO_ENCRYPTED_PROPS'
       });
     }
 
@@ -134,8 +158,8 @@ export class TabService {
       (isDefined(ent.st?.encrypted) || isDefined(ent.lt?.encrypted)) &&
       (isDefined(ent.st?.decrypted) || isDefined(ent.lt?.decrypted))
     ) {
-      throw new ServerError({
-        message: 'BACKEND_DB_RECORD_HAS_BOTH_DECRYPTED_AND_ENCRYPTED_PROPS'
+      return Result.fail({
+        code: 'BACKEND_DB_RECORD_HAS_BOTH_DECRYPTED_AND_ENCRYPTED_PROPS'
       });
     }
 
@@ -143,8 +167,8 @@ export class TabService {
       isDefined(ent.keyTag) &&
       (isDefined(ent.st?.decrypted) || isDefined(ent.lt?.decrypted))
     ) {
-      throw new ServerError({
-        message: 'BACKEND_DB_RECORD_IS_DECRYPTED_BUT_HAS_KEY_TAG'
+      return Result.fail({
+        code: 'BACKEND_DB_RECORD_IS_DECRYPTED_BUT_HAS_KEY_TAG'
       });
     }
 
@@ -152,19 +176,19 @@ export class TabService {
       isDefined(ent.keyTag) &&
       [this.keyTag, this.prevKeyTag].indexOf(ent.keyTag) < 0
     ) {
-      throw new ServerError({
-        message: 'BACKEND_DB_RECORD_KEY_TAG_DOES_NOT_MATCH_CURRENT_OR_PREV'
+      return Result.fail({
+        code: 'BACKEND_DB_RECORD_KEY_TAG_DOES_NOT_MATCH_CURRENT_OR_PREV'
       });
     }
 
-    let keyBuffer =
+    let keyBuffer: Buffer =
       isDefined(ent.keyTag) && ent.keyTag === this.keyTag
         ? this.keyBuffer
         : isDefined(ent.keyTag) && ent.keyTag === this.prevKeyTag
           ? this.prevKeyBuffer
           : undefined;
 
-    return isDefined(ent.keyTag)
+    let props: ST & LT = isDefined(ent.keyTag)
       ? {
           ...this.decrypt<ST>({
             encryptedString: ent.st?.encrypted,
@@ -179,6 +203,8 @@ export class TabService {
           ...(ent.st?.decrypted ?? ({} as ST)),
           ...(ent.lt?.decrypted ?? ({} as LT))
         };
+
+    return Result.succeed({ props: props });
   }
 
   decrypt<T>(item: {

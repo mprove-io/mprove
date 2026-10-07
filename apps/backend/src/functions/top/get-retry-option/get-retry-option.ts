@@ -1,9 +1,9 @@
-import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { WrapOptions } from 'retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { Logger } from '@nestjs/common';
+import type { ConfigService } from '@nestjs/config';
+import type { WrapOptions } from 'retry';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendTransactionRetryError } from '#common/types/backend/errors/backend-transaction-retry-error';
 
 interface MyWrapOptions extends WrapOptions {
   onRetry: any;
@@ -20,10 +20,10 @@ export function getRetryOption(
     randomize: true, // 1 to 2 (default true)
     onRetry: (e: any) => {
       logToConsoleBackend({
-        log: new ServerError({
-          message: 'BACKEND_TRANSACTION_RETRY',
+        log: {
+          code: 'BACKEND_TRANSACTION_RETRY' satisfies BackendTransactionRetryError['code'],
           originalError: e
-        }),
+        },
         logLevel: 'Error',
         logger: logger,
         cs: cs

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '#backend/config/backend-config';
+import { Result } from '@praha/byethrow';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   AvatarTab,
   BranchTab,
@@ -56,7 +57,7 @@ import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
 import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
 import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
-import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
+import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
@@ -68,7 +69,10 @@ import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { HashService } from '#backend/services/hash/hash.service';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
+import type { ProjectTabToEntResultError } from '#common/types/backend/function-errors/project-tab-to-ent-result-error';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
 import type { AvatarSt } from '#common/types/shared/st-lt/avatars/avatar-st';
 import type { BranchLt } from '#common/types/shared/st-lt/branches/branch-lt';
@@ -1013,6 +1017,22 @@ export class TabToEntService {
   }
 
   projectTabToEnt(item: { tab: ProjectTab; hashSecret: string }): ProjectEnt {
+    let result: Result.Result<ProjectEnt, ProjectTabToEntResultError> =
+      this.projectTabToEntResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let projectEnt: ProjectEnt = result.value;
+
+    return projectEnt;
+  }
+
+  projectTabToEntResult(item: {
+    tab: ProjectTab;
+    hashSecret?: string;
+  }): Result.Result<ProjectEnt, ProjectTabToEntResultError> {
     let { tab, hashSecret } = item;
 
     let projectSt: ProjectSt = {
@@ -1030,27 +1050,45 @@ export class TabToEntService {
       passPhrase: tab.passPhrase
     };
 
-    let projectEnt: ProjectEnt = {
-      projectId: tab.projectId,
-      orgId: tab.orgId,
-      remoteType: tab.remoteType,
-      ...this.getEntProps({
-        dataSt: projectSt,
-        dataLt: projectLt,
-        isMetadata: false
+    return Result.pipe(
+      Result.succeed({
+        tab: tab,
+        hashSecret: hashSecret,
+        hashService: this.hashService,
+        entProps: this.getEntProps({
+          dataSt: projectSt,
+          dataLt: projectLt,
+          isMetadata: false
+        })
       }),
-      nameHash: this.hashService.makeHash({
-        input: tab.name,
-        hashSecret: hashSecret
-      }),
-      gitUrlHash: this.hashService.makeHash({
-        input: tab.gitUrl,
-        hashSecret: hashSecret
-      }),
-      serverTs: tab.serverTs
-    };
-
-    return projectEnt;
+      Result.bind(
+        'nameHash',
+        (v): Result.Result<string, MakeHashResultError> =>
+          v.hashService.makeHashResult({
+            input: v.tab.name,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.bind(
+        'gitUrlHash',
+        (v): Result.Result<string, MakeHashResultError> =>
+          v.hashService.makeHashResult({
+            input: v.tab.gitUrl,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.map(
+        (v): ProjectEnt => ({
+          projectId: v.tab.projectId,
+          orgId: v.tab.orgId,
+          remoteType: v.tab.remoteType,
+          ...v.entProps,
+          nameHash: v.nameHash,
+          gitUrlHash: v.gitUrlHash,
+          serverTs: v.tab.serverTs
+        })
+      )
+    );
   }
 
   providerTabToEnt(item: {

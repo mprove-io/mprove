@@ -1,12 +1,13 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
 
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
@@ -16,7 +17,10 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import {
+  type MemberEnt,
+  membersTable
+} from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
@@ -26,6 +30,7 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { TabProps } from '#backend/types/tab-props';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_STRUCT_ID,
@@ -35,8 +40,13 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
+import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
+import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
+import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';
+import type { MemberSt } from '#common/types/shared/st-lt/members/member-st';
 
 @Injectable()
 export class MembersService {
@@ -111,31 +121,77 @@ export class MembersService {
     return apiMember;
   }
 
-  async getMemberCheckIsAdmin(item: { memberId: string; projectId: string }) {
-    let { projectId, memberId } = item;
+  async getMemberCheckIsAdmin(item: {
+    memberId: string;
+    projectId: string;
+  }): Promise<MemberTab> {
+    let result: Result.Result<MemberTab, GetMemberCheckIsAdminResultError> =
+      await this.getMemberCheckIsAdminResult(item);
 
-    let member = await this.db.drizzle.query.membersTable
-      .findFirst({
-        where: and(
-          eq(membersTable.memberId, memberId),
-          eq(membersTable.projectId, projectId)
-        )
-      })
-      .then(x => this.tabService.memberEntToTab(x));
-
-    if (isUndefined(member)) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (member.isAdmin !== true) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_IS_NOT_ADMIN'
-      });
-    }
+    let member: MemberTab = result.value;
 
     return member;
+  }
+
+  async getMemberCheckIsAdminResult(item: {
+    memberId: string;
+    projectId: string;
+  }): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> {
+    return Result.pipe(
+      Result.succeed({
+        memberId: item.memberId,
+        projectId: item.projectId,
+        db: this.db,
+        tabService: this.tabService
+      }),
+      Result.bind(
+        'memberEnt',
+        async (
+          v
+        ): Result.ResultAsync<MemberEnt, BackendMemberDoesNotExistError> => {
+          let memberEnt: MemberEnt =
+            await v.db.drizzle.query.membersTable.findFirst({
+              where: and(
+                eq(membersTable.memberId, v.memberId),
+                eq(membersTable.projectId, v.projectId)
+              )
+            });
+
+          if (isUndefined(memberEnt)) {
+            return Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' });
+          }
+
+          return Result.succeed(memberEnt);
+        }
+      ),
+      Result.andThrough(v =>
+        v.memberEnt.isAdmin === true
+          ? Result.succeed()
+          : Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_ADMIN' })
+      ),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<MemberSt, MemberLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<MemberSt, MemberLt>({
+            ent: v.memberEnt
+          })
+      ),
+      Result.map(
+        (v): MemberTab => ({
+          ...v.memberEnt,
+          ...v.tabProps.props
+        })
+      )
+    );
   }
 
   async getMemberCheckIsEditorOrAdmin(item: {

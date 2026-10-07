@@ -1,9 +1,10 @@
+import * as crypto from 'node:crypto';
 import { Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 import { ServerError } from '#common/classes/server-error/server-error';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
 
 @Injectable()
 export class HashService {
@@ -29,24 +30,40 @@ export class HashService {
   }
 
   makeHash(item: { input: string; hashSecret: string }) {
+    let result: Result.Result<string, MakeHashResultError> =
+      this.makeHashResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let hash: string = result.value;
+
+    return hash;
+  }
+
+  makeHashResult(item: {
+    input?: string;
+    hashSecret?: string;
+  }): Result.Result<string, MakeHashResultError> {
     let { input, hashSecret } = item;
 
     if (isUndefined(input)) {
-      return;
+      return Result.succeed(undefined);
     }
 
     if (isUndefined(hashSecret)) {
-      throw new ServerError({
-        message: 'BACKEND_HASH_SECRET_IS_NOT_DEFINED'
+      return Result.fail({
+        code: 'BACKEND_HASH_SECRET_IS_NOT_DEFINED'
       });
     }
 
-    let hash = crypto
+    let hash: string = crypto
       .createHmac('sha256', hashSecret)
       .update(input)
       .digest('hex');
 
-    return hash;
+    return Result.succeed(hash);
   }
 
   makeBranchFullId(item: {

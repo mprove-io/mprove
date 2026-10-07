@@ -1,8 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
@@ -11,7 +12,10 @@ import type {
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import {
+  type ProjectEnt,
+  projectsTable
+} from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
@@ -21,16 +25,21 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { TabProps } from '#backend/types/tab-props';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
+import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
 import type { Ev } from '#common/types/backend/parts/ev';
 import type { Project } from '#common/types/backend/parts/project/project';
 import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
 import type { ToDiskCreateProjectOutput } from '#common/types/disk/routes/projects/create-project/create-project-output';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 
 @Injectable()
 export class ProjectsService {
@@ -82,22 +91,53 @@ export class ProjectsService {
     return apiProject;
   }
 
-  async getProjectCheckExists(item: { projectId: string }) {
+  async getProjectCheckExists(item: {
+    projectId: string;
+  }): Promise<ProjectTab> {
+    let result: Result.Result<ProjectTab, GetProjectCheckExistsResultError> =
+      await this.getProjectCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let project: ProjectTab = result.value;
+
+    return project;
+  }
+
+  async getProjectCheckExistsResult(item: {
+    projectId: string;
+  }): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> {
     let { projectId } = item;
 
-    let project = await this.db.drizzle.query.projectsTable
-      .findFirst({
+    let projectEnt: ProjectEnt =
+      await this.db.drizzle.query.projectsTable.findFirst({
         where: eq(projectsTable.projectId, projectId)
-      })
-      .then(x => this.tabService.projectEntToTab(x));
+      });
 
-    if (isUndefined(project)) {
-      throw new ServerError({
-        message: 'BACKEND_PROJECT_DOES_NOT_EXIST'
+    if (isUndefined(projectEnt)) {
+      return Result.fail({
+        code: 'BACKEND_PROJECT_DOES_NOT_EXIST'
       });
     }
 
-    return project;
+    return Result.pipe(
+      Result.succeed({ projectEnt: projectEnt, tabService: this.tabService }),
+      Result.bind(
+        'props',
+        (
+          v
+        ): Result.Result<
+          TabProps<ProjectSt, ProjectLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<ProjectSt, ProjectLt>({
+            ent: v.projectEnt
+          })
+      ),
+      Result.map((v): ProjectTab => ({ ...v.projectEnt, ...v.props.props }))
+    );
   }
 
   async checkProjectIsNotRestricted(item: {
