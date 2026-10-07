@@ -28,11 +28,11 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
 import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { SetProjectInfoError } from '#common/types/backend/function-errors/set-project-info-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetProjectInfoOutput } from '#common/types/backend/routes/projects/set-project-info/set-project-info-output';
 
@@ -60,7 +60,7 @@ export class SetProjectInfoController {
   setProjectInfo(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetProjectInfoRequestDto
-  ): Result.ResultAsync<ToBackendSetProjectInfoOutput, SetProjectInfoError> {
+  ): Promise<BackendResultForOperation<'setProjectInfo'>> {
     return Result.pipe(
       Result.succeed({
         projectId: body.input.projectId,

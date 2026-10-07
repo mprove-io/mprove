@@ -6,30 +6,27 @@ import {
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeSetProjectInfoResponse } from '#backend/functions/temp/make-set-project-info-response/make-set-project-info-response';
+import { makeSetProjectSandboxProviderResponse } from '#backend/functions/temp/make-set-project-sandbox-provider-response/make-set-project-sandbox-provider-response';
 import { logResponseBackend } from '#backend/functions/top/log-response-backend/log-response-backend';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
 import { makeOkResponseBackend } from '#backend/functions/top/make-ok-response-backend/make-ok-response-backend';
-import { makeSetProjectInfoResponse } from '#backend/functions/top/make-set-project-info-response/make-set-project-info-response';
 import { validateToBackendRequest } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendInternalError } from '#common/types/backend/errors/backend-internal-error';
-import type { SetProjectInfoError } from '#common/types/backend/function-errors/set-project-info-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
-import type { ToBackendSetProjectInfoOutput } from '#common/types/backend/routes/projects/set-project-info/set-project-info-output';
 import {
   type WrappedError,
   wrapError
@@ -179,36 +176,27 @@ export class AppInterceptor implements NestInterceptor {
 
     if (isUndefined(idemp)) {
       if (req.operation === 'setProjectInfo') {
-        let resultExecution: Observable<
-          Result.Result<ToBackendSetProjectInfoOutput, SetProjectInfoError>
-        > = next.handle();
-
-        execution = resultExecution.pipe(
-          catchError((e: unknown) => {
-            wrappedError = wrapError(e);
-
-            let failure: Result.Result<never, BackendInternalError> =
-              Result.fail({ code: 'BACKEND_INTERNAL' });
-
-            let failureExecution: Observable<
-              Result.Result<never, BackendInternalError>
-            > = of(failure);
-
-            return failureExecution;
-          }),
-          map(result =>
-            makeSetProjectInfoResponse({
-              result: result,
-              traceId: req.traceId,
-              method: request.method,
-              mproveVersion:
-                this.cs.get<BackendConfig['mproveReleaseTag']>(
-                  'mproveReleaseTag'
-                ),
-              duration: Date.now() - request.start_ts
-            })
-          )
-        );
+        execution = makeSetProjectInfoResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'setProjectSandboxProvider') {
+        execution = makeSetProjectSandboxProviderResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else {
         execution = next.handle().pipe(
           map(payload =>

@@ -9,22 +9,30 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSetProjectSandboxProviderRequestDto,
   ToBackendSetProjectSandboxProviderResponseDto
 } from '#backend/controllers/projects/set-project-sandbox-provider/set-project-sandbox-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
+import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetProjectSandboxProviderOutput } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-output';
 
@@ -34,7 +42,6 @@ import type { ToBackendSetProjectSandboxProviderOutput } from '#common/types/bac
 @Controller()
 export class SetProjectSandboxProviderController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
@@ -50,47 +57,67 @@ export class SetProjectSandboxProviderController {
   @ApiOkResponse({
     type: ToBackendSetProjectSandboxProviderResponseDto
   })
-  async setProjectSandboxProvider(
+  setProjectSandboxProvider(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetProjectSandboxProviderRequestDto
-  ) {
-    let { projectId, e2bApiKey } = body.input;
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckIsAdmin({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    if (isDefined(e2bApiKey)) {
-      project.e2bApiKey = e2bApiKey === '' ? undefined : e2bApiKey;
-    }
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                projects: [project]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
+  ): Promise<BackendResultForOperation<'setProjectSandboxProvider'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        e2bApiKey: body.input.e2bApiKey,
+        userId: user.userId,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
+      }),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+          v.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+          v.membersService.getMemberCheckIsAdminResult({
+            projectId: v.projectId,
+            memberId: v.userId
+          })
+      ),
+      Result.inspect(v => {
+        if (isDefined(v.e2bApiKey)) {
+          v.project.e2bApiKey = v.e2bApiKey === '' ? undefined : v.e2bApiKey;
+        }
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await v.db.drizzle.transaction(
+                  async tx =>
+                    await v.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: { projects: [v.project] }
+                    })
+                ),
+              getRetryOption(v.cs, v.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendSetProjectSandboxProviderOutput => ({
+          project: v.projectsService.tabToApiProject({
+            project: v.project,
+            isAddPublicKey: v.userMember.isAdmin,
+            isAddGitUrl: v.userMember.isAdmin
+          })
+        })
+      )
     );
-
-    let payload: ToBackendSetProjectSandboxProviderOutput = {
-      project: this.projectsService.tabToApiProject({
-        project: project,
-        isAddPublicKey: userMember.isAdmin,
-        isAddGitUrl: userMember.isAdmin
-      })
-    };
-
-    return payload;
   }
 }
