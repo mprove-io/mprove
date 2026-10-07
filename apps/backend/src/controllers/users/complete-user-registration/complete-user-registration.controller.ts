@@ -16,16 +16,16 @@ import {
   ToBackendCompleteUserRegistrationRequestDto,
   ToBackendCompleteUserRegistrationResponseDto
 } from '#backend/controllers/users/complete-user-registration/complete-user-registration.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { DconfigsService } from '#backend/services/db/dconfigs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

@@ -7,21 +7,21 @@ import {
   ToBackendGetQueriesRequestDto,
   ToBackendGetQueriesResponseDto
 } from '#backend/controllers/queries/get-queries/get-queries.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { QueriesService } from '#backend/services/db/queries.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { ParentService } from '#backend/services/parent.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { ParentService } from '#backend/services/parent/parent.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueriesOutput } from '#common/types/backend/routes/queries/get-queries/get-queries-output';

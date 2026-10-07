@@ -11,10 +11,15 @@ import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
-import { validateToBackendRequest } from '#backend/functions/validate-to-backend-request';
+import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { logResponseBackend } from '#backend/functions/top/log-response-backend/log-response-backend';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
+import { makeOkResponseBackend } from '#backend/functions/top/make-ok-response-backend/make-ok-response-backend';
+import { validateToBackendRequest } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
+import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
@@ -22,13 +27,7 @@ import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import { WrappedError } from '#node-common/functions/wrap-error/wrap-error';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
-import { logResponseBackend } from './functions/log-response-backend';
-import { logToConsoleBackend } from './functions/log-to-console-backend';
-import { makeErrorResponseBackend } from './functions/make-error-response-backend';
-import { makeOkResponseBackend } from './functions/make-ok-response-backend';
-import { makeTsNumber } from './functions/make-ts-number';
 import { Idemp } from './interfaces/idemp';
-import { RedisService } from './services/redis.service';
 
 @Injectable()
 export class AppInterceptor implements NestInterceptor {

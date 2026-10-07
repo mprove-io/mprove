@@ -16,7 +16,7 @@ import {
   ToBackendDeleteRoleRequestDto,
   ToBackendDeleteRoleResponseDto
 } from '#backend/controllers/roles/delete-role/delete-role.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
@@ -24,12 +24,12 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { RolesService } from '#backend/services/db/roles.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { RolesService } from '#backend/services/db/roles/roles.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';

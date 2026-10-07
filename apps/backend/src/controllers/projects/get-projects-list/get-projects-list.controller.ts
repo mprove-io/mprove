@@ -14,14 +14,14 @@ import {
   ToBackendGetProjectsListRequestDto,
   ToBackendGetProjectsListResponseDto
 } from '#backend/controllers/projects/get-projects-list/get-projects-list.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';

@@ -5,11 +5,11 @@ import {
   ToBackendStartUserCodexAuthRequestDto,
   ToBackendStartUserCodexAuthResponseDto
 } from '#backend/controllers/users/start-user-codex-auth/start-user-codex-auth.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex.service';
-import { UsersService } from '#backend/services/db/users.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { CodexService } from '#backend/services/codex/codex.service';
+import { UsersService } from '#backend/services/db/users/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendStartUserCodexAuthOutput } from '#common/types/backend/routes/users/start-user-codex-auth/start-user-codex-auth-output';

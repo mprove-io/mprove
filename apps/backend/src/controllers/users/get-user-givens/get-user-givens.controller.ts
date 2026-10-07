@@ -5,12 +5,12 @@ import {
   ToBackendGetUserGivensRequestDto,
   ToBackendGetUserGivensResponseDto
 } from '#backend/controllers/users/get-user-givens/get-user-givens.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { GivensService } from '#backend/services/db/givens.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { UsersService } from '#backend/services/db/users.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { GivensService } from '#backend/services/db/givens/givens.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { UsersService } from '#backend/services/db/users/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetUserGivensOutput } from '#common/types/backend/routes/users/get-user-givens/get-user-givens-output';

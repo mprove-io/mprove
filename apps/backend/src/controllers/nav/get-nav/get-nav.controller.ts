@@ -7,7 +7,7 @@ import {
   ToBackendGetNavRequestDto,
   ToBackendGetNavResponseDto
 } from '#backend/controllers/nav/get-nav/get-nav.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
@@ -18,14 +18,14 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

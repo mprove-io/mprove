@@ -7,10 +7,10 @@ import {
 } from '#backend/controllers/orgs/is-org-exist/is-org-exist.dto';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { DconfigsService } from '#backend/services/db/dconfigs.service';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsOrgExistOutput } from '#common/types/backend/routes/orgs/is-org-exist/is-org-exist-output';

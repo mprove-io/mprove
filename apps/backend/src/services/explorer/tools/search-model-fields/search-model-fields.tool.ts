@@ -6,26 +6,25 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { checkModelAccess } from '#backend/functions/check-model-access';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { CachedColumnService } from '#backend/services/db/cached-column.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { TabService } from '#backend/services/tab.service';
-
+import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import {
   SEARCH_FIELD_VALUE_MATCH_FIELDS_LIMIT,
   SEARCH_FIELD_VALUE_MATCH_VALUES_LIMIT,
   SEARCH_FIELD_VALUES_LIMIT,
   SearchCachedFieldValuesService
-} from './search-cached-field-values.service';
-import { SearchDwhSchemaFieldNamesService } from './search-dwh-schema-field-names.service';
+} from '#backend/services/explorer/tools/search-model-fields/search-cached-field-values/search-cached-field-values.service';
+import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names/search-dwh-schema-field-names.service';
 import {
   SEARCH_FIELD_NAME_MATCH_FIELDS_LIMIT,
   SEARCH_FIELD_NAMES_LIMIT,
   SearchModelFieldLeafNamesService
-} from './search-model-field-leaf-names.service';
+} from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type {
   SearchFieldMatch,
   SearchModelFieldsToolResult

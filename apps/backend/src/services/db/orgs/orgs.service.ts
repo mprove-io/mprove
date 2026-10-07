@@ -1,0 +1,133 @@
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
+import { eq } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
+import { ServerError } from '#common/classes/server-error/server-error';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
+import type { Org } from '#common/types/backend/parts/org';
+import type { OrgsItem } from '#common/types/backend/parts/orgs-item';
+
+@Injectable()
+export class OrgsService {
+  constructor(
+    private tabService: TabService,
+    private hashService: HashService,
+    private rpcService: RpcService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  tabToApi(item: { org: OrgTab }): Org {
+    let { org } = item;
+
+    let apiOrg: Org = {
+      orgId: org.orgId,
+      ownerId: org.ownerId,
+      name: org.name,
+      ownerEmail: org.ownerEmail,
+      serverTs: Number(org.serverTs)
+    };
+
+    return apiOrg;
+  }
+
+  tabToApiOrgsItem(item: { org: OrgTab }): OrgsItem {
+    let { org } = item;
+
+    let apiOrgsItem: OrgsItem = {
+      orgId: org.orgId,
+      name: org.name
+    };
+
+    return apiOrgsItem;
+  }
+
+  async getOrgCheckExists(item: { orgId: string }) {
+    let { orgId } = item;
+
+    let org = await this.db.drizzle.query.orgsTable
+      .findFirst({
+        where: eq(orgsTable.orgId, orgId)
+      })
+      .then(x => this.tabService.orgEntToTab(x));
+
+    if (isUndefined(org)) {
+      throw new ServerError({
+        message: 'BACKEND_ORG_DOES_NOT_EXIST'
+      });
+    }
+
+    return org;
+  }
+
+  async checkUserIsOrgOwner(item: { userId: string; org: OrgTab }) {
+    let { org, userId } = item;
+
+    if (org.ownerId !== userId) {
+      throw new ServerError({
+        message: 'BACKEND_ONLY_ORG_OWNER_CAN_ACCESS'
+      });
+    }
+
+    return;
+  }
+
+  async addOrg(item: {
+    ownerId: string;
+    ownerEmail: string;
+    name: string;
+    traceId: string;
+    orgId?: string;
+  }) {
+    let { ownerId, ownerEmail, name, traceId, orgId } = item;
+
+    let newOrg: OrgTab = {
+      orgId: orgId || makeId(),
+      name: name,
+      ownerId: ownerId,
+      ownerEmail: ownerEmail,
+      nameHash: undefined, // tab-to-ent
+      ownerEmailHash: undefined, // tab-to-ent
+      keyTag: undefined,
+      serverTs: undefined
+    };
+
+    await this.rpcService.sendToDiskUnwrapOutput({
+      request: {
+        operation: 'createOrg',
+        traceId: traceId,
+        input: {
+          orgId: newOrg.orgId
+        }
+      }
+    });
+
+    await retry(
+      async () => {
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                orgs: [newOrg]
+              }
+            })
+        );
+      },
+      getRetryOption(this.cs, this.logger)
+    );
+
+    return newOrg;
+  }
+}

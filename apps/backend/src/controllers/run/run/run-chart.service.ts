@@ -5,9 +5,9 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { checkModelAccess } from '#backend/functions/check-model-access';
-import { getChartUrl } from '#backend/functions/get-chart-url';
-import { TabService } from '#backend/services/tab.service';
+import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

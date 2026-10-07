@@ -1,0 +1,34 @@
+import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '#backend/config/backend-config';
+import { makeErrorResponse } from '#backend/functions/top/make-error-response-backend/make-error-response/make-error-response';
+
+export function makeErrorResponseBackend(item: {
+  body: any;
+  e: any;
+  path: any;
+  method: any;
+  mproveVersion: string;
+  duration: number;
+  cs: ConfigService<BackendConfig>;
+  logger: Logger;
+}) {
+  let { e, body, cs, path, method, mproveVersion, duration, logger } = item;
+
+  return makeErrorResponse({
+    body: body,
+    e: e,
+    path: path,
+    method: method,
+    mproveVersion: mproveVersion,
+    duration: duration,
+    logResponseError: false, // logged already in log-response-backend.ts
+    // logResponseError: cs.get<BackendConfig['backendLogResponseError']>(
+    //   'backendLogResponseError'
+    // ),
+    logIsJson: cs.get<BackendConfig['backendLogIsJson']>('backendLogIsJson'),
+    logger: logger,
+    useLoggerOnlyForErrorLevel:
+      cs.get<BackendConfig['backendEnv']>('backendEnv') !== 'PROD'
+  });
+}

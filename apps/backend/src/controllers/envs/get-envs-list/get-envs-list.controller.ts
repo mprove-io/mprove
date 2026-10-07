@@ -5,15 +5,15 @@ import {
   ToBackendGetEnvsListRequestDto,
   ToBackendGetEnvsListResponseDto
 } from '#backend/controllers/envs/get-envs-list/get-envs-list.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-output';

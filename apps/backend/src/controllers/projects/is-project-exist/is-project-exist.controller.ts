@@ -5,15 +5,15 @@ import {
   ToBackendIsProjectExistRequestDto,
   ToBackendIsProjectExistResponseDto
 } from '#backend/controllers/projects/is-project-exist/is-project-exist.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { DconfigsService } from '#backend/services/db/dconfigs.service';
-import { OrgsService } from '#backend/services/db/orgs.service';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
+import { OrgsService } from '#backend/services/db/orgs/orgs.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsProjectExistOutput } from '#common/types/backend/routes/projects/is-project-exist/is-project-exist-output';

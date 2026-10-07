@@ -5,7 +5,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   CHART_ID_PLACEHOLDER,
   ProduceExplorerChartService
-} from './produce-explorer-chart.service';
+} from '#backend/services/explorer/tools/produce-chart/produce-explorer-chart/produce-explorer-chart.service';
 
 @Injectable()
 export class ProduceChartToolService {

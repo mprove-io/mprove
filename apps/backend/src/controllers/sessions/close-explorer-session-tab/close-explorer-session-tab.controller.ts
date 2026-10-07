@@ -5,11 +5,11 @@ import {
   ToBackendCloseExplorerSessionTabRequestDto,
   ToBackendCloseExplorerSessionTabResponseDto
 } from '#backend/controllers/sessions/close-explorer-session-tab/close-explorer-session-tab.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { SessionsService } from '#backend/services/db/sessions.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

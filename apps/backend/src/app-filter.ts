@@ -8,18 +8,17 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
+import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { logResponseBackend } from '#backend/functions/top/log-response-backend/log-response-backend';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
+import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
-import { logResponseBackend } from './functions/log-response-backend';
-import { logToConsoleBackend } from './functions/log-to-console-backend';
-import { makeErrorResponseBackend } from './functions/make-error-response-backend';
-import { makeTsNumber } from './functions/make-ts-number';
 import { Idemp } from './interfaces/idemp';
-import { RedisService } from './services/redis.service';
 
 @Catch()
 export class AppFilter implements ExceptionFilter {

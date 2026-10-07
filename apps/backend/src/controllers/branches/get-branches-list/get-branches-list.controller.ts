@@ -5,17 +5,17 @@ import {
   ToBackendGetBranchesListRequestDto,
   ToBackendGetBranchesListResponseDto
 } from '#backend/controllers/branches/get-branches-list/get-branches-list.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';

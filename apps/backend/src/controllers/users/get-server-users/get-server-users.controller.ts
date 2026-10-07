@@ -7,7 +7,7 @@ import {
   ToBackendGetServerUsersRequestDto,
   ToBackendGetServerUsersResponseDto
 } from '#backend/controllers/users/get-server-users/get-server-users.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
@@ -18,9 +18,9 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { makeFullName } from '#backend/functions/make-full-name';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { TabService } from '#backend/services/tab.service';
+import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';

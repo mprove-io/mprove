@@ -17,22 +17,22 @@ import {
   ToBackendDeleteFileRequestDto,
   ToBackendDeleteFileResponseDto
 } from '#backend/controllers/files/delete-file/delete-file.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml.service';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';

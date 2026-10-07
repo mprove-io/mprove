@@ -3,9 +3,9 @@ import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { getDashboardUrl } from '#backend/functions/get-dashboard-url';
-import { DashboardsService } from '#backend/services/db/dashboards.service';
-import { MembersService } from '#backend/services/db/members.service';
+import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
+import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { MembersService } from '#backend/services/db/members/members.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

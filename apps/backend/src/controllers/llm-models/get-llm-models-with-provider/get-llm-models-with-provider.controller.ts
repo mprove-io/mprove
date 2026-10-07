@@ -5,12 +5,12 @@ import {
   ToBackendGetLlmModelsWithProviderRequestDto,
   ToBackendGetLlmModelsWithProviderResponseDto
 } from '#backend/controllers/llm-models/get-llm-models-with-provider/get-llm-models-with-provider.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ProvidersService } from '#backend/services/db/providers.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

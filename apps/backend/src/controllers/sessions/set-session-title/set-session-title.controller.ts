@@ -5,12 +5,12 @@ import {
   ToBackendSetSessionTitleRequestDto,
   ToBackendSetSessionTitleResponseDto
 } from '#backend/controllers/sessions/set-session-title/set-session-title.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
-import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

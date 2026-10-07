@@ -5,13 +5,13 @@ import {
   ToBackendLoginUserRequestDto,
   ToBackendLoginUserResponseDto
 } from '#backend/controllers/users/login-user/login-user.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { LocalAuthGuard } from '#backend/guards/local-auth.guard';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { UsersService } from '#backend/services/db/users.service';
-import { TabService } from '#backend/services/tab.service';
+import { LocalAuthGuard } from '#backend/guards/local-auth/local-auth.guard';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/users/login-user/login-user-output';
 

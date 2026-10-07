@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import test from 'ava';
 import { Sandbox } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
-import { forTestsStartOpencodeServer } from '#backend/functions/for-tests/for-tests-start-opencode-server';
-import { prepareTest } from '#backend/functions/prepare-test';
+import { forTestsStartOpencodeServer } from '#backend/functions/top/for-tests-start-opencode-server/for-tests-start-opencode-server';
+import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
-import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
+import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
 
 test('1', async t => {
   let prep: Prep = await prepareTest({});

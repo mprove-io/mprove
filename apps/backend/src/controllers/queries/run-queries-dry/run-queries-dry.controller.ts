@@ -18,23 +18,23 @@ import {
   ToBackendRunQueriesDryRequestDto,
   ToBackendRunQueriesDryResponseDto
 } from '#backend/controllers/queries/run-queries-dry/run-queries-dry.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { QueryTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { ConnectionsService } from '#backend/services/db/connections.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { QueriesService } from '#backend/services/db/queries.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery.service';
-import { ParentService } from '#backend/services/parent.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
+import { ParentService } from '#backend/services/parent/parent.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';

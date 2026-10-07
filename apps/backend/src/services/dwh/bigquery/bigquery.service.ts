@@ -1,0 +1,526 @@
+import { BigQuery, BigQueryOptions, JobResponse } from '@google-cloud/bigquery';
+import type { ConnectionConfigEntry } from '@malloydata/malloy';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import pIteration from 'p-iteration';
+import { BackendConfig } from '#backend/config/backend-config';
+import type {
+  ConnectionTab,
+  QueryTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import { ServerError } from '#common/classes/server-error/server-error';
+
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
+import type { RawSchemaColumn } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-column';
+import type { RawSchemaForeignKey } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-foreign-key';
+import type { RawSchemaIndex } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-index';
+import type { RawSchemaTable } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-table';
+import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
+import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
+import type { MalloyConfigPart } from '#common/types/backend/parts/malloy-config-part';
+import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
+
+const { forEachSeries } = pIteration;
+
+@Injectable()
+export class BigQueryService {
+  constructor(
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
+  ) {}
+
+  makeMalloyConfigPart(item: {
+    connection: ConnectionTab;
+    envPrefix: string;
+  }): MalloyConfigPart {
+    let { connection, envPrefix } = item;
+    let opts = connection.options.bigquery;
+    let envs: Record<string, string> = {};
+    let files: { path: string; data: string }[] = [];
+
+    if (isDefined(opts.googleCloudProject)) {
+      envs[`${envPrefix}_GOOGLE_CLOUD_PROJECT`] = String(
+        opts.googleCloudProject
+      );
+    }
+    if (isDefined(opts.bigqueryQuerySizeLimitGb)) {
+      envs[`${envPrefix}_BIGQUERY_QUERY_SIZE_LIMIT_GB`] = String(
+        opts.bigqueryQuerySizeLimitGb
+      );
+    }
+
+    let malloyConnectionConfigEntry: ConnectionConfigEntry = {
+      is: 'bigquery',
+      projectId: { env: `${envPrefix}_GOOGLE_CLOUD_PROJECT` }
+    };
+
+    if (isDefined(opts.serviceAccountCredentials)) {
+      let credPath = `/home/user/.config/mprove/connections/${connection.connectionId}/service-account-credentials.json`;
+
+      envs[`${envPrefix}_SERVICE_ACCOUNT_CREDENTIALS_PATH`] = credPath;
+
+      files.push({
+        path: credPath,
+        data:
+          typeof opts.serviceAccountCredentials === 'string'
+            ? opts.serviceAccountCredentials
+            : JSON.stringify(opts.serviceAccountCredentials, null, 2)
+      });
+
+      malloyConnectionConfigEntry.serviceAccountKeyPath = credPath;
+    }
+
+    return {
+      malloyConnectionConfigEntry: malloyConnectionConfigEntry,
+      envs: envs,
+      files: files
+    };
+  }
+
+  optionsToBigQueryOptions(item: { connection: ConnectionTab }) {
+    let { connection } = item;
+
+    let connectionOptions: BigQueryOptions = {
+      credentials: connection.options.bigquery.serviceAccountCredentials,
+      projectId: connection.options.bigquery.googleCloudProject
+    };
+
+    return connectionOptions;
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
+      connection: connection
+    });
+
+    try {
+      let bigquery = new BigQuery(bigqueryConnectionOptions);
+
+      await bigquery.query('SELECT 1');
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
+  async fetchSample(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Promise<FetchSampleResult> {
+    let { connection, schemaName, tableName, columnName, offset } = item;
+
+    let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
+      connection: connection
+    });
+
+    try {
+      let bigquery = new BigQuery(bigqueryConnectionOptions);
+
+      let sqlText: string;
+
+      if (isDefined(columnName)) {
+        sqlText = `SELECT DISTINCT \`${columnName}\` FROM (SELECT \`${columnName}\` FROM \`${schemaName}\`.\`${tableName}\` LIMIT 10000) sub LIMIT 100`;
+      } else {
+        let sqlOffset = isDefined(offset) ? offset : 0;
+        sqlText = `SELECT * FROM \`${schemaName}\`.\`${tableName}\` LIMIT 100 OFFSET ${sqlOffset}`;
+      }
+
+      let [resultRows] = await bigquery.query(sqlText);
+
+      let columnNames: string[] =
+        resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+
+      let rows: string[][] = resultRows.map((row: any) =>
+        columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+      );
+
+      return { columnNames: columnNames, rows: rows };
+    } catch (e: any) {
+      return {
+        columnNames: [],
+        rows: [],
+        errorMessage: `Sample fetch failed: ${e.message}`
+      };
+    }
+  }
+
+  async fetchCachedParts(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    sampleSize?: number;
+    cacheLimit: number;
+  }): Promise<CachedPartsResult> {
+    let {
+      connection,
+      schemaName,
+      tableName,
+      columnName,
+      sampleSize,
+      cacheLimit
+    } = item;
+
+    let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
+      connection: connection
+    });
+
+    try {
+      let bigquery = new BigQuery(bigqueryConnectionOptions);
+
+      let sourceSql = isDefined(sampleSize)
+        ? `(SELECT \`${columnName}\` FROM \`${schemaName}\`.\`${tableName}\` LIMIT ${sampleSize}) sub`
+        : `\`${schemaName}\`.\`${tableName}\``;
+
+      let sqlText = `SELECT \`${columnName}\` AS column_value, COUNT(*) AS count FROM ${sourceSql} WHERE \`${columnName}\` IS NOT NULL AND CAST(\`${columnName}\` AS STRING) <> '' GROUP BY \`${columnName}\` ORDER BY count DESC LIMIT ${cacheLimit}`;
+
+      let [resultRows] = await bigquery.query(sqlText);
+
+      return {
+        values: resultRows.map((row: any) => ({
+          columnValue: String(row.column_value),
+          count: Number(row.count)
+        }))
+      };
+    } catch (e: any) {
+      return { values: [], errorMessage: `Column cache failed: ${e.message}` };
+    }
+  }
+
+  async fetchSchema(item: {
+    connection: ConnectionTab;
+  }): Promise<ConnectionRawSchema> {
+    let { connection } = item;
+
+    let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
+      connection: connection
+    });
+
+    try {
+      let bigquery = new BigQuery(bigqueryConnectionOptions);
+
+      let [datasets] = await bigquery.getDatasets();
+
+      let allTablesRows: {
+        table_schema: string;
+        table_name: string;
+        table_type: string;
+      }[] = [];
+
+      let allColumnsRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        data_type: string;
+        is_nullable: string;
+      }[] = [];
+
+      let allFkRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        constraint_name: string;
+        referenced_schema: string;
+        referenced_table: string;
+        referenced_column: string;
+      }[] = [];
+
+      let allConstraintRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        constraint_name: string;
+        constraint_type: string;
+      }[] = [];
+
+      await forEachSeries(datasets, async dataset => {
+        let datasetId = dataset.id;
+
+        try {
+          let [tablesRows] = await bigquery.query(`
+            SELECT table_schema, table_name, table_type
+            FROM \`${datasetId}\`.INFORMATION_SCHEMA.TABLES
+
+            ORDER BY table_schema, table_name
+          `);
+          allTablesRows.push(...tablesRows);
+
+          let [columnsRows] = await bigquery.query(`
+            SELECT table_schema, table_name, column_name, data_type, is_nullable
+            FROM \`${datasetId}\`.INFORMATION_SCHEMA.COLUMNS
+            ORDER BY table_schema, table_name, ordinal_position
+          `);
+          allColumnsRows.push(...columnsRows);
+
+          try {
+            let [fkRows] = await bigquery.query(`
+              SELECT
+                kcu.table_schema,
+                kcu.table_name,
+                kcu.column_name,
+                tc.constraint_name,
+                ccu.table_schema AS referenced_schema,
+                ccu.table_name AS referenced_table,
+                ccu.column_name AS referenced_column
+              FROM \`${datasetId}\`.INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+              JOIN \`${datasetId}\`.INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                ON kcu.constraint_name = tc.constraint_name
+              JOIN \`${datasetId}\`.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu
+                ON ccu.constraint_name = tc.constraint_name
+              WHERE tc.constraint_type = 'FOREIGN KEY'
+            `);
+            allFkRows.push(...fkRows);
+          } catch (fkErr: any) {
+            logToConsoleBackend({
+              log: new ServerError({
+                message: 'BACKEND_FETCH_FK_BIGQUERY_ERROR',
+                originalError: fkErr
+              }),
+              logLevel: 'Error',
+              logger: this.logger,
+              cs: this.cs
+            });
+          }
+
+          try {
+            let [constraintRows] = await bigquery.query(`
+              SELECT
+                kcu.table_schema,
+                kcu.table_name,
+                kcu.column_name,
+                tc.constraint_name,
+                tc.constraint_type
+              FROM \`${datasetId}\`.INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+              JOIN \`${datasetId}\`.INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                ON kcu.constraint_name = tc.constraint_name
+              WHERE tc.constraint_type IN ('PRIMARY KEY', 'UNIQUE')
+            `);
+            allConstraintRows.push(...constraintRows);
+          } catch (constraintErr: any) {
+            logToConsoleBackend({
+              log: new ServerError({
+                message: 'BACKEND_FETCH_CONSTRAINTS_BIGQUERY_ERROR',
+                originalError: constraintErr
+              }),
+              logLevel: 'Error',
+              logger: this.logger,
+              cs: this.cs
+            });
+          }
+        } catch (datasetErr: any) {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_FETCH_DATASET_BIGQUERY_ERROR',
+              originalError: datasetErr
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
+          });
+        }
+      });
+
+      let tables: RawSchemaTable[] = allTablesRows.map(row => {
+        let tableConstraintRows = allConstraintRows.filter(
+          cr =>
+            cr.table_schema === row.table_schema &&
+            cr.table_name === row.table_name
+        );
+
+        let constraintNames = [
+          ...new Set(tableConstraintRows.map(cr => cr.constraint_name))
+        ];
+
+        let indexes: RawSchemaIndex[] = constraintNames.map(constraintName => {
+          let constraintGroup = tableConstraintRows.filter(
+            cr => cr.constraint_name === constraintName
+          );
+          let isPrimaryKey =
+            constraintGroup[0].constraint_type === 'PRIMARY KEY';
+          return {
+            indexName: constraintName,
+            indexColumns: constraintGroup.map(cr => cr.column_name),
+            isUnique: true,
+            isPrimaryKey: isPrimaryKey
+          };
+        });
+
+        let columns: RawSchemaColumn[] = allColumnsRows
+          .filter(
+            c =>
+              c.table_schema === row.table_schema &&
+              c.table_name === row.table_name
+          )
+          .map(c => {
+            let foreignKeys: RawSchemaForeignKey[] = allFkRows
+              .filter(
+                fk =>
+                  fk.table_schema === c.table_schema &&
+                  fk.table_name === c.table_name &&
+                  fk.column_name === c.column_name
+              )
+              .map(fk => ({
+                constraintName: fk.constraint_name,
+                referencedSchemaName: fk.referenced_schema,
+                referencedTableName: fk.referenced_table,
+                referencedColumnName: fk.referenced_column
+              }));
+
+            let isPrimaryKey = indexes.some(
+              idx =>
+                idx.isPrimaryKey === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
+            let isUnique = indexes.some(
+              idx =>
+                idx.isUnique === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
+            return {
+              columnName: c.column_name,
+              dataType: c.data_type,
+              isNullable: c.is_nullable === 'YES',
+              isPrimaryKey: isPrimaryKey,
+              isUnique: isUnique,
+              foreignKeys: foreignKeys
+            };
+          });
+
+        return {
+          schemaName: row.table_schema,
+          tableName: row.table_name,
+          tableType: row.table_type,
+          columns: columns,
+          indexes: indexes
+        };
+      });
+
+      return {
+        tables: tables,
+        lastRefreshedTs: Date.now(),
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        tables: [],
+        lastRefreshedTs: Date.now(),
+        errorMessage: `Schema fetch failed: ${err.message}`
+      };
+    }
+  }
+
+  async runQuery(item: {
+    userId: string;
+    query: QueryTab;
+    connection: ConnectionTab;
+  }): Promise<QueryTab> {
+    let { query, userId, connection } = item;
+
+    let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
+      connection: connection
+    });
+
+    let bigquery = new BigQuery(bigqueryConnectionOptions);
+
+    query.lastRunBy = userId;
+    query.lastRunTs = makeTsNumber();
+    query.bigqueryQueryJobId = null;
+    query.bigqueryConsecutiveErrorsGetJob = 0;
+    query.bigqueryConsecutiveErrorsGetResults = 0;
+
+    let maximumBytesBilled =
+      connection.options.bigquery.bigqueryQuerySizeLimitGb * 1024 * 1024 * 1024;
+
+    let createQueryJobItem = await bigquery
+      .createQueryJob({
+        destination: undefined,
+        dryRun: false,
+        useLegacySql: false,
+        query: query.sql,
+        maximumBytesBilled: maximumBytesBilled.toString()
+      })
+      .catch(e => {
+        query.status = 'Error';
+        query.data = [];
+        query.lastErrorMessage = e.message;
+        query.lastErrorTs = makeTsNumber();
+      });
+
+    if (isDefined(createQueryJobItem)) {
+      let queryJob = (createQueryJobItem as JobResponse)[0];
+      let createQueryJobApiResponse = (createQueryJobItem as JobResponse)[1];
+
+      query.status = 'Running';
+      query.bigqueryQueryJobId = queryJob.id;
+    }
+
+    return query;
+  }
+
+  async runQueryDry(item: { query: QueryTab; connection: ConnectionTab }) {
+    let { query, connection } = item;
+
+    let validEstimate: QueryEstimate;
+    let errorQuery: QueryTab;
+
+    let bigquery = new BigQuery({
+      credentials: connection.options.bigquery.serviceAccountCredentials,
+      projectId: connection.options.bigquery.googleCloudProject
+    });
+
+    let createQueryJobItem = await bigquery
+      .createQueryJob({
+        destination: undefined,
+        dryRun: true,
+        useLegacySql: false,
+        query: query.sql
+      })
+      .catch(e => {
+        query.status = 'Error';
+        query.data = [];
+        query.lastErrorMessage = e.message;
+        query.lastErrorTs = makeTsNumber();
+
+        errorQuery = query;
+      });
+
+    if (isDefined(createQueryJobItem)) {
+      let createQueryJobApiResponse = (createQueryJobItem as JobResponse)[1];
+
+      let estimate = Number(
+        createQueryJobApiResponse.statistics.totalBytesProcessed
+      );
+
+      validEstimate = {
+        queryId: query.queryId,
+        estimate: estimate,
+        lastRunDryTs: makeTsNumber()
+      };
+    }
+
+    return {
+      validEstimate: validEstimate,
+      errorQuery: errorQuery
+    };
+  }
+}

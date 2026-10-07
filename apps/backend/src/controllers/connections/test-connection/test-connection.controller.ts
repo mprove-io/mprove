@@ -14,23 +14,23 @@ import {
   ToBackendTestConnectionRequestDto,
   ToBackendTestConnectionResponseDto
 } from '#backend/controllers/connections/test-connection/test-connection.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ConnectionsService } from '#backend/services/db/connections.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql.service';
-import { PgService } from '#backend/services/dwh/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino.service';
-import { StoreService } from '#backend/services/store.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
+import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
+import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
+import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
+import { PgService } from '#backend/services/dwh/pg/pg.service';
+import { PrestoService } from '#backend/services/dwh/presto/presto.service';
+import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
+import { TrinoService } from '#backend/services/dwh/trino/trino.service';
+import { StoreService } from '#backend/services/store/store.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

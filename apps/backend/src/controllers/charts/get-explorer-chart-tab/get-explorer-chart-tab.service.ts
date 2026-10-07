@@ -16,19 +16,19 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { checkModelAccess } from '#backend/functions/check-model-access';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ChartsService } from '#backend/services/db/charts.service';
-import { MconfigsService } from '#backend/services/db/mconfigs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
-import { QueriesService } from '#backend/services/db/queries.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
+import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import {
   ExplorerChartRebuildService,
   type ExplorerRebuildResult
-} from '#backend/services/explorer/explorer-chart-rebuild.service';
-import { TabService } from '#backend/services/tab.service';
+} from '#backend/services/explorer/explorer-chart-rebuild/explorer-chart-rebuild.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetExplorerChartTabOutput } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';

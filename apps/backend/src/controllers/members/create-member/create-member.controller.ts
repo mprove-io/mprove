@@ -17,7 +17,7 @@ import {
   ToBackendCreateMemberRequestDto,
   ToBackendCreateMemberResponseDto
 } from '#backend/controllers/members/create-member/create-member.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
@@ -30,19 +30,19 @@ import {
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml.service';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { DconfigsService } from '#backend/services/db/dconfigs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { EmailService } from '#backend/services/email.service';
-import { HashService } from '#backend/services/hash.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { EmailService } from '#backend/services/email/email.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_REPORT_ID,

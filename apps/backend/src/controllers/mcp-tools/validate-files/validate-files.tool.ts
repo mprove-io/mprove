@@ -6,10 +6,10 @@ import type { Request } from 'express';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { ValidateFilesService } from '#backend/controllers/files/validate-files/validate-files.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
-import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
-import { ToolService } from '#backend/services/tool.service';
+import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
+import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
+import { ToolService } from '#backend/services/tool/tool.service';
 import {
   MCP_TOOL_VALIDATE,
   MCP_TOOL_VALIDATE_DESCRIPTION

@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { prepareSeed, prepareTest } from '#backend/functions/prepare-test';
-import { sendToBackend } from '#backend/functions/send-to-backend';
-import { sendToMcp } from '#backend/functions/send-to-mcp';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { prepareSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-seed/prepare-seed';
+import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
+import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
+import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
 import { PrepTest } from '#backend/interfaces/prep-test';
 import { MCP_TOOL_SEARCH_DOCS } from '#common/constants/mcp-tools-registry';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';

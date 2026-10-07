@@ -17,16 +17,16 @@ import {
   ToBackendEditEnvFallbacksRequestDto,
   ToBackendEditEnvFallbacksResponseDto
 } from '#backend/controllers/envs/edit-env-fallbacks/edit-env-fallbacks.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditEnvFallbacksOutput } from '#common/types/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-output';

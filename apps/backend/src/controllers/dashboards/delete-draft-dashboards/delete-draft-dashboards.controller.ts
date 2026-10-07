@@ -16,22 +16,22 @@ import {
   ToBackendDeleteDraftDashboardsRequestDto,
   ToBackendDeleteDraftDashboardsResponseDto
 } from '#backend/controllers/dashboards/delete-draft-dashboards/delete-draft-dashboards.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { DashboardsService } from '#backend/services/db/dashboards.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 

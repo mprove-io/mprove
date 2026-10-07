@@ -5,13 +5,13 @@ import {
   ToBackendPauseEditorSessionRequestDto,
   ToBackendPauseEditorSessionResponseDto
 } from '#backend/controllers/sessions/pause-editor-session/pause-editor-session.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
-import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
-import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

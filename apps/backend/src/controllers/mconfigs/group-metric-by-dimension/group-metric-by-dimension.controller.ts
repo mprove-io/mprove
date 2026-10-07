@@ -16,7 +16,7 @@ import {
   ToBackendGroupMetricByDimensionRequestDto,
   ToBackendGroupMetricByDimensionResponseDto
 } from '#backend/controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MconfigTab,
@@ -24,22 +24,22 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MconfigsService } from '#backend/services/db/mconfigs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { QueriesService } from '#backend/services/db/queries.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { MalloyService } from '#backend/services/malloy.service';
-import { ParentService } from '#backend/services/parent.service';
-import { TabService } from '#backend/services/tab.service';
+import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { MalloyService } from '#backend/services/malloy/malloy.service';
+import { ParentService } from '#backend/services/parent/parent.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

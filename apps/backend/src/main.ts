@@ -5,18 +5,17 @@ import { WinstonModule } from 'nest-winston';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 import 'reflect-metadata';
 import { MCP_STRATEGY, McpStrategy } from '@rekog/mcp-nest';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { OPEN_API_ALLOWED_PATHS } from '#common/constants/open-api-allowed-paths';
 import {
   APP_NAME_BACKEND,
   APP_NAME_SCHEDULER
 } from '#common/constants/top-backend';
-
 import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { startTelemetry } from '#node-common/functions/start-telemetry/start-telemetry';
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
-import { logToConsoleBackend } from './functions/log-to-console-backend';
 
 let tracerNodeSdk = startTelemetry({
   serviceName:

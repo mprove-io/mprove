@@ -8,16 +8,16 @@ import {
   ToBackendCreateOrgRequestDto,
   ToBackendCreateOrgResponseDto
 } from '#backend/controllers/orgs/create-org/create-org.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { DconfigsService } from '#backend/services/db/dconfigs.service';
-import { OrgsService } from '#backend/services/db/orgs.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
+import { OrgsService } from '#backend/services/db/orgs/orgs.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

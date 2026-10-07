@@ -15,15 +15,15 @@ import {
   ToBackendUpdateUserPasswordRequestDto,
   ToBackendUpdateUserPasswordResponseDto
 } from '#backend/controllers/users/update-user-password/update-user-password.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { makeTsNumber } from '#backend/functions/make-ts-number';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { DconfigsService } from '#backend/services/db/dconfigs.service';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
+import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';

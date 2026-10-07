@@ -5,12 +5,12 @@ import {
   ToBackendArchiveSessionRequestDto,
   ToBackendArchiveSessionResponseDto
 } from '#backend/controllers/sessions/archive-session/archive-session.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { SessionArchiveService } from '#backend/services/session/session-archive.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { SessionArchiveService } from '#backend/services/session/session-archive/session-archive.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

@@ -1,13 +1,13 @@
 import test from 'ava';
 import { OPENAI_GPT_5_6_LUNA_MODEL_INFO } from '#backend/controllers/sessions/get-session/_tests/fixtures/openai-gpt-5-6-luna-model-info.fixture';
-import { forTestsConnectSse } from '#backend/functions/for-tests/for-tests-connect-sse';
-import { forTestsGetSseTicket } from '#backend/functions/for-tests/for-tests-get-sse-ticket';
-import { forTestsWaitForSessionActive } from '#backend/functions/for-tests/for-tests-wait-for-session-active';
-import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests/for-tests-wait-for-turn-ended';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { makeAscendingId } from '#backend/functions/make-ascending-id';
-import { prepareTestAndSeed } from '#backend/functions/prepare-test';
-import { sendToBackend } from '#backend/functions/send-to-backend';
+import { forTestsConnectSse } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-connect-sse/for-tests-connect-sse';
+import { forTestsGetSseTicket } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-get-sse-ticket/for-tests-get-sse-ticket';
+import { forTestsWaitForSessionActive } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-wait-for-session-active/for-tests-wait-for-session-active';
+import { forTestsWaitForTurnEnded } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-wait-for-turn-ended/for-tests-wait-for-turn-ended';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
+import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
+import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 
@@ -115,6 +115,9 @@ test('1', async t => {
     });
 
     // Create session
+    let ascendingIdService: AscendingIdService =
+      prep.app.get(AscendingIdService);
+
     let createSessionReq: ToBackendCreateEditorSessionRequest = {
       operation: 'createEditorSession',
       traceId: traceId,
@@ -128,8 +131,8 @@ test('1', async t => {
         variant: 'default',
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN,
-        messageId: makeAscendingId({ prefix: 'msg' }),
-        partId: makeAscendingId({ prefix: 'prt' })
+        messageId: ascendingIdService.makeAscendingId({ prefix: 'msg' }),
+        partId: ascendingIdService.makeAscendingId({ prefix: 'prt' })
       }
     };
 

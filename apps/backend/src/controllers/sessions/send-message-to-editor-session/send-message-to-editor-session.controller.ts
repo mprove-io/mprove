@@ -16,30 +16,30 @@ import {
   ToBackendSendMessageToEditorSessionRequestDto,
   ToBackendSendMessageToEditorSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key';
-import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ProvidersService } from '#backend/services/db/providers.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
+import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { CodexService } from '#backend/services/codex/codex.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { EditorCodexService } from '#backend/services/editor/editor-codex/editor-codex.service';
 import {
   EditorOpencodeService,
   type ProviderConfigResult
-} from '#backend/services/editor/editor-opencode.service';
-import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
-import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
-import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
+} from '#backend/services/editor/editor-opencode/editor-opencode.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

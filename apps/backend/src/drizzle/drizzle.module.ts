@@ -13,9 +13,9 @@ const { Pool } = pg;
 
 import { BackendConfig } from '#backend/config/backend-config';
 import { getConfig } from '#backend/config/get.config';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
-import { TabToEntService } from '#backend/services/tab-to-ent.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
+import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import { DrizzleLogWriter } from './drizzle-log-writer';
 import { DrizzlePacker } from './postgres/drizzle-packer';
 import { schemaPostgres } from './postgres/schema/_schema-postgres';

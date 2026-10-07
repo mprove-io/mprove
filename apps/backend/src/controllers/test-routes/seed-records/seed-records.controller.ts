@@ -17,7 +17,7 @@ import {
   ToBackendSeedRecordsRequestDto,
   ToBackendSeedRecordsResponseDto
 } from '#backend/controllers/test-routes/seed-records/seed-records.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
@@ -41,28 +41,28 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { parseApiKey } from '#backend/functions/api-key/parse-api-key';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
-import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
-import { BlockmlService } from '#backend/services/blockml.service';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { ChartsService } from '#backend/services/db/charts.service';
-import { ConnectionsService } from '#backend/services/db/connections.service';
-import { DashboardsService } from '#backend/services/db/dashboards.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MconfigsService } from '#backend/services/db/mconfigs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ProvidersService } from '#backend/services/db/providers.service';
-import { QueriesService } from '#backend/services/db/queries.service';
-import { ReportsService } from '#backend/services/db/reports.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { HashService } from '#backend/services/hash.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { parseApiKey } from '#backend/functions/api-key/parse-api-key/parse-api-key';
+import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
+import { ReportsService } from '#backend/services/db/reports/reports.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import {

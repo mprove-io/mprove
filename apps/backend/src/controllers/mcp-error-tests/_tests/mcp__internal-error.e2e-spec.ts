@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'ava';
 import type { Response } from 'supertest';
-import { prepareTestAndSeed } from '#backend/functions/prepare-test';
-import { sendToMcp } from '#backend/functions/send-to-mcp';
+import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
+import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
 import type { Prep } from '#backend/interfaces/prep';
-import { DocsService } from '#backend/services/docs.service';
+import { DocsService } from '#backend/services/docs/docs.service';
 import { MCP_TOOL_LIST_DOCS } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
 

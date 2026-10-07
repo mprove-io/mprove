@@ -5,20 +5,20 @@ import {
   ToBackendCheckLastNavRequestDto,
   ToBackendCheckLastNavResponseDto
 } from '#backend/controllers/nav/check-last-nav/check-last-nav.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCheckLastNavOutput } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-output';

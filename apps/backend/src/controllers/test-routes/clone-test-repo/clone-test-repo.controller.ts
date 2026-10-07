@@ -5,9 +5,9 @@ import {
   ToBackendCloneTestRepoRequestDto,
   ToBackendCloneTestRepoResponseDto
 } from '#backend/controllers/test-routes/clone-test-repo/clone-test-repo.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
-import { RpcService } from '#backend/services/rpc.service';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
+import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
+import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCloneTestRepoOutput } from '#common/types/backend/routes/test-routes/clone-test-repo/clone-test-repo-output';
 

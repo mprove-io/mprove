@@ -17,22 +17,22 @@ import {
   ToBackendSendMessageToExplorerSessionRequestDto,
   ToBackendSendMessageToExplorerSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcMessageTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ProvidersService } from '#backend/services/db/providers.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { CodexService } from '#backend/services/codex/codex.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

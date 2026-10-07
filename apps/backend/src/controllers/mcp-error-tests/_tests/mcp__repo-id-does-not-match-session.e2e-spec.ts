@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
-import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key';
-import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { makeSessionId } from '#backend/functions/make-session-id';
-import { prepareTestAndSeed } from '#backend/functions/prepare-test';
-import { sendToMcp } from '#backend/functions/send-to-mcp';
+import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
+import { sendToMcp } from '#backend/functions/top/send-to-mcp/send-to-mcp';
 import { Prep } from '#backend/interfaces/prep';
 import { MCP_TOOL_GET_STATE } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';

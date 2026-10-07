@@ -5,7 +5,7 @@ import {
   ToBackendGetProvidersRequestDto,
   ToBackendGetProvidersResponseDto
 } from '#backend/controllers/providers/get-providers/get-providers.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
@@ -16,11 +16,11 @@ import {
   type ProviderEnt,
   providersTable
 } from '#backend/drizzle/postgres/schema/providers';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ProvidersService } from '#backend/services/db/providers.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { Member } from '#common/types/backend/parts/member';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';

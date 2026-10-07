@@ -1,0 +1,141 @@
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
+import { BackendConfig } from '#backend/config/backend-config';
+import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { ExplorerChartRebuildService } from '#backend/services/explorer/explorer-chart-rebuild/explorer-chart-rebuild.service';
+import { ExplorerEventsMakerService } from '#backend/services/explorer/explorer-events-maker/explorer-events-maker.service';
+import { SessionDrainService } from '#backend/services/session/session-drain/session-drain.service';
+import { ServerError } from '#common/classes/server-error/server-error';
+
+import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendProduceExplorerChartOutput } from '#common/types/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-output';
+
+export const CHART_ID_PLACEHOLDER = '<chart-id-placeholder>';
+
+@Injectable()
+export class ProduceExplorerChartService {
+  constructor(
+    private sessionsService: SessionsService,
+    private explorerChartRebuildService: ExplorerChartRebuildService,
+    private explorerEventsMakerService: ExplorerEventsMakerService,
+    private sessionDrainService: SessionDrainService,
+    private runQueriesService: RunQueriesService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  async produceExplorerChart(item: {
+    user: UserTab;
+    traceId: string;
+    sessionId: string;
+    modelId: string;
+    chartYaml: string;
+    title: string;
+  }): Promise<ToBackendProduceExplorerChartOutput> {
+    let { user, traceId, sessionId, modelId, chartYaml, title } = item;
+
+    let hasChartIdPlaceholder = chartYaml.includes(CHART_ID_PLACEHOLDER);
+    if (!hasChartIdPlaceholder) {
+      return {
+        status: 'error',
+        errors: [
+          {
+            title: 'Missing chart id placeholder',
+            message: `chartYaml must contain ${CHART_ID_PLACEHOLDER} as the chart id placeholder. Put it in the top-level chart field.`,
+            lines: []
+          }
+        ]
+      };
+    }
+
+    let chartId = makeId();
+    chartYaml = chartYaml.split(CHART_ID_PLACEHOLDER).join(chartId);
+
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId: sessionId
+    });
+
+    if (session.userId !== user.userId) {
+      throw new ServerError({ message: 'BACKEND_UNAUTHORIZED' });
+    }
+
+    if (session.type !== 'Explorer') {
+      throw new ServerError({
+        message: 'BACKEND_SESSION_TYPE_IS_NOT_EXPLORER'
+      });
+    }
+
+    let rebuildResult = await this.explorerChartRebuildService.rebuildFromYaml({
+      traceId: traceId,
+      session: session,
+      chartId: chartId,
+      modelId: modelId,
+      chartYaml: chartYaml
+    });
+
+    if (rebuildResult.ok === false) {
+      return { status: 'error', errors: rebuildResult.errors };
+    }
+
+    let { chart, mconfig, query } = rebuildResult;
+
+    chart.title = title;
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                charts: [chart],
+                mconfigs: [mconfig]
+              },
+              insertOrDoNothing: {
+                queries: [query]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    await this.runQueriesService.runQueries({
+      user: user,
+      projectId: session.projectId,
+      repoId: session.repoId,
+      branchId: session.branchId,
+      envId: session.envId,
+      mconfigIds: [mconfig.mconfigId]
+    });
+
+    let tabId = makeId();
+
+    let tabEvent = this.explorerEventsMakerService.makeChartTabEvent({
+      tabId: tabId,
+      chartId: chart.chartId,
+      chartType: chart.chartType,
+      title: title,
+      modelId: modelId
+    });
+
+    this.sessionDrainService.enqueue({
+      sessionId: sessionId,
+      event: tabEvent
+    });
+
+    let payload: ToBackendProduceExplorerChartOutput = {
+      status: 'ok',
+      tabId: tabId,
+      chartId: chart.chartId,
+      title: title
+    };
+
+    return payload;
+  }
+}

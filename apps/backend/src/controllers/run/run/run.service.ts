@@ -6,14 +6,14 @@ import { RunChartService } from '#backend/controllers/run/run/run-chart.service'
 import { RunDashboardService } from '#backend/controllers/run/run/run-dashboard.service';
 import { RunReportService } from '#backend/controllers/run/run/run-report.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { QueriesService } from '#backend/services/db/queries.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BackendConfig } from '#backend/config/backend-config';
 import { ToBackendCheckSignUpResponseDto } from '#backend/controllers/check/check-sign-up/check-sign-up.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCheckSignUpOutput } from '#common/types/backend/routes/check/check-sign-up/check-sign-up-output';
 

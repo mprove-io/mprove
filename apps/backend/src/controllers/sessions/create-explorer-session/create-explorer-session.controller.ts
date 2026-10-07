@@ -17,26 +17,26 @@ import {
   ToBackendCreateExplorerSessionRequestDto,
   ToBackendCreateExplorerSessionResponseDto
 } from '#backend/controllers/sessions/create-explorer-session/create-explorer-session.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { makeSessionId } from '#backend/functions/make-session-id';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex.service';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { OcEventsService } from '#backend/services/db/oc-events.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ProvidersService } from '#backend/services/db/providers.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
+import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { CodexService } from '#backend/services/codex/codex.service';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

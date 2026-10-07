@@ -1,5 +1,5 @@
 import type { PrepTest } from '#backend/interfaces/prep-test';
-import { DocsService } from '#backend/services/docs.service';
+import { DocsService } from '#backend/services/docs/docs.service';
 import type { McpToolSearchDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-output';
 
 export function mockMcpSearchDocsOutput(item: { prepTest: PrepTest }): void {

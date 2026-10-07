@@ -5,11 +5,11 @@ import {
   ToBackendCreateSessionSseTicketRequestDto,
   ToBackendCreateSessionSseTicketResponseDto
 } from '#backend/controllers/sessions/create-session-sse-ticket/create-session-sse-ticket.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { RedisService } from '#backend/services/redis.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

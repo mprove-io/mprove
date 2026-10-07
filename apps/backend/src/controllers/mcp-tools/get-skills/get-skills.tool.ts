@@ -1,9 +1,9 @@
 import { UseFilters } from '@nestjs/common';
 import { McpController, Tool } from '@rekog/mcp-nest';
 import { GetSkillsService } from '#backend/controllers/skills/get-skills/get-skills.service';
-import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
-import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
+import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
+import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
 import {
   MCP_TOOL_GET_SKILLS,
   MCP_TOOL_GET_SKILLS_DESCRIPTION

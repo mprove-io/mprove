@@ -5,17 +5,17 @@ import {
   ToBackendGetRebuildStructRequestDto,
   ToBackendGetRebuildStructResponseDto
 } from '#backend/controllers/test-routes/get-rebuild-struct/get-rebuild-struct.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
-import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
-import { ConnectionsService } from '#backend/services/db/connections.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';
+import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
+import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-output';

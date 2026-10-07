@@ -17,7 +17,7 @@ import {
   ToBackendCreateEditorSessionRequestDto,
   ToBackendCreateEditorSessionResponseDto
 } from '#backend/controllers/sessions/create-editor-session/create-editor-session.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
@@ -28,27 +28,27 @@ import type {
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
-import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key';
-import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { makeSessionId } from '#backend/functions/make-session-id';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml.service';
-import { CodexService } from '#backend/services/codex.service';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ProvidersService } from '#backend/services/db/providers.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
-import { EditorConnectionsService } from '#backend/services/editor/editor-connections.service';
-import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
-import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { CodexService } from '#backend/services/codex/codex.service';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { EditorCodexService } from '#backend/services/editor/editor-codex/editor-codex.service';
+import { EditorConnectionsService } from '#backend/services/editor/editor-connections/editor-connections.service';
+import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

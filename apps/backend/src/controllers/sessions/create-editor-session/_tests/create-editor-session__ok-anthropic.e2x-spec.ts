@@ -1,6 +1,6 @@
 import test from 'ava';
 import { ANTHROPIC_CLAUDE_SONNET_5_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/_tests/fixtures/anthropic-claude-sonnet-5-model-info.fixture';
-import { forTestsRunEditorSessionE2x } from '#backend/functions/for-tests/for-tests-run-editor-session-e2x';
+import { forTestsRunEditorSessionE2x } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-run-editor-session-e2x';
 import { ANTHROPIC_PROVIDER_ID } from '#common/constants/providers';
 
 test('1', async t => {

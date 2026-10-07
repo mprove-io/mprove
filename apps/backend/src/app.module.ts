@@ -29,6 +29,19 @@ import pg from 'pg';
 const { Client } = pg;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { JwtAuthGuard } from '#backend/guards/jwt-auth/jwt-auth.guard';
+import { ZodValidationPipe } from '#backend/pipes/zod-validation/zod-validation.pipe';
+import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { OrgsService } from '#backend/services/db/orgs/orgs.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
+import { TabCheckerService } from '#backend/services/tab-checker/tab-checker.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
   DEMO_ORG_NAME,
@@ -37,7 +50,6 @@ import {
   RESTRICTED_USER_PASSWORD
 } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -65,20 +77,7 @@ import { orgsTable } from './drizzle/postgres/schema/orgs';
 import { projectsTable } from './drizzle/postgres/schema/projects';
 import { uconfigsTable } from './drizzle/postgres/schema/uconfigs';
 import { usersTable } from './drizzle/postgres/schema/users';
-import { getRetryOption } from './functions/get-retry-option';
-import { logToConsoleBackend } from './functions/log-to-console-backend';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { mcpProviders } from './mcp-providers';
-import { ZodValidationPipe } from './pipes/zod-validation.pipe';
-import { ConnectionsService } from './services/db/connections.service';
-import { DconfigsService } from './services/db/dconfigs.service';
-import { MembersService } from './services/db/members.service';
-import { OrgsService } from './services/db/orgs.service';
-import { ProjectsService } from './services/db/projects.service';
-import { UsersService } from './services/db/users.service';
-import { HashService } from './services/hash.service';
-import { TabService } from './services/tab.service';
-import { TabCheckerService } from './services/tab-checker.service';
 
 let configModule = ConfigModule.forRoot({
   load: [getConfig],

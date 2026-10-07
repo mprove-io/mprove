@@ -4,10 +4,10 @@ import { McpController, McpRawRequest, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { RunService } from '#backend/controllers/run/run/run.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
-import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
-import { ToolService } from '#backend/services/tool.service';
+import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
+import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
+import { ToolService } from '#backend/services/tool/tool.service';
 import {
   MCP_TOOL_RUN,
   MCP_TOOL_RUN_DESCRIPTION

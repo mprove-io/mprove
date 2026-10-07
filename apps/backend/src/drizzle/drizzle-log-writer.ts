@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { LogWriter } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 
 export class DrizzleLogWriter implements LogWriter {
   constructor(

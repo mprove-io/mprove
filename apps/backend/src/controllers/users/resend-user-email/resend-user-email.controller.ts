@@ -6,13 +6,13 @@ import {
   ToBackendResendUserEmailRequestDto,
   ToBackendResendUserEmailResponseDto
 } from '#backend/controllers/users/resend-user-email/resend-user-email.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { UsersService } from '#backend/services/db/users.service';
-import { EmailService } from '#backend/services/email.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { EmailService } from '#backend/services/email/email.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 

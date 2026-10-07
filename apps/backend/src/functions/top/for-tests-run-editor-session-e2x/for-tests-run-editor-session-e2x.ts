@@ -1,0 +1,384 @@
+import type { ExecutionContext } from 'ava';
+import { forTestsConnectSse } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-connect-sse/for-tests-connect-sse';
+import { forTestsExtractDialogLines } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-extract-dialog-lines/for-tests-extract-dialog-lines';
+import { forTestsGetSseTicket } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-get-sse-ticket/for-tests-get-sse-ticket';
+import { forTestsInspectUi } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-inspect-ui/for-tests-inspect-ui';
+import { forTestsWaitForSessionActive } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-wait-for-session-active/for-tests-wait-for-session-active';
+import { forTestsWaitForTurnEnded } from '#backend/functions/top/for-tests-run-editor-session-e2x/for-tests-wait-for-turn-ended/for-tests-wait-for-turn-ended';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
+import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
+import { Prep } from '#backend/interfaces/prep';
+import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
+
+import { makeId } from '#common/functions/make-id/make-id';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
+import type { ToBackendSeedRecordsInputProvidersItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-providers-item';
+import type { ToBackendCreateEditorSessionRequest } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-request';
+import type { ToBackendCreateEditorSessionResponse } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-response';
+import type { ToBackendDeleteSessionRequest } from '#common/types/backend/routes/sessions/delete-session/delete-session-request';
+import type { ToBackendSendMessageToEditorSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
+import type { ToBackendSendMessageToEditorSessionResponse } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
+
+type EditorSessionProviderSeed =
+  ToBackendSeedRecordsInputProvidersItem extends infer T
+    ? T extends ToBackendSeedRecordsInputProvidersItem
+      ? Omit<T, 'projectId'>
+      : never
+    : never;
+
+export async function forTestsRunEditorSessionE2x(item: {
+  t: ExecutionContext;
+  testId: string;
+  inspectUI: boolean;
+  projectApiKeys: {
+    e2bApiKey: string;
+  };
+  provider: EditorSessionProviderSeed;
+  modelId: string;
+  variant: string;
+}): Promise<void> {
+  let { t, testId, inspectUI } = item;
+
+  if (inspectUI) {
+    t.timeout(35 * 60 * 1000); // 35 minutes for inspection mode
+  }
+
+  let traceId = testId;
+  let email = `${testId}@example.com`;
+  let userId = makeId();
+  let password = '123456';
+  let orgId = testId;
+  let orgName = testId;
+  let projectId = makeId();
+  let projectName = testId;
+
+  let prep: Prep;
+  let sessionId: string | undefined;
+  let sse: { events: SessionEventApi[]; close: () => void } | undefined;
+  let testError: unknown;
+  let createSessionResp: ToBackendCreateEditorSessionResponse;
+  let sendFirstMessageResp: ToBackendSendMessageToEditorSessionResponse;
+  let sendMessageResp: ToBackendSendMessageToEditorSessionResponse;
+
+  try {
+    console.log('[test] preparing test and seeding...');
+    prep = await prepareTestAndSeed({
+      traceId: traceId,
+      deleteRecordsPayload: {
+        emails: [email],
+        orgIds: [orgId],
+        projectIds: [projectId],
+        projectNames: [projectName]
+      },
+      seedRecordsPayload: {
+        users: [
+          {
+            email,
+            password,
+            isEmailVerified: true
+          }
+        ],
+        orgs: [
+          {
+            orgId: orgId,
+            ownerEmail: email,
+            name: orgName
+          }
+        ],
+        projects: [
+          {
+            orgId,
+            projectId,
+            name: projectName,
+            remoteType: 'Managed',
+            defaultBranch: BRANCH_MAIN,
+            e2bApiKey: item.projectApiKeys.e2bApiKey
+          }
+        ],
+        members: [
+          {
+            memberId: userId,
+            email,
+            projectId,
+            isAdmin: true,
+            isEditor: true,
+            isExplorer: true
+          }
+        ],
+        providers: [
+          {
+            ...item.provider,
+            projectId: projectId
+          }
+        ]
+      },
+      loginUserPayload: { email, password }
+    });
+
+    console.log('[test] seed complete, creating editor session...');
+
+    // Create editor session without firstMessage to avoid race condition:
+    // SSE must be connected before messages are sent, otherwise events
+    // published to Redis pub/sub before SSE subscription are lost.
+    let ascendingIdService: AscendingIdService =
+      prep.app.get(AscendingIdService);
+
+    let createSessionReq: ToBackendCreateEditorSessionRequest = {
+      operation: 'createEditorSession',
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
+        projectId: projectId,
+        sandboxType: 'E2B',
+        providerId: item.provider.providerId,
+        modelId: item.modelId,
+        agent: 'plan',
+        variant: item.variant,
+        envId: PROJECT_ENV_PROD,
+        initialBranch: BRANCH_MAIN,
+        messageId: ascendingIdService.makeAscendingId({ prefix: 'msg' }),
+        partId: ascendingIdService.makeAscendingId({ prefix: 'prt' })
+      }
+    };
+
+    createSessionResp = await sendToBackend({
+      route: 'api/ToBackendCreateEditorSession',
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: createSessionReq,
+      checkIsOk: true
+    });
+
+    sessionId = unwrapBackendResponseOutput({
+      response: createSessionResp
+    }).sessionId;
+    console.log(`[test] session created: ${sessionId}`);
+
+    // Start listening so EventSource can connect
+    await new Promise<void>(resolve => {
+      prep.httpServer.listen(0, () => resolve());
+    });
+
+    console.log(
+      '[test] http server listening, waiting for session activation...'
+    );
+
+    // Wait for async session activation to complete
+    await forTestsWaitForSessionActive({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      traceId: traceId,
+      sessionId: sessionId
+    });
+
+    console.log('[test] session active, connecting SSE...');
+
+    // Get SSE ticket and connect before sending any messages
+    let sseTicket = await forTestsGetSseTicket({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      traceId: traceId,
+      sessionId: sessionId
+    });
+
+    sse = await forTestsConnectSse({
+      httpServer: prep.httpServer,
+      sessionId: sessionId,
+      ticket: sseTicket
+    });
+
+    console.log('[test] SSE connected, sending 1st message...');
+
+    // Send 1st message (after SSE is connected)
+    let sendFirstMessageReq: ToBackendSendMessageToEditorSessionRequest = {
+      operation: 'sendMessageToEditorSession',
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
+        sessionId: sessionId,
+        interactionType: 'Message',
+        message: 'hello, what model is used?',
+        agent: 'plan',
+        providerId: item.provider.providerId,
+        modelId: item.modelId,
+        variant: item.variant
+      }
+    };
+
+    sendFirstMessageResp = await sendToBackend({
+      route: 'api/ToBackendSendMessageToEditorSession',
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: sendFirstMessageReq,
+      checkIsOk: true
+    });
+
+    console.log('[test] 1st message sent, waiting for turn to complete...');
+
+    // Wait for 1st turn to complete
+    await forTestsWaitForTurnEnded({
+      events: sse.events,
+      count: 1,
+      maxRetries: 60
+    });
+
+    console.log(
+      `[test] 1st turn complete (${sse.events.length} events so far), sending 2nd message...`
+    );
+
+    // Send 2nd message
+    let sendMessageReq: ToBackendSendMessageToEditorSessionRequest = {
+      operation: 'sendMessageToEditorSession',
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
+        sessionId: sessionId,
+        interactionType: 'Message',
+        message: 'what is 2 + 2?',
+        agent: 'plan',
+        providerId: item.provider.providerId,
+        modelId: item.modelId,
+        variant: item.variant
+      }
+    };
+
+    sendMessageResp = await sendToBackend({
+      route: 'api/ToBackendSendMessageToEditorSession',
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: sendMessageReq,
+      checkIsOk: true
+    });
+
+    console.log('[test] 2nd message sent, waiting for turn to complete...');
+
+    // Wait for 2nd turn to complete
+    await forTestsWaitForTurnEnded({
+      events: sse.events,
+      count: 1,
+      maxRetries: 60
+    });
+
+    console.log(`[test] 2nd turn complete (${sse.events.length} events total)`);
+  } catch (e) {
+    console.log(`[test] ERROR: ${e instanceof Error ? e.message : e}`);
+    if (sse) {
+      console.log(`[test] events received so far: ${sse.events.length}`);
+      let eventTypes = sse.events.map(ev => ev.eventType);
+      console.log(`[test] event types: ${JSON.stringify(eventTypes)}`);
+    }
+    logToConsoleBackend({
+      log: e,
+      logLevel: 'Error',
+      logger: prep.logger,
+      cs: prep.cs
+    });
+    testError = e;
+  }
+
+  if (sse) {
+    sse.close();
+  }
+
+  if (!!inspectUI) {
+    await forTestsInspectUi({
+      t,
+      prep,
+      sessionId,
+      testError,
+      createSessionResp
+    });
+  }
+
+  if (!inspectUI) {
+    // Cleanup
+    if (sessionId && prep) {
+      try {
+        let deleteSessionReq: ToBackendDeleteSessionRequest = {
+          operation: 'deleteSession',
+          traceId: traceId,
+          idempotencyKey: makeId(),
+          input: {
+            sessionId: sessionId
+          }
+        };
+
+        await sendToBackend({
+          route: 'api/ToBackendDeleteSession',
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: deleteSessionReq,
+          checkIsOk: true
+        });
+
+        // Wait for stream stop to complete (stopDelay=0 in TEST env)
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (er) {
+        logToConsoleBackend({
+          log: er,
+          logLevel: 'Error',
+          logger: prep.logger,
+          cs: prep.cs
+        });
+      }
+    }
+
+    if (prep) {
+      await prep.app.close();
+    }
+
+    t.is(testError, undefined);
+    t.is(createSessionResp.type, 'Success');
+
+    t.truthy(sessionId);
+
+    t.is(sendFirstMessageResp.type, 'Success');
+    t.is(sendMessageResp.type, 'Success');
+
+    // Log event summary
+    let eventTypeCounts: Record<string, number> = {};
+    sse.events.forEach(sseEvent => {
+      eventTypeCounts[sseEvent.eventType] =
+        (eventTypeCounts[sseEvent.eventType] || 0) + 1;
+    });
+    console.log(
+      `[test] event summary (${sse.events.length} total): ${JSON.stringify(eventTypeCounts, null, 2)}`
+    );
+
+    // // Log each event for debugging
+    // for (let ev of sse.events) {
+    //   let oc = ev.ocEvent;
+    //   let detail = '';
+    //   if (oc.type === 'message.updated') {
+    //     detail = ` role=${oc.properties.info.role} msgId=${oc.properties.info.id}`;
+    //   } else if (oc.type === 'message.part.updated') {
+    //     detail = ` partType=${oc.properties.part.type} partId=${oc.properties.part.id} msgId=${oc.properties.part.messageID}`;
+    //     if (oc.properties.part.type === 'text') {
+    //       detail += ` text="${oc.properties.part.text?.substring(0, 80)}"`;
+    //     }
+    //   } else if (oc.type === 'message.part.delta') {
+    //     let props = oc.properties;
+    //     detail = ` partId=${props.partID} field=${props.field} delta="${props.delta?.substring(0, 80)}"`;
+    //   }
+    //   console.log(`[event ${ev.eventIndex}] ${ev.eventType}${detail}`);
+    // }
+
+    // Extract dialog messages from OpenCode events
+    let dialogLines = forTestsExtractDialogLines({ events: sse.events });
+
+    console.log('\n' + dialogLines.join('\n'));
+
+    t.true(
+      dialogLines.some(l => l.startsWith('=== Assistant:')),
+      'Expected assistant text answer in dialog'
+    );
+
+    t.true(
+      dialogLines.some(l => l.startsWith('=== User:')),
+      'Expected user text message in dialog'
+    );
+  }
+}

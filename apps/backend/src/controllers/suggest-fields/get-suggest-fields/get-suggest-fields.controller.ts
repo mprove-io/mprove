@@ -5,23 +5,23 @@ import {
   ToBackendGetSuggestFieldsRequestDto,
   ToBackendGetSuggestFieldsResponseDto
 } from '#backend/controllers/suggest-fields/get-suggest-fields/get-suggest-fields.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { checkModelAccess } from '#backend/functions/check-model-access';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { DashboardsService } from '#backend/services/db/dashboards.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { ReportsService } from '#backend/services/db/reports.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { TabService } from '#backend/services/tab.service';
+import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { ReportsService } from '#backend/services/db/reports/reports.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { TabService } from '#backend/services/tab/tab.service';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SuggestField } from '#common/types/backend/parts/suggest-field';

@@ -17,7 +17,7 @@ import {
   ToBackendSpecialRebuildStructsRequestDto,
   ToBackendSpecialRebuildStructsResponseDto
 } from '#backend/controllers/special/special-rebuild-structs/special-rebuild-structs.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
@@ -26,12 +26,12 @@ import type {
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { BlockmlService } from '#backend/services/blockml.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';

@@ -8,11 +8,11 @@ import {
   type ProviderEnt,
   providersTable
 } from '#backend/drizzle/postgres/schema/providers';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '#backend/functions/prepare-test';
-import { sendToBackend } from '#backend/functions/send-to-backend';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
+import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
 import type { Prep } from '#backend/interfaces/prep';
-import { TabService } from '#backend/services/tab.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 

@@ -1,0 +1,222 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { StructTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
+import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { structsTable } from '#backend/drizzle/postgres/schema/structs';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
+import { ServerError } from '#common/classes/server-error/server-error';
+import {
+  EMPTY_STRUCT_ID,
+  PROJECT_CONFIG_CURRENCY_PREFIX,
+  PROJECT_CONFIG_CURRENCY_SUFFIX,
+  PROJECT_CONFIG_DEFAULT_TIMEZONE,
+  PROJECT_CONFIG_FORMAT_NUMBER,
+  PROJECT_CONFIG_THOUSANDS_SEPARATOR
+} from '#common/constants/top';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
+import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
+import type { StructX } from '#common/types/backend/parts/struct/struct-x';
+
+@Injectable()
+export class StructsService {
+  constructor(
+    private tabService: TabService,
+    private hashService: HashService,
+    private cs: ConfigService<BackendConfig>,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  tabToApi(item: { struct: StructTab; modelPartXs: ModelPartX[] }): StructX {
+    let { struct, modelPartXs } = item;
+
+    let apiStruct: StructX = {
+      projectId: struct.projectId,
+      structId: struct.structId,
+      errors: struct.errors,
+      modelFilePaths: struct.modelFilePaths ?? [],
+      metrics: struct.metrics.map(x => {
+        let modelMetricX: ModelMetricX = Object.assign({}, x, {
+          hasAccessToModel: modelPartXs.find(y => y.modelId === x.modelId)
+            .hasAccess
+        });
+        return modelMetricX;
+      }),
+      presets: struct.presets,
+      spaces: struct.spaces,
+      mproveConfig: struct.mproveConfig,
+      mproveExplorer: struct.mproveExplorer,
+      mproveVersion: struct.mproveVersion,
+      serverTs: Number(struct.serverTs)
+    };
+
+    return apiStruct;
+  }
+
+  async getStructCheckExists(item: {
+    structId: string;
+    projectId: string;
+    isGetEmptyStructOnError?: boolean;
+  }) {
+    let { structId, projectId, isGetEmptyStructOnError } = item;
+
+    let emptyStruct: StructTab = {
+      structId: structId,
+      projectId: projectId,
+      errors: [],
+      modelFilePaths: [],
+      metrics: [],
+      presets: [],
+      spaces: [],
+      extraSchemas: [],
+      mproveConfig: {
+        mproveDirValue: './data',
+        weekStart: 'Sunday',
+        allowTimezones: true,
+        caseSensitiveStringFilters: false,
+        defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
+        formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
+        currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
+        currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
+        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR
+      },
+      mproveExplorer: undefined,
+      mproveVersion:
+        this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
+      keyTag: undefined,
+      serverTs: undefined
+    };
+
+    let struct: StructTab;
+
+    if (structId === EMPTY_STRUCT_ID) {
+      struct = emptyStruct;
+    } else {
+      struct = await this.db.drizzle.query.structsTable
+        .findFirst({
+          where: and(
+            eq(structsTable.structId, structId),
+            eq(structsTable.projectId, projectId)
+          )
+        })
+        .then(x => this.tabService.structEntToTab(x));
+
+      if (isUndefined(struct)) {
+        if (isGetEmptyStructOnError === true) {
+          struct = emptyStruct;
+        } else {
+          throw new ServerError({
+            message: 'BACKEND_STRUCT_DOES_NOT_EXIST'
+          });
+        }
+      }
+    }
+
+    return struct;
+  }
+
+  async getStructCheckExistsAndNotChanged(item: {
+    bridgeStructId: string;
+    projectId: string;
+    structId: string;
+  }) {
+    let { bridgeStructId, projectId, structId } = item;
+
+    let struct = await this.getStructCheckExists({
+      structId: bridgeStructId,
+      projectId: projectId
+    });
+
+    if (structId !== bridgeStructId) {
+      throw new ServerError({
+        message: 'BACKEND_STRUCT_ID_CHANGED'
+      });
+    }
+
+    return struct;
+  }
+
+  async removeStructs() {
+    let rawData: any = await this.db.drizzle.execute(sql`
+SELECT
+  s.struct_id,
+  b.project_id,
+  b.repo_id,
+  b.branch_id,
+  b.env_id
+FROM structs AS s
+LEFT JOIN bridges AS b ON s.struct_id = b.struct_id
+LEFT JOIN branches AS c ON b.branch_id = c.branch_id
+WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL '15 seconds');
+`);
+
+    let structIds: string[] = rawData.rows.map((x: any) => x.struct_id) || [];
+
+    structIds = structIds.filter(x => [EMPTY_STRUCT_ID].indexOf(x) < 0);
+
+    if (structIds.length > 0) {
+      await this.db.drizzle
+        .delete(structsTable)
+        .where(inArray(structsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(modelsTable)
+        .where(inArray(modelsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(modelFieldLeafsTable)
+        .where(inArray(modelFieldLeafsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(chartsTable)
+        .where(
+          and(
+            inArray(chartsTable.structId, structIds),
+            isNull(chartsTable.sessionId)
+          )
+        );
+
+      await this.db.drizzle
+        .delete(dashboardsTable)
+        .where(inArray(dashboardsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(reportsTable)
+        .where(inArray(reportsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(kitsTable)
+        .where(inArray(kitsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(mconfigsTable)
+        .where(
+          and(
+            inArray(mconfigsTable.structId, structIds),
+            isNull(mconfigsTable.sessionId)
+          )
+        );
+
+      await this.db.drizzle
+        .delete(queriesTable)
+        .where(
+          and(
+            inArray(queriesTable.reportStructId, structIds),
+            isNull(queriesTable.sessionId)
+          )
+        );
+    }
+  }
+}

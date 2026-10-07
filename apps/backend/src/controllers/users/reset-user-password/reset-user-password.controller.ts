@@ -15,14 +15,14 @@ import {
   ToBackendResetUserPasswordRequestDto,
   ToBackendResetUserPasswordResponseDto
 } from '#backend/controllers/users/reset-user-password/reset-user-password.dto';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { UsersService } from '#backend/services/db/users.service';
-import { EmailService } from '#backend/services/email.service';
-import { TabService } from '#backend/services/tab.service';
+import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { EmailService } from '#backend/services/email/email.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { PATH_UPDATE_PASSWORD } from '#common/constants/top';
 import {
   PASSWORD_EXPIRES_OFFSET,

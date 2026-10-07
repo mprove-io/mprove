@@ -1,0 +1,593 @@
+import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
+import { format, fromUnixTime } from 'date-fns';
+import dayjs from 'dayjs';
+import { DateTime } from 'luxon';
+import pgPromise from 'pg-promise';
+import pg from 'pg-promise/typescript/pg-subset';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix/node-format-ts-unix';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { makeTs } from '#backend/services/doc/make-ts/make-ts';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
+import { ServerError } from '#common/classes/server-error/server-error';
+import {
+  DOUBLE_UNDERSCORE,
+  SOME_ROWS_HAVE_FORMULA_ERRORS
+} from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
+import type { ReportDataColumn } from '#common/types/backend/parts/report/report-data-column';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+import type { RowRecord } from '#common/types/blockml/parts/report/row/row-record';
+import type { TimeSpec } from '#common/types/shared/time/timespec';
+import { CycleGraph } from '#node-common/classes/cycle-graph/cycle-graph';
+
+@Injectable()
+export class DocService implements OnModuleDestroy {
+  private pgp: pgPromise.IMain;
+  private calcDb: pgPromise.IDatabase<unknown>;
+
+  constructor(
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
+  ) {
+    this.pgp = pgPromise({ noWarnings: true });
+
+    const cn: pg.IConnectionParameters<pg.IClient> = {
+      host: this.cs.get<BackendConfig['calcPostgresHost']>('calcPostgresHost'),
+      port: this.cs.get<BackendConfig['calcPostgresPort']>('calcPostgresPort'),
+      database: 'postgres',
+      user: this.cs.get<BackendConfig['calcPostgresUsername']>(
+        'calcPostgresUsername'
+      ),
+      password: this.cs.get<BackendConfig['calcPostgresPassword']>(
+        'calcPostgresPassword'
+      ),
+      ssl: false
+    };
+
+    this.calcDb = this.pgp(cn);
+  }
+
+  onModuleDestroy() {
+    this.calcDb.$pool.end();
+  }
+
+  async calculateData(item: {
+    report: ReportX;
+    timezone: string;
+    timeSpec: TimeSpec;
+    timeRangeFraction: Fraction;
+    traceId: string;
+  }) {
+    let { report, timeSpec, timeRangeFraction, timezone, traceId } = item;
+
+    // check for cycles
+    let g = new CycleGraph();
+    // graph for toposort
+    let gr: string[][] = [];
+
+    report.rows.forEach(x => {
+      x.formulaError = undefined;
+
+      if (isDefined(x.formulaDeps) && x.formulaDeps.length > 0) {
+        let wrongReferences: string[] = [];
+
+        x.formulaDeps.forEach(dep => {
+          if (report.rows.map(r => r.rowId).indexOf(dep) < 0) {
+            wrongReferences.push(dep);
+          }
+          g.add(x.rowId, [dep]);
+          gr.push([x.rowId, dep]);
+        });
+
+        if (wrongReferences.length > 0) {
+          x.formulaError = `Formula references not valid rows: ${wrongReferences.join(
+            ', '
+          )}`;
+        }
+      }
+    });
+
+    let cycledNames: string[] = [];
+
+    if (g.hasCycle() === true) {
+      let cycles: any[] = g.getCycles();
+
+      cycledNames = cycles[0].map((c: any) => c.name);
+
+      let cycledNamesStr = cycledNames.join(', ');
+
+      report.rows
+        .filter(k => cycledNames.indexOf(k.rowId) > -1)
+        .forEach(x => {
+          if (isUndefined(x.formulaError)) {
+            x.formulaError = `Cycle in formula references of rows: ${cycledNamesStr}`;
+          }
+          return x;
+        });
+    }
+
+    let reportDataColumns = this.makeReportDataColumns({
+      report: report,
+      timeSpec: timeSpec
+    });
+
+    let topQueryData: any[] = [];
+    let topQueryError: any;
+
+    if (report.rows.filter(x => isDefined(x.formulaError)).length > 0) {
+      topQueryError = SOME_ROWS_HAVE_FORMULA_ERRORS;
+    } else {
+      let timestampValues = reportDataColumns.map(
+        x => x.fields['timestamp'] * 1000
+      );
+
+      let mainSelect = [
+        `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
+        ...report.rows
+          .filter(row => row.rowType === 'metric')
+          .map(row => {
+            let values = reportDataColumns.map(r =>
+              isDefined(r.fields[row.rowId]) ? r.fields[row.rowId] : 'NULL'
+            );
+            let str = `    unnest(ARRAY[${values}]::numeric[]) AS ${row.rowId}`;
+            return str;
+          })
+      ];
+
+      let mainSelectReady = mainSelect.join(',\n');
+
+      let outerSelect = [
+        `  main.timestamp as timestamp`,
+        ...report.rows
+          .filter(row => row.rowType === 'metric')
+          .map(x => `  main.${x.rowId} AS ${x.rowId}`),
+        ...report.rows
+          .filter(row => row.rowType === 'formula')
+          .map(row => {
+            let newFormula = row.formula;
+            let reg = MyRegex.CAPTURE_ROW_REF();
+            let r;
+
+            while ((r = reg.exec(newFormula))) {
+              let reference = r[1];
+
+              let targetRow = report.rows.find(y => y.rowId === reference);
+
+              let targetTo =
+                targetRow.rowType === 'formula'
+                  ? targetRow.formula
+                  : targetRow.rowType === 'metric'
+                    ? `main.${targetRow.rowId}`
+                    : reference;
+
+              newFormula =
+                targetRow.rowType === 'metric'
+                  ? MyRegex.replaceRowIdsFinalNoPars(
+                      newFormula,
+                      reference,
+                      targetTo
+                    )
+                  : MyRegex.replaceRowIdsFinalAddPars(
+                      newFormula,
+                      reference,
+                      targetTo
+                    );
+            }
+
+            let str = `  ${newFormula} as ${row.rowId}`;
+
+            return str;
+          })
+      ];
+
+      let outerSelectReady = outerSelect.join(',\n');
+
+      let querySql = `WITH main AS (
+  SELECT
+    ${mainSelectReady}
+)
+SELECT
+${outerSelectReady}
+FROM main;`;
+
+      await this.calcDb
+        .any(querySql)
+        .then(async (data: any) => {
+          topQueryData = data.map((r: any) => {
+            Object.keys(r)
+              .filter(y => y !== 'timestamp')
+              .forEach(x => {
+                r[x] = isDefined(r[x]) ? Number(r[x]) : undefined;
+              });
+
+            return r;
+          });
+        })
+        .catch(async (errr: any) => {
+          topQueryError = errr.message;
+        });
+    }
+
+    let lastCalculatedTs = Number(makeTs());
+
+    let newKits: KitTab[] = [];
+
+    report.rows
+      .filter(row => row.rowType === 'metric' || row.rowType === 'formula')
+      .forEach(row => {
+        if (row.rowType === 'formula' && isDefined(row.formulaError)) {
+          row.topQueryError = row.formulaError;
+          row.records = reportDataColumns.map((y: any, index) => {
+            let unixTimeZoned = y.fields['timestamp'];
+
+            let record: RowRecord = {
+              columnLabel: undefined,
+              id: index + 1,
+              key: unixTimeZoned,
+              value: undefined,
+              error: undefined
+            };
+
+            return record;
+          });
+        } else if (row.rowType === 'formula' && isDefined(topQueryError)) {
+          row.topQueryError = topQueryError;
+          row.records = reportDataColumns.map((y: any, index) => {
+            let unixTimeZoned = y.fields['timestamp'];
+
+            let record: RowRecord = {
+              columnLabel: undefined,
+              id: index + 1,
+              key: unixTimeZoned,
+              value: undefined,
+              error: undefined
+            };
+
+            return record;
+          });
+        } else if (row.rowType === 'metric' && isDefined(topQueryError)) {
+          row.topQueryError = topQueryError;
+
+          row.records = reportDataColumns.map((y: any, index) => {
+            let unixTimeZoned = y.fields['timestamp'];
+
+            let record: RowRecord = {
+              columnLabel: undefined,
+              id: index + 1,
+              key: unixTimeZoned,
+              value: y.fields[row.rowId],
+              error: undefined
+            };
+
+            return record;
+          });
+        } else if (isUndefined(topQueryError)) {
+          row.topQueryError = undefined;
+
+          row.records = topQueryData.map((y: any, index) => {
+            let unixTimeZoned = y.timestamp / 1000;
+
+            let record: RowRecord = {
+              columnLabel: undefined,
+              id: index + 1,
+              key: unixTimeZoned,
+              value: y[row.rowId.toLowerCase()],
+              error: undefined
+            };
+
+            return record;
+          });
+        }
+
+        let rq = row.rqs.find(
+          y =>
+            y.fractionBrick === timeRangeFraction.brick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
+
+        if (row.rowType === 'formula') {
+          rq.kitId = makeId();
+
+          let newKit: KitTab = {
+            structId: report.structId,
+            kitId: rq.kitId,
+            reportId: report.reportId,
+            data: row.records,
+            keyTag: undefined,
+            serverTs: undefined
+          };
+
+          newKits.push(newKit);
+        }
+
+        rq.lastCalculatedTs = lastCalculatedTs;
+      });
+
+    if (newKits.length > 0) {
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  kits: newKits
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    return report;
+  }
+
+  makeReportDataColumns(item: { report: ReportX; timeSpec: TimeSpec }) {
+    let { report, timeSpec } = item;
+
+    let reportDataColumns: ReportDataColumn[] = [];
+
+    report.rows
+      .filter(
+        row =>
+          row.rowType === 'metric' &&
+          row.mconfig.select.length > 0 &&
+          isDefined(row.query?.data)
+      )
+      .forEach(row => {
+        row.query.data =
+          row.mconfig?.modelType === 'Malloy' &&
+          row.query.connectionType === 'PostgreSQL'
+            ? row.query.data
+                .filter((x: any) => isDefined(x.row))
+                .map((x: any) => {
+                  x.row = Object.keys(x.row).reduce((destination: any, key) => {
+                    destination[key.toLowerCase()] = x.row[key];
+                    return destination;
+                  }, {});
+
+                  return x;
+                })
+            : row.query.data.map((x: any) =>
+                Object.keys(x).reduce((destination: any, key) => {
+                  destination[key.toLowerCase()] = x[key];
+                  return destination;
+                }, {})
+              );
+      });
+
+    if (timeSpec !== 'timestamps') {
+      reportDataColumns = report.columns.map((column, i) => {
+        let reportDataColumn: ReportDataColumn = {
+          id: i,
+          fields: {
+            timestamp: column.columnId
+          }
+        };
+
+        report.rows
+          .filter(
+            row => row.rowType === 'metric' && row.mconfig.select.length > 0
+          )
+          .forEach((row: Row) => {
+            let timeFieldId = this.getReportDataFieldSqlName({
+              row: row,
+              selectIndex: 0
+            });
+
+            let fieldId = this.getReportDataFieldSqlName({
+              row: row,
+              selectIndex: 1
+            });
+
+            let dataRow;
+
+            if (row.mconfig.modelType === 'Store') {
+              dataRow = row.query?.data?.find(
+                (r: any) => r[timeFieldId] === column.columnId
+              );
+            } else {
+              let tsDate = fromUnixTime(column.columnId);
+
+              let zonedDate = DateTime.fromJSDate(tsDate, {
+                zone: 'utc'
+              }).setZone(row.mconfig.timezone);
+
+              if (!zonedDate.isValid) {
+                throw new ServerError({
+                  message: 'BACKEND_DATE_CONVERSION_FAILED'
+                });
+              }
+
+              let offsetMs = zonedDate.offset * 60 * 1000;
+
+              let inverseOffsetMs = -offsetMs;
+
+              let inverseDate = new Date(tsDate.getTime() + inverseOffsetMs);
+
+              let inverseZonedDate = DateTime.fromJSDate(inverseDate, {
+                zone: 'utc'
+              });
+
+              let zonedTimeValue = inverseZonedDate.toFormat(
+                'yyyy-MM-dd HH:mm:ss'
+              );
+
+              let timeValue =
+                row.mconfig?.modelType === 'Malloy'
+                  ? zonedTimeValue
+                  : timeSpec === 'years'
+                    ? format(tsDate, 'yyyy')
+                    : timeSpec === 'quarters'
+                      ? format(tsDate, 'yyyy-MM')
+                      : timeSpec === 'months'
+                        ? format(tsDate, 'yyyy-MM')
+                        : timeSpec === 'weeks'
+                          ? format(tsDate, 'yyyy-MM-dd')
+                          : timeSpec === 'days'
+                            ? format(tsDate, 'yyyy-MM-dd')
+                            : timeSpec === 'hours'
+                              ? format(tsDate, 'yyyy-MM-dd HH')
+                              : timeSpec === 'minutes'
+                                ? format(tsDate, 'yyyy-MM-dd HH:mm')
+                                : undefined;
+
+              let normalizeTimeValue = (v: string) => {
+                const match = v?.match(
+                  /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(\.\d{3})?(?: UTC|Z|[+-]\d{2}(?::?\d{2})?)?$/
+                );
+                return match
+                  ? `${match[1]}T${match[2]}${match[3] || '.000'}`
+                  : null;
+              };
+
+              dataRow =
+                row.mconfig?.modelType === 'Malloy' &&
+                row.query.connectionType === 'PostgreSQL'
+                  ? row.query?.data?.find(
+                      (r: any) =>
+                        normalizeTimeValue(timeValue) ===
+                        normalizeTimeValue(r.row?.[timeFieldId]?.toString())
+                    )?.row
+                  : row.query?.data?.find(
+                      (r: any) =>
+                        normalizeTimeValue(timeValue) ===
+                        normalizeTimeValue(r[timeFieldId]?.toString())
+                    );
+            }
+
+            if (isDefined(dataRow)) {
+              reportDataColumn.fields[row.rowId] = isUndefined(dataRow[fieldId])
+                ? undefined
+                : isNaN(dataRow[fieldId]) === false
+                  ? Number(dataRow[fieldId])
+                  : dataRow[fieldId];
+            }
+          });
+
+        return reportDataColumn;
+      });
+    } else {
+      report.columns = [];
+
+      report.rows
+        .filter(
+          row => row.rowType === 'metric' && row.mconfig.select.length > 0
+        )
+        .forEach((row: Row) => {
+          let timeFieldId = this.getReportDataFieldSqlName({
+            row: row,
+            selectIndex: 0
+          });
+
+          let fieldId = this.getReportDataFieldSqlName({
+            row: row,
+            selectIndex: 1
+          });
+
+          (row.query?.data as any[])?.forEach(x => {
+            let dataRow =
+              row.mconfig?.modelType === 'Malloy' &&
+              row.query.connectionType === 'PostgreSQL'
+                ? x.row
+                : x;
+
+            let timestampString = dataRow[timeFieldId]?.toString();
+
+            let columnId = dayjs(timestampString).valueOf() / 1000;
+
+            let dataValue = isUndefined(dataRow[fieldId])
+              ? undefined
+              : isNaN(dataRow[fieldId]) === false
+                ? Number(dataRow[fieldId])
+                : dataRow[fieldId];
+
+            let reportDataColumn = reportDataColumns.find(
+              x => x.fields.timestamp === columnId
+            );
+
+            if (isUndefined(reportDataColumn)) {
+              reportDataColumn = {
+                id: undefined,
+                fields: {
+                  timestamp: columnId,
+                  [row.rowId]: dataValue
+                }
+              };
+              reportDataColumns.push(reportDataColumn);
+            } else {
+              reportDataColumn.fields[row.rowId] = dataValue;
+            }
+
+            let reportColumn = report.columns.find(
+              x => x.columnId === columnId
+            );
+
+            if (isUndefined(reportColumn)) {
+              reportColumn = {
+                columnId: columnId,
+                label: nodeFormatTsUnix({
+                  timeSpec: timeSpec,
+                  unixTimeZoned: columnId
+                })
+              };
+              report.columns.push(reportColumn);
+            }
+          });
+        });
+
+      report.columns.sort((a, b) =>
+        a.columnId > b.columnId ? 1 : b.columnId > a.columnId ? -1 : 0
+      );
+
+      reportDataColumns.sort((a, b) =>
+        a.fields.timestamp > b.fields.timestamp
+          ? 1
+          : b.fields.timestamp > a.fields.timestamp
+            ? -1
+            : 0
+      );
+
+      reportDataColumns = reportDataColumns.map((x, i) => {
+        x.id = i;
+        return x;
+      });
+    }
+
+    return reportDataColumns;
+  }
+
+  private getReportDataFieldSqlName(item: {
+    row: Row;
+    selectIndex: number;
+  }): string {
+    let { row, selectIndex } = item;
+
+    let fieldId = row.mconfig?.select[selectIndex];
+
+    let mconfigField = row.mconfig?.fields.find(field => field.id === fieldId);
+
+    let fallbackSqlName =
+      row.mconfig?.modelType === 'Malloy'
+        ? fieldId?.split('.').join(DOUBLE_UNDERSCORE)
+        : fieldId?.split('.').join('_');
+
+    let sqlName = isDefined(mconfigField?.sqlName)
+      ? mconfigField.sqlName
+      : fallbackSqlName;
+
+    return sqlName?.toLowerCase();
+  }
+}

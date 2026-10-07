@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   buildFullMcpJson,
   type FullMcpJson
-} from '#backend/functions/build-full-mcp-json';
+} from '#backend/functions/build-full-mcp-json/build-full-mcp-json';
 
 @Injectable()
 export class FullMcpJsonService {

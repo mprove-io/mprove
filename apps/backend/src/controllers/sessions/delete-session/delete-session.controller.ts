@@ -16,7 +16,7 @@ import {
   ToBackendDeleteSessionRequestDto,
   ToBackendDeleteSessionResponseDto
 } from '#backend/controllers/sessions/delete-session/delete-session.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   SessionTab,
@@ -31,17 +31,17 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
-import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
-import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
-import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';

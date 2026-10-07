@@ -1,0 +1,142 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
+import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
+import type { ToDiskGetCatalogFilesRequest } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-request';
+
+@Injectable()
+export class ExplorerModelPartsService {
+  constructor(
+    private projectsService: ProjectsService,
+    private membersService: MembersService,
+    private envsService: EnvsService,
+    private bridgesService: BridgesService,
+    private modelsService: ModelsService,
+    private structsService: StructsService,
+    private rpcService: RpcService,
+    private tabService: TabService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  async getExplorerModelParts(item: {
+    userId: string;
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    traceId: string;
+  }): Promise<ExplorerModelPart[]> {
+    let { userId, projectId, repoId, branchId, envId, traceId } = item;
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
+    let userMember = await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: userId
+    });
+
+    await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId,
+      envId: envId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
+    let modelTabs = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: eq(modelsTable.structId, struct.structId)
+      })
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+
+    let models = modelTabs
+      .map(model =>
+        this.modelsService.tabToApi({
+          model: model,
+          hasAccess: checkModelAccess({
+            member: userMember,
+            modelAccessRoles: model.accessRolesCombined
+          })
+        })
+      )
+      .filter(model => model.hasAccess === true);
+
+    let baseProject = this.tabService.projectTabToBaseProject({
+      project: project
+    });
+
+    let request: ToDiskGetCatalogFilesRequest = {
+      operation: 'getCatalogFiles',
+      traceId: traceId,
+      input: {
+        baseProject: baseProject,
+        repoId: repoId,
+        branch: branchId
+      }
+    };
+
+    let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: request
+      });
+
+    let catalogFiles = diskGetCatalogFilesOutput.files.filter(file =>
+      file.pathString.endsWith('.malloy')
+    );
+
+    return models.map(model => {
+      let catalogFile = catalogFiles.find(file => {
+        let left = model.filePath;
+        let right = file.pathString;
+
+        return (
+          left === right ||
+          left.endsWith(`/${right}`) ||
+          right.endsWith(`/${left}`)
+        );
+      });
+
+      let malloySource =
+        model.type === 'Malloy'
+          ? {
+              source: model.source,
+              filePath: catalogFile?.pathString ?? model.filePath,
+              fileText: catalogFile?.content ?? model.fileText
+            }
+          : undefined;
+
+      return {
+        modelId: model.modelId,
+        label: model.label,
+        type: model.type,
+        connectionId: model.connectionId,
+        connectionType: model.connectionType,
+        malloySource: malloySource
+      };
+    });
+  }
+}

@@ -3,10 +3,10 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { RedisService } from '#backend/services/redis.service';
-import { SessionSseService } from '#backend/services/session/session-sse.service';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { RedisService } from '#backend/services/redis/redis.service';
+import { SessionSseService } from '#backend/services/session/session-sse/session-sse.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';

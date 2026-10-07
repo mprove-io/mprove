@@ -6,18 +6,18 @@ import {
   ToBackendViewCachedColumnRequestDto,
   ToBackendViewCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/view-cached-column/view-cached-column.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { CachedColumnService } from '#backend/services/db/cached-column.service';
-import { EnvsService } from '#backend/services/db/envs.service.js';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service.js';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 

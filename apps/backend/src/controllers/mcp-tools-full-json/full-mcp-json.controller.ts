@@ -1,9 +1,9 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { FullMcpJson } from '#backend/functions/build-full-mcp-json';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
+import type { FullMcpJson } from '#backend/functions/build-full-mcp-json/build-full-mcp-json';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { FullMcpJsonService } from './full-mcp-json.service';
 

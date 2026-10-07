@@ -16,13 +16,13 @@ import {
   ToBackendGenerateProjectRemoteKeyRequestDto,
   ToBackendGenerateProjectRemoteKeyResponseDto
 } from '#backend/controllers/projects/generate-project-remote-key/generate-project-remote-key.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { NoteTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { OrgsService } from '#backend/services/db/orgs.service';
-import { TabService } from '#backend/services/tab.service';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { OrgsService } from '#backend/services/db/orgs/orgs.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';

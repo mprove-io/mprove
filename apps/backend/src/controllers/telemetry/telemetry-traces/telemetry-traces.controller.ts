@@ -13,10 +13,10 @@ import { Throttle } from '@nestjs/throttler';
 import axios from 'axios';
 import type { Response } from 'express';
 import { BackendConfig } from '#backend/config/backend-config';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_TELEMETRY } from '#common/constants/top-backend';
 

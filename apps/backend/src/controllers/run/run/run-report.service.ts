@@ -7,9 +7,9 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
-import { checkAccess } from '#backend/functions/check-access';
-import { getReportUrl } from '#backend/functions/get-report-url';
-import { TabService } from '#backend/services/tab.service';
+import { checkAccess } from '#backend/functions/check-access/check-access';
+import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';

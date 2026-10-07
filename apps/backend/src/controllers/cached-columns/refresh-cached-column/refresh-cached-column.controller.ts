@@ -8,7 +8,7 @@ import {
   ToBackendRefreshCachedColumnRequestDto,
   ToBackendRefreshCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/refresh-cached-column/refresh-cached-column.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   CachedColumnTab,
@@ -19,23 +19,23 @@ import type {
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { makeTsNumber } from '#backend/functions/make-ts-number';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
-import { CachedColumnService } from '#backend/services/db/cached-column.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql.service';
-import { PgService } from '#backend/services/dwh/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino.service';
-import { HashService } from '#backend/services/hash.service';
-import { TabService } from '#backend/services/tab.service';
+import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
+import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
+import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
+import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
+import { PgService } from '#backend/services/dwh/pg/pg.service';
+import { PrestoService } from '#backend/services/dwh/presto/presto.service';
+import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
+import { TrinoService } from '#backend/services/dwh/trino/trino.service';
+import { HashService } from '#backend/services/hash/hash.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

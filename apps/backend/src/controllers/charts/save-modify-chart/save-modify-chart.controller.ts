@@ -17,7 +17,7 @@ import {
   ToBackendSaveModifyChartRequestDto,
   ToBackendSaveModifyChartResponseDto
 } from '#backend/controllers/charts/save-modify-chart/save-modify-chart.dto';
-import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MconfigTab,
@@ -28,27 +28,27 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { checkModelAccess } from '#backend/functions/check-model-access';
-import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id';
-import { makeChartFileText } from '#backend/functions/make-chart-file-text';
-import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml.service';
-import { BranchesService } from '#backend/services/db/branches.service';
-import { BridgesService } from '#backend/services/db/bridges.service';
-import { ChartsService } from '#backend/services/db/charts.service';
-import { EnvsService } from '#backend/services/db/envs.service';
-import { MconfigsService } from '#backend/services/db/mconfigs.service';
-import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { QueriesService } from '#backend/services/db/queries.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { UsersService } from '#backend/services/db/users.service';
-import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service';
+import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path/get-report-space-from-file-path';
+import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
+import { makeChartFileText } from '#backend/functions/make-chart-file-text/make-chart-file-text';
+import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
+import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
+import { MembersService } from '#backend/services/db/members/members.service';
+import { ModelsService } from '#backend/services/db/models/models.service';
+import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
+import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { StructsService } from '#backend/services/db/structs/structs.service';
+import { UsersService } from '#backend/services/db/users/users.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
