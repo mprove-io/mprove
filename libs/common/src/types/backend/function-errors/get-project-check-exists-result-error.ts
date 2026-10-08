@@ -5,16 +5,16 @@ import {
   zBackendProjectDoesNotExistError
 } from '#common/types/backend/errors/backend-project-does-not-exist-error';
 import {
-  type GetTabPropsResultError,
-  zGetTabPropsResultError
-} from '#common/types/backend/function-errors/get-tab-props-result-error';
+  type ProjectEntToTabResultError,
+  zProjectEntToTabResultError
+} from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 
 export type GetProjectCheckExistsResultError =
-  | GetTabPropsResultError
+  | ProjectEntToTabResultError
   | BackendProjectDoesNotExistError;
 
 export let zGetProjectCheckExistsResultError = z.union([
-  zGetTabPropsResultError,
+  zProjectEntToTabResultError,
   zBackendProjectDoesNotExistError
 ]);
 

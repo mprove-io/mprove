@@ -41,22 +41,22 @@ import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
 import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
 import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
 import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
-import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
+import type { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
-import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
-import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import type { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
+import type { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
 import { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
-import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import type { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
 import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
 import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
 import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
 import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
-import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
+import type { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
@@ -66,13 +66,33 @@ import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import type { GitKeyPair } from '#backend/types/git-key-pair';
 import type { TabProps } from '#backend/types/tab-props';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
+import type { DconfigEntToTabResultError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-result-error';
+import type { EnvEntToTabResultError } from '#common/types/backend/function-errors/env-ent-to-tab-result-error';
 import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
+import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
+import type { NoteEntToTabResultError } from '#common/types/backend/function-errors/note-ent-to-tab-result-error';
+import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
+import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
+import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
+import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
+import type { DconfigLt } from '#common/types/shared/st-lt/dconfigs/dconfig-lt';
+import type { DconfigSt } from '#common/types/shared/st-lt/dconfigs/dconfig-st';
+import type { EnvLt } from '#common/types/shared/st-lt/envs/env-lt';
+import type { EnvSt } from '#common/types/shared/st-lt/envs/env-st';
+import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';
+import type { MemberSt } from '#common/types/shared/st-lt/members/member-st';
+import type { NoteLt } from '#common/types/shared/st-lt/notes/note-lt';
+import type { NoteSt } from '#common/types/shared/st-lt/notes/note-st';
+import type { OrgLt } from '#common/types/shared/st-lt/orgs/org-lt';
+import type { OrgSt } from '#common/types/shared/st-lt/orgs/org-st';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
@@ -241,28 +261,31 @@ export class TabService {
     return output;
   }
 
-  createGitKeyPair() {
-    let passPhrase = this.makePassPhrase();
+  createGitKeyPair(): GitKeyPair {
+    let passPhrase: string = this.makePassPhrase();
 
-    let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem',
-        cipher: 'aes-256-cbc',
-        passphrase: passPhrase
-      }
-    });
+    let keyPair: crypto.KeyPairSyncResult<string, string> =
+      crypto.generateKeyPairSync('rsa', {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+          type: 'spki',
+          format: 'pem'
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem',
+          cipher: 'aes-256-cbc',
+          passphrase: passPhrase
+        }
+      });
 
-    return {
-      publicKeyEncrypted: publicKey,
-      privateKeyEncrypted: privateKey,
-      passPhrase
+    let gitKeyPair: GitKeyPair = {
+      publicKeyEncrypted: keyPair.publicKey,
+      privateKeyEncrypted: keyPair.privateKey,
+      passPhrase: passPhrase
     };
+
+    return gitKeyPair;
   }
 
   projectTabToBaseProject(item: {
@@ -380,12 +403,39 @@ export class TabService {
       return;
     }
 
-    let connection: ConnectionTab = {
-      ...connectionEnt,
-      ...this.getTabProps({ ent: connectionEnt })
-    };
+    let result: Result.Result<ConnectionTab, ConnectionEntToTabResultError> =
+      this.connectionEntToTabResult({ connectionEnt: connectionEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let connection: ConnectionTab = result.value;
 
     return connection;
+  }
+
+  connectionEntToTabResult(item: {
+    connectionEnt: ConnectionEnt;
+  }): Result.Result<ConnectionTab, ConnectionEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ connectionEnt: item.connectionEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<ConnectionSt, ConnectionLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<ConnectionSt, ConnectionLt>({
+            ent: v.connectionEnt
+          })
+      ),
+      Result.map(
+        (v): ConnectionTab => ({ ...v.connectionEnt, ...v.tabProps.props })
+      )
+    );
   }
 
   dashboardEntToTab(dashboardEnt: DashboardEnt): DashboardTab {
@@ -406,12 +456,37 @@ export class TabService {
       return;
     }
 
-    let dconfig: DconfigTab = {
-      ...dconfigEnt,
-      ...this.getTabProps({ ent: dconfigEnt })
-    };
+    let result: Result.Result<DconfigTab, DconfigEntToTabResultError> =
+      this.dconfigEntToTabResult({ dconfigEnt: dconfigEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let dconfig: DconfigTab = result.value;
 
     return dconfig;
+  }
+
+  dconfigEntToTabResult(item: {
+    dconfigEnt: DconfigEnt;
+  }): Result.Result<DconfigTab, DconfigEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ dconfigEnt: item.dconfigEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<DconfigSt, DconfigLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<DconfigSt, DconfigLt>({
+            ent: v.dconfigEnt
+          })
+      ),
+      Result.map((v): DconfigTab => ({ ...v.dconfigEnt, ...v.tabProps.props }))
+    );
   }
 
   uconfigEntToTab(uconfigEnt: UconfigEnt): UconfigTab {
@@ -458,12 +533,30 @@ export class TabService {
       return;
     }
 
-    let env: EnvTab = {
-      ...envEnt,
-      ...this.getTabProps({ ent: envEnt })
-    };
+    let result: Result.Result<EnvTab, EnvEntToTabResultError> =
+      this.envEntToTabResult({ envEnt: envEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let env: EnvTab = result.value;
 
     return env;
+  }
+
+  envEntToTabResult(item: {
+    envEnt: EnvEnt;
+  }): Result.Result<EnvTab, EnvEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ envEnt: item.envEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<EnvSt, EnvLt>, GetTabPropsResultError> =>
+          v.tabService.getTabPropsResult<EnvSt, EnvLt>({ ent: v.envEnt })
+      ),
+      Result.map((v): EnvTab => ({ ...v.envEnt, ...v.tabProps.props }))
+    );
   }
 
   kitEntToTab(kitEnt: KitEnt): KitTab {
@@ -497,12 +590,37 @@ export class TabService {
       return;
     }
 
-    let member: MemberTab = {
-      ...memberEnt,
-      ...this.getTabProps({ ent: memberEnt })
-    };
+    let result: Result.Result<MemberTab, MemberEntToTabResultError> =
+      this.memberEntToTabResult({ memberEnt: memberEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let member: MemberTab = result.value;
 
     return member;
+  }
+
+  memberEntToTabResult(item: {
+    memberEnt: MemberEnt;
+  }): Result.Result<MemberTab, MemberEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ memberEnt: item.memberEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<MemberSt, MemberLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<MemberSt, MemberLt>({
+            ent: v.memberEnt
+          })
+      ),
+      Result.map((v): MemberTab => ({ ...v.memberEnt, ...v.tabProps.props }))
+    );
   }
 
   modelEntToTab(modelEnt: ModelEnt): ModelTab {
@@ -523,12 +641,30 @@ export class TabService {
       return;
     }
 
-    let note: NoteTab = {
-      ...noteEnt,
-      ...this.getTabProps({ ent: noteEnt })
-    };
+    let result: Result.Result<NoteTab, NoteEntToTabResultError> =
+      this.noteEntToTabResult({ noteEnt: noteEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let note: NoteTab = result.value;
 
     return note;
+  }
+
+  noteEntToTabResult(item: {
+    noteEnt: NoteEnt;
+  }): Result.Result<NoteTab, NoteEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ noteEnt: item.noteEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<NoteSt, NoteLt>, GetTabPropsResultError> =>
+          v.tabService.getTabPropsResult<NoteSt, NoteLt>({ ent: v.noteEnt })
+      ),
+      Result.map((v): NoteTab => ({ ...v.noteEnt, ...v.tabProps.props }))
+    );
   }
 
   orgEntToTab(orgEnt: OrgEnt): OrgTab {
@@ -536,12 +672,30 @@ export class TabService {
       return;
     }
 
-    let org: OrgTab = {
-      ...orgEnt,
-      ...this.getTabProps({ ent: orgEnt })
-    };
+    let result: Result.Result<OrgTab, OrgEntToTabResultError> =
+      this.orgEntToTabResult({ orgEnt: orgEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let org: OrgTab = result.value;
 
     return org;
+  }
+
+  orgEntToTabResult(item: {
+    orgEnt: OrgEnt;
+  }): Result.Result<OrgTab, OrgEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ orgEnt: item.orgEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<OrgSt, OrgLt>, GetTabPropsResultError> =>
+          v.tabService.getTabPropsResult<OrgSt, OrgLt>({ ent: v.orgEnt })
+      ),
+      Result.map((v): OrgTab => ({ ...v.orgEnt, ...v.tabProps.props }))
+    );
   }
 
   projectEntToTab(projectEnt: ProjectEnt): ProjectTab {
@@ -549,12 +703,37 @@ export class TabService {
       return;
     }
 
-    let project: ProjectTab = {
-      ...projectEnt,
-      ...this.getTabProps({ ent: projectEnt })
-    };
+    let result: Result.Result<ProjectTab, ProjectEntToTabResultError> =
+      this.projectEntToTabResult({ projectEnt: projectEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let project: ProjectTab = result.value;
 
     return project;
+  }
+
+  projectEntToTabResult(item: {
+    projectEnt: ProjectEnt;
+  }): Result.Result<ProjectTab, ProjectEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ projectEnt: item.projectEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<ProjectSt, ProjectLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<ProjectSt, ProjectLt>({
+            ent: v.projectEnt
+          })
+      ),
+      Result.map((v): ProjectTab => ({ ...v.projectEnt, ...v.tabProps.props }))
+    );
   }
 
   providerEntToTab(item: { providerEnt: ProviderEnt }): ProviderTab {

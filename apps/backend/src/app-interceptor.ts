@@ -12,6 +12,12 @@ import { map, mergeMap, tap } from 'rxjs/operators';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { makeCreateProjectResponse } from '#backend/functions/temp/make-create-project-response/make-create-project-response';
+import { makeDeleteProjectResponse } from '#backend/functions/temp/make-delete-project-response/make-delete-project-response';
+import { makeGenerateProjectRemoteKeyResponse } from '#backend/functions/temp/make-generate-project-remote-key-response/make-generate-project-remote-key-response';
+import { makeGetProjectResponse } from '#backend/functions/temp/make-get-project-response/make-get-project-response';
+import { makeGetProjectsListResponse } from '#backend/functions/temp/make-get-projects-list-response/make-get-projects-list-response';
+import { makeIsProjectExistResponse } from '#backend/functions/temp/make-is-project-exist-response/make-is-project-exist-response';
 import { makeSetProjectInfoResponse } from '#backend/functions/temp/make-set-project-info-response/make-set-project-info-response';
 import { makeSetProjectSandboxProviderResponse } from '#backend/functions/temp/make-set-project-sandbox-provider-response/make-set-project-sandbox-provider-response';
 import { logResponseBackend } from '#backend/functions/top/log-response-backend/log-response-backend';
@@ -188,6 +194,72 @@ export class AppInterceptor implements NestInterceptor {
         });
       } else if (req.operation === 'setProjectSandboxProvider') {
         execution = makeSetProjectSandboxProviderResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createProject') {
+        execution = makeCreateProjectResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteProject') {
+        execution = makeDeleteProjectResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'generateProjectRemoteKey') {
+        execution = makeGenerateProjectRemoteKeyResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getProject') {
+        execution = makeGetProjectResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getProjectsList') {
+        execution = makeGetProjectsListResponse({
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'isProjectExist') {
+        execution = makeIsProjectExistResponse({
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,

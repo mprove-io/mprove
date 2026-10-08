@@ -16,7 +16,10 @@ export function validateToBackendRequest(item: {
   let operation: ToBackendOperation = getToBackendOperation({ path: path });
 
   if (isUndefined(operation)) {
-    throw new ServerError({ message: 'BACKEND_WRONG_REQUEST_PARAMS' });
+    throw new ServerError({
+      message: 'BACKEND_INVALID_REQUEST',
+      displayData: []
+    });
   }
 
   let validation: z.ZodSafeParseResult<ToBackendRequest> =
@@ -24,7 +27,7 @@ export function validateToBackendRequest(item: {
 
   if (validation.success === false) {
     throw new ServerError({
-      message: 'BACKEND_WRONG_REQUEST_PARAMS',
+      message: 'BACKEND_INVALID_REQUEST',
       displayData: validation.error.issues.map(issue => ({
         path: issue.path.join('.'),
         message: issue.message,

@@ -5,26 +5,20 @@ import {
   zBackendMemberDoesNotExistError
 } from '#common/types/backend/errors/backend-member-does-not-exist-error';
 import {
-  type BackendMemberIsNotAdminError,
-  zBackendMemberIsNotAdminError
-} from '#common/types/backend/errors/backend-member-is-not-admin-error';
-import {
   type MemberEntToTabResultError,
   zMemberEntToTabResultError
 } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
 
-export type GetMemberCheckIsAdminResultError =
-  | MemberEntToTabResultError
+export type GetMemberCheckExistsResultError =
   | BackendMemberDoesNotExistError
-  | BackendMemberIsNotAdminError;
+  | MemberEntToTabResultError;
 
-export let zGetMemberCheckIsAdminResultError = z.union([
-  zMemberEntToTabResultError,
+export let zGetMemberCheckExistsResultError = z.union([
   zBackendMemberDoesNotExistError,
-  zBackendMemberIsNotAdminError
+  zMemberEntToTabResultError
 ]);
 
 assertTypesEqual<
-  GetMemberCheckIsAdminResultError,
-  z.infer<typeof zGetMemberCheckIsAdminResultError>
+  GetMemberCheckExistsResultError,
+  z.infer<typeof zGetMemberCheckExistsResultError>
 >({ value: true });

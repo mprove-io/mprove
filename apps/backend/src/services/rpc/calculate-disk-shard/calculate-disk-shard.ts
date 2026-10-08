@@ -1,41 +1,20 @@
+import { Result } from '@praha/byethrow';
+import { calculateDiskShardResult } from '#backend/functions/calculate-disk-shard-result/calculate-disk-shard-result';
 import { ServerError } from '#common/classes/server-error/server-error';
-
-let FIRST_CHAR_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // 26
-let SECOND_CHAR_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // 36
-
-let MAX_BUCKETS = FIRST_CHAR_ALPHABET.length * SECOND_CHAR_ALPHABET.length; // 26*36 = 936;
+import type { CalculateDiskShardResultError } from '#common/types/backend/function-errors/calculate-disk-shard-result-error';
 
 export function calculateDiskShard(item: {
   shardKey: string;
   totalDiskShards: number;
 }): string {
-  let { shardKey, totalDiskShards } = item;
+  let result: Result.Result<string, CalculateDiskShardResultError> =
+    calculateDiskShardResult(item);
 
-  if (totalDiskShards <= 0 || totalDiskShards > MAX_BUCKETS) {
-    throw new ServerError({
-      message: 'BACKEND_WRONG_TOTAL_DISK_SHARDS'
-    });
+  if (Result.isFailure(result)) {
+    throw new ServerError({ message: result.error.code });
   }
 
-  let isFirstCharValid: boolean = FIRST_CHAR_ALPHABET.includes(shardKey[0]);
+  let shard: string = result.value;
 
-  let isSecondCharValid: boolean = SECOND_CHAR_ALPHABET.includes(shardKey[1]);
-
-  if (!isFirstCharValid || !isSecondCharValid) {
-    return 'shard-0'; // shard keys in tests may not match pattern - OK
-  }
-
-  if (totalDiskShards === 1) {
-    return 'shard-0';
-  }
-
-  let idx =
-    FIRST_CHAR_ALPHABET.indexOf(shardKey[0]) * 36 +
-    SECOND_CHAR_ALPHABET.indexOf(shardKey[1]);
-
-  let step = MAX_BUCKETS / totalDiskShards;
-
-  let shardIndex = Math.min(Math.floor(idx / step), totalDiskShards - 1);
-
-  return `shard-${shardIndex}`;
+  return shard;
 }

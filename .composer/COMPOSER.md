@@ -41,6 +41,7 @@
 - rules/zod-optional-fields-use-nullish.md
 - rules/zod-schemas-and-native-types.md
 - rules/explicit-variable-types.md
+- rules/entity-and-tab-variable-names.md
 - rules/local-object-projections.md
 - rules/empty-lines-between-statements.md
 - rules/optional-typescript-properties.md

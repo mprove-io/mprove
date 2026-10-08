@@ -30,7 +30,6 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import type { TabProps } from '#backend/types/tab-props';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_STRUCT_ID,
@@ -41,12 +40,11 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
 import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
-import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
+import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
-import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';
-import type { MemberSt } from '#common/types/shared/st-lt/members/member-st';
 
 @Injectable()
 export class MembersService {
@@ -173,23 +171,9 @@ export class MembersService {
           ? Result.succeed()
           : Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_ADMIN' })
       ),
-      Result.bind(
-        'tabProps',
-        (
-          v
-        ): Result.Result<
-          TabProps<MemberSt, MemberLt>,
-          GetTabPropsResultError
-        > =>
-          v.tabService.getTabPropsResult<MemberSt, MemberLt>({
-            ent: v.memberEnt
-          })
-      ),
-      Result.map(
-        (v): MemberTab => ({
-          ...v.memberEnt,
-          ...v.tabProps.props
-        })
+      Result.andThen(
+        (v): Result.Result<MemberTab, MemberEntToTabResultError> =>
+          v.tabService.memberEntToTabResult({ memberEnt: v.memberEnt })
       )
     );
   }
@@ -251,25 +235,41 @@ export class MembersService {
     return member;
   }
 
-  async getMemberCheckExists(item: { memberId: string; projectId: string }) {
+  async getMemberCheckExists(item: {
+    memberId: string;
+    projectId: string;
+  }): Promise<MemberTab> {
+    let result: Result.Result<MemberTab, GetMemberCheckExistsResultError> =
+      await this.getMemberCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let member: MemberTab = result.value;
+
+    return member;
+  }
+
+  async getMemberCheckExistsResult(item: {
+    memberId: string;
+    projectId: string;
+  }): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> {
     let { projectId, memberId } = item;
 
-    let member = await this.db.drizzle.query.membersTable
-      .findFirst({
+    let memberEnt: MemberEnt =
+      await this.db.drizzle.query.membersTable.findFirst({
         where: and(
           eq(membersTable.memberId, memberId),
           eq(membersTable.projectId, projectId)
         )
-      })
-      .then(x => this.tabService.memberEntToTab(x));
-
-    if (isUndefined(member)) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
       });
+
+    if (isUndefined(memberEnt)) {
+      return Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' });
     }
 
-    return member;
+    return this.tabService.memberEntToTabResult({ memberEnt: memberEnt });
   }
 
   async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {

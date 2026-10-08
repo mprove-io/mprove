@@ -7,7 +7,10 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BranchTab,
+  BridgeTab,
   ConnectionTab,
+  EnvTab,
   MemberTab,
   ProjectTab,
   UserTab
@@ -16,8 +19,12 @@ import {
   type ProjectEnt,
   projectsTable
 } from '#backend/drizzle/postgres/schema/projects';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import {
+  BlockmlService,
+  type RebuildStructResultValue
+} from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
@@ -25,21 +32,22 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import type { TabProps } from '#backend/types/tab-props';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { AddProjectResultError } from '#common/types/backend/function-errors/add-project-result-error';
+import type { DbErrorToResultError } from '#common/types/backend/function-errors/db-error-to-result-error';
 import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
+import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
+import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
 import type { Ev } from '#common/types/backend/parts/ev';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { Project } from '#common/types/backend/parts/project/project';
 import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
 import type { ToDiskCreateProjectOutput } from '#common/types/disk/routes/projects/create-project/create-project-output';
-import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
-import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 
 @Injectable()
 export class ProjectsService {
@@ -122,22 +130,7 @@ export class ProjectsService {
       });
     }
 
-    return Result.pipe(
-      Result.succeed({ projectEnt: projectEnt, tabService: this.tabService }),
-      Result.bind(
-        'props',
-        (
-          v
-        ): Result.Result<
-          TabProps<ProjectSt, ProjectLt>,
-          GetTabPropsResultError
-        > =>
-          v.tabService.getTabPropsResult<ProjectSt, ProjectLt>({
-            ent: v.projectEnt
-          })
-      ),
-      Result.map((v): ProjectTab => ({ ...v.projectEnt, ...v.props.props }))
-    );
+    return this.tabService.projectEntToTabResult({ projectEnt: projectEnt });
   }
 
   async checkProjectIsNotRestricted(item: {
@@ -178,7 +171,54 @@ export class ProjectsService {
     evs: Ev[];
     connections: ConnectionTab[];
     traceId: string;
-  }) {
+  }): Promise<ProjectTab> {
+    let result: Result.Result<ProjectTab, AddProjectResultError> =
+      await this.addProjectResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        displayData:
+          result.error.code === 'BACKEND_INVALID_REQUEST'
+            ? result.error.displayData
+            : undefined,
+        originalError:
+          (result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_DISK' ||
+            result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML') &&
+          result.error.originalError
+            ? Object.assign(new Error(result.error.originalError.code), {
+                displayData:
+                  'displayData' in result.error.originalError
+                    ? result.error.originalError.displayData
+                    : undefined
+              })
+            : undefined
+      });
+    }
+
+    let project: ProjectTab = result.value;
+
+    return project;
+  }
+
+  async addProjectResult(item: {
+    projectId: string;
+    orgId: string;
+    remoteType: ProjectRemoteType;
+    name: string;
+    gitUrl?: string;
+    publicKey?: string;
+    privateKey?: string;
+    publicKeyEncrypted?: string;
+    privateKeyEncrypted?: string;
+    passPhrase?: string;
+    e2bApiKey?: string;
+    seedProjectId: string;
+    user: UserTab;
+    evs: Ev[];
+    connections: ConnectionTab[];
+    traceId: string;
+  }): Result.ResultAsync<ProjectTab, AddProjectResultError> {
     let {
       projectId,
       orgId,
@@ -217,33 +257,41 @@ export class ProjectsService {
       serverTs: undefined
     };
 
-    let baseProject = this.tabService.projectTabToBaseProject({
+    let baseProject: BaseProject = this.tabService.projectTabToBaseProject({
       project: newProject
     });
 
-    let diskCreateProjectOutput: ToDiskCreateProjectOutput =
-      await this.rpcService.sendToDiskUnwrapOutput({
-        request: {
-          operation: 'createProject',
-          traceId: traceId,
-          input: {
-            baseProject: baseProject,
-            devRepoId: user.userId,
-            userAlias: user.alias,
-            seedProjectId: seedProjectId
-          }
+    let diskResult: Result.Result<
+      ToDiskCreateProjectOutput,
+      SendToDiskResultError
+    > = await this.rpcService.sendToDiskResult({
+      request: {
+        operation: 'createProject',
+        traceId: traceId,
+        input: {
+          baseProject: baseProject,
+          devRepoId: user.userId,
+          userAlias: user.alias,
+          seedProjectId: seedProjectId
         }
-      });
+      }
+    });
+
+    if (Result.isFailure(diskResult)) {
+      return diskResult;
+    }
+
+    let diskCreateProjectOutput: ToDiskCreateProjectOutput = diskResult.value;
 
     newProject.defaultBranch = diskCreateProjectOutput.defaultBranch;
 
-    let prodEnv = this.envsService.makeEnv({
+    let prodEnv: EnvTab = this.envsService.makeEnv({
       projectId: newProject.projectId,
       envId: PROJECT_ENV_PROD,
       evs: evs
     });
 
-    let newMember = this.membersService.makeMember({
+    let newMember: MemberTab = this.membersService.makeMember({
       projectId: newProject.projectId,
       user: user,
       isAdmin: true,
@@ -251,22 +299,23 @@ export class ProjectsService {
       isExplorer: true
     });
 
-    let devStructId = makeId();
-    let prodStructId = makeId();
+    let devStructId: string = makeId();
 
-    let prodBranch = this.branchesService.makeBranch({
+    let prodStructId: string = makeId();
+
+    let prodBranch: BranchTab = this.branchesService.makeBranch({
       projectId: newProject.projectId,
       repoId: PROD_REPO_ID,
       branchId: newProject.defaultBranch
     });
 
-    let devBranch = this.branchesService.makeBranch({
+    let devBranch: BranchTab = this.branchesService.makeBranch({
       projectId: newProject.projectId,
       repoId: user.userId,
       branchId: newProject.defaultBranch
     });
 
-    let prodBranchBridgeProdEnv = this.bridgesService.makeBridge({
+    let prodBranchBridgeProdEnv: BridgeTab = this.bridgesService.makeBridge({
       projectId: prodBranch.projectId,
       repoId: prodBranch.repoId,
       branchId: prodBranch.branchId,
@@ -275,7 +324,7 @@ export class ProjectsService {
       needValidate: false
     });
 
-    let devBranchBridgeProdEnv = this.bridgesService.makeBridge({
+    let devBranchBridgeProdEnv: BridgeTab = this.bridgesService.makeBridge({
       projectId: devBranch.projectId,
       repoId: devBranch.repoId,
       branchId: devBranch.branchId,
@@ -284,8 +333,11 @@ export class ProjectsService {
       needValidate: false
     });
 
-    await this.blockmlService.rebuildStruct({
-      traceId,
+    let prodStructResult: Result.Result<
+      RebuildStructResultValue,
+      RebuildStructResultError
+    > = await this.blockmlService.rebuildStructResult({
+      traceId: traceId,
       orgId: newProject.orgId,
       projectId: newProject.projectId,
       repoId: PROD_REPO_ID,
@@ -299,8 +351,15 @@ export class ProjectsService {
       connections: connections
     });
 
-    await this.blockmlService.rebuildStruct({
-      traceId,
+    if (Result.isFailure(prodStructResult)) {
+      return prodStructResult;
+    }
+
+    let devStructResult: Result.Result<
+      RebuildStructResultValue,
+      RebuildStructResultError
+    > = await this.blockmlService.rebuildStructResult({
+      traceId: traceId,
       orgId: newProject.orgId,
       projectId: newProject.projectId,
       repoId: user.userId,
@@ -314,24 +373,37 @@ export class ProjectsService {
       connections: connections
     });
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                projects: [newProject],
-                envs: [prodEnv],
-                members: [newMember],
-                branches: [prodBranch, devBranch],
-                bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
+    if (Result.isFailure(devStructResult)) {
+      return devStructResult;
+    }
 
-    return newProject;
+    let persistence: Result.Result<void, DbErrorToResultError> =
+      await dbErrorToResult({
+        action: async () => {
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insert: {
+                      projects: [newProject],
+                      envs: [prodEnv],
+                      members: [newMember],
+                      branches: [prodBranch, devBranch],
+                      bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+        }
+      });
+
+    if (Result.isFailure(persistence)) {
+      return persistence;
+    }
+
+    return Result.succeed(newProject);
   }
 }

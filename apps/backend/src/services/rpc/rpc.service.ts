@@ -1,13 +1,18 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { Queue } from 'groupmq';
 import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import type { ZodSafeParseResult } from 'zod';
-import { BackendConfig } from '#backend/config/backend-config';
-import { calculateDiskShard } from '#backend/services/rpc/calculate-disk-shard/calculate-disk-shard';
+import type { BackendConfig } from '#backend/config/backend-config';
+import { calculateDiskShardResult } from '#backend/functions/calculate-disk-shard-result/calculate-disk-shard-result';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
+import type { CalculateDiskShardResultError } from '#common/types/backend/function-errors/calculate-disk-shard-result-error';
+import type { RequestResultError } from '#common/types/backend/function-errors/request-result-error';
+import type { SendToBlockmlResultError } from '#common/types/backend/function-errors/send-to-blockml-result-error';
+import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
 import { zToBlockmlOperationRegistry } from '#common/types/blockml/request/to-blockml-operation-registry';
 import type { ToBlockmlRequest } from '#common/types/blockml/request/to-blockml-request';
 import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
@@ -17,29 +22,14 @@ import type { ToDiskResponseForOperation } from '#common/types/disk/response/to-
 import type { RpcNamespace } from '#common/types/node-common/rpc/rpc-namespace';
 import type { RpcRequestData } from '#common/types/node-common/rpc-request-data';
 
-type BlockmlSendItem<TRequest extends ToBlockmlRequest> = {
-  request: TRequest;
-  orgId: string;
-  repoId: string;
-};
-
 type BlockmlSuccessOutput<TRequest extends ToBlockmlRequest> = Extract<
   ToBlockmlResponseForOperation<TRequest['operation']>,
   { type: 'Success' }
 >['output'];
 
-type DiskSendItem<TRequest extends ToDiskRequest> = {
-  request: TRequest;
-};
-
 type DiskRoute = {
   shardKey: string;
   groupId: string;
-};
-
-type RpcResponseError = {
-  code: ServerError['message'];
-  displayData?: unknown;
 };
 
 type DiskSuccessOutput<TRequest extends ToDiskRequest> = Extract<
@@ -107,6 +97,30 @@ export class RpcService implements OnModuleDestroy {
     message: any;
     timeout: number;
   }): Promise<T> {
+    let result: Result.Result<T, RequestResultError> =
+      await this.requestResult<T>(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        customData:
+          result.error.code === 'BACKEND_RPC_TIMEOUT'
+            ? { timeout: `${item.timeout} ms` }
+            : undefined
+      });
+    }
+
+    let response: T = result.value;
+
+    return response;
+  }
+
+  async requestResult<T = unknown>(item: {
+    namespace: string;
+    groupId: string;
+    message: any;
+    timeout: number;
+  }): Result.ResultAsync<T, RequestResultError> {
     let { namespace, groupId, message, timeout } = item;
 
     let correlationId: string = uuidv4();
@@ -129,141 +143,132 @@ export class RpcService implements OnModuleDestroy {
       data: data
     });
 
-    return new Promise<T>((resolve, reject) => {
-      let timer: NodeJS.Timeout = setTimeout(() => {
-        sub.quit();
-        reject(
-          new ServerError({
-            message: 'BACKEND_RPC_TIMEOUT',
-            customData: { timeout: `${timeout} ms` }
-          })
-        );
-      }, timeout);
-
-      sub.on('message', (channel, message) => {
-        if (channel === replyTo) {
-          clearTimeout(timer);
-
+    let execution: Result.ResultAsync<T, RequestResultError> = new Promise(
+      resolve => {
+        let timer: NodeJS.Timeout = setTimeout(() => {
           sub.quit();
+          resolve(Result.fail({ code: 'BACKEND_RPC_TIMEOUT' }));
+        }, timeout);
 
-          try {
-            let response: T = JSON.parse(message) as T;
-            resolve(response);
-          } catch {
-            reject(
-              new ServerError({
-                message: 'BACKEND_RPC_INVALID_RESPONSE_FORMAT'
-              })
-            );
+        sub.on('message', (channel, message) => {
+          if (channel === replyTo) {
+            clearTimeout(timer);
+
+            sub.quit();
+
+            try {
+              let response: T = JSON.parse(message) as T;
+              resolve(Result.succeed(response));
+            } catch {
+              resolve(
+                Result.fail({ code: 'BACKEND_RPC_INVALID_RESPONSE_FORMAT' })
+              );
+            }
           }
-        }
-      });
-    });
+        });
+      }
+    );
+
+    return execution;
   }
 
-  private validateBlockmlRequest<TRequest extends ToBlockmlRequest>(item: {
-    request: TRequest;
-  }): TRequest {
-    let { request: sourceRequest } = item;
-
-    let validationResult: ZodSafeParseResult<ToBlockmlRequest>;
-
-    try {
-      validationResult =
-        zToBlockmlOperationRegistry[sourceRequest.operation].request.safeParse(
-          sourceRequest
-        );
-    } catch {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_REQUEST_PARAMS'
-      });
-    }
-
-    if (validationResult.success === false) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_REQUEST_PARAMS'
-      });
-    }
-
-    return sourceRequest;
-  }
-
-  private async sendToBlockml<TRequest extends ToBlockmlRequest>(item: {
+  async sendToBlockmlUnwrapOutput<TRequest extends ToBlockmlRequest>(item: {
     request: TRequest;
     orgId: string;
     repoId: string;
-  }): Promise<ToBlockmlResponseForOperation<TRequest['operation']>> {
-    let { request, orgId, repoId } = item;
+  }): Promise<BlockmlSuccessOutput<TRequest>> {
+    let result: Result.Result<
+      BlockmlSuccessOutput<TRequest>,
+      SendToBlockmlResultError
+    > = await this.sendToBlockmlResult(item);
 
-    let groupId: string = `repo:${repoId}-${request.input.projectId}-${orgId}`;
-
-    let response: ToBlockmlResponseForOperation<TRequest['operation']> =
-      await this.request<ToBlockmlResponseForOperation<TRequest['operation']>>({
-        namespace: ('rpc-blockml' satisfies RpcNamespace).toString(),
-        groupId: groupId,
-        message: request,
-        timeout: this.rpcBlockmlTimeoutMs
-      });
-
-    return response;
-  }
-
-  async sendToBlockmlUnwrapOutput<TRequest extends ToBlockmlRequest>(
-    item: BlockmlSendItem<TRequest>
-  ): Promise<BlockmlSuccessOutput<TRequest>> {
-    let request: TRequest = this.validateBlockmlRequest({
-      request: item.request
-    });
-
-    let response: ToBlockmlResponseForOperation<TRequest['operation']> =
-      await this.sendToBlockml({
-        request: request,
-        orgId: item.orgId,
-        repoId: item.repoId
-      });
-
-    if (response.type === 'Failure') {
-      let error: RpcResponseError = response.error;
-
+    if (Result.isFailure(result)) {
       throw new ServerError({
-        message: 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML',
-        originalError: new ServerError({
-          message: error.code,
-          displayData: error.displayData
-        })
+        message: result.error.code,
+        displayData:
+          result.error.code === 'BACKEND_INVALID_REQUEST'
+            ? result.error.displayData
+            : undefined,
+        customData:
+          result.error.code === 'BACKEND_RPC_TIMEOUT'
+            ? { timeout: `${this.rpcBlockmlTimeoutMs} ms` }
+            : undefined,
+        originalError:
+          result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML' &&
+          result.error.originalError
+            ? Object.assign(new Error(result.error.originalError.code), {
+                displayData:
+                  'displayData' in result.error.originalError
+                    ? result.error.originalError.displayData
+                    : undefined
+              })
+            : undefined
       });
     }
 
-    let output: BlockmlSuccessOutput<TRequest> = response.output;
+    let output: BlockmlSuccessOutput<TRequest> = result.value;
 
     return output;
   }
 
-  private validateDiskRequest<TRequest extends ToDiskRequest>(item: {
+  async sendToBlockmlResult<TRequest extends ToBlockmlRequest>(item: {
     request: TRequest;
-  }): TRequest {
-    let { request: sourceRequest } = item;
+    orgId: string;
+    repoId: string;
+  }): Result.ResultAsync<
+    BlockmlSuccessOutput<TRequest>,
+    SendToBlockmlResultError
+  > {
+    let { request, orgId, repoId } = item;
 
-    let validationResult: ZodSafeParseResult<ToDiskRequest>;
+    let validation: ZodSafeParseResult<ToBlockmlRequest>;
 
     try {
-      validationResult =
-        zToDiskOperationRegistry[sourceRequest.operation].request.safeParse(
-          sourceRequest
+      validation =
+        zToBlockmlOperationRegistry[request.operation].request.safeParse(
+          request
         );
     } catch {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_REQUEST_PARAMS'
+      return Result.fail({ code: 'BACKEND_INVALID_REQUEST', displayData: [] });
+    }
+
+    if (validation.success === false) {
+      return Result.fail({ code: 'BACKEND_INVALID_REQUEST', displayData: [] });
+    }
+
+    let result: Result.Result<
+      ToBlockmlResponseForOperation<TRequest['operation']>,
+      RequestResultError
+    > = await this.requestResult<
+      ToBlockmlResponseForOperation<TRequest['operation']>
+    >({
+      namespace: 'rpc-blockml' satisfies RpcNamespace,
+      groupId: `repo:${repoId}-${request.input.projectId}-${orgId}`,
+      message: request,
+      timeout: this.rpcBlockmlTimeoutMs
+    });
+
+    if (Result.isFailure(result)) {
+      return result;
+    }
+
+    let response: ToBlockmlResponseForOperation<TRequest['operation']> =
+      result.value;
+
+    if (response.type === 'Failure') {
+      return Result.fail({
+        code: 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML',
+        originalError:
+          response.error.code === 'BLOCKML_INVALID_REQUEST'
+            ? {
+                code: response.error.code,
+                displayData: response.error.displayData
+              }
+            : { code: response.error.code }
       });
     }
 
-    if (validationResult.success === false) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_REQUEST_PARAMS'
-      });
-    }
-
-    return sourceRequest;
+    return Result.succeed(response.output);
   }
 
   private getDiskRoute(item: { request: ToDiskRequest }): DiskRoute {
@@ -354,62 +359,137 @@ export class RpcService implements OnModuleDestroy {
     return exhaustiveRequest;
   }
 
-  private async sendToDisk<TRequest extends ToDiskRequest>(item: {
+  async sendToDiskUnwrapOutput<TRequest extends ToDiskRequest>(item: {
     request: TRequest;
-    shardKey: string;
-    groupId: string;
-  }): Promise<ToDiskResponseForOperation<TRequest['operation']>> {
-    let { request, shardKey, groupId } = item;
+  }): Promise<DiskSuccessOutput<TRequest>> {
+    let result: Result.Result<
+      DiskSuccessOutput<TRequest>,
+      SendToDiskResultError
+    > = await this.sendToDiskResult(item);
 
-    let diskShard: string = calculateDiskShard({
-      shardKey: shardKey,
-      totalDiskShards: this.totalDiskShards
-    });
-
-    let response: ToDiskResponseForOperation<TRequest['operation']> =
-      await this.request<ToDiskResponseForOperation<TRequest['operation']>>({
-        namespace: `${'rpc-disk' satisfies RpcNamespace}-${diskShard}`,
-        groupId: groupId,
-        message: request,
-        timeout: this.rpcDiskTimeoutMs
-      });
-
-    return response;
-  }
-
-  async sendToDiskUnwrapOutput<TRequest extends ToDiskRequest>(
-    item: DiskSendItem<TRequest>
-  ): Promise<DiskSuccessOutput<TRequest>> {
-    let request: TRequest = this.validateDiskRequest({
-      request: item.request
-    });
-
-    let route: DiskRoute = this.getDiskRoute({
-      request: request
-    });
-
-    let response: ToDiskResponseForOperation<TRequest['operation']> =
-      await this.sendToDisk({
-        request: request,
-        shardKey: route.shardKey,
-        groupId: route.groupId
-      });
-
-    if (response.type === 'Failure') {
-      let error: RpcResponseError = response.error;
-
+    if (Result.isFailure(result)) {
       throw new ServerError({
-        message: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
-        originalError: new ServerError({
-          message: error.code,
-          displayData: error.displayData
-        })
+        message: result.error.code,
+        displayData:
+          result.error.code === 'BACKEND_INVALID_REQUEST'
+            ? result.error.displayData
+            : undefined,
+        customData:
+          result.error.code === 'BACKEND_RPC_TIMEOUT'
+            ? { timeout: `${this.rpcDiskTimeoutMs} ms` }
+            : undefined,
+        originalError:
+          result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_DISK' &&
+          result.error.originalError
+            ? Object.assign(new Error(result.error.originalError.code), {
+                displayData:
+                  'displayData' in result.error.originalError
+                    ? result.error.originalError.displayData
+                    : undefined
+              })
+            : undefined
       });
     }
 
-    let output: DiskSuccessOutput<TRequest> = response.output;
+    let output: DiskSuccessOutput<TRequest> = result.value;
 
     return output;
+  }
+
+  async sendToDiskResult<TRequest extends ToDiskRequest>(item: {
+    request: TRequest;
+  }): Result.ResultAsync<DiskSuccessOutput<TRequest>, SendToDiskResultError> {
+    let { request } = item;
+
+    let validation: ZodSafeParseResult<ToDiskRequest>;
+
+    try {
+      validation =
+        zToDiskOperationRegistry[request.operation].request.safeParse(request);
+    } catch {
+      return Result.fail({ code: 'BACKEND_INVALID_REQUEST', displayData: [] });
+    }
+
+    if (validation.success === false) {
+      return Result.fail({ code: 'BACKEND_INVALID_REQUEST', displayData: [] });
+    }
+
+    let route: DiskRoute = this.getDiskRoute({ request: request });
+
+    let diskShard: Result.Result<string, CalculateDiskShardResultError> =
+      calculateDiskShardResult({
+        shardKey: route.shardKey,
+        totalDiskShards: this.totalDiskShards
+      });
+
+    if (Result.isFailure(diskShard)) {
+      return diskShard;
+    }
+
+    let result: Result.Result<
+      ToDiskResponseForOperation<TRequest['operation']>,
+      RequestResultError
+    > = await this.requestResult<
+      ToDiskResponseForOperation<TRequest['operation']>
+    >({
+      namespace: `${'rpc-disk' satisfies RpcNamespace}-${diskShard.value}`,
+      groupId: route.groupId,
+      message: request,
+      timeout: this.rpcDiskTimeoutMs
+    });
+
+    if (Result.isFailure(result)) {
+      return result;
+    }
+
+    let response: ToDiskResponseForOperation<TRequest['operation']> =
+      result.value;
+
+    if (response.type === 'Failure') {
+      // Match the legacy boundary: forward only public code/displayData fields,
+      // never arbitrary worker response properties or diagnostic payloads.
+      switch (response.error.code) {
+        case 'DISK_INVALID_REQUEST':
+          return Result.fail({
+            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
+            originalError: {
+              code: response.error.code,
+              displayData: response.error.displayData
+            }
+          });
+        case 'DISK_PATH_TRAVERSAL':
+          return Result.fail({
+            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
+            originalError: {
+              code: response.error.code,
+              displayData: response.error.displayData
+            }
+          });
+        case 'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH':
+          return Result.fail({
+            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
+            originalError: {
+              code: response.error.code,
+              displayData: response.error.displayData
+            }
+          });
+        case 'DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT':
+          return Result.fail({
+            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
+            originalError: {
+              code: response.error.code,
+              displayData: response.error.displayData
+            }
+          });
+        default:
+          return Result.fail({
+            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
+            originalError: { code: response.error.code }
+          });
+      }
+    }
+
+    return Result.succeed(response.output);
   }
 
   onModuleDestroy() {

@@ -57,13 +57,10 @@ export function makeErrorResponse(item: {
         ? ('TOO_MANY_REQUESTS_ERROR' satisfies Er)
         : wrappedError.name === 'ThrottlerException'
           ? ('THROTTLER_ERROR' satisfies Er)
-          : wrappedError.message ===
-              ('BACKEND_WRONG_REQUEST_PARAMS' satisfies Er)
-            ? 'BACKEND_INVALID_REQUEST'
-            : typeof wrappedError.message === 'string' &&
-                erValues.some(value => value === wrappedError.message)
-              ? wrappedError.message
-              : 'BACKEND_INTERNAL';
+          : typeof wrappedError.message === 'string' &&
+              erValues.some(value => value === wrappedError.message)
+            ? wrappedError.message
+            : 'BACKEND_INTERNAL';
 
     response = {
       type: 'Failure',

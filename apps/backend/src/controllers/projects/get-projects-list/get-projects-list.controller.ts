@@ -8,21 +8,28 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGetProjectsListRequestDto,
   ToBackendGetProjectsListResponseDto
 } from '#backend/controllers/projects/get-projects-list/get-projects-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';
 
@@ -46,42 +53,61 @@ export class GetProjectsListController {
   @ApiOkResponse({
     type: ToBackendGetProjectsListResponseDto
   })
-  async getProjectsList(
+  getProjectsList(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProjectsListRequestDto
-  ) {
-    let { orgId } = body.input;
+  ): Promise<BackendResultForOperation<'getProjectsList'>> {
+    return Result.pipe(
+      Result.succeed({
+        orgId: body.input.orgId,
+        userId: user.userId,
+        db: this.db,
+        tabService: this.tabService,
+        projectsService: this.projectsService
+      }),
+      Result.bind(
+        'projectEnts',
+        async (v): Result.ResultAsync<ProjectEnt[], never> => {
+          let userMemberEnts: MemberEnt[] =
+            await v.db.drizzle.query.membersTable.findMany({
+              where: eq(membersTable.memberId, v.userId)
+            });
 
-    let userMembers = await this.db.drizzle.query.membersTable.findMany({
-      where: eq(membersTable.memberId, user.userId)
-    });
+          let projectIds: string[] = userMemberEnts.map(
+            userMemberEnt => userMemberEnt.projectId
+          );
 
-    let projectIds = userMembers.map(m => m.projectId);
+          let projectEnts: ProjectEnt[] =
+            projectIds.length === 0
+              ? []
+              : await v.db.drizzle.query.projectsTable.findMany({
+                  where: and(
+                    inArray(projectsTable.projectId, projectIds),
+                    eq(projectsTable.orgId, v.orgId)
+                  )
+                });
 
-    let projects =
-      projectIds.length === 0
-        ? []
-        : await this.db.drizzle.query.projectsTable
-            .findMany({
-              where: and(
-                inArray(projectsTable.projectId, projectIds),
-                eq(projectsTable.orgId, orgId)
-              )
+          return Result.succeed(projectEnts);
+        }
+      ),
+      Result.bind(
+        'projects',
+        (v): Result.Result<ProjectTab[], ProjectEntToTabResultError> =>
+          Result.sequence(v.projectEnts, projectEnt =>
+            v.tabService.projectEntToTabResult({
+              projectEnt: projectEnt
             })
-            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
-
-    let sortedProjects = projects.sort((a, b) =>
-      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+          )
+      ),
+      Result.map(
+        (v): ToBackendGetProjectsListOutput => ({
+          projectsList: v.projects
+            .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
+            .map(project =>
+              v.projectsService.wrapToApiProjectsItem({ project: project })
+            )
+        })
+      )
     );
-
-    let projectsItems: ProjectsItem[] = sortedProjects.map(x =>
-      this.projectsService.wrapToApiProjectsItem({ project: x })
-    );
-
-    let payload: ToBackendGetProjectsListOutput = {
-      projectsList: projectsItems
-    };
-
-    return payload;
   }
 }
