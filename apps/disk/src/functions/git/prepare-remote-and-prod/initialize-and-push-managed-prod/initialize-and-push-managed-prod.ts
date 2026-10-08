@@ -7,7 +7,7 @@ import { createInitialCommitToProd } from '#disk/functions/git/prepare-remote-an
 import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
-export function initializeAndPushManagedProd(item: {
+export async function initializeAndPushManagedProd(item: {
   projectId: string;
   projectDir: string;
   prodDir: string;

@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
-export function revertRepoToRemote(item: {
+export async function revertRepoToRemote(item: {
   repoDir: string;
   remoteBranch: string;
   git: SimpleGit;

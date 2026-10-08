@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
-export function getLastCommitFileContent(item: {
+export async function getLastCommitFileContent(item: {
   repoDir: string;
   filePathRelative: string;
 }): Result.ResultAsync<string, never> {

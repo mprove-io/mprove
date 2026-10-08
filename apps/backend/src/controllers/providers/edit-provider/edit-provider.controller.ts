@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -21,19 +22,20 @@ import type {
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { UrlService } from '#backend/services/url/url.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/providers/edit-provider/edit-provider-output';
-import type { ToBackendEditProviderRequest } from '#common/types/backend/routes/providers/edit-provider/edit-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -61,84 +63,116 @@ export class EditProviderController {
   async editProvider(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditProviderRequestDto
-  ) {
-    let bodyPayload: ToBackendEditProviderRequest['input'] = body.input;
+  ): Promise<BackendResultForOperation<'editProvider'>> {
+    return Result.pipe(
+      Result.succeed({
+        input: body.input,
+        userId: user.userId,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        providersService: this.providersService,
+        urlService: this.urlService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.input.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        v.membersService.getMemberCheckIsAdminResult({
+          memberId: v.userId,
+          projectId: v.input.projectId
+        })
+      ),
+      Result.bind(
+        'provider',
+        (
+          v
+        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+          v.providersService.getProviderCheckExistsResult({
+            projectId: v.input.projectId,
+            providerId: v.input.providerId
+          })
+      ),
+      Result.andThrough(v => {
+        if (
+          v.provider.type === 'OpenAICompatible' &&
+          'baseURL' in v.input.options &&
+          'name' in v.input
+        ) {
+          v.provider.name = v.input.name;
 
-    let { projectId, providerId, options } = bodyPayload;
+          return v.urlService.checkApiUrlResult({
+            urlStr: v.input.options.baseURL
+          });
+        }
 
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    let provider: ProviderTab =
-      await this.providersService.getProviderCheckExists({
-        projectId: projectId,
-        providerId: providerId
-      });
-
-    if (
-      provider.type === 'OpenAICompatible' &&
-      'baseURL' in options &&
-      'name' in bodyPayload
-    ) {
-      provider.name = bodyPayload.name;
-
-      await this.urlService.checkApiUrl({
-        urlStr: options.baseURL
-      });
-
-      provider.options = {
-        baseURL: options.baseURL,
-        apiKey: isDefinedAndNotEmpty(options.apiKey)
-          ? options.apiKey
-          : undefined,
-        headers: options.headers,
-        queryParams: options.queryParams
-      };
-    } else if (provider.type === 'OpenAI' && 'apiKey' in options) {
-      provider.options = {
-        apiKey: isDefinedAndNotEmpty(options.apiKey)
-          ? options.apiKey
-          : undefined
-      };
-    } else if (provider.type === 'Anthropic' && 'apiKey' in options) {
-      provider.options = {
-        apiKey: isDefinedAndNotEmpty(options.apiKey)
-          ? options.apiKey
-          : undefined
-      };
-    } else if (provider.type === 'OpenAICodex') {
-      provider.options = {};
-    }
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              update: {
-                providers: [provider]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
+        return Result.succeed();
+      }),
+      Result.inspect(v => {
+        if (
+          v.provider.type === 'OpenAICompatible' &&
+          'baseURL' in v.input.options &&
+          'name' in v.input
+        ) {
+          v.provider.options = {
+            baseURL: v.input.options.baseURL,
+            apiKey: isDefinedAndNotEmpty(v.input.options.apiKey)
+              ? v.input.options.apiKey
+              : undefined,
+            headers: v.input.options.headers,
+            queryParams: v.input.options.queryParams
+          };
+        } else if (
+          v.provider.type === 'OpenAI' &&
+          'apiKey' in v.input.options
+        ) {
+          v.provider.options = {
+            apiKey: isDefinedAndNotEmpty(v.input.options.apiKey)
+              ? v.input.options.apiKey
+              : undefined
+          };
+        } else if (
+          v.provider.type === 'Anthropic' &&
+          'apiKey' in v.input.options
+        ) {
+          v.provider.options = {
+            apiKey: isDefinedAndNotEmpty(v.input.options.apiKey)
+              ? v.input.options.apiKey
+              : undefined
+          };
+        } else if (v.provider.type === 'OpenAICodex') {
+          v.provider.options = {};
+        }
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await v.db.drizzle.transaction(
+                  async tx =>
+                    await v.db.packer.write({
+                      tx: tx,
+                      update: { providers: [v.provider] }
+                    })
+                ),
+              getRetryOption(v.cs, v.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendEditProviderOutput => ({
+          provider: v.providersService.tabToApiProvider({
+            provider: v.provider,
+            isIncludePasswords: false
+          })
+        })
+      )
     );
-
-    let apiProvider: Provider = this.providersService.tabToApiProvider({
-      provider: provider,
-      isIncludePasswords: false
-    });
-
-    let payload: ToBackendEditProviderOutput = {
-      provider: apiProvider
-    };
-
-    return payload;
   }
 }

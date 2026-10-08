@@ -57,7 +57,7 @@ export class SetProjectInfoController {
   @ApiOkResponse({
     type: ToBackendSetProjectInfoResponseDto
   })
-  setProjectInfo(
+  async setProjectInfo(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetProjectInfoRequestDto
   ): Promise<BackendResultForOperation<'setProjectInfo'>> {

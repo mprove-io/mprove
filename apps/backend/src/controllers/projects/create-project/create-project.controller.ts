@@ -77,7 +77,7 @@ export class CreateProjectController {
   @ApiOkResponse({
     type: ToBackendCreateProjectResponseDto
   })
-  createProject(
+  async createProject(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateProjectRequestDto
   ): Promise<BackendResultForOperation<'createProject'>> {

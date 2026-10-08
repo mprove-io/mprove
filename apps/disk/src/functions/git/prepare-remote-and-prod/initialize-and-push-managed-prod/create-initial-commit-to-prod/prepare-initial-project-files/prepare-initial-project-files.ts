@@ -6,7 +6,7 @@ import { copyPath } from '#disk/functions/disk/copy-path/copy-path';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { writeDefaultInitialProjectFiles } from '#disk/functions/git/prepare-remote-and-prod/initialize-and-push-managed-prod/create-initial-commit-to-prod/prepare-initial-project-files/write-default-initial-project-files/write-default-initial-project-files';
 
-export function prepareInitialProjectFiles(item: {
+export async function prepareInitialProjectFiles(item: {
   prodDir: string;
   sourceDir: string;
   seedProjectId: string;

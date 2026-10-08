@@ -20,7 +20,7 @@ export type NodesAndFilesPayload = {
   files: DiskCatalogFile[];
 };
 
-export function getNodesAndFilesPayloadRecursive(item: {
+export async function getNodesAndFilesPayloadRecursive(item: {
   dir: string;
   projectId: string;
   repoId: string;

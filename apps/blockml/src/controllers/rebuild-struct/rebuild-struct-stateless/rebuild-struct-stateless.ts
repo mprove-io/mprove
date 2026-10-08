@@ -22,7 +22,7 @@ import { type BuildYamlOutput, buildYaml } from './build-yaml/build-yaml';
 import { getProjectConfig } from './get-project-config/get-project-config';
 import { makeEmptyRebuildStructPrep } from './make-empty-rebuild-struct-prep/make-empty-rebuild-struct-prep';
 import { rebuildConfiguredStruct } from './rebuild-configured-struct/rebuild-configured-struct';
-export function rebuildStructStateless(item: {
+export async function rebuildStructStateless(item: {
   files: BmlFile[];
   structId: string;
   envId: string;

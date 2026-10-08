@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
-export function deleteRemoteBranch(item: {
+export async function deleteRemoteBranch(item: {
   projectDir: string;
   branch: string;
   git: SimpleGit;

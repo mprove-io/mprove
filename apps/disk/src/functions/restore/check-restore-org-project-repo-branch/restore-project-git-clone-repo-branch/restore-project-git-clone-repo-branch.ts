@@ -10,7 +10,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 
-export function restoreProjectGitCloneRepoBranch(item: {
+export async function restoreProjectGitCloneRepoBranch(item: {
   remoteType: 'GitClone';
   projectId: string;
   projectDir: string;

@@ -27,7 +27,7 @@ export type BuildCompiledModelsOutput = {
   metrics: ModelMetric[];
 };
 
-export function buildCompiledModels(item: {
+export async function buildCompiledModels(item: {
   files: BmlFile[];
   malloyConnections: MalloyConnection[];
   projectConnections: ProjectConnection[];

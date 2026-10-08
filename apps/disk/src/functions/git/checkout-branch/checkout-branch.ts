@@ -8,7 +8,7 @@ import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
-export function checkoutBranch(item: {
+export async function checkoutBranch(item: {
   projectId: string;
   projectDir: string;
   repoId: string;

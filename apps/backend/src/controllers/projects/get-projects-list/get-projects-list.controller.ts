@@ -53,7 +53,7 @@ export class GetProjectsListController {
   @ApiOkResponse({
     type: ToBackendGetProjectsListResponseDto
   })
-  getProjectsList(
+  async getProjectsList(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProjectsListRequestDto
   ): Promise<BackendResultForOperation<'getProjectsList'>> {

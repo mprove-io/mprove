@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -21,6 +22,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { CheckUserIsNotRestrictedResultError } from '#common/types/backend/function-errors/check-user-is-not-restricted-result-error';
 import { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
 import type { User } from '#common/types/backend/parts/user';
@@ -260,13 +262,22 @@ export class UsersService {
   }
 
   checkUserIsNotRestricted(item: { user: UserTab }) {
+    let result: Result.Result<void, CheckUserIsNotRestrictedResultError> =
+      this.checkUserIsNotRestrictedResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+  }
+
+  checkUserIsNotRestrictedResult(item: {
+    user: UserTab;
+  }): Result.Result<void, CheckUserIsNotRestrictedResultError> {
     let { user } = item;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: 'BACKEND_RESTRICTED_USER'
-      });
-    }
+    return user.alias === RESTRICTED_USER_ALIAS
+      ? Result.fail({ code: 'BACKEND_RESTRICTED_USER' })
+      : Result.succeed();
   }
 
   async getUserByEmailCheckExists(item: { email: string }) {

@@ -8,7 +8,7 @@ import { deleteRemoteBranch } from '#disk/functions/git/delete-remote-branch/del
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 
-export function deleteBranchFromRepositories(item: {
+export async function deleteBranchFromRepositories(item: {
   projectDir: string;
   repoId: string;
   repoDir: string;

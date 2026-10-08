@@ -23,7 +23,7 @@ let statusOrder = {
   new: 3
 };
 
-export function getSyncAppliedChanges(item: {
+export async function getSyncAppliedChanges(item: {
   repoDir: string;
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];

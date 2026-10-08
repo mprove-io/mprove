@@ -5,7 +5,7 @@ import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
 import { restoreProject } from '#disk/functions/restore/check-restore-org-project/restore-project/restore-project';
 
-export function checkRestoreOrgProject(item: {
+export async function checkRestoreOrgProject(item: {
   remoteType: ProjectRemoteType;
   orgId: string;
   orgPath: string;

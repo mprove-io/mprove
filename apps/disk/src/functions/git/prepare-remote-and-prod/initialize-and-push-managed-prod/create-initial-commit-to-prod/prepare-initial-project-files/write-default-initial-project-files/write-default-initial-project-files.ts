@@ -7,7 +7,7 @@ import type { DiskWriteDefaultInitialProjectFilesError } from '#common/types/dis
 import type { DiskWriteToFileError } from '#common/types/disk/function-errors/disk-write-to-file-error';
 import { writeToFile } from '#disk/functions/disk/write-to-file/write-to-file';
 
-export function writeDefaultInitialProjectFiles(item: {
+export async function writeDefaultInitialProjectFiles(item: {
   prodDir: string;
   projectName: string;
 }): Result.ResultAsync<void, DiskWriteDefaultInitialProjectFilesError> {

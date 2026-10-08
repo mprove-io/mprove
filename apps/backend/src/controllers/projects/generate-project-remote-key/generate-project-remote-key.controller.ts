@@ -61,7 +61,7 @@ export class GenerateProjectRemoteKeyController {
   @ApiOkResponse({
     type: ToBackendGenerateProjectRemoteKeyResponseDto
   })
-  createProject(
+  async createProject(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGenerateProjectRemoteKeyRequestDto
   ): Promise<BackendResultForOperation<'generateProjectRemoteKey'>> {

@@ -30,7 +30,7 @@ import {
   prepareMalloy
 } from './prepare-malloy/prepare-malloy';
 
-export function rebuildConfiguredStruct(item: {
+export async function rebuildConfiguredStruct(item: {
   files: BmlFile[];
   structId: string;
   envId: string;

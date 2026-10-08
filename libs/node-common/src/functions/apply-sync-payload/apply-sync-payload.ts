@@ -10,7 +10,7 @@ import { validatePathUnderDir } from '#node-common/functions/validate-path-under
 
 const { forEachSeries } = pIteration;
 
-export function applySyncPayload(item: {
+export async function applySyncPayload(item: {
   repoDir: string;
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];

@@ -3,7 +3,7 @@ import fse from 'fs-extra';
 import type { RemovePathUnderDirError } from '#common/types/node-common/function-errors/remove-path-under-dir-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';
 
-export function removePathUnderDir(item: {
+export async function removePathUnderDir(item: {
   fullPath: string;
   allowedDir: string;
   displayPath?: string;

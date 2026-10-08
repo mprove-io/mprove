@@ -3,7 +3,7 @@ import type { DiskOrgAlreadyExistError } from '#common/types/disk/errors/disk-or
 import type { DiskCheckOrgDoesNotExistError } from '#common/types/disk/function-errors/disk-check-org-does-not-exist-error';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 
-export function checkOrgDoesNotExist(item: {
+export async function checkOrgDoesNotExist(item: {
   orgDir: string;
 }): Result.ResultAsync<void, DiskCheckOrgDoesNotExistError> {
   let { orgDir } = item;

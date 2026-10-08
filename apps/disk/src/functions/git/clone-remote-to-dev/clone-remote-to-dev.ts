@@ -6,7 +6,7 @@ import type { ProjectRemoteType } from '#common/types/backend/parts/project/proj
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
-export function cloneRemoteToDev(item: {
+export async function cloneRemoteToDev(item: {
   orgId: string;
   projectId: string;
   devRepoId: string;

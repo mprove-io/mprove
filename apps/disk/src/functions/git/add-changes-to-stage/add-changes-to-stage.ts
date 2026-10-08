@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
-export function addChangesToStage(item: {
+export async function addChangesToStage(item: {
   repoDir: string;
 }): Result.ResultAsync<void, never> {
   return addTraceSpan({

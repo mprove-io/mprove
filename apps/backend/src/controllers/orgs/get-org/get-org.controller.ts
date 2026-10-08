@@ -1,5 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import {
   ToBackendGetOrgRequestDto,
@@ -7,13 +8,20 @@ import {
 } from '#backend/controllers/orgs/get-org/get-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  type MemberEnt,
+  membersTable
+} from '#backend/drizzle/postgres/schema/members';
+import {
+  type ProjectEnt,
+  projectsTable
+} from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { GetOrgCheckExistsResultError } from '#common/types/backend/function-errors/get-org-check-exists-result-error';
 
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgOutput } from '#common/types/backend/routes/orgs/get-org/get-org-output';
@@ -39,41 +47,52 @@ export class GetOrgController {
   async getOrg(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetOrgRequestDto
-  ) {
-    let { orgId } = body.input;
+  ): Promise<BackendResultForOperation<'getOrg'>> {
+    return Result.pipe(
+      Result.succeed({
+        orgId: body.input.orgId,
+        userId: user.userId,
+        orgsService: this.orgsService,
+        db: this.db
+      }),
+      Result.bind(
+        'org',
+        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
+          v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+      ),
+      Result.andThrough(async v => {
+        if (v.org.ownerId === v.userId) {
+          return Result.succeed();
+        }
 
-    let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
+        let userMemberEnts: MemberEnt[] =
+          await v.db.drizzle.query.membersTable.findMany({
+            where: eq(membersTable.memberId, v.userId)
+          });
 
-    if (org.ownerId !== user.userId) {
-      let userMembers = await this.db.drizzle.query.membersTable.findMany({
-        where: eq(membersTable.memberId, user.userId)
-      });
+        let projectIds: string[] = userMemberEnts.map(
+          userMemberEnt => userMemberEnt.projectId
+        );
 
-      let projectIds = userMembers.map(m => m.projectId);
+        let projectEnts: ProjectEnt[] =
+          projectIds.length === 0
+            ? []
+            : await v.db.drizzle.query.projectsTable.findMany({
+                where: and(
+                  inArray(projectsTable.projectId, projectIds),
+                  eq(projectsTable.orgId, v.orgId)
+                )
+              });
 
-      let projects =
-        projectIds.length === 0
-          ? []
-          : await this.db.drizzle.query.projectsTable.findMany({
-              where: and(
-                inArray(projectsTable.projectId, projectIds),
-                eq(projectsTable.orgId, orgId)
-              )
-            });
-
-      let orgIds = projects.map(x => x.orgId);
-
-      if (orgIds.indexOf(orgId) < 0) {
-        throw new ServerError({
-          message: 'BACKEND_FORBIDDEN_ORG'
-        });
-      }
-    }
-
-    let payload: ToBackendGetOrgOutput = {
-      org: this.orgsService.tabToApi({ org: org })
-    };
-
-    return payload;
+        return projectEnts.length === 0
+          ? Result.fail({ code: 'BACKEND_FORBIDDEN_ORG' })
+          : Result.succeed();
+      }),
+      Result.map(
+        (v): ToBackendGetOrgOutput => ({
+          org: v.orgsService.tabToApi({ org: v.org })
+        })
+      )
+    );
   }
 }

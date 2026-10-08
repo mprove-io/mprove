@@ -7,7 +7,7 @@ import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo/check-restore-org-project-repo';
 import { restoreProjectGitCloneRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/restore-project-git-clone-repo-branch/restore-project-git-clone-repo-branch';
 
-export function checkRestoreOrgProjectRepoBranch(item: {
+export async function checkRestoreOrgProjectRepoBranch(item: {
   remoteType: ProjectRemoteType;
   orgId: string;
   orgPath: string;

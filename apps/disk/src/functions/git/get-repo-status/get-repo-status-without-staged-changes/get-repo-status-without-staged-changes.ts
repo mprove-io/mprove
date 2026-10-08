@@ -9,7 +9,7 @@ import type { RepoError } from '#common/types/disk/parts/repo/repo-error';
 import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 
-export function getRepoStatusWithoutStagedChanges(item: {
+export async function getRepoStatusWithoutStagedChanges(item: {
   currentBranchName: string;
   changesToCommit: DiskFileChange[];
   conflicts: DiskFileLine[];

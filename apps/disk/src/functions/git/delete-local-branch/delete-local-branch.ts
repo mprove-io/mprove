@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
-export function deleteLocalBranch(item: {
+export async function deleteLocalBranch(item: {
   repoDir: string;
   branch: string;
 }): Result.ResultAsync<void, never> {

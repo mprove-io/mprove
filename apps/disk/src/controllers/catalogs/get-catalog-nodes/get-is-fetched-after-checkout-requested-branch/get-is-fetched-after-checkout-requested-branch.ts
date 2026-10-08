@@ -5,7 +5,7 @@ import type { DiskGetIsFetchedAfterCheckoutRequestedBranchError } from '#common/
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
 
-export function getIsFetchedAfterCheckoutRequestedBranch(item: {
+export async function getIsFetchedAfterCheckoutRequestedBranch(item: {
   branch: string;
   projectId: string;
   projectDir: string;

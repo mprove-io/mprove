@@ -3,7 +3,7 @@ import type { DiskProjectAlreadyExistError } from '#common/types/disk/errors/dis
 import type { DiskCheckProjectDoesNotExistError } from '#common/types/disk/function-errors/disk-check-project-does-not-exist-error';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 
-export function checkProjectDoesNotExist(item: {
+export async function checkProjectDoesNotExist(item: {
   projectDir: string;
 }): Result.ResultAsync<void, DiskCheckProjectDoesNotExistError> {
   return Result.pipe(

@@ -11,7 +11,7 @@ import { getRepoStatusWithoutStagedChanges } from '#disk/functions/git/get-repo-
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit/get-changes-to-commit';
 
-export function getRepoStatus(item: {
+export async function getRepoStatus(item: {
   projectId: string;
   repoId: string;
   projectDir: string;

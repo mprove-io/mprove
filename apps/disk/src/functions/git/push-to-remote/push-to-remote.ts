@@ -7,7 +7,7 @@ import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-sta
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
-export function pushToRemote(item: {
+export async function pushToRemote(item: {
   projectId: string;
   projectDir: string;
   repoId: string;

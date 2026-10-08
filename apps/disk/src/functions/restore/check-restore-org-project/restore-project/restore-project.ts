@@ -5,7 +5,7 @@ import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { restoreProjectGitClone } from '#disk/functions/restore/check-restore-org-project/restore-project/restore-project-git-clone/restore-project-git-clone';
 
-export function restoreProject(item: {
+export async function restoreProject(item: {
   remoteType: ProjectRemoteType;
   orgId: string;
   orgPath: string;

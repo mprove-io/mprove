@@ -6,7 +6,7 @@ import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { cloneRemote } from '#disk/functions/git/clone-remote/clone-remote';
 
-export function restoreProjectGitClone(item: {
+export async function restoreProjectGitClone(item: {
   remoteType: 'GitClone';
   orgId: string;
   orgPath: string;

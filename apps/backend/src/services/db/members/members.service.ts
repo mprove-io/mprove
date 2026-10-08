@@ -42,6 +42,7 @@ import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
 import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
 import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
+import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
 import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
@@ -181,31 +182,46 @@ export class MembersService {
   async getMemberCheckIsEditorOrAdmin(item: {
     memberId: string;
     projectId: string;
-  }) {
-    let { projectId, memberId } = item;
+  }): Promise<MemberTab> {
+    let result: Result.Result<
+      MemberTab,
+      GetMemberCheckIsEditorOrAdminResultError
+    > = await this.getMemberCheckIsEditorOrAdminResult(item);
 
-    let member = await this.db.drizzle.query.membersTable
-      .findFirst({
-        where: and(
-          eq(membersTable.memberId, memberId),
-          eq(membersTable.projectId, projectId)
-        )
-      })
-      .then(x => this.tabService.memberEntToTab(x));
-
-    if (isUndefined(member)) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (member.isEditor !== true && member.isAdmin !== true) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
-      });
-    }
+    let member: MemberTab = result.value;
 
     return member;
+  }
+
+  async getMemberCheckIsEditorOrAdminResult(item: {
+    memberId: string;
+    projectId: string;
+  }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminResultError> {
+    return Result.pipe(
+      Result.succeed({
+        memberId: item.memberId,
+        projectId: item.projectId,
+        membersService: this
+      }),
+      Result.bind(
+        'member',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          v.membersService.getMemberCheckExistsResult({
+            memberId: v.memberId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        v.member.isEditor !== true && v.member.isAdmin !== true
+          ? Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN' })
+          : Result.succeed()
+      ),
+      Result.map((v): MemberTab => v.member)
+    );
   }
 
   async getMemberCheckIsEditor(item: { memberId: string; projectId: string }) {

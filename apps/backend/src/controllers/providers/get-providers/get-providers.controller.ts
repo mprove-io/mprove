@@ -1,5 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
   ToBackendGetProvidersRequestDto,
@@ -21,11 +22,11 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import type { Member } from '#common/types/backend/parts/member';
-import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
-import type { ToBackendGetProvidersRequest } from '#common/types/backend/routes/providers/get-providers/get-providers-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -50,52 +51,66 @@ export class GetProvidersController {
   async getProviders(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProvidersRequestDto
-  ) {
-    let bodyPayload: ToBackendGetProvidersRequest['input'] = body.input;
+  ): Promise<BackendResultForOperation<'getProviders'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        userId: user.userId,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        providersService: this.providersService,
+        tabService: this.tabService,
+        db: this.db
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (
+          v
+        ): Result.ResultAsync<
+          MemberTab,
+          GetMemberCheckIsEditorOrAdminResultError
+        > =>
+          v.membersService.getMemberCheckIsEditorOrAdminResult({
+            memberId: v.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'providerEnts',
+        async (v): Result.ResultAsync<ProviderEnt[], never> => {
+          let providerEnts: ProviderEnt[] =
+            await v.db.drizzle.query.providersTable.findMany({
+              where: eq(providersTable.projectId, v.projectId)
+            });
 
-    let { projectId } = bodyPayload;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember: MemberTab =
-      await this.membersService.getMemberCheckIsEditorOrAdmin({
-        memberId: user.userId,
-        projectId: projectId
-      });
-
-    let providerEnts: ProviderEnt[] =
-      await this.db.drizzle.query.providersTable.findMany({
-        where: eq(providersTable.projectId, projectId)
-      });
-
-    let providers: ProviderTab[] = providerEnts.map(providerEnt =>
-      this.tabService.providerEntToTab({ providerEnt: providerEnt })
-    );
-
-    let sortedProviders: ProviderTab[] = providers.sort((a, b) =>
-      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-    );
-
-    let apiProviders: Provider[] = await Promise.all(
-      sortedProviders.map(provider =>
-        this.providersService.tabToApiProvider({
-          provider: provider,
-          isIncludePasswords: false
+          return Result.succeed(providerEnts);
+        }
+      ),
+      Result.bind(
+        'providers',
+        (v): Result.Result<ProviderTab[], ProviderEntToTabResultError> =>
+          Result.sequence(v.providerEnts, providerEnt =>
+            v.tabService.providerEntToTabResult({ providerEnt: providerEnt })
+          )
+      ),
+      Result.map(
+        (v): ToBackendGetProvidersOutput => ({
+          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          providers: v.providers
+            .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
+            .map(provider =>
+              v.providersService.tabToApiProvider({
+                provider: provider,
+                isIncludePasswords: false
+              })
+            )
         })
       )
     );
-
-    let apiUserMember: Member = this.membersService.tabToApi({
-      member: userMember
-    });
-
-    let payload: ToBackendGetProvidersOutput = {
-      userMember: apiUserMember,
-      providers: apiProviders
-    };
-
-    return payload;
   }
 }

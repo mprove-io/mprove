@@ -16,7 +16,7 @@ type SyncFilesPayload = {
   deletedFiles: DiskSyncFile[];
 };
 
-export function getSyncFilesPayload(item: {
+export async function getSyncFilesPayload(item: {
   statusResult: StatusResult;
   repoDir: string;
 }): Result.ResultAsync<SyncFilesPayload, GetSyncFilesPayloadError> {

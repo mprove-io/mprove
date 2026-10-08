@@ -7,7 +7,7 @@ import { prepareInitialProjectFiles } from '#disk/functions/git/prepare-remote-a
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
-export function createInitialCommitToProd(item: {
+export async function createInitialCommitToProd(item: {
   prodDir: string;
   projectId: string;
   seedProjectId: string;

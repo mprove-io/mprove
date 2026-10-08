@@ -12,14 +12,7 @@ import { map, mergeMap, tap } from 'rxjs/operators';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { makeCreateProjectResponse } from '#backend/functions/temp/make-create-project-response/make-create-project-response';
-import { makeDeleteProjectResponse } from '#backend/functions/temp/make-delete-project-response/make-delete-project-response';
-import { makeGenerateProjectRemoteKeyResponse } from '#backend/functions/temp/make-generate-project-remote-key-response/make-generate-project-remote-key-response';
-import { makeGetProjectResponse } from '#backend/functions/temp/make-get-project-response/make-get-project-response';
-import { makeGetProjectsListResponse } from '#backend/functions/temp/make-get-projects-list-response/make-get-projects-list-response';
-import { makeIsProjectExistResponse } from '#backend/functions/temp/make-is-project-exist-response/make-is-project-exist-response';
-import { makeSetProjectInfoResponse } from '#backend/functions/temp/make-set-project-info-response/make-set-project-info-response';
-import { makeSetProjectSandboxProviderResponse } from '#backend/functions/temp/make-set-project-sandbox-provider-response/make-set-project-sandbox-provider-response';
+import { makeBackendResultResponse } from '#backend/functions/temp/make-backend-result-response/make-backend-result-response';
 import { logResponseBackend } from '#backend/functions/top/log-response-backend/log-response-backend';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
@@ -182,7 +175,8 @@ export class AppInterceptor implements NestInterceptor {
 
     if (isUndefined(idemp)) {
       if (req.operation === 'setProjectInfo') {
-        execution = makeSetProjectInfoResponse({
+        execution = makeBackendResultResponse({
+          operation: 'setProjectInfo',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
@@ -193,7 +187,8 @@ export class AppInterceptor implements NestInterceptor {
           }
         });
       } else if (req.operation === 'setProjectSandboxProvider') {
-        execution = makeSetProjectSandboxProviderResponse({
+        execution = makeBackendResultResponse({
+          operation: 'setProjectSandboxProvider',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
@@ -204,7 +199,8 @@ export class AppInterceptor implements NestInterceptor {
           }
         });
       } else if (req.operation === 'createProject') {
-        execution = makeCreateProjectResponse({
+        execution = makeBackendResultResponse({
+          operation: 'createProject',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
@@ -215,7 +211,8 @@ export class AppInterceptor implements NestInterceptor {
           }
         });
       } else if (req.operation === 'deleteProject') {
-        execution = makeDeleteProjectResponse({
+        execution = makeBackendResultResponse({
+          operation: 'deleteProject',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
@@ -226,7 +223,8 @@ export class AppInterceptor implements NestInterceptor {
           }
         });
       } else if (req.operation === 'generateProjectRemoteKey') {
-        execution = makeGenerateProjectRemoteKeyResponse({
+        execution = makeBackendResultResponse({
+          operation: 'generateProjectRemoteKey',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
@@ -237,7 +235,8 @@ export class AppInterceptor implements NestInterceptor {
           }
         });
       } else if (req.operation === 'getProject') {
-        execution = makeGetProjectResponse({
+        execution = makeBackendResultResponse({
+          operation: 'getProject',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
@@ -248,7 +247,8 @@ export class AppInterceptor implements NestInterceptor {
           }
         });
       } else if (req.operation === 'getProjectsList') {
-        execution = makeGetProjectsListResponse({
+        execution = makeBackendResultResponse({
+          operation: 'getProjectsList',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
@@ -259,7 +259,152 @@ export class AppInterceptor implements NestInterceptor {
           }
         });
       } else if (req.operation === 'isProjectExist') {
-        execution = makeIsProjectExistResponse({
+        execution = makeBackendResultResponse({
+          operation: 'isProjectExist',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createOrg') {
+        execution = makeBackendResultResponse({
+          operation: 'createOrg',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteOrg') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteOrg',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getOrg') {
+        execution = makeBackendResultResponse({
+          operation: 'getOrg',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getOrgsList') {
+        execution = makeBackendResultResponse({
+          operation: 'getOrgsList',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'isOrgExist') {
+        execution = makeBackendResultResponse({
+          operation: 'isOrgExist',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'setOrgInfo') {
+        execution = makeBackendResultResponse({
+          operation: 'setOrgInfo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'setOrgOwner') {
+        execution = makeBackendResultResponse({
+          operation: 'setOrgOwner',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createProvider') {
+        execution = makeBackendResultResponse({
+          operation: 'createProvider',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteProvider') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteProvider',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editProvider') {
+        execution = makeBackendResultResponse({
+          operation: 'editProvider',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getProviders') {
+        execution = makeBackendResultResponse({
+          operation: 'getProviders',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'toggleProvider') {
+        execution = makeBackendResultResponse({
+          operation: 'toggleProvider',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,

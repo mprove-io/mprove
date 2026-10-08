@@ -14,7 +14,7 @@ import { checkBuildMetricsFieldGroups } from './check-build-metrics-field-groups
 import { checkModSpaces } from './check-mod-spaces/check-mod-spaces';
 import { checkTimeframes } from './check-timeframes/check-timeframes';
 
-export function buildModStart(item: {
+export async function buildModStart(item: {
   files: BmlFile[];
   malloyConnections: MalloyConnection[];
   connections: ProjectConnection[];

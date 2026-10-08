@@ -29,7 +29,7 @@ export type BuildVisualizationsOutput = {
   reports: FileReport[];
 };
 
-export function buildVisualizations(item: {
+export async function buildVisualizations(item: {
   projectConfig: FileProjectConf;
   dashboards: FileDashboard[];
   charts: FileChart[];

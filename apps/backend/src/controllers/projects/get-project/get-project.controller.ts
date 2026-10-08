@@ -39,7 +39,7 @@ export class GetProjectController {
   @ApiOkResponse({
     type: ToBackendGetProjectResponseDto
   })
-  getProject(
+  async getProject(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProjectRequestDto
   ): Promise<BackendResultForOperation<'getProject'>> {

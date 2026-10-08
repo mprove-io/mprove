@@ -43,7 +43,7 @@ export class IsProjectExistController {
   @ApiOkResponse({
     type: ToBackendIsProjectExistResponseDto
   })
-  isProjectExist(
+  async isProjectExist(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendIsProjectExistRequestDto
   ): Promise<BackendResultForOperation<'isProjectExist'>> {

@@ -12,7 +12,7 @@ import {
   type NodesAndFilesPayload
 } from './get-nodes-and-files-payload-recursive/get-nodes-and-files-payload-recursive';
 
-export function getNodesAndFiles(item: {
+export async function getNodesAndFiles(item: {
   projectId: string;
   projectDir: string;
   repoId: string;

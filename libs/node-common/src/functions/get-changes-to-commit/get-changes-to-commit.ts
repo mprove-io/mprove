@@ -14,7 +14,7 @@ import { readFileCheckSize } from '#node-common/functions/read-file-check-size/r
 
 const { forEachSeries } = pIteration;
 
-export function getChangesToCommit(item: {
+export async function getChangesToCommit(item: {
   repoDir: string;
   addContent?: boolean;
   expandRenamed?: boolean;

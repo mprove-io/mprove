@@ -66,7 +66,7 @@ export class DeleteProjectController {
   @ApiOkResponse({
     type: ToBackendDeleteProjectResponseDto
   })
-  deleteProject(
+  async deleteProject(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteProjectRequestDto
   ): Promise<BackendResultForOperation<'deleteProject'>> {

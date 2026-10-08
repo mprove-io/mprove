@@ -80,6 +80,7 @@ import type { MemberEntToTabResultError } from '#common/types/backend/function-e
 import type { NoteEntToTabResultError } from '#common/types/backend/function-errors/note-ent-to-tab-result-error';
 import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
 import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
+import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
@@ -95,6 +96,8 @@ import type { OrgLt } from '#common/types/shared/st-lt/orgs/org-lt';
 import type { OrgSt } from '#common/types/shared/st-lt/orgs/org-st';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
+import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-lt';
+import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
 
 @Injectable()
@@ -743,12 +746,40 @@ export class TabService {
       return;
     }
 
-    let provider: ProviderTab = {
-      ...providerEnt,
-      ...this.getTabProps({ ent: providerEnt })
-    } as ProviderTab;
+    let result: Result.Result<ProviderTab, ProviderEntToTabResultError> =
+      this.providerEntToTabResult({ providerEnt: providerEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let provider: ProviderTab = result.value;
 
     return provider;
+  }
+
+  providerEntToTabResult(item: {
+    providerEnt: ProviderEnt;
+  }): Result.Result<ProviderTab, ProviderEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ providerEnt: item.providerEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<ProviderSt, ProviderLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<ProviderSt, ProviderLt>({
+            ent: v.providerEnt
+          })
+      ),
+      Result.map(
+        (v): ProviderTab =>
+          ({ ...v.providerEnt, ...v.tabProps.props }) as ProviderTab
+      )
+    );
   }
 
   queryEntToTab(queryEnt: QueryEnt): QueryTab {

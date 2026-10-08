@@ -6,25 +6,51 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendInternalError } from '#common/types/backend/errors/backend-internal-error';
+import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
+import type { ToBackendResponseBase } from '#common/types/backend/response/to-backend-response-base';
+import type { ToBackendResponseForOperation } from '#common/types/backend/response/to-backend-response-for-operation';
 import type { ToBackendResponseMetadata } from '#common/types/backend/response/to-backend-response-metadata';
-import type { ToBackendCreateProjectResponse } from '#common/types/backend/routes/projects/create-project/create-project-response';
 import {
   type WrappedError,
   wrapError
 } from '#node-common/functions/wrap-error/wrap-error';
 
-// Temporary operation-specific transport boundary during incremental migration.
-export function makeCreateProjectResponse(item: {
-  execution: Observable<BackendResultForOperation<'createProject'>>;
+type BackendResultResponse<TOperation extends ToBackendOperation> =
+  ToBackendResponseBase<
+    TOperation,
+    Extract<
+      ToBackendResponseForOperation<TOperation>,
+      { type: 'Success' }
+    >['output'],
+    Extract<
+      ToBackendResponseForOperation<TOperation>,
+      { type: 'Failure' }
+    >['error']
+  >;
+
+// Only explicitly migrated operations may use this transport boundary.
+export function makeBackendResultResponse<
+  TOperation extends ToBackendOperation
+>(item: {
+  operation: TOperation;
+  execution: Observable<BackendResultForOperation<TOperation>>;
   traceId?: string;
   method: string;
   cs: ConfigService<BackendConfig>;
   startTs: number;
   onUnexpectedError: (error: WrappedError) => void;
-}): Observable<ToBackendCreateProjectResponse> {
-  let { execution, traceId, method, cs, startTs, onUnexpectedError } = item;
+}): Observable<BackendResultResponse<TOperation>> {
+  let {
+    operation,
+    execution,
+    traceId,
+    method,
+    cs,
+    startTs,
+    onUnexpectedError
+  } = item;
 
-  let responseExecution: Observable<ToBackendCreateProjectResponse> =
+  let responseExecution: Observable<BackendResultResponse<TOperation>> =
     execution.pipe(
       catchError((e: unknown) => {
         let wrappedError: WrappedError = wrapError(e);
@@ -47,15 +73,17 @@ export function makeCreateProjectResponse(item: {
         let mproveVersion: string =
           cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag');
 
-        let metadata: ToBackendResponseMetadata<'createProject'> = {
-          operation: 'createProject',
+        let metadata: ToBackendResponseMetadata<TOperation> = {
+          operation: operation,
           method: method,
           mproveVersion: mproveVersion ?? '',
           duration: Number.isFinite(duration) ? Math.max(0, duration) : 0,
           traceId: typeof traceId === 'string' ? traceId : makeId()
         };
 
-        let response: ToBackendCreateProjectResponse = Result.isFailure(result)
+        let response: BackendResultResponse<TOperation> = Result.isFailure(
+          result
+        )
           ? { type: 'Failure', ...metadata, error: result.error }
           : { type: 'Success', ...metadata, output: result.value };
 

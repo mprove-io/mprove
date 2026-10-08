@@ -12,7 +12,7 @@ import { initializeAndPushManagedProd } from '#disk/functions/git/prepare-remote
 import { initializeManagedCentralRepo } from '#disk/functions/git/prepare-remote-and-prod/initialize-managed-central-repo/initialize-managed-central-repo';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
-export function prepareRemoteAndProd(item: {
+export async function prepareRemoteAndProd(item: {
   projectId: string;
   projectDir: string;
   seedProjectId: string;

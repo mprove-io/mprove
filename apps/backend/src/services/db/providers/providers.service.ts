@@ -1,9 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import {
+  type ProviderEnt,
+  providersTable
+} from '#backend/drizzle/postgres/schema/providers';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -18,6 +22,9 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckProviderDoesNotExistResultError } from '#common/types/backend/function-errors/check-provider-does-not-exist-result-error';
+import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
+import type { MakeProviderResultError } from '#common/types/backend/function-errors/make-provider-result-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ProviderOptionsAnthropic } from '#common/types/backend/parts/provider/options/provider-options-anthropic';
@@ -25,6 +32,7 @@ import type { ProviderOptionsCodex } from '#common/types/backend/parts/provider/
 import type { ProviderOptionsOpenAI } from '#common/types/backend/parts/provider/options/provider-options-openai';
 import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 
 @Injectable()
 export class ProvidersService {
@@ -60,34 +68,74 @@ export class ProvidersService {
         }
     )
   ): ProviderTab {
-    let expectedProviderType = PROVIDER_TYPE_BY_ID[item.providerId];
+    let result: Result.Result<ProviderTab, MakeProviderResultError> =
+      this.makeProviderResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let provider: ProviderTab = result.value;
+
+    return provider;
+  }
+
+  makeProviderResult(
+    item: {
+      projectId: string;
+      providerId: string;
+      isEnabled: boolean;
+      models: LlmModel[];
+    } & (
+      | {
+          type: 'OpenAI';
+          options: ProviderOptionsOpenAI;
+        }
+      | {
+          type: 'Anthropic';
+          options: ProviderOptionsAnthropic;
+        }
+      | {
+          type: 'OpenAICompatible';
+          name: string;
+          options: ProviderOptionsOpenAICompatible;
+        }
+      | {
+          type: 'OpenAICodex';
+          options: ProviderOptionsCodex;
+        }
+    )
+  ): Result.Result<ProviderTab, MakeProviderResultError> {
+    let { projectId, providerId, isEnabled, models } = item;
+
+    let expectedProviderType: ProviderType = PROVIDER_TYPE_BY_ID[providerId];
 
     let isInvalidBuiltIn =
       item.type !== 'OpenAICompatible' && expectedProviderType !== item.type;
 
+    let isReservedProviderId: boolean =
+      RESERVED_PROVIDER_IDS.includes(providerId);
+
     let isReservedCompatible =
-      item.type === 'OpenAICompatible' &&
-      RESERVED_PROVIDER_IDS.includes(item.providerId);
+      item.type === 'OpenAICompatible' && isReservedProviderId;
 
     if (isInvalidBuiltIn || isReservedCompatible) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_TYPE_MISMATCH'
-      });
+      return Result.fail({ code: 'BACKEND_PROVIDER_TYPE_MISMATCH' });
     }
 
     let common: Omit<ProviderTab, 'type' | 'options'> = {
       providerFullId: this.hashService.makeProviderFullId({
-        projectId: item.projectId,
-        providerId: item.providerId
+        projectId: projectId,
+        providerId: providerId
       }),
-      projectId: item.projectId,
-      providerId: item.providerId,
+      projectId: projectId,
+      providerId: providerId,
       name:
         item.type === 'OpenAICompatible'
           ? item.name
-          : PROVIDER_NAME_BY_ID[item.providerId],
-      isEnabled: item.isEnabled,
-      models: item.models,
+          : PROVIDER_NAME_BY_ID[providerId],
+      isEnabled: isEnabled,
+      models: models,
       keyTag: undefined,
       serverTs: undefined,
       emptyData: undefined
@@ -95,14 +143,14 @@ export class ProvidersService {
 
     let provider: ProviderTab =
       item.type === 'OpenAI'
-        ? { ...common, type: item.type, options: item.options }
+        ? { type: item.type, ...common, options: item.options }
         : item.type === 'Anthropic'
-          ? { ...common, type: item.type, options: item.options }
+          ? { type: item.type, ...common, options: item.options }
           : item.type === 'OpenAICodex'
-            ? { ...common, type: item.type, options: item.options }
-            : { ...common, type: item.type, options: item.options };
+            ? { type: item.type, ...common, options: item.options }
+            : { type: item.type, ...common, options: item.options };
 
-    return provider;
+    return Result.succeed(provider);
   }
 
   tabToApiProvider(item: {
@@ -209,45 +257,69 @@ export class ProvidersService {
   async checkProviderDoesNotExist(item: {
     projectId: string;
     providerId: string;
-  }) {
-    let { projectId, providerId } = item;
-    let provider = await this.db.drizzle.query.providersTable.findFirst({
-      where: and(
-        eq(providersTable.projectId, projectId),
-        eq(providersTable.providerId, providerId)
-      )
-    });
+  }): Promise<void> {
+    let result: Result.Result<void, CheckProviderDoesNotExistResultError> =
+      await this.checkProviderDoesNotExistResult(item);
 
-    if (isDefined(provider)) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_ALREADY_EXISTS'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
+  }
+
+  async checkProviderDoesNotExistResult(item: {
+    projectId: string;
+    providerId: string;
+  }): Result.ResultAsync<void, CheckProviderDoesNotExistResultError> {
+    let { projectId, providerId } = item;
+
+    let providerEnt: ProviderEnt =
+      await this.db.drizzle.query.providersTable.findFirst({
+        where: and(
+          eq(providersTable.projectId, projectId),
+          eq(providersTable.providerId, providerId)
+        )
+      });
+
+    return isDefined(providerEnt)
+      ? Result.fail({ code: 'BACKEND_PROVIDER_ALREADY_EXISTS' })
+      : Result.succeed();
   }
 
   async getProviderCheckExists(item: {
     projectId: string;
     providerId: string;
   }): Promise<ProviderTab> {
+    let result: Result.Result<ProviderTab, GetProviderCheckExistsResultError> =
+      await this.getProviderCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let provider: ProviderTab = result.value;
+
+    return provider;
+  }
+
+  async getProviderCheckExistsResult(item: {
+    projectId: string;
+    providerId: string;
+  }): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> {
     let { projectId, providerId } = item;
-    let provider = await this.db.drizzle.query.providersTable
-      .findFirst({
+
+    let providerEnt: ProviderEnt =
+      await this.db.drizzle.query.providersTable.findFirst({
         where: and(
           eq(providersTable.projectId, projectId),
           eq(providersTable.providerId, providerId)
         )
-      })
-      .then(providerEnt =>
-        this.tabService.providerEntToTab({ providerEnt: providerEnt })
-      );
-
-    if (isUndefined(provider)) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_DOES_NOT_EXIST'
       });
+
+    if (isUndefined(providerEnt)) {
+      return Result.fail({ code: 'BACKEND_PROVIDER_DOES_NOT_EXIST' });
     }
 
-    return provider;
+    return this.tabService.providerEntToTabResult({ providerEnt: providerEnt });
   }
 
   async getEnabledProviders(item: {

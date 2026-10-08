@@ -20,7 +20,7 @@ import { checkTileTitleModelSelect } from './check-tile-title-model-select/check
 import { checkTileUnknownParameters } from './check-tile-unknown-parameters/check-tile-unknown-parameters';
 import { fetchSql } from './fetch-sql/fetch-sql';
 
-export function buildTile<T extends dcType>(item: {
+export async function buildTile<T extends dcType>(item: {
   envId: string;
   projectId: string;
   entities: T[];

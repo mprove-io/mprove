@@ -9,7 +9,7 @@ import { getSyncAppliedChanges } from '#node-common/functions/get-sync-applied-c
 import { resetWorkingTreeToHead } from '#node-common/functions/reset-working-tree-to-head/reset-working-tree-to-head';
 import type { SyncData } from '../get-sync-data';
 
-export function getToServerSyncData(item: {
+export async function getToServerSyncData(item: {
   repoDir: string;
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];

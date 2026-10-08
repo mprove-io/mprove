@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
@@ -25,10 +26,10 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteProviderOutput } from '#common/types/backend/routes/providers/delete-provider/delete-provider-output';
-import type { ToBackendDeleteProviderRequest } from '#common/types/backend/routes/providers/delete-provider/delete-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -55,38 +56,49 @@ export class DeleteProviderController {
   async deleteProvider(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteProviderRequestDto
-  ) {
-    let bodyPayload: ToBackendDeleteProviderRequest['input'] = body.input;
+  ): Promise<BackendResultForOperation<'deleteProvider'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        providerId: body.input.providerId,
+        userId: user.userId,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        v.membersService.getMemberCheckIsAdminResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(async v => {
+        await retry(
+          async () => {
+            await v.db.drizzle.transaction(async tx => {
+              await tx
+                .delete(providersTable)
+                .where(
+                  and(
+                    eq(providersTable.projectId, v.projectId),
+                    eq(providersTable.providerId, v.providerId)
+                  )
+                );
+            });
+          },
+          getRetryOption(v.cs, v.logger)
+        );
 
-    let { projectId, providerId } = bodyPayload;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    await retry(
-      async () => {
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(providersTable)
-            .where(
-              and(
-                eq(providersTable.projectId, projectId),
-                eq(providersTable.providerId, providerId)
-              )
-            );
-        });
-      },
-      getRetryOption(this.cs, this.logger)
+        return Result.succeed();
+      }),
+      Result.map((v): ToBackendDeleteProviderOutput => ({}))
     );
-
-    let payload: ToBackendDeleteProviderOutput = {};
-
-    return payload;
   }
 }

@@ -5,7 +5,7 @@ import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { cloneRemote } from '#disk/functions/git/clone-remote/clone-remote';
 
-export function restoreProjectGitCloneRepo(item: {
+export async function restoreProjectGitCloneRepo(item: {
   remoteType: 'GitClone';
   orgId: string;
   orgPath: string;

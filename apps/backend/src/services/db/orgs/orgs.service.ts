@@ -8,6 +8,7 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { type OrgEnt, orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
@@ -15,6 +16,7 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { AddOrgResultError } from '#common/types/backend/function-errors/add-org-result-error';
 import type { CheckUserIsOrgOwnerResultError } from '#common/types/backend/function-errors/check-user-is-org-owner-result-error';
 import type { GetOrgCheckExistsResultError } from '#common/types/backend/function-errors/get-org-check-exists-result-error';
 import type { Org } from '#common/types/backend/parts/org';
@@ -116,7 +118,26 @@ export class OrgsService {
     name: string;
     traceId: string;
     orgId?: string;
-  }) {
+  }): Promise<OrgTab> {
+    let result: Result.Result<OrgTab, AddOrgResultError> =
+      await this.addOrgResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let org: OrgTab = result.value;
+
+    return org;
+  }
+
+  async addOrgResult(item: {
+    ownerId: string;
+    ownerEmail: string;
+    name: string;
+    traceId: string;
+    orgId?: string;
+  }): Result.ResultAsync<OrgTab, AddOrgResultError> {
     let { ownerId, ownerEmail, name, traceId, orgId } = item;
 
     let newOrg: OrgTab = {
@@ -130,31 +151,42 @@ export class OrgsService {
       serverTs: undefined
     };
 
-    await this.rpcService.sendToDiskUnwrapOutput({
-      request: {
-        operation: 'createOrg',
+    return Result.pipe(
+      Result.succeed({
+        org: newOrg,
         traceId: traceId,
-        input: {
-          orgId: newOrg.orgId
-        }
-      }
-    });
-
-    await retry(
-      async () => {
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                orgs: [newOrg]
-              }
-            })
-        );
-      },
-      getRetryOption(this.cs, this.logger)
+        rpcService: this.rpcService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
+      }),
+      Result.andThrough(v =>
+        v.rpcService.sendToDiskResult({
+          request: {
+            operation: 'createOrg',
+            traceId: v.traceId,
+            input: { orgId: v.org.orgId }
+          }
+        })
+      ),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await v.db.drizzle.transaction(
+                  async tx =>
+                    await v.db.packer.write({
+                      tx: tx,
+                      insert: { orgs: [v.org] }
+                    })
+                ),
+              getRetryOption(v.cs, v.logger)
+            );
+          }
+        })
+      ),
+      Result.map((v): OrgTab => v.org)
     );
-
-    return newOrg;
   }
 }

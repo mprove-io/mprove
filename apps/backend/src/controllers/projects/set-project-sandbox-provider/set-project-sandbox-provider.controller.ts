@@ -57,7 +57,7 @@ export class SetProjectSandboxProviderController {
   @ApiOkResponse({
     type: ToBackendSetProjectSandboxProviderResponseDto
   })
-  setProjectSandboxProvider(
+  async setProjectSandboxProvider(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetProjectSandboxProviderRequestDto
   ): Promise<BackendResultForOperation<'setProjectSandboxProvider'>> {

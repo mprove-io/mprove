@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -21,16 +22,17 @@ import type {
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendToggleProviderOutput } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-output';
-import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -55,47 +57,69 @@ export class ToggleProviderController {
   async toggleProvider(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendToggleProviderRequestDto
-  ) {
-    let bodyPayload: ToBackendToggleProviderRequest['input'] = body.input;
-
-    let { projectId, providerId, isEnabled } = bodyPayload;
-
-    await this.projectsService.getProjectCheckExists({ projectId: projectId });
-
-    await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    let provider: ProviderTab =
-      await this.providersService.getProviderCheckExists({
-        projectId: projectId,
-        providerId: providerId
-      });
-
-    provider.isEnabled = isEnabled;
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              update: { providers: [provider] }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
+  ): Promise<BackendResultForOperation<'toggleProvider'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        providerId: body.input.providerId,
+        isEnabled: body.input.isEnabled,
+        userId: user.userId,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        providersService: this.providersService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        v.membersService.getMemberCheckIsAdminResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'provider',
+        (
+          v
+        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+          v.providersService.getProviderCheckExistsResult({
+            projectId: v.projectId,
+            providerId: v.providerId
+          })
+      ),
+      Result.inspect(v => {
+        v.provider.isEnabled = v.isEnabled;
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await v.db.drizzle.transaction(
+                  async tx =>
+                    await v.db.packer.write({
+                      tx: tx,
+                      update: { providers: [v.provider] }
+                    })
+                ),
+              getRetryOption(v.cs, v.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendToggleProviderOutput => ({
+          provider: v.providersService.tabToApiProvider({
+            provider: v.provider,
+            isIncludePasswords: false
+          })
+        })
+      )
     );
-
-    let apiProvider: Provider = this.providersService.tabToApiProvider({
-      provider: provider,
-      isIncludePasswords: false
-    });
-
-    let payload: ToBackendToggleProviderOutput = {
-      provider: apiProvider
-    };
-
-    return payload;
   }
 }

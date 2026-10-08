@@ -4,7 +4,7 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
-export function initializeManagedCentralRepo(item: {
+export async function initializeManagedCentralRepo(item: {
   centralDir: string;
 }): Result.ResultAsync<void, never> {
   return Result.pipe(

@@ -23,7 +23,7 @@ export type SyncData =
       appliedChangesOnServer: string[];
     };
 
-export function getSyncData(item: {
+export async function getSyncData(item: {
   direction: SyncDirection;
   repoDir: string;
   changedFiles: DiskSyncFile[];

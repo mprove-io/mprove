@@ -5,7 +5,7 @@ import type { ResetWorkingTreeToHeadError } from '#common/types/node-common/func
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 import { removePathUnderDir } from '#node-common/functions/reset-working-tree-to-head/remove-path-under-dir/remove-path-under-dir';
 
-export function resetWorkingTreeToHead(item: {
+export async function resetWorkingTreeToHead(item: {
   repoDir: string;
   statusResult?: StatusResult;
 }): Result.ResultAsync<void, ResetWorkingTreeToHeadError> {
