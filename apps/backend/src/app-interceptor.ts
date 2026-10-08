@@ -414,6 +414,126 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'createEnv') {
+        execution = makeBackendResultResponse({
+          operation: 'createEnv',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteEnv') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteEnv',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createEnvUser') {
+        execution = makeBackendResultResponse({
+          operation: 'createEnvUser',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteEnvUser') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteEnvUser',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createEnvVar') {
+        execution = makeBackendResultResponse({
+          operation: 'createEnvVar',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteEnvVar') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteEnvVar',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editEnvVar') {
+        execution = makeBackendResultResponse({
+          operation: 'editEnvVar',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editEnvFallbacks') {
+        execution = makeBackendResultResponse({
+          operation: 'editEnvFallbacks',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getEnvs') {
+        execution = makeBackendResultResponse({
+          operation: 'getEnvs',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getEnvsList') {
+        execution = makeBackendResultResponse({
+          operation: 'getEnvsList',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else {
         execution = next.handle().pipe(
           map(payload =>

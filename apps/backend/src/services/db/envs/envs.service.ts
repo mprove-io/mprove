@@ -21,7 +21,10 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckEnvDoesNotExistResultError } from '#common/types/backend/function-errors/check-env-does-not-exist-result-error';
+import type { EnvEntToTabResultError } from '#common/types/backend/function-errors/env-ent-to-tab-result-error';
 import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
+import type { GetEnvCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-result-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { EnvUser } from '#common/types/backend/parts/env-user';
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
@@ -139,52 +142,85 @@ export class EnvsService {
   }
 
   async checkEnvDoesNotExist(item: { projectId: string; envId: string }) {
+    let result: Result.Result<void, CheckEnvDoesNotExistResultError> =
+      await this.checkEnvDoesNotExistResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+  }
+
+  async checkEnvDoesNotExistResult(item: {
+    projectId: string;
+    envId: string;
+  }): Result.ResultAsync<void, CheckEnvDoesNotExistResultError> {
     let { projectId, envId } = item;
 
-    let env = await this.db.drizzle.query.envsTable.findFirst({
+    let envEnt: EnvEnt = await this.db.drizzle.query.envsTable.findFirst({
       where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
 
-    if (isDefined(env)) {
-      throw new ServerError({
-        message: 'BACKEND_ENV_ALREADY_EXISTS'
+    if (isDefined(envEnt)) {
+      return Result.fail({
+        code: 'BACKEND_ENV_ALREADY_EXISTS'
       });
     }
+
+    return Result.succeed();
   }
 
   async getEnvCheckExistsAndAccess(item: {
     projectId: string;
     envId: string;
     member: MemberTab;
-  }) {
-    let { projectId, envId, member } = item;
+  }): Promise<EnvTab> {
+    let result: Result.Result<EnvTab, GetEnvCheckExistsAndAccessResultError> =
+      await this.getEnvCheckExistsAndAccessResult(item);
 
-    let env = await this.db.drizzle.query.envsTable
-      .findFirst({
-        where: and(
-          eq(envsTable.envId, envId),
-          eq(envsTable.projectId, projectId)
-        )
-      })
-      .then(x => this.tabService.envEntToTab(x));
-
-    if (isUndefined(env)) {
-      throw new ServerError({
-        message: 'BACKEND_ENV_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (
-      envId !== PROJECT_ENV_PROD &&
-      member.isAdmin === false &&
-      env.memberIds.indexOf(member.memberId) < 0
-    ) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV'
-      });
-    }
+    let env: EnvTab = result.value;
 
     return env;
+  }
+
+  async getEnvCheckExistsAndAccessResult(item: {
+    projectId: string;
+    envId: string;
+    member: MemberTab;
+  }): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessResultError> {
+    let { projectId, envId, member } = item;
+
+    let envEnt: EnvEnt = await this.db.drizzle.query.envsTable.findFirst({
+      where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
+    });
+
+    if (isUndefined(envEnt)) {
+      return Result.fail({
+        code: 'BACKEND_ENV_DOES_NOT_EXIST'
+      });
+    }
+
+    let envResult: Result.Result<EnvTab, EnvEntToTabResultError> =
+      this.tabService.envEntToTabResult({ envEnt: envEnt });
+
+    if (Result.isFailure(envResult)) {
+      return envResult;
+    }
+
+    let env: EnvTab = envResult.value;
+
+    if (envId !== PROJECT_ENV_PROD && member.isAdmin === false) {
+      if (env.memberIds.indexOf(member.memberId) < 0) {
+        return Result.fail({
+          code: 'BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV'
+        });
+      }
+    }
+
+    return Result.succeed(env);
   }
 
   async getApiEnvs(item: { projectId: string }): Promise<Env[]> {

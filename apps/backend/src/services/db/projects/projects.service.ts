@@ -38,6 +38,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { AddProjectResultError } from '#common/types/backend/function-errors/add-project-result-error';
+import type { CheckProjectIsNotRestrictedResultError } from '#common/types/backend/function-errors/check-project-is-not-restricted-result-error';
 import type { DbErrorToResultError } from '#common/types/backend/function-errors/db-error-to-result-error';
 import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
 import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
@@ -138,9 +139,22 @@ export class ProjectsService {
     userMember: MemberTab;
     repoId: string;
   }) {
+    let result: Result.Result<void, CheckProjectIsNotRestrictedResultError> =
+      this.checkProjectIsNotRestrictedResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+  }
+
+  checkProjectIsNotRestrictedResult(item: {
+    projectId: string;
+    userMember: MemberTab;
+    repoId?: string;
+  }): Result.Result<void, CheckProjectIsNotRestrictedResultError> {
     let { projectId, userMember, repoId } = item;
 
-    let demoProjectId =
+    let demoProjectId: string =
       this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
     if (
@@ -148,10 +162,12 @@ export class ProjectsService {
       projectId === demoProjectId &&
       (isUndefined(repoId) || repoId === PROD_REPO_ID)
     ) {
-      throw new ServerError({
-        message: 'BACKEND_RESTRICTED_PROJECT'
+      return Result.fail({
+        code: 'BACKEND_RESTRICTED_PROJECT'
       });
     }
+
+    return Result.succeed();
   }
 
   async addProject(item: {
