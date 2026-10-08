@@ -41,6 +41,7 @@
 - rules/zod-optional-fields-use-nullish.md
 - rules/zod-schemas-and-native-types.md
 - rules/explicit-variable-types.md
+- rules/async-promise-chains.md
 - rules/entity-and-tab-variable-names.md
 - rules/local-object-projections.md
 - rules/empty-lines-between-statements.md
@@ -59,6 +60,7 @@
 - rules/byethrow/no-nested-pipes-in-a-single-function.md
 - rules/byethrow/result-type-inference.md
 - rules/byethrow/result-callback-return-types.md
+- rules/byethrow/combine-lookup-and-conversion.md
 - rules/byethrow/function-error-types.md
 - rules/byethrow/byethrow-function-selection.md
 - rules/byethrow/combinator-application.md

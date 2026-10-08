@@ -35,7 +35,7 @@ import type {
   UconfigTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
+import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
 import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
@@ -72,6 +72,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
 import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
 import type { DconfigEntToTabResultError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-result-error';
 import type { EnvEntToTabResultError } from '#common/types/backend/function-errors/env-ent-to-tab-result-error';
@@ -82,6 +83,8 @@ import type { OrgEntToTabResultError } from '#common/types/backend/function-erro
 import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
+import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
+import type { AvatarSt } from '#common/types/shared/st-lt/avatars/avatar-st';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 import type { DconfigLt } from '#common/types/shared/st-lt/dconfigs/dconfig-lt';
@@ -328,12 +331,37 @@ export class TabService {
       return;
     }
 
-    let avatar: AvatarTab = {
-      ...avatarEnt,
-      ...this.getTabProps({ ent: avatarEnt })
-    };
+    let result: Result.Result<AvatarTab, AvatarEntToTabResultError> =
+      this.avatarEntToTabResult({ avatarEnt: avatarEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let avatar: AvatarTab = result.value;
 
     return avatar;
+  }
+
+  avatarEntToTabResult(item: {
+    avatarEnt: AvatarEnt;
+  }): Result.Result<AvatarTab, AvatarEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ avatarEnt: item.avatarEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<AvatarSt, AvatarLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<AvatarSt, AvatarLt>({
+            ent: v.avatarEnt
+          })
+      ),
+      Result.map((v): AvatarTab => ({ ...v.avatarEnt, ...v.tabProps.props }))
+    );
   }
 
   branchEntToTab(branchEnt: BranchEnt): BranchTab {

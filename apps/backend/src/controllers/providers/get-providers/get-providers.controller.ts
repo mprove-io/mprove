@@ -81,22 +81,19 @@ export class GetProvidersController {
           })
       ),
       Result.bind(
-        'providerEnts',
-        async (v): Result.ResultAsync<ProviderEnt[], never> => {
-          let providerEnts: ProviderEnt[] =
-            await v.db.drizzle.query.providersTable.findMany({
-              where: eq(providersTable.projectId, v.projectId)
-            });
-
-          return Result.succeed(providerEnts);
-        }
-      ),
-      Result.bind(
         'providers',
-        (v): Result.Result<ProviderTab[], ProviderEntToTabResultError> =>
-          Result.sequence(v.providerEnts, providerEnt =>
-            v.tabService.providerEntToTabResult({ providerEnt: providerEnt })
-          )
+        (v): Result.ResultAsync<ProviderTab[], ProviderEntToTabResultError> =>
+          v.db.drizzle.query.providersTable
+            .findMany({
+              where: eq(providersTable.projectId, v.projectId)
+            })
+            .then((providerEnts: ProviderEnt[]) =>
+              Result.sequence(providerEnts, providerEnt =>
+                v.tabService.providerEntToTabResult({
+                  providerEnt: providerEnt
+                })
+              )
+            )
       ),
       Result.map(
         (v): ToBackendGetProvidersOutput => ({

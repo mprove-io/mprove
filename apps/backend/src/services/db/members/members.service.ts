@@ -273,19 +273,18 @@ export class MembersService {
   }): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> {
     let { projectId, memberId } = item;
 
-    let memberEnt: MemberEnt =
-      await this.db.drizzle.query.membersTable.findFirst({
+    return this.db.drizzle.query.membersTable
+      .findFirst({
         where: and(
           eq(membersTable.memberId, memberId),
           eq(membersTable.projectId, projectId)
         )
-      });
-
-    if (isUndefined(memberEnt)) {
-      return Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' });
-    }
-
-    return this.tabService.memberEntToTabResult({ memberEnt: memberEnt });
+      })
+      .then((memberEnt: MemberEnt) =>
+        isUndefined(memberEnt)
+          ? Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' })
+          : this.tabService.memberEntToTabResult({ memberEnt: memberEnt })
+      );
   }
 
   async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {

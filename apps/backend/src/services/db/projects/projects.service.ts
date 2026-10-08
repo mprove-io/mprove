@@ -120,18 +120,15 @@ export class ProjectsService {
   }): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> {
     let { projectId } = item;
 
-    let projectEnt: ProjectEnt =
-      await this.db.drizzle.query.projectsTable.findFirst({
+    return this.db.drizzle.query.projectsTable
+      .findFirst({
         where: eq(projectsTable.projectId, projectId)
-      });
-
-    if (isUndefined(projectEnt)) {
-      return Result.fail({
-        code: 'BACKEND_PROJECT_DOES_NOT_EXIST'
-      });
-    }
-
-    return this.tabService.projectEntToTabResult({ projectEnt: projectEnt });
+      })
+      .then((projectEnt: ProjectEnt) =>
+        isUndefined(projectEnt)
+          ? Result.fail({ code: 'BACKEND_PROJECT_DOES_NOT_EXIST' })
+          : this.tabService.projectEntToTabResult({ projectEnt: projectEnt })
+      );
   }
 
   async checkProjectIsNotRestricted(item: {

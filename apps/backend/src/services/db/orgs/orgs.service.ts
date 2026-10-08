@@ -76,15 +76,15 @@ export class OrgsService {
   }): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> {
     let { orgId } = item;
 
-    let orgEnt: OrgEnt = await this.db.drizzle.query.orgsTable.findFirst({
-      where: eq(orgsTable.orgId, orgId)
-    });
-
-    if (isUndefined(orgEnt)) {
-      return Result.fail({ code: 'BACKEND_ORG_DOES_NOT_EXIST' });
-    }
-
-    return this.tabService.orgEntToTabResult({ orgEnt: orgEnt });
+    return this.db.drizzle.query.orgsTable
+      .findFirst({
+        where: eq(orgsTable.orgId, orgId)
+      })
+      .then((orgEnt: OrgEnt) =>
+        isUndefined(orgEnt)
+          ? Result.fail({ code: 'BACKEND_ORG_DOES_NOT_EXIST' })
+          : this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+      );
   }
 
   async checkUserIsOrgOwner(item: {

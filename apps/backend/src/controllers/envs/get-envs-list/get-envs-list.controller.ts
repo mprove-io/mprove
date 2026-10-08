@@ -67,19 +67,18 @@ export class GetEnvsListController {
           memberId: v.userId
         })
       ),
-      Result.bind('envEnts', async (v): Result.ResultAsync<EnvEnt[], never> => {
-        let envEnts: EnvEnt[] = await v.db.drizzle.query.envsTable.findMany({
-          where: eq(envsTable.projectId, v.projectId)
-        });
-
-        return Result.succeed(envEnts);
-      }),
       Result.bind(
         'envs',
-        (v): Result.Result<EnvTab[], EnvEntToTabResultError> =>
-          Result.sequence(v.envEnts, envEnt =>
-            v.tabService.envEntToTabResult({ envEnt: envEnt })
-          )
+        (v): Result.ResultAsync<EnvTab[], EnvEntToTabResultError> =>
+          v.db.drizzle.query.envsTable
+            .findMany({
+              where: eq(envsTable.projectId, v.projectId)
+            })
+            .then((envEnts: EnvEnt[]) =>
+              Result.sequence(envEnts, envEnt =>
+                v.tabService.envEntToTabResult({ envEnt: envEnt })
+              )
+            )
       ),
       Result.map((v): ToBackendGetEnvsListOutput => {
         let envs: EnvTab[] =

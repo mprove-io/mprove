@@ -1,7 +1,8 @@
 # Result callback return types
 
 Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
-`Result.Result<Success, Error>` return type.
+`Result.Result<Success, Error>` or `Result.ResultAsync<Success, Error>` return
+type, matching whether the callback returns a synchronous Result or a promise.
 
 ```ts
 Result.bind(

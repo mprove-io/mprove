@@ -307,19 +307,18 @@ export class ProvidersService {
   }): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> {
     let { projectId, providerId } = item;
 
-    let providerEnt: ProviderEnt =
-      await this.db.drizzle.query.providersTable.findFirst({
+    return this.db.drizzle.query.providersTable
+      .findFirst({
         where: and(
           eq(providersTable.projectId, projectId),
           eq(providersTable.providerId, providerId)
         )
-      });
-
-    if (isUndefined(providerEnt)) {
-      return Result.fail({ code: 'BACKEND_PROVIDER_DOES_NOT_EXIST' });
-    }
-
-    return this.tabService.providerEntToTabResult({ providerEnt: providerEnt });
+      })
+      .then((providerEnt: ProviderEnt) =>
+        isUndefined(providerEnt)
+          ? Result.fail({ code: 'BACKEND_PROVIDER_DOES_NOT_EXIST' })
+          : this.tabService.providerEntToTabResult({ providerEnt: providerEnt })
+      );
   }
 
   async getEnabledProviders(item: {

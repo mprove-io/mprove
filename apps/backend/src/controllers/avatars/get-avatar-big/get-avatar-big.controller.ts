@@ -1,5 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
   ToBackendGetAvatarBigRequestDto,
@@ -7,10 +8,19 @@ import {
 } from '#backend/controllers/avatars/get-avatar-big/get-avatar-big.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
+import type {
+  AvatarTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  type AvatarEnt,
+  avatarsTable
+} from '#backend/drizzle/postgres/schema/avatars';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetAvatarBigOutput } from '#common/types/backend/routes/avatars/get-avatar-big/get-avatar-big-output';
 
@@ -34,20 +44,32 @@ export class GetAvatarBigController {
   async getAvatarBig(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetAvatarBigRequestDto
-  ) {
-    let { avatarUserId } = body.input;
-
-    let avatar = await this.db.drizzle.query.avatarsTable
-      .findFirst({
-        where: eq(avatarsTable.userId, avatarUserId)
-      })
-      .then(x => this.tabService.avatarEntToTab(x));
-
-    let payload: ToBackendGetAvatarBigOutput = {
-      avatarSmall: avatar?.avatarSmall,
-      avatarBig: avatar?.avatarBig
-    };
-
-    return payload;
+  ): Promise<BackendResultForOperation<'getAvatarBig'>> {
+    return Result.pipe(
+      Result.succeed({
+        ...body.input,
+        db: this.db,
+        tabService: this.tabService
+      }),
+      Result.bind(
+        'avatar',
+        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+          v.db.drizzle.query.avatarsTable
+            .findFirst({
+              where: eq(avatarsTable.userId, v.avatarUserId)
+            })
+            .then((avatarEnt: AvatarEnt) =>
+              isUndefined(avatarEnt)
+                ? Result.succeed(undefined)
+                : v.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+            )
+      ),
+      Result.map(
+        (v): ToBackendGetAvatarBigOutput => ({
+          avatarSmall: v.avatar?.avatarSmall,
+          avatarBig: v.avatar?.avatarBig
+        })
+      )
+    );
   }
 }

@@ -55,57 +55,58 @@ export class GetOrgsListController {
         tabService: this.tabService,
         orgsService: this.orgsService
       }),
-      Result.bind('orgEnts', async (v): Result.ResultAsync<OrgEnt[], never> => {
-        let userMemberEnts: MemberEnt[] =
-          await v.db.drizzle.query.membersTable.findMany({
-            where: eq(membersTable.memberId, v.userId)
-          });
-
-        let userProjectIds: string[] = userMemberEnts.map(
-          userMemberEnt => userMemberEnt.projectId
-        );
-
-        let userProjectEnts: ProjectEnt[] =
-          userProjectIds.length === 0
-            ? []
-            : await v.db.drizzle.query.projectsTable.findMany({
-                where: inArray(projectsTable.projectId, userProjectIds)
-              });
-
-        let userOrgIds: string[] = userProjectEnts.map(
-          userProjectEnt => userProjectEnt.orgId
-        );
-
-        let userOrgEnts: OrgEnt[] =
-          userOrgIds.length === 0
-            ? []
-            : await v.db.drizzle.query.orgsTable.findMany({
-                where: inArray(orgsTable.orgId, userOrgIds)
-              });
-
-        let ownerOrgEnts: OrgEnt[] =
-          await v.db.drizzle.query.orgsTable.findMany({
-            where: eq(orgsTable.ownerId, v.userId)
-          });
-
-        let orgEnts: OrgEnt[] = [...userOrgEnts];
-
-        ownerOrgEnts.forEach(ownerOrgEnt => {
-          if (
-            orgEnts.findIndex(orgEnt => orgEnt.orgId === ownerOrgEnt.orgId) < 0
-          ) {
-            orgEnts.push(ownerOrgEnt);
-          }
-        });
-
-        return Result.succeed(orgEnts);
-      }),
       Result.bind(
         'orgs',
-        (v): Result.Result<OrgTab[], OrgEntToTabResultError> =>
-          Result.sequence(v.orgEnts, orgEnt =>
-            v.tabService.orgEntToTabResult({ orgEnt: orgEnt })
-          )
+        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> => {
+          let userMemberEnts: MemberEnt[] =
+            await v.db.drizzle.query.membersTable.findMany({
+              where: eq(membersTable.memberId, v.userId)
+            });
+
+          let userProjectIds: string[] = userMemberEnts.map(
+            userMemberEnt => userMemberEnt.projectId
+          );
+
+          let userProjectEnts: ProjectEnt[] =
+            userProjectIds.length === 0
+              ? []
+              : await v.db.drizzle.query.projectsTable.findMany({
+                  where: inArray(projectsTable.projectId, userProjectIds)
+                });
+
+          let userOrgIds: string[] = userProjectEnts.map(
+            userProjectEnt => userProjectEnt.orgId
+          );
+
+          let userOrgEnts: OrgEnt[] =
+            userOrgIds.length === 0
+              ? []
+              : await v.db.drizzle.query.orgsTable.findMany({
+                  where: inArray(orgsTable.orgId, userOrgIds)
+                });
+
+          return v.db.drizzle.query.orgsTable
+            .findMany({
+              where: eq(orgsTable.ownerId, v.userId)
+            })
+            .then((ownerOrgEnts: OrgEnt[]) => {
+              let orgEnts: OrgEnt[] = [...userOrgEnts];
+
+              ownerOrgEnts.forEach(ownerOrgEnt => {
+                if (
+                  orgEnts.findIndex(
+                    orgEnt => orgEnt.orgId === ownerOrgEnt.orgId
+                  ) < 0
+                ) {
+                  orgEnts.push(ownerOrgEnt);
+                }
+              });
+
+              return Result.sequence(orgEnts, orgEnt =>
+                v.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+              );
+            });
+        }
       ),
       Result.map(
         (v): ToBackendGetOrgsListOutput => ({

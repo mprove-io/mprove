@@ -549,6 +549,24 @@ method call. Before returning a value, assign it to an explicitly typed variable
 and return that variable. Do not rely on return-type inference at invocation or
 return sites.
 
+Exception: Byethrow Result flows follow the exceptions under "Result type
+inference".
+
+Exception: when a function, method, or callback with an explicit return type
+returns a promise chain, its `.then(...)` callbacks may return expressions
+directly without intermediate variables or their own return annotations. The
+outer return contract checks the returned promise's value type. This applies to
+expression-bodied callbacks and direct returns from block-bodied callbacks,
+including chains returning `Result.ResultAsync<Success, Error>`.
+
+```ts
+async function loadMemberName(item: { memberId: string }): Promise<string> {
+  let { memberId } = item;
+
+  return loadMember({ memberId: memberId }).then(member => member.name);
+}
+```
+
 Exception: `PackerOutput` flows do not require explicit variable or callback
 return types. A `retry` callback may directly return `db.drizzle.transaction`,
 and its transaction callback may directly return `db.packer.write`, without
@@ -598,6 +616,27 @@ let modelParts = await this.llmModelService.getModelParts({
 
 return models.map(model => toDevModel(model));
 ```
+
+## Async promise chains
+
+Use `async` for promise-chain functions or methods where TypeScript offers "This
+may be converted to an async function" (`ts(80006)`), even when their bodies
+contain no `await`. Keep the explicit outer return type.
+
+Keep `.then(...)` when it expresses lookup/conversion clearly; do not rewrite it
+to `await` solely to satisfy that suggestion.
+
+Do not add `async` to callbacks solely because they return a promise when no
+`ts(80006)` suggestion applies. In particular, Result combinator callbacks may
+directly return a promise chain with an explicit
+`Result.ResultAsync<Success, Error>` return type and no `async`. Use `async`
+when the callback needs `await`; keep synchronous `.then(...)` conversion
+callbacks non-async.
+
+Keeping `async` on functions and methods also preserves conversion of
+synchronous exceptions in the outer body to promise rejections. Direct returns
+from `.then(...)` follow the promise-chain exception under "Explicit variable
+types".
 
 ## Entity and Tab variable names
 
@@ -859,15 +898,16 @@ rule in these cases:
   type.
 - Return `Result.succeed` and `Result.fail` directly without intermediate
   variables.
-- Return a `ResultAsync` helper directly instead of wrapping it in redundant
-  `async`/`await`.
+- Return a `ResultAsync` helper directly without redundant `await`; promise
+  chains follow "Async promise chains".
 
 Standalone Result-producing functions must retain explicit return types.
 
 ### Result callback return types
 
 Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
-`Result.Result<Success, Error>` return type.
+`Result.Result<Success, Error>` or `Result.ResultAsync<Success, Error>` return
+type, matching whether the callback returns a synchronous Result or a promise.
 
 ```ts
 Result.bind(
@@ -901,6 +941,41 @@ Result.map(
 ```
 
 Callbacks passed to `Result.andThrough` do not require an explicit return type.
+
+### Combine lookup and conversion
+
+When a database entity or entity collection is used only for conversion to a Tab
+value, combine lookup and conversion in one Result binding. Keep the entity
+local to the callback rather than adding an entity binding followed immediately
+by a Tab binding.
+
+Use the query promise's `.then(...)` for conversion, following "Result callback
+return types" and the promise-chain exception under "Explicit variable types".
+The outer callback follows "Async promise chains".
+
+```ts
+Result.bind(
+  'avatar',
+  (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+    v.db.drizzle.query.avatarsTable
+      .findFirst({
+        where: eq(avatarsTable.userId, v.avatarUserId)
+      })
+      .then((avatarEnt: AvatarEnt) =>
+        isUndefined(avatarEnt)
+          ? Result.succeed(undefined)
+          : v.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+      )
+);
+```
+
+For collections, return `Result.sequence` with the conversion callback from
+`.then(...)`, preserving first-failure processing order.
+
+Keep missing-entity guards at the caller and preserve existing missing-value
+behavior. Keep steps separate when entities are needed elsewhere in the
+pipeline, including authorization, existence checks, or mutations. Do not
+reorder checks, queries, or side effects merely to combine steps.
 
 ### Function error types
 

@@ -10,7 +10,7 @@ rule in these cases:
   type.
 - Return `Result.succeed` and `Result.fail` directly without intermediate
   variables.
-- Return a `ResultAsync` helper directly instead of wrapping it in redundant
-  `async`/`await`.
+- Return a `ResultAsync` helper directly without redundant `await`; promise
+  chains follow "Async promise chains".
 
 Standalone Result-producing functions must retain explicit return types.

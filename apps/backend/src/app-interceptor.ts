@@ -534,6 +534,30 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'getAvatarBig') {
+        execution = makeBackendResultResponse({
+          operation: 'getAvatarBig',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'setAvatar') {
+        execution = makeBackendResultResponse({
+          operation: 'setAvatar',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else {
         execution = next.handle().pipe(
           map(payload =>
