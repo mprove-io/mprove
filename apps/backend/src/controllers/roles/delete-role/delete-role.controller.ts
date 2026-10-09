@@ -9,9 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteRoleRequestDto,
   ToBackendDeleteRoleResponseDto
@@ -24,14 +25,20 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
+import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
+import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
+import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRoleOutput } from '#common/types/backend/routes/roles/delete-role/delete-role-output';
 
@@ -61,69 +68,101 @@ export class DeleteRoleController {
   async deleteRole(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteRoleRequestDto
-  ) {
-    let { projectId, roleId } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    let projectMembers = await this.db.drizzle.query.membersTable
-      .findMany({
-        where: eq(membersTable.projectId, projectId)
-      })
-      .then(xs => xs.map(x => this.tabService.memberEntToTab(x)));
-
-    let membersToUpdate: MemberTab[] = projectMembers.filter(
-      member => member.roles.indexOf(roleId) > -1
-    );
-
-    membersToUpdate.forEach(member => {
-      member.roles = member.roles.filter(role => role !== roleId);
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(rolesTable)
-            .where(
-              and(
-                eq(rolesTable.projectId, projectId),
-                eq(rolesTable.roleId, roleId)
-              )
-            );
-
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              members: membersToUpdate
-            }
-          });
-        }),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    let apiRoles = await this.rolesService.getApiRoles({
-      projectId: projectId
-    });
-
-    let updatedUserMember = membersToUpdate.find(
-      member => member.memberId === userMember.memberId
-    );
-
-    let payload: ToBackendDeleteRoleOutput = {
-      userMember: this.membersService.tabToApi({
-        member: isDefined(updatedUserMember) ? updatedUserMember : userMember
+  ): Promise<BackendResultForOperation<'deleteRole'>> {
+    return Result.pipe(
+      Result.succeed({
+        ...body.input,
+        user: user,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        rolesService: this.rolesService,
+        tabService: this.tabService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
       }),
-      roles: apiRoles
-    };
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+          v.membersService.getMemberCheckIsAdminResult({
+            memberId: v.user.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'projectMembers',
+        (v): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
+          v.db.drizzle.query.membersTable
+            .findMany({ where: eq(membersTable.projectId, v.projectId) })
+            .then(memberEnts =>
+              Result.sequence(memberEnts, memberEnt =>
+                v.tabService.memberEntToTabResult({ memberEnt: memberEnt })
+              )
+            )
+      ),
+      Result.bind(
+        'membersToUpdate',
+        (v): Result.Result<MemberTab[], never> =>
+          Result.succeed(
+            v.projectMembers.filter(member => member.roles.includes(v.roleId))
+          )
+      ),
+      Result.inspect(v => {
+        v.membersToUpdate.forEach(member => {
+          member.roles = member.roles.filter(role => role !== v.roleId);
+        });
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await v.db.drizzle.transaction(async tx => {
+                  await tx
+                    .delete(rolesTable)
+                    .where(
+                      and(
+                        eq(rolesTable.projectId, v.projectId),
+                        eq(rolesTable.roleId, v.roleId)
+                      )
+                    );
 
-    return payload;
+                  await v.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: { members: v.membersToUpdate }
+                  });
+                }),
+              getRetryOption(v.cs, v.logger)
+            );
+          }
+        })
+      ),
+      Result.bind(
+        'apiRoles',
+        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+      ),
+      Result.map((v): ToBackendDeleteRoleOutput => {
+        let updatedUserMember: MemberTab = v.membersToUpdate.find(
+          member => member.memberId === v.userMember.memberId
+        );
+
+        let payload: ToBackendDeleteRoleOutput = {
+          userMember: v.membersService.tabToApi({
+            member: isDefined(updatedUserMember)
+              ? updatedUserMember
+              : v.userMember
+          }),
+          roles: v.apiRoles
+        };
+
+        return payload;
+      })
+    );
   }
 }

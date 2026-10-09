@@ -1,16 +1,26 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendGetRolesRequestDto,
   ToBackendGetRolesResponseDto
 } from '#backend/controllers/roles/get-roles/get-roles.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
+import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { Given } from '#common/types/backend/parts/given/given';
+import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 
@@ -36,32 +46,46 @@ export class GetRolesController {
   async getRoles(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetRolesRequestDto
-  ) {
-    let { projectId } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let apiRoles = await this.rolesService.getApiRoles({
-      projectId: projectId
-    });
-
-    let apiGivens = await this.givensService.getApiGivens({
-      projectId: projectId
-    });
-
-    let payload: ToBackendGetRolesOutput = {
-      userMember: this.membersService.tabToApi({ member: userMember }),
-      roles: apiRoles,
-      givens: apiGivens
-    };
-
-    return payload;
+  ): Promise<BackendResultForOperation<'getRoles'>> {
+    return Result.pipe(
+      Result.succeed({
+        ...body.input,
+        user: user,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        rolesService: this.rolesService,
+        givensService: this.givensService
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          v.membersService.getMemberCheckExistsResult({
+            memberId: v.user.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'apiRoles',
+        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+      ),
+      Result.bind(
+        'apiGivens',
+        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+          v.givensService.getApiGivensResult({ projectId: v.projectId })
+      ),
+      Result.map(
+        (v): ToBackendGetRolesOutput => ({
+          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          roles: v.apiRoles,
+          givens: v.apiGivens
+        })
+      )
+    );
   }
 }

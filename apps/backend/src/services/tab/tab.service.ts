@@ -45,7 +45,7 @@ import type { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import type { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
 import type { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
-import { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
+import type { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
@@ -60,7 +60,7 @@ import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
-import { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
+import type { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
 import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
@@ -77,11 +77,13 @@ import type { ConnectionEntToTabResultError } from '#common/types/backend/functi
 import type { DconfigEntToTabResultError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-result-error';
 import type { EnvEntToTabResultError } from '#common/types/backend/function-errors/env-ent-to-tab-result-error';
 import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
+import type { GivenEntToTabResultError } from '#common/types/backend/function-errors/given-ent-to-tab-result-error';
 import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
 import type { NoteEntToTabResultError } from '#common/types/backend/function-errors/note-ent-to-tab-result-error';
 import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
 import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
+import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
 import type { AvatarSt } from '#common/types/shared/st-lt/avatars/avatar-st';
@@ -91,6 +93,8 @@ import type { DconfigLt } from '#common/types/shared/st-lt/dconfigs/dconfig-lt';
 import type { DconfigSt } from '#common/types/shared/st-lt/dconfigs/dconfig-st';
 import type { EnvLt } from '#common/types/shared/st-lt/envs/env-lt';
 import type { EnvSt } from '#common/types/shared/st-lt/envs/env-st';
+import type { GivenLt } from '#common/types/shared/st-lt/givens/given-lt';
+import type { GivenSt } from '#common/types/shared/st-lt/givens/given-st';
 import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';
 import type { MemberSt } from '#common/types/shared/st-lt/members/member-st';
 import type { NoteLt } from '#common/types/shared/st-lt/notes/note-lt';
@@ -101,6 +105,8 @@ import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-lt';
 import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';
+import type { RoleLt } from '#common/types/shared/st-lt/roles/role-lt';
+import type { RoleSt } from '#common/types/shared/st-lt/roles/role-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
 
 @Injectable()
@@ -538,12 +544,32 @@ export class TabService {
       return;
     }
 
-    let given: GivenTab = {
-      ...givenEnt,
-      ...this.getTabProps({ ent: givenEnt })
-    };
+    let result: Result.Result<GivenTab, GivenEntToTabResultError> =
+      this.givenEntToTabResult({ givenEnt: givenEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let given: GivenTab = result.value;
 
     return given;
+  }
+
+  givenEntToTabResult(item: {
+    givenEnt: GivenEnt;
+  }): Result.Result<GivenTab, GivenEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ givenEnt: item.givenEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<TabProps<GivenSt, GivenLt>, GetTabPropsResultError> =>
+          v.tabService.getTabPropsResult<GivenSt, GivenLt>({ ent: v.givenEnt })
+      ),
+      Result.map((v): GivenTab => ({ ...v.givenEnt, ...v.tabProps.props }))
+    );
   }
 
   roleEntToTab(roleEnt: RoleEnt): RoleTab {
@@ -551,12 +577,30 @@ export class TabService {
       return;
     }
 
-    let role: RoleTab = {
-      ...roleEnt,
-      ...this.getTabProps({ ent: roleEnt })
-    };
+    let result: Result.Result<RoleTab, RoleEntToTabResultError> =
+      this.roleEntToTabResult({ roleEnt: roleEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let role: RoleTab = result.value;
 
     return role;
+  }
+
+  roleEntToTabResult(item: {
+    roleEnt: RoleEnt;
+  }): Result.Result<RoleTab, RoleEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ roleEnt: item.roleEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<RoleSt, RoleLt>, GetTabPropsResultError> =>
+          v.tabService.getTabPropsResult<RoleSt, RoleLt>({ ent: v.roleEnt })
+      ),
+      Result.map((v): RoleTab => ({ ...v.roleEnt, ...v.tabProps.props }))
+    );
   }
 
   envEntToTab(envEnt: EnvEnt): EnvTab {

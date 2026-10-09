@@ -1,8 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { givensTable } from '#backend/drizzle/postgres/schema/givens';
+import {
+  type GivenEnt,
+  givensTable
+} from '#backend/drizzle/postgres/schema/givens';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -10,6 +14,10 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
+import type { GetGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-given-check-exists-result-error';
+import type { GivenEntToTabResultError } from '#common/types/backend/function-errors/given-ent-to-tab-result-error';
+import type { ValidateGivenValuesResultError } from '#common/types/backend/function-errors/validate-given-values-result-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
@@ -68,23 +76,41 @@ export class GivensService {
     type: GivenType;
     isMultiple: boolean;
     values: string[];
-  }) {
+  }): void {
+    let result: Result.Result<void, ValidateGivenValuesResultError> =
+      this.validateGivenValuesResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        displayData: result.error.displayData
+      });
+    }
+  }
+
+  validateGivenValuesResult(item: {
+    type: GivenType;
+    isMultiple: boolean;
+    values: string[];
+  }): Result.Result<void, ValidateGivenValuesResultError> {
     let { type, isMultiple, values } = item;
 
-    let error = getGivenValueValidationError({
+    let error: string = getGivenValueValidationError({
       type: type,
       isMultiple: isMultiple,
       values: values
     });
 
     if (isDefined(error)) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_GIVEN_VALUE',
+      return Result.fail({
+        code: 'BACKEND_WRONG_GIVEN_VALUE',
         displayData: {
           error: error
         }
       });
     }
+
+    return Result.succeed();
   }
 
   async checkGivenDoesNotExist(item: { projectId: string; givenId: string }) {
@@ -104,43 +130,84 @@ export class GivensService {
     }
   }
 
-  async getGivenCheckExists(item: { projectId: string; givenId: string }) {
+  async getGivenCheckExists(item: {
+    projectId: string;
+    givenId: string;
+  }): Promise<GivenTab> {
+    let result: Result.Result<GivenTab, GetGivenCheckExistsResultError> =
+      await this.getGivenCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let given: GivenTab = result.value;
+
+    return given;
+  }
+
+  async getGivenCheckExistsResult(item: {
+    projectId: string;
+    givenId: string;
+  }): Result.ResultAsync<GivenTab, GetGivenCheckExistsResultError> {
     let { projectId, givenId } = item;
 
-    let given = await this.db.drizzle.query.givensTable
+    return this.db.drizzle.query.givensTable
       .findFirst({
         where: and(
           eq(givensTable.projectId, projectId),
           eq(givensTable.givenId, givenId)
         )
       })
-      .then(x => this.tabService.givenEntToTab(x));
-
-    if (isUndefined(given)) {
-      throw new ServerError({
-        message: 'BACKEND_GIVEN_DOES_NOT_EXIST'
-      });
-    }
-
-    return given;
+      .then((givenEnt: GivenEnt) =>
+        isUndefined(givenEnt)
+          ? Result.fail({ code: 'BACKEND_GIVEN_DOES_NOT_EXIST' })
+          : this.tabService.givenEntToTabResult({ givenEnt: givenEnt })
+      );
   }
 
-  async getApiGivens(item: { projectId: string }) {
-    let { projectId } = item;
+  async getApiGivens(item: { projectId: string }): Promise<Given[]> {
+    let result: Result.Result<Given[], GetApiGivensResultError> =
+      await this.getApiGivensResult(item);
 
-    let givens = await this.db.drizzle.query.givensTable
-      .findMany({
-        where: eq(givensTable.projectId, projectId)
-      })
-      .then(xs => xs.map(x => this.tabService.givenEntToTab(x)));
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    let apiGivens = givens
-      .map(given => this.tabToApi({ given: given }))
-      .sort((a, b) =>
-        a.givenId > b.givenId ? 1 : b.givenId > a.givenId ? -1 : 0
-      );
+    let apiGivens: Given[] = result.value;
 
     return apiGivens;
+  }
+
+  async getApiGivensResult(item: {
+    projectId: string;
+  }): Result.ResultAsync<Given[], GetApiGivensResultError> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: item.projectId,
+        db: this.db,
+        tabService: this.tabService,
+        givensService: this
+      }),
+      Result.bind(
+        'givens',
+        (v): Result.ResultAsync<GivenTab[], GivenEntToTabResultError> =>
+          v.db.drizzle.query.givensTable
+            .findMany({ where: eq(givensTable.projectId, v.projectId) })
+            .then(givenEnts =>
+              Result.sequence(givenEnts, givenEnt =>
+                v.tabService.givenEntToTabResult({ givenEnt: givenEnt })
+              )
+            )
+      ),
+      Result.map((v): Given[] =>
+        v.givens
+          .map(given => v.givensService.tabToApi({ given: given }))
+          .sort((a, b) =>
+            a.givenId > b.givenId ? 1 : b.givenId > a.givenId ? -1 : 0
+          )
+      )
+    );
   }
 
   async getMemberGivensForSelection(item: {

@@ -558,6 +558,90 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'createRole') {
+        execution = makeBackendResultResponse({
+          operation: 'createRole',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteRole') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteRole',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createRoleGiven') {
+        execution = makeBackendResultResponse({
+          operation: 'createRoleGiven',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteRoleGiven') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteRoleGiven',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editRoleGiven') {
+        execution = makeBackendResultResponse({
+          operation: 'editRoleGiven',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getRoles') {
+        execution = makeBackendResultResponse({
+          operation: 'getRoles',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'setFavorite') {
+        execution = makeBackendResultResponse({
+          operation: 'setFavorite',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else {
         execution = next.handle().pipe(
           map(payload =>

@@ -9,21 +9,31 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateRoleRequestDto,
   ToBackendCreateRoleResponseDto
 } from '#backend/controllers/roles/create-role/create-role.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  RoleTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
+import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
+import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateRoleOutput } from '#common/types/backend/routes/roles/create-role/create-role-output';
 
@@ -52,52 +62,76 @@ export class CreateRoleController {
   async createRole(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateRoleRequestDto
-  ) {
-    let { projectId, roleId } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    await this.rolesService.checkRoleDoesNotExist({
-      projectId: projectId,
-      roleId: roleId
-    });
-
-    let newRole = this.rolesService.makeRole({
-      projectId: projectId,
-      roleId: roleId,
-      gvs: []
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                roles: [newRole]
-              }
+  ): Promise<BackendResultForOperation<'createRole'>> {
+    return Result.pipe(
+      Result.succeed({
+        ...body.input,
+        user: user,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        rolesService: this.rolesService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+          v.membersService.getMemberCheckIsAdminResult({
+            memberId: v.user.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        v.rolesService.checkRoleDoesNotExistResult({
+          projectId: v.projectId,
+          roleId: v.roleId
+        })
+      ),
+      Result.bind(
+        'role',
+        (v): Result.Result<RoleTab, never> =>
+          Result.succeed(
+            v.rolesService.makeRole({
+              projectId: v.projectId,
+              roleId: v.roleId,
+              gvs: []
             })
-        ),
-      getRetryOption(this.cs, this.logger)
+          )
+      ),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await v.db.drizzle.transaction(
+                  async tx =>
+                    await v.db.packer.write({
+                      tx: tx,
+                      insert: { roles: [v.role] }
+                    })
+                ),
+              getRetryOption(v.cs, v.logger)
+            );
+          }
+        })
+      ),
+      Result.bind(
+        'apiRoles',
+        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+      ),
+      Result.map(
+        (v): ToBackendCreateRoleOutput => ({
+          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          roles: v.apiRoles
+        })
+      )
     );
-
-    let apiRoles = await this.rolesService.getApiRoles({
-      projectId: projectId
-    });
-
-    let payload: ToBackendCreateRoleOutput = {
-      userMember: this.membersService.tabToApi({ member: userMember }),
-      roles: apiRoles
-    };
-
-    return payload;
   }
 }

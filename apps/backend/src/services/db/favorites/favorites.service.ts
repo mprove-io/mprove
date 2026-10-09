@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -30,16 +31,16 @@ export class FavoritesService {
     });
   }
 
-  async setFavorite(item: {
+  async setFavoriteResult(item: {
     projectId: string;
     userId: string;
     type: FavoriteType;
     targetId: string;
     isFavorite: boolean;
-  }) {
+  }): Result.ResultAsync<void, never> {
     let { projectId, userId, type, targetId, isFavorite } = item;
 
-    let favoriteFullId = this.makeFavoriteFullId({
+    let favoriteFullId: string = this.makeFavoriteFullId({
       userId: userId,
       projectId: projectId,
       type: type,
@@ -63,6 +64,8 @@ export class FavoritesService {
         .delete(favoritesTable)
         .where(eq(favoritesTable.favoriteFullId, favoriteFullId));
     }
+
+    return Result.succeed();
   }
 
   async getFavoriteTargetIds(item: {

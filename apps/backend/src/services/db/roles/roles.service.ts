@@ -1,14 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { RoleTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import {
+  type RoleEnt,
+  rolesTable
+} from '#backend/drizzle/postgres/schema/roles';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckRoleDoesNotExistResultError } from '#common/types/backend/function-errors/check-role-does-not-exist-result-error';
+import type { CheckRoleGivenDoesNotExistResultError } from '#common/types/backend/function-errors/check-role-given-does-not-exist-result-error';
+import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
+import type { GetRoleCheckExistsResultError } from '#common/types/backend/function-errors/get-role-check-exists-result-error';
+import type { GetRoleGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-role-given-check-exists-result-error';
+import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
 
@@ -52,42 +62,42 @@ export class RolesService {
     return apiRole;
   }
 
-  async checkRoleDoesNotExist(item: { projectId: string; roleId: string }) {
+  async checkRoleDoesNotExistResult(item: {
+    projectId: string;
+    roleId: string;
+  }): Result.ResultAsync<void, CheckRoleDoesNotExistResultError> {
     let { projectId, roleId } = item;
 
-    let role = await this.db.drizzle.query.rolesTable.findFirst({
+    let roleEnt: RoleEnt = await this.db.drizzle.query.rolesTable.findFirst({
       where: and(
         eq(rolesTable.projectId, projectId),
         eq(rolesTable.roleId, roleId)
       )
     });
 
-    if (isDefined(role)) {
-      throw new ServerError({
-        message: 'BACKEND_ROLE_ALREADY_EXISTS'
-      });
-    }
+    return isDefined(roleEnt)
+      ? Result.fail({ code: 'BACKEND_ROLE_ALREADY_EXISTS' })
+      : Result.succeed();
   }
 
-  async getRoleCheckExists(item: { projectId: string; roleId: string }) {
+  async getRoleCheckExistsResult(item: {
+    projectId: string;
+    roleId: string;
+  }): Result.ResultAsync<RoleTab, GetRoleCheckExistsResultError> {
     let { projectId, roleId } = item;
 
-    let role = await this.db.drizzle.query.rolesTable
+    return this.db.drizzle.query.rolesTable
       .findFirst({
         where: and(
           eq(rolesTable.projectId, projectId),
           eq(rolesTable.roleId, roleId)
         )
       })
-      .then(x => this.tabService.roleEntToTab(x));
-
-    if (isUndefined(role)) {
-      throw new ServerError({
-        message: 'BACKEND_ROLE_DOES_NOT_EXIST'
-      });
-    }
-
-    return role;
+      .then((roleEnt: RoleEnt) =>
+        isUndefined(roleEnt)
+          ? Result.fail({ code: 'BACKEND_ROLE_DOES_NOT_EXIST' })
+          : this.tabService.roleEntToTabResult({ roleEnt: roleEnt })
+      );
   }
 
   async checkRolesExist(item: { projectId: string; roleIds: string[] }) {
@@ -128,30 +138,28 @@ export class RolesService {
     }
   }
 
-  checkRoleGivenDoesNotExist(item: { role: RoleTab; givenId: string }) {
+  checkRoleGivenDoesNotExistResult(item: {
+    role: RoleTab;
+    givenId: string;
+  }): Result.Result<void, CheckRoleGivenDoesNotExistResultError> {
     let { role, givenId } = item;
 
-    let roleGiven = role.gvs.find(x => x.givenId === givenId);
-
-    if (isDefined(roleGiven)) {
-      throw new ServerError({
-        message: 'BACKEND_ROLE_GIVEN_ALREADY_EXISTS'
-      });
-    }
+    return role.gvs.some(gv => gv.givenId === givenId)
+      ? Result.fail({ code: 'BACKEND_ROLE_GIVEN_ALREADY_EXISTS' })
+      : Result.succeed();
   }
 
-  getRoleGivenCheckExists(item: { role: RoleTab; givenId: string }) {
+  getRoleGivenCheckExistsResult(item: {
+    role: RoleTab;
+    givenId: string;
+  }): Result.Result<Gv, GetRoleGivenCheckExistsResultError> {
     let { role, givenId } = item;
 
-    let roleGiven = role.gvs.find(x => x.givenId === givenId);
+    let roleGiven: Gv = role.gvs.find(gv => gv.givenId === givenId);
 
-    if (isUndefined(roleGiven)) {
-      throw new ServerError({
-        message: 'BACKEND_ROLE_GIVEN_DOES_NOT_EXIST'
-      });
-    }
-
-    return roleGiven;
+    return isUndefined(roleGiven)
+      ? Result.fail({ code: 'BACKEND_ROLE_GIVEN_DOES_NOT_EXIST' })
+      : Result.succeed(roleGiven);
   }
 
   async getRoles(item: { projectId: string }) {
@@ -166,19 +174,47 @@ export class RolesService {
     return roles;
   }
 
-  async getApiRoles(item: { projectId: string }) {
-    let { projectId } = item;
+  async getApiRoles(item: { projectId: string }): Promise<Role[]> {
+    let result: Result.Result<Role[], GetApiRolesResultError> =
+      await this.getApiRolesResult(item);
 
-    let roles = await this.db.drizzle.query.rolesTable
-      .findMany({
-        where: eq(rolesTable.projectId, projectId)
-      })
-      .then(xs => xs.map(x => this.tabService.roleEntToTab(x)));
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    let apiRoles = roles
-      .map(role => this.tabToApi({ role: role }))
-      .sort((a, b) => (a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0));
+    let apiRoles: Role[] = result.value;
 
     return apiRoles;
+  }
+
+  async getApiRolesResult(item: {
+    projectId: string;
+  }): Result.ResultAsync<Role[], GetApiRolesResultError> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: item.projectId,
+        db: this.db,
+        tabService: this.tabService,
+        rolesService: this
+      }),
+      Result.bind(
+        'roles',
+        (v): Result.ResultAsync<RoleTab[], RoleEntToTabResultError> =>
+          v.db.drizzle.query.rolesTable
+            .findMany({ where: eq(rolesTable.projectId, v.projectId) })
+            .then(roleEnts =>
+              Result.sequence(roleEnts, roleEnt =>
+                v.tabService.roleEntToTabResult({ roleEnt: roleEnt })
+              )
+            )
+      ),
+      Result.map((v): Role[] =>
+        v.roles
+          .map(role => v.rolesService.tabToApi({ role: role }))
+          .sort((a, b) =>
+            a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+          )
+      )
+    );
   }
 }

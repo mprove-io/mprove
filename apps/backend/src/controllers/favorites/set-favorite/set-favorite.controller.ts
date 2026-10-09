@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendSetFavoriteRequestDto,
   ToBackendSetFavoriteResponseDto
@@ -11,6 +12,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetFavoriteOutput } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-output';
@@ -37,28 +39,36 @@ export class SetFavoriteController {
   async setFavorite(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetFavoriteRequestDto
-  ) {
-    let { projectId, type, targetId, isFavorite } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    await this.favoritesService.setFavorite({
-      projectId: projectId,
-      userId: user.userId,
-      type: type,
-      targetId: targetId,
-      isFavorite: isFavorite
-    });
-
-    let payload: ToBackendSetFavoriteOutput = {};
-
-    return payload;
+  ): Promise<BackendResultForOperation<'setFavorite'>> {
+    return Result.pipe(
+      Result.succeed({
+        ...body.input,
+        user: user,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        favoritesService: this.favoritesService
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        v.membersService.getMemberCheckExistsResult({
+          projectId: v.projectId,
+          memberId: v.user.userId
+        })
+      ),
+      Result.andThrough(v =>
+        v.favoritesService.setFavoriteResult({
+          projectId: v.projectId,
+          userId: v.user.userId,
+          type: v.type,
+          targetId: v.targetId,
+          isFavorite: v.isFavorite
+        })
+      ),
+      Result.map((v): ToBackendSetFavoriteOutput => ({}))
+    );
   }
 }
