@@ -73,26 +73,21 @@ export class DeleteOrgController {
       Result.succeed({
         orgId: body.input.orgId,
         userId: user.userId,
-        traceId: body.traceId,
-        orgsService: this.orgsService,
-        rpcService: this.rpcService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        traceId: body.traceId
       }),
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
-          v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        v.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwnerResult({
           org: v.org,
           userId: v.userId
         })
       ),
       Result.andThrough(v =>
-        v.rpcService.sendToDiskResult({
+        this.rpcService.sendToDiskResult({
           request: {
             operation: 'deleteOrg',
             traceId: v.traceId,
@@ -103,7 +98,7 @@ export class DeleteOrgController {
       Result.bind(
         'projectIds',
         (v): Result.ResultAsync<string[], never> =>
-          v.db.drizzle.query.projectsTable
+          this.db.drizzle.query.projectsTable
             .findMany({
               where: eq(projectsTable.orgId, v.orgId)
             })
@@ -116,7 +111,7 @@ export class DeleteOrgController {
       Result.andThrough(async v => {
         await retry(
           async () =>
-            await v.db.drizzle.transaction(async tx => {
+            await this.db.drizzle.transaction(async tx => {
               await tx.delete(orgsTable).where(eq(orgsTable.orgId, v.orgId));
 
               if (v.projectIds.length > 0) {
@@ -153,7 +148,7 @@ export class DeleteOrgController {
                   .where(inArray(cachedColumnsTable.projectId, v.projectIds));
               }
             }),
-          getRetryOption(v.cs, v.logger)
+          getRetryOption(this.cs, this.logger)
         );
 
         return Result.succeed();

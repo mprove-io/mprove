@@ -40,7 +40,7 @@ export class GetFileService {
     fileNodeId: string;
     builderLeft: BuilderLeft;
   }): Promise<DiskResultForOperation<'getFile'>> {
-    let { baseProject, repoId, branch, fileNodeId, builderLeft } = item;
+    let { baseProject, fileNodeId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -59,14 +59,14 @@ export class GetFileService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        remoteType: baseProject.remoteType,
+        remoteType: item.baseProject.remoteType,
         projectLt: projectLt,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        branch: branch,
-        builderLeft: builderLeft,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        branch: item.branch,
+        builderLeft: item.builderLeft,
         filePathRelative: filePathRelative,
-        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${filePathRelative}`,
+        filePath: `${orgPath}/${orgId}/${projectId}/${item.repoId}/${filePathRelative}`,
         orgPath: orgPath
       }),
       Result.andThrough(v =>

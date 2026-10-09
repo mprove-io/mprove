@@ -57,15 +57,7 @@ export class SyncRepoService {
           deletedFiles: DiskSyncFile[];
         }
   ): Promise<DiskResultForOperation<'syncRepo'>> {
-    let {
-      baseProject,
-      repoId,
-      branch,
-      lastCommit,
-      direction,
-      getRepo,
-      getRepoNodes
-    } = item;
+    let { baseProject, repoId } = item;
 
     let changedFiles: DiskSyncFile[] =
       item.direction === 'to-server' ? item.changedFiles : [];
@@ -98,19 +90,19 @@ export class SyncRepoService {
         orgId: orgId,
         projectId: projectId,
         projectDir: projectDir,
-        repoId: repoId,
+        repoId: item.repoId,
         repoDir: repoDir,
-        getRepoNodes: getRepoNodes,
-        getRepo: getRepo,
+        getRepoNodes: item.getRepoNodes,
+        getRepo: item.getRepo,
         deletedFiles: deletedFiles,
         changedFiles: changedFiles,
-        direction: direction,
-        lastCommit: lastCommit,
+        direction: item.direction,
+        lastCommit: item.lastCommit,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

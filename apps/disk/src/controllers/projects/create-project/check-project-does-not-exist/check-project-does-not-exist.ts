@@ -7,7 +7,7 @@ export async function checkProjectDoesNotExist(item: {
   projectDir: string;
 }): Result.ResultAsync<void, DiskCheckProjectDoesNotExistError> {
   return Result.pipe(
-    Result.succeed({ projectDir: item.projectDir }),
+    Result.succeed(item),
     Result.bind(
       'isProjectExist',
       (v): Result.ResultAsync<boolean, never> =>

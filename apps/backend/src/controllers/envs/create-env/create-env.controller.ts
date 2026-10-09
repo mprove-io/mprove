@@ -78,30 +78,23 @@ export class CreateEnvController {
       Result.succeed({
         projectId: body.input.projectId,
         envId: body.input.envId,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        envsService: this.envsService,
-        bridgesService: this.bridgesService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        v.envsService.checkEnvDoesNotExistResult({
+        this.envsService.checkEnvDoesNotExistResult({
           projectId: v.projectId,
           envId: v.envId
         })
@@ -110,7 +103,7 @@ export class CreateEnvController {
         'newEnv',
         (v): Result.Result<EnvTab, never> =>
           Result.succeed(
-            v.envsService.makeEnv({
+            this.envsService.makeEnv({
               projectId: v.projectId,
               envId: v.envId,
               evs: []
@@ -120,7 +113,7 @@ export class CreateEnvController {
       Result.bind(
         'branchEnts',
         (v): Result.ResultAsync<BranchEnt[], never> =>
-          v.db.drizzle.query.branchesTable
+          this.db.drizzle.query.branchesTable
             .findMany({
               where: eq(branchesTable.projectId, v.projectId)
             })
@@ -128,7 +121,7 @@ export class CreateEnvController {
       ),
       Result.bind('newBridges', (v): Result.Result<BridgeTab[], never> => {
         let newBridges: BridgeTab[] = v.branchEnts.map(branchEnt =>
-          v.bridgesService.makeBridge({
+          this.bridgesService.makeBridge({
             projectId: v.projectId,
             repoId: branchEnt.repoId,
             branchId: branchEnt.branchId,
@@ -145,14 +138,14 @@ export class CreateEnvController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insert: { envs: [v.newEnv], bridges: v.newBridges }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -160,11 +153,11 @@ export class CreateEnvController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
-          v.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateEnvOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           envs: v.apiEnvs
         })
       )

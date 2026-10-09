@@ -47,21 +47,19 @@ export class GetAvatarBigController {
   ): Promise<BackendResultForOperation<'getAvatarBig'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        db: this.db,
-        tabService: this.tabService
+        avatarUserId: body.input.avatarUserId
       }),
       Result.bind(
         'avatar',
         (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
-          v.db.drizzle.query.avatarsTable
+          this.db.drizzle.query.avatarsTable
             .findFirst({
               where: eq(avatarsTable.userId, v.avatarUserId)
             })
             .then((avatarEnt: AvatarEnt) =>
               isUndefined(avatarEnt)
                 ? Result.succeed(undefined)
-                : v.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+                : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
             )
       ),
       Result.map(

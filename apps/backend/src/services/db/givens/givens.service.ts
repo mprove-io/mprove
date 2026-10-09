@@ -185,26 +185,21 @@ export class GivensService {
     projectId: string;
   }): Result.ResultAsync<Given[], GetApiGivensResultError> {
     return Result.pipe(
-      Result.succeed({
-        projectId: item.projectId,
-        db: this.db,
-        tabService: this.tabService,
-        givensService: this
-      }),
+      Result.succeed(item),
       Result.bind(
         'givens',
         (v): Result.ResultAsync<GivenTab[], GivenEntToTabResultError> =>
-          v.db.drizzle.query.givensTable
+          this.db.drizzle.query.givensTable
             .findMany({ where: eq(givensTable.projectId, v.projectId) })
             .then(givenEnts =>
               Result.sequence(givenEnts, givenEnt =>
-                v.tabService.givenEntToTabResult({ givenEnt: givenEnt })
+                this.tabService.givenEntToTabResult({ givenEnt: givenEnt })
               )
             )
       ),
       Result.map((v): Given[] =>
         v.givens
-          .map(given => v.givensService.tabToApi({ given: given }))
+          .map(given => this.tabToApi({ given: given }))
           .sort((a, b) =>
             a.givenId > b.givenId ? 1 : b.givenId > a.givenId ? -1 : 0
           )

@@ -60,10 +60,7 @@ export class GetProjectsListController {
     return Result.pipe(
       Result.succeed({
         orgId: body.input.orgId,
-        userId: user.userId,
-        db: this.db,
-        tabService: this.tabService,
-        projectsService: this.projectsService
+        userId: user.userId
       }),
       Result.bind(
         'projects',
@@ -71,7 +68,7 @@ export class GetProjectsListController {
           v
         ): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> => {
           let userMemberEnts: MemberEnt[] =
-            await v.db.drizzle.query.membersTable.findMany({
+            await this.db.drizzle.query.membersTable.findMany({
               where: eq(membersTable.memberId, v.userId)
             });
 
@@ -81,7 +78,7 @@ export class GetProjectsListController {
 
           return projectIds.length === 0
             ? Result.succeed([])
-            : v.db.drizzle.query.projectsTable
+            : this.db.drizzle.query.projectsTable
                 .findMany({
                   where: and(
                     inArray(projectsTable.projectId, projectIds),
@@ -90,7 +87,7 @@ export class GetProjectsListController {
                 })
                 .then((projectEnts: ProjectEnt[]) =>
                   Result.sequence(projectEnts, projectEnt =>
-                    v.tabService.projectEntToTabResult({
+                    this.tabService.projectEntToTabResult({
                       projectEnt: projectEnt
                     })
                   )
@@ -102,7 +99,7 @@ export class GetProjectsListController {
           projectsList: v.projects
             .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
             .map(project =>
-              v.projectsService.wrapToApiProjectsItem({ project: project })
+              this.projectsService.wrapToApiProjectsItem({ project: project })
             )
         })
       )

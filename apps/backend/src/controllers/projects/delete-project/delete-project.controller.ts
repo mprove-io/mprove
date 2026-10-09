@@ -74,29 +74,23 @@ export class DeleteProjectController {
       Result.succeed({
         projectId: body.input.projectId,
         userId: user.userId,
-        traceId: body.traceId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        rpcService: this.rpcService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        traceId: body.traceId
       }),
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
-          v.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        v.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdminResult({
           projectId: v.projectId,
           memberId: v.userId
         })
       ),
       Result.andThrough(v =>
-        v.rpcService.sendToDiskResult({
+        this.rpcService.sendToDiskResult({
           request: {
             operation: 'deleteProject',
             traceId: v.traceId,
@@ -110,7 +104,7 @@ export class DeleteProjectController {
       Result.andThrough(async v => {
         await retry(
           async () =>
-            await v.db.drizzle.transaction(async tx => {
+            await this.db.drizzle.transaction(async tx => {
               await tx
                 .delete(projectsTable)
                 .where(eq(projectsTable.projectId, v.projectId));
@@ -143,7 +137,7 @@ export class DeleteProjectController {
                 .delete(cachedColumnsTable)
                 .where(eq(cachedColumnsTable.projectId, v.projectId));
             }),
-          getRetryOption(v.cs, v.logger)
+          getRetryOption(this.cs, this.logger)
         );
 
         return Result.succeed();

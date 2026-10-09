@@ -42,7 +42,7 @@ export class SaveFileService {
     content: string;
     userAlias: string;
   }): Promise<DiskResultForOperation<'saveFile'>> {
-    let { baseProject, repoId, branch, fileNodeId, content, userAlias } = item;
+    let { baseProject, fileNodeId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -61,13 +61,13 @@ export class SaveFileService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${relativeFilePath}`,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        filePath: `${orgPath}/${orgId}/${projectId}/${item.repoId}/${relativeFilePath}`,
         relativeFilePath: relativeFilePath,
-        userAlias: userAlias,
-        content: content,
-        branch: branch,
+        userAlias: item.userAlias,
+        content: item.content,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

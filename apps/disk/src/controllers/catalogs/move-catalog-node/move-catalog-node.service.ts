@@ -41,7 +41,7 @@ export class MoveCatalogNodeService {
     fromNodeId: string;
     toNodeId: string;
   }): Promise<DiskResultForOperation<'moveCatalogNode'>> {
-    let { baseProject, repoId, branch, fromNodeId, toNodeId } = item;
+    let { baseProject, repoId, fromNodeId, toNodeId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -65,13 +65,13 @@ export class MoveCatalogNodeService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        repoId: repoId,
+        repoId: item.repoId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
         repoDir: repoDir,
         fromPath: fromPath,
         toPath: toPath,
         toParentPath: toParentPath,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

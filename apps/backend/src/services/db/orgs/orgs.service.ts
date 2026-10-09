@@ -138,7 +138,7 @@ export class OrgsService {
     traceId: string;
     orgId?: string;
   }): Result.ResultAsync<OrgTab, AddOrgResultError> {
-    let { ownerId, ownerEmail, name, traceId, orgId } = item;
+    let { ownerId, ownerEmail, name, orgId } = item;
 
     let newOrg: OrgTab = {
       orgId: orgId || makeId(),
@@ -154,14 +154,10 @@ export class OrgsService {
     return Result.pipe(
       Result.succeed({
         org: newOrg,
-        traceId: traceId,
-        rpcService: this.rpcService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        traceId: item.traceId
       }),
       Result.andThrough(v =>
-        v.rpcService.sendToDiskResult({
+        this.rpcService.sendToDiskResult({
           request: {
             operation: 'createOrg',
             traceId: v.traceId,
@@ -174,14 +170,14 @@ export class OrgsService {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insert: { orgs: [v.org] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })

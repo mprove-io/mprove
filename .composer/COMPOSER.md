@@ -18,6 +18,7 @@
 - info/external.md
 
 - rules.md
+- rules/dry.md
 - rules/git-operations.md
 - rules/do-not-run-tests-unless-asked.md
 - rules/do-not-write-tests-unless-asked.md
@@ -66,9 +67,7 @@
 - rules/byethrow/combinator-application.md
 - rules/byethrow/sequence-result-collections.md
 - rules/byethrow/error-policy.md
-- rules/byethrow/pipe-should-start-with-result-succeed.md
-- rules/byethrow/pipe-initial-state.md
+- rules/byethrow/pipe-state.md
 - rules/byethrow/pipe-step-callbacks.md
 - rules/byethrow/pipe-step-argument-types.md
-- rules/byethrow/pipe-state-access.md
 - rules/byethrow/guard-optional-operations-at-caller.md

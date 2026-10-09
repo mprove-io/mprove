@@ -32,7 +32,7 @@ export class RevertRepoToLastCommitService {
     repoId: string;
     branch: string;
   }): Promise<DiskResultForOperation<'revertRepoToLastCommit'>> {
-    let { baseProject, repoId, branch } = item;
+    let { baseProject, repoId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -55,13 +55,13 @@ export class RevertRepoToLastCommitService {
         orgId: orgId,
         projectId: projectId,
         projectDir: projectDir,
-        repoId: repoId,
+        repoId: item.repoId,
         repoDir: repoDir,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

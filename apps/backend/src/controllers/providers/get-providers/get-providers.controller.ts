@@ -55,15 +55,10 @@ export class GetProvidersController {
     return Result.pipe(
       Result.succeed({
         projectId: body.input.projectId,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        providersService: this.providersService,
-        tabService: this.tabService,
-        db: this.db
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
@@ -75,7 +70,7 @@ export class GetProvidersController {
           MemberTab,
           GetMemberCheckIsEditorOrAdminResultError
         > =>
-          v.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -83,13 +78,13 @@ export class GetProvidersController {
       Result.bind(
         'providers',
         (v): Result.ResultAsync<ProviderTab[], ProviderEntToTabResultError> =>
-          v.db.drizzle.query.providersTable
+          this.db.drizzle.query.providersTable
             .findMany({
               where: eq(providersTable.projectId, v.projectId)
             })
             .then((providerEnts: ProviderEnt[]) =>
               Result.sequence(providerEnts, providerEnt =>
-                v.tabService.providerEntToTabResult({
+                this.tabService.providerEntToTabResult({
                   providerEnt: providerEnt
                 })
               )
@@ -97,11 +92,11 @@ export class GetProvidersController {
       ),
       Result.map(
         (v): ToBackendGetProvidersOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           providers: v.providers
             .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
             .map(provider =>
-              v.providersService.tabToApiProvider({
+              this.providersService.tabToApiProvider({
                 provider: provider,
                 isIncludePasswords: false
               })

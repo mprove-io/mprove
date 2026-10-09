@@ -27,7 +27,7 @@ export class IsBranchExistService {
     branch: string;
     isRemote: boolean;
   }): Promise<DiskResultForOperation<'isBranchExist'>> {
-    let { baseProject, repoId, branch, isRemote } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -51,10 +51,10 @@ export class IsBranchExistService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        branch: branch,
-        isRemote: isRemote,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        branch: item.branch,
+        isRemote: item.isRemote,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,

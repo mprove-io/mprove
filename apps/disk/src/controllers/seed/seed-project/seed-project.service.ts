@@ -33,7 +33,7 @@ export class SeedProjectService {
     devRepoId: string;
     userAlias: string;
   }): Promise<DiskResultForOperation<'seedProject'>> {
-    let { baseProject, devRepoId, userAlias, seedProjectId } = item;
+    let { baseProject, devRepoId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -61,7 +61,7 @@ export class SeedProjectService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        devRepoId: devRepoId,
+        devRepoId: item.devRepoId,
         projectDir: projectDir,
         devRepoDir: devRepoDir,
         keyDir: keyDir,
@@ -71,8 +71,8 @@ export class SeedProjectService {
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
         remoteType: remoteType,
-        userAlias: userAlias,
-        seedProjectId: seedProjectId,
+        userAlias: item.userAlias,
+        seedProjectId: item.seedProjectId,
         projectName: projectName,
         orgDir: orgDir
       }),

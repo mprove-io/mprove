@@ -73,22 +73,15 @@ export class SetOrgOwnerController {
       Result.succeed({
         orgId: body.input.orgId,
         ownerEmail: body.input.ownerEmail,
-        userId: user.userId,
-        orgsService: this.orgsService,
-        dconfigsService: this.dconfigsService,
-        hashService: this.hashService,
-        tabService: this.tabService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
-          v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        v.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwnerResult({
           org: v.org,
           userId: v.userId
         })
@@ -96,12 +89,12 @@ export class SetOrgOwnerController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
-          v.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'ownerEmailHash',
         (v): Result.Result<string, MakeHashResultError> =>
-          v.hashService.makeHashResult({
+          this.hashService.makeHashResult({
             input: v.ownerEmail,
             hashSecret: v.hashSecret
           })
@@ -109,7 +102,7 @@ export class SetOrgOwnerController {
       Result.bind(
         'newOwner',
         (v): Result.ResultAsync<UserTab, BackendNewOwnerNotFoundError> =>
-          v.db.drizzle.query.usersTable
+          this.db.drizzle.query.usersTable
             .findFirst({
               where: and(
                 eq(usersTable.emailHash, v.ownerEmailHash),
@@ -121,7 +114,7 @@ export class SetOrgOwnerController {
                 return Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' });
               }
 
-              let newOwner: UserTab = v.tabService.userEntToTab(newOwnerEnt);
+              let newOwner: UserTab = this.tabService.userEntToTab(newOwnerEnt);
 
               return Result.succeed(newOwner);
             })
@@ -136,21 +129,21 @@ export class SetOrgOwnerController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: { orgs: [v.org] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
       ),
       Result.map(
         (v): ToBackendSetOrgOwnerOutput => ({
-          org: v.orgsService.tabToApi({ org: v.org })
+          org: this.orgsService.tabToApi({ org: v.org })
         })
       )
     );

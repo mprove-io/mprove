@@ -13,14 +13,14 @@ The outer callback follows "Async promise chains".
 Result.bind(
   'avatar',
   (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
-    v.db.drizzle.query.avatarsTable
+    this.db.drizzle.query.avatarsTable
       .findFirst({
         where: eq(avatarsTable.userId, v.avatarUserId)
       })
       .then((avatarEnt: AvatarEnt) =>
         isUndefined(avatarEnt)
           ? Result.succeed(undefined)
-          : v.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+          : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
       )
 );
 ```

@@ -50,16 +50,13 @@ export class GetOrgsListController {
   ): Promise<BackendResultForOperation<'getOrgsList'>> {
     return Result.pipe(
       Result.succeed({
-        userId: user.userId,
-        db: this.db,
-        tabService: this.tabService,
-        orgsService: this.orgsService
+        userId: user.userId
       }),
       Result.bind(
         'orgs',
         async (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> => {
           let userMemberEnts: MemberEnt[] =
-            await v.db.drizzle.query.membersTable.findMany({
+            await this.db.drizzle.query.membersTable.findMany({
               where: eq(membersTable.memberId, v.userId)
             });
 
@@ -70,7 +67,7 @@ export class GetOrgsListController {
           let userProjectEnts: ProjectEnt[] =
             userProjectIds.length === 0
               ? []
-              : await v.db.drizzle.query.projectsTable.findMany({
+              : await this.db.drizzle.query.projectsTable.findMany({
                   where: inArray(projectsTable.projectId, userProjectIds)
                 });
 
@@ -81,11 +78,11 @@ export class GetOrgsListController {
           let userOrgEnts: OrgEnt[] =
             userOrgIds.length === 0
               ? []
-              : await v.db.drizzle.query.orgsTable.findMany({
+              : await this.db.drizzle.query.orgsTable.findMany({
                   where: inArray(orgsTable.orgId, userOrgIds)
                 });
 
-          return v.db.drizzle.query.orgsTable
+          return this.db.drizzle.query.orgsTable
             .findMany({
               where: eq(orgsTable.ownerId, v.userId)
             })
@@ -103,7 +100,7 @@ export class GetOrgsListController {
               });
 
               return Result.sequence(orgEnts, orgEnt =>
-                v.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+                this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
               );
             });
         }
@@ -112,7 +109,7 @@ export class GetOrgsListController {
         (v): ToBackendGetOrgsListOutput => ({
           orgsList: v.orgs
             .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
-            .map(org => v.orgsService.tabToApi({ org: org }))
+            .map(org => this.orgsService.tabToApi({ org: org }))
         })
       )
     );

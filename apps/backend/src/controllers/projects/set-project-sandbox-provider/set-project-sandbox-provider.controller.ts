@@ -65,24 +65,19 @@ export class SetProjectSandboxProviderController {
       Result.succeed({
         projectId: body.input.projectId,
         e2bApiKey: body.input.e2bApiKey,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
-          v.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             projectId: v.projectId,
             memberId: v.userId
           })
@@ -97,21 +92,21 @@ export class SetProjectSandboxProviderController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: { projects: [v.project] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
       ),
       Result.map(
         (v): ToBackendSetProjectSandboxProviderOutput => ({
-          project: v.projectsService.tabToApiProject({
+          project: this.projectsService.tabToApiProject({
             project: v.project,
             isAddPublicKey: v.userMember.isAdmin,
             isAddGitUrl: v.userMember.isAdmin

@@ -11,7 +11,7 @@ import { readFileCheckSize } from '#node-common/functions/read-file-check-size/r
 
 const { forEachSeries } = pIteration;
 
-type SyncFilesPayload = {
+export type SyncFilesPayload = {
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];
 };

@@ -63,21 +63,15 @@ export class ToggleProviderController {
         projectId: body.input.projectId,
         providerId: body.input.providerId,
         isEnabled: body.input.isEnabled,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        providersService: this.providersService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        v.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdminResult({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -87,7 +81,7 @@ export class ToggleProviderController {
         (
           v
         ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
-          v.providersService.getProviderCheckExistsResult({
+          this.providersService.getProviderCheckExistsResult({
             projectId: v.projectId,
             providerId: v.providerId
           })
@@ -100,21 +94,21 @@ export class ToggleProviderController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       update: { providers: [v.provider] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
       ),
       Result.map(
         (v): ToBackendToggleProviderOutput => ({
-          provider: v.providersService.tabToApiProvider({
+          provider: this.providersService.tabToApiProvider({
             provider: v.provider,
             isIncludePasswords: false
           })

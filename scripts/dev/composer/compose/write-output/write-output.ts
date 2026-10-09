@@ -10,7 +10,7 @@ export function writeOutput(item: {
   markdown: string;
   outputPath: string;
 }): Result.Result<void, WriteOutputError> {
-  let { markdown, outputPath } = item;
+  let { outputPath } = item;
 
   let outputDirectory: string = dirname(outputPath);
 
@@ -23,8 +23,7 @@ export function writeOutput(item: {
 
   return Result.pipe(
     Result.succeed({
-      markdown: markdown,
-      outputPath: outputPath,
+      ...item,
       temporaryOutputPath: temporaryOutputPath
     }),
     Result.andThrough(v =>

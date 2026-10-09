@@ -45,15 +45,7 @@ export class CreateFileService {
     fileName: string;
     fileText?: string;
   }): Promise<DiskResultForOperation<'createFile'>> {
-    let {
-      baseProject,
-      repoId,
-      branch,
-      userAlias,
-      parentNodeId,
-      fileName,
-      fileText
-    } = item;
+    let { baseProject, parentNodeId, fileName, fileText } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -79,14 +71,14 @@ export class CreateFileService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        parentPath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}`,
-        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}${fileName}`,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        parentPath: `${orgPath}/${orgId}/${projectId}/${item.repoId}/${parent}`,
+        filePath: `${orgPath}/${orgId}/${projectId}/${item.repoId}/${parent}${item.fileName}`,
         relativeFilePath: relativeFilePath,
-        userAlias: userAlias,
+        userAlias: item.userAlias,
         content: content,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

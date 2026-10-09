@@ -49,20 +49,15 @@ export class GetEnvsListController {
       Result.succeed({
         projectId: body.input.projectId,
         isFilter: body.input.isFilter,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        envsService: this.envsService,
-        tabService: this.tabService,
-        db: this.db
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        v.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExistsResult({
           projectId: v.projectId,
           memberId: v.userId
         })
@@ -70,13 +65,13 @@ export class GetEnvsListController {
       Result.bind(
         'envs',
         (v): Result.ResultAsync<EnvTab[], EnvEntToTabResultError> =>
-          v.db.drizzle.query.envsTable
+          this.db.drizzle.query.envsTable
             .findMany({
               where: eq(envsTable.projectId, v.projectId)
             })
             .then((envEnts: EnvEnt[]) =>
               Result.sequence(envEnts, envEnt =>
-                v.tabService.envEntToTabResult({ envEnt: envEnt })
+                this.tabService.envEntToTabResult({ envEnt: envEnt })
               )
             )
       ),
@@ -96,7 +91,7 @@ export class GetEnvsListController {
 
         let payload: ToBackendGetEnvsListOutput = {
           envsList: sortedEnvs.map(env =>
-            v.envsService.wrapToApiEnvsItem({ env: env })
+            this.envsService.wrapToApiEnvsItem({ env: env })
           )
         };
 

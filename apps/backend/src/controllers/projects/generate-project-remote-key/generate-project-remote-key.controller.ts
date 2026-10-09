@@ -68,26 +68,21 @@ export class GenerateProjectRemoteKeyController {
     return Result.pipe(
       Result.succeed({
         orgId: body.input.orgId,
-        userId: user.userId,
-        orgsService: this.orgsService,
-        tabService: this.tabService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
-          v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        v.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwnerResult({
           org: v.org,
           userId: v.userId
         })
       ),
       Result.bind('note', (v): Result.Result<NoteTab, never> => {
-        let gitKeyPair: GitKeyPair = v.tabService.createGitKeyPair();
+        let gitKeyPair: GitKeyPair = this.tabService.createGitKeyPair();
 
         let publicKey: string = parseKey(gitKeyPair.publicKeyEncrypted, 'pem', {
           passphrase: gitKeyPair.passPhrase
@@ -119,14 +114,14 @@ export class GenerateProjectRemoteKeyController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insert: { notes: [v.note] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })

@@ -196,26 +196,21 @@ export class RolesService {
     projectId: string;
   }): Result.ResultAsync<Role[], GetApiRolesResultError> {
     return Result.pipe(
-      Result.succeed({
-        projectId: item.projectId,
-        db: this.db,
-        tabService: this.tabService,
-        rolesService: this
-      }),
+      Result.succeed(item),
       Result.bind(
         'roles',
         (v): Result.ResultAsync<RoleTab[], RoleEntToTabResultError> =>
-          v.db.drizzle.query.rolesTable
+          this.db.drizzle.query.rolesTable
             .findMany({ where: eq(rolesTable.projectId, v.projectId) })
             .then(roleEnts =>
               Result.sequence(roleEnts, roleEnt =>
-                v.tabService.roleEntToTabResult({ roleEnt: roleEnt })
+                this.tabService.roleEntToTabResult({ roleEnt: roleEnt })
               )
             )
       ),
       Result.map((v): Role[] =>
         v.roles
-          .map(role => v.rolesService.tabToApi({ role: role }))
+          .map(role => this.tabToApi({ role: role }))
           .sort((a, b) =>
             a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
           )

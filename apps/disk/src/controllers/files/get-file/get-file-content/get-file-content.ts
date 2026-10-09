@@ -1,8 +1,10 @@
 import { Result } from '@praha/byethrow';
-import type { Stats } from 'fs-extra';
 import type { DiskGetFileContentError } from '#common/types/disk/function-errors/disk-get-file-content-error';
 import type { ReadFileCheckSizeError } from '#common/types/node-common/function-errors/read-file-check-size-error';
-import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
+import {
+  type ReadFileCheckSizeOutput,
+  readFileCheckSize
+} from '#node-common/functions/read-file-check-size/read-file-check-size';
 
 export async function getFileContent(item: {
   filePath: string;
@@ -12,10 +14,7 @@ export async function getFileContent(item: {
     Result.andThen(
       (
         v
-      ): Result.ResultAsync<
-        { content: string; stat?: Stats },
-        ReadFileCheckSizeError
-      > =>
+      ): Result.ResultAsync<ReadFileCheckSizeOutput, ReadFileCheckSizeError> =>
         readFileCheckSize({
           filePath: v.filePath,
           getStat: false

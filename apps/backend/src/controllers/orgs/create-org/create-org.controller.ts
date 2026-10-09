@@ -61,24 +61,18 @@ export class CreateOrgController {
       Result.succeed({
         name: body.input.name,
         traceId: body.traceId,
-        user: user,
-        usersService: this.usersService,
-        dconfigsService: this.dconfigsService,
-        hashService: this.hashService,
-        orgsService: this.orgsService,
-        cs: this.cs,
-        db: this.db
+        user: user
       }),
       Result.andThrough(v =>
-        v.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
       ),
       Result.andThrough(v => {
-        let allowUsersToCreateOrganizations: boolean = v.cs.get<
+        let allowUsersToCreateOrganizations: boolean = this.cs.get<
           BackendConfig['allowUsersToCreateOrganizations']
         >('allowUsersToCreateOrganizations');
 
         let mproveAdminEmail: string =
-          v.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail');
+          this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail');
 
         return allowUsersToCreateOrganizations === false &&
           v.user.email !== mproveAdminEmail
@@ -90,12 +84,12 @@ export class CreateOrgController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
-          v.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashResultError> =>
-          v.hashService.makeHashResult({
+          this.hashService.makeHashResult({
             input: v.name,
             hashSecret: v.hashSecret
           })
@@ -103,7 +97,7 @@ export class CreateOrgController {
       Result.bind(
         'orgEnt',
         (v): Result.ResultAsync<OrgEnt, never> =>
-          v.db.drizzle.query.orgsTable
+          this.db.drizzle.query.orgsTable
             .findFirst({
               where: eq(orgsTable.nameHash, v.nameHash)
             })
@@ -122,7 +116,7 @@ export class CreateOrgController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, AddOrgResultError> =>
-          v.orgsService.addOrgResult({
+          this.orgsService.addOrgResult({
             name: v.name,
             ownerId: v.user.userId,
             ownerEmail: v.user.email,
@@ -131,7 +125,7 @@ export class CreateOrgController {
       ),
       Result.map(
         (v): ToBackendCreateOrgOutput => ({
-          org: v.orgsService.tabToApi({ org: v.org })
+          org: this.orgsService.tabToApi({ org: v.org })
         })
       )
     );

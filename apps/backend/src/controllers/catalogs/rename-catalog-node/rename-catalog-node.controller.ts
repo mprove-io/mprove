@@ -95,25 +95,17 @@ export class RenameCatalogNodeController {
   ): Promise<BackendResultForOperation<'renameCatalogNode'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        nodeId: body.input.nodeId,
+        newName: body.input.newName,
         traceId: body.traceId,
-        user: user,
-        sessionsService: this.sessionsService,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        branchesService: this.branchesService,
-        envsService: this.envsService,
-        tabService: this.tabService,
-        rpcService: this.rpcService,
-        blockmlService: this.blockmlService,
-        structsService: this.structsService,
-        modelsService: this.modelsService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        user: user
       }),
       Result.andThrough(v =>
-        v.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoIdResult({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -123,14 +115,14 @@ export class RenameCatalogNodeController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
-          v.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> =>
-          v.membersService.getMemberCheckIsEditorResult({
+          this.membersService.getMemberCheckIsEditorResult({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -138,14 +130,14 @@ export class RenameCatalogNodeController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
-          v.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        v.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccessResult({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -159,12 +151,12 @@ export class RenameCatalogNodeController {
           ToDiskRenameCatalogNodeOutput,
           SendToDiskResultError
         > =>
-          v.rpcService.sendToDiskResult({
+          this.rpcService.sendToDiskResult({
             request: {
               operation: 'renameCatalogNode',
               traceId: v.traceId,
               input: {
-                baseProject: v.tabService.projectTabToBaseProject({
+                baseProject: this.tabService.projectTabToBaseProject({
                   project: v.project
                 }),
                 repoId: v.repoId,
@@ -178,7 +170,7 @@ export class RenameCatalogNodeController {
       Result.bind(
         'branchBridgeEnts',
         (v): Result.ResultAsync<BridgeEnt[], never> =>
-          v.db.drizzle.query.bridgesTable
+          this.db.drizzle.query.bridgesTable
             .findMany({
               where: and(
                 eq(bridgesTable.projectId, v.branch.projectId),
@@ -200,7 +192,7 @@ export class RenameCatalogNodeController {
               let result: Result.Result<
                 RebuildStructResultValue,
                 RebuildStructResultError
-              > = await v.blockmlService.rebuildStructResult({
+              > = await this.blockmlService.rebuildStructResult({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
                 projectId: v.projectId,
@@ -233,14 +225,14 @@ export class RenameCatalogNodeController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: { bridges: [...v.branchBridgeEnts] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -252,7 +244,7 @@ export class RenameCatalogNodeController {
             bridgeEnt => bridgeEnt.envId === v.envId
           );
 
-          return v.structsService.getStructCheckExistsResult({
+          return this.structsService.getStructCheckExistsResult({
             structId: currentBridgeEnt.structId,
             projectId: v.projectId
           });
@@ -261,9 +253,11 @@ export class RenameCatalogNodeController {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> =>
-          v.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXsResult({
             structId: v.struct.structId,
-            apiUserMember: v.membersService.tabToApi({ member: v.userMember })
+            apiUserMember: this.membersService.tabToApi({
+              member: v.userMember
+            })
           })
       ),
       Result.map((v): ToBackendRenameCatalogNodeOutput => {
@@ -273,7 +267,7 @@ export class RenameCatalogNodeController {
 
         let payload: ToBackendRenameCatalogNodeOutput = {
           repo: v.diskRenameCatalogNodeOutput.repo,
-          struct: v.structsService.tabToApi({
+          struct: this.structsService.tabToApi({
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),

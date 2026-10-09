@@ -14,16 +14,14 @@ export class CreateOrgService {
   async process(item: {
     orgId: string;
   }): Promise<DiskResultForOperation<'createOrg'>> {
-    let { orgId } = item;
-
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
     let createOrgResult = Result.pipe(
       Result.succeed({
-        orgId: orgId,
-        orgDir: `${orgPath}/${orgId}`
+        ...item,
+        orgDir: `${orgPath}/${item.orgId}`
       }),
       Result.andThrough(v => checkOrgDoesNotExist({ orgDir: v.orgDir })),
       Result.andThrough(v => ensureDir({ dir: v.orgDir })),

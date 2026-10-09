@@ -72,25 +72,21 @@ export class EditRoleGivenController {
   ): Promise<BackendResultForOperation<'editRoleGiven'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        rolesService: this.rolesService,
-        givensService: this.givensService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        projectId: body.input.projectId,
+        roleId: body.input.roleId,
+        givenId: body.input.givenId,
+        values: body.input.values,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -98,7 +94,7 @@ export class EditRoleGivenController {
       Result.bind(
         'role',
         (v): Result.ResultAsync<RoleTab, GetRoleCheckExistsResultError> =>
-          v.rolesService.getRoleCheckExistsResult({
+          this.rolesService.getRoleCheckExistsResult({
             projectId: v.projectId,
             roleId: v.roleId
           })
@@ -106,7 +102,7 @@ export class EditRoleGivenController {
       Result.bind(
         'roleGiven',
         (v): Result.Result<Gv, GetRoleGivenCheckExistsResultError> =>
-          v.rolesService.getRoleGivenCheckExistsResult({
+          this.rolesService.getRoleGivenCheckExistsResult({
             role: v.role,
             givenId: v.givenId
           })
@@ -114,13 +110,13 @@ export class EditRoleGivenController {
       Result.bind(
         'given',
         (v): Result.ResultAsync<GivenTab, GetGivenCheckExistsResultError> =>
-          v.givensService.getGivenCheckExistsResult({
+          this.givensService.getGivenCheckExistsResult({
             projectId: v.projectId,
             givenId: v.givenId
           })
       ),
       Result.andThrough(v =>
-        v.givensService.validateGivenValuesResult({
+        this.givensService.validateGivenValuesResult({
           type: v.given.type,
           isMultiple: v.given.isMultiple === true,
           values: v.values
@@ -134,14 +130,14 @@ export class EditRoleGivenController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: { roles: [v.role] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -149,11 +145,11 @@ export class EditRoleGivenController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
-          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendEditRoleGivenOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           roles: v.apiRoles
         })
       )

@@ -142,16 +142,11 @@ export class MembersService {
     projectId: string;
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> {
     return Result.pipe(
-      Result.succeed({
-        memberId: item.memberId,
-        projectId: item.projectId,
-        db: this.db,
-        tabService: this.tabService
-      }),
+      Result.succeed(item),
       Result.bind(
         'memberEnt',
         (v): Result.ResultAsync<MemberEnt, BackendMemberDoesNotExistError> =>
-          v.db.drizzle.query.membersTable
+          this.db.drizzle.query.membersTable
             .findFirst({
               where: and(
                 eq(membersTable.memberId, v.memberId),
@@ -171,7 +166,7 @@ export class MembersService {
       ),
       Result.andThen(
         (v): Result.Result<MemberTab, MemberEntToTabResultError> =>
-          v.tabService.memberEntToTabResult({ memberEnt: v.memberEnt })
+          this.tabService.memberEntToTabResult({ memberEnt: v.memberEnt })
       )
     );
   }
@@ -199,15 +194,11 @@ export class MembersService {
     projectId: string;
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminResultError> {
     return Result.pipe(
-      Result.succeed({
-        memberId: item.memberId,
-        projectId: item.projectId,
-        membersService: this
-      }),
+      Result.succeed(item),
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
-          v.membersService.getMemberCheckExistsResult({
+          this.getMemberCheckExistsResult({
             memberId: v.memberId,
             projectId: v.projectId
           })
@@ -242,11 +233,11 @@ export class MembersService {
     projectId: string;
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> {
     return Result.pipe(
-      Result.succeed({ ...item, membersService: this }),
+      Result.succeed(item),
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
-          v.membersService.getMemberCheckExistsResult({
+          this.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.memberId
           })

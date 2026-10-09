@@ -34,7 +34,7 @@ export class RevertRepoToRemoteService {
     repoId: string;
     branch: string;
   }): Promise<DiskResultForOperation<'revertRepoToRemote'>> {
-    let { baseProject, repoId, branch } = item;
+    let { baseProject, repoId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -57,13 +57,13 @@ export class RevertRepoToRemoteService {
         orgId: orgId,
         projectId: projectId,
         projectDir: projectDir,
-        repoId: repoId,
+        repoId: item.repoId,
         repoDir: repoDir,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

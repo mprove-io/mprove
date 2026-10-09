@@ -39,7 +39,7 @@ export class CreateBranchService {
     fromBranch: string;
     isFromRemote: boolean;
   }): Promise<DiskResultForOperation<'createBranch'>> {
-    let { baseProject, repoId, newBranch, fromBranch, isFromRemote } = item;
+    let { baseProject, repoId, fromBranch, isFromRemote } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -71,11 +71,11 @@ export class CreateBranchService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        newBranch: newBranch,
-        fromBranch: fromBranch,
-        isFromRemote: isFromRemote,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        newBranch: item.newBranch,
+        fromBranch: item.fromBranch,
+        isFromRemote: item.isFromRemote,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,

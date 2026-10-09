@@ -15,17 +15,14 @@ export class IsProjectExistService {
     orgId: string;
     projectId: string;
   }): Promise<DiskResultForOperation<'isProjectExist'>> {
-    let { orgId, projectId } = item;
-
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
     let isProjectExistResult = Result.pipe(
       Result.succeed({
-        orgId: orgId,
-        projectId: projectId,
-        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        ...item,
+        projectDir: `${orgPath}/${item.orgId}/${item.projectId}`,
         orgPath: orgPath
       }),
       Result.andThrough(v =>

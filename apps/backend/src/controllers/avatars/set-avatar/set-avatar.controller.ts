@@ -63,21 +63,17 @@ export class SetAvatarController {
   ): Promise<BackendResultForOperation<'setAvatar'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        usersService: this.usersService,
-        tabService: this.tabService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        avatarSmall: body.input.avatarSmall,
+        avatarBig: body.input.avatarBig,
+        user: user
       }),
       Result.andThrough(v =>
-        v.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
       ),
       Result.bind(
         'avatar',
         (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
-          v.db.drizzle.query.avatarsTable
+          this.db.drizzle.query.avatarsTable
             .findFirst({
               where: eq(avatarsTable.userId, v.user.userId)
             })
@@ -90,7 +86,7 @@ export class SetAvatarController {
                     keyTag: undefined,
                     serverTs: undefined
                   })
-                : v.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+                : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
             )
       ),
       Result.inspect(v => {
@@ -103,16 +99,16 @@ export class SetAvatarController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: {
                         avatars: [v.avatar]
                       }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })

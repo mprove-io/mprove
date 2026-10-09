@@ -13,16 +13,14 @@ export class IsOrgExistService {
   async process(item: {
     orgId: string;
   }): Promise<DiskResultForOperation<'isOrgExist'>> {
-    let { orgId } = item;
-
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
     let isOrgExistResult = Result.pipe(
       Result.succeed({
-        orgId: orgId,
-        orgDir: `${orgPath}/${orgId}`
+        ...item,
+        orgDir: `${orgPath}/${item.orgId}`
       }),
       Result.bind(
         'isOrgExist',

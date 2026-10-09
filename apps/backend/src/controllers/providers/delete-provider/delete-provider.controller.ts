@@ -61,20 +61,15 @@ export class DeleteProviderController {
       Result.succeed({
         projectId: body.input.projectId,
         providerId: body.input.providerId,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        v.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdminResult({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -82,7 +77,7 @@ export class DeleteProviderController {
       Result.andThrough(async v => {
         await retry(
           async () => {
-            await v.db.drizzle.transaction(async tx => {
+            await this.db.drizzle.transaction(async tx => {
               await tx
                 .delete(providersTable)
                 .where(
@@ -93,7 +88,7 @@ export class DeleteProviderController {
                 );
             });
           },
-          getRetryOption(v.cs, v.logger)
+          getRetryOption(this.cs, this.logger)
         );
 
         return Result.succeed();

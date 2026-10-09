@@ -67,22 +67,15 @@ export class EditProviderController {
     return Result.pipe(
       Result.succeed({
         input: body.input,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        providersService: this.providersService,
-        urlService: this.urlService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.input.projectId
         })
       ),
       Result.andThrough(v =>
-        v.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdminResult({
           memberId: v.userId,
           projectId: v.input.projectId
         })
@@ -92,7 +85,7 @@ export class EditProviderController {
         (
           v
         ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
-          v.providersService.getProviderCheckExistsResult({
+          this.providersService.getProviderCheckExistsResult({
             projectId: v.input.projectId,
             providerId: v.input.providerId
           })
@@ -105,7 +98,7 @@ export class EditProviderController {
         ) {
           v.provider.name = v.input.name;
 
-          return v.urlService.checkApiUrlResult({
+          return this.urlService.checkApiUrlResult({
             urlStr: v.input.options.baseURL
           });
         }
@@ -153,21 +146,21 @@ export class EditProviderController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       update: { providers: [v.provider] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
       ),
       Result.map(
         (v): ToBackendEditProviderOutput => ({
-          provider: v.providersService.tabToApiProvider({
+          provider: this.providersService.tabToApiProvider({
             provider: v.provider,
             isIncludePasswords: false
           })

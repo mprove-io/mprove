@@ -14,16 +14,14 @@ export class DeleteOrgService {
   async process(item: {
     orgId: string;
   }): Promise<DiskResultForOperation<'deleteOrg'>> {
-    let { orgId } = item;
-
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
     let deleteOrgResult = Result.pipe(
       Result.succeed({
-        orgId: orgId,
-        orgDir: `${orgPath}/${orgId}`
+        ...item,
+        orgDir: `${orgPath}/${item.orgId}`
       }),
       Result.bind(
         'isOrgExist',

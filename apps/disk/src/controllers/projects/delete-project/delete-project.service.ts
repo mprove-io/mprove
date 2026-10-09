@@ -16,17 +16,14 @@ export class DeleteProjectService {
     orgId: string;
     projectId: string;
   }): Promise<DiskResultForOperation<'deleteProject'>> {
-    let { orgId, projectId } = item;
-
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
     let deleteProjectResult = Result.pipe(
       Result.succeed({
-        orgId: orgId,
-        projectId: projectId,
-        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        ...item,
+        projectDir: `${orgPath}/${item.orgId}/${item.projectId}`,
         orgPath: orgPath
       }),
       Result.andThrough(v =>

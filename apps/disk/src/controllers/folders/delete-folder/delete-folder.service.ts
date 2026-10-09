@@ -37,7 +37,7 @@ export class DeleteFolderService {
     branch: string;
     folderNodeId: string;
   }): Promise<DiskResultForOperation<'deleteFolder'>> {
-    let { baseProject, repoId, branch, folderNodeId } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -54,11 +54,11 @@ export class DeleteFolderService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        folderAbsolutePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${folderNodeId.substring(projectId.length + 1)}`,
-        folderNodeId: folderNodeId,
-        branch: branch,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        folderAbsolutePath: `${orgPath}/${orgId}/${projectId}/${item.repoId}/${item.folderNodeId.substring(projectId.length + 1)}`,
+        folderNodeId: item.folderNodeId,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

@@ -83,31 +83,28 @@ export class CreateProjectController {
   ): Promise<BackendResultForOperation<'createProject'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
+        orgId: body.input.orgId,
+        name: body.input.name,
+        remoteType: body.input.remoteType,
+        gitUrl: body.input.gitUrl,
+        noteId: body.input.noteId,
         traceId: body.traceId,
-        user: user,
-        orgsService: this.orgsService,
-        dconfigsService: this.dconfigsService,
-        hashService: this.hashService,
-        projectsService: this.projectsService,
-        tabService: this.tabService,
-        cs: this.cs,
-        db: this.db
+        user: user
       }),
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
-          v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        v.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwnerResult({
           org: v.org,
           userId: v.user.userId
         })
       ),
       Result.andThrough(v => {
         let demoOrgId: string =
-          v.cs.get<BackendConfig['demoOrgId']>('demoOrgId');
+          this.cs.get<BackendConfig['demoOrgId']>('demoOrgId');
 
         return v.org.orgId === demoOrgId
           ? Result.fail({ code: 'BACKEND_RESTRICTED_ORGANIZATION' })
@@ -116,12 +113,12 @@ export class CreateProjectController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
-          v.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashResultError> =>
-          v.hashService.makeHashResult({
+          this.hashService.makeHashResult({
             input: v.name,
             hashSecret: v.hashSecret
           })
@@ -129,7 +126,7 @@ export class CreateProjectController {
       Result.bind(
         'existingProject',
         (v): Result.ResultAsync<ProjectTab, ProjectEntToTabResultError> =>
-          v.db.drizzle.query.projectsTable
+          this.db.drizzle.query.projectsTable
             .findFirst({
               where: and(
                 eq(projectsTable.orgId, v.orgId),
@@ -139,7 +136,9 @@ export class CreateProjectController {
             .then((projectEnt: ProjectEnt) =>
               isUndefined(projectEnt)
                 ? Result.succeed(undefined)
-                : v.tabService.projectEntToTabResult({ projectEnt: projectEnt })
+                : this.tabService.projectEntToTabResult({
+                    projectEnt: projectEnt
+                  })
             )
       ),
       Result.andThrough(v =>
@@ -159,13 +158,14 @@ export class CreateProjectController {
             return Result.succeed(undefined);
           }
 
-          let noteEnt: NoteEnt = await v.db.drizzle.query.notesTable.findFirst({
-            where: eq(notesTable.noteId, v.noteId)
-          });
+          let noteEnt: NoteEnt =
+            await this.db.drizzle.query.notesTable.findFirst({
+              where: eq(notesTable.noteId, v.noteId)
+            });
 
           return isUndefined(noteEnt)
             ? Result.fail({ code: 'BACKEND_NOTE_DOES_NOT_EXIST' })
-            : v.tabService.noteEntToTabResult({
+            : this.tabService.noteEntToTabResult({
                 noteEnt: noteEnt
               });
         }
@@ -173,7 +173,7 @@ export class CreateProjectController {
       Result.bind(
         'newProject',
         (v): Result.ResultAsync<ProjectTab, AddProjectResultError> =>
-          v.projectsService.addProjectResult({
+          this.projectsService.addProjectResult({
             orgId: v.orgId,
             name: v.name,
             traceId: v.traceId,
@@ -193,14 +193,14 @@ export class CreateProjectController {
       ),
       Result.andThrough(
         (v): Result.ResultAsync<void, never> =>
-          v.db.drizzle
+          this.db.drizzle
             .delete(notesTable)
             .where(eq(notesTable.noteId, v.noteId))
             .then(() => Result.succeed())
       ),
       Result.map(
         (v): ToBackendCreateProjectOutput => ({
-          project: v.projectsService.tabToApiProject({
+          project: this.projectsService.tabToApiProject({
             project: v.newProject,
             isAddPublicKey: true,
             isAddGitUrl: true

@@ -35,7 +35,7 @@ export class CommitRepoService {
     userAlias: string;
     commitMessage: string;
   }): Promise<DiskResultForOperation<'commitRepo'>> {
-    let { baseProject, repoId, branch, userAlias, commitMessage } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -58,16 +58,16 @@ export class CommitRepoService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        repoId: repoId,
+        repoId: item.repoId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        commitMessage: commitMessage,
-        userAlias: userAlias,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        commitMessage: item.commitMessage,
+        userAlias: item.userAlias,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

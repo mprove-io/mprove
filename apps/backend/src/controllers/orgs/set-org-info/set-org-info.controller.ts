@@ -62,19 +62,15 @@ export class SetOrgInfoController {
       Result.succeed({
         orgId: body.input.orgId,
         name: body.input.name,
-        userId: user.userId,
-        orgsService: this.orgsService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
-          v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        v.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwnerResult({
           org: v.org,
           userId: v.userId
         })
@@ -97,21 +93,21 @@ export class SetOrgInfoController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: { orgs: [v.org] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
       ),
       Result.map(
         (v): ToBackendSetOrgInfoOutput => ({
-          org: v.orgsService.tabToApi({ org: v.org })
+          org: this.orgsService.tabToApi({ org: v.org })
         })
       )
     );

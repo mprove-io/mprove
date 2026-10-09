@@ -37,7 +37,7 @@ export class GetCatalogNodesService {
     branch?: string;
     isFetch: boolean;
   }): Promise<DiskResultForOperation<'getCatalogNodes'>> {
-    let { baseProject, repoId, branch, isFetch } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -61,15 +61,15 @@ export class GetCatalogNodesService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        repoId: repoId,
+        repoId: item.repoId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        isFetch: isFetch,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        isFetch: item.isFetch,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

@@ -36,7 +36,7 @@ export class CreateProjectService {
     devRepoId: string;
     userAlias: string;
   }): Promise<DiskResultForOperation<'createProject'>> {
-    let { baseProject, seedProjectId, devRepoId, userAlias } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -62,14 +62,14 @@ export class CreateProjectService {
         projectDir: `${orgPath}/${orgId}/${projectId}`,
         keyDir: `${orgPath}/${orgId}/_keys/${projectId}`,
         prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`,
-        devRepoId: devRepoId,
+        devRepoId: item.devRepoId,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
         remoteType: remoteType,
-        userAlias: userAlias,
-        seedProjectId: seedProjectId,
+        userAlias: item.userAlias,
+        seedProjectId: item.seedProjectId,
         projectName: projectName,
         orgPath: orgPath
       }),

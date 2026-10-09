@@ -38,7 +38,7 @@ export class CreateFolderService {
     parentNodeId: string;
     folderName: string;
   }): Promise<DiskResultForOperation<'createFolder'>> {
-    let { baseProject, repoId, branch, parentNodeId, folderName } = item;
+    let { baseProject, repoId, parentNodeId, folderName } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -64,11 +64,11 @@ export class CreateFolderService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
         parentPath: parentPath,
         folderAbsolutePath: folderAbsolutePath,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

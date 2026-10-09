@@ -23,7 +23,7 @@ export class DeleteDevRepoService {
     baseProject: BaseProject;
     devRepoId: string;
   }): Promise<DiskResultForOperation<'deleteDevRepo'>> {
-    let { baseProject, devRepoId } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -43,11 +43,11 @@ export class DeleteDevRepoService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        devRepoId: devRepoId,
-        devRepoDir: `${orgPath}/${orgId}/${projectId}/${devRepoId}`,
+        devRepoId: item.devRepoId,
+        devRepoDir: `${orgPath}/${orgId}/${projectId}/${item.devRepoId}`,
         projectLt: projectLt,
         orgPath: orgPath,
-        baseProject: baseProject
+        baseProject: item.baseProject
       }),
       Result.andThrough(v =>
         checkRestoreOrgProject({

@@ -45,14 +45,11 @@ export class GetGivensController {
   ): Promise<BackendResultForOperation<'getGivens'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        givensService: this.givensService
+        projectId: body.input.projectId,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
@@ -64,7 +61,7 @@ export class GetGivensController {
           MemberTab,
           GetMemberCheckIsEditorOrAdminResultError
         > =>
-          v.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdminResult({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -72,11 +69,11 @@ export class GetGivensController {
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
-          v.givensService.getApiGivensResult({ projectId: v.projectId })
+          this.givensService.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetGivensOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           givens: v.apiGivens
         })
       )

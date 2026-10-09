@@ -42,25 +42,25 @@ export class SetFavoriteController {
   ): Promise<BackendResultForOperation<'setFavorite'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        favoritesService: this.favoritesService
+        projectId: body.input.projectId,
+        type: body.input.type,
+        targetId: body.input.targetId,
+        isFavorite: body.input.isFavorite,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        v.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExistsResult({
           projectId: v.projectId,
           memberId: v.user.userId
         })
       ),
       Result.andThrough(v =>
-        v.favoritesService.setFavoriteResult({
+        this.favoritesService.setFavoriteResult({
           projectId: v.projectId,
           userId: v.user.userId,
           type: v.type,

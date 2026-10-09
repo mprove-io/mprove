@@ -50,24 +50,20 @@ export class IsProjectExistController {
     return Result.pipe(
       Result.succeed({
         name: body.input.name,
-        orgId: body.input.orgId,
-        orgsService: this.orgsService,
-        dconfigsService: this.dconfigsService,
-        hashService: this.hashService,
-        db: this.db
+        orgId: body.input.orgId
       }),
       Result.andThrough(v =>
-        v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+        this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
-          v.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashResultError> =>
-          v.hashService.makeHashResult({
+          this.hashService.makeHashResult({
             input: v.name,
             hashSecret: v.hashSecret
           })
@@ -75,7 +71,7 @@ export class IsProjectExistController {
       Result.bind(
         'projectEnt',
         (v): Result.ResultAsync<ProjectEnt, never> =>
-          v.db.drizzle.query.projectsTable
+          this.db.drizzle.query.projectsTable
             .findFirst({
               where: eq(projectsTable.nameHash, v.nameHash)
             })

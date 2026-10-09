@@ -365,7 +365,7 @@ export class TabService {
     avatarEnt: AvatarEnt;
   }): Result.Result<AvatarTab, AvatarEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ avatarEnt: item.avatarEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -374,7 +374,7 @@ export class TabService {
           TabProps<AvatarSt, AvatarLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<AvatarSt, AvatarLt>({
+          this.getTabPropsResult<AvatarSt, AvatarLt>({
             ent: v.avatarEnt
           })
       ),
@@ -403,7 +403,7 @@ export class TabService {
     branchEnt: BranchEnt;
   }): Result.Result<BranchTab, BranchEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ branchEnt: item.branchEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -412,7 +412,7 @@ export class TabService {
           TabProps<BranchSt, BranchLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<BranchSt, BranchLt>({
+          this.getTabPropsResult<BranchSt, BranchLt>({
             ent: v.branchEnt
           })
       ),
@@ -441,7 +441,7 @@ export class TabService {
     bridgeEnt: BridgeEnt;
   }): Result.Result<BridgeTab, BridgeEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ bridgeEnt: item.bridgeEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -450,7 +450,7 @@ export class TabService {
           TabProps<BridgeSt, BridgeLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<BridgeSt, BridgeLt>({
+          this.getTabPropsResult<BridgeSt, BridgeLt>({
             ent: v.bridgeEnt
           })
       ),
@@ -518,7 +518,7 @@ export class TabService {
     connectionEnt: ConnectionEnt;
   }): Result.Result<ConnectionTab, ConnectionEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ connectionEnt: item.connectionEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -527,7 +527,7 @@ export class TabService {
           TabProps<ConnectionSt, ConnectionLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<ConnectionSt, ConnectionLt>({
+          this.getTabPropsResult<ConnectionSt, ConnectionLt>({
             ent: v.connectionEnt
           })
       ),
@@ -571,7 +571,7 @@ export class TabService {
     dconfigEnt: DconfigEnt;
   }): Result.Result<DconfigTab, DconfigEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ dconfigEnt: item.dconfigEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -580,7 +580,7 @@ export class TabService {
           TabProps<DconfigSt, DconfigLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<DconfigSt, DconfigLt>({
+          this.getTabPropsResult<DconfigSt, DconfigLt>({
             ent: v.dconfigEnt
           })
       ),
@@ -622,13 +622,13 @@ export class TabService {
     givenEnt: GivenEnt;
   }): Result.Result<GivenTab, GivenEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ givenEnt: item.givenEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
           v
         ): Result.Result<TabProps<GivenSt, GivenLt>, GetTabPropsResultError> =>
-          v.tabService.getTabPropsResult<GivenSt, GivenLt>({ ent: v.givenEnt })
+          this.getTabPropsResult<GivenSt, GivenLt>({ ent: v.givenEnt })
       ),
       Result.map((v): GivenTab => ({ ...v.givenEnt, ...v.tabProps.props }))
     );
@@ -655,11 +655,11 @@ export class TabService {
     roleEnt: RoleEnt;
   }): Result.Result<RoleTab, RoleEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ roleEnt: item.roleEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<RoleSt, RoleLt>, GetTabPropsResultError> =>
-          v.tabService.getTabPropsResult<RoleSt, RoleLt>({ ent: v.roleEnt })
+          this.getTabPropsResult<RoleSt, RoleLt>({ ent: v.roleEnt })
       ),
       Result.map((v): RoleTab => ({ ...v.roleEnt, ...v.tabProps.props }))
     );
@@ -686,11 +686,11 @@ export class TabService {
     envEnt: EnvEnt;
   }): Result.Result<EnvTab, EnvEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ envEnt: item.envEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<EnvSt, EnvLt>, GetTabPropsResultError> =>
-          v.tabService.getTabPropsResult<EnvSt, EnvLt>({ ent: v.envEnt })
+          this.getTabPropsResult<EnvSt, EnvLt>({ ent: v.envEnt })
       ),
       Result.map((v): EnvTab => ({ ...v.envEnt, ...v.tabProps.props }))
     );
@@ -743,7 +743,7 @@ export class TabService {
     memberEnt: MemberEnt;
   }): Result.Result<MemberTab, MemberEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ memberEnt: item.memberEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -752,7 +752,7 @@ export class TabService {
           TabProps<MemberSt, MemberLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<MemberSt, MemberLt>({
+          this.getTabPropsResult<MemberSt, MemberLt>({
             ent: v.memberEnt
           })
       ),
@@ -781,13 +781,13 @@ export class TabService {
     modelEnt: ModelEnt;
   }): Result.Result<ModelTab, ModelEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ modelEnt: item.modelEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
           v
         ): Result.Result<TabProps<ModelSt, ModelLt>, GetTabPropsResultError> =>
-          v.tabService.getTabPropsResult<ModelSt, ModelLt>({ ent: v.modelEnt })
+          this.getTabPropsResult<ModelSt, ModelLt>({ ent: v.modelEnt })
       ),
       Result.map((v): ModelTab => ({ ...v.modelEnt, ...v.tabProps.props }))
     );
@@ -814,11 +814,11 @@ export class TabService {
     noteEnt: NoteEnt;
   }): Result.Result<NoteTab, NoteEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ noteEnt: item.noteEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<NoteSt, NoteLt>, GetTabPropsResultError> =>
-          v.tabService.getTabPropsResult<NoteSt, NoteLt>({ ent: v.noteEnt })
+          this.getTabPropsResult<NoteSt, NoteLt>({ ent: v.noteEnt })
       ),
       Result.map((v): NoteTab => ({ ...v.noteEnt, ...v.tabProps.props }))
     );
@@ -845,11 +845,11 @@ export class TabService {
     orgEnt: OrgEnt;
   }): Result.Result<OrgTab, OrgEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ orgEnt: item.orgEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<OrgSt, OrgLt>, GetTabPropsResultError> =>
-          v.tabService.getTabPropsResult<OrgSt, OrgLt>({ ent: v.orgEnt })
+          this.getTabPropsResult<OrgSt, OrgLt>({ ent: v.orgEnt })
       ),
       Result.map((v): OrgTab => ({ ...v.orgEnt, ...v.tabProps.props }))
     );
@@ -876,7 +876,7 @@ export class TabService {
     projectEnt: ProjectEnt;
   }): Result.Result<ProjectTab, ProjectEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ projectEnt: item.projectEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -885,7 +885,7 @@ export class TabService {
           TabProps<ProjectSt, ProjectLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<ProjectSt, ProjectLt>({
+          this.getTabPropsResult<ProjectSt, ProjectLt>({
             ent: v.projectEnt
           })
       ),
@@ -916,7 +916,7 @@ export class TabService {
     providerEnt: ProviderEnt;
   }): Result.Result<ProviderTab, ProviderEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ providerEnt: item.providerEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -925,7 +925,7 @@ export class TabService {
           TabProps<ProviderSt, ProviderLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<ProviderSt, ProviderLt>({
+          this.getTabPropsResult<ProviderSt, ProviderLt>({
             ent: v.providerEnt
           })
       ),
@@ -983,7 +983,7 @@ export class TabService {
     structEnt: StructEnt;
   }): Result.Result<StructTab, StructEntToTabResultError> {
     return Result.pipe(
-      Result.succeed({ structEnt: item.structEnt, tabService: this }),
+      Result.succeed(item),
       Result.bind(
         'tabProps',
         (
@@ -992,7 +992,7 @@ export class TabService {
           TabProps<StructSt, StructLt>,
           GetTabPropsResultError
         > =>
-          v.tabService.getTabPropsResult<StructSt, StructLt>({
+          this.getTabPropsResult<StructSt, StructLt>({
             ent: v.structEnt
           })
       ),

@@ -46,33 +46,31 @@ export class GetProjectController {
     return Result.pipe(
       Result.succeed({
         projectId: body.input.projectId,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService
+        userId: user.userId
       }),
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
-          v.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
-          v.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.userId
           })
       ),
       Result.map(
         (v): ToBackendGetProjectOutput => ({
-          project: v.projectsService.tabToApiProject({
+          project: this.projectsService.tabToApiProject({
             project: v.project,
             isAddPublicKey: v.userMember.isAdmin === true,
             isAddGitUrl: v.userMember.isAdmin === true
           }),
-          userMember: v.membersService.tabToApi({ member: v.userMember })
+          userMember: this.membersService.tabToApi({ member: v.userMember })
         })
       )
     );

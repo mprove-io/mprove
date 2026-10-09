@@ -9,6 +9,12 @@ import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendSyncRepoOutput } from '#common/types/backend/routes/repos/sync-repo/sync-repo-output';
 import type { ToBackendSyncRepoRequest } from '#common/types/backend/routes/repos/sync-repo/sync-repo-request';
+import type { DiskFileChange } from '#common/types/disk/parts/file/disk-file-change';
+import type { ApplySyncPayloadError } from '#common/types/node-common/function-errors/apply-sync-payload-error';
+import type { GetChangesToCommitError } from '#common/types/node-common/function-errors/get-changes-to-commit-error';
+import type { GetSyncAppliedChangesError } from '#common/types/node-common/function-errors/get-sync-applied-changes-error';
+import type { GetSyncFilesPayloadError } from '#common/types/node-common/function-errors/get-sync-files-payload-error';
+import type { ResetWorkingTreeToHeadError } from '#common/types/node-common/function-errors/reset-working-tree-to-head-error';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -17,7 +23,10 @@ import { applySyncPayload } from '#node-common/functions/apply-sync-payload/appl
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit/get-changes-to-commit';
 import { getSyncAppliedChanges } from '#node-common/functions/get-sync-applied-changes/get-sync-applied-changes';
-import { getSyncFilesPayload } from '#node-common/functions/get-sync-files-payload/get-sync-files-payload';
+import {
+  getSyncFilesPayload,
+  type SyncFilesPayload
+} from '#node-common/functions/get-sync-files-payload/get-sync-files-payload';
 import { resetWorkingTreeToHead } from '#node-common/functions/reset-working-tree-to-head/reset-working-tree-to-head';
 
 export class SyncCommand extends CustomCommand {
@@ -110,11 +119,23 @@ export class SyncCommand extends CustomCommand {
         ? { changedFiles: [], deletedFiles: [] }
         : await Result.unwrap(
             Result.pipe(
-              getSyncFilesPayload({
+              Result.succeed({
                 repoDir: repoDir,
                 statusResult: statusResult
               }),
-              Result.mapError(error => new ServerError({ message: error.code }))
+              Result.andThen(
+                (
+                  v
+                ): Result.ResultAsync<
+                  SyncFilesPayload,
+                  GetSyncFilesPayloadError
+                > =>
+                  getSyncFilesPayload({
+                    repoDir: v.repoDir,
+                    statusResult: v.statusResult
+                  })
+              ),
+              Result.mapError(v => new ServerError({ message: v.code }))
             )
           );
 
@@ -171,18 +192,26 @@ export class SyncCommand extends CustomCommand {
     if (syncRepoOutput.direction === 'from-server') {
       appliedChangesOnLocal = await Result.unwrap(
         Result.pipe(
-          getSyncAppliedChanges({
+          Result.succeed({
             repoDir: repoDir,
             changedFiles: syncRepoOutput.changedFiles,
             deletedFiles: syncRepoOutput.deletedFiles,
             statusResult: statusResult
           }),
+          Result.andThen(
+            (v): Result.ResultAsync<string[], GetSyncAppliedChangesError> =>
+              getSyncAppliedChanges({
+                repoDir: v.repoDir,
+                changedFiles: v.changedFiles,
+                deletedFiles: v.deletedFiles,
+                statusResult: v.statusResult
+              })
+          ),
           Result.mapError(
-            error =>
+            v =>
               new ServerError({
-                message: error.code,
-                displayData:
-                  'displayData' in error ? error.displayData : undefined
+                message: v.code,
+                displayData: 'displayData' in v ? v.displayData : undefined
               })
           )
         )
@@ -190,15 +219,22 @@ export class SyncCommand extends CustomCommand {
 
       await Result.unwrap(
         Result.pipe(
-          resetWorkingTreeToHead({
+          Result.succeed({
             repoDir: repoDir,
             statusResult: statusResult
           }),
+          Result.andThen(
+            (v): Result.ResultAsync<void, ResetWorkingTreeToHeadError> =>
+              resetWorkingTreeToHead({
+                repoDir: v.repoDir,
+                statusResult: v.statusResult
+              })
+          ),
           Result.mapError(
-            error =>
+            v =>
               new ServerError({
-                message: error.code,
-                displayData: error.displayData
+                message: v.code,
+                displayData: v.displayData
               })
           )
         )
@@ -206,17 +242,24 @@ export class SyncCommand extends CustomCommand {
 
       await Result.unwrap(
         Result.pipe(
-          applySyncPayload({
+          Result.succeed({
             repoDir: repoDir,
             changedFiles: syncRepoOutput.changedFiles,
             deletedFiles: syncRepoOutput.deletedFiles
           }),
+          Result.andThen(
+            (v): Result.ResultAsync<void, ApplySyncPayloadError> =>
+              applySyncPayload({
+                repoDir: v.repoDir,
+                changedFiles: v.changedFiles,
+                deletedFiles: v.deletedFiles
+              })
+          ),
           Result.mapError(
-            error =>
+            v =>
               new ServerError({
-                message: error.code,
-                displayData:
-                  'displayData' in error ? error.displayData : undefined
+                message: v.code,
+                displayData: 'displayData' in v ? v.displayData : undefined
               })
           )
         )
@@ -229,12 +272,20 @@ export class SyncCommand extends CustomCommand {
 
     let localChangesToCommit = await Result.unwrap(
       Result.pipe(
-        getChangesToCommit({
+        Result.succeed({
           repoDir: repoDir,
           addContent: true,
           expandRenamed: true
         }),
-        Result.mapError(error => new ServerError({ message: error.code }))
+        Result.andThen(
+          (v): Result.ResultAsync<DiskFileChange[], GetChangesToCommitError> =>
+            getChangesToCommit({
+              repoDir: v.repoDir,
+              addContent: v.addContent,
+              expandRenamed: v.expandRenamed
+            })
+        ),
+        Result.mapError(v => new ServerError({ message: v.code }))
       )
     );
 

@@ -37,7 +37,7 @@ export class CreateDevRepoService {
     initialBranch?: string;
     sessionBranch?: string;
   }): Promise<DiskResultForOperation<'createDevRepo'>> {
-    let { baseProject, devRepoId, initialBranch, sessionBranch } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -60,11 +60,11 @@ export class CreateDevRepoService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        devRepoId: devRepoId,
+        devRepoId: item.devRepoId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        devRepoDir: `${orgPath}/${orgId}/${projectId}/${devRepoId}`,
-        sessionBranch: sessionBranch,
-        initialBranch: initialBranch,
+        devRepoDir: `${orgPath}/${orgId}/${projectId}/${item.devRepoId}`,
+        sessionBranch: item.sessionBranch,
+        initialBranch: item.initialBranch,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,

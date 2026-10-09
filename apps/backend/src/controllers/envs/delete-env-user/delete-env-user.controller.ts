@@ -68,17 +68,13 @@ export class DeleteEnvUserController {
   ): Promise<BackendResultForOperation<'deleteEnvUser'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        envsService: this.envsService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        projectId: body.input.projectId,
+        envId: body.input.envId,
+        envUserId: body.input.envUserId,
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
@@ -90,7 +86,7 @@ export class DeleteEnvUserController {
           MemberTab,
           GetMemberCheckIsEditorOrAdminResultError
         > =>
-          v.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -100,7 +96,7 @@ export class DeleteEnvUserController {
         (
           v
         ): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessResultError> =>
-          v.envsService.getEnvCheckExistsAndAccessResult({
+          this.envsService.getEnvCheckExistsAndAccessResult({
             projectId: v.projectId,
             envId: v.envId,
             member: v.userMember
@@ -116,13 +112,13 @@ export class DeleteEnvUserController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(async tx => {
-                  await v.db.packer.write({
+                await this.db.drizzle.transaction(async tx => {
+                  await this.db.packer.write({
                     tx: tx,
                     insertOrUpdate: { envs: [v.env] }
                   });
                 }),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -130,11 +126,11 @@ export class DeleteEnvUserController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
-          v.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteEnvUserOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           envs: v.apiEnvs
         })
       )

@@ -26,6 +26,7 @@ import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-output';
+import type { GetMproveDirError } from '#common/types/node-common/function-errors/get-mprove-dir-error';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir/get-mprove-dir';
@@ -200,11 +201,15 @@ export class RebuildStructService {
 
     let mproveDir = await Result.unwrap(
       Result.pipe(
-        getMproveDir({
+        Result.succeed({
           dir: item.dir,
           configPath: configPath
         }),
-        Result.mapError(error => new ServerError({ message: error.code }))
+        Result.andThen(
+          (v): Result.ResultAsync<string, GetMproveDirError> =>
+            getMproveDir({ dir: v.dir, configPath: v.configPath })
+        ),
+        Result.mapError(v => new ServerError({ message: v.code }))
       )
     );
 

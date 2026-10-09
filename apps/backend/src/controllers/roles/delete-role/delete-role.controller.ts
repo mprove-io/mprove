@@ -71,25 +71,19 @@ export class DeleteRoleController {
   ): Promise<BackendResultForOperation<'deleteRole'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        rolesService: this.rolesService,
-        tabService: this.tabService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        projectId: body.input.projectId,
+        roleId: body.input.roleId,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -97,11 +91,11 @@ export class DeleteRoleController {
       Result.bind(
         'projectMembers',
         (v): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
-          v.db.drizzle.query.membersTable
+          this.db.drizzle.query.membersTable
             .findMany({ where: eq(membersTable.projectId, v.projectId) })
             .then(memberEnts =>
               Result.sequence(memberEnts, memberEnt =>
-                v.tabService.memberEntToTabResult({ memberEnt: memberEnt })
+                this.tabService.memberEntToTabResult({ memberEnt: memberEnt })
               )
             )
       ),
@@ -122,7 +116,7 @@ export class DeleteRoleController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(async tx => {
+                await this.db.drizzle.transaction(async tx => {
                   await tx
                     .delete(rolesTable)
                     .where(
@@ -132,12 +126,12 @@ export class DeleteRoleController {
                       )
                     );
 
-                  await v.db.packer.write({
+                  await this.db.packer.write({
                     tx: tx,
                     insertOrUpdate: { members: v.membersToUpdate }
                   });
                 }),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -145,7 +139,7 @@ export class DeleteRoleController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
-          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.map((v): ToBackendDeleteRoleOutput => {
         let updatedUserMember: MemberTab = v.membersToUpdate.find(
@@ -153,7 +147,7 @@ export class DeleteRoleController {
         );
 
         let payload: ToBackendDeleteRoleOutput = {
-          userMember: v.membersService.tabToApi({
+          userMember: this.membersService.tabToApi({
             member: isDefined(updatedUserMember)
               ? updatedUserMember
               : v.userMember

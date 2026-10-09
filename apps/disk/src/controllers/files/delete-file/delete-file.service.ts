@@ -41,7 +41,7 @@ export class DeleteFileService {
     fileNodeId: string;
     userAlias: string;
   }): Promise<DiskResultForOperation<'deleteFile'>> {
-    let { baseProject, repoId, branch, fileNodeId, userAlias } = item;
+    let { baseProject, fileNodeId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -60,13 +60,13 @@ export class DeleteFileService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${relativeFilePath}`,
-        fileNodeId: fileNodeId,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        filePath: `${orgPath}/${orgId}/${projectId}/${item.repoId}/${relativeFilePath}`,
+        fileNodeId: item.fileNodeId,
         relativeFilePath: relativeFilePath,
-        userAlias: userAlias,
-        branch: branch,
+        userAlias: item.userAlias,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

@@ -218,16 +218,11 @@ export class ModelsService {
     apiUserMember: Member;
   }): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> {
     return Result.pipe(
-      Result.succeed({
-        ...item,
-        db: this.db,
-        tabService: this.tabService,
-        modelsService: this
-      }),
+      Result.succeed(item),
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
-          v.db.drizzle
+          this.db.drizzle
             .select({
               keyTag: modelsTable.keyTag,
               modelId: modelsTable.modelId,
@@ -237,7 +232,7 @@ export class ModelsService {
             .where(and(eq(modelsTable.structId, v.structId)))
             .then(modelEnts =>
               Result.sequence(modelEnts, modelEnt =>
-                v.tabService.modelEntToTabResult({
+                this.tabService.modelEntToTabResult({
                   modelEnt: modelEnt as ModelEnt
                 })
               )
@@ -245,7 +240,7 @@ export class ModelsService {
       ),
       Result.map((v): ModelPartX[] =>
         v.models.map(model => {
-          let apiModelPart: ModelPart = v.modelsService.tabToModelPart({
+          let apiModelPart: ModelPart = this.tabToModelPart({
             model: model
           });
 

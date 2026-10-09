@@ -37,7 +37,7 @@ export class PushRepoService {
     branch: string;
     userAlias: string;
   }): Promise<DiskResultForOperation<'pushRepo'>> {
-    let { baseProject, repoId, branch, userAlias } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -56,15 +56,15 @@ export class PushRepoService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
         prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`,
-        userAlias: userAlias,
+        userAlias: item.userAlias,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

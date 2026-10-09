@@ -70,31 +70,25 @@ export class DeleteGivenController {
   ): Promise<BackendResultForOperation<'deleteGiven'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        givensService: this.givensService,
-        rolesService: this.rolesService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        projectId: body.input.projectId,
+        givenId: body.input.givenId,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        v.givensService.getGivenCheckExistsResult({
+        this.givensService.getGivenCheckExistsResult({
           projectId: v.projectId,
           givenId: v.givenId
         })
@@ -102,7 +96,7 @@ export class DeleteGivenController {
       Result.bind(
         'roles',
         (v): Result.ResultAsync<RoleTab[], GetRolesResultError> =>
-          v.rolesService.getRolesResult({ projectId: v.projectId })
+          this.rolesService.getRolesResult({ projectId: v.projectId })
       ),
       Result.bind(
         'rolesToUpdate',
@@ -123,7 +117,7 @@ export class DeleteGivenController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(async tx => {
+                await this.db.drizzle.transaction(async tx => {
                   await tx
                     .delete(givensTable)
                     .where(
@@ -133,12 +127,12 @@ export class DeleteGivenController {
                       )
                     );
 
-                  await v.db.packer.write({
+                  await this.db.packer.write({
                     tx: tx,
                     insertOrUpdate: { roles: v.rolesToUpdate }
                   });
                 }),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -146,11 +140,11 @@ export class DeleteGivenController {
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
-          v.givensService.getApiGivensResult({ projectId: v.projectId })
+          this.givensService.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteGivenOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           givens: v.apiGivens
         })
       )

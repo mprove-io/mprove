@@ -1033,7 +1033,7 @@ export class TabToEntService {
     tab: ProjectTab;
     hashSecret?: string;
   }): Result.Result<ProjectEnt, ProjectTabToEntResultError> {
-    let { tab, hashSecret } = item;
+    let { tab } = item;
 
     let projectSt: ProjectSt = {
       name: tab.name,
@@ -1052,9 +1052,8 @@ export class TabToEntService {
 
     return Result.pipe(
       Result.succeed({
-        tab: tab,
-        hashSecret: hashSecret,
-        hashService: this.hashService,
+        tab: item.tab,
+        hashSecret: item.hashSecret,
         entProps: this.getEntProps({
           dataSt: projectSt,
           dataLt: projectLt,
@@ -1064,7 +1063,7 @@ export class TabToEntService {
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashResultError> =>
-          v.hashService.makeHashResult({
+          this.hashService.makeHashResult({
             input: v.tab.name,
             hashSecret: v.hashSecret
           })
@@ -1072,7 +1071,7 @@ export class TabToEntService {
       Result.bind(
         'gitUrlHash',
         (v): Result.Result<string, MakeHashResultError> =>
-          v.hashService.makeHashResult({
+          this.hashService.makeHashResult({
             input: v.tab.gitUrl,
             hashSecret: v.hashSecret
           })

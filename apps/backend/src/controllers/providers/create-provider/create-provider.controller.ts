@@ -67,29 +67,24 @@ export class CreateProviderController {
     return Result.pipe(
       Result.succeed({
         input: body.input,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        providersService: this.providersService,
-        urlService: this.urlService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.input.projectId
         })
       ),
       Result.andThrough(v =>
-        v.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdminResult({
           memberId: v.userId,
           projectId: v.input.projectId
         })
       ),
       Result.andThrough(v =>
         v.input.type === 'OpenAICompatible' && 'baseURL' in v.input.options
-          ? v.urlService.checkApiUrlResult({ urlStr: v.input.options.baseURL })
+          ? this.urlService.checkApiUrlResult({
+              urlStr: v.input.options.baseURL
+            })
           : Result.succeed()
       ),
       Result.inspect(v => {
@@ -100,7 +95,7 @@ export class CreateProviderController {
         }
       }),
       Result.andThrough(v =>
-        v.providersService.checkProviderDoesNotExistResult({
+        this.providersService.checkProviderDoesNotExistResult({
           projectId: v.input.projectId,
           providerId: v.input.providerId
         })
@@ -108,7 +103,7 @@ export class CreateProviderController {
       Result.bind(
         'provider',
         (v): Result.Result<ProviderTab, MakeProviderResultError> =>
-          v.providersService.makeProviderResult({
+          this.providersService.makeProviderResult({
             ...v.input,
             isEnabled: true,
             models: []
@@ -119,21 +114,21 @@ export class CreateProviderController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insert: { providers: [v.provider] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
       ),
       Result.map(
         (v): ToBackendCreateProviderOutput => ({
-          provider: v.providersService.tabToApiProvider({
+          provider: this.providersService.tabToApiProvider({
             provider: v.provider,
             isIncludePasswords: false
           })

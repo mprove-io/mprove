@@ -74,23 +74,17 @@ export class DeleteEnvController {
       Result.succeed({
         projectId: body.input.projectId,
         envId: body.input.envId,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        envsService: this.envsService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -103,7 +97,7 @@ export class DeleteEnvController {
       Result.andThrough(async v => {
         await retry(
           async () =>
-            await v.db.drizzle.transaction(async tx => {
+            await this.db.drizzle.transaction(async tx => {
               await tx
                 .delete(envsTable)
                 .where(
@@ -140,18 +134,18 @@ export class DeleteEnvController {
                   )
                 );
             }),
-          getRetryOption(v.cs, v.logger)
+          getRetryOption(this.cs, this.logger)
         );
         return Result.succeed();
       }),
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
-          v.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteEnvOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           envs: v.apiEnvs
         })
       )

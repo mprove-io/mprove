@@ -50,11 +50,11 @@ export class DconfigsService {
     }
 
     return Result.pipe(
-      Result.succeed({ dconfigEnt: dconfigEnt, tabService: this.tabService }),
+      Result.succeed({ dconfigEnt: dconfigEnt }),
       Result.bind(
         'dconfig',
         (v): Result.Result<DconfigTab, DconfigEntToTabResultError> =>
-          v.tabService.dconfigEntToTabResult({
+          this.tabService.dconfigEntToTabResult({
             dconfigEnt: v.dconfigEnt
           })
       ),

@@ -32,7 +32,7 @@ export class GetCatalogFilesService {
     repoId: string;
     branch: string;
   }): Promise<DiskResultForOperation<'getCatalogFiles'>> {
-    let { baseProject, repoId, branch } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -56,14 +56,14 @@ export class GetCatalogFilesService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        repoId: repoId,
+        repoId: item.repoId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

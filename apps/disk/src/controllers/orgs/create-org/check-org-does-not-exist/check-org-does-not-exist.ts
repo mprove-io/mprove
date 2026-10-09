@@ -6,10 +6,8 @@ import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 export async function checkOrgDoesNotExist(item: {
   orgDir: string;
 }): Result.ResultAsync<void, DiskCheckOrgDoesNotExistError> {
-  let { orgDir } = item;
-
   return Result.pipe(
-    Result.succeed({ orgDir: orgDir }),
+    Result.succeed(item),
     Result.bind(
       'isOrgExist',
       (v): Result.ResultAsync<boolean, never> => isPathExist({ path: v.orgDir })

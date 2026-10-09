@@ -66,24 +66,20 @@ export class DeleteRoleGivenController {
   ): Promise<BackendResultForOperation<'deleteRoleGiven'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        rolesService: this.rolesService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        projectId: body.input.projectId,
+        roleId: body.input.roleId,
+        givenId: body.input.givenId,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -91,7 +87,7 @@ export class DeleteRoleGivenController {
       Result.bind(
         'role',
         (v): Result.ResultAsync<RoleTab, GetRoleCheckExistsResultError> =>
-          v.rolesService.getRoleCheckExistsResult({
+          this.rolesService.getRoleCheckExistsResult({
             projectId: v.projectId,
             roleId: v.roleId
           })
@@ -104,14 +100,14 @@ export class DeleteRoleGivenController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: { roles: [v.role] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -119,11 +115,11 @@ export class DeleteRoleGivenController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
-          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteRoleGivenOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           roles: v.apiRoles
         })
       )

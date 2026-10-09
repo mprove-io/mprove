@@ -66,24 +66,20 @@ export class EditGivenController {
   ): Promise<BackendResultForOperation<'editGiven'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        givensService: this.givensService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        projectId: body.input.projectId,
+        givenId: body.input.givenId,
+        values: body.input.values,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -91,13 +87,13 @@ export class EditGivenController {
       Result.bind(
         'given',
         (v): Result.ResultAsync<GivenTab, GetGivenCheckExistsResultError> =>
-          v.givensService.getGivenCheckExistsResult({
+          this.givensService.getGivenCheckExistsResult({
             projectId: v.projectId,
             givenId: v.givenId
           })
       ),
       Result.andThrough(v =>
-        v.givensService.validateGivenValuesResult({
+        this.givensService.validateGivenValuesResult({
           type: v.given.type,
           isMultiple: v.given.isMultiple === true,
           values: v.values
@@ -111,14 +107,14 @@ export class EditGivenController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insertOrUpdate: { givens: [v.given] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -126,11 +122,11 @@ export class EditGivenController {
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
-          v.givensService.getApiGivensResult({ projectId: v.projectId })
+          this.givensService.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendEditGivenOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           givens: v.apiGivens
         })
       )

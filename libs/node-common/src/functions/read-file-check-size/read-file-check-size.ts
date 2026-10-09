@@ -2,13 +2,15 @@ import { Result } from '@praha/byethrow';
 import fse, { type Stats } from 'fs-extra';
 import type { ReadFileCheckSizeError } from '#common/types/node-common/function-errors/read-file-check-size-error';
 
+export type ReadFileCheckSizeOutput = {
+  content: string;
+  stat?: Stats;
+};
+
 export async function readFileCheckSize(item: {
   filePath: string | URL;
   getStat: boolean;
-}): Result.ResultAsync<
-  { content: string; stat?: Stats },
-  ReadFileCheckSizeError
-> {
+}): Result.ResultAsync<ReadFileCheckSizeOutput, ReadFileCheckSizeError> {
   let { filePath, getStat } = item;
 
   let stat: Stats = await fse.lstat(filePath);

@@ -65,30 +65,25 @@ export class CreateRoleController {
   ): Promise<BackendResultForOperation<'createRole'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        rolesService: this.rolesService,
-        db: this.db,
-        cs: this.cs,
-        logger: this.logger
+        projectId: body.input.projectId,
+        roleId: body.input.roleId,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
-          v.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        v.rolesService.checkRoleDoesNotExistResult({
+        this.rolesService.checkRoleDoesNotExistResult({
           projectId: v.projectId,
           roleId: v.roleId
         })
@@ -97,7 +92,7 @@ export class CreateRoleController {
         'role',
         (v): Result.Result<RoleTab, never> =>
           Result.succeed(
-            v.rolesService.makeRole({
+            this.rolesService.makeRole({
               projectId: v.projectId,
               roleId: v.roleId,
               gvs: []
@@ -109,14 +104,14 @@ export class CreateRoleController {
           action: async () => {
             await retry(
               async () =>
-                await v.db.drizzle.transaction(
+                await this.db.drizzle.transaction(
                   async tx =>
-                    await v.db.packer.write({
+                    await this.db.packer.write({
                       tx: tx,
                       insert: { roles: [v.role] }
                     })
                 ),
-              getRetryOption(v.cs, v.logger)
+              getRetryOption(this.cs, this.logger)
             );
           }
         })
@@ -124,11 +119,11 @@ export class CreateRoleController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
-          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateRoleOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           roles: v.apiRoles
         })
       )

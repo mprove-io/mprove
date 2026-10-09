@@ -50,20 +50,17 @@ export class GetEnvsController {
     return Result.pipe(
       Result.succeed({
         projectId: body.input.projectId,
-        userId: user.userId,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        envsService: this.envsService
+        userId: user.userId
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
-          v.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.userId
           })
@@ -71,11 +68,11 @@ export class GetEnvsController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
-          v.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetEnvsOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           envs: v.apiEnvs
         })
       )

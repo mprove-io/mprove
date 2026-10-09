@@ -49,22 +49,18 @@ export class GetRolesController {
   ): Promise<BackendResultForOperation<'getRoles'>> {
     return Result.pipe(
       Result.succeed({
-        ...body.input,
-        user: user,
-        projectsService: this.projectsService,
-        membersService: this.membersService,
-        rolesService: this.rolesService,
-        givensService: this.givensService
+        projectId: body.input.projectId,
+        user: user
       }),
       Result.andThrough(v =>
-        v.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExistsResult({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
-          v.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExistsResult({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -72,16 +68,16 @@ export class GetRolesController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
-          v.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
-          v.givensService.getApiGivensResult({ projectId: v.projectId })
+          this.givensService.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetRolesOutput => ({
-          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
           roles: v.apiRoles,
           givens: v.apiGivens
         })

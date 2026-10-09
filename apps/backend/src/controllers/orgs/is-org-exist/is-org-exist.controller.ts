@@ -43,20 +43,17 @@ export class IsOrgExistController {
   ): Promise<BackendResultForOperation<'isOrgExist'>> {
     return Result.pipe(
       Result.succeed({
-        name: body.input.name,
-        dconfigsService: this.dconfigsService,
-        hashService: this.hashService,
-        db: this.db
+        name: body.input.name
       }),
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
-          v.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashResultError> =>
-          v.hashService.makeHashResult({
+          this.hashService.makeHashResult({
             input: v.name,
             hashSecret: v.hashSecret
           })
@@ -64,7 +61,7 @@ export class IsOrgExistController {
       Result.bind(
         'orgEnt',
         (v): Result.ResultAsync<OrgEnt, never> =>
-          v.db.drizzle.query.orgsTable
+          this.db.drizzle.query.orgsTable
             .findFirst({
               where: eq(orgsTable.nameHash, v.nameHash)
             })

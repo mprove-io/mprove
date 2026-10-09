@@ -39,7 +39,7 @@ export class RenameCatalogNodeService {
     nodeId: string;
     newName: string;
   }): Promise<DiskResultForOperation<'renameCatalogNode'>> {
-    let { baseProject, repoId, branch, nodeId, newName } = item;
+    let { baseProject, repoId, nodeId, newName } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -70,12 +70,12 @@ export class RenameCatalogNodeService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        repoId: repoId,
+        repoId: item.repoId,
         projectDir: projectDir,
         repoDir: repoDir,
         oldPath: oldPath,
         newPath: newPath,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType

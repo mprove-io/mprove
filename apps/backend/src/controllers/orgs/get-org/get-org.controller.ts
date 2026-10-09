@@ -51,14 +51,12 @@ export class GetOrgController {
     return Result.pipe(
       Result.succeed({
         orgId: body.input.orgId,
-        userId: user.userId,
-        orgsService: this.orgsService,
-        db: this.db
+        userId: user.userId
       }),
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
-          v.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(async v => {
         if (v.org.ownerId === v.userId) {
@@ -66,7 +64,7 @@ export class GetOrgController {
         }
 
         let userMemberEnts: MemberEnt[] =
-          await v.db.drizzle.query.membersTable.findMany({
+          await this.db.drizzle.query.membersTable.findMany({
             where: eq(membersTable.memberId, v.userId)
           });
 
@@ -77,7 +75,7 @@ export class GetOrgController {
         let projectEnts: ProjectEnt[] =
           projectIds.length === 0
             ? []
-            : await v.db.drizzle.query.projectsTable.findMany({
+            : await this.db.drizzle.query.projectsTable.findMany({
                 where: and(
                   inArray(projectsTable.projectId, projectIds),
                   eq(projectsTable.orgId, v.orgId)
@@ -90,7 +88,7 @@ export class GetOrgController {
       }),
       Result.map(
         (v): ToBackendGetOrgOutput => ({
-          org: v.orgsService.tabToApi({ org: v.org })
+          org: this.orgsService.tabToApi({ org: v.org })
         })
       )
     );

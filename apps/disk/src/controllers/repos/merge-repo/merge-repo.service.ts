@@ -39,14 +39,7 @@ export class MergeRepoService {
     isTheirBranchRemote: boolean;
     userAlias: string;
   }): Promise<DiskResultForOperation<'mergeRepo'>> {
-    let {
-      baseProject,
-      repoId,
-      branch,
-      theirBranch,
-      isTheirBranchRemote,
-      userAlias
-    } = item;
+    let { baseProject } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -69,16 +62,16 @@ export class MergeRepoService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        userAlias: userAlias,
-        theirBranch: theirBranch,
-        isTheirBranchRemote: isTheirBranchRemote,
+        repoId: item.repoId,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${item.repoId}`,
+        userAlias: item.userAlias,
+        theirBranch: item.theirBranch,
+        isTheirBranchRemote: item.isTheirBranchRemote,
         passPhrase: passPhrase,
         publicKey: publicKey,
         privateKeyEncrypted: privateKeyEncrypted,
         gitUrl: gitUrl,
-        branch: branch,
+        branch: item.branch,
         projectLt: projectLt,
         orgPath: orgPath,
         remoteType: remoteType
