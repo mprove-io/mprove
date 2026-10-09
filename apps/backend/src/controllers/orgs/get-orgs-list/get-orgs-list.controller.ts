@@ -53,41 +53,59 @@ export class GetOrgsListController {
         userId: user.userId
       }),
       Result.bind(
-        'orgs',
-        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> => {
-          let userMemberEnts: MemberEnt[] =
-            await this.db.drizzle.query.membersTable.findMany({
+        'userMemberEnts',
+        (v): Result.ResultAsync<MemberEnt[], never> =>
+          this.db.drizzle.query.membersTable
+            .findMany({
               where: eq(membersTable.memberId, v.userId)
-            });
-
-          let userProjectIds: string[] = userMemberEnts.map(
-            userMemberEnt => userMemberEnt.projectId
-          );
-
-          let userProjectEnts: ProjectEnt[] =
-            userProjectIds.length === 0
-              ? []
-              : await this.db.drizzle.query.projectsTable.findMany({
-                  where: inArray(projectsTable.projectId, userProjectIds)
-                });
-
-          let userOrgIds: string[] = userProjectEnts.map(
-            userProjectEnt => userProjectEnt.orgId
-          );
-
-          let userOrgEnts: OrgEnt[] =
-            userOrgIds.length === 0
-              ? []
-              : await this.db.drizzle.query.orgsTable.findMany({
-                  where: inArray(orgsTable.orgId, userOrgIds)
-                });
-
-          return this.db.drizzle.query.orgsTable
+            })
+            .then(userMemberEnts => Result.succeed(userMemberEnts))
+      ),
+      Result.bind(
+        'userProjectIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(
+            v.userMemberEnts.map(userMemberEnt => userMemberEnt.projectId)
+          )
+      ),
+      Result.bind(
+        'userProjectEnts',
+        async (v): Result.ResultAsync<ProjectEnt[], never> =>
+          v.userProjectIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.projectsTable
+                .findMany({
+                  where: inArray(projectsTable.projectId, v.userProjectIds)
+                })
+                .then(userProjectEnts => Result.succeed(userProjectEnts))
+      ),
+      Result.bind(
+        'userOrgIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(
+            v.userProjectEnts.map(userProjectEnt => userProjectEnt.orgId)
+          )
+      ),
+      Result.bind(
+        'userOrgEnts',
+        async (v): Result.ResultAsync<OrgEnt[], never> =>
+          v.userOrgIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.orgsTable
+                .findMany({
+                  where: inArray(orgsTable.orgId, v.userOrgIds)
+                })
+                .then(userOrgEnts => Result.succeed(userOrgEnts))
+      ),
+      Result.bind(
+        'orgs',
+        (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> =>
+          this.db.drizzle.query.orgsTable
             .findMany({
               where: eq(orgsTable.ownerId, v.userId)
             })
             .then((ownerOrgEnts: OrgEnt[]) => {
-              let orgEnts: OrgEnt[] = [...userOrgEnts];
+              let orgEnts: OrgEnt[] = [...v.userOrgEnts];
 
               ownerOrgEnts.forEach(ownerOrgEnt => {
                 if (
@@ -102,8 +120,7 @@ export class GetOrgsListController {
               return Result.sequence(orgEnts, orgEnt =>
                 this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
               );
-            });
-        }
+            })
       ),
       Result.map(
         (v): ToBackendGetOrgsListOutput => ({

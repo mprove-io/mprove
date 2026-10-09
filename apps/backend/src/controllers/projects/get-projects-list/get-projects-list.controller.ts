@@ -63,25 +63,32 @@ export class GetProjectsListController {
         userId: user.userId
       }),
       Result.bind(
+        'userMemberEnts',
+        (v): Result.ResultAsync<MemberEnt[], never> =>
+          this.db.drizzle.query.membersTable
+            .findMany({
+              where: eq(membersTable.memberId, v.userId)
+            })
+            .then(userMemberEnts => Result.succeed(userMemberEnts))
+      ),
+      Result.bind(
+        'projectIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(
+            v.userMemberEnts.map(userMemberEnt => userMemberEnt.projectId)
+          )
+      ),
+      Result.bind(
         'projects',
         async (
           v
-        ): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> => {
-          let userMemberEnts: MemberEnt[] =
-            await this.db.drizzle.query.membersTable.findMany({
-              where: eq(membersTable.memberId, v.userId)
-            });
-
-          let projectIds: string[] = userMemberEnts.map(
-            userMemberEnt => userMemberEnt.projectId
-          );
-
-          return projectIds.length === 0
+        ): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> =>
+          v.projectIds.length === 0
             ? Result.succeed([])
             : this.db.drizzle.query.projectsTable
                 .findMany({
                   where: and(
-                    inArray(projectsTable.projectId, projectIds),
+                    inArray(projectsTable.projectId, v.projectIds),
                     eq(projectsTable.orgId, v.orgId)
                   )
                 })
@@ -91,8 +98,7 @@ export class GetProjectsListController {
                       projectEnt: projectEnt
                     })
                   )
-                );
-        }
+                )
       ),
       Result.map(
         (v): ToBackendGetProjectsListOutput => ({

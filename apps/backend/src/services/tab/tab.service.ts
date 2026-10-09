@@ -54,14 +54,14 @@ import type { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
 import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
 import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
 import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
-import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
+import type { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import type { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import type { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
-import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
+import type { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import type { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
@@ -83,10 +83,12 @@ import type { GivenEntToTabResultError } from '#common/types/backend/function-er
 import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
 import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
 import type { NoteEntToTabResultError } from '#common/types/backend/function-errors/note-ent-to-tab-result-error';
+import type { OcSessionEntToTabResultError } from '#common/types/backend/function-errors/oc-session-ent-to-tab-result-error';
 import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
 import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
 import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
+import type { SessionEntToTabResultError } from '#common/types/backend/function-errors/session-ent-to-tab-result-error';
 import type { StructEntToTabResultError } from '#common/types/backend/function-errors/struct-ent-to-tab-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
@@ -109,6 +111,8 @@ import type { ModelLt } from '#common/types/shared/st-lt/models/model-lt';
 import type { ModelSt } from '#common/types/shared/st-lt/models/model-st';
 import type { NoteLt } from '#common/types/shared/st-lt/notes/note-lt';
 import type { NoteSt } from '#common/types/shared/st-lt/notes/note-st';
+import type { OcSessionLt } from '#common/types/shared/st-lt/oc-sessions/oc-session-lt';
+import type { OcSessionSt } from '#common/types/shared/st-lt/oc-sessions/oc-session-st';
 import type { OrgLt } from '#common/types/shared/st-lt/orgs/org-lt';
 import type { OrgSt } from '#common/types/shared/st-lt/orgs/org-st';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
@@ -117,6 +121,8 @@ import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-l
 import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';
 import type { RoleLt } from '#common/types/shared/st-lt/roles/role-lt';
 import type { RoleSt } from '#common/types/shared/st-lt/roles/role-st';
+import type { SessionLt } from '#common/types/shared/st-lt/sessions/session-lt';
+import type { SessionSt } from '#common/types/shared/st-lt/sessions/session-st';
 import type { StructLt } from '#common/types/shared/st-lt/structs/struct-lt';
 import type { StructSt } from '#common/types/shared/st-lt/structs/struct-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
@@ -1018,12 +1024,34 @@ export class TabService {
       return;
     }
 
-    let session: SessionTab = {
-      ...sessionEnt,
-      ...this.getTabProps({ ent: sessionEnt })
-    };
+    let result: Result.Result<SessionTab, SessionEntToTabResultError> =
+      this.sessionEntToTabResult({ sessionEnt: sessionEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let session: SessionTab = result.value;
 
     return session;
+  }
+
+  sessionEntToTabResult(item: {
+    sessionEnt: SessionEnt;
+  }): Result.Result<SessionTab, SessionEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<SessionSt, SessionLt>,
+          GetTabPropsResultError
+        > => this.getTabPropsResult<SessionSt, SessionLt>({ ent: v.sessionEnt })
+      ),
+      Result.map((v): SessionTab => ({ ...v.sessionEnt, ...v.tabProps.props }))
+    );
   }
 
   ocSessionEntToTab(ocSessionEnt: OcSessionEnt): OcSessionTab {
@@ -1031,12 +1059,39 @@ export class TabService {
       return;
     }
 
-    let ocSession: OcSessionTab = {
-      ...ocSessionEnt,
-      ...this.getTabProps({ ent: ocSessionEnt })
-    };
+    let result: Result.Result<OcSessionTab, OcSessionEntToTabResultError> =
+      this.ocSessionEntToTabResult({ ocSessionEnt: ocSessionEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let ocSession: OcSessionTab = result.value;
 
     return ocSession;
+  }
+
+  ocSessionEntToTabResult(item: {
+    ocSessionEnt: OcSessionEnt;
+  }): Result.Result<OcSessionTab, OcSessionEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<OcSessionSt, OcSessionLt>,
+          GetTabPropsResultError
+        > =>
+          this.getTabPropsResult<OcSessionSt, OcSessionLt>({
+            ent: v.ocSessionEnt
+          })
+      ),
+      Result.map(
+        (v): OcSessionTab => ({ ...v.ocSessionEnt, ...v.tabProps.props })
+      )
+    );
   }
 
   ocEventEntToTab(eventEnt: OcEventEnt): OcEventTab {

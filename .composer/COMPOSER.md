@@ -68,6 +68,7 @@
 - rules/byethrow/sequence-result-collections.md
 - rules/byethrow/error-policy.md
 - rules/byethrow/pipe-state.md
+- rules/byethrow/pipe-step-granularity.md
 - rules/byethrow/pipe-step-callbacks.md
 - rules/byethrow/pipe-step-argument-types.md
 - rules/byethrow/guard-optional-operations-at-caller.md

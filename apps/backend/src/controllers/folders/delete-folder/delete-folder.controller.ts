@@ -243,17 +243,19 @@ export class DeleteFolderController {
         })
       ),
       Result.bind(
+        'currentBridgeEnt',
+        (v): Result.Result<BridgeEnt, never> =>
+          Result.succeed(
+            v.branchBridgeEnts.find(bridgeEnt => bridgeEnt.envId === v.envId)
+          )
+      ),
+      Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> => {
-          let currentBridgeEnt: BridgeEnt = v.branchBridgeEnts.find(
-            bridgeEnt => bridgeEnt.envId === v.envId
-          );
-
-          return this.structsService.getStructCheckExistsResult({
-            structId: currentBridgeEnt.structId,
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.currentBridgeEnt.structId,
             projectId: v.projectId
-          });
-        }
+          })
       ),
       Result.bind(
         'modelPartXs',
@@ -265,22 +267,16 @@ export class DeleteFolderController {
             })
           })
       ),
-      Result.map((v): ToBackendDeleteFolderOutput => {
-        let currentBridgeEnt: BridgeEnt = v.branchBridgeEnts.find(
-          bridgeEnt => bridgeEnt.envId === v.envId
-        );
-
-        let payload: ToBackendDeleteFolderOutput = {
+      Result.map(
+        (v): ToBackendDeleteFolderOutput => ({
           repo: v.diskDeleteFolderOutput.repo,
           struct: this.structsService.tabToApi({
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),
-          needValidate: currentBridgeEnt.needValidate
-        };
-
-        return payload;
-      })
+          needValidate: v.currentBridgeEnt.needValidate
+        })
+      )
     );
   }
 }

@@ -30,5 +30,6 @@ For collections, return `Result.sequence` with the conversion callback from
 
 Keep missing-entity guards at the caller and preserve existing missing-value
 behavior. Keep steps separate when entities are needed elsewhere in the
-pipeline, including authorization, existence checks, or mutations. Do not
-reorder checks, queries, or side effects merely to combine steps.
+pipeline, including authorization, existence checks, or mutations. When
+combining steps, follow the preservation requirements in "Pipe step
+granularity".

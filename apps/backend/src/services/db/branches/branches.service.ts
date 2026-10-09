@@ -13,6 +13,7 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckBranchDoesNotExistResultError } from '#common/types/backend/function-errors/check-branch-does-not-exist-result-error';
 import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
 
 @Injectable()
@@ -85,25 +86,28 @@ export class BranchesService {
       );
   }
 
-  async checkBranchDoesNotExist(item: {
+  async checkBranchDoesNotExistResult(item: {
     projectId: string;
     repoId: string;
     branchId: string;
-  }) {
+  }): Result.ResultAsync<void, CheckBranchDoesNotExistResultError> {
     let { projectId, repoId, branchId } = item;
 
-    let branch = await this.db.drizzle.query.branchesTable.findFirst({
-      where: and(
-        eq(branchesTable.projectId, projectId),
-        eq(branchesTable.repoId, repoId),
-        eq(branchesTable.branchId, branchId)
-      )
-    });
+    let branchEnt: BranchEnt =
+      await this.db.drizzle.query.branchesTable.findFirst({
+        where: and(
+          eq(branchesTable.projectId, projectId),
+          eq(branchesTable.repoId, repoId),
+          eq(branchesTable.branchId, branchId)
+        )
+      });
 
-    if (isDefined(branch)) {
-      throw new ServerError({
-        message: 'BACKEND_BRANCH_ALREADY_EXISTS'
+    if (isDefined(branchEnt)) {
+      return Result.fail({
+        code: 'BACKEND_BRANCH_ALREADY_EXISTS'
       });
     }
+
+    return Result.succeed();
   }
 }

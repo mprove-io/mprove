@@ -141,22 +141,26 @@ export class DeleteRoleController {
         (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
           this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
-      Result.map((v): ToBackendDeleteRoleOutput => {
-        let updatedUserMember: MemberTab = v.membersToUpdate.find(
-          member => member.memberId === v.userMember.memberId
-        );
+      Result.bind(
+        'responseUserMember',
+        (v): Result.Result<MemberTab, never> => {
+          let updatedUserMember: MemberTab = v.membersToUpdate.find(
+            member => member.memberId === v.userMember.memberId
+          );
 
-        let payload: ToBackendDeleteRoleOutput = {
+          return Result.succeed(
+            isDefined(updatedUserMember) ? updatedUserMember : v.userMember
+          );
+        }
+      ),
+      Result.map(
+        (v): ToBackendDeleteRoleOutput => ({
           userMember: this.membersService.tabToApi({
-            member: isDefined(updatedUserMember)
-              ? updatedUserMember
-              : v.userMember
+            member: v.responseUserMember
           }),
           roles: v.apiRoles
-        };
-
-        return payload;
-      })
+        })
+      )
     );
   }
 }

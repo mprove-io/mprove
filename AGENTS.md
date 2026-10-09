@@ -644,6 +644,12 @@ directly return a promise chain with an explicit
 when the callback needs `await`; keep synchronous `.then(...)` conversion
 callbacks non-async.
 
+When a Result callback must return a promise but has a synchronous fallback
+branch, make the enclosing callback `async` and return `Result.succeed(...)`
+directly from that branch instead of `Promise.resolve(Result.succeed(...))`.
+Retain its explicit `Result.ResultAsync<Success, Error>` return type and keep
+query `.then(...)` conversion chains intact.
+
 Keeping `async` on functions and methods also preserves conversion of
 synchronous exceptions in the outer body to promise rejections. Direct returns
 from `.then(...)` follow the promise-chain exception under "Explicit variable
@@ -942,6 +948,11 @@ type.
 Keep a one-off final projection inline in the `Result.map` callback. Do not
 extract it into a named function used only by that final projection.
 
+When the callback only constructs the output object, return the object directly
+with an expression body and an explicit callback return type. Do not introduce a
+redundant typed `payload` variable followed by `return payload`. Intermediate
+operations follow "Pipe step granularity".
+
 ```ts
 Result.map(
   (v): SomeType => ({
@@ -985,8 +996,9 @@ For collections, return `Result.sequence` with the conversion callback from
 
 Keep missing-entity guards at the caller and preserve existing missing-value
 behavior. Keep steps separate when entities are needed elsewhere in the
-pipeline, including authorization, existence checks, or mutations. Do not
-reorder checks, queries, or side effects merely to combine steps.
+pipeline, including authorization, existence checks, or mutations. When
+combining steps, follow the preservation requirements in "Pipe step
+granularity".
 
 ### Function error types
 
@@ -1162,6 +1174,43 @@ return Result.pipe(
         userId: v.userId
       })
   )
+);
+```
+
+### Pipe step granularity
+
+Prefer flat pipelines with named steps for distinct intermediate operations
+rather than putting several prerequisite queries or transformations in one
+callback.
+
+- Separate prerequisite lookups and derived query inputs, such as ID arrays,
+  when doing so leaves each query binding focused on one operation.
+- Bind intermediate filtering, sorting, lookup-map construction, and fallback
+  selection when they obscure the final response projection.
+- Bind a value once when multiple later steps use it, rather than repeating a
+  lookup or transformation. Keep the binding at the original first-use point.
+- For infallible named intermediate values, use `Result.bind` with
+  `Result.succeed` and an explicit `Result.Result<Value, never>` callback return
+  type. Do not manually rebuild the full pipeline state just to add a property.
+
+Do not add steps merely for every expression or trivial one-off output field.
+Keep lookup/conversion together as specified by "Combine lookup and conversion",
+and keep final projections inline as specified by "Result callback return
+types".
+
+Step-only refactors must preserve query, validation, conversion, and side-effect
+order; conditional bypasses and empty-list guards; missing-value behavior and
+error precedence; and transaction/retry boundaries. Do not split a transaction
+or retry into pipeline steps, introduce new existence failures, or move
+post-persistence selection before persistence.
+
+```ts
+Result.bind(
+  'projectIds',
+  (v): Result.Result<string[], never> =>
+    Result.succeed(
+      v.userMemberEnts.map(userMemberEnt => userMemberEnt.projectId)
+    )
 );
 ```
 

@@ -9,16 +9,21 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteBranchRequestDto,
   ToBackendDeleteBranchResponseDto
 } from '#backend/controllers/branches/delete-branch/delete-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
@@ -28,10 +33,17 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { BackendDefaultBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-default-branch-cannot-be-deleted-error';
+import type { BackendSessionBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-session-branch-cannot-be-deleted-error';
+import type { CheckRepoIdResultError } from '#common/types/backend/function-errors/check-repo-id-result-error';
+import type { GetMemberCheckIsEditorResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-result-error';
+import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
 
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
+import type { ToBackendDeleteBranchOutput } from '#common/types/backend/routes/branches/delete-branch/delete-branch-output';
+import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)
@@ -60,87 +72,105 @@ export class DeleteBranchController {
   async deleteBranch(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteBranchRequestDto
-  ) {
-    let { projectId, repoId, branchId } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    if (repoType === 'session') {
-      throw new ServerError({
-        message: 'BACKEND_SESSION_BRANCH_CANNOT_BE_DELETED'
-      });
-    }
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckIsEditor({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    await this.projectsService.checkProjectIsNotRestricted({
-      projectId: projectId,
-      userMember: userMember,
-      repoId: repoId
-    });
-
-    if (branchId === project.defaultBranch) {
-      throw new ServerError({
-        message: 'BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED'
-      });
-    }
-
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
-
-    await this.rpcService.sendToDiskUnwrapOutput({
-      request: {
-        operation: 'deleteBranch',
+  ): Promise<BackendResultForOperation<'deleteBranch'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
         traceId: body.traceId,
-        input: {
-          baseProject: baseProject,
-          repoId: repoId,
-          branch: branchId
-        }
-      }
-    });
+        userId: user.userId
+      }),
+      Result.bind(
+        'repoType',
+        (v): Result.ResultAsync<RepoType, CheckRepoIdResultError> =>
+          this.sessionsService.checkRepoIdResult({
+            repoId: v.repoId,
+            userId: v.userId,
+            projectId: v.projectId,
+            allowProdRepo: true
+          })
+      ),
+      Result.andThrough(v =>
+        v.repoType === 'session'
+          ? Result.fail({
+              code: 'BACKEND_SESSION_BRANCH_CANNOT_BE_DELETED'
+            } satisfies BackendSessionBranchCannotBeDeletedError)
+          : Result.succeed()
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> =>
+          this.membersService.getMemberCheckIsEditorResult({
+            memberId: v.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        this.projectsService.checkProjectIsNotRestrictedResult({
+          projectId: v.projectId,
+          userMember: v.userMember,
+          repoId: v.repoId
+        })
+      ),
+      Result.andThrough(v =>
+        v.branchId === v.project.defaultBranch
+          ? Result.fail({
+              code: 'BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED'
+            } satisfies BackendDefaultBranchCannotBeDeletedError)
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        this.rpcService.sendToDiskResult({
+          request: {
+            operation: 'deleteBranch',
+            traceId: v.traceId,
+            input: {
+              baseProject: this.tabService.projectTabToBaseProject({
+                project: v.project
+              }),
+              repoId: v.repoId,
+              branch: v.branchId
+            }
+          }
+        })
+      ),
+      Result.andThrough(async v => {
+        await retry(
+          async () =>
+            await this.db.drizzle.transaction(async tx => {
+              await tx
+                .delete(branchesTable)
+                .where(
+                  and(
+                    eq(branchesTable.projectId, v.projectId),
+                    eq(branchesTable.repoId, v.repoId),
+                    eq(branchesTable.branchId, v.branchId)
+                  )
+                );
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(branchesTable)
-            .where(
-              and(
-                eq(branchesTable.projectId, projectId),
-                eq(branchesTable.repoId, repoId),
-                eq(branchesTable.branchId, branchId)
-              )
-            );
-
-          await tx
-            .delete(bridgesTable)
-            .where(
-              and(
-                eq(bridgesTable.projectId, projectId),
-                eq(bridgesTable.repoId, repoId),
-                eq(bridgesTable.branchId, branchId)
-              )
-            );
-        }),
-      getRetryOption(this.cs, this.logger)
+              await tx
+                .delete(bridgesTable)
+                .where(
+                  and(
+                    eq(bridgesTable.projectId, v.projectId),
+                    eq(bridgesTable.repoId, v.repoId),
+                    eq(bridgesTable.branchId, v.branchId)
+                  )
+                );
+            }),
+          getRetryOption(this.cs, this.logger)
+        );
+        return Result.succeed();
+      }),
+      Result.map((v): ToBackendDeleteBranchOutput => ({}))
     );
-
-    let payload = {};
-
-    return payload;
   }
 }

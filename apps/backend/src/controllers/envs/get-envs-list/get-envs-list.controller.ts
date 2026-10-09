@@ -75,28 +75,35 @@ export class GetEnvsListController {
               )
             )
       ),
-      Result.map((v): ToBackendGetEnvsListOutput => {
-        let envs: EnvTab[] =
-          v.isFilter === true
-            ? v.envs.filter(env => {
-                let isEnvMember: boolean = env.memberIds.includes(v.userId);
+      Result.bind(
+        'visibleEnvs',
+        (v): Result.Result<EnvTab[], never> =>
+          Result.succeed(
+            v.isFilter === true
+              ? v.envs.filter(env => {
+                  let isEnvMember: boolean = env.memberIds.includes(v.userId);
 
-                return isEnvMember || env.envId === PROJECT_ENV_PROD;
-              })
-            : v.envs;
-
-        let sortedEnvs: EnvTab[] = envs.sort((a, b) =>
-          a.envId > b.envId ? 1 : b.envId > a.envId ? -1 : 0
-        );
-
-        let payload: ToBackendGetEnvsListOutput = {
-          envsList: sortedEnvs.map(env =>
+                  return isEnvMember || env.envId === PROJECT_ENV_PROD;
+                })
+              : v.envs
+          )
+      ),
+      Result.bind(
+        'sortedEnvs',
+        (v): Result.Result<EnvTab[], never> =>
+          Result.succeed(
+            v.visibleEnvs.sort((a, b) =>
+              a.envId > b.envId ? 1 : b.envId > a.envId ? -1 : 0
+            )
+          )
+      ),
+      Result.map(
+        (v): ToBackendGetEnvsListOutput => ({
+          envsList: v.sortedEnvs.map(env =>
             this.envsService.wrapToApiEnvsItem({ env: env })
           )
-        };
-
-        return payload;
-      })
+        })
+      )
     );
   }
 }
