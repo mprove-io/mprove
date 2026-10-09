@@ -18,6 +18,7 @@ import type { CheckRoleGivenDoesNotExistResultError } from '#common/types/backen
 import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
 import type { GetRoleCheckExistsResultError } from '#common/types/backend/function-errors/get-role-check-exists-result-error';
 import type { GetRoleGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-role-given-check-exists-result-error';
+import type { GetRolesResultError } from '#common/types/backend/function-errors/get-roles-result-error';
 import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
@@ -162,16 +163,20 @@ export class RolesService {
       : Result.succeed(roleGiven);
   }
 
-  async getRoles(item: { projectId: string }) {
+  async getRolesResult(item: {
+    projectId: string;
+  }): Result.ResultAsync<RoleTab[], GetRolesResultError> {
     let { projectId } = item;
 
-    let roles = await this.db.drizzle.query.rolesTable
+    return this.db.drizzle.query.rolesTable
       .findMany({
         where: eq(rolesTable.projectId, projectId)
       })
-      .then(xs => xs.map(x => this.tabService.roleEntToTab(x)));
-
-    return roles;
+      .then(roleEnts =>
+        Result.sequence(roleEnts, roleEnt =>
+          this.tabService.roleEntToTabResult({ roleEnt: roleEnt })
+        )
+      );
   }
 
   async getApiRoles(item: { projectId: string }): Promise<Role[]> {

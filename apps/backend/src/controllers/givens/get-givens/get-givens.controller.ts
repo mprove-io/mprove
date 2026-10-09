@@ -1,15 +1,23 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendGetGivensRequestDto,
   ToBackendGetGivensResponseDto
 } from '#backend/controllers/givens/get-givens/get-givens.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
+import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetGivensOutput } from '#common/types/backend/routes/givens/get-givens/get-givens-output';
 
@@ -34,27 +42,44 @@ export class GetGivensController {
   async getGivens(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetGivensRequestDto
-  ) {
-    let { projectId } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let apiGivens = await this.givensService.getApiGivens({
-      projectId: projectId
-    });
-
-    let payload: ToBackendGetGivensOutput = {
-      userMember: this.membersService.tabToApi({ member: userMember }),
-      givens: apiGivens
-    };
-
-    return payload;
+  ): Promise<BackendResultForOperation<'getGivens'>> {
+    return Result.pipe(
+      Result.succeed({
+        ...body.input,
+        user: user,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        givensService: this.givensService
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (
+          v
+        ): Result.ResultAsync<
+          MemberTab,
+          GetMemberCheckIsEditorOrAdminResultError
+        > =>
+          v.membersService.getMemberCheckIsEditorOrAdminResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'apiGivens',
+        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+          v.givensService.getApiGivensResult({ projectId: v.projectId })
+      ),
+      Result.map(
+        (v): ToBackendGetGivensOutput => ({
+          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          givens: v.apiGivens
+        })
+      )
+    );
   }
 }

@@ -14,6 +14,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckGivenDoesNotExistResultError } from '#common/types/backend/function-errors/check-given-does-not-exist-result-error';
 import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
 import type { GetGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-given-check-exists-result-error';
 import type { GivenEntToTabResultError } from '#common/types/backend/function-errors/given-ent-to-tab-result-error';
@@ -113,21 +114,22 @@ export class GivensService {
     return Result.succeed();
   }
 
-  async checkGivenDoesNotExist(item: { projectId: string; givenId: string }) {
+  async checkGivenDoesNotExistResult(item: {
+    projectId: string;
+    givenId: string;
+  }): Result.ResultAsync<void, CheckGivenDoesNotExistResultError> {
     let { projectId, givenId } = item;
 
-    let given = await this.db.drizzle.query.givensTable.findFirst({
+    let givenEnt: GivenEnt = await this.db.drizzle.query.givensTable.findFirst({
       where: and(
         eq(givensTable.projectId, projectId),
         eq(givensTable.givenId, givenId)
       )
     });
 
-    if (isDefined(given)) {
-      throw new ServerError({
-        message: 'BACKEND_GIVEN_ALREADY_EXISTS'
-      });
-    }
+    return isDefined(givenEnt)
+      ? Result.fail({ code: 'BACKEND_GIVEN_ALREADY_EXISTS' })
+      : Result.succeed();
   }
 
   async getGivenCheckExists(item: {

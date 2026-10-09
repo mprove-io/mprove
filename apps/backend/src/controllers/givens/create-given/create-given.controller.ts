@@ -9,23 +9,44 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateGivenRequestDto,
   ToBackendCreateGivenResponseDto
 } from '#backend/controllers/givens/create-given/create-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  GivenTab,
+  MemberTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
+import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
+import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateGivenOutput } from '#common/types/backend/routes/givens/create-given/create-given-output';
+
+type CreateGivenWriteState = {
+  projectId: string;
+  userMember: MemberTab;
+  membersService: MembersService;
+  givensService: GivensService;
+  db: Db;
+  cs: ConfigService<BackendConfig>;
+  logger: Logger;
+  given: GivenTab;
+};
 
 @ApiTags('Givens')
 @UseGuards(ThrottlerUserIdGuard)
@@ -52,60 +73,90 @@ export class CreateGivenController {
   async createGiven(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateGivenRequestDto
-  ) {
-    let { projectId, givenId, type, isMultiple, values } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    await this.givensService.checkGivenDoesNotExist({
-      projectId: projectId,
-      givenId: givenId
-    });
-
-    this.givensService.validateGivenValues({
-      type: type,
-      isMultiple: isMultiple,
-      values: values
-    });
-
-    let newGiven = this.givensService.makeGiven({
-      projectId: projectId,
-      givenId: givenId,
-      type: type,
-      isMultiple: isMultiple,
-      values: values
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                givens: [newGiven]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
+  ): Promise<BackendResultForOperation<'createGiven'>> {
+    return Result.pipe(
+      Result.succeed({
+        ...body.input,
+        user: user,
+        projectsService: this.projectsService,
+        membersService: this.membersService,
+        givensService: this.givensService,
+        db: this.db,
+        cs: this.cs,
+        logger: this.logger
+      }),
+      Result.andThrough(v =>
+        v.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+          v.membersService.getMemberCheckIsAdminResult({
+            memberId: v.user.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        v.givensService.checkGivenDoesNotExistResult({
+          projectId: v.projectId,
+          givenId: v.givenId
+        })
+      ),
+      Result.andThrough(v =>
+        v.givensService.validateGivenValuesResult({
+          type: v.type,
+          isMultiple: v.isMultiple,
+          values: v.values
+        })
+      ),
+      Result.map(
+        (v): CreateGivenWriteState => ({
+          projectId: v.projectId,
+          userMember: v.userMember,
+          membersService: v.membersService,
+          givensService: v.givensService,
+          db: v.db,
+          cs: v.cs,
+          logger: v.logger,
+          given: v.givensService.makeGiven({
+            projectId: v.projectId,
+            givenId: v.givenId,
+            type: v.type,
+            isMultiple: v.isMultiple,
+            values: v.values
+          })
+        })
+      ),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await v.db.drizzle.transaction(
+                  async tx =>
+                    await v.db.packer.write({
+                      tx: tx,
+                      insert: { givens: [v.given] }
+                    })
+                ),
+              getRetryOption(v.cs, v.logger)
+            );
+          }
+        })
+      ),
+      Result.bind(
+        'apiGivens',
+        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+          v.givensService.getApiGivensResult({ projectId: v.projectId })
+      ),
+      Result.map(
+        (v): ToBackendCreateGivenOutput => ({
+          userMember: v.membersService.tabToApi({ member: v.userMember }),
+          givens: v.apiGivens
+        })
+      )
     );
-
-    let apiGivens = await this.givensService.getApiGivens({
-      projectId: projectId
-    });
-
-    let payload: ToBackendCreateGivenOutput = {
-      userMember: this.membersService.tabToApi({ member: userMember }),
-      givens: apiGivens
-    };
-
-    return payload;
   }
 }
