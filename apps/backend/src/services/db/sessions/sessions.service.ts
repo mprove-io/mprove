@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, desc, eq, inArray, notInArray } from 'drizzle-orm';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
@@ -13,6 +14,7 @@ import {
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
+import type { CheckRepoIdResultError } from '#common/types/backend/function-errors/check-repo-id-result-error';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
@@ -174,37 +176,53 @@ export class SessionsService {
     projectId: string;
     allowProdRepo: boolean;
   }): Promise<RepoType> {
+    let result: Result.Result<RepoType, CheckRepoIdResultError> =
+      await this.checkRepoIdResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let repoType: RepoType = result.value;
+
+    return repoType;
+  }
+
+  async checkRepoIdResult(item: {
+    repoId: string;
+    userId: string;
+    projectId: string;
+    allowProdRepo: boolean;
+  }): Result.ResultAsync<RepoType, CheckRepoIdResultError> {
     let { repoId, userId, projectId, allowProdRepo } = item;
 
     if (repoId === PROD_REPO_ID) {
       if (allowProdRepo === false) {
-        throw new ServerError({
-          message: 'BACKEND_PRODUCTION_REPO_NOT_ALLOWED'
-        });
+        return Result.fail({ code: 'BACKEND_PRODUCTION_REPO_NOT_ALLOWED' });
       }
-      return 'production';
+
+      return Result.succeed('production');
     }
 
     if (repoId === userId) {
-      return 'dev';
+      return Result.succeed('dev');
     }
 
-    let session = await this.db.drizzle.query.sessionsTable.findFirst({
-      where: and(
-        eq(sessionsTable.sessionId, repoId),
-        eq(sessionsTable.repoId, repoId),
-        eq(sessionsTable.userId, userId),
-        eq(sessionsTable.projectId, projectId)
-      )
-    });
+    let sessionEnt: SessionEnt =
+      await this.db.drizzle.query.sessionsTable.findFirst({
+        where: and(
+          eq(sessionsTable.sessionId, repoId),
+          eq(sessionsTable.repoId, repoId),
+          eq(sessionsTable.userId, userId),
+          eq(sessionsTable.projectId, projectId)
+        )
+      });
 
-    if (session) {
-      return 'session';
+    if (sessionEnt) {
+      return Result.succeed('session');
     }
 
-    throw new ServerError({
-      message: 'BACKEND_FORBIDDEN_REPO_ID'
-    });
+    return Result.fail({ code: 'BACKEND_FORBIDDEN_REPO_ID' });
   }
 
   tabToOcSessionApi(item: { ocSession: OcSessionTab }): OcSessionApi {

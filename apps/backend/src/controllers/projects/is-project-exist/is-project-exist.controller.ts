@@ -74,14 +74,12 @@ export class IsProjectExistController {
       ),
       Result.bind(
         'projectEnt',
-        async (v): Result.ResultAsync<ProjectEnt, never> => {
-          let projectEnt: ProjectEnt =
-            await v.db.drizzle.query.projectsTable.findFirst({
+        (v): Result.ResultAsync<ProjectEnt, never> =>
+          v.db.drizzle.query.projectsTable
+            .findFirst({
               where: eq(projectsTable.nameHash, v.nameHash)
-            });
-
-          return Result.succeed(projectEnt);
-        }
+            })
+            .then(projectEnt => Result.succeed(projectEnt))
       ),
       Result.map(
         (v): ToBackendIsProjectExistOutput => ({

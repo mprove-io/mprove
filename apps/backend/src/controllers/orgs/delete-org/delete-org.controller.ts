@@ -102,18 +102,16 @@ export class DeleteOrgController {
       ),
       Result.bind(
         'projectIds',
-        async (v): Result.ResultAsync<string[], never> => {
-          let projectEnts: ProjectEnt[] =
-            await v.db.drizzle.query.projectsTable.findMany({
+        (v): Result.ResultAsync<string[], never> =>
+          v.db.drizzle.query.projectsTable
+            .findMany({
               where: eq(projectsTable.orgId, v.orgId)
-            });
-
-          let projectIds: string[] = projectEnts.map(
-            projectEnt => projectEnt.projectId
-          );
-
-          return Result.succeed(projectIds);
-        }
+            })
+            .then((projectEnts: ProjectEnt[]) =>
+              Result.succeed(
+                projectEnts.map(projectEnt => projectEnt.projectId)
+              )
+            )
       ),
       Result.andThrough(async v => {
         await retry(

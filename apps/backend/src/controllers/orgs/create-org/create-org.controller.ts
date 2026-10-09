@@ -100,13 +100,15 @@ export class CreateOrgController {
             hashSecret: v.hashSecret
           })
       ),
-      Result.bind('orgEnt', async (v): Result.ResultAsync<OrgEnt, never> => {
-        let orgEnt: OrgEnt = await v.db.drizzle.query.orgsTable.findFirst({
-          where: eq(orgsTable.nameHash, v.nameHash)
-        });
-
-        return Result.succeed(orgEnt);
-      }),
+      Result.bind(
+        'orgEnt',
+        (v): Result.ResultAsync<OrgEnt, never> =>
+          v.db.drizzle.query.orgsTable
+            .findFirst({
+              where: eq(orgsTable.nameHash, v.nameHash)
+            })
+            .then(orgEnt => Result.succeed(orgEnt))
+      ),
       Result.andThrough(v =>
         v.name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()
           ? Result.fail({ code: 'BACKEND_RESTRICTED_ORGANIZATION_NAME' })

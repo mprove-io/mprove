@@ -119,14 +119,12 @@ export class CreateEnvController {
       ),
       Result.bind(
         'branchEnts',
-        async (v): Result.ResultAsync<BranchEnt[], never> => {
-          let branchEnts: BranchEnt[] =
-            await v.db.drizzle.query.branchesTable.findMany({
+        (v): Result.ResultAsync<BranchEnt[], never> =>
+          v.db.drizzle.query.branchesTable
+            .findMany({
               where: eq(branchesTable.projectId, v.projectId)
-            });
-
-          return Result.succeed(branchEnts);
-        }
+            })
+            .then(branchEnts => Result.succeed(branchEnts))
       ),
       Result.bind('newBridges', (v): Result.Result<BridgeTab[], never> => {
         let newBridges: BridgeTab[] = v.branchEnts.map(branchEnt =>

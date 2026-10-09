@@ -128,23 +128,19 @@ export class CreateProjectController {
       ),
       Result.bind(
         'existingProject',
-        async (
-          v
-        ): Result.ResultAsync<ProjectTab, ProjectEntToTabResultError> => {
-          let projectEnt: ProjectEnt =
-            await v.db.drizzle.query.projectsTable.findFirst({
+        (v): Result.ResultAsync<ProjectTab, ProjectEntToTabResultError> =>
+          v.db.drizzle.query.projectsTable
+            .findFirst({
               where: and(
                 eq(projectsTable.orgId, v.orgId),
                 eq(projectsTable.nameHash, v.nameHash)
               )
-            });
-
-          return isUndefined(projectEnt)
-            ? Result.succeed(undefined)
-            : v.tabService.projectEntToTabResult({
-                projectEnt: projectEnt
-              });
-        }
+            })
+            .then((projectEnt: ProjectEnt) =>
+              isUndefined(projectEnt)
+                ? Result.succeed(undefined)
+                : v.tabService.projectEntToTabResult({ projectEnt: projectEnt })
+            )
       ),
       Result.andThrough(v =>
         isDefined(v.existingProject)
@@ -195,13 +191,13 @@ export class CreateProjectController {
             connections: []
           })
       ),
-      Result.andThrough(async v => {
-        await v.db.drizzle
-          .delete(notesTable)
-          .where(eq(notesTable.noteId, v.noteId));
-
-        return Result.succeed();
-      }),
+      Result.andThrough(
+        (v): Result.ResultAsync<void, never> =>
+          v.db.drizzle
+            .delete(notesTable)
+            .where(eq(notesTable.noteId, v.noteId))
+            .then(() => Result.succeed())
+      ),
       Result.map(
         (v): ToBackendCreateProjectOutput => ({
           project: v.projectsService.tabToApiProject({

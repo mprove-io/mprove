@@ -108,25 +108,23 @@ export class SetOrgOwnerController {
       ),
       Result.bind(
         'newOwner',
-        async (
-          v
-        ): Result.ResultAsync<UserTab, BackendNewOwnerNotFoundError> => {
-          let newOwnerEnt: UserEnt =
-            await v.db.drizzle.query.usersTable.findFirst({
+        (v): Result.ResultAsync<UserTab, BackendNewOwnerNotFoundError> =>
+          v.db.drizzle.query.usersTable
+            .findFirst({
               where: and(
                 eq(usersTable.emailHash, v.ownerEmailHash),
                 eq(usersTable.isEmailVerified, true)
               )
-            });
+            })
+            .then((newOwnerEnt: UserEnt) => {
+              if (isUndefined(newOwnerEnt)) {
+                return Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' });
+              }
 
-          if (isUndefined(newOwnerEnt)) {
-            return Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' });
-          }
+              let newOwner: UserTab = v.tabService.userEntToTab(newOwnerEnt);
 
-          let newOwner: UserTab = v.tabService.userEntToTab(newOwnerEnt);
-
-          return Result.succeed(newOwner);
-        }
+              return Result.succeed(newOwner);
+            })
       ),
       Result.inspect(v => {
         v.org.ownerId = v.newOwner.userId;

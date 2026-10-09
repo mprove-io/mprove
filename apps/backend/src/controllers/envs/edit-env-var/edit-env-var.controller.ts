@@ -135,17 +135,15 @@ export class EditEnvVarController {
       }),
       Result.bind(
         'branchBridgeEnts',
-        async (v): Result.ResultAsync<BridgeEnt[], never> => {
-          let branchBridgeEnts: BridgeEnt[] =
-            await v.db.drizzle.query.bridgesTable.findMany({
+        (v): Result.ResultAsync<BridgeEnt[], never> =>
+          v.db.drizzle.query.bridgesTable
+            .findMany({
               where: and(
                 eq(bridgesTable.projectId, v.projectId),
                 eq(bridgesTable.envId, v.envId)
               )
-            });
-
-          return Result.succeed(branchBridgeEnts);
-        }
+            })
+            .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
       ),
       Result.inspect(v => {
         v.branchBridgeEnts.forEach(bridgeEnt => {

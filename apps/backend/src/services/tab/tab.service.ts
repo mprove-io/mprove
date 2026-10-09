@@ -36,8 +36,8 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
-import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
-import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import type { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
+import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
 import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
 import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
 import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
@@ -49,7 +49,7 @@ import type { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
-import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
+import type { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import type { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
 import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
 import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
@@ -62,7 +62,7 @@ import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import type { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
 import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
-import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import type { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
@@ -73,20 +73,28 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
+import type { BranchEntToTabResultError } from '#common/types/backend/function-errors/branch-ent-to-tab-result-error';
+import type { BridgeEntToTabResultError } from '#common/types/backend/function-errors/bridge-ent-to-tab-result-error';
 import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
 import type { DconfigEntToTabResultError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-result-error';
 import type { EnvEntToTabResultError } from '#common/types/backend/function-errors/env-ent-to-tab-result-error';
 import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
 import type { GivenEntToTabResultError } from '#common/types/backend/function-errors/given-ent-to-tab-result-error';
 import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
+import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
 import type { NoteEntToTabResultError } from '#common/types/backend/function-errors/note-ent-to-tab-result-error';
 import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
 import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
 import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
+import type { StructEntToTabResultError } from '#common/types/backend/function-errors/struct-ent-to-tab-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
 import type { AvatarSt } from '#common/types/shared/st-lt/avatars/avatar-st';
+import type { BranchLt } from '#common/types/shared/st-lt/branches/branch-lt';
+import type { BranchSt } from '#common/types/shared/st-lt/branches/branch-st';
+import type { BridgeLt } from '#common/types/shared/st-lt/bridges/bridge-lt';
+import type { BridgeSt } from '#common/types/shared/st-lt/bridges/bridge-st';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 import type { DconfigLt } from '#common/types/shared/st-lt/dconfigs/dconfig-lt';
@@ -97,6 +105,8 @@ import type { GivenLt } from '#common/types/shared/st-lt/givens/given-lt';
 import type { GivenSt } from '#common/types/shared/st-lt/givens/given-st';
 import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';
 import type { MemberSt } from '#common/types/shared/st-lt/members/member-st';
+import type { ModelLt } from '#common/types/shared/st-lt/models/model-lt';
+import type { ModelSt } from '#common/types/shared/st-lt/models/model-st';
 import type { NoteLt } from '#common/types/shared/st-lt/notes/note-lt';
 import type { NoteSt } from '#common/types/shared/st-lt/notes/note-st';
 import type { OrgLt } from '#common/types/shared/st-lt/orgs/org-lt';
@@ -107,6 +117,8 @@ import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-l
 import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';
 import type { RoleLt } from '#common/types/shared/st-lt/roles/role-lt';
 import type { RoleSt } from '#common/types/shared/st-lt/roles/role-st';
+import type { StructLt } from '#common/types/shared/st-lt/structs/struct-lt';
+import type { StructSt } from '#common/types/shared/st-lt/structs/struct-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
 
 @Injectable()
@@ -375,12 +387,37 @@ export class TabService {
       return;
     }
 
-    let branch: BranchTab = {
-      ...branchEnt,
-      ...this.getTabProps({ ent: branchEnt })
-    };
+    let result: Result.Result<BranchTab, BranchEntToTabResultError> =
+      this.branchEntToTabResult({ branchEnt: branchEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let branch: BranchTab = result.value;
 
     return branch;
+  }
+
+  branchEntToTabResult(item: {
+    branchEnt: BranchEnt;
+  }): Result.Result<BranchTab, BranchEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ branchEnt: item.branchEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<BranchSt, BranchLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<BranchSt, BranchLt>({
+            ent: v.branchEnt
+          })
+      ),
+      Result.map((v): BranchTab => ({ ...v.branchEnt, ...v.tabProps.props }))
+    );
   }
 
   bridgeEntToTab(bridgeEnt: BridgeEnt): BridgeTab {
@@ -388,12 +425,37 @@ export class TabService {
       return;
     }
 
-    let bridge: BridgeTab = {
-      ...bridgeEnt,
-      ...this.getTabProps({ ent: bridgeEnt })
-    };
+    let result: Result.Result<BridgeTab, BridgeEntToTabResultError> =
+      this.bridgeEntToTabResult({ bridgeEnt: bridgeEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let bridge: BridgeTab = result.value;
 
     return bridge;
+  }
+
+  bridgeEntToTabResult(item: {
+    bridgeEnt: BridgeEnt;
+  }): Result.Result<BridgeTab, BridgeEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ bridgeEnt: item.bridgeEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<BridgeSt, BridgeLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<BridgeSt, BridgeLt>({
+            ent: v.bridgeEnt
+          })
+      ),
+      Result.map((v): BridgeTab => ({ ...v.bridgeEnt, ...v.tabProps.props }))
+    );
   }
 
   cachedColumnEntToTab(cachedColumnEnt: CachedColumnsEnt): CachedColumnTab {
@@ -703,12 +765,32 @@ export class TabService {
       return;
     }
 
-    let model: ModelTab = {
-      ...modelEnt,
-      ...this.getTabProps({ ent: modelEnt })
-    };
+    let result: Result.Result<ModelTab, ModelEntToTabResultError> =
+      this.modelEntToTabResult({ modelEnt: modelEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let model: ModelTab = result.value;
 
     return model;
+  }
+
+  modelEntToTabResult(item: {
+    modelEnt: ModelEnt;
+  }): Result.Result<ModelTab, ModelEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ modelEnt: item.modelEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<TabProps<ModelSt, ModelLt>, GetTabPropsResultError> =>
+          v.tabService.getTabPropsResult<ModelSt, ModelLt>({ ent: v.modelEnt })
+      ),
+      Result.map((v): ModelTab => ({ ...v.modelEnt, ...v.tabProps.props }))
+    );
   }
 
   noteEntToTab(noteEnt: NoteEnt): NoteTab {
@@ -885,12 +967,37 @@ export class TabService {
       return;
     }
 
-    let struct: StructTab = {
-      ...structEnt,
-      ...this.getTabProps({ ent: structEnt })
-    };
+    let result: Result.Result<StructTab, StructEntToTabResultError> =
+      this.structEntToTabResult({ structEnt: structEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let struct: StructTab = result.value;
 
     return struct;
+  }
+
+  structEntToTabResult(item: {
+    structEnt: StructEnt;
+  }): Result.Result<StructTab, StructEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed({ structEnt: item.structEnt, tabService: this }),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<StructSt, StructLt>,
+          GetTabPropsResultError
+        > =>
+          v.tabService.getTabPropsResult<StructSt, StructLt>({
+            ent: v.structEnt
+          })
+      ),
+      Result.map((v): StructTab => ({ ...v.structEnt, ...v.tabProps.props }))
+    );
   }
 
   userEntToTab(userEnt: UserEnt): UserTab {

@@ -43,6 +43,7 @@ import type { BackendMemberDoesNotExistError } from '#common/types/backend/error
 import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
 import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
 import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { GetMemberCheckIsEditorResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-result-error';
 import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
@@ -149,23 +150,19 @@ export class MembersService {
       }),
       Result.bind(
         'memberEnt',
-        async (
-          v
-        ): Result.ResultAsync<MemberEnt, BackendMemberDoesNotExistError> => {
-          let memberEnt: MemberEnt =
-            await v.db.drizzle.query.membersTable.findFirst({
+        (v): Result.ResultAsync<MemberEnt, BackendMemberDoesNotExistError> =>
+          v.db.drizzle.query.membersTable
+            .findFirst({
               where: and(
                 eq(membersTable.memberId, v.memberId),
                 eq(membersTable.projectId, v.projectId)
               )
-            });
-
-          if (isUndefined(memberEnt)) {
-            return Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' });
-          }
-
-          return Result.succeed(memberEnt);
-        }
+            })
+            .then((memberEnt: MemberEnt) =>
+              isUndefined(memberEnt)
+                ? Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' })
+                : Result.succeed(memberEnt)
+            )
       ),
       Result.andThrough(v =>
         v.memberEnt.isAdmin === true
@@ -224,31 +221,43 @@ export class MembersService {
     );
   }
 
-  async getMemberCheckIsEditor(item: { memberId: string; projectId: string }) {
-    let { projectId, memberId } = item;
+  async getMemberCheckIsEditor(item: {
+    memberId: string;
+    projectId: string;
+  }): Promise<MemberTab> {
+    let result: Result.Result<MemberTab, GetMemberCheckIsEditorResultError> =
+      await this.getMemberCheckIsEditorResult(item);
 
-    let member = await this.db.drizzle.query.membersTable
-      .findFirst({
-        where: and(
-          eq(membersTable.memberId, memberId),
-          eq(membersTable.projectId, projectId)
-        )
-      })
-      .then(x => this.tabService.memberEntToTab(x));
-
-    if (isUndefined(member)) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (member.isEditor !== true) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_IS_NOT_EDITOR'
-      });
-    }
+    let member: MemberTab = result.value;
 
     return member;
+  }
+
+  async getMemberCheckIsEditorResult(item: {
+    memberId: string;
+    projectId: string;
+  }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> {
+    return Result.pipe(
+      Result.succeed({ ...item, membersService: this }),
+      Result.bind(
+        'member',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          v.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.memberId
+          })
+      ),
+      Result.andThrough(v =>
+        v.member.isEditor !== true
+          ? Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_EDITOR' })
+          : Result.succeed()
+      ),
+      Result.map((v): MemberTab => v.member)
+    );
   }
 
   async getMemberCheckExists(item: {

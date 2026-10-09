@@ -678,6 +678,54 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'createFolder') {
+        execution = makeBackendResultResponse({
+          operation: 'createFolder',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteFolder') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteFolder',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'moveCatalogNode') {
+        execution = makeBackendResultResponse({
+          operation: 'moveCatalogNode',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'renameCatalogNode') {
+        execution = makeBackendResultResponse({
+          operation: 'renameCatalogNode',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else if (req.operation === 'getSkills') {
         execution = makeBackendResultResponse({
           operation: 'getSkills',

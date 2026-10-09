@@ -1,14 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { BranchTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import {
+  type BranchEnt,
+  branchesTable
+} from '#backend/drizzle/postgres/schema/branches';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
 
 @Injectable()
 export class BranchesService {
@@ -46,9 +51,26 @@ export class BranchesService {
     repoId: string;
     branchId: string;
   }): Promise<BranchTab> {
+    let result: Result.Result<BranchTab, GetBranchCheckExistsResultError> =
+      await this.getBranchCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let branch: BranchTab = result.value;
+
+    return branch;
+  }
+
+  async getBranchCheckExistsResult(item: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+  }): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> {
     let { projectId, repoId, branchId } = item;
 
-    let branch = await this.db.drizzle.query.branchesTable
+    return this.db.drizzle.query.branchesTable
       .findFirst({
         where: and(
           eq(branchesTable.projectId, projectId),
@@ -56,15 +78,11 @@ export class BranchesService {
           eq(branchesTable.branchId, branchId)
         )
       })
-      .then(x => this.tabService.branchEntToTab(x));
-
-    if (isUndefined(branch)) {
-      throw new ServerError({
-        message: 'BACKEND_BRANCH_DOES_NOT_EXIST'
-      });
-    }
-
-    return branch;
+      .then((branchEnt: BranchEnt) =>
+        isUndefined(branchEnt)
+          ? Result.fail({ code: 'BACKEND_BRANCH_DOES_NOT_EXIST' })
+          : this.tabService.branchEntToTabResult({ branchEnt: branchEnt })
+      );
   }
 
   async checkBranchDoesNotExist(item: {

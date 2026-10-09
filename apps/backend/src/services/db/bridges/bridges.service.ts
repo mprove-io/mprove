@@ -1,13 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import {
+  type BridgeEnt,
+  bridgesTable
+} from '#backend/drizzle/postgres/schema/bridges';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
 
 @Injectable()
 export class BridgesService {
@@ -53,9 +58,27 @@ export class BridgesService {
     branchId: string;
     envId: string;
   }): Promise<BridgeTab> {
+    let result: Result.Result<BridgeTab, GetBridgeCheckExistsResultError> =
+      await this.getBridgeCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let bridge: BridgeTab = result.value;
+
+    return bridge;
+  }
+
+  async getBridgeCheckExistsResult(item: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  }): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> {
     let { projectId, repoId, branchId, envId } = item;
 
-    let bridge = await this.db.drizzle.query.bridgesTable
+    return this.db.drizzle.query.bridgesTable
       .findFirst({
         where: and(
           eq(bridgesTable.projectId, projectId),
@@ -64,14 +87,10 @@ export class BridgesService {
           eq(bridgesTable.envId, envId)
         )
       })
-      .then(x => this.tabService.bridgeEntToTab(x));
-
-    if (isUndefined(bridge)) {
-      throw new ServerError({
-        message: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST'
-      });
-    }
-
-    return bridge;
+      .then((bridgeEnt: BridgeEnt) =>
+        isUndefined(bridgeEnt)
+          ? Result.fail({ code: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST' })
+          : this.tabService.bridgeEntToTabResult({ bridgeEnt: bridgeEnt })
+      );
   }
 }

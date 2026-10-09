@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -6,13 +7,18 @@ import type {
   MemberTab,
   ModelTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
+import {
+  type ModelEnt,
+  modelsTable
+} from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
+import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPart } from '#common/types/backend/parts/model/model-part';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
@@ -195,45 +201,65 @@ export class ModelsService {
     // user: UserTab;
     apiUserMember: Member;
   }): Promise<ModelPartX[]> {
-    let {
-      structId,
-      // , user,
-      apiUserMember
-    } = item;
+    let result: Result.Result<ModelPartX[], GetModelPartXsResultError> =
+      await this.getModelPartXsResult(item);
 
-    let modelParts: ModelTab[] = await this.db.drizzle
-      .select({
-        keyTag: modelsTable.keyTag,
-        modelId: modelsTable.modelId,
-        st: modelsTable.st
-        // lt: {},
-      })
-      .from(modelsTable)
-      .where(
-        and(
-          // inArray(modelsTable.modelId, modelIds),
-          eq(modelsTable.structId, structId)
-        )
-      )
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    let apiModelParts = modelParts.map(x =>
-      this.tabToModelPart({
-        model: x
-      })
-    );
+    let modelPartXs: ModelPartX[] = result.value;
 
-    let apiModelPartXs = apiModelParts.map(x => {
-      let modelPartX: ModelPartX = Object.assign({}, x, {
-        hasAccess: checkModelAccess({
-          member: apiUserMember,
-          modelAccessRoles: x.accessRolesCombined
+    return modelPartXs;
+  }
+
+  async getModelPartXsResult(item: {
+    structId: string;
+    apiUserMember: Member;
+  }): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> {
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        db: this.db,
+        tabService: this.tabService,
+        modelsService: this
+      }),
+      Result.bind(
+        'models',
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
+          v.db.drizzle
+            .select({
+              keyTag: modelsTable.keyTag,
+              modelId: modelsTable.modelId,
+              st: modelsTable.st
+            })
+            .from(modelsTable)
+            .where(and(eq(modelsTable.structId, v.structId)))
+            .then(modelEnts =>
+              Result.sequence(modelEnts, modelEnt =>
+                v.tabService.modelEntToTabResult({
+                  modelEnt: modelEnt as ModelEnt
+                })
+              )
+            )
+      ),
+      Result.map((v): ModelPartX[] =>
+        v.models.map(model => {
+          let apiModelPart: ModelPart = v.modelsService.tabToModelPart({
+            model: model
+          });
+
+          let modelPartX: ModelPartX = Object.assign({}, apiModelPart, {
+            hasAccess: checkModelAccess({
+              member: v.apiUserMember,
+              modelAccessRoles: apiModelPart.accessRolesCombined
+            })
+          });
+
+          return modelPartX;
         })
-      });
-      return modelPartX;
-    });
-
-    return apiModelPartXs;
+      )
+    );
   }
 
   tabToModelPart(item: { model: ModelTab }): ModelPart {
