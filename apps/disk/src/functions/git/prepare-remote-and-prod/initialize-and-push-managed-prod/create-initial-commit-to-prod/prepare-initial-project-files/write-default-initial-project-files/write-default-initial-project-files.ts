@@ -19,10 +19,11 @@ export async function writeDefaultInitialProjectFiles(item: {
         content: `# ${v.projectName} project`
       })
     ),
-    Result.andThen((v): Result.ResultAsync<void, DiskWriteToFileError> => {
-      let mproveFilePath: string = `${v.prodDir}/${MPROVE_CONFIG_FILENAME}`;
+    Result.andThen(
+      async (v): Result.ResultAsync<void, DiskWriteToFileError> => {
+        let mproveFilePath: string = `${v.prodDir}/${MPROVE_CONFIG_FILENAME}`;
 
-      let mproveContent: string = `mprove_dir: ./
+        let mproveContent: string = `mprove_dir: ./
 case_sensitive_string_filters: false
 format_number: ''
 thousands_separator: ','
@@ -30,10 +31,11 @@ currency_prefix: '$'
 currency_suffix: ''
 `;
 
-      return writeToFile({
-        filePath: mproveFilePath,
-        content: mproveContent
-      });
-    })
+        return writeToFile({
+          filePath: mproveFilePath,
+          content: mproveContent
+        });
+      }
+    )
   );
 }

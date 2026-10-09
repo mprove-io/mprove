@@ -7,9 +7,14 @@ contain no `await`. Keep the explicit outer return type.
 Keep `.then(...)` when it expresses lookup/conversion clearly; do not rewrite it
 to `await` solely to satisfy that suggestion.
 
-Do not add `async` to callbacks solely because they return a promise when no
-`ts(80006)` suggestion applies. In particular, Result combinator callbacks may
-directly return a promise chain with an explicit
+Block-bodied arrow functions (`=> { ... }`) with an explicit
+`Result.ResultAsync<Success, Error>` return type must be declared `async`, even
+when their bodies contain no `await`. Expression-bodied arrow functions
+(`=> expression`) are exempt from this requirement.
+
+Otherwise, do not add `async` to callbacks solely because they return a promise
+when no `ts(80006)` suggestion applies. Expression-bodied Result combinator
+callbacks may directly return a promise chain with an explicit
 `Result.ResultAsync<Success, Error>` return type and no `async`. Use `async`
 when the callback needs `await`; keep synchronous `.then(...)` conversion
 callbacks non-async.

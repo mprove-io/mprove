@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 
@@ -16,7 +17,7 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import {
-  DashboardEnt,
+  type DashboardEnt,
   dashboardsTable
 } from '#backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
@@ -43,6 +44,7 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { GetDashboardCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-result-error';
 import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
@@ -308,44 +310,81 @@ export class DashboardsService {
     userMember: MemberTab | Member;
     user: UserTab;
   }): Promise<DashboardTab> {
-    let { dashboardId, structId, userMember, user } = item;
+    let result: Result.Result<
+      DashboardTab,
+      GetDashboardCheckExistsAndAccessResultError
+    > = await this.getDashboardCheckExistsAndAccessResult(item);
 
-    let dashboard = await this.db.drizzle.query.dashboardsTable
-      .findFirst({
-        where: and(
-          eq(dashboardsTable.structId, structId),
-          eq(dashboardsTable.dashboardId, dashboardId)
-        )
-      })
-      .then(x => this.tabService.dashboardEntToTab(x));
-
-    if (isUndefined(dashboard)) {
-      throw new ServerError({
-        message: 'BACKEND_DASHBOARD_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (dashboard.draft === true && dashboard.creatorId !== user.userId) {
-      throw new ServerError({
-        message: 'BACKEND_DASHBOARD_CREATOR_ID_MISMATCH'
-      });
-    }
-
-    if (dashboard.draft === false) {
-      let isAccessGranted = checkAccess({
-        member: userMember,
-        accessRoles: dashboard.accessRolesCombined,
-        filePath: dashboard.filePath
-      });
-
-      if (isAccessGranted === false) {
-        throw new ServerError({
-          message: 'BACKEND_FORBIDDEN_DASHBOARD'
-        });
-      }
-    }
+    let dashboard: DashboardTab = result.value;
 
     return dashboard;
+  }
+
+  async getDashboardCheckExistsAndAccessResult(item: {
+    dashboardId: string;
+    structId: string;
+    userMember: MemberTab | Member;
+    user: UserTab;
+  }): Result.ResultAsync<
+    DashboardTab,
+    GetDashboardCheckExistsAndAccessResultError
+  > {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'dashboard',
+        (
+          v
+        ): Result.ResultAsync<
+          DashboardTab,
+          GetDashboardCheckExistsAndAccessResultError
+        > =>
+          this.db.drizzle.query.dashboardsTable
+            .findFirst({
+              where: and(
+                eq(dashboardsTable.structId, v.structId),
+                eq(dashboardsTable.dashboardId, v.dashboardId)
+              )
+            })
+            .then(dashboardEnt =>
+              isUndefined(dashboardEnt)
+                ? Result.fail({ code: 'BACKEND_DASHBOARD_DOES_NOT_EXIST' })
+                : this.tabService.dashboardEntToTabResult({
+                    dashboardEnt: dashboardEnt
+                  })
+            )
+      ),
+      Result.andThrough(v => {
+        if (
+          v.dashboard.draft === true &&
+          v.dashboard.creatorId !== v.user.userId
+        ) {
+          return Result.fail({ code: 'BACKEND_DASHBOARD_CREATOR_ID_MISMATCH' });
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(v => {
+        if (v.dashboard.draft === false) {
+          let isAccessGranted: boolean = checkAccess({
+            member: v.userMember,
+            accessRoles: v.dashboard.accessRolesCombined,
+            filePath: v.dashboard.filePath
+          });
+
+          if (isAccessGranted === false) {
+            return Result.fail({ code: 'BACKEND_FORBIDDEN_DASHBOARD' });
+          }
+        }
+
+        return Result.succeed();
+      }),
+      Result.map((v): DashboardTab => v.dashboard)
+    );
   }
 
   async getDashboardXCheckExistsAndAccess(item: {

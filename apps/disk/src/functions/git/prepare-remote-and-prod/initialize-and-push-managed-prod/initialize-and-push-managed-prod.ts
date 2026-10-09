@@ -26,18 +26,20 @@ export async function initializeAndPushManagedProd(item: {
         projectName: v.projectName
       })
     ),
-    Result.andThen((v): Result.ResultAsync<void, DiskPushToRemoteError> => {
-      let prodGit: SimpleGit = createSimpleGit({ baseDir: v.prodDir });
+    Result.andThen(
+      async (v): Result.ResultAsync<void, DiskPushToRemoteError> => {
+        let prodGit: SimpleGit = createSimpleGit({ baseDir: v.prodDir });
 
-      return pushToRemote({
-        projectId: v.projectId,
-        projectDir: v.projectDir,
-        repoId: PROD_REPO_ID,
-        repoDir: v.prodDir,
-        branch: BRANCH_MAIN,
-        git: prodGit,
-        isFetch: true
-      });
-    })
+        return pushToRemote({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: PROD_REPO_ID,
+          repoDir: v.prodDir,
+          branch: BRANCH_MAIN,
+          git: prodGit,
+          isFetch: true
+        });
+      }
+    )
   );
 }

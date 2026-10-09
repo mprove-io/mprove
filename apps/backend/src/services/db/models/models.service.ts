@@ -17,6 +17,7 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetModelCheckExistsResultError } from '#common/types/backend/function-errors/get-model-check-exists-result-error';
 import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
 import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
 import type { Member } from '#common/types/backend/parts/member';
@@ -134,24 +135,36 @@ export class ModelsService {
     modelId: string;
     structId: string;
   }): Promise<ModelTab> {
+    let result: Result.Result<ModelTab, GetModelCheckExistsResultError> =
+      await this.getModelCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let model: ModelTab = result.value;
+
+    return model;
+  }
+
+  async getModelCheckExistsResult(item: {
+    modelId: string;
+    structId: string;
+  }): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> {
     let { modelId, structId } = item;
 
-    let model = await this.db.drizzle.query.modelsTable
+    return this.db.drizzle.query.modelsTable
       .findFirst({
         where: and(
           eq(modelsTable.structId, structId),
           eq(modelsTable.modelId, modelId)
         )
       })
-      .then(x => this.tabService.modelEntToTab(x));
-
-    if (isUndefined(model)) {
-      throw new ServerError({
-        message: 'BACKEND_MODEL_DOES_NOT_EXIST'
-      });
-    }
-
-    return model;
+      .then(modelEnt =>
+        isUndefined(modelEnt)
+          ? Result.fail({ code: 'BACKEND_MODEL_DOES_NOT_EXIST' })
+          : this.tabService.modelEntToTabResult({ modelEnt: modelEnt })
+      );
   }
 
   async getModelCheckExistsAndAccess(item: {

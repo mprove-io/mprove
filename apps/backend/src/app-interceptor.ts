@@ -798,6 +798,42 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'getModel') {
+        execution = makeBackendResultResponse({
+          operation: 'getModel',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getModels') {
+        execution = makeBackendResultResponse({
+          operation: 'getModels',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getSuggestFields') {
+        execution = makeBackendResultResponse({
+          operation: 'getSuggestFields',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else if (req.operation === 'setFavorite') {
         execution = makeBackendResultResponse({
           operation: 'setFavorite',

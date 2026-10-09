@@ -1,7 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
@@ -28,6 +29,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
+import type { GetReportCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-result-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
@@ -376,71 +378,103 @@ export class ReportsService {
     structId: string;
     user: UserTab;
     userMember: MemberTab | Member;
-  }) {
-    let { projectId, reportId, structId, user, userMember } = item;
+  }): Promise<ReportTab> {
+    let result: Result.Result<
+      ReportTab,
+      GetReportCheckExistsAndAccessResultError
+    > = await this.getReportCheckExistsAndAccessResult(item);
 
-    let chart = makeCopy(DEFAULT_CHART);
-
-    chart.type = 'line';
-
-    let emptyReport = this.makeReport({
-      structId: undefined,
-      reportId: reportId,
-      projectId: projectId,
-      creatorId: undefined,
-      filePath: undefined,
-      space: undefined,
-      accessRoles: [],
-      title: reportId,
-      fields: [],
-      rows: [],
-      chart: chart,
-      draft: false
-    });
-
-    let report =
-      reportId === EMPTY_REPORT_ID
-        ? emptyReport
-        : await this.db.drizzle.query.reportsTable
-            .findFirst({
-              where: and(
-                eq(reportsTable.projectId, projectId),
-                eq(reportsTable.structId, structId),
-                eq(reportsTable.reportId, reportId)
-              )
-            })
-            .then(x => this.tabService.reportEntToTab(x));
-
-    if (isUndefined(report)) {
-      throw new ServerError({
-        message: 'BACKEND_REPORT_NOT_FOUND'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (
-      reportId !== EMPTY_REPORT_ID &&
-      report.draft === true &&
-      report.creatorId !== user.userId
-    ) {
-      throw new ServerError({
-        message: 'BACKEND_REPORT_CREATOR_ID_MISMATCH'
-      });
-    }
-
-    if (report.draft === false) {
-      let isAccessGranted = checkAccess({
-        member: userMember,
-        accessRoles: report.accessRolesCombined,
-        filePath: report.filePath
-      });
-
-      if (isAccessGranted === false) {
-        throw new ServerError({
-          message: 'BACKEND_FORBIDDEN_REPORT'
-        });
-      }
-    }
+    let report: ReportTab = result.value;
 
     return report;
+  }
+
+  async getReportCheckExistsAndAccessResult(item: {
+    projectId: string;
+    reportId: string;
+    structId: string;
+    user: UserTab;
+    userMember: MemberTab | Member;
+  }): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'report',
+        async (
+          v
+        ): Result.ResultAsync<
+          ReportTab,
+          GetReportCheckExistsAndAccessResultError
+        > => {
+          let chart: MconfigChart = makeCopy(DEFAULT_CHART);
+
+          chart.type = 'line';
+
+          let emptyReport: ReportTab = this.makeReport({
+            structId: undefined,
+            reportId: v.reportId,
+            projectId: v.projectId,
+            creatorId: undefined,
+            filePath: undefined,
+            space: undefined,
+            accessRoles: [],
+            title: v.reportId,
+            fields: [],
+            rows: [],
+            chart: chart,
+            draft: false
+          });
+
+          if (v.reportId === EMPTY_REPORT_ID) {
+            return Result.succeed(emptyReport);
+          }
+
+          return this.db.drizzle.query.reportsTable
+            .findFirst({
+              where: and(
+                eq(reportsTable.projectId, v.projectId),
+                eq(reportsTable.structId, v.structId),
+                eq(reportsTable.reportId, v.reportId)
+              )
+            })
+            .then(reportEnt =>
+              isUndefined(reportEnt)
+                ? Result.fail({ code: 'BACKEND_REPORT_NOT_FOUND' })
+                : this.tabService.reportEntToTabResult({ reportEnt: reportEnt })
+            );
+        }
+      ),
+      Result.andThrough(v => {
+        if (
+          v.reportId !== EMPTY_REPORT_ID &&
+          v.report.draft === true &&
+          v.report.creatorId !== v.user.userId
+        ) {
+          return Result.fail({ code: 'BACKEND_REPORT_CREATOR_ID_MISMATCH' });
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(v => {
+        if (v.report.draft === false) {
+          let isAccessGranted: boolean = checkAccess({
+            member: v.userMember,
+            accessRoles: v.report.accessRolesCombined,
+            filePath: v.report.filePath
+          });
+
+          if (isAccessGranted === false) {
+            return Result.fail({ code: 'BACKEND_FORBIDDEN_REPORT' });
+          }
+        }
+
+        return Result.succeed();
+      }),
+      Result.map((v): ReportTab => v.report)
+    );
   }
 }
