@@ -5,6 +5,10 @@ import {
   zBackendHashSecretIsNotDefinedError
 } from '#common/types/backend/errors/backend-hash-secret-is-not-defined-error';
 import {
+  type BackendLlmModelDoesNotExistError,
+  zBackendLlmModelDoesNotExistError
+} from '#common/types/backend/errors/backend-llm-model-does-not-exist-error';
+import {
   type BackendMemberDoesNotExistError,
   zBackendMemberDoesNotExistError
 } from '#common/types/backend/errors/backend-member-does-not-exist-error';
@@ -21,10 +25,6 @@ import {
   zBackendProviderDoesNotExistError
 } from '#common/types/backend/errors/backend-provider-does-not-exist-error';
 import {
-  type BackendProviderModelDoesNotExistError,
-  zBackendProviderModelDoesNotExistError
-} from '#common/types/backend/errors/backend-provider-model-does-not-exist-error';
-import {
   type BackendTransactionRetryError,
   zBackendTransactionRetryError
 } from '#common/types/backend/errors/backend-transaction-retry-error';
@@ -35,7 +35,7 @@ export type ToBackendDeleteLlmModelError =
   | BackendMemberIsNotAdminError
   | BackendProjectDoesNotExistError
   | BackendProviderDoesNotExistError
-  | BackendProviderModelDoesNotExistError
+  | BackendLlmModelDoesNotExistError
   | BackendTransactionRetryError;
 
 export let zToBackendDeleteLlmModelError = z.discriminatedUnion('code', [
@@ -44,7 +44,7 @@ export let zToBackendDeleteLlmModelError = z.discriminatedUnion('code', [
   zBackendMemberIsNotAdminError,
   zBackendProjectDoesNotExistError,
   zBackendProviderDoesNotExistError,
-  zBackendProviderModelDoesNotExistError,
+  zBackendLlmModelDoesNotExistError,
   zBackendTransactionRetryError
 ]);
 

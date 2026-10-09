@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -21,28 +22,29 @@ import type {
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import {
-  type LlmModelPartsResult,
-  LlmModelService
-} from '#backend/services/llm-model/llm-model.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import { LlmModelService } from '#backend/services/llm-model/llm-model.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
+import type { GetDiscoveredLlmModelPartResultError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-result-error';
+import type { GetLlmModelCheckExistsResultError } from '#common/types/backend/function-errors/get-llm-model-check-exists-result-error';
+import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
+import type { ReconcileDiscoveredModelVariantsResultError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-result-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
-import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditLlmModelOutput } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
-import type { ToBackendEditLlmModelRequest } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -68,161 +70,193 @@ export class EditLlmModelController {
   async editLlmModel(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditLlmModelRequestDto
-  ): Promise<ToBackendEditLlmModelOutput> {
-    let bodyPayload: ToBackendEditLlmModelRequest['input'] = body.input;
+  ): Promise<BackendResultForOperation<'editLlmModel'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        providerId: body.input.providerId,
+        modelId: body.input.modelId,
+        name: body.input.name,
+        contextLimit: body.input.contextLimit,
+        inputLimit: body.input.inputLimit,
+        outputLimit: body.input.outputLimit,
+        submittedVariants: body.input.variants,
+        isExplorer: body.input.isExplorer,
+        isBuilder: body.input.isBuilder,
+        userId: user.userId,
+        isCodexAuthSet: isDefined(user.codexAuth)
+      }),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        this.membersService.getMemberCheckIsAdminResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'provider',
+        (
+          v
+        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+          this.providersService.getProviderCheckExistsResult({
+            projectId: v.projectId,
+            providerId: v.providerId
+          })
+      ),
+      Result.bind(
+        'model',
+        (v): Result.Result<LlmModel, GetLlmModelCheckExistsResultError> =>
+          this.providersService.getLlmModelCheckExistsResult({
+            provider: v.provider,
+            modelId: v.modelId
+          })
+      ),
+      Result.bind(
+        'isManualModel',
+        (v): Result.Result<boolean, never> =>
+          Result.succeed(
+            v.provider.type === 'OpenAICompatible' || v.model.isManual === true
+          )
+      ),
+      Result.bind(
+        'modelPart',
+        async (
+          v
+        ): Result.ResultAsync<
+          LlmModelPart,
+          GetDiscoveredLlmModelPartResultError
+        > => {
+          if (
+            v.provider.type === 'OpenAICompatible' ||
+            v.model.isManual === true
+          ) {
+            return Result.succeed(undefined);
+          }
 
-    let {
-      projectId,
-      providerId,
-      modelId,
-      name,
-      contextLimit,
-      inputLimit,
-      outputLimit,
-      variants,
-      isExplorer,
-      isBuilder
-    } = bodyPayload;
-
-    await this.projectsService.getProjectCheckExists({ projectId: projectId });
-
-    await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    let provider: ProviderTab =
-      await this.providersService.getProviderCheckExists({
-        projectId: projectId,
-        providerId: providerId
-      });
-
-    let model: LlmModel = this.providersService.getModelCheckExists({
-      provider: provider,
-      modelId: modelId
-    });
-
-    let isManualModel: boolean =
-      provider.type === 'OpenAICompatible' || model.isManual === true;
-
-    if (provider.type !== 'OpenAICompatible' && model.isManual !== true) {
-      let isCodexAuthSet: boolean = isDefined(user.codexAuth);
-
-      let modelPartsResult: LlmModelPartsResult =
-        await this.llmModelService.getModelParts({
-          providerType: provider.type,
-          apiKey:
-            provider.type === 'OpenAICodex'
-              ? undefined
-              : provider.options.apiKey,
-          userId: user.userId,
-          isCodexAuthSet: isCodexAuthSet,
-          isForceRefresh: true
-        });
-
-      let modelPartIndex: number = modelPartsResult.modelParts.findIndex(
-        modelPart => modelPart.modelId === modelId
-      );
-
-      if (modelPartIndex < 0) {
-        throw new ServerError({
-          message: 'BACKEND_PROVIDER_MODEL_NOT_DISCOVERED'
-        });
-      }
-
-      let modelPart: LlmModelPart = modelPartsResult.modelParts[modelPartIndex];
-
-      let currentVariantNames: string[] = [
-        LLM_MODEL_DEFAULT_VARIANT,
-        ...(modelPart.variants ?? [])
-      ];
-
-      variants = this.llmModelService.reconcileDiscoveredModelVariants({
-        variants: variants,
-        storedVariants: model.variants,
-        currentVariantNames: currentVariantNames,
-        isExplorer: isExplorer,
-        isBuilder: isBuilder
-      });
-
-      let refreshedModel: LlmModel = {
-        ...model,
-        ...modelPart,
-        name: model.name,
-        isManual: false,
-        variants: variants,
-        isExplorer: model.isExplorer,
-        isBuilder: model.isBuilder,
-        refreshedTs: Date.now()
-      };
-
-      Object.assign(model, refreshedModel);
-    }
-
-    if (isBuilder === true && model.isOpencodeSupported === false) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER'
-      });
-    }
-
-    this.llmModelService.validateModelVariants({
-      variants: variants,
-      isExplorer: isExplorer,
-      isBuilder: isBuilder
-    });
-
-    model.name = isUndefinedOrEmpty(name)
-      ? capitalizeFirstLetter(modelId)
-      : name;
-
-    if (isManualModel) {
-      this.llmModelService.validateManualModelLimits({
-        modelInput: {
-          modelId: model.modelId,
-          name: model.name,
-          isManual: model.isManual,
-          contextLimit: contextLimit,
-          inputLimit: inputLimit,
-          outputLimit: outputLimit,
-          isExplorer: isExplorer,
-          isBuilder: isBuilder
+          return this.llmModelService.getDiscoveredLlmModelPartResult({
+            providerType: v.provider.type,
+            modelId: v.modelId,
+            apiKey:
+              v.provider.type === 'OpenAICodex'
+                ? undefined
+                : v.provider.options.apiKey,
+            userId: v.userId,
+            isCodexAuthSet: v.isCodexAuthSet,
+            isForceRefresh: true
+          });
         }
-      });
+      ),
+      Result.bind(
+        'variants',
+        (
+          v
+        ): Result.Result<
+          LlmModelVariant[],
+          ReconcileDiscoveredModelVariantsResultError
+        > =>
+          isUndefined(v.modelPart)
+            ? Result.succeed(v.submittedVariants)
+            : this.llmModelService.reconcileDiscoveredModelVariantsResult({
+                variants: v.submittedVariants,
+                storedVariants: v.model.variants,
+                currentVariantNames: [
+                  LLM_MODEL_DEFAULT_VARIANT,
+                  ...(v.modelPart.variants ?? [])
+                ],
+                isExplorer: v.isExplorer,
+                isBuilder: v.isBuilder
+              })
+      ),
+      Result.inspect(v => {
+        if (isDefined(v.modelPart)) {
+          let refreshedModel: LlmModel = {
+            ...v.model,
+            ...v.modelPart,
+            name: v.model.name,
+            isManual: false,
+            variants: v.variants,
+            isExplorer: v.model.isExplorer,
+            isBuilder: v.model.isBuilder,
+            refreshedTs: Date.now()
+          };
 
-      model.contextLimit = contextLimit;
-
-      model.inputLimit = inputLimit;
-
-      model.outputLimit = outputLimit;
-    }
-
-    model.isExplorer = isExplorer;
-
-    model.isBuilder = isBuilder;
-
-    model.variants = variants;
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              update: { providers: [provider] }
+          Object.assign(v.model, refreshedModel);
+        }
+      }),
+      Result.andThrough(v =>
+        v.isBuilder === true && v.model.isOpencodeSupported === false
+          ? Result.fail({
+              code: 'BACKEND_LLM_MODEL_NOT_AVAILABLE_IN_BUILDER'
             })
-        ),
-      getRetryOption(this.cs, this.logger)
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        this.llmModelService.validateModelVariantsResult({
+          variants: v.variants,
+          isExplorer: v.isExplorer,
+          isBuilder: v.isBuilder
+        })
+      ),
+      Result.inspect(v => {
+        v.model.name = isUndefinedOrEmpty(v.name)
+          ? capitalizeFirstLetter(v.modelId)
+          : v.name;
+      }),
+      Result.andThrough(v =>
+        v.isManualModel
+          ? this.llmModelService.validateManualModelLimitsResult({
+              modelInput: {
+                modelId: v.model.modelId,
+                name: v.model.name,
+                isManual: v.model.isManual,
+                contextLimit: v.contextLimit,
+                inputLimit: v.inputLimit,
+                outputLimit: v.outputLimit,
+                isExplorer: v.isExplorer,
+                isBuilder: v.isBuilder
+              }
+            })
+          : Result.succeed()
+      ),
+      Result.inspect(v => {
+        if (v.isManualModel) {
+          v.model.contextLimit = v.contextLimit;
+          v.model.inputLimit = v.inputLimit;
+          v.model.outputLimit = v.outputLimit;
+        }
+        v.model.isExplorer = v.isExplorer;
+        v.model.isBuilder = v.isBuilder;
+        v.model.variants = v.variants;
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      update: { providers: [v.provider] }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendEditLlmModelOutput => ({
+          provider: this.providersService.tabToApiProvider({
+            provider: v.provider,
+            isIncludePasswords: false
+          })
+        })
+      )
     );
-
-    let apiProvider: Provider = this.providersService.tabToApiProvider({
-      provider: provider,
-      isIncludePasswords: false
-    });
-
-    let payload: ToBackendEditLlmModelOutput = {
-      provider: apiProvider
-    };
-
-    return payload;
   }
 }

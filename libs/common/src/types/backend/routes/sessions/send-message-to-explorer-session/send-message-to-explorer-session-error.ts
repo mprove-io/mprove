@@ -169,6 +169,22 @@ import {
   zBackendInteractTimeoutError
 } from '#common/types/backend/errors/backend-interact-timeout-error';
 import {
+  type BackendLlmModelDoesNotExistError,
+  zBackendLlmModelDoesNotExistError
+} from '#common/types/backend/errors/backend-llm-model-does-not-exist-error';
+import {
+  type BackendLlmModelNotAvailableInBuilderError,
+  zBackendLlmModelNotAvailableInBuilderError
+} from '#common/types/backend/errors/backend-llm-model-not-available-in-builder-error';
+import {
+  type BackendLlmModelNotAvailableInExplorerError,
+  zBackendLlmModelNotAvailableInExplorerError
+} from '#common/types/backend/errors/backend-llm-model-not-available-in-explorer-error';
+import {
+  type BackendLlmModelVariantNotAvailableError,
+  zBackendLlmModelVariantNotAvailableError
+} from '#common/types/backend/errors/backend-llm-model-variant-not-available-error';
+import {
   type BackendMemberDoesNotExistError,
   zBackendMemberDoesNotExistError
 } from '#common/types/backend/errors/backend-member-does-not-exist-error';
@@ -228,22 +244,6 @@ import {
   type BackendProviderIsDisabledError,
   zBackendProviderIsDisabledError
 } from '#common/types/backend/errors/backend-provider-is-disabled-error';
-import {
-  type BackendProviderModelDoesNotExistError,
-  zBackendProviderModelDoesNotExistError
-} from '#common/types/backend/errors/backend-provider-model-does-not-exist-error';
-import {
-  type BackendProviderModelNotAvailableInBuilderError,
-  zBackendProviderModelNotAvailableInBuilderError
-} from '#common/types/backend/errors/backend-provider-model-not-available-in-builder-error';
-import {
-  type BackendProviderModelNotAvailableInExplorerError,
-  zBackendProviderModelNotAvailableInExplorerError
-} from '#common/types/backend/errors/backend-provider-model-not-available-in-explorer-error';
-import {
-  type BackendProviderModelVariantNotAvailableError,
-  zBackendProviderModelVariantNotAvailableError
-} from '#common/types/backend/errors/backend-provider-model-variant-not-available-error';
 import {
   type BackendQueriesDoNotExistError,
   zBackendQueriesDoNotExistError
@@ -407,10 +407,10 @@ export type ToBackendSendMessageToExplorerSessionError =
   | BackendProviderApiKeyRequiredError
   | BackendProviderDoesNotExistError
   | BackendProviderIsDisabledError
-  | BackendProviderModelDoesNotExistError
-  | BackendProviderModelNotAvailableInBuilderError
-  | BackendProviderModelNotAvailableInExplorerError
-  | BackendProviderModelVariantNotAvailableError
+  | BackendLlmModelDoesNotExistError
+  | BackendLlmModelNotAvailableInBuilderError
+  | BackendLlmModelNotAvailableInExplorerError
+  | BackendLlmModelVariantNotAvailableError
   | BackendQueriesDoNotExistError
   | BackendQueryDoesNotExistError
   | BackendReportCreatorIdMismatchError
@@ -498,10 +498,10 @@ export let zToBackendSendMessageToExplorerSessionError = z.discriminatedUnion(
     zBackendProviderApiKeyRequiredError,
     zBackendProviderDoesNotExistError,
     zBackendProviderIsDisabledError,
-    zBackendProviderModelDoesNotExistError,
-    zBackendProviderModelNotAvailableInBuilderError,
-    zBackendProviderModelNotAvailableInExplorerError,
-    zBackendProviderModelVariantNotAvailableError,
+    zBackendLlmModelDoesNotExistError,
+    zBackendLlmModelNotAvailableInBuilderError,
+    zBackendLlmModelNotAvailableInExplorerError,
+    zBackendLlmModelVariantNotAvailableError,
     zBackendQueriesDoNotExistError,
     zBackendQueryDoesNotExistError,
     zBackendReportCreatorIdMismatchError,

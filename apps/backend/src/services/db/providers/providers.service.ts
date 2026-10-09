@@ -22,7 +22,10 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckLlmModelDoesNotExistResultError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-result-error';
 import type { CheckProviderDoesNotExistResultError } from '#common/types/backend/function-errors/check-provider-does-not-exist-result-error';
+import type { GetEnabledProvidersResultError } from '#common/types/backend/function-errors/get-enabled-providers-result-error';
+import type { GetLlmModelCheckExistsResultError } from '#common/types/backend/function-errors/get-llm-model-check-exists-result-error';
 import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
 import type { MakeProviderResultError } from '#common/types/backend/function-errors/make-provider-result-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
@@ -324,8 +327,24 @@ export class ProvidersService {
   async getEnabledProviders(item: {
     projectId: string;
   }): Promise<ProviderTab[]> {
+    let result: Result.Result<ProviderTab[], GetEnabledProvidersResultError> =
+      await this.getEnabledProvidersResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let providers: ProviderTab[] = result.value;
+
+    return providers;
+  }
+
+  async getEnabledProvidersResult(item: {
+    projectId: string;
+  }): Result.ResultAsync<ProviderTab[], GetEnabledProvidersResultError> {
     let { projectId } = item;
-    return await this.db.drizzle.query.providersTable
+
+    return this.db.drizzle.query.providersTable
       .findMany({
         where: and(
           eq(providersTable.projectId, projectId),
@@ -333,8 +352,8 @@ export class ProvidersService {
         )
       })
       .then(providerEnts =>
-        providerEnts.map(providerEnt =>
-          this.tabService.providerEntToTab({ providerEnt: providerEnt })
+        Result.sequence(providerEnts, providerEnt =>
+          this.tabService.providerEntToTabResult({ providerEnt: providerEnt })
         )
       );
   }
@@ -393,12 +412,12 @@ export class ProvidersService {
     if (item.isBuilder === true) {
       if (model.isOpencodeSupported === false || model.isBuilder === false) {
         throw new ServerError({
-          message: 'BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER'
+          message: 'BACKEND_LLM_MODEL_NOT_AVAILABLE_IN_BUILDER'
         });
       }
     } else if (model.isExplorer === false) {
       throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_EXPLORER'
+        message: 'BACKEND_LLM_MODEL_NOT_AVAILABLE_IN_EXPLORER'
       });
     }
 
@@ -420,36 +439,56 @@ export class ProvidersService {
 
     if (isVariantAvailable === false) {
       throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_VARIANT_NOT_AVAILABLE'
+        message: 'BACKEND_LLM_MODEL_VARIANT_NOT_AVAILABLE'
       });
     }
 
     return { provider: provider, model: model };
   }
 
-  checkModelDoesNotExist(item: { provider: ProviderTab; modelId: string }) {
+  checkLlmModelDoesNotExistResult(item: {
+    provider: ProviderTab;
+    modelId: string;
+  }): Result.Result<void, CheckLlmModelDoesNotExistResultError> {
     let { provider, modelId } = item;
 
-    let model = provider.models.find(x => x.modelId === modelId);
-
-    if (isDefined(model)) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_ALREADY_EXISTS'
-      });
+    if (provider.models.some(model => model.modelId === modelId)) {
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_ALREADY_EXISTS' });
     }
+
+    return Result.succeed();
   }
 
-  getModelCheckExists(item: { provider: ProviderTab; modelId: string }) {
-    let { provider, modelId } = item;
+  getModelCheckExists(item: {
+    provider: ProviderTab;
+    modelId: string;
+  }): LlmModel {
+    let result: Result.Result<LlmModel, GetLlmModelCheckExistsResultError> =
+      this.getLlmModelCheckExistsResult(item);
 
-    let model = provider.models.find(x => x.modelId === modelId);
-
-    if (isUndefined(model)) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
+    let model: LlmModel = result.value;
+
     return model;
+  }
+
+  getLlmModelCheckExistsResult(item: {
+    provider: ProviderTab;
+    modelId: string;
+  }): Result.Result<LlmModel, GetLlmModelCheckExistsResultError> {
+    let { provider, modelId } = item;
+
+    let model: LlmModel = provider.models.find(
+      model => model.modelId === modelId
+    );
+
+    if (isUndefined(model)) {
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_DOES_NOT_EXIST' });
+    }
+
+    return Result.succeed(model);
   }
 }

@@ -87,6 +87,16 @@ import type { BackendInteractFailedError } from '#common/types/backend/errors/ba
 import type { BackendInteractTimeoutError } from '#common/types/backend/errors/backend-interact-timeout-error';
 import type { BackendInternalError } from '#common/types/backend/errors/backend-internal-error';
 import type { BackendInvalidRequestError } from '#common/types/backend/errors/backend-invalid-request-error';
+import type { BackendLlmModelAlreadyExistsError } from '#common/types/backend/errors/backend-llm-model-already-exists-error';
+import type { BackendLlmModelContextLimitRequiredError } from '#common/types/backend/errors/backend-llm-model-context-limit-required-error';
+import type { BackendLlmModelDiscoveryFailedError } from '#common/types/backend/errors/backend-llm-model-discovery-failed-error';
+import type { BackendLlmModelDoesNotExistError } from '#common/types/backend/errors/backend-llm-model-does-not-exist-error';
+import type { BackendLlmModelLimitInvalidError } from '#common/types/backend/errors/backend-llm-model-limit-invalid-error';
+import type { BackendLlmModelNotAvailableInBuilderError } from '#common/types/backend/errors/backend-llm-model-not-available-in-builder-error';
+import type { BackendLlmModelNotAvailableInExplorerError } from '#common/types/backend/errors/backend-llm-model-not-available-in-explorer-error';
+import type { BackendLlmModelNotDiscoveredError } from '#common/types/backend/errors/backend-llm-model-not-discovered-error';
+import type { BackendLlmModelVariantNotAvailableError } from '#common/types/backend/errors/backend-llm-model-variant-not-available-error';
+import type { BackendLlmModelVariantsInvalidError } from '#common/types/backend/errors/backend-llm-model-variants-invalid-error';
 import type { BackendMalloyConnectionCloseError } from '#common/types/backend/errors/backend-malloy-connection-close-error';
 import type { BackendManualCommitToProductionRepoIsForbiddenError } from '#common/types/backend/errors/backend-manual-commit-to-production-repo-is-forbidden-error';
 import type { BackendMconfigDoesNotExistError } from '#common/types/backend/errors/backend-mconfig-does-not-exist-error';
@@ -124,16 +134,6 @@ import type { BackendProviderAlreadyExistsError } from '#common/types/backend/er
 import type { BackendProviderApiKeyRequiredError } from '#common/types/backend/errors/backend-provider-api-key-required-error';
 import type { BackendProviderDoesNotExistError } from '#common/types/backend/errors/backend-provider-does-not-exist-error';
 import type { BackendProviderIsDisabledError } from '#common/types/backend/errors/backend-provider-is-disabled-error';
-import type { BackendProviderModelAlreadyExistsError } from '#common/types/backend/errors/backend-provider-model-already-exists-error';
-import type { BackendProviderModelContextLimitRequiredError } from '#common/types/backend/errors/backend-provider-model-context-limit-required-error';
-import type { BackendProviderModelDiscoveryFailedError } from '#common/types/backend/errors/backend-provider-model-discovery-failed-error';
-import type { BackendProviderModelDoesNotExistError } from '#common/types/backend/errors/backend-provider-model-does-not-exist-error';
-import type { BackendProviderModelLimitInvalidError } from '#common/types/backend/errors/backend-provider-model-limit-invalid-error';
-import type { BackendProviderModelNotAvailableInBuilderError } from '#common/types/backend/errors/backend-provider-model-not-available-in-builder-error';
-import type { BackendProviderModelNotAvailableInExplorerError } from '#common/types/backend/errors/backend-provider-model-not-available-in-explorer-error';
-import type { BackendProviderModelNotDiscoveredError } from '#common/types/backend/errors/backend-provider-model-not-discovered-error';
-import type { BackendProviderModelVariantNotAvailableError } from '#common/types/backend/errors/backend-provider-model-variant-not-available-error';
-import type { BackendProviderModelVariantsInvalidError } from '#common/types/backend/errors/backend-provider-model-variants-invalid-error';
 import type { BackendProviderNotValidApiKeyError } from '#common/types/backend/errors/backend-provider-not-valid-api-key-error';
 import type { BackendProviderTypeMismatchError } from '#common/types/backend/errors/backend-provider-type-mismatch-error';
 import type { BackendQueriesDoNotExistError } from '#common/types/backend/errors/backend-queries-do-not-exist-error';
@@ -350,16 +350,16 @@ export type BackendError =
   | BackendProviderApiKeyRequiredError
   | BackendProviderDoesNotExistError
   | BackendProviderIsDisabledError
-  | BackendProviderModelAlreadyExistsError
-  | BackendProviderModelContextLimitRequiredError
-  | BackendProviderModelDiscoveryFailedError
-  | BackendProviderModelDoesNotExistError
-  | BackendProviderModelLimitInvalidError
-  | BackendProviderModelNotAvailableInBuilderError
-  | BackendProviderModelNotAvailableInExplorerError
-  | BackendProviderModelNotDiscoveredError
-  | BackendProviderModelVariantsInvalidError
-  | BackendProviderModelVariantNotAvailableError
+  | BackendLlmModelAlreadyExistsError
+  | BackendLlmModelContextLimitRequiredError
+  | BackendLlmModelDiscoveryFailedError
+  | BackendLlmModelDoesNotExistError
+  | BackendLlmModelLimitInvalidError
+  | BackendLlmModelNotAvailableInBuilderError
+  | BackendLlmModelNotAvailableInExplorerError
+  | BackendLlmModelNotDiscoveredError
+  | BackendLlmModelVariantsInvalidError
+  | BackendLlmModelVariantNotAvailableError
   | BackendProviderNotValidApiKeyError
   | BackendProviderTypeMismatchError
   | BackendQueriesDoNotExistError

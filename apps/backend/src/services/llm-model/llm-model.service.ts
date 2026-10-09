@@ -6,6 +6,7 @@ import {
   type Provider,
   type ProviderMap
 } from '@opencode-ai/models';
+import { Result } from '@praha/byethrow';
 import OpenAI from 'openai';
 import { isCodexModelSupportedByOpencode } from '#backend/functions/llm-providers/codex/is-codex-model-supported-by-opencode/is-codex-model-supported-by-opencode';
 import {
@@ -16,11 +17,19 @@ import { anthropicModelToLlmModelPart } from '#backend/services/llm-model/anthro
 import { codexModelToLlmModelPart } from '#backend/services/llm-model/codex-model-to-llm-model-part/codex-model-to-llm-model-part';
 import { openAiModelToLlmModelPart } from '#backend/services/llm-model/open-ai-model-to-llm-model-part/open-ai-model-to-llm-model-part';
 import type { ModelCatalogProviderType } from '#backend/types/model-catalog-provider-type';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendLlmModelNotDiscoveredError } from '#common/types/backend/errors/backend-llm-model-not-discovered-error';
+import type { GetAnthropicModelPartsResultError } from '#common/types/backend/function-errors/get-anthropic-model-parts-result-error';
+import type { GetDiscoveredLlmModelPartResultError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-result-error';
+import type { GetModelPartsResultError } from '#common/types/backend/function-errors/get-model-parts-result-error';
+import type { ReconcileDiscoveredModelVariantsResultError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-result-error';
+import type { RefreshModelResultError } from '#common/types/backend/function-errors/refresh-model-result-error';
+import type { ValidateManualModelLimitsResultError } from '#common/types/backend/function-errors/validate-manual-model-limits-result-error';
+import type { ValidateModelVariantsResultError } from '#common/types/backend/function-errors/validate-model-variants-result-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelInput } from '#common/types/backend/parts/llm-models/llm-model-input';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
@@ -36,7 +45,7 @@ export class LlmModelService {
   private modelsDev?: ProviderMap;
   private modelsDevTs?: number;
   constructor(private codexService: CodexService) {}
-  async refreshModel(item: {
+  async refreshModelResult(item: {
     providerType: ProviderType;
     apiKey?: string;
     userId?: string;
@@ -44,7 +53,7 @@ export class LlmModelService {
     modelInput: LlmModelInput;
     variants: LlmModelVariant[];
     isForceRefresh?: boolean;
-  }): Promise<LlmModel> {
+  }): Result.ResultAsync<LlmModel, RefreshModelResultError> {
     let {
       providerType,
       apiKey,
@@ -54,19 +63,32 @@ export class LlmModelService {
       variants,
       isForceRefresh
     } = item;
+
     let refreshedTs: number = Date.now();
+
     let isManualCodexModel: boolean =
       providerType === 'OpenAICodex' && modelInput.isManual === true;
+
     let isManualModel: boolean =
       providerType === 'OpenAICompatible' || isManualCodexModel;
+
     if (isManualModel) {
-      this.validateManualModelLimits({ modelInput: modelInput });
+      let limitsResult: Result.Result<
+        void,
+        ValidateManualModelLimitsResultError
+      > = this.validateManualModelLimitsResult({ modelInput: modelInput });
+
+      if (Result.isFailure(limitsResult)) {
+        return limitsResult;
+      }
     }
+
     if (providerType === 'OpenAICompatible' || isManualCodexModel) {
       let isOpencodeSupported: boolean =
         providerType === 'OpenAICompatible'
           ? true
           : isCodexModelSupportedByOpencode({ modelId: modelInput.modelId });
+
       let model: LlmModel = {
         modelId: modelInput.modelId,
         name: modelInput.name,
@@ -81,30 +103,41 @@ export class LlmModelService {
         isBuilder: modelInput.isBuilder,
         refreshedTs: refreshedTs
       };
-      this.validateModelVariants({
+
+      let variantsResult: Result.Result<
+        void,
+        ValidateModelVariantsResultError
+      > = this.validateModelVariantsResult({
         variants: model.variants,
         isExplorer: model.isExplorer,
         isBuilder: model.isBuilder
       });
-      return model;
+
+      if (Result.isFailure(variantsResult)) {
+        return variantsResult;
+      }
+
+      return Result.succeed(model);
     }
-    let modelPartsResult: LlmModelPartsResult = await this.getModelParts({
+
+    let discoveryResult: Result.Result<
+      LlmModelPart,
+      GetDiscoveredLlmModelPartResultError
+    > = await this.getDiscoveredLlmModelPartResult({
       providerType: providerType,
+      modelId: modelInput.modelId,
       apiKey: apiKey,
       userId: userId,
       isCodexAuthSet: isCodexAuthSet,
       isForceRefresh: isForceRefresh
     });
-    let modelParts: LlmModelPart[] = modelPartsResult.modelParts;
-    let modelPartIndex: number = modelParts.findIndex(
-      modelPart => modelPart.modelId === modelInput.modelId
-    );
-    if (modelPartIndex < 0) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_NOT_DISCOVERED'
-      });
+
+    if (Result.isFailure(discoveryResult)) {
+      return discoveryResult;
     }
-    let modelPart: LlmModelPart = modelParts[modelPartIndex];
+
+    let modelPart: LlmModelPart = discoveryResult.value;
+
     let model: LlmModel = {
       ...modelPart,
       name: modelInput.name,
@@ -114,68 +147,139 @@ export class LlmModelService {
       isBuilder: modelInput.isBuilder,
       refreshedTs: refreshedTs
     };
+
     let currentVariantNames: string[] = [
       LLM_MODEL_DEFAULT_VARIANT,
       ...(modelPart.variants ?? [])
     ];
-    model.variants = this.reconcileDiscoveredModelVariants({
+
+    let reconciledResult: Result.Result<
+      LlmModelVariant[],
+      ReconcileDiscoveredModelVariantsResultError
+    > = this.reconcileDiscoveredModelVariantsResult({
       variants: model.variants,
       storedVariants: [],
       currentVariantNames: currentVariantNames,
       isExplorer: model.isExplorer,
       isBuilder: model.isBuilder
     });
-    this.validateModelVariants({
-      variants: model.variants,
-      isExplorer: model.isExplorer,
-      isBuilder: model.isBuilder
-    });
-    return model;
+
+    if (Result.isFailure(reconciledResult)) {
+      return reconciledResult;
+    }
+
+    model.variants = reconciledResult.value;
+
+    let variantsResult: Result.Result<void, ValidateModelVariantsResultError> =
+      this.validateModelVariantsResult({
+        variants: model.variants,
+        isExplorer: model.isExplorer,
+        isBuilder: model.isBuilder
+      });
+
+    if (Result.isFailure(variantsResult)) {
+      return variantsResult;
+    }
+
+    return Result.succeed(model);
   }
-  validateModelVariants(item: {
+
+  async getDiscoveredLlmModelPartResult(item: {
+    providerType: ModelCatalogProviderType;
+    modelId: string;
+    apiKey?: string;
+    userId?: string;
+    isCodexAuthSet?: boolean;
+    isForceRefresh?: boolean;
+  }): Result.ResultAsync<LlmModelPart, GetDiscoveredLlmModelPartResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'discovery',
+        (
+          v
+        ): Result.ResultAsync<LlmModelPartsResult, GetModelPartsResultError> =>
+          this.getModelPartsResult({
+            providerType: v.providerType,
+            apiKey: v.apiKey,
+            userId: v.userId,
+            isCodexAuthSet: v.isCodexAuthSet,
+            isForceRefresh: v.isForceRefresh
+          })
+      ),
+      Result.andThen(
+        (v): Result.Result<LlmModelPart, BackendLlmModelNotDiscoveredError> => {
+          let modelPart: LlmModelPart = v.discovery.modelParts.find(
+            modelPart => modelPart.modelId === v.modelId
+          );
+
+          return isUndefined(modelPart)
+            ? Result.fail({ code: 'BACKEND_LLM_MODEL_NOT_DISCOVERED' })
+            : Result.succeed(modelPart);
+        }
+      )
+    );
+  }
+
+  validateModelVariantsResult(item: {
     variants: LlmModelVariant[];
     isExplorer: boolean;
     isBuilder: boolean;
-  }): void {
+  }): Result.Result<void, ValidateModelVariantsResultError> {
     let { variants, isExplorer, isBuilder } = item;
+
     let variantNames: string[] = variants.map(variant => variant.variant);
+
     let normalizedVariantNames: string[] = variantNames.map(variantName =>
       variantName.toLocaleLowerCase()
     );
+
     let uniqueVariantNames: Set<string> = new Set(normalizedVariantNames);
-    let hasUniqueVariantNames: boolean =
+
+    let isUniqueVariantNames: boolean =
       uniqueVariantNames.size === normalizedVariantNames.length;
-    let hasDefaultVariant: boolean = variantNames.includes(
+
+    let isDefaultVariantPresent: boolean = variantNames.includes(
       LLM_MODEL_DEFAULT_VARIANT
     );
+
     let explorerEnabledCount: number = variants.filter(
       variant => variant.isExplorer
     ).length;
+
     let builderEnabledCount: number = variants.filter(
       variant => variant.isBuilder
     ).length;
-    let hasEnabledExplorerVariant: boolean =
+
+    let isExplorerVariantEnabled: boolean =
       isExplorer === false || explorerEnabledCount > 0;
-    let hasEnabledBuilderVariant: boolean =
+
+    let isBuilderVariantEnabled: boolean =
       isBuilder === false || builderEnabledCount > 0;
+
     let isInvalid: boolean =
-      hasUniqueVariantNames === false ||
-      hasDefaultVariant === false ||
-      hasEnabledExplorerVariant === false ||
-      hasEnabledBuilderVariant === false;
+      isUniqueVariantNames === false ||
+      isDefaultVariantPresent === false ||
+      isExplorerVariantEnabled === false ||
+      isBuilderVariantEnabled === false;
+
     if (isInvalid) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_VARIANTS_INVALID'
-      });
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_VARIANTS_INVALID' });
     }
+
+    return Result.succeed();
   }
-  reconcileDiscoveredModelVariants(item: {
+
+  reconcileDiscoveredModelVariantsResult(item: {
     variants: LlmModelVariant[];
     storedVariants: LlmModelVariant[];
     currentVariantNames: string[];
     isExplorer: boolean;
     isBuilder: boolean;
-  }): LlmModelVariant[] {
+  }): Result.Result<
+    LlmModelVariant[],
+    ReconcileDiscoveredModelVariantsResultError
+  > {
     let {
       variants,
       storedVariants,
@@ -183,37 +287,44 @@ export class LlmModelService {
       isExplorer,
       isBuilder
     } = item;
+
     let storedNames: Set<string> = new Set(
       storedVariants.map(variant => variant.variant)
     );
+
     let currentNames: Set<string> = new Set(currentVariantNames);
+
     let normalizedVariantNames: string[] = variants.map(variant =>
       variant.variant.toLocaleLowerCase()
     );
+
     let uniqueVariantNames: Set<string> = new Set(normalizedVariantNames);
-    let hasUniqueVariantNames: boolean =
+
+    let isUniqueVariantNames: boolean =
       uniqueVariantNames.size === normalizedVariantNames.length;
-    if (hasUniqueVariantNames === false) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_VARIANTS_INVALID'
-      });
+
+    if (isUniqueVariantNames === false) {
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_VARIANTS_INVALID' });
     }
-    let hasUnknownVariant: boolean = variants.some(
+
+    let isUnknownVariantPresent: boolean = variants.some(
       variant =>
         currentNames.has(variant.variant) === false &&
         storedNames.has(variant.variant) === false
     );
-    if (hasUnknownVariant) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_VARIANTS_INVALID'
-      });
+
+    if (isUnknownVariantPresent) {
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_VARIANTS_INVALID' });
     }
+
     let submittedVariantsByName: Map<string, LlmModelVariant> = new Map(
       variants.map(variant => [variant.variant, variant])
     );
+
     let storedVariantsByName: Map<string, LlmModelVariant> = new Map(
       storedVariants.map(variant => [variant.variant, variant])
     );
+
     let reconciledVariants: LlmModelVariant[] = currentVariantNames.map(
       variantName =>
         submittedVariantsByName.get(variantName) ??
@@ -225,14 +336,17 @@ export class LlmModelService {
           isBuilderRecommended: false
         }
     );
+
     let adjustedVariants: LlmModelVariant[] = this.syncDiscoveredModelVariants({
       variants: reconciledVariants,
       currentVariantNames: currentVariantNames,
       isExplorer: isExplorer,
       isBuilder: isBuilder
     });
-    return adjustedVariants;
+
+    return Result.succeed(adjustedVariants);
   }
+
   syncDiscoveredModelVariants(item: {
     variants: LlmModelVariant[];
     currentVariantNames: string[];
@@ -278,127 +392,149 @@ export class LlmModelService {
     }));
     return adjustedVariants;
   }
-  validateManualModelLimits(item: { modelInput: LlmModelInput }): void {
+
+  validateManualModelLimitsResult(item: {
+    modelInput: LlmModelInput;
+  }): Result.Result<void, ValidateManualModelLimitsResultError> {
     let { modelInput } = item;
-    if (!isDefined(modelInput.contextLimit)) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_CONTEXT_LIMIT_REQUIRED'
+
+    if (isUndefined(modelInput.contextLimit)) {
+      return Result.fail({
+        code: 'BACKEND_LLM_MODEL_CONTEXT_LIMIT_REQUIRED'
       });
     }
+
     let isInputLimitInvalid: boolean =
       isDefined(modelInput.inputLimit) &&
       modelInput.inputLimit > modelInput.contextLimit;
+
     let isOutputLimitInvalid: boolean =
       isDefined(modelInput.outputLimit) &&
       modelInput.outputLimit > modelInput.contextLimit;
+
     if (isInputLimitInvalid || isOutputLimitInvalid) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_LIMIT_INVALID'
-      });
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_LIMIT_INVALID' });
     }
+
+    return Result.succeed();
   }
-  async getModelParts(item: {
+
+  async getModelPartsResult(item: {
     providerType: ModelCatalogProviderType;
     apiKey?: string;
     userId?: string;
     isCodexAuthSet?: boolean;
     isForceRefresh?: boolean;
-  }): Promise<LlmModelPartsResult> {
+  }): Result.ResultAsync<LlmModelPartsResult, GetModelPartsResultError> {
     let { providerType, apiKey, userId, isCodexAuthSet, isForceRefresh } = item;
+
     if (providerType !== 'OpenAICodex' && !isDefinedAndNotEmpty(apiKey)) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_API_KEY_REQUIRED'
-      });
+      return Result.fail({ code: 'BACKEND_PROVIDER_API_KEY_REQUIRED' });
     }
+
     if (providerType === 'OpenAICodex') {
-      let canGetCodexModels: boolean =
+      let isCodexModelsAvailable: boolean =
         isCodexAuthSet === true && isDefinedAndNotEmpty(userId);
-      if (canGetCodexModels === false) {
+
+      if (isCodexModelsAvailable === false) {
         let result: LlmModelPartsResult = { modelParts: [] };
-        return result;
+
+        return Result.succeed(result);
       }
+
       let codexModelsResult: CodexModelsResult =
         await this.codexService.getModels({ userId: userId });
+
       if (isDefinedAndNotEmpty(codexModelsResult.errorMessage)) {
         let result: LlmModelPartsResult = {
           modelParts: [],
           errorMessage: codexModelsResult.errorMessage
         };
-        return result;
+
+        return Result.succeed(result);
       }
+
       let codexModelParts: LlmModelPart[] = codexModelsResult.codexModels.map(
         codexModel =>
           codexModelToLlmModelPart({
             codexModel: codexModel
           })
       );
+
       let result: LlmModelPartsResult = {
         modelParts: codexModelParts
       };
-      return result;
+
+      return Result.succeed(result);
     }
+
     if (providerType === 'Anthropic') {
-      let anthropicModelParts: LlmModelPart[] =
-        await this.getAnthropicModelParts({ apiKey: apiKey as string });
-      let result: LlmModelPartsResult = {
-        modelParts: anthropicModelParts
-      };
-      return result;
+      return this.getAnthropicModelPartsResult({
+        apiKey: apiKey as string
+      }).then(result =>
+        Result.isFailure(result)
+          ? result
+          : Result.succeed({ modelParts: result.value })
+      );
     }
+
     let isModelsDevFresh: boolean =
       isForceRefresh !== true &&
       isDefinedAndNotEmpty(this.modelsDev) &&
       isDefinedAndNotEmpty(this.modelsDevTs) &&
       Date.now() - this.modelsDevTs < this.modelsDevTtlMs;
+
     let modelsDev: ProviderMap;
+
     if (isModelsDevFresh) {
       modelsDev = this.modelsDev as ProviderMap;
     } else {
       try {
         let modelsClient: ReturnType<typeof Models.make> = Models.make();
+
         modelsDev = await modelsClient.providers({
           signal: AbortSignal.timeout(10000)
         });
+
         this.modelsDev = modelsDev;
+
         this.modelsDevTs = Date.now();
       } catch (error) {
-        throw new ServerError({
-          message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED',
-          originalError: error
-        });
+        return Result.fail({ code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED' });
       }
     }
+
     let devProvider: Provider = modelsDev[OPENAI_PROVIDER_ID];
+
     if (!devProvider) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED'
-      });
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED' });
     }
+
     let devModels: Model[] = Object.values(devProvider.models);
+
     let openAiModelsById: Map<string, OpenAI.Models.Model> = new Map();
+
     try {
       let openAiClient: OpenAI = new OpenAI({
         apiKey: apiKey,
         timeout: 10000,
         maxRetries: 0
       });
+
       let openAiResponse: OpenAI.Models.ModelsPage =
         await openAiClient.models.list();
+
       openAiModelsById = new Map(
         openAiResponse.data.map(model => [model.id, model])
       );
     } catch (error) {
       if (error instanceof OpenAI.AuthenticationError) {
-        throw new ServerError({
-          message: 'BACKEND_PROVIDER_NOT_VALID_API_KEY',
-          originalError: error
-        });
+        return Result.fail({ code: 'BACKEND_PROVIDER_NOT_VALID_API_KEY' });
       }
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED',
-        originalError: error
-      });
+
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED' });
     }
+
     let modelParts: LlmModelPart[] = devModels
       .map(devModel =>
         openAiModelToLlmModelPart({
@@ -408,46 +544,54 @@ export class LlmModelService {
         })
       )
       .filter(isDefined);
+
     let result: LlmModelPartsResult = {
       modelParts: modelParts
     };
-    return result;
+
+    return Result.succeed(result);
   }
-  private async getAnthropicModelParts(item: {
+
+  private async getAnthropicModelPartsResult(item: {
     apiKey: string;
-  }): Promise<LlmModelPart[]> {
+  }): Result.ResultAsync<LlmModelPart[], GetAnthropicModelPartsResultError> {
     let { apiKey } = item;
+
     let anthropicModels: Anthropic.Models.ModelInfo[] = [];
+
     try {
       let anthropicClient: Anthropic = new Anthropic({
         apiKey: apiKey,
         timeout: 10000,
         maxRetries: 0
       });
+
       let page: Anthropic.Models.ModelInfosPage =
         await anthropicClient.models.list({ limit: 1000 });
+
       anthropicModels.push(...page.data);
-      let hasNextPage: boolean = page.hasNextPage();
-      while (hasNextPage) {
+
+      let isNextPageAvailable: boolean = page.hasNextPage();
+
+      while (isNextPageAvailable) {
         page = await page.getNextPage();
+
         anthropicModels.push(...page.data);
-        hasNextPage = page.hasNextPage();
+
+        isNextPageAvailable = page.hasNextPage();
       }
     } catch (error) {
       if (error instanceof Anthropic.AuthenticationError) {
-        throw new ServerError({
-          message: 'BACKEND_PROVIDER_NOT_VALID_API_KEY',
-          originalError: error
-        });
+        return Result.fail({ code: 'BACKEND_PROVIDER_NOT_VALID_API_KEY' });
       }
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_MODEL_DISCOVERY_FAILED',
-        originalError: error
-      });
+
+      return Result.fail({ code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED' });
     }
+
     let modelParts: LlmModelPart[] = anthropicModels.map(anthropicModel =>
       anthropicModelToLlmModelPart({ anthropicModel: anthropicModel })
     );
-    return modelParts;
+
+    return Result.succeed(modelParts);
   }
 }

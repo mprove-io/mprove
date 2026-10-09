@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -21,16 +22,17 @@ import type {
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteLlmModelOutput } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-output';
-import type { ToBackendDeleteLlmModelRequest } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -55,52 +57,71 @@ export class DeleteLlmModelController {
   async deleteLlmModel(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteLlmModelRequestDto
-  ): Promise<ToBackendDeleteLlmModelOutput> {
-    let bodyPayload: ToBackendDeleteLlmModelRequest['input'] = body.input;
-
-    let { projectId, providerId, modelId } = bodyPayload;
-
-    await this.projectsService.getProjectCheckExists({ projectId: projectId });
-
-    await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    let provider: ProviderTab =
-      await this.providersService.getProviderCheckExists({
-        projectId: projectId,
-        providerId: providerId
-      });
-
-    this.providersService.getModelCheckExists({
-      provider: provider,
-      modelId: modelId
-    });
-
-    provider.models = provider.models.filter(x => x.modelId !== modelId);
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              update: { providers: [provider] }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
+  ): Promise<BackendResultForOperation<'deleteLlmModel'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        providerId: body.input.providerId,
+        modelId: body.input.modelId,
+        userId: user.userId
+      }),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        this.membersService.getMemberCheckIsAdminResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'provider',
+        (
+          v
+        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+          this.providersService.getProviderCheckExistsResult({
+            projectId: v.projectId,
+            providerId: v.providerId
+          })
+      ),
+      Result.andThrough(v =>
+        this.providersService.getLlmModelCheckExistsResult({
+          provider: v.provider,
+          modelId: v.modelId
+        })
+      ),
+      Result.inspect(v => {
+        v.provider.models = v.provider.models.filter(
+          model => model.modelId !== v.modelId
+        );
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      update: { providers: [v.provider] }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendDeleteLlmModelOutput => ({
+          provider: this.providersService.tabToApiProvider({
+            provider: v.provider,
+            isIncludePasswords: false
+          })
+        })
+      )
     );
-
-    let apiProvider: Provider = this.providersService.tabToApiProvider({
-      provider: provider,
-      isIncludePasswords: false
-    });
-
-    let payload: ToBackendDeleteLlmModelOutput = {
-      provider: apiProvider
-    };
-
-    return payload;
   }
 }

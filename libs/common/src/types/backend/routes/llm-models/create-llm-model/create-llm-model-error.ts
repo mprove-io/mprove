@@ -17,6 +17,34 @@ import {
   zBackendHashSecretIsNotDefinedError
 } from '#common/types/backend/errors/backend-hash-secret-is-not-defined-error';
 import {
+  type BackendLlmModelAlreadyExistsError,
+  zBackendLlmModelAlreadyExistsError
+} from '#common/types/backend/errors/backend-llm-model-already-exists-error';
+import {
+  type BackendLlmModelContextLimitRequiredError,
+  zBackendLlmModelContextLimitRequiredError
+} from '#common/types/backend/errors/backend-llm-model-context-limit-required-error';
+import {
+  type BackendLlmModelDiscoveryFailedError,
+  zBackendLlmModelDiscoveryFailedError
+} from '#common/types/backend/errors/backend-llm-model-discovery-failed-error';
+import {
+  type BackendLlmModelLimitInvalidError,
+  zBackendLlmModelLimitInvalidError
+} from '#common/types/backend/errors/backend-llm-model-limit-invalid-error';
+import {
+  type BackendLlmModelNotAvailableInBuilderError,
+  zBackendLlmModelNotAvailableInBuilderError
+} from '#common/types/backend/errors/backend-llm-model-not-available-in-builder-error';
+import {
+  type BackendLlmModelNotDiscoveredError,
+  zBackendLlmModelNotDiscoveredError
+} from '#common/types/backend/errors/backend-llm-model-not-discovered-error';
+import {
+  type BackendLlmModelVariantsInvalidError,
+  zBackendLlmModelVariantsInvalidError
+} from '#common/types/backend/errors/backend-llm-model-variants-invalid-error';
+import {
   type BackendMemberDoesNotExistError,
   zBackendMemberDoesNotExistError
 } from '#common/types/backend/errors/backend-member-does-not-exist-error';
@@ -41,34 +69,6 @@ import {
   zBackendProviderDoesNotExistError
 } from '#common/types/backend/errors/backend-provider-does-not-exist-error';
 import {
-  type BackendProviderModelAlreadyExistsError,
-  zBackendProviderModelAlreadyExistsError
-} from '#common/types/backend/errors/backend-provider-model-already-exists-error';
-import {
-  type BackendProviderModelContextLimitRequiredError,
-  zBackendProviderModelContextLimitRequiredError
-} from '#common/types/backend/errors/backend-provider-model-context-limit-required-error';
-import {
-  type BackendProviderModelDiscoveryFailedError,
-  zBackendProviderModelDiscoveryFailedError
-} from '#common/types/backend/errors/backend-provider-model-discovery-failed-error';
-import {
-  type BackendProviderModelLimitInvalidError,
-  zBackendProviderModelLimitInvalidError
-} from '#common/types/backend/errors/backend-provider-model-limit-invalid-error';
-import {
-  type BackendProviderModelNotAvailableInBuilderError,
-  zBackendProviderModelNotAvailableInBuilderError
-} from '#common/types/backend/errors/backend-provider-model-not-available-in-builder-error';
-import {
-  type BackendProviderModelNotDiscoveredError,
-  zBackendProviderModelNotDiscoveredError
-} from '#common/types/backend/errors/backend-provider-model-not-discovered-error';
-import {
-  type BackendProviderModelVariantsInvalidError,
-  zBackendProviderModelVariantsInvalidError
-} from '#common/types/backend/errors/backend-provider-model-variants-invalid-error';
-import {
   type BackendProviderNotValidApiKeyError,
   zBackendProviderNotValidApiKeyError
 } from '#common/types/backend/errors/backend-provider-not-valid-api-key-error';
@@ -92,13 +92,13 @@ export type ToBackendCreateLlmModelError =
   | BackendPromptFailedError
   | BackendProviderApiKeyRequiredError
   | BackendProviderDoesNotExistError
-  | BackendProviderModelAlreadyExistsError
-  | BackendProviderModelContextLimitRequiredError
-  | BackendProviderModelDiscoveryFailedError
-  | BackendProviderModelLimitInvalidError
-  | BackendProviderModelNotAvailableInBuilderError
-  | BackendProviderModelNotDiscoveredError
-  | BackendProviderModelVariantsInvalidError
+  | BackendLlmModelAlreadyExistsError
+  | BackendLlmModelContextLimitRequiredError
+  | BackendLlmModelDiscoveryFailedError
+  | BackendLlmModelLimitInvalidError
+  | BackendLlmModelNotAvailableInBuilderError
+  | BackendLlmModelNotDiscoveredError
+  | BackendLlmModelVariantsInvalidError
   | BackendProviderNotValidApiKeyError
   | BackendTransactionRetryError
   | BackendUserProfileCodexAuthNotSetError;
@@ -114,13 +114,13 @@ export let zToBackendCreateLlmModelError = z.discriminatedUnion('code', [
   zBackendPromptFailedError,
   zBackendProviderApiKeyRequiredError,
   zBackendProviderDoesNotExistError,
-  zBackendProviderModelAlreadyExistsError,
-  zBackendProviderModelContextLimitRequiredError,
-  zBackendProviderModelDiscoveryFailedError,
-  zBackendProviderModelLimitInvalidError,
-  zBackendProviderModelNotAvailableInBuilderError,
-  zBackendProviderModelNotDiscoveredError,
-  zBackendProviderModelVariantsInvalidError,
+  zBackendLlmModelAlreadyExistsError,
+  zBackendLlmModelContextLimitRequiredError,
+  zBackendLlmModelDiscoveryFailedError,
+  zBackendLlmModelLimitInvalidError,
+  zBackendLlmModelNotAvailableInBuilderError,
+  zBackendLlmModelNotDiscoveredError,
+  zBackendLlmModelVariantsInvalidError,
   zBackendProviderNotValidApiKeyError,
   zBackendTransactionRetryError,
   zBackendUserProfileCodexAuthNotSetError

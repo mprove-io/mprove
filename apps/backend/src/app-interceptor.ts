@@ -834,6 +834,78 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'createLlmModel') {
+        execution = makeBackendResultResponse({
+          operation: 'createLlmModel',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editLlmModel') {
+        execution = makeBackendResultResponse({
+          operation: 'editLlmModel',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteLlmModel') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteLlmModel',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getLlmModelParts') {
+        execution = makeBackendResultResponse({
+          operation: 'getLlmModelParts',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getLlmModelsWithProvider') {
+        execution = makeBackendResultResponse({
+          operation: 'getLlmModelsWithProvider',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'checkSignUp') {
+        execution = makeBackendResultResponse({
+          operation: 'checkSignUp',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else if (req.operation === 'setFavorite') {
         execution = makeBackendResultResponse({
           operation: 'setFavorite',

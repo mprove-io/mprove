@@ -1,10 +1,12 @@
 import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { BackendConfig } from '#backend/config/backend-config';
+import { Result } from '@praha/byethrow';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { ToBackendCheckSignUpResponseDto } from '#backend/controllers/check/check-sign-up/check-sign-up.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCheckSignUpOutput } from '#common/types/backend/routes/check/check-sign-up/check-sign-up-output';
 
@@ -23,7 +25,9 @@ export class CheckSignUpController {
   @ApiOkResponse({
     type: ToBackendCheckSignUpResponseDto
   })
-  async completeUserRegistration() {
+  async completeUserRegistration(): Promise<
+    BackendResultForOperation<'checkSignUp'>
+  > {
     let payload: ToBackendCheckSignUpOutput = {
       isRegisterOnlyInvitedUsers:
         this.cs.get<BackendConfig['registerOnlyInvitedUsers']>(
@@ -31,6 +35,6 @@ export class CheckSignUpController {
         ) === true
     };
 
-    return payload;
+    return Result.succeed(payload);
   }
 }

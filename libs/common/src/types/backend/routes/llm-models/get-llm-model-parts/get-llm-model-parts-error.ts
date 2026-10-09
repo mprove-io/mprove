@@ -17,6 +17,10 @@ import {
   zBackendHashSecretIsNotDefinedError
 } from '#common/types/backend/errors/backend-hash-secret-is-not-defined-error';
 import {
+  type BackendLlmModelDiscoveryFailedError,
+  zBackendLlmModelDiscoveryFailedError
+} from '#common/types/backend/errors/backend-llm-model-discovery-failed-error';
+import {
   type BackendMemberDoesNotExistError,
   zBackendMemberDoesNotExistError
 } from '#common/types/backend/errors/backend-member-does-not-exist-error';
@@ -40,10 +44,6 @@ import {
   type BackendProviderDoesNotExistError,
   zBackendProviderDoesNotExistError
 } from '#common/types/backend/errors/backend-provider-does-not-exist-error';
-import {
-  type BackendProviderModelDiscoveryFailedError,
-  zBackendProviderModelDiscoveryFailedError
-} from '#common/types/backend/errors/backend-provider-model-discovery-failed-error';
 import {
   type BackendProviderNotValidApiKeyError,
   zBackendProviderNotValidApiKeyError
@@ -72,7 +72,7 @@ export type ToBackendGetLlmModelPartsError =
   | BackendPromptFailedError
   | BackendProviderApiKeyRequiredError
   | BackendProviderDoesNotExistError
-  | BackendProviderModelDiscoveryFailedError
+  | BackendLlmModelDiscoveryFailedError
   | BackendProviderNotValidApiKeyError
   | BackendProviderTypeMismatchError
   | BackendTransactionRetryError
@@ -89,7 +89,7 @@ export let zToBackendGetLlmModelPartsError = z.discriminatedUnion('code', [
   zBackendPromptFailedError,
   zBackendProviderApiKeyRequiredError,
   zBackendProviderDoesNotExistError,
-  zBackendProviderModelDiscoveryFailedError,
+  zBackendLlmModelDiscoveryFailedError,
   zBackendProviderNotValidApiKeyError,
   zBackendProviderTypeMismatchError,
   zBackendTransactionRetryError,
