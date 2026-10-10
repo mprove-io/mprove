@@ -89,10 +89,11 @@ export class SetAvatarController {
                 : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
             )
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.avatar.avatarSmall = v.avatarSmall;
-
         v.avatar.avatarBig = undefined; // do not use avatarBig (encryption time)
+
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

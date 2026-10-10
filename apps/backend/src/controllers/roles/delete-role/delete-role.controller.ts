@@ -106,10 +106,11 @@ export class DeleteRoleController {
             v.projectMembers.filter(member => member.roles.includes(v.roleId))
           )
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.membersToUpdate.forEach(member => {
           member.roles = member.roles.filter(role => role !== v.roleId);
         });
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

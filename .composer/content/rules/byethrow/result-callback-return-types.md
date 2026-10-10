@@ -28,13 +28,24 @@ Result.andThen(
 Callbacks passed to `Result.map` must declare an explicit success-value return
 type.
 
+Exception: synchronous in-place mutation callbacks described in "Byethrow
+function selection" may infer their return type. Do not introduce a state type
+solely to annotate them.
+
+```ts
+Result.map(v => {
+  v.role.gvs.push({ givenId: v.givenId, values: v.values });
+  return v;
+});
+```
+
 Keep a one-off final projection inline in the `Result.map` callback. Do not
 extract it into a named function used only by that final projection.
 
 When the callback only constructs the output object, return the object directly
-with an expression body and an explicit callback return type. Do not introduce a
-redundant typed `payload` variable followed by `return payload`. Intermediate
-operations follow "Pipe step granularity".
+with an expression body. Do not introduce a redundant typed `payload` variable
+followed by `return payload`. Intermediate operations follow "Pipe step
+granularity".
 
 ```ts
 Result.map(

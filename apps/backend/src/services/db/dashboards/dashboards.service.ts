@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import pIteration from 'p-iteration';
+import type { DashboardEntToTabResultError } from '#common/types/backend/function-errors/dashboard-ent-to-tab-result-error';
+import type { GetDashboardPartsResultError } from '#common/types/backend/function-errors/get-dashboard-parts-result-error';
 
 const { forEachSeries } = pIteration;
 
@@ -528,49 +530,85 @@ export class DashboardsService {
   }): Promise<DashboardPart[]> {
     let { structId, user, apiUserMember } = item;
 
-    let dashboardParts = await this.db.drizzle
-      .select({
-        keyTag: dashboardsTable.keyTag,
-        dashboardId: dashboardsTable.dashboardId,
-        draft: dashboardsTable.draft,
-        creatorId: dashboardsTable.creatorId,
-        st: dashboardsTable.st
-        // lt: {},
-      })
-      .from(dashboardsTable)
-      .where(
-        and(
-          eq(dashboardsTable.structId, structId),
-          or(
-            eq(dashboardsTable.draft, false),
-            eq(dashboardsTable.creatorId, user.userId)
+    let result: Result.Result<DashboardPart[], GetDashboardPartsResultError> =
+      await this.getDashboardPartsResult({
+        structId: structId,
+        user: user,
+        apiUserMember: apiUserMember
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let dashboardParts: DashboardPart[] = result.value;
+
+    return dashboardParts;
+  }
+
+  async getDashboardPartsResult(item: {
+    structId: string;
+    user: UserTab;
+    apiUserMember: Member;
+  }): Result.ResultAsync<DashboardPart[], GetDashboardPartsResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'dashboards',
+        (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabResultError> =>
+          this.db.drizzle
+            .select({
+              keyTag: dashboardsTable.keyTag,
+              dashboardId: dashboardsTable.dashboardId,
+              draft: dashboardsTable.draft,
+              creatorId: dashboardsTable.creatorId,
+              st: dashboardsTable.st
+              // lt: {},
+            })
+            .from(dashboardsTable)
+            .where(
+              and(
+                eq(dashboardsTable.structId, v.structId),
+                or(
+                  eq(dashboardsTable.draft, false),
+                  eq(dashboardsTable.creatorId, v.user.userId)
+                )
+              )
+            )
+            .then(dashboardEnts =>
+              Result.sequence(dashboardEnts, dashboardEnt =>
+                this.tabService.dashboardEntToTabResult({
+                  dashboardEnt: dashboardEnt as DashboardEnt
+                })
+              )
+            )
+      ),
+      Result.bind(
+        'dashboardsGrantedAccess',
+        (v): Result.Result<DashboardTab[], never> =>
+          Result.succeed(
+            v.dashboards.filter(dashboard => {
+              if (dashboard.draft === true) {
+                return true;
+              }
+
+              return checkAccess({
+                member: v.apiUserMember,
+                accessRoles: dashboard.accessRolesCombined,
+                filePath: dashboard.filePath
+              });
+            })
           )
+      ),
+      Result.map((v): DashboardPart[] =>
+        v.dashboardsGrantedAccess.map(dashboard =>
+          this.tabToDashboardPart({
+            dashboard: dashboard,
+            member: v.apiUserMember
+          })
         )
       )
-      .then(xs =>
-        xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
-      );
-
-    let dashboardPartsGrantedAccess = dashboardParts.filter(x => {
-      if (x.draft === true) {
-        return true;
-      }
-
-      return checkAccess({
-        member: apiUserMember,
-        accessRoles: x.accessRolesCombined,
-        filePath: x.filePath
-      });
-    });
-
-    let apiDashboardParts = dashboardPartsGrantedAccess.map(x =>
-      this.tabToDashboardPart({
-        dashboard: x,
-        member: apiUserMember
-      })
     );
-
-    return apiDashboardParts;
   }
 
   async processDashboard(item: {

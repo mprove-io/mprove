@@ -102,10 +102,11 @@ export class DeleteEnvUserController {
             member: v.userMember
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.env.memberIds = v.env.memberIds.filter(
           memberId => memberId !== v.envUserId
         );
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

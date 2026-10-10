@@ -1266,6 +1266,66 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'clearCachedColumn') {
+        execution = makeBackendResultResponse({
+          operation: 'clearCachedColumn',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getCachedColumns') {
+        execution = makeBackendResultResponse({
+          operation: 'getCachedColumns',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'refreshCachedColumn') {
+        execution = makeBackendResultResponse({
+          operation: 'refreshCachedColumn',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'viewCachedColumn') {
+        execution = makeBackendResultResponse({
+          operation: 'viewCachedColumn',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getState') {
+        execution = makeBackendResultResponse({
+          operation: 'getState',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else if (req.operation === 'validateFiles') {
         execution = makeBackendResultResponse({
           operation: 'validateFiles',

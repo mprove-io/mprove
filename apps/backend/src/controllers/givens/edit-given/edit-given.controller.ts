@@ -99,8 +99,9 @@ export class EditGivenController {
           values: v.values
         })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.given.values = v.values;
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

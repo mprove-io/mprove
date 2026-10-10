@@ -115,10 +115,12 @@ export class SetOrgOwnerController {
                 : Result.succeed(this.tabService.userEntToTab(newOwnerEnt))
             )
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.org.ownerId = v.newOwner.userId;
 
         v.org.ownerEmail = v.newOwner.email;
+
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

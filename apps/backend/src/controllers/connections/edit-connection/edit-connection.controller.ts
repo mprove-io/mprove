@@ -118,7 +118,7 @@ export class EditConnectionController {
             connectionId: v.connectionId
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         if (isDefined(v.options.storeGoogleApi)) {
           v.options.storeGoogleApi.googleCloudProject =
             v.options.storeGoogleApi.serviceAccountCredentials?.project_id;
@@ -139,6 +139,8 @@ export class EditConnectionController {
           v.options.bigquery.bigqueryQuerySizeLimitGb =
             isDefined(sLimit) && sLimit > 0 ? sLimit : DEFAULT_QUERY_SIZE_LIMIT;
         }
+
+        return v;
       }),
       Result.andThrough(v => {
         if (isUndefined(v.options.motherduck)) {
@@ -155,10 +157,12 @@ export class EditConnectionController {
             })
           : Result.succeed();
       }),
-      Result.inspect(v => {
+      Result.map(v => {
         this.connectionsService.cleanInternalFields({ options: v.options });
 
         v.connection.options = v.options;
+
+        return v;
       }),
       Result.bind(
         'branchBridgeEnts',
@@ -172,11 +176,12 @@ export class EditConnectionController {
             })
             .then(bridgeEnts => Result.succeed(bridgeEnts))
       ),
-      Result.inspect(v =>
+      Result.map(v => {
         v.branchBridgeEnts.forEach(bridgeEnt => {
           bridgeEnt.needValidate = true;
-        })
-      ),
+        });
+        return v;
+      }),
       Result.andThrough(v =>
         dbErrorToResult({
           action: async () => {

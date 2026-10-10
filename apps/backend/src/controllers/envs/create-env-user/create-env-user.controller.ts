@@ -121,8 +121,9 @@ export class CreateEnvUserController {
           projectId: v.projectId
         })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.env.memberIds.push(v.envUserId);
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

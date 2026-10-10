@@ -125,8 +125,9 @@ export class EditEnvVarController {
           ? Result.fail({ code: 'BACKEND_EV_DOES_NOT_EXIST' })
           : Result.succeed(ev);
       }),
-      Result.inspect(v => {
+      Result.map(v => {
         v.ev.val = v.val;
+        return v;
       }),
       Result.bind(
         'branchBridgeEnts',
@@ -140,10 +141,11 @@ export class EditEnvVarController {
             })
             .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.branchBridgeEnts.forEach(bridgeEnt => {
           bridgeEnt.needValidate = true;
         });
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

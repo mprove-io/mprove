@@ -82,10 +82,11 @@ export class SetProjectSandboxProviderController {
             memberId: v.userId
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         if (isDefined(v.e2bApiKey)) {
           v.project.e2bApiKey = v.e2bApiKey === '' ? undefined : v.e2bApiKey;
         }
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

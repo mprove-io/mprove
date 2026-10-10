@@ -122,10 +122,12 @@ export class CreateEnvVarController {
           ? Result.fail({ code: 'BACKEND_EV_ALREADY_EXISTS' })
           : Result.succeed()
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         let newEv: Ev = { evId: v.evId, val: v.val };
 
         v.env.evs.push(newEv);
+
+        return v;
       }),
       Result.bind(
         'branchBridgeEnts',
@@ -139,10 +141,11 @@ export class CreateEnvVarController {
             })
             .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.branchBridgeEnts.forEach(bridgeEnt => {
           bridgeEnt.needValidate = true;
         });
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

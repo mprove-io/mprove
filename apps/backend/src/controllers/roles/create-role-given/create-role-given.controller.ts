@@ -118,8 +118,9 @@ export class CreateRoleGivenController {
           givenId: v.givenId
         })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.role.gvs.push({ givenId: v.givenId, values: v.values });
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

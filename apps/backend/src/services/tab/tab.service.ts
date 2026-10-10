@@ -39,8 +39,8 @@ import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import type { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
 import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
 import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
-import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
-import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
+import type { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
+import type { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
 import type { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import type { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import type { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
@@ -76,6 +76,8 @@ import type { AvatarEntToTabResultError } from '#common/types/backend/function-e
 import type { BranchEntToTabResultError } from '#common/types/backend/function-errors/branch-ent-to-tab-result-error';
 import type { BridgeEntToTabResultError } from '#common/types/backend/function-errors/bridge-ent-to-tab-result-error';
 import type { CachedColumnEntToTabResultError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-result-error';
+import type { CachedPartEntToTabResultError } from '#common/types/backend/function-errors/cached-part-ent-to-tab-result-error';
+import type { ChartEntToTabResultError } from '#common/types/backend/function-errors/chart-ent-to-tab-result-error';
 import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
 import type { DashboardEntToTabResultError } from '#common/types/backend/function-errors/dashboard-ent-to-tab-result-error';
 import type { DconfigEntToTabResultError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-result-error';
@@ -103,6 +105,10 @@ import type { BridgeLt } from '#common/types/shared/st-lt/bridges/bridge-lt';
 import type { BridgeSt } from '#common/types/shared/st-lt/bridges/bridge-st';
 import type { CachedColumnLt } from '#common/types/shared/st-lt/cached-columns/cached-column-lt';
 import type { CachedColumnSt } from '#common/types/shared/st-lt/cached-columns/cached-column-st';
+import type { CachedPartLt } from '#common/types/shared/st-lt/cached-parts/cached-part-lt';
+import type { CachedPartSt } from '#common/types/shared/st-lt/cached-parts/cached-part-st';
+import type { ChartLt } from '#common/types/shared/st-lt/charts/chart-lt';
+import type { ChartSt } from '#common/types/shared/st-lt/charts/chart-st';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 import type { DashboardLt } from '#common/types/shared/st-lt/dashboards/dashboard-lt';
@@ -523,12 +529,39 @@ export class TabService {
       return;
     }
 
-    let cachedPart: CachedPartTab = {
-      ...cachedPartEnt,
-      ...this.getTabProps({ ent: cachedPartEnt })
-    };
+    let result: Result.Result<CachedPartTab, CachedPartEntToTabResultError> =
+      this.cachedPartEntToTabResult({ cachedPartEnt: cachedPartEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let cachedPart: CachedPartTab = result.value;
 
     return cachedPart;
+  }
+
+  cachedPartEntToTabResult(item: {
+    cachedPartEnt: CachedPartsEnt;
+  }): Result.Result<CachedPartTab, CachedPartEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<CachedPartSt, CachedPartLt>,
+          GetTabPropsResultError
+        > =>
+          this.getTabPropsResult<CachedPartSt, CachedPartLt>({
+            ent: v.cachedPartEnt
+          })
+      ),
+      Result.map(
+        (v): CachedPartTab => ({ ...v.cachedPartEnt, ...v.tabProps.props })
+      )
+    );
   }
 
   chartEntToTab(chartEnt: ChartEnt): ChartTab {
@@ -536,12 +569,32 @@ export class TabService {
       return;
     }
 
-    let chart: ChartTab = {
-      ...chartEnt,
-      ...this.getTabProps({ ent: chartEnt })
-    };
+    let result: Result.Result<ChartTab, ChartEntToTabResultError> =
+      this.chartEntToTabResult({ chartEnt: chartEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let chart: ChartTab = result.value;
 
     return chart;
+  }
+
+  chartEntToTabResult(item: {
+    chartEnt: ChartEnt;
+  }): Result.Result<ChartTab, ChartEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<TabProps<ChartSt, ChartLt>, GetTabPropsResultError> =>
+          this.getTabPropsResult<ChartSt, ChartLt>({ ent: v.chartEnt })
+      ),
+      Result.map((v): ChartTab => ({ ...v.chartEnt, ...v.tabProps.props }))
+    );
   }
 
   connectionEntToTab(connectionEnt: ConnectionEnt): ConnectionTab {

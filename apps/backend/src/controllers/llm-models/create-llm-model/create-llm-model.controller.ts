@@ -142,8 +142,9 @@ export class CreateLlmModelController {
             })
           : Result.succeed()
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.provider.models.push(v.model);
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

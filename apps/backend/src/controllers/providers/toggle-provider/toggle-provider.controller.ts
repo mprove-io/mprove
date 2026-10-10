@@ -86,8 +86,9 @@ export class ToggleProviderController {
             providerId: v.providerId
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.provider.isEnabled = v.isEnabled;
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

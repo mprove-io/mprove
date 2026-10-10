@@ -92,10 +92,11 @@ export class DeleteLlmModelController {
           modelId: v.modelId
         })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.provider.models = v.provider.models.filter(
           model => model.modelId !== v.modelId
         );
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

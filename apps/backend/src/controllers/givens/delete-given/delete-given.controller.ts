@@ -107,10 +107,11 @@ export class DeleteGivenController {
             )
           )
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.rolesToUpdate.forEach(role => {
           role.gvs = role.gvs.filter(gv => gv.givenId !== v.givenId);
         });
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

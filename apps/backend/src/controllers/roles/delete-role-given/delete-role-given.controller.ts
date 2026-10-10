@@ -92,8 +92,9 @@ export class DeleteRoleGivenController {
             roleId: v.roleId
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.role.gvs = v.role.gvs.filter(gv => gv.givenId !== v.givenId);
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

@@ -113,11 +113,13 @@ export class EditMemberController {
             projectId: v.projectId
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.member.isAdmin = v.isAdmin;
         v.member.isEditor = v.isEditor;
         v.member.isExplorer = v.isExplorer;
         v.member.roles = v.roles;
+
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

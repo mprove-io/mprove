@@ -87,12 +87,13 @@ export class CreateProviderController {
             })
           : Result.succeed()
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         if ('apiKey' in v.input.options) {
           v.input.options.apiKey = isDefinedAndNotEmpty(v.input.options.apiKey)
             ? v.input.options.apiKey
             : undefined;
         }
+        return v;
       }),
       Result.andThrough(v =>
         this.providersService.checkProviderDoesNotExistResult({

@@ -114,8 +114,9 @@ export class DeleteEnvVarController {
             member: v.userMember
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.env.evs = v.env.evs.filter(ev => ev.evId !== v.evId);
+        return v;
       }),
       Result.bind(
         'branchBridgeEnts',
@@ -129,10 +130,11 @@ export class DeleteEnvVarController {
             })
             .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.branchBridgeEnts.forEach(bridgeEnt => {
           bridgeEnt.needValidate = true;
         });
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

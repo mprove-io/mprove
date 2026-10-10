@@ -122,8 +122,9 @@ export class EditRoleGivenController {
           values: v.values
         })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.roleGiven.values = v.values;
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

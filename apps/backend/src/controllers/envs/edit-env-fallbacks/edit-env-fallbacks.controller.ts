@@ -116,12 +116,14 @@ export class EditEnvFallbacksController {
             member: v.userMember
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.env.isFallbackToProdConnections = v.isFallbackToProdConnections;
 
         v.env.isFallbackToProdVariables = v.isFallbackToProdVariables;
 
         v.env.useProdCache = v.useProdCache;
+
+        return v;
       }),
       Result.bind(
         'branchBridgeEnts',
@@ -135,10 +137,11 @@ export class EditEnvFallbacksController {
             })
             .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.branchBridgeEnts.forEach(bridgeEnt => {
           bridgeEnt.needValidate = true;
         });
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

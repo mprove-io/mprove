@@ -82,10 +82,11 @@ export class SetProjectInfoController {
             memberId: v.userId
           })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         if (isDefined(v.name)) {
           v.project.name = v.name;
         }
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

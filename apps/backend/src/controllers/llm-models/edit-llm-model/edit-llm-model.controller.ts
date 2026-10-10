@@ -165,7 +165,7 @@ export class EditLlmModelController {
                 isBuilder: v.isBuilder
               })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         if (isDefined(v.modelPart)) {
           let refreshedModel: LlmModel = {
             ...v.model,
@@ -180,6 +180,7 @@ export class EditLlmModelController {
 
           Object.assign(v.model, refreshedModel);
         }
+        return v;
       }),
       Result.andThrough(v =>
         v.isBuilder === true && v.model.isOpencodeSupported === false
@@ -195,10 +196,11 @@ export class EditLlmModelController {
           isBuilder: v.isBuilder
         })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.model.name = isUndefinedOrEmpty(v.name)
           ? capitalizeFirstLetter(v.modelId)
           : v.name;
+        return v;
       }),
       Result.andThrough(v =>
         v.isManualModel
@@ -216,7 +218,7 @@ export class EditLlmModelController {
             })
           : Result.succeed()
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         if (v.isManualModel) {
           v.model.contextLimit = v.contextLimit;
           v.model.inputLimit = v.inputLimit;
@@ -225,6 +227,8 @@ export class EditLlmModelController {
         v.model.isExplorer = v.isExplorer;
         v.model.isBuilder = v.isBuilder;
         v.model.variants = v.variants;
+
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

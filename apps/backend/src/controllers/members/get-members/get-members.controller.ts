@@ -165,7 +165,7 @@ export class GetMembersController {
         (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
           this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
-      Result.inspect(v => {
+      Result.map(v => {
         v.apiMembers.forEach(apiMember => {
           let avatar: AvatarTab = v.avatars.find(
             avatar => avatar.userId === apiMember.memberId
@@ -175,6 +175,7 @@ export class GetMembersController {
             apiMember.avatarSmall = avatar.avatarSmall;
           }
         });
+        return v;
       }),
       Result.map(
         (v): ToBackendGetMembersOutput => ({

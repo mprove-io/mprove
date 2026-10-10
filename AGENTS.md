@@ -671,6 +671,26 @@ synchronous exceptions in the outer body to promise rejections. Direct returns
 from `.then(...)` follow the promise-chain exception under "Explicit variable
 types".
 
+## Fire and forget promises
+
+When deliberately starting asynchronous work without waiting for it, prefix the
+promise-producing expression with `void` at the call site. Apply this inside
+callbacks too, including timer callbacks and Result pipeline steps.
+
+When subsequent work depends on completion, await or return the promise instead.
+Do not add `void` merely to silence an accidentally unawaited operation.
+
+`void` documents intentional promise disposal; it does not handle rejection.
+Preserve existing background rejection handling and the behavior-preservation
+requirements under "Pipe step granularity" when clarifying existing calls.
+
+```ts
+Result.andThrough(v => {
+  void this.finishRefreshCachedColumn({ projectId: v.projectId });
+  return Result.succeed();
+});
+```
+
 ## Entity and Tab variable names
 
 For database entities and their converted Tab values:
@@ -966,13 +986,24 @@ Result.andThen(
 Callbacks passed to `Result.map` must declare an explicit success-value return
 type.
 
+Exception: synchronous in-place mutation callbacks described in "Byethrow
+function selection" may infer their return type. Do not introduce a state type
+solely to annotate them.
+
+```ts
+Result.map(v => {
+  v.role.gvs.push({ givenId: v.givenId, values: v.values });
+  return v;
+});
+```
+
 Keep a one-off final projection inline in the `Result.map` callback. Do not
 extract it into a named function used only by that final projection.
 
 When the callback only constructs the output object, return the object directly
-with an expression body and an explicit callback return type. Do not introduce a
-redundant typed `payload` variable followed by `return payload`. Intermediate
-operations follow "Pipe step granularity".
+with an expression body. Do not introduce a redundant typed `payload` variable
+followed by `return payload`. Intermediate operations follow "Pipe step
+granularity".
 
 ```ts
 Result.map(
@@ -1066,20 +1097,31 @@ Use the Byethrow function matching the operation.
 #### Composing and transforming
 
 - `pipe` applies functions from left to right.
-- `map` transforms a success value without introducing an anticipated error.
+- `map` transforms or mutates pipeline data without introducing an anticipated
+  error. For an in-place mutation, return the same state object with `return v`
+  to preserve references.
 - `mapError` transforms a failure value.
 - `andThen` replaces a success with another Result-producing computation.
-- `andThrough` runs a Result-producing validation or side effect and preserves
-  the original success.
+- `andThrough` runs a validation or operational side effect, such as
+  persistence, notification, or a background-work launch, and preserves the
+  original success. Return the operation's Result or ResultAsync so its
+  anticipated failure stops the pipeline. Background launches follow "Fire and
+  forget promises" and immediately return `Result.succeed()`, confirming launch
+  rather than completion.
 - `bind` adds a Result-producing computation's success under a named property.
   Do not bind `void` results or final projections.
 - `orElse` replaces a failure with another Result-producing computation.
 - `orThrough` runs a Result-producing operation on a failure and preserves the
   original failure when that operation succeeds.
-- `inspect` runs an infallible side effect on a success without changing the
-  result.
+- `inspect` is reserved for observation, such as debug logging and diagnostics,
+  without mutating pipeline data.
 - `inspectError` runs an infallible side effect on a failure without changing
   the result.
+
+Both `inspect` and `andThrough` wait for promises returned by their callbacks,
+but only `andThrough` propagates a returned Result failure. Do not discard a
+fallible Result inside either callback. Callback annotations follow "Result
+callback return types".
 
 #### Combining and validating
 

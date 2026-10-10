@@ -168,11 +168,12 @@ export class CreateConnectionController {
             })
             .then(bridgeEnts => Result.succeed(bridgeEnts))
       ),
-      Result.inspect(v =>
+      Result.map(v => {
         v.branchBridgeEnts.forEach(bridgeEnt => {
           bridgeEnt.needValidate = true;
-        })
-      ),
+        });
+        return v;
+      }),
       Result.andThrough(v =>
         dbErrorToResult({
           action: async () => {

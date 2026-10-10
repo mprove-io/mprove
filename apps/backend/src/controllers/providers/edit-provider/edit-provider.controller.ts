@@ -105,7 +105,7 @@ export class EditProviderController {
 
         return Result.succeed();
       }),
-      Result.inspect(v => {
+      Result.map(v => {
         if (
           v.provider.type === 'OpenAICompatible' &&
           'baseURL' in v.input.options &&
@@ -140,6 +140,7 @@ export class EditProviderController {
         } else if (v.provider.type === 'OpenAICodex') {
           v.provider.options = {};
         }
+        return v;
       }),
       Result.andThrough(v =>
         dbErrorToResult({

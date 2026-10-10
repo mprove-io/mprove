@@ -152,10 +152,10 @@ export class SessionArchiveService {
           }
         })
       ),
-      Result.inspect(v => {
+      Result.andThrough(v => {
         setTimeout(() => {
           if (v.freshSession.type === 'Editor') {
-            this.editorStreamService
+            void this.editorStreamService
               .publishStopSessionStream({
                 sessionId: v.freshSession.sessionId
               })
@@ -169,6 +169,7 @@ export class SessionArchiveService {
               });
           }
         }, 10_000);
+        return Result.succeed();
       }),
       Result.map(
         (v): SessionApi =>

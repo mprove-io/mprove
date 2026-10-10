@@ -177,10 +177,11 @@ export async function buildVisualizations(item: {
           cs: v.cs
         })
     ),
-    Result.inspect(v => {
+    Result.map(v => {
       v.reports.forEach(report => {
         report.tiles = [{ options: report.options }];
       });
+      return v;
     }),
     Result.bind(
       'mconfigChartBuiltReports',

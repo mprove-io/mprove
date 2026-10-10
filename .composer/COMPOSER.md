@@ -43,6 +43,7 @@
 - rules/zod-schemas-and-native-types.md
 - rules/explicit-variable-types.md
 - rules/async-promise-chains.md
+- rules/fire-and-forget-promises.md
 - rules/entity-and-tab-variable-names.md
 - rules/local-object-projections.md
 - rules/empty-lines-between-statements.md
