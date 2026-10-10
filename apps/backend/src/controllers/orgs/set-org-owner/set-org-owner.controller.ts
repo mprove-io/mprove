@@ -109,15 +109,11 @@ export class SetOrgOwnerController {
                 eq(usersTable.isEmailVerified, true)
               )
             })
-            .then((newOwnerEnt: UserEnt) => {
-              if (isUndefined(newOwnerEnt)) {
-                return Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' });
-              }
-
-              let newOwner: UserTab = this.tabService.userEntToTab(newOwnerEnt);
-
-              return Result.succeed(newOwner);
-            })
+            .then((newOwnerEnt: UserEnt) =>
+              isUndefined(newOwnerEnt)
+                ? Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' })
+                : Result.succeed(this.tabService.userEntToTab(newOwnerEnt))
+            )
       ),
       Result.inspect(v => {
         v.org.ownerId = v.newOwner.userId;

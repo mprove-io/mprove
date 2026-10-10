@@ -106,22 +106,19 @@ export class GetLlmModelPartsController {
         ): Result.ResultAsync<
           LlmModelPartsResult,
           GetModelPartsResultError | BackendProviderTypeMismatchError
-        > => {
-          if (v.provider.type === 'OpenAICompatible') {
-            return Result.fail({ code: 'BACKEND_PROVIDER_TYPE_MISMATCH' });
-          }
-
-          return this.llmModelService.getModelPartsResult({
-            providerType: v.provider.type,
-            apiKey:
-              v.provider.type === 'OpenAICodex'
-                ? undefined
-                : v.provider.options.apiKey,
-            userId: v.userId,
-            isCodexAuthSet: v.isCodexAuthSet,
-            isForceRefresh: true
-          });
-        }
+        > =>
+          v.provider.type === 'OpenAICompatible'
+            ? Result.fail({ code: 'BACKEND_PROVIDER_TYPE_MISMATCH' })
+            : this.llmModelService.getModelPartsResult({
+                providerType: v.provider.type,
+                apiKey:
+                  v.provider.type === 'OpenAICodex'
+                    ? undefined
+                    : v.provider.options.apiKey,
+                userId: v.userId,
+                isCodexAuthSet: v.isCodexAuthSet,
+                isForceRefresh: true
+              })
       ),
       Result.bind(
         'modelPartsById',
@@ -194,27 +191,25 @@ export class GetLlmModelPartsController {
 
         return Result.succeed(isProviderChanged);
       }),
-      Result.andThrough(async v => {
-        if (v.isProviderChanged) {
-          return dbErrorToResult({
-            action: async () => {
-              await retry(
-                async () =>
-                  await this.db.drizzle.transaction(
-                    async tx =>
-                      await this.db.packer.write({
-                        tx: tx,
-                        update: { providers: [v.provider] }
-                      })
-                  ),
-                getRetryOption(this.cs, this.logger)
-              );
-            }
-          });
-        }
-
-        return Result.succeed();
-      }),
+      Result.andThrough(async v =>
+        v.isProviderChanged
+          ? dbErrorToResult({
+              action: async () => {
+                await retry(
+                  async () =>
+                    await this.db.drizzle.transaction(
+                      async tx =>
+                        await this.db.packer.write({
+                          tx: tx,
+                          update: { providers: [v.provider] }
+                        })
+                    ),
+                  getRetryOption(this.cs, this.logger)
+                );
+              }
+            })
+          : Result.succeed()
+      ),
       Result.map(
         (v): ToBackendGetLlmModelPartsOutput => ({
           modelParts: v.modelPartsResult.modelParts,

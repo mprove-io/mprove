@@ -121,11 +121,9 @@ export class EditEnvVarController {
       Result.bind('ev', (v): Result.Result<Ev, BackendEvDoesNotExistError> => {
         let ev: Ev = v.env.evs.find(ev => ev.evId === v.evId);
 
-        if (isUndefined(ev)) {
-          return Result.fail({ code: 'BACKEND_EV_DOES_NOT_EXIST' });
-        }
-
-        return Result.succeed(ev);
+        return isUndefined(ev)
+          ? Result.fail({ code: 'BACKEND_EV_DOES_NOT_EXIST' })
+          : Result.succeed(ev);
       }),
       Result.inspect(v => {
         v.ev.val = v.val;

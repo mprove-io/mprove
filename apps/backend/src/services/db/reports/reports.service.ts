@@ -448,32 +448,23 @@ export class ReportsService {
             );
         }
       ),
-      Result.andThrough(v => {
-        if (
-          v.reportId !== EMPTY_REPORT_ID &&
-          v.report.draft === true &&
-          v.report.creatorId !== v.user.userId
-        ) {
-          return Result.fail({ code: 'BACKEND_REPORT_CREATOR_ID_MISMATCH' });
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(v => {
-        if (v.report.draft === false) {
-          let isAccessGranted: boolean = checkAccess({
-            member: v.userMember,
-            accessRoles: v.report.accessRolesCombined,
-            filePath: v.report.filePath
-          });
-
-          if (isAccessGranted === false) {
-            return Result.fail({ code: 'BACKEND_FORBIDDEN_REPORT' });
-          }
-        }
-
-        return Result.succeed();
-      }),
+      Result.andThrough(v =>
+        v.reportId !== EMPTY_REPORT_ID &&
+        v.report.draft === true &&
+        v.report.creatorId !== v.user.userId
+          ? Result.fail({ code: 'BACKEND_REPORT_CREATOR_ID_MISMATCH' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.report.draft === false &&
+        checkAccess({
+          member: v.userMember,
+          accessRoles: v.report.accessRolesCombined,
+          filePath: v.report.filePath
+        }) === false
+          ? Result.fail({ code: 'BACKEND_FORBIDDEN_REPORT' })
+          : Result.succeed()
+      ),
       Result.map((v): ReportTab => v.report)
     );
   }

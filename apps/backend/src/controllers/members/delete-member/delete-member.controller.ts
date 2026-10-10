@@ -9,16 +9,21 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteMemberRequestDto,
   ToBackendDeleteMemberResponseDto
 } from '#backend/controllers/members/delete-member/delete-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
@@ -28,10 +33,12 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
+import type { ToBackendDeleteMemberOutput } from '#common/types/backend/routes/members/delete-member/delete-member-output';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)
@@ -59,82 +66,91 @@ export class DeleteMemberController {
   async deleteMember(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteMemberRequestDto
-  ) {
-    let { traceId } = body;
-    let { projectId, memberId } = body.input;
+  ): Promise<BackendResultForOperation<'deleteMember'>> {
+    return Result.pipe(
+      Result.succeed({
+        traceId: body.traceId,
+        projectId: body.input.projectId,
+        memberId: body.input.memberId,
+        userId: user.userId
+      }),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        this.membersService.getMemberCheckIsAdminResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        v.userId === v.memberId
+          ? Result.fail({ code: 'BACKEND_ADMIN_CANNOT_DELETE_HIMSELF' })
+          : Result.succeed()
+      ),
+      Result.bind(
+        'member',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          this.membersService.getMemberCheckExistsResult({
+            memberId: v.memberId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        this.rpcService.sendToDiskResult({
+          request: {
+            operation: 'deleteDevRepo',
+            traceId: v.traceId,
+            input: {
+              baseProject: this.tabService.projectTabToBaseProject({
+                project: v.project
+              }),
+              devRepoId: v.member.memberId
+            }
+          }
+        })
+      ),
+      Result.andThrough(async v => {
+        await retry(
+          async () =>
+            await this.db.drizzle.transaction(async tx => {
+              await tx
+                .delete(membersTable)
+                .where(
+                  and(
+                    eq(membersTable.projectId, v.projectId),
+                    eq(membersTable.memberId, v.memberId)
+                  )
+                );
 
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
+              await tx
+                .delete(branchesTable)
+                .where(
+                  and(
+                    eq(branchesTable.projectId, v.projectId),
+                    eq(branchesTable.repoId, v.member.memberId)
+                  )
+                );
 
-    await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
+              await tx
+                .delete(bridgesTable)
+                .where(
+                  and(
+                    eq(bridgesTable.projectId, v.projectId),
+                    eq(bridgesTable.repoId, v.member.memberId)
+                  )
+                );
+            }),
+          getRetryOption(this.cs, this.logger)
+        );
 
-    if (user.userId === memberId) {
-      throw new ServerError({
-        message: 'BACKEND_ADMIN_CANNOT_DELETE_HIMSELF'
-      });
-    }
-
-    let member = await this.membersService.getMemberCheckExists({
-      memberId: memberId,
-      projectId: projectId
-    });
-
-    let devRepoId = member.memberId;
-
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
-
-    await this.rpcService.sendToDiskUnwrapOutput({
-      request: {
-        operation: 'deleteDevRepo',
-        traceId: traceId,
-        input: {
-          baseProject: baseProject,
-          devRepoId: devRepoId
-        }
-      }
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(membersTable)
-            .where(
-              and(
-                eq(membersTable.projectId, projectId),
-                eq(membersTable.memberId, memberId)
-              )
-            );
-
-          await tx
-            .delete(branchesTable)
-            .where(
-              and(
-                eq(branchesTable.projectId, projectId),
-                eq(branchesTable.repoId, devRepoId)
-              )
-            );
-
-          await tx
-            .delete(bridgesTable)
-            .where(
-              and(
-                eq(bridgesTable.projectId, projectId),
-                eq(bridgesTable.repoId, devRepoId)
-              )
-            );
-        }),
-      getRetryOption(this.cs, this.logger)
+        return Result.succeed();
+      }),
+      Result.map((v): ToBackendDeleteMemberOutput => ({}))
     );
-
-    let payload = {};
-
-    return payload;
   }
 }

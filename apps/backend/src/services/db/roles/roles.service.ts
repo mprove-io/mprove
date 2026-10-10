@@ -15,6 +15,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckRoleDoesNotExistResultError } from '#common/types/backend/function-errors/check-role-does-not-exist-result-error';
 import type { CheckRoleGivenDoesNotExistResultError } from '#common/types/backend/function-errors/check-role-given-does-not-exist-result-error';
+import type { CheckRolesExistResultError } from '#common/types/backend/function-errors/check-roles-exist-result-error';
 import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
 import type { GetRoleCheckExistsResultError } from '#common/types/backend/function-errors/get-role-check-exists-result-error';
 import type { GetRoleGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-role-given-check-exists-result-error';
@@ -101,7 +102,10 @@ export class RolesService {
       );
   }
 
-  async checkRolesExist(item: { projectId: string; roleIds: string[] }) {
+  async checkRolesExistResult(item: {
+    projectId: string;
+    roleIds: string[];
+  }): Result.ResultAsync<void, CheckRolesExistResultError> {
     let { projectId, roleIds } = item;
 
     let uniqueRoleIds: string[] = [];
@@ -113,30 +117,32 @@ export class RolesService {
     });
 
     if (uniqueRoleIds.length === 0) {
-      return;
+      return Result.succeed();
     }
 
-    let roles = await this.db.drizzle.query.rolesTable.findMany({
+    let roleEnts: RoleEnt[] = await this.db.drizzle.query.rolesTable.findMany({
       where: and(
         eq(rolesTable.projectId, projectId),
         inArray(rolesTable.roleId, uniqueRoleIds)
       )
     });
 
-    let existingRoleIds = roles.map(role => role.roleId);
+    let existingRoleIds: string[] = roleEnts.map(roleEnt => roleEnt.roleId);
 
-    let missingRoleIds = uniqueRoleIds
+    let missingRoleIds: string[] = uniqueRoleIds
       .filter(roleId => existingRoleIds.indexOf(roleId) < 0)
       .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0));
 
     if (missingRoleIds.length > 0) {
-      throw new ServerError({
-        message: 'BACKEND_ROLES_DO_NOT_EXIST',
+      return Result.fail({
+        code: 'BACKEND_ROLES_DO_NOT_EXIST',
         displayData: {
           roles: missingRoleIds
         }
       });
     }
+
+    return Result.succeed();
   }
 
   checkRoleGivenDoesNotExistResult(item: {

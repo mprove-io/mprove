@@ -16,13 +16,16 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckGivenDoesNotExistResultError } from '#common/types/backend/function-errors/check-given-does-not-exist-result-error';
 import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
+import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
 import type { GetGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-given-check-exists-result-error';
+import type { GetMemberGivensForSelectionResultError } from '#common/types/backend/function-errors/get-member-givens-for-selection-result-error';
 import type { GivenEntToTabResultError } from '#common/types/backend/function-errors/given-ent-to-tab-result-error';
 import type { ValidateGivenValuesResultError } from '#common/types/backend/function-errors/validate-given-values-result-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
 import type { MemberGivenValue } from '#common/types/backend/parts/members/member-given-value';
+import type { Role } from '#common/types/backend/parts/role';
 
 @Injectable()
 export class GivensService {
@@ -210,81 +213,121 @@ export class GivensService {
   async getMemberGivensForSelection(item: {
     projectId: string;
     roles: string[];
-  }) {
-    let { projectId, roles } = item;
+  }): Promise<MemberGiven[]> {
+    let result: Result.Result<
+      MemberGiven[],
+      GetMemberGivensForSelectionResultError
+    > = await this.getMemberGivensForSelectionResult(item);
 
-    let apiGivens = await this.getApiGivens({
-      projectId: projectId
-    });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    let apiRoles = await this.rolesService.getApiRoles({
-      projectId: projectId
-    });
+    let memberGivens: MemberGiven[] = result.value;
 
-    let memberRoles = apiRoles.filter(role => roles.indexOf(role.roleId) > -1);
+    return memberGivens;
+  }
 
-    let valueOriginsByGivenId: Record<
-      string,
-      Record<string, { isProjectDefault: boolean; roleIds: string[] }>
-    > = {};
-    let typeByGivenId: Record<string, GivenType> = {};
-    let isMultipleByGivenId: Record<string, boolean> = {};
+  async getMemberGivensForSelectionResult(item: {
+    projectId: string;
+    roles: string[];
+  }): Result.ResultAsync<
+    MemberGiven[],
+    GetMemberGivensForSelectionResultError
+  > {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'apiGivens',
+        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+          this.getApiGivensResult({ projectId: v.projectId })
+      ),
+      Result.bind(
+        'apiRoles',
+        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+          this.rolesService.getApiRolesResult({ projectId: v.projectId })
+      ),
+      Result.map((v): MemberGiven[] => {
+        let memberRoles: Role[] = v.apiRoles.filter(role =>
+          v.roles.includes(role.roleId)
+        );
 
-    apiGivens.forEach(given => {
-      valueOriginsByGivenId[given.givenId] = {};
-      typeByGivenId[given.givenId] = given.type;
-      isMultipleByGivenId[given.givenId] = given.isMultiple;
+        let valueOriginsByGivenId: Record<
+          string,
+          Record<string, { isProjectDefault: boolean; roleIds: string[] }>
+        > = {};
 
-      given.values.forEach(value => {
-        valueOriginsByGivenId[given.givenId][value] = {
-          isProjectDefault: true,
-          roleIds: []
-        };
-      });
-    });
+        let typeByGivenId: Record<string, GivenType> = {};
 
-    memberRoles.forEach(role => {
-      role.gvs.forEach(gv => {
-        let isGivenMissing = !valueOriginsByGivenId[gv.givenId];
-        if (isGivenMissing) {
-          valueOriginsByGivenId[gv.givenId] = {};
-        }
+        let isMultipleByGivenId: Record<string, boolean> = {};
 
-        gv.values.forEach(value => {
-          let isValueMissing = !valueOriginsByGivenId[gv.givenId][value];
-          if (isValueMissing) {
-            valueOriginsByGivenId[gv.givenId][value] = {
-              isProjectDefault: false,
+        v.apiGivens.forEach(given => {
+          valueOriginsByGivenId[given.givenId] = {};
+
+          typeByGivenId[given.givenId] = given.type;
+
+          isMultipleByGivenId[given.givenId] = given.isMultiple;
+
+          given.values.forEach(value => {
+            valueOriginsByGivenId[given.givenId][value] = {
+              isProjectDefault: true,
               roleIds: []
             };
-          }
-
-          valueOriginsByGivenId[gv.givenId][value].roleIds.push(role.roleId);
+          });
         });
-      });
-    });
 
-    return Object.keys(valueOriginsByGivenId)
-      .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
-      .map(givenId => {
-        let valueOrigins = valueOriginsByGivenId[givenId];
+        memberRoles.forEach(role => {
+          role.gvs.forEach(gv => {
+            let isGivenMissing = !valueOriginsByGivenId[gv.givenId];
 
-        let memberGivenValues: MemberGivenValue[] = Object.keys(valueOrigins)
+            if (isGivenMissing) {
+              valueOriginsByGivenId[gv.givenId] = {};
+            }
+
+            gv.values.forEach(value => {
+              let isValueMissing = !valueOriginsByGivenId[gv.givenId][value];
+
+              if (isValueMissing) {
+                valueOriginsByGivenId[gv.givenId][value] = {
+                  isProjectDefault: false,
+                  roleIds: []
+                };
+              }
+
+              valueOriginsByGivenId[gv.givenId][value].roleIds.push(
+                role.roleId
+              );
+            });
+          });
+        });
+
+        let memberGivens: MemberGiven[] = Object.keys(valueOriginsByGivenId)
           .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
-          .map(value => ({
-            value: value,
-            isProjectDefault: valueOrigins[value].isProjectDefault,
-            roleIds: valueOrigins[value].roleIds
-          }));
+          .map(givenId => {
+            let valueOrigins = valueOriginsByGivenId[givenId];
 
-        let memberGiven: MemberGiven = {
-          givenId: givenId,
-          type: typeByGivenId[givenId],
-          isMultiple: isMultipleByGivenId[givenId] === true,
-          memberGivenValues: memberGivenValues
-        };
+            let memberGivenValues: MemberGivenValue[] = Object.keys(
+              valueOrigins
+            )
+              .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
+              .map(value => ({
+                value: value,
+                isProjectDefault: valueOrigins[value].isProjectDefault,
+                roleIds: valueOrigins[value].roleIds
+              }));
 
-        return memberGiven;
-      });
+            let memberGiven: MemberGiven = {
+              givenId: givenId,
+              type: typeByGivenId[givenId],
+              isMultiple: isMultipleByGivenId[givenId] === true,
+              memberGivenValues: memberGivenValues
+            };
+
+            return memberGiven;
+          });
+
+        return memberGivens;
+      })
+    );
   }
 }

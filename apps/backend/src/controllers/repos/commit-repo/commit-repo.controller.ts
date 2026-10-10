@@ -146,15 +146,12 @@ export class CommitRepoController {
         ): Result.ResultAsync<
           SessionTab,
           GetSessionByIdCheckExistsResultError
-        > => {
-          if (v.repoType !== 'session') {
-            return Result.succeed(undefined);
-          }
-
-          return this.sessionsService.getSessionByIdCheckExistsResult({
-            sessionId: v.repoId
-          });
-        }
+        > =>
+          v.repoType !== 'session'
+            ? Result.succeed(undefined)
+            : this.sessionsService.getSessionByIdCheckExistsResult({
+                sessionId: v.repoId
+              })
       ),
       Result.bind(
         'apiSession',

@@ -72,27 +72,25 @@ export async function getRepoStatus(item: {
               isCheckConflicts: v.isCheckConflicts
             })
         ),
-        Result.andThen(async (v): Result.ResultAsync<DiskItemStatus, never> => {
-          // RETURN NeedCommit
-          if (v.stagedFilesCount > 0) {
-            return Result.succeed({
-              repoStatus: 'NeedCommit',
-              conflicts: v.conflicts,
-              currentBranch: v.currentBranchName,
-              changesToCommit: v.changesToCommit,
-              changesToPush: []
-            });
-          }
-
-          return getRepoStatusWithoutStagedChanges({
-            git: v.git,
-            currentBranchName: v.currentBranchName,
-            changesToCommit: v.changesToCommit,
-            conflicts: v.conflicts,
-            repoDir: v.repoDir,
-            isFetch: v.isFetch
-          });
-        })
+        Result.andThen(
+          async (v): Result.ResultAsync<DiskItemStatus, never> =>
+            v.stagedFilesCount > 0
+              ? Result.succeed({
+                  repoStatus: 'NeedCommit',
+                  conflicts: v.conflicts,
+                  currentBranch: v.currentBranchName,
+                  changesToCommit: v.changesToCommit,
+                  changesToPush: []
+                })
+              : getRepoStatusWithoutStagedChanges({
+                  git: v.git,
+                  currentBranchName: v.currentBranchName,
+                  changesToCommit: v.changesToCommit,
+                  conflicts: v.conflicts,
+                  repoDir: v.repoDir,
+                  isFetch: v.isFetch
+                })
+        )
       );
     }
   });

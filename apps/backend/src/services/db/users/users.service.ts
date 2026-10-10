@@ -3,12 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import {
+  type UserEnt,
+  usersTable
+} from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { GivensService } from '#backend/services/db/givens/givens.service';
@@ -22,7 +25,11 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BackendUserAliasIsUndefinedError } from '#common/types/backend/errors/backend-user-alias-is-undefined-error';
 import type { CheckUserIsNotRestrictedResultError } from '#common/types/backend/function-errors/check-user-is-not-restricted-result-error';
+import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
+import type { MakeAliasResultError } from '#common/types/backend/function-errors/make-alias-result-error';
+import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
 import { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
 import type { User } from '#common/types/backend/parts/user';
@@ -413,42 +420,79 @@ export class UsersService {
     return user;
   }
 
-  async makeAlias(email: string) {
-    let reg = MyRegex.CAPTURE_ALIAS();
-    let r = reg.exec(email);
+  async makeAlias(email: string): Promise<string> {
+    let result: Result.Result<string, MakeAliasResultError> =
+      await this.makeAliasResult({ email: email });
 
-    let alias = r ? r[1] : undefined;
-
-    if (isUndefined(alias)) {
-      throw new ServerError({
-        message: 'BACKEND_USER_ALIAS_IS_UNDEFINED'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
-
-    let count = 2;
-
-    let restart = true;
-
-    while (restart) {
-      let aliasHash = this.hashService.makeHash({
-        input: alias,
-        hashSecret: hashSecret
-      });
-
-      let aliasUser = await this.db.drizzle.query.usersTable.findFirst({
-        where: eq(usersTable.aliasHash, aliasHash)
-      });
-
-      if (isDefined(aliasUser)) {
-        alias = `${alias}${count}`;
-        count++;
-      } else {
-        restart = false;
-      }
-    }
+    let alias: string = result.value;
 
     return alias;
+  }
+
+  async makeAliasResult(item: {
+    email: string;
+  }): Result.ResultAsync<string, MakeAliasResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'alias',
+        (v): Result.Result<string, BackendUserAliasIsUndefinedError> => {
+          let reg: RegExp = MyRegex.CAPTURE_ALIAS();
+
+          let match: RegExpExecArray = reg.exec(v.email);
+
+          let alias: string = match ? match[1] : undefined;
+
+          return isUndefined(alias)
+            ? Result.fail({ code: 'BACKEND_USER_ALIAS_IS_UNDEFINED' })
+            : Result.succeed(alias);
+        }
+      ),
+      Result.bind(
+        'hashSecret',
+        (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
+          this.dconfigsService.getDconfigHashSecretResult()
+      ),
+      Result.andThen(
+        async (v): Result.ResultAsync<string, MakeHashResultError> => {
+          let alias: string = v.alias;
+
+          let count = 2;
+
+          let isRestart = true;
+
+          while (isRestart) {
+            let aliasHashResult: Result.Result<string, MakeHashResultError> =
+              this.hashService.makeHashResult({
+                input: alias,
+                hashSecret: v.hashSecret
+              });
+
+            if (Result.isFailure(aliasHashResult)) {
+              return Result.fail(aliasHashResult.error);
+            }
+
+            let aliasUserEnt: UserEnt =
+              await this.db.drizzle.query.usersTable.findFirst({
+                where: eq(usersTable.aliasHash, aliasHashResult.value)
+              });
+
+            if (isDefined(aliasUserEnt)) {
+              alias = `${alias}${count}`;
+
+              count++;
+            } else {
+              isRestart = false;
+            }
+          }
+
+          return Result.succeed(alias);
+        }
+      )
+    );
   }
 }

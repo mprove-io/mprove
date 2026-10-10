@@ -1,5 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
   ToBackendCheckLastNavRequestDto,
@@ -7,7 +8,12 @@ import {
 } from '#backend/controllers/nav/check-last-nav/check-last-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BranchTab,
+  BridgeTab,
+  MemberTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
@@ -19,7 +25,12 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCheckLastNavOutput } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-output';
 
@@ -48,109 +59,134 @@ export class CheckLastNavController {
   async checkLastNav(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCheckLastNavRequestDto
-  ) {
-    let {
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      modelId,
-      chartId,
-      dashboardId,
-      reportId
-    } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let modelExists = false;
-    let chartExists = false;
-    let dashboardExists = false;
-    let reportExists = false;
-
-    if (isDefined(modelId)) {
-      let model = await this.db.drizzle.query.modelsTable.findFirst({
-        where: and(
-          eq(modelsTable.structId, bridge.structId),
-          eq(modelsTable.modelId, modelId)
-        ),
-        columns: { modelId: true }
-      });
-      modelExists = isDefined(model);
-    }
-
-    if (isDefined(chartId)) {
-      let chart = await this.db.drizzle.query.chartsTable.findFirst({
-        where: and(
-          eq(chartsTable.structId, bridge.structId),
-          eq(chartsTable.chartId, chartId)
-        ),
-        columns: { chartId: true }
-      });
-      chartExists = isDefined(chart);
-    }
-
-    if (isDefined(dashboardId)) {
-      let dashboard = await this.db.drizzle.query.dashboardsTable.findFirst({
-        where: and(
-          eq(dashboardsTable.structId, bridge.structId),
-          eq(dashboardsTable.dashboardId, dashboardId)
-        ),
-        columns: { dashboardId: true }
-      });
-      dashboardExists = isDefined(dashboard);
-    }
-
-    if (isDefined(reportId)) {
-      let report = await this.db.drizzle.query.reportsTable.findFirst({
-        where: and(
-          eq(reportsTable.structId, bridge.structId),
-          eq(reportsTable.reportId, reportId)
-        ),
-        columns: { reportId: true }
-      });
-      reportExists = isDefined(report);
-    }
-
-    let payload: ToBackendCheckLastNavOutput = {
-      modelExists: modelExists,
-      chartExists: chartExists,
-      dashboardExists: dashboardExists,
-      reportExists: reportExists
-    };
-
-    return payload;
+  ): Promise<BackendResultForOperation<'checkLastNav'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        modelId: body.input.modelId,
+        chartId: body.input.chartId,
+        dashboardId: body.input.dashboardId,
+        reportId: body.input.reportId,
+        userId: user.userId
+      }),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.userId
+          })
+      ),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'modelExists',
+        async (v): Result.ResultAsync<boolean, never> =>
+          isUndefined(v.modelId)
+            ? Result.succeed(false)
+            : this.db.drizzle.query.modelsTable
+                .findFirst({
+                  where: and(
+                    eq(modelsTable.structId, v.bridge.structId),
+                    eq(modelsTable.modelId, v.modelId)
+                  ),
+                  columns: { modelId: true }
+                })
+                .then(modelEnt => Result.succeed(isDefined(modelEnt)))
+      ),
+      Result.bind(
+        'chartExists',
+        async (v): Result.ResultAsync<boolean, never> =>
+          isUndefined(v.chartId)
+            ? Result.succeed(false)
+            : this.db.drizzle.query.chartsTable
+                .findFirst({
+                  where: and(
+                    eq(chartsTable.structId, v.bridge.structId),
+                    eq(chartsTable.chartId, v.chartId)
+                  ),
+                  columns: { chartId: true }
+                })
+                .then(chartEnt => Result.succeed(isDefined(chartEnt)))
+      ),
+      Result.bind(
+        'dashboardExists',
+        async (v): Result.ResultAsync<boolean, never> =>
+          isUndefined(v.dashboardId)
+            ? Result.succeed(false)
+            : this.db.drizzle.query.dashboardsTable
+                .findFirst({
+                  where: and(
+                    eq(dashboardsTable.structId, v.bridge.structId),
+                    eq(dashboardsTable.dashboardId, v.dashboardId)
+                  ),
+                  columns: { dashboardId: true }
+                })
+                .then(dashboardEnt => Result.succeed(isDefined(dashboardEnt)))
+      ),
+      Result.bind(
+        'reportExists',
+        async (v): Result.ResultAsync<boolean, never> =>
+          isUndefined(v.reportId)
+            ? Result.succeed(false)
+            : this.db.drizzle.query.reportsTable
+                .findFirst({
+                  where: and(
+                    eq(reportsTable.structId, v.bridge.structId),
+                    eq(reportsTable.reportId, v.reportId)
+                  ),
+                  columns: { reportId: true }
+                })
+                .then(reportEnt => Result.succeed(isDefined(reportEnt)))
+      ),
+      Result.map(
+        (v): ToBackendCheckLastNavOutput => ({
+          modelExists: v.modelExists,
+          chartExists: v.chartExists,
+          dashboardExists: v.dashboardExists,
+          reportExists: v.reportExists
+        })
+      )
+    );
   }
 }

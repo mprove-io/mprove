@@ -358,31 +358,21 @@ export class DashboardsService {
                   })
             )
       ),
-      Result.andThrough(v => {
-        if (
-          v.dashboard.draft === true &&
-          v.dashboard.creatorId !== v.user.userId
-        ) {
-          return Result.fail({ code: 'BACKEND_DASHBOARD_CREATOR_ID_MISMATCH' });
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(v => {
-        if (v.dashboard.draft === false) {
-          let isAccessGranted: boolean = checkAccess({
-            member: v.userMember,
-            accessRoles: v.dashboard.accessRolesCombined,
-            filePath: v.dashboard.filePath
-          });
-
-          if (isAccessGranted === false) {
-            return Result.fail({ code: 'BACKEND_FORBIDDEN_DASHBOARD' });
-          }
-        }
-
-        return Result.succeed();
-      }),
+      Result.andThrough(v =>
+        v.dashboard.draft === true && v.dashboard.creatorId !== v.user.userId
+          ? Result.fail({ code: 'BACKEND_DASHBOARD_CREATOR_ID_MISMATCH' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.dashboard.draft === false &&
+        checkAccess({
+          member: v.userMember,
+          accessRoles: v.dashboard.accessRolesCombined,
+          filePath: v.dashboard.filePath
+        }) === false
+          ? Result.fail({ code: 'BACKEND_FORBIDDEN_DASHBOARD' })
+          : Result.succeed()
+      ),
       Result.map((v): DashboardTab => v.dashboard)
     );
   }

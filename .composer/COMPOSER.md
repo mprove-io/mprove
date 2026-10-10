@@ -62,6 +62,7 @@
 - rules/byethrow/result-type-inference.md
 - rules/byethrow/result-callback-return-types.md
 - rules/byethrow/combine-lookup-and-conversion.md
+- rules/byethrow/inline-guarded-result-callbacks.md
 - rules/byethrow/function-error-types.md
 - rules/byethrow/byethrow-function-selection.md
 - rules/byethrow/combinator-application.md

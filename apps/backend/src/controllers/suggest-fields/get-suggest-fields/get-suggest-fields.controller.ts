@@ -162,20 +162,15 @@ export class GetSuggestFieldsController {
         ): Result.ResultAsync<
           DashboardTab,
           GetDashboardCheckExistsAndAccessResultError
-        > => {
-          if (v.parentType === 'Dashboard') {
-            return this.dashboardsService.getDashboardCheckExistsAndAccessResult(
-              {
+        > =>
+          v.parentType === 'Dashboard'
+            ? this.dashboardsService.getDashboardCheckExistsAndAccessResult({
                 dashboardId: v.parentId,
                 structId: v.bridge.structId,
                 userMember: v.userMember,
                 user: v.user
-              }
-            );
-          }
-
-          return Result.succeed(undefined);
-        }
+              })
+            : Result.succeed(undefined)
       ),
       Result.bind(
         'report',
@@ -184,19 +179,16 @@ export class GetSuggestFieldsController {
         ): Result.ResultAsync<
           ReportTab,
           GetReportCheckExistsAndAccessResultError
-        > => {
-          if (v.parentType === 'Report') {
-            return this.reportsService.getReportCheckExistsAndAccessResult({
-              projectId: v.projectId,
-              reportId: v.parentId,
-              structId: v.bridge.structId,
-              userMember: v.userMember,
-              user: v.user
-            });
-          }
-
-          return Result.succeed(undefined);
-        }
+        > =>
+          v.parentType === 'Report'
+            ? this.reportsService.getReportCheckExistsAndAccessResult({
+                projectId: v.projectId,
+                reportId: v.parentId,
+                structId: v.bridge.structId,
+                userMember: v.userMember,
+                user: v.user
+              })
+            : Result.succeed(undefined)
       ),
       Result.bind(
         'extraModelIds',

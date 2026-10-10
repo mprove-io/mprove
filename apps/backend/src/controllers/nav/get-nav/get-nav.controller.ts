@@ -1,8 +1,9 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGetNavRequestDto,
   ToBackendGetNavResponseDto
@@ -10,11 +11,18 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
-  BridgeTab,
+  AvatarTab,
+  MemberTab,
+  OrgTab,
+  ProjectTab,
+  StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
+import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -26,14 +34,22 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
+import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
+import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
+import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
+import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
 import type { Member } from '#common/types/backend/parts/member';
+import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { StructX } from '#common/types/backend/parts/struct/struct-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetNavOutput } from '#common/types/backend/routes/nav/get-nav/get-nav-output';
-import type { Repo } from '#common/types/disk/parts/repo/repo';
 import type { ToDiskGetCatalogNodesOutput } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 
 @ApiTags('Nav')
@@ -63,161 +79,277 @@ export class GetNavController {
   async getNav(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetNavRequestDto
-  ) {
-    let { orgId, projectId, getRepo } = body.input;
-
-    let members = await this.db.drizzle.query.membersTable.findMany({
-      where: eq(membersTable.memberId, user.userId)
-    });
-
-    let projectIds = members.map(x => x.projectId);
-
-    let projects =
-      projectIds.length === 0
-        ? []
-        : await this.db.drizzle.query.projectsTable
+  ): Promise<BackendResultForOperation<'getNav'>> {
+    return Result.pipe(
+      Result.succeed({
+        orgId: body.input.orgId,
+        projectId: body.input.projectId,
+        getRepo: body.input.getRepo,
+        traceId: body.traceId,
+        user: user
+      }),
+      Result.bind(
+        'memberEnts',
+        (v): Result.ResultAsync<MemberEnt[], never> =>
+          this.db.drizzle.query.membersTable
+            .findMany({ where: eq(membersTable.memberId, v.user.userId) })
+            .then(memberEnts => Result.succeed(memberEnts))
+      ),
+      Result.bind(
+        'projectIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.memberEnts.map(memberEnt => memberEnt.projectId))
+      ),
+      Result.bind(
+        'projects',
+        async (
+          v
+        ): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> =>
+          v.projectIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.projectsTable
+                .findMany({
+                  where: inArray(projectsTable.projectId, v.projectIds)
+                })
+                .then(projectEnts =>
+                  Result.sequence(projectEnts, projectEnt =>
+                    this.tabService.projectEntToTabResult({
+                      projectEnt: projectEnt
+                    })
+                  )
+                )
+      ),
+      Result.bind(
+        'orgIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.projects.map(project => project.orgId))
+      ),
+      Result.bind(
+        'orgs',
+        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> =>
+          v.orgIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.orgsTable
+                .findMany({
+                  where: inArray(orgsTable.orgId, v.orgIds)
+                })
+                .then(orgEnts =>
+                  Result.sequence(orgEnts, orgEnt =>
+                    this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+                  )
+                )
+      ),
+      Result.bind(
+        'ownerOrgs',
+        (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> =>
+          this.db.drizzle.query.orgsTable
             .findMany({
-              where: inArray(projectsTable.projectId, projectIds)
+              where: eq(orgsTable.ownerId, v.user.userId)
             })
-            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
+            .then(orgEnts =>
+              Result.sequence(orgEnts, orgEnt =>
+                this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+              )
+            )
+      ),
+      Result.bind(
+        'existingOrgIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([
+            ...new Set([...v.orgs, ...v.ownerOrgs].map(org => org.orgId))
+          ])
+      ),
+      Result.bind('resultOrgId', (v): Result.Result<string, never> => {
+        let isExistingOrg: boolean = v.existingOrgIds.includes(v.orgId);
 
-    let orgIds = projects.map(x => x.orgId);
+        return Result.succeed(
+          isDefined(v.orgId) && isExistingOrg ? v.orgId : v.existingOrgIds[0]
+        );
+      }),
+      Result.bind(
+        'resultOrg',
+        (v): Result.Result<OrgTab, never> =>
+          Result.succeed(
+            [...v.orgs, ...v.ownerOrgs].find(org => org.orgId === v.resultOrgId)
+          )
+      ),
+      Result.bind(
+        'existingProjectIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(
+            v.projects
+              .filter(project => project.orgId === v.resultOrgId)
+              .map(project => project.projectId)
+          )
+      ),
+      Result.bind('resultProjectId', (v): Result.Result<string, never> => {
+        let isExistingProject: boolean = v.existingProjectIds.includes(
+          v.projectId
+        );
 
-    let orgs =
-      orgIds.length === 0
-        ? []
-        : await this.db.drizzle.query.orgsTable
-            .findMany({
-              where: inArray(orgsTable.orgId, orgIds)
+        return Result.succeed(
+          isDefined(v.projectId) && isExistingProject
+            ? v.projectId
+            : v.existingProjectIds[0]
+        );
+      }),
+      Result.bind(
+        'resultProject',
+        (v): Result.Result<ProjectTab, never> =>
+          Result.succeed(
+            v.projects.find(project => project.projectId === v.resultProjectId)
+          )
+      ),
+      Result.bind(
+        'bridgeEnt',
+        async (v): Result.ResultAsync<BridgeEnt, never> =>
+          isUndefined(v.resultProject)
+            ? Result.succeed(undefined)
+            : this.db.drizzle.query.bridgesTable
+                .findFirst({
+                  where: and(
+                    eq(bridgesTable.projectId, v.resultProject.projectId),
+                    eq(bridgesTable.repoId, PROD_REPO_ID),
+                    eq(bridgesTable.branchId, v.resultProject.defaultBranch),
+                    eq(bridgesTable.envId, PROJECT_ENV_PROD)
+                  )
+                })
+                .then(bridgeEnt => Result.succeed(bridgeEnt))
+      ),
+      Result.bind(
+        'avatar',
+        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+          this.db.drizzle.query.avatarsTable
+            .findFirst({
+              where: eq(avatarsTable.userId, v.user.userId)
             })
-            .then(xs => xs.map(x => this.tabService.orgEntToTab(x)));
-
-    let ownerOrgs = await this.db.drizzle.query.orgsTable
-      .findMany({
-        where: eq(orgsTable.ownerId, user.userId)
-      })
-      .then(xs => xs.map(x => this.tabService.orgEntToTab(x)));
-
-    let orgIdsWithDuplicates = [...orgs, ...ownerOrgs].map(x => x.orgId);
-
-    let existingOrgIds = [...new Set(orgIdsWithDuplicates)];
-
-    let resultOrgId =
-      isDefined(orgId) && existingOrgIds.indexOf(orgId) > -1
-        ? orgId
-        : existingOrgIds[0];
-
-    let resultOrg = [...orgs, ...ownerOrgs].find(x => x.orgId === resultOrgId);
-
-    let existingProjectIds = projects
-      .filter(x => x.orgId === resultOrgId)
-      .map(x => x.projectId);
-
-    let resultProjectId =
-      isDefined(projectId) && existingProjectIds.indexOf(projectId) > -1
-        ? projectId
-        : existingProjectIds[0];
-
-    let resultProject = projects.find(x => x.projectId === resultProjectId);
-
-    let bridge: BridgeTab;
-
-    if (isDefined(resultProject)) {
-      bridge = await this.db.drizzle.query.bridgesTable.findFirst({
-        where: and(
-          eq(bridgesTable.projectId, resultProject.projectId),
-          eq(bridgesTable.repoId, PROD_REPO_ID),
-          eq(bridgesTable.branchId, resultProject.defaultBranch),
-          eq(bridgesTable.envId, PROJECT_ENV_PROD)
-        )
-      });
-    }
-
-    let avatar = await this.db.drizzle.query.avatarsTable
-      .findFirst({
-        where: eq(avatarsTable.userId, user.userId)
-      })
-      .then(x => this.tabService.avatarEntToTab(x));
-
-    let apiMember: Member;
-    let apiStruct: StructX;
-    let apiRepo: Repo;
-
-    if (
-      getRepo === true &&
-      isDefined(resultOrgId) &&
-      isDefined(resultProjectId) &&
-      isDefined(bridge)
-    ) {
-      let userMember = await this.membersService.getMemberCheckExists({
-        projectId: resultProject.projectId,
-        memberId: user.userId
-      });
-
-      apiMember = this.membersService.tabToApi({ member: userMember });
-
-      let struct = await this.structsService.getStructCheckExists({
-        structId: bridge.structId,
-        projectId: resultProject.projectId
-      });
-
-      let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-      let modelPartXs = await this.modelsService.getModelPartXs({
-        structId: struct.structId,
-        apiUserMember: apiUserMember
-      });
-
-      apiStruct = this.structsService.tabToApi({
-        struct: struct,
-        modelPartXs: modelPartXs
-      });
-
-      let apiResultBaseProject = this.tabService.projectTabToBaseProject({
-        project: resultProject
-      });
-
-      let diskGetCatalogNodesOutput: ToDiskGetCatalogNodesOutput =
-        await this.rpcService.sendToDiskUnwrapOutput({
-          request: {
-            operation: 'getCatalogNodes',
-            traceId: body.traceId,
-            input: {
-              baseProject: apiResultBaseProject,
-              repoId: bridge.repoId,
-              branch: bridge.branchId,
-              isFetch: false
-            }
-          }
-        });
-
-      apiRepo = diskGetCatalogNodesOutput.repo;
-    }
-
-    let payload: ToBackendGetNavOutput = {
-      avatarSmall: avatar?.avatarSmall,
-      avatarBig: avatar?.avatarBig,
-      orgId: resultOrgId,
-      orgOwnerId: resultOrg?.ownerId,
-      orgName: resultOrg?.name,
-      projectId: resultProjectId,
-      projectName: resultProject?.name,
-      projectDefaultBranch: resultProject?.defaultBranch,
-      repoId: PROD_REPO_ID,
-      repoType: 'production',
-      branchId: resultProject?.defaultBranch,
-      envId: PROJECT_ENV_PROD,
-      needValidate: isDefined(bridge) ? bridge.needValidate : false,
-      user: this.usersService.tabToApi({ user: user }),
-      serverNowTs: Date.now(),
-      isMproveAdmin:
-        user.email ===
-        this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail'),
-      userMember: apiMember,
-      struct: apiStruct,
-      repo: apiRepo
-    };
-
-    return payload;
+            .then((avatarEnt: AvatarEnt) =>
+              isUndefined(avatarEnt)
+                ? Result.succeed(undefined)
+                : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+            )
+      ),
+      Result.bind(
+        'isGetRepo',
+        (v): Result.Result<boolean, never> =>
+          Result.succeed(
+            v.getRepo === true &&
+              isDefined(v.resultOrgId) &&
+              isDefined(v.resultProjectId) &&
+              isDefined(v.bridgeEnt)
+          )
+      ),
+      Result.bind(
+        'userMember',
+        async (
+          v
+        ): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          v.isGetRepo
+            ? this.membersService.getMemberCheckExistsResult({
+                projectId: v.resultProject.projectId,
+                memberId: v.user.userId
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.bind(
+        'apiMember',
+        (v): Result.Result<Member, never> =>
+          Result.succeed(
+            v.isGetRepo
+              ? this.membersService.tabToApi({ member: v.userMember })
+              : undefined
+          )
+      ),
+      Result.bind(
+        'struct',
+        async (
+          v
+        ): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          v.isGetRepo
+            ? this.structsService.getStructCheckExistsResult({
+                structId: v.bridgeEnt.structId,
+                projectId: v.resultProject.projectId
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.bind(
+        'modelPartXs',
+        async (
+          v
+        ): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> =>
+          v.isGetRepo
+            ? this.modelsService.getModelPartXsResult({
+                structId: v.struct.structId,
+                apiUserMember: this.membersService.tabToApi({
+                  member: v.userMember
+                })
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.bind(
+        'apiStruct',
+        (v): Result.Result<StructX, never> =>
+          Result.succeed(
+            v.isGetRepo
+              ? this.structsService.tabToApi({
+                  struct: v.struct,
+                  modelPartXs: v.modelPartXs
+                })
+              : undefined
+          )
+      ),
+      Result.bind(
+        'diskGetCatalogNodesOutput',
+        async (
+          v
+        ): Result.ResultAsync<
+          ToDiskGetCatalogNodesOutput,
+          SendToDiskResultError
+        > =>
+          v.isGetRepo
+            ? this.rpcService.sendToDiskResult({
+                request: {
+                  operation: 'getCatalogNodes',
+                  traceId: v.traceId,
+                  input: {
+                    baseProject: this.tabService.projectTabToBaseProject({
+                      project: v.resultProject
+                    }),
+                    repoId: v.bridgeEnt.repoId,
+                    branch: v.bridgeEnt.branchId,
+                    isFetch: false
+                  }
+                }
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.map(
+        (v): ToBackendGetNavOutput => ({
+          avatarSmall: v.avatar?.avatarSmall,
+          avatarBig: v.avatar?.avatarBig,
+          orgId: v.resultOrgId,
+          orgOwnerId: v.resultOrg?.ownerId,
+          orgName: v.resultOrg?.name,
+          projectId: v.resultProjectId,
+          projectName: v.resultProject?.name,
+          projectDefaultBranch: v.resultProject?.defaultBranch,
+          repoId: PROD_REPO_ID,
+          repoType: 'production',
+          branchId: v.resultProject?.defaultBranch,
+          envId: PROJECT_ENV_PROD,
+          needValidate: isDefined(v.bridgeEnt)
+            ? v.bridgeEnt.needValidate
+            : false,
+          user: this.usersService.tabToApi({ user: v.user }),
+          serverNowTs: Date.now(),
+          isMproveAdmin:
+            v.user.email ===
+            this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail'),
+          userMember: v.apiMember,
+          struct: v.apiStruct,
+          repo: v.diskGetCatalogNodesOutput?.repo
+        })
+      )
+    );
   }
 }

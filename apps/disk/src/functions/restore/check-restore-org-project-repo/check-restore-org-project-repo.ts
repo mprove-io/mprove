@@ -29,21 +29,20 @@ export async function checkRestoreOrgProjectRepo(item: {
           projectLt: v.projectLt
         })
     ),
-    Result.andThen(async (v): Result.ResultAsync<string, never> => {
-      if (v.remoteType !== 'GitClone') {
-        return Result.succeed(v.keyDir);
-      }
-
-      return restoreProjectGitCloneRepo({
-        remoteType: v.remoteType,
-        orgId: v.orgId,
-        orgPath: v.orgPath,
-        projectId: v.projectId,
-        projectDir: v.projectDir,
-        projectLt: v.projectLt,
-        repoId: v.repoId,
-        keyDir: v.keyDir
-      });
-    })
+    Result.andThen(
+      async (v): Result.ResultAsync<string, never> =>
+        v.remoteType !== 'GitClone'
+          ? Result.succeed(v.keyDir)
+          : restoreProjectGitCloneRepo({
+              remoteType: v.remoteType,
+              orgId: v.orgId,
+              orgPath: v.orgPath,
+              projectId: v.projectId,
+              projectDir: v.projectDir,
+              projectLt: v.projectLt,
+              repoId: v.repoId,
+              keyDir: v.keyDir
+            })
+    )
   );
 }

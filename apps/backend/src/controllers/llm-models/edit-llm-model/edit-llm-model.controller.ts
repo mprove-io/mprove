@@ -129,26 +129,20 @@ export class EditLlmModelController {
         ): Result.ResultAsync<
           LlmModelPart,
           GetDiscoveredLlmModelPartResultError
-        > => {
-          if (
-            v.provider.type === 'OpenAICompatible' ||
-            v.model.isManual === true
-          ) {
-            return Result.succeed(undefined);
-          }
-
-          return this.llmModelService.getDiscoveredLlmModelPartResult({
-            providerType: v.provider.type,
-            modelId: v.modelId,
-            apiKey:
-              v.provider.type === 'OpenAICodex'
-                ? undefined
-                : v.provider.options.apiKey,
-            userId: v.userId,
-            isCodexAuthSet: v.isCodexAuthSet,
-            isForceRefresh: true
-          });
-        }
+        > =>
+          v.provider.type === 'OpenAICompatible' || v.model.isManual === true
+            ? Result.succeed(undefined)
+            : this.llmModelService.getDiscoveredLlmModelPartResult({
+                providerType: v.provider.type,
+                modelId: v.modelId,
+                apiKey:
+                  v.provider.type === 'OpenAICodex'
+                    ? undefined
+                    : v.provider.options.apiKey,
+                userId: v.userId,
+                isCodexAuthSet: v.isCodexAuthSet,
+                isForceRefresh: true
+              })
       ),
       Result.bind(
         'variants',

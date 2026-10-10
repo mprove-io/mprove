@@ -40,6 +40,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
+import type { CheckMemberDoesNotExistResultError } from '#common/types/backend/function-errors/check-member-does-not-exist-result-error';
 import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
 import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
 import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
@@ -287,21 +288,23 @@ export class MembersService {
       );
   }
 
-  async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {
+  async checkMemberDoesNotExistResult(item: {
+    memberId: string;
+    projectId: string;
+  }): Result.ResultAsync<void, CheckMemberDoesNotExistResultError> {
     let { projectId, memberId } = item;
 
-    let member = await this.db.drizzle.query.membersTable.findFirst({
-      where: and(
-        eq(membersTable.memberId, memberId),
-        eq(membersTable.projectId, projectId)
-      )
-    });
-
-    if (isDefined(member)) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_ALREADY_EXISTS'
+    let memberEnt: MemberEnt =
+      await this.db.drizzle.query.membersTable.findFirst({
+        where: and(
+          eq(membersTable.memberId, memberId),
+          eq(membersTable.projectId, projectId)
+        )
       });
-    }
+
+    return isDefined(memberEnt)
+      ? Result.fail({ code: 'BACKEND_MEMBER_ALREADY_EXISTS' })
+      : Result.succeed();
   }
 
   async addMemberToDemoProject(item: { user: UserTab; traceId: string }) {

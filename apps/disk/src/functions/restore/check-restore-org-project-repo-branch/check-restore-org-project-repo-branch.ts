@@ -40,26 +40,19 @@ export async function checkRestoreOrgProjectRepoBranch(item: {
       ): Result.ResultAsync<
         string,
         DiskRestoreProjectGitCloneRepoBranchError
-      > => {
-        if (v.remoteType !== 'GitClone') {
-          return Result.succeed(v.keyDir);
-        }
-
-        if (isUndefined(v.branchId)) {
-          return Result.succeed(v.keyDir);
-        }
-
-        return restoreProjectGitCloneRepoBranch({
-          remoteType: v.remoteType,
-          projectId: v.projectId,
-          projectDir: v.projectDir,
-          projectLt: v.projectLt,
-          repoId: v.repoId,
-          repoDir: v.repoDir,
-          branchId: v.branchId,
-          keyDir: v.keyDir
-        });
-      }
+      > =>
+        v.remoteType !== 'GitClone' || isUndefined(v.branchId)
+          ? Result.succeed(v.keyDir)
+          : restoreProjectGitCloneRepoBranch({
+              remoteType: v.remoteType,
+              projectId: v.projectId,
+              projectDir: v.projectDir,
+              projectLt: v.projectLt,
+              repoId: v.repoId,
+              repoDir: v.repoDir,
+              branchId: v.branchId,
+              keyDir: v.keyDir
+            })
     )
   );
 }

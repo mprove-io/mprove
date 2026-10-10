@@ -26,20 +26,19 @@ export async function restoreProject(item: {
         Result.succeed(`${v.orgDir}/_keys/${v.projectId}`)
     ),
     Result.andThrough(v => ensureDir({ dir: v.keyDir })),
-    Result.andThen(async (v): Result.ResultAsync<string, never> => {
-      if (v.remoteType !== 'GitClone') {
-        return Result.succeed(v.keyDir);
-      }
-
-      return restoreProjectGitClone({
-        remoteType: v.remoteType,
-        orgId: v.orgId,
-        orgPath: v.orgPath,
-        projectId: v.projectId,
-        projectDir: v.projectDir,
-        projectLt: v.projectLt,
-        keyDir: v.keyDir
-      });
-    })
+    Result.andThen(
+      async (v): Result.ResultAsync<string, never> =>
+        v.remoteType !== 'GitClone'
+          ? Result.succeed(v.keyDir)
+          : restoreProjectGitClone({
+              remoteType: v.remoteType,
+              orgId: v.orgId,
+              orgPath: v.orgPath,
+              projectId: v.projectId,
+              projectDir: v.projectDir,
+              projectLt: v.projectLt,
+              keyDir: v.keyDir
+            })
+    )
   );
 }

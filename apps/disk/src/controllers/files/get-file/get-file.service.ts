@@ -138,23 +138,18 @@ export class GetFileService {
       ),
       Result.bind(
         'originalContent',
-        async (v): Result.ResultAsync<string, never> => {
-          if (v.builderLeft === 'ChangesToCommit') {
-            return getLastCommitFileContent({
-              repoDir: v.repoDir,
-              filePathRelative: v.filePathRelative
-            });
-          }
-
-          if (v.builderLeft === 'ChangesToPush') {
-            return getBaseCommitFileContent({
-              repoDir: v.repoDir,
-              filePathRelative: v.filePathRelative
-            });
-          }
-
-          return Result.succeed('');
-        }
+        async (v): Result.ResultAsync<string, never> =>
+          v.builderLeft === 'ChangesToCommit'
+            ? getLastCommitFileContent({
+                repoDir: v.repoDir,
+                filePathRelative: v.filePathRelative
+              })
+            : v.builderLeft === 'ChangesToPush'
+              ? getBaseCommitFileContent({
+                  repoDir: v.repoDir,
+                  filePathRelative: v.filePathRelative
+                })
+              : Result.succeed('')
       ),
       Result.bind(
         'repoStatus',

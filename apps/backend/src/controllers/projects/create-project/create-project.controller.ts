@@ -153,22 +153,20 @@ export class CreateProjectController {
         ): Result.ResultAsync<
           NoteTab,
           BackendNoteDoesNotExistError | NoteEntToTabResultError
-        > => {
-          if (v.remoteType !== 'GitClone') {
-            return Result.succeed(undefined);
-          }
-
-          let noteEnt: NoteEnt =
-            await this.db.drizzle.query.notesTable.findFirst({
-              where: eq(notesTable.noteId, v.noteId)
-            });
-
-          return isUndefined(noteEnt)
-            ? Result.fail({ code: 'BACKEND_NOTE_DOES_NOT_EXIST' })
-            : this.tabService.noteEntToTabResult({
-                noteEnt: noteEnt
-              });
-        }
+        > =>
+          v.remoteType !== 'GitClone'
+            ? Result.succeed(undefined)
+            : this.db.drizzle.query.notesTable
+                .findFirst({
+                  where: eq(notesTable.noteId, v.noteId)
+                })
+                .then((noteEnt: NoteEnt) =>
+                  isUndefined(noteEnt)
+                    ? Result.fail({ code: 'BACKEND_NOTE_DOES_NOT_EXIST' })
+                    : this.tabService.noteEntToTabResult({
+                        noteEnt: noteEnt
+                      })
+                )
       ),
       Result.bind(
         'newProject',

@@ -64,7 +64,7 @@ import type { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
 import type { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import type { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
-import { UserEnt } from '#backend/drizzle/postgres/schema/users';
+import type { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import type { GitKeyPair } from '#backend/types/git-key-pair';
 import type { TabProps } from '#backend/types/tab-props';
@@ -92,6 +92,7 @@ import type { ReportEntToTabResultError } from '#common/types/backend/function-e
 import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
 import type { SessionEntToTabResultError } from '#common/types/backend/function-errors/session-ent-to-tab-result-error';
 import type { StructEntToTabResultError } from '#common/types/backend/function-errors/struct-ent-to-tab-result-error';
+import type { UserEntToTabResultError } from '#common/types/backend/function-errors/user-ent-to-tab-result-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
 import type { AvatarSt } from '#common/types/shared/st-lt/avatars/avatar-st';
@@ -131,6 +132,8 @@ import type { SessionLt } from '#common/types/shared/st-lt/sessions/session-lt';
 import type { SessionSt } from '#common/types/shared/st-lt/sessions/session-st';
 import type { StructLt } from '#common/types/shared/st-lt/structs/struct-lt';
 import type { StructSt } from '#common/types/shared/st-lt/structs/struct-st';
+import type { UserLt } from '#common/types/shared/st-lt/users/user-lt';
+import type { UserSt } from '#common/types/shared/st-lt/users/user-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
 
 @Injectable()
@@ -1066,12 +1069,30 @@ export class TabService {
       return;
     }
 
-    let user: UserTab = {
-      ...userEnt,
-      ...this.getTabProps({ ent: userEnt })
-    };
+    let result: Result.Result<UserTab, UserEntToTabResultError> =
+      this.userEntToTabResult({ userEnt: userEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let user: UserTab = result.value;
 
     return user;
+  }
+
+  userEntToTabResult(item: {
+    userEnt: UserEnt;
+  }): Result.Result<UserTab, UserEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<UserSt, UserLt>, GetTabPropsResultError> =>
+          this.getTabPropsResult<UserSt, UserLt>({ ent: v.userEnt })
+      ),
+      Result.map((v): UserTab => ({ ...v.userEnt, ...v.tabProps.props }))
+    );
   }
 
   sessionEntToTab(sessionEnt: SessionEnt): SessionTab {
