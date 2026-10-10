@@ -9,6 +9,7 @@ import { ValidateFilesService } from '#backend/controllers/files/validate-files/
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
@@ -30,19 +31,14 @@ export class ValidateFilesController {
   async saveFile(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendValidateFilesRequestDto
-  ) {
-    let { traceId } = body;
-    let { projectId, repoId, envId, branchId } = body.input;
-
-    let payload = await this.validateFilesService.validateFiles({
-      traceId: traceId,
+  ): Promise<BackendResultForOperation<'validateFiles'>> {
+    return this.validateFilesService.validateFilesResult({
+      traceId: body.traceId,
       userId: user.userId,
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId
+      projectId: body.input.projectId,
+      repoId: body.input.repoId,
+      branchId: body.input.branchId,
+      envId: body.input.envId
     });
-
-    return payload;
   }
 }

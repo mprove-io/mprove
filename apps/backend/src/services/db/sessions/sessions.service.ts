@@ -14,7 +14,9 @@ import {
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckRepoIdResultError } from '#common/types/backend/function-errors/check-repo-id-result-error';
+import type { GetSessionByIdCheckExistsResultError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-result-error';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
@@ -117,17 +119,34 @@ export class SessionsService {
   async getSessionByIdCheckExists(item: {
     sessionId: string;
   }): Promise<SessionTab> {
-    let session = await this.db.drizzle.query.sessionsTable.findFirst({
-      where: eq(sessionsTable.sessionId, item.sessionId)
-    });
+    let result: Result.Result<
+      SessionTab,
+      GetSessionByIdCheckExistsResultError
+    > = await this.getSessionByIdCheckExistsResult(item);
 
-    if (!session) {
-      throw new ServerError({
-        message: 'BACKEND_SESSION_NOT_FOUND'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    return this.tabService.sessionEntToTab(session);
+    let session: SessionTab = result.value;
+
+    return session;
+  }
+
+  async getSessionByIdCheckExistsResult(item: {
+    sessionId: string;
+  }): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsResultError> {
+    let { sessionId } = item;
+
+    return this.db.drizzle.query.sessionsTable
+      .findFirst({
+        where: eq(sessionsTable.sessionId, sessionId)
+      })
+      .then((sessionEnt: SessionEnt) =>
+        isUndefined(sessionEnt)
+          ? Result.fail({ code: 'BACKEND_SESSION_NOT_FOUND' })
+          : this.tabService.sessionEntToTabResult({ sessionEnt: sessionEnt })
+      );
   }
 
   async getOcSessionBySessionId(item: {

@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray, lt } from 'drizzle-orm';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
@@ -14,6 +15,7 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { StopSandboxResultError } from '#common/types/backend/function-errors/stop-sandbox-result-error';
 import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
@@ -74,19 +76,33 @@ export class EditorSandboxService {
     sandboxId: string;
     e2bApiKey: string;
   }): Promise<void> {
-    let isApiKeySet = isDefinedAndNotEmpty(item.e2bApiKey);
-    if (isApiKeySet === false) {
-      return;
+    let result: Result.Result<void, StopSandboxResultError> =
+      await this.stopSandboxResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+  }
+
+  async stopSandboxResult(item: {
+    sandboxType?: SandboxType;
+    sandboxId: string;
+    e2bApiKey: string;
+  }): Result.ResultAsync<void, StopSandboxResultError> {
+    let { sandboxType, sandboxId, e2bApiKey } = item;
+
+    if (isDefinedAndNotEmpty(e2bApiKey) === false) {
+      return Result.succeed();
     }
 
-    switch (item.sandboxType) {
+    switch (sandboxType) {
       case 'E2B':
-        await Sandbox.kill(item.sandboxId, { apiKey: item.e2bApiKey });
+        await Sandbox.kill(sandboxId, { apiKey: e2bApiKey });
 
-        break;
+        return Result.succeed();
       default:
-        throw new ServerError({
-          message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
+        return Result.fail({
+          code: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
         });
     }
   }

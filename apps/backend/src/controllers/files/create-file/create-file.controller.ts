@@ -9,10 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import pIteration from 'p-iteration';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateFileRequestDto,
   ToBackendCreateFileResponseDto
@@ -20,11 +20,24 @@ import {
 import { makeModelFileText } from '#backend/controllers/files/create-file/make-model-file-text/make-model-file-text';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import type {
+  BranchTab,
+  MemberTab,
+  ProjectTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  type BridgeEnt,
+  bridgesTable
+} from '#backend/drizzle/postgres/schema/bridges';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import {
+  BlockmlService,
+  type RebuildStructResultValue
+} from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
@@ -35,15 +48,23 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { GetMemberCheckIsEditorResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-result-error';
+import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
+import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
+import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
+import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
+import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateFileOutput } from '#common/types/backend/routes/files/create-file/create-file-output';
+import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { ToDiskCreateFileOutput } from '#common/types/disk/routes/files/create-file/create-file-output';
-
-const { forEachSeries } = pIteration;
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -78,157 +99,214 @@ export class CreateFileController {
   async createFile(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateFileRequestDto
-  ) {
-    let { traceId } = body;
-    let {
-      projectId,
-      repoId,
-      branchId,
-      parentNodeId,
-      fileName,
-      envId,
-      modelInfo
-    } = body.input;
-
-    await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: false
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckIsEditor({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let fileText: string;
-
-    if (isDefined(modelInfo)) {
-      fileText = makeModelFileText({
-        modelId: fileName.split('.')[0],
-        isStore: fileName.split('.')[1] === 'store',
-        label: modelInfo.name,
-        connectionId: modelInfo.connectionId,
-        presetId: modelInfo.presetId,
-        roles: modelInfo.accessRoles?.join(', ')
-      });
-    }
-
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
-
-    let diskCreateFileOutput: ToDiskCreateFileOutput =
-      await this.rpcService.sendToDiskUnwrapOutput({
-        request: {
-          operation: 'createFile',
-          traceId: body.traceId,
-          input: {
-            baseProject: baseProject,
-            repoId: repoId,
-            branch: branchId,
-            parentNodeId: parentNodeId,
-            fileName: fileName.toLowerCase(),
-            fileText: fileText,
-            userAlias: user.alias
-          }
-        }
-      });
-
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, branch.repoId),
-        eq(bridgesTable.branchId, branch.branchId)
-      )
-    });
-
-    await forEachSeries(branchBridges, async x => {
-      if (x.envId === envId) {
-        let structId = makeId();
-
-        await this.blockmlService.rebuildStruct({
-          traceId: traceId,
-          orgId: project.orgId,
-          projectId: projectId,
-          repoId: repoId,
-          structId: structId,
-          diskFiles: diskCreateFileOutput.files,
-          mproveDir: diskCreateFileOutput.mproveDir,
-          envId: x.envId,
-          selectedGivens: [],
-          overrideTimezone: undefined
-        });
-
-        x.structId = structId;
-        x.needValidate = false;
-      } else {
-        x.structId = EMPTY_STRUCT_ID;
-        x.needValidate = true;
-      }
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                bridges: [...branchBridges]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    let currentBridge = branchBridges.find(y => y.envId === envId);
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: currentBridge.structId,
-      projectId: projectId
-    });
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    let modelPartXs = await this.modelsService.getModelPartXs({
-      structId: struct.structId,
-      apiUserMember: apiUserMember
-    });
-
-    let payload: ToBackendCreateFileOutput = {
-      repo: diskCreateFileOutput.repo,
-      struct: this.structsService.tabToApi({
-        struct: struct,
-        modelPartXs: modelPartXs
+  ): Promise<BackendResultForOperation<'createFile'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        parentNodeId: body.input.parentNodeId,
+        fileName: body.input.fileName,
+        envId: body.input.envId,
+        modelInfo: body.input.modelInfo,
+        traceId: body.traceId,
+        user: user
       }),
-      needValidate: currentBridge.needValidate
-    };
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: false
+        })
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> =>
+          this.membersService.getMemberCheckIsEditorResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.andThrough(v =>
+        this.bridgesService.getBridgeCheckExistsResult({
+          projectId: v.branch.projectId,
+          repoId: v.branch.repoId,
+          branchId: v.branch.branchId,
+          envId: v.envId
+        })
+      ),
+      Result.bind('fileText', (v): Result.Result<string, never> => {
+        let fileText: string;
 
-    return payload;
+        if (isDefined(v.modelInfo)) {
+          fileText = makeModelFileText({
+            modelId: v.fileName.split('.')[0],
+            isStore:
+              `.${v.fileName.split('.')[1]}` ===
+              ('.store' satisfies FileExtension),
+            label: v.modelInfo.name,
+            connectionId: v.modelInfo.connectionId,
+            presetId: v.modelInfo.presetId,
+            roles: v.modelInfo.accessRoles?.join(', ')
+          });
+        }
+
+        return Result.succeed(fileText);
+      }),
+      Result.bind(
+        'diskCreateFileOutput',
+        (
+          v
+        ): Result.ResultAsync<ToDiskCreateFileOutput, SendToDiskResultError> =>
+          this.rpcService.sendToDiskResult({
+            request: {
+              operation: 'createFile',
+              traceId: v.traceId,
+              input: {
+                baseProject: this.tabService.projectTabToBaseProject({
+                  project: v.project
+                }),
+                repoId: v.repoId,
+                branch: v.branchId,
+                parentNodeId: v.parentNodeId,
+                fileName: v.fileName.toLowerCase(),
+                fileText: v.fileText,
+                userAlias: v.user.alias
+              }
+            }
+          })
+      ),
+      Result.bind(
+        'branchBridgeEnts',
+        (v): Result.ResultAsync<BridgeEnt[], never> =>
+          this.db.drizzle.query.bridgesTable
+            .findMany({
+              where: and(
+                eq(bridgesTable.projectId, v.branch.projectId),
+                eq(bridgesTable.repoId, v.branch.repoId),
+                eq(bridgesTable.branchId, v.branch.branchId)
+              )
+            })
+            .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
+      ),
+      Result.andThrough(v =>
+        Result.sequence(
+          v.branchBridgeEnts,
+          async (
+            bridgeEnt
+          ): Result.ResultAsync<void, RebuildStructResultError> => {
+            if (bridgeEnt.envId === v.envId) {
+              let structId: string = makeId();
+
+              let result: Result.Result<
+                RebuildStructResultValue,
+                RebuildStructResultError
+              > = await this.blockmlService.rebuildStructResult({
+                traceId: v.traceId,
+                orgId: v.project.orgId,
+                projectId: v.projectId,
+                repoId: v.repoId,
+                structId: structId,
+                diskFiles: v.diskCreateFileOutput.files,
+                mproveDir: v.diskCreateFileOutput.mproveDir,
+                envId: bridgeEnt.envId,
+                selectedGivens: [],
+                overrideTimezone: undefined
+              });
+
+              if (Result.isFailure(result)) {
+                return result;
+              }
+
+              bridgeEnt.structId = structId;
+              bridgeEnt.needValidate = false;
+            } else {
+              bridgeEnt.structId = EMPTY_STRUCT_ID;
+              bridgeEnt.needValidate = true;
+            }
+
+            return Result.succeed();
+          }
+        )
+      ),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: {
+                        bridges: [...v.branchBridgeEnts]
+                      }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.bind(
+        'currentBridgeEnt',
+        (v): Result.Result<BridgeEnt, never> =>
+          Result.succeed(
+            v.branchBridgeEnts.find(bridgeEnt => bridgeEnt.envId === v.envId)
+          )
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.currentBridgeEnt.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'modelPartXs',
+        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> =>
+          this.modelsService.getModelPartXsResult({
+            structId: v.struct.structId,
+            apiUserMember: this.membersService.tabToApi({
+              member: v.userMember
+            })
+          })
+      ),
+      Result.map(
+        (v): ToBackendCreateFileOutput => ({
+          repo: v.diskCreateFileOutput.repo,
+          struct: this.structsService.tabToApi({
+            struct: v.struct,
+            modelPartXs: v.modelPartXs
+          }),
+          needValidate: v.currentBridgeEnt.needValidate
+        })
+      )
+    );
   }
 }

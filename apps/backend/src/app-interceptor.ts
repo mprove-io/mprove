@@ -918,6 +918,162 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'commitRepo') {
+        execution = makeBackendResultResponse({
+          operation: 'commitRepo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getRepo') {
+        execution = makeBackendResultResponse({
+          operation: 'getRepo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'mergeRepo') {
+        execution = makeBackendResultResponse({
+          operation: 'mergeRepo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'pullRepo') {
+        execution = makeBackendResultResponse({
+          operation: 'pullRepo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'pushRepo') {
+        execution = makeBackendResultResponse({
+          operation: 'pushRepo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'revertRepoToLastCommit') {
+        execution = makeBackendResultResponse({
+          operation: 'revertRepoToLastCommit',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'revertRepoToRemote') {
+        execution = makeBackendResultResponse({
+          operation: 'revertRepoToRemote',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'syncRepo') {
+        execution = makeBackendResultResponse({
+          operation: 'syncRepo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createFile') {
+        execution = makeBackendResultResponse({
+          operation: 'createFile',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteFile') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteFile',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getFile') {
+        execution = makeBackendResultResponse({
+          operation: 'getFile',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'saveFile') {
+        execution = makeBackendResultResponse({
+          operation: 'saveFile',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'validateFiles') {
+        execution = makeBackendResultResponse({
+          operation: 'validateFiles',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else {
         execution = next.handle().pipe(
           map(payload =>
