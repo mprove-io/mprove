@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -19,8 +20,15 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendConnectionDoesNotExistError } from '#common/types/backend/errors/backend-connection-does-not-exist-error';
+import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
+import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
+import type { GetConnectionSampleResultError } from '#common/types/backend/function-errors/get-connection-sample-result-error';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
+import type { RawSchemaTable } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-table';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
+import type { Env } from '#common/types/backend/parts/env';
+import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
 @Injectable()
 export class GetConnectionSampleService {
@@ -49,192 +57,241 @@ export class GetConnectionSampleService {
     tableName: string;
     columnName?: string;
     offset?: number;
-  }): Promise<{
-    columnNames: string[];
-    rows: string[][];
-    errorMessage?: string;
-  }> {
-    let {
-      userId,
-      projectId,
-      envId,
-      connectionId,
-      schemaName,
-      tableName,
-      columnName,
-      offset
-    } = item;
+  }): Promise<ToBackendGetConnectionSampleOutput> {
+    let result: Result.Result<
+      ToBackendGetConnectionSampleOutput,
+      GetConnectionSampleResultError
+    > = await this.getConnectionSampleResult(item);
 
-    if (isDefined(offset) && (!Number.isInteger(offset) || offset < 0)) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_OFFSET'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
+    let output: ToBackendGetConnectionSampleOutput = result.value;
 
-    await this.membersService.getMemberCheckIsEditorOrAdmin({
-      memberId: userId,
-      projectId: projectId
-    });
+    return output;
+  }
 
-    let apiEnvs = await this.envsService.getApiEnvs({
-      projectId: projectId
-    });
-
-    let apiEnv = apiEnvs.find(x => x.envId === envId);
-
-    let connections: ConnectionTab[] =
-      await this.db.drizzle.query.connectionsTable
-        .findMany({
-          where: and(
-            eq(connectionsTable.projectId, projectId),
-            or(
-              eq(connectionsTable.envId, envId),
-              and(
-                eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                inArray(
-                  connectionsTable.connectionId,
-                  apiEnv.fallbackConnectionIds
+  async getConnectionSampleResult(item: {
+    userId: string;
+    projectId: string;
+    envId: string;
+    connectionId: string;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Result.ResultAsync<
+    ToBackendGetConnectionSampleOutput,
+    GetConnectionSampleResultError
+  > {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThrough(v =>
+        isDefined(v.offset) && (!Number.isInteger(v.offset) || v.offset < 0)
+          ? Result.fail({ code: 'BACKEND_WRONG_OFFSET' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        this.membersService.getMemberCheckIsEditorOrAdminResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'apiEnvs',
+        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+      ),
+      Result.bind(
+        'apiEnv',
+        (v): Result.Result<Env, never> =>
+          Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
+      ),
+      Result.bind(
+        'connections',
+        (
+          v
+        ): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabResultError> =>
+          this.db.drizzle.query.connectionsTable
+            .findMany({
+              where: and(
+                eq(connectionsTable.projectId, v.projectId),
+                or(
+                  eq(connectionsTable.envId, v.envId),
+                  and(
+                    eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                    inArray(
+                      connectionsTable.connectionId,
+                      v.apiEnv.fallbackConnectionIds
+                    )
+                  )
                 )
               )
+            })
+            .then(connectionEnts =>
+              Result.sequence(connectionEnts, connectionEnt =>
+                this.tabService.connectionEntToTabResult({
+                  connectionEnt: connectionEnt
+                })
+              )
+            )
+      ),
+      Result.bind(
+        'connection',
+        (
+          v
+        ): Result.Result<ConnectionTab, BackendConnectionDoesNotExistError> => {
+          let connection: ConnectionTab = v.connections.find(
+            connection => connection.connectionId === v.connectionId
+          );
+
+          return isUndefined(connection)
+            ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
+            : Result.succeed(connection);
+        }
+      ),
+      Result.andThrough(v =>
+        (
+          [
+            'PostgreSQL',
+            'MySQL',
+            'SnowFlake',
+            'BigQuery',
+            'Databricks',
+            'MotherDuck',
+            'Presto',
+            'Trino'
+          ] satisfies ConnectionType[]
+        ).findIndex(type => type === v.connection.type) < 0
+          ? Result.fail({
+              code: 'BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE'
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.connection.rawSchema)
+          ? Result.fail({ code: 'BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND' })
+          : Result.succeed()
+      ),
+      Result.bind(
+        'schemaTable',
+        (v): Result.Result<RawSchemaTable, never> =>
+          Result.succeed(
+            v.connection.rawSchema.tables.find(
+              table =>
+                table.schemaName === v.schemaName &&
+                table.tableName === v.tableName
             )
           )
+      ),
+      Result.andThrough(v =>
+        v.connection.rawSchema.tables.findIndex(
+          table => table.schemaName === v.schemaName
+        ) < 0
+          ? Result.fail({ code: 'BACKEND_WRONG_SCHEMA_NAME' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.schemaTable)
+          ? Result.fail({ code: 'BACKEND_WRONG_TABLE_NAME' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.columnName)
+          ? Result.succeed()
+          : v.schemaTable.columns.findIndex(
+                column => column.columnName === v.columnName
+              ) < 0
+            ? Result.fail({ code: 'BACKEND_WRONG_COLUMN_NAME' })
+            : Result.succeed()
+      ),
+      Result.bind(
+        'sampleResult',
+        async (v): Result.ResultAsync<FetchSampleResult, never> => {
+          let sampleResult: FetchSampleResult;
+
+          if (v.connection.type === 'PostgreSQL') {
+            sampleResult = await this.pgService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          } else if (v.connection.type === 'MySQL') {
+            sampleResult = await this.mysqlService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          } else if (v.connection.type === 'SnowFlake') {
+            sampleResult = await this.snowFlakeService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          } else if (v.connection.type === 'Databricks') {
+            sampleResult = await this.databricksService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          } else if (v.connection.type === 'BigQuery') {
+            sampleResult = await this.bigQueryService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          } else if (v.connection.type === 'MotherDuck') {
+            sampleResult = await this.duckDbService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          } else if (v.connection.type === 'Presto') {
+            sampleResult = await this.prestoService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          } else if (v.connection.type === 'Trino') {
+            sampleResult = await this.trinoService.fetchSample({
+              connection: v.connection,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName,
+              offset: v.offset
+            });
+          }
+
+          return Result.succeed(sampleResult);
+        }
+      ),
+      Result.map(
+        (v): ToBackendGetConnectionSampleOutput => ({
+          columnNames: v.sampleResult.columnNames,
+          rows: v.sampleResult.rows,
+          errorMessage: v.sampleResult.errorMessage
         })
-        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
-
-    let connection = connections.find(c => c.connectionId === connectionId);
-
-    if (!isDefined(connection)) {
-      throw new ServerError({
-        message: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
-      });
-    }
-
-    if (
-      (
-        [
-          'PostgreSQL',
-          'MySQL',
-          'SnowFlake',
-          'BigQuery',
-          'Databricks',
-          'MotherDuck',
-          'Presto',
-          'Trino'
-        ] satisfies ConnectionType[]
-      ).findIndex(candidate => candidate === connection.type) < 0
-    ) {
-      throw new ServerError({
-        message: 'BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE'
-      });
-    }
-
-    if (isUndefined(connection.rawSchema)) {
-      throw new ServerError({
-        message: 'BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND'
-      });
-    }
-
-    let schemaTable = connection.rawSchema.tables.find(
-      t => t.schemaName === schemaName && t.tableName === tableName
+      )
     );
-
-    if (!connection.rawSchema.tables.some(t => t.schemaName === schemaName)) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_SCHEMA_NAME'
-      });
-    }
-
-    if (!isDefined(schemaTable)) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_TABLE_NAME'
-      });
-    }
-
-    if (
-      isDefined(columnName) &&
-      !schemaTable.columns.some(c => c.columnName === columnName)
-    ) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_COLUMN_NAME'
-      });
-    }
-
-    let sampleResult: FetchSampleResult;
-
-    if (connection.type === 'PostgreSQL') {
-      sampleResult = await this.pgService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    } else if (connection.type === 'MySQL') {
-      sampleResult = await this.mysqlService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    } else if (connection.type === 'SnowFlake') {
-      sampleResult = await this.snowFlakeService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    } else if (connection.type === 'Databricks') {
-      sampleResult = await this.databricksService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    } else if (connection.type === 'BigQuery') {
-      sampleResult = await this.bigQueryService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    } else if (connection.type === 'MotherDuck') {
-      sampleResult = await this.duckDbService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    } else if (connection.type === 'Presto') {
-      sampleResult = await this.prestoService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    } else if (connection.type === 'Trino') {
-      sampleResult = await this.trinoService.fetchSample({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        offset: offset
-      });
-    }
-
-    return {
-      columnNames: sampleResult.columnNames,
-      rows: sampleResult.rows,
-      errorMessage: sampleResult.errorMessage
-    };
   }
 }

@@ -9,10 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { inArray } from 'drizzle-orm';
-import asyncPool from 'tiny-async-pool';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSpecialRebuildStructsRequestDto,
   ToBackendSpecialRebuildStructsResponseDto
@@ -20,29 +20,45 @@ import {
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
-  BridgeTab,
-  MemberTab
+  MemberTab,
+  ProjectTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import {
+  type BridgeEnt,
+  bridgesTable
+} from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import {
+  BlockmlService,
+  type RebuildStructResultValue
+} from '#backend/services/blockml/blockml.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { DbErrorToResultError } from '#common/types/backend/function-errors/db-error-to-result-error';
+import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
+import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
+import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
+import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
 import type { BridgeItem } from '#common/types/backend/parts/special/bridge-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSpecialRebuildStructsOutput } from '#common/types/backend/routes/special/special-rebuild-structs/special-rebuild-structs-output';
 import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
+
+type RebuildSummary = {
+  notFoundProjectIds: string[];
+  errorGetCatalogBridgeItems: BridgeItem[];
+  successBridgeItems: BridgeItem[];
+};
 
 @ApiTags('Special')
 @SkipJwtCheck()
@@ -65,7 +81,6 @@ import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/cata
 export class SpecialRebuildStructsController {
   constructor(
     private tabService: TabService,
-    private projectsService: ProjectsService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
@@ -83,160 +98,204 @@ export class SpecialRebuildStructsController {
   })
   async specialRebuildStructs(
     @Body() body: ToBackendSpecialRebuildStructsRequestDto
-  ) {
-    let { traceId } = body;
-    let { specialKey, userIds, skipRebuild, overrideTimezone } = body.input;
+  ): Promise<BackendResultForOperation<'specialRebuildStructs'>> {
+    return Result.pipe(
+      Result.succeed({
+        traceId: body.traceId,
+        specialKey: body.input.specialKey,
+        userIds: body.input.userIds,
+        skipRebuild: body.input.skipRebuild,
+        overrideTimezone: body.input.overrideTimezone
+      }),
+      Result.andThrough(v => {
+        let envSpecialKey: string =
+          this.cs.get<BackendConfig['specialKey']>('specialKey');
 
-    let envSpecialKey = this.cs.get<BackendConfig['specialKey']>('specialKey');
-
-    if (isUndefinedOrEmpty(specialKey) || specialKey !== envSpecialKey) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_SPECIAL_KEY'
-      });
-    }
-
-    let projectIds: string[] = [];
-    let members: MemberTab[] = [];
-
-    if (userIds.length > 0) {
-      members = await this.db.drizzle.query.membersTable
-        .findMany({
-          where: inArray(membersTable.memberId, userIds)
-        })
-        .then(xs => xs.map(x => this.tabService.memberEntToTab(x)));
-
-      projectIds = members.map(x => x.projectId);
-    }
-
-    let projects =
-      projectIds.length > 0
-        ? await this.db.drizzle.query.projectsTable
-            .findMany({
-              where: inArray(projectsTable.projectId, projectIds)
-            })
-            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)))
-        : await this.db.drizzle
-            .select()
-            .from(projectsTable)
-            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
-
-    let bridges: BridgeTab[];
-
-    if (userIds.length > 0) {
-      bridges = await this.db.drizzle.query.bridgesTable.findMany({
-        where: inArray(bridgesTable.repoId, userIds)
-      });
-    } else {
-      bridges = await this.db.drizzle.select().from(bridgesTable);
-    }
-
-    let notFoundProjectIds: string[] = [];
-    let errorGetCatalogBridgeItems: BridgeItem[] = [];
-    let successBridgeItems: BridgeItem[] = [];
-
-    await asyncPool(1, bridges, async bridge => {
-      let project = projects.find(x => x.projectId === bridge.projectId);
-
-      if (isUndefined(project)) {
-        notFoundProjectIds.push(bridge.projectId);
-        return;
-      }
-
-      let bridgeItem: BridgeItem = {
-        orgId: project.orgId,
-        projectId: project.projectId,
-        repoId: bridge.repoId,
-        branchId: bridge.branchId,
-        envId: bridge.envId,
-        structId: bridge.structId,
-        needValidate: bridge.needValidate
-      };
-
-      if (skipRebuild === false) {
-        let baseProject = this.tabService.projectTabToBaseProject({
-          project: project
-        });
-
-        let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput;
-
-        try {
-          diskGetCatalogFilesOutput =
-            await this.rpcService.sendToDiskUnwrapOutput({
-              request: {
-                operation: 'getCatalogFiles',
-                traceId: body.traceId,
-                input: {
-                  baseProject: baseProject,
-                  repoId: bridge.repoId,
-                  branch: bridge.branchId
-                }
-              }
-            });
-        } catch (error: unknown) {
-          if (!(error instanceof ServerError)) {
-            throw error;
-          }
-
-          let diskErrorCode: string =
-            error.originalError instanceof ServerError
-              ? error.originalError.message
-              : error.message;
-
-          bridgeItem.errorMessage = diskErrorCode;
-          errorGetCatalogBridgeItems.push(bridgeItem);
-          return;
-        }
-
-        let structId = makeId();
-
-        await this.blockmlService.rebuildStruct({
-          traceId: traceId,
-          orgId: project.orgId,
-          projectId: project.projectId,
-          repoId: bridge.repoId,
-          structId: structId,
-          diskFiles: diskGetCatalogFilesOutput.files,
-          mproveDir: diskGetCatalogFilesOutput.mproveDir,
-          envId: bridge.envId,
-          selectedGivens: [],
-          overrideTimezone: overrideTimezone
-        });
-
-        bridge.structId = structId;
-        bridge.needValidate = false;
-      } else {
-        bridge.structId = EMPTY_STRUCT_ID;
-        bridge.needValidate = true;
-      }
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insertOrUpdate: {
-                  bridges: [bridge]
-                }
+        return isUndefinedOrEmpty(v.specialKey) ||
+          v.specialKey !== envSpecialKey
+          ? Result.fail({ code: 'BACKEND_WRONG_SPECIAL_KEY' })
+          : Result.succeed();
+      }),
+      Result.bind(
+        'members',
+        async (
+          v
+        ): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
+          v.userIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.membersTable
+                .findMany({ where: inArray(membersTable.memberId, v.userIds) })
+                .then(memberEnts =>
+                  Result.sequence(memberEnts, memberEnt =>
+                    this.tabService.memberEntToTabResult({
+                      memberEnt: memberEnt
+                    })
+                  )
+                )
+      ),
+      Result.bind(
+        'projectIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.members.map(member => member.projectId))
+      ),
+      Result.bind(
+        'projects',
+        (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> =>
+          (v.projectIds.length > 0
+            ? this.db.drizzle.query.projectsTable.findMany({
+                where: inArray(projectsTable.projectId, v.projectIds)
               })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+            : this.db.drizzle.select().from(projectsTable)
+          ).then(projectEnts =>
+            Result.sequence(projectEnts, projectEnt =>
+              this.tabService.projectEntToTabResult({ projectEnt: projectEnt })
+            )
+          )
+      ),
+      Result.bind(
+        'bridgeEnts',
+        (v): Result.ResultAsync<BridgeEnt[], never> =>
+          (v.userIds.length > 0
+            ? this.db.drizzle.query.bridgesTable.findMany({
+                where: inArray(bridgesTable.repoId, v.userIds)
+              })
+            : this.db.drizzle.select().from(bridgesTable)
+          ).then(bridgeEnts => Result.succeed(bridgeEnts))
+      ),
+      Result.bind(
+        'summary',
+        (v): Result.Result<RebuildSummary, never> =>
+          Result.succeed({
+            notFoundProjectIds: [],
+            errorGetCatalogBridgeItems: [],
+            successBridgeItems: []
+          })
+      ),
+      Result.andThrough(v =>
+        Result.sequence(
+          v.bridgeEnts,
+          async (
+            bridgeEnt
+          ): Result.ResultAsync<
+            void,
+            RebuildStructResultError | DbErrorToResultError
+          > => {
+            let project: ProjectTab = v.projects.find(
+              project => project.projectId === bridgeEnt.projectId
+            );
 
-      bridgeItem.structId = bridge.structId;
-      bridgeItem.needValidate = bridge.needValidate;
+            if (isUndefined(project)) {
+              v.summary.notFoundProjectIds.push(bridgeEnt.projectId);
 
-      successBridgeItems.push(bridgeItem);
-    });
+              return Result.succeed();
+            }
 
-    let payload: ToBackendSpecialRebuildStructsOutput = {
-      notFoundProjectIds: notFoundProjectIds,
-      successTotal: successBridgeItems.length,
-      errorTotal: errorGetCatalogBridgeItems.length,
-      successBridgeItems: successBridgeItems,
-      errorGetCatalogBridgeItems: errorGetCatalogBridgeItems
-    };
+            let bridgeItem: BridgeItem = {
+              orgId: project.orgId,
+              projectId: project.projectId,
+              repoId: bridgeEnt.repoId,
+              branchId: bridgeEnt.branchId,
+              envId: bridgeEnt.envId,
+              structId: bridgeEnt.structId,
+              needValidate: bridgeEnt.needValidate
+            };
 
-    return payload;
+            if (v.skipRebuild === false) {
+              let diskResult: Result.Result<
+                ToDiskGetCatalogFilesOutput,
+                SendToDiskResultError
+              > = await this.rpcService.sendToDiskResult({
+                request: {
+                  operation: 'getCatalogFiles',
+                  traceId: v.traceId,
+                  input: {
+                    baseProject: this.tabService.projectTabToBaseProject({
+                      project: project
+                    }),
+                    repoId: bridgeEnt.repoId,
+                    branch: bridgeEnt.branchId
+                  }
+                }
+              });
+
+              if (Result.isFailure(diskResult)) {
+                // The delegating RPC wrapper uses Error (not ServerError) for the
+                // nested cause, so the legacy per-bridge message is the outer code.
+                bridgeItem.errorMessage = diskResult.error.code;
+
+                v.summary.errorGetCatalogBridgeItems.push(bridgeItem);
+
+                return Result.succeed();
+              }
+
+              let structId: string = makeId();
+
+              let rebuildResult: Result.Result<
+                RebuildStructResultValue,
+                RebuildStructResultError
+              > = await this.blockmlService.rebuildStructResult({
+                traceId: v.traceId,
+                orgId: project.orgId,
+                projectId: project.projectId,
+                repoId: bridgeEnt.repoId,
+                structId: structId,
+                diskFiles: diskResult.value.files,
+                mproveDir: diskResult.value.mproveDir,
+                envId: bridgeEnt.envId,
+                selectedGivens: [],
+                overrideTimezone: v.overrideTimezone
+              });
+
+              if (Result.isFailure(rebuildResult)) {
+                return rebuildResult;
+              }
+
+              bridgeEnt.structId = structId;
+              bridgeEnt.needValidate = false;
+            } else {
+              bridgeEnt.structId = EMPTY_STRUCT_ID;
+              bridgeEnt.needValidate = true;
+            }
+
+            let writeResult: Result.Result<void, DbErrorToResultError> =
+              await dbErrorToResult({
+                action: async () => {
+                  await retry(
+                    async () =>
+                      await this.db.drizzle.transaction(
+                        async tx =>
+                          await this.db.packer.write({
+                            tx: tx,
+                            insertOrUpdate: { bridges: [bridgeEnt] }
+                          })
+                      ),
+                    getRetryOption(this.cs, this.logger)
+                  );
+                }
+              });
+
+            if (Result.isFailure(writeResult)) {
+              return writeResult;
+            }
+
+            bridgeItem.structId = bridgeEnt.structId;
+            bridgeItem.needValidate = bridgeEnt.needValidate;
+
+            v.summary.successBridgeItems.push(bridgeItem);
+
+            return Result.succeed();
+          }
+        )
+      ),
+      Result.map(
+        (v): ToBackendSpecialRebuildStructsOutput => ({
+          notFoundProjectIds: v.summary.notFoundProjectIds,
+          successTotal: v.summary.successBridgeItems.length,
+          errorTotal: v.summary.errorGetCatalogBridgeItems.length,
+          successBridgeItems: v.summary.successBridgeItems,
+          errorGetCatalogBridgeItems: v.summary.errorGetCatalogBridgeItems
+        })
+      )
+    );
   }
 }

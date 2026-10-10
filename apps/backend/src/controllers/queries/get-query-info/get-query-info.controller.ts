@@ -32,46 +32,11 @@ export class GetQueryInfoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetQueryInfoRequestDto
   ) {
-    let { traceId } = body;
-    let {
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      chartId,
-      dashboardId,
-      tileIndex,
-      reportId,
-      rowId,
-      timezone,
-      timeSpec,
-      timeRangeFractionBrick,
-      getMalloy,
-      getSql,
-      getData,
-      isFetch
-    } = body.input;
-
     let payload: ToBackendGetQueryInfoOutput =
       await this.getQueryInfoService.getQueryInfo({
-        traceId: traceId,
-        user: user,
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        chartId: chartId,
-        dashboardId: dashboardId,
-        tileIndex: tileIndex,
-        reportId: reportId,
-        rowId: rowId,
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFractionBrick: timeRangeFractionBrick,
-        getMalloy: getMalloy,
-        getSql: getSql,
-        getData: getData,
-        isFetch: isFetch
+        ...body.input,
+        traceId: body.traceId,
+        user: user
       });
 
     return payload;

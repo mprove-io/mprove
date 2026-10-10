@@ -33,39 +33,10 @@ export class GetStateController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetStateRequestDto
   ) {
-    let { traceId } = body;
-    let {
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      isFetch,
-      getErrors,
-      getRepo,
-      getRepoNodes,
-      getModels,
-      getDashboards,
-      getCharts,
-      getMetrics,
-      getReports
-    } = body.input;
-
     let payload: ToBackendGetStateOutput = await this.getStateService.getState({
-      traceId: traceId,
-      user: user,
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId,
-      isFetch: isFetch,
-      getErrors: getErrors,
-      getRepo: getRepo,
-      getRepoNodes: getRepoNodes,
-      getModels: getModels,
-      getDashboards: getDashboards,
-      getCharts: getCharts,
-      getMetrics: getMetrics,
-      getReports: getReports
+      ...body.input,
+      traceId: body.traceId,
+      user: user
     });
 
     return payload;

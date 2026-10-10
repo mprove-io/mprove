@@ -69,13 +69,8 @@ export class GetModelTool {
     }
 
     let result = await this.getModelService.getModel({
-      userId: user.userId,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      branchId: item.branchId,
-      envId: item.envId,
-      modelId: item.modelId,
-      getMalloy: item.getMalloy
+      ...item,
+      userId: user.userId
     });
 
     return processGetModelPayload({

@@ -29,16 +29,9 @@ export class GetModelController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetModelRequestDto
   ): Promise<BackendResultForOperation<'getModel'>> {
-    let { projectId, repoId, branchId, modelId, envId, getMalloy } = body.input;
-
     return this.getModelService.getModelResult({
-      userId: user.userId,
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId,
-      modelId: modelId,
-      getMalloy: getMalloy
+      ...body.input,
+      userId: user.userId
     });
   }
 }

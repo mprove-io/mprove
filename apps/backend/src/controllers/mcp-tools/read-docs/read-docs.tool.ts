@@ -12,7 +12,10 @@ import {
   type McpToolReadDocsInput,
   zMcpToolReadDocsInput
 } from '#common/types/backend/mcp-tools/mcp-tool-read-docs/mcp-tool-read-docs-input';
-import { zMcpToolReadDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-read-docs/mcp-tool-read-docs-output';
+import {
+  type McpToolReadDocsOutput,
+  zMcpToolReadDocsOutput
+} from '#common/types/backend/mcp-tools/mcp-tool-read-docs/mcp-tool-read-docs-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
@@ -28,8 +31,8 @@ export class ReadDocsTool {
     })
   })
   async readDocs(item: McpToolReadDocsInput) {
-    return this.docsService.readDocs({
-      pageIds: item.pageIds
-    });
+    let output: McpToolReadDocsOutput = this.docsService.readDocs(item);
+
+    return output;
   }
 }

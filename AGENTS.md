@@ -284,14 +284,25 @@ export function doSomething(item: { orgId: string; projectId: string }) {
 ## Item destructuring
 
 Destructure `item` inside a named function or method when individual properties
-are needed outside a `Result.pipe` pipeline. Do not destructure inputs solely to
-construct pipeline initial state; follow "Pipe state" instead.
+are needed outside a `Result.pipe` pipeline.
+
+Only top-level controller and MCP-tool handlers may forward a complete input
+directly or spread it before adding trusted context. Avoid destructuring solely
+for forwarding there. Elsewhere, explicitly map arguments. Keep explicit mapping
+for subsets, renamed fields, or transformations.
+
+Result pipelines follow "Pipe state" and "Pipe step callbacks" instead.
 
 ```ts
 export function doSomething(item: { orgId: string; projectId: string }) {
   let { orgId, projectId } = item;
   // ...
 }
+
+return this.connectionSampleService.getConnectionSampleResult({
+  ...body.input,
+  userId: user.userId
+});
 ```
 
 ## Recursive function names
@@ -930,6 +941,11 @@ Standalone Result-producing functions must retain explicit return types.
 Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
 `Result.Result<Success, Error>` or `Result.ResultAsync<Success, Error>` return
 type, matching whether the callback returns a synchronous Result or a promise.
+
+Use named handwritten types for object-shaped callback success values, including
+array elements, rather than inline object types. Keep local types in the same
+file unless shared. Function parameter types still follow "Function and method
+args".
 
 ```ts
 Result.bind(

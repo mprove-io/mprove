@@ -33,12 +33,9 @@ export class ValidateFilesController {
     @Body() body: ToBackendValidateFilesRequestDto
   ): Promise<BackendResultForOperation<'validateFiles'>> {
     return this.validateFilesService.validateFilesResult({
+      ...body.input,
       traceId: body.traceId,
-      userId: user.userId,
-      projectId: body.input.projectId,
-      repoId: body.input.repoId,
-      branchId: body.input.branchId,
-      envId: body.input.envId
+      userId: user.userId
     });
   }
 }

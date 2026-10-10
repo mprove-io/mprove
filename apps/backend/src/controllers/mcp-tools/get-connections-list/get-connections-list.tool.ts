@@ -55,9 +55,8 @@ export class GetConnectionsListTool {
 
     let payload: ToBackendGetConnectionsListOutput =
       await this.getConnectionsListService.getConnectionsList({
-        userId: user.userId,
-        projectId: item.projectId,
-        envId: item.envId
+        ...item,
+        userId: user.userId
       });
 
     return payload;

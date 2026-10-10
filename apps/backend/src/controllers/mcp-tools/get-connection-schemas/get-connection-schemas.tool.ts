@@ -65,12 +65,8 @@ export class GetConnectionSchemasTool {
     }
 
     let result = await this.getConnectionSchemasService.getConnectionSchemas({
-      userId: user.userId,
-      projectId: item.projectId,
-      envId: item.envId,
-      repoId: item.repoId,
-      branchId: item.branchId,
-      isRefreshExistingCache: item.isRefreshExistingCache
+      ...item,
+      userId: user.userId
     });
 
     return processGetConnectionSchemasPayload({

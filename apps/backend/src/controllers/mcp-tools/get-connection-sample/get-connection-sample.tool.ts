@@ -53,14 +53,8 @@ export class GetConnectionSampleTool {
 
     let payload: ToBackendGetConnectionSampleOutput =
       await this.getConnectionSampleService.getConnectionSample({
-        userId: user.userId,
-        projectId: item.projectId,
-        envId: item.envId,
-        connectionId: item.connectionId,
-        schemaName: item.schemaName,
-        tableName: item.tableName,
-        columnName: item.columnName,
-        offset: item.offset
+        ...item,
+        userId: user.userId
       });
 
     return payload;

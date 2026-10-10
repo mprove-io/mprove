@@ -1,9 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 import { sortSchemaColumns } from '#backend/controllers/connections/get-connection-schemas/sort-schema-columns/sort-schema-columns';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BridgeTab,
+  CachedColumnTab,
+  ConnectionTab,
+  MemberTab,
+  StructTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
@@ -23,8 +30,17 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.serv
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CachedColumnEntToTabResultError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-result-error';
+import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
+import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetConnectionSchemasResultError } from '#common/types/backend/function-errors/get-connection-schemas-result-error';
+import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
 import type { ColumnCombinedReference } from '#common/types/backend/parts/connection-schemas/combined-schemas/column-combined-reference';
 import type { CombinedSchema } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema';
 import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
@@ -33,10 +49,16 @@ import type { CombinedSchemaTable } from '#common/types/backend/parts/connection
 import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
-import type { Member } from '#common/types/backend/parts/member';
+import type { Env } from '#common/types/backend/parts/env';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
+
+type ConnectionRawSchemaItem = {
+  connectionId: string;
+  schema: ConnectionRawSchema;
+};
 
 const { forEachSeries } = pIteration;
 
@@ -69,158 +91,241 @@ export class GetConnectionSchemasService {
     repoId: string;
     branchId: string;
     isRefreshExistingCache: boolean;
-  }): Promise<{
-    userMember: Member;
-    combinedSchemaItems: CombinedSchemaItem[];
-  }> {
-    let { userId, projectId, envId, repoId, branchId, isRefreshExistingCache } =
-      item;
+  }): Promise<ToBackendGetConnectionSchemasOutput> {
+    let result: Result.Result<
+      ToBackendGetConnectionSchemasOutput,
+      GetConnectionSchemasResultError
+    > = await this.getConnectionSchemasResult(item);
 
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
-      memberId: userId,
-      projectId: projectId
-    });
+    let output: ToBackendGetConnectionSchemasOutput = result.value;
 
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId
-    });
+    return output;
+  }
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let extraSchemas = struct.extraSchemas ?? [];
-
-    let apiEnvs = await this.envsService.getApiEnvs({
-      projectId: projectId
-    });
-
-    let apiEnv = apiEnvs.find(x => x.envId === envId);
-
-    let connections: ConnectionTab[] =
-      await this.db.drizzle.query.connectionsTable
-        .findMany({
-          where: and(
-            eq(connectionsTable.projectId, projectId),
-            or(
-              eq(connectionsTable.envId, envId),
-              and(
-                eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                inArray(
-                  connectionsTable.connectionId,
-                  apiEnv.fallbackConnectionIds
+  async getConnectionSchemasResult(item: {
+    userId: string;
+    projectId: string;
+    envId: string;
+    repoId: string;
+    branchId: string;
+    isRefreshExistingCache: boolean;
+  }): Result.ResultAsync<
+    ToBackendGetConnectionSchemasOutput,
+    GetConnectionSchemasResultError
+  > {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (
+          v
+        ): Result.ResultAsync<
+          MemberTab,
+          GetMemberCheckIsEditorOrAdminResultError
+        > =>
+          this.membersService.getMemberCheckIsEditorOrAdminResult({
+            memberId: v.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'apiEnvs',
+        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+      ),
+      Result.bind(
+        'apiEnv',
+        (v): Result.Result<Env, never> =>
+          Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
+      ),
+      Result.bind(
+        'connections',
+        (
+          v
+        ): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabResultError> =>
+          this.db.drizzle.query.connectionsTable
+            .findMany({
+              where: and(
+                eq(connectionsTable.projectId, v.projectId),
+                or(
+                  eq(connectionsTable.envId, v.envId),
+                  and(
+                    eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                    inArray(
+                      connectionsTable.connectionId,
+                      v.apiEnv.fallbackConnectionIds
+                    )
+                  )
                 )
               )
+            })
+            .then(connectionEnts =>
+              Result.sequence(connectionEnts, connectionEnt =>
+                this.tabService.connectionEntToTabResult({
+                  connectionEnt: connectionEnt
+                })
+              )
+            )
+      ),
+      Result.bind(
+        'eligibleConnections',
+        (v): Result.Result<ConnectionTab[], never> =>
+          Result.succeed(
+            v.connections.filter(
+              c =>
+                c.type !== 'GoogleApi' &&
+                c.type !== 'Api' &&
+                (c.type === 'PostgreSQL' ||
+                  c.type === 'MySQL' ||
+                  c.type === 'SnowFlake' ||
+                  c.type === 'Databricks' ||
+                  c.type === 'BigQuery' ||
+                  c.type === 'MotherDuck' ||
+                  c.type === 'Presto' ||
+                  c.type === 'Trino')
             )
           )
-        })
-        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
+      ),
+      Result.bind(
+        'connectionRawSchemaItems',
+        async (v): Result.ResultAsync<ConnectionRawSchemaItem[], never> => {
+          let connectionRawSchemaItems: ConnectionRawSchemaItem[] = [];
 
-    let eligibleConnections = connections.filter(
-      c =>
-        c.type !== 'GoogleApi' &&
-        c.type !== 'Api' &&
-        (c.type === 'PostgreSQL' ||
-          c.type === 'MySQL' ||
-          c.type === 'SnowFlake' ||
-          c.type === 'Databricks' ||
-          c.type === 'BigQuery' ||
-          c.type === 'MotherDuck' ||
-          c.type === 'Presto' ||
-          c.type === 'Trino')
+          if (v.isRefreshExistingCache === true) {
+            let fetched: ConnectionRawSchemaItem[] =
+              await this.fetchAndSaveSchemas({
+                connections: v.eligibleConnections
+              });
+
+            fetched.forEach(x => {
+              connectionRawSchemaItems.push(x);
+            });
+          } else {
+            let connectionsWithCache: ConnectionTab[] =
+              v.eligibleConnections.filter(x => isDefined(x.rawSchema));
+
+            connectionsWithCache.forEach(x => {
+              connectionRawSchemaItems.push({
+                connectionId: x.connectionId,
+                schema: x.rawSchema
+              });
+            });
+
+            let connectionsWithoutCache: ConnectionTab[] =
+              v.eligibleConnections.filter(x => isUndefined(x.rawSchema));
+
+            if (connectionsWithoutCache.length > 0) {
+              let fetched: ConnectionRawSchemaItem[] =
+                await this.fetchAndSaveSchemas({
+                  connections: connectionsWithoutCache
+                });
+
+              fetched.forEach(x => {
+                connectionRawSchemaItems.push(x);
+              });
+            }
+          }
+
+          return Result.succeed(connectionRawSchemaItems);
+        }
+      ),
+      Result.bind(
+        'cacheEnvId',
+        (v): Result.Result<string, never> =>
+          Result.succeed(
+            v.apiEnv?.useProdCache === true ? PROJECT_ENV_PROD : v.envId
+          )
+      ),
+      Result.bind(
+        'connectionIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(
+            v.eligibleConnections.map(connection => connection.connectionId)
+          )
+      ),
+      Result.bind(
+        'cachedColumns',
+        async (
+          v
+        ): Result.ResultAsync<
+          CachedColumnTab[],
+          CachedColumnEntToTabResultError
+        > =>
+          v.connectionIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.cachedColumnsTable
+                .findMany({
+                  where: and(
+                    eq(cachedColumnsTable.projectId, v.projectId),
+                    eq(cachedColumnsTable.envId, v.cacheEnvId),
+                    inArray(cachedColumnsTable.connectionId, v.connectionIds)
+                  )
+                })
+                .then(cachedColumnEnts =>
+                  Result.sequence(cachedColumnEnts, cachedColumnEnt =>
+                    this.tabService.cachedColumnEntToTabResult({
+                      cachedColumnEnt: cachedColumnEnt
+                    })
+                  )
+                )
+      ),
+      Result.bind(
+        'combinedSchemaItems',
+        (v): Result.Result<CombinedSchemaItem[], never> =>
+          Result.succeed(
+            this.buildCombinedSchema({
+              connectionRawSchemaItems: v.connectionRawSchemaItems,
+              extraSchemas: v.struct.extraSchemas ?? [],
+              cachedColumns: v.cachedColumns.map(cachedColumn =>
+                this.cachedColumnService.cachedColumnTabToApi({
+                  cachedColumn: cachedColumn
+                })
+              )
+            })
+          )
+      ),
+      Result.map(
+        (v): ToBackendGetConnectionSchemasOutput => ({
+          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          combinedSchemaItems: v.combinedSchemaItems
+        })
+      )
     );
-
-    let rawSchemasByConnection: {
-      connectionId: string;
-      schema: ConnectionRawSchema;
-    }[] = [];
-
-    if (isRefreshExistingCache === true) {
-      let fetched = await this.fetchAndSaveSchemas({
-        connections: eligibleConnections
-      });
-
-      fetched.forEach(x => {
-        rawSchemasByConnection.push(x);
-      });
-    } else {
-      let connectionsWithCache = eligibleConnections.filter(x =>
-        isDefined(x.rawSchema)
-      );
-
-      connectionsWithCache.forEach(x => {
-        rawSchemasByConnection.push({
-          connectionId: x.connectionId,
-          schema: x.rawSchema
-        });
-      });
-
-      let connectionsWithoutCache = eligibleConnections.filter(
-        x => !isDefined(x.rawSchema)
-      );
-
-      if (connectionsWithoutCache.length > 0) {
-        let fetched = await this.fetchAndSaveSchemas({
-          connections: connectionsWithoutCache
-        });
-
-        fetched.forEach(x => {
-          rawSchemasByConnection.push(x);
-        });
-      }
-    }
-
-    let cacheEnvId = apiEnv?.useProdCache === true ? PROJECT_ENV_PROD : envId;
-
-    let connectionIds = eligibleConnections.map(x => x.connectionId);
-
-    let cachedColumns: CachedColumn[] = [];
-
-    if (connectionIds.length > 0) {
-      cachedColumns = await this.db.drizzle.query.cachedColumnsTable
-        .findMany({
-          where: and(
-            eq(cachedColumnsTable.projectId, projectId),
-            eq(cachedColumnsTable.envId, cacheEnvId),
-            inArray(cachedColumnsTable.connectionId, connectionIds)
-          )
-        })
-        .then(xs => xs.map(x => this.tabService.cachedColumnEntToTab(x)))
-        .then(xs =>
-          xs.map(x =>
-            this.cachedColumnService.cachedColumnTabToApi({ cachedColumn: x })
-          )
-        );
-    }
-
-    let combinedSchemaItems = this.buildCombinedSchema({
-      rawSchemasByConnection: rawSchemasByConnection,
-      extraSchemas: extraSchemas,
-      cachedColumns: cachedColumns
-    });
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    return {
-      userMember: apiUserMember,
-      combinedSchemaItems: combinedSchemaItems
-    };
   }
 
   private async fetchAndSaveSchemas(item: {
     connections: ConnectionTab[];
-  }): Promise<{ connectionId: string; schema: ConnectionRawSchema }[]> {
+  }): Promise<ConnectionRawSchemaItem[]> {
     let { connections } = item;
 
-    let results: { connectionId: string; schema: ConnectionRawSchema }[] = [];
+    let results: ConnectionRawSchemaItem[] = [];
 
     await Promise.all(
       connections.map(async connection => {
@@ -296,14 +401,11 @@ export class GetConnectionSchemasService {
   }
 
   buildCombinedSchema(item: {
-    rawSchemasByConnection: {
-      connectionId: string;
-      schema: ConnectionRawSchema;
-    }[];
+    connectionRawSchemaItems: ConnectionRawSchemaItem[];
     extraSchemas: ExtraSchema[];
     cachedColumns: CachedColumn[];
   }): CombinedSchemaItem[] {
-    let { rawSchemasByConnection, extraSchemas, cachedColumns } = item;
+    let { connectionRawSchemaItems, extraSchemas, cachedColumns } = item;
 
     // Build relationship lookup
     let relLookup: {
@@ -360,7 +462,7 @@ export class GetConnectionSchemasService {
     // Build combined schema items
     let combinedSchemaItems: CombinedSchemaItem[] = [];
 
-    rawSchemasByConnection.forEach(rawItem => {
+    connectionRawSchemaItems.forEach(rawItem => {
       let connectionId = rawItem.connectionId;
       let rawSchema = rawItem.schema;
 

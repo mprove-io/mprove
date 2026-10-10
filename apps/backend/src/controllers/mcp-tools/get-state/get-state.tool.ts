@@ -71,21 +71,9 @@ export class GetStateTool {
     let traceId = makeId();
 
     return await this.getStateService.getState({
+      ...item,
       traceId: traceId,
-      user: user,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      branchId: item.branchId,
-      envId: item.envId,
-      isFetch: item.isFetch,
-      getErrors: item.getErrors,
-      getRepo: item.getRepo,
-      getRepoNodes: item.getRepoNodes,
-      getModels: item.getModels,
-      getDashboards: item.getDashboards,
-      getCharts: item.getCharts,
-      getMetrics: item.getMetrics,
-      getReports: item.getReports
+      user: user
     });
   }
 }

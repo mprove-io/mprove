@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -11,6 +12,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckConnectionDoesNotExistResultError } from '#common/types/backend/function-errors/check-connection-does-not-exist-result-error';
+import type { GetConnectionCheckExistsResultError } from '#common/types/backend/function-errors/get-connection-check-exists-result-error';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
@@ -343,36 +346,14 @@ export class ConnectionsService {
     return apiBaseConnection;
   }
 
-  async checkConnectionDoesNotExist(item: {
+  async checkConnectionDoesNotExistResult(item: {
     projectId: string;
     envId: string;
     connectionId: string;
-  }) {
+  }): Result.ResultAsync<void, CheckConnectionDoesNotExistResultError> {
     let { projectId, envId, connectionId } = item;
 
-    let connection = await this.db.drizzle.query.connectionsTable.findFirst({
-      where: and(
-        eq(connectionsTable.connectionId, connectionId),
-        eq(connectionsTable.envId, envId),
-        eq(connectionsTable.projectId, projectId)
-      )
-    });
-
-    if (isDefined(connection)) {
-      throw new ServerError({
-        message: 'BACKEND_CONNECTION_ALREADY_EXISTS'
-      });
-    }
-  }
-
-  async getConnectionCheckExists(item: {
-    connectionId: string;
-    envId: string;
-    projectId: string;
-  }): Promise<ConnectionTab> {
-    let { projectId, envId, connectionId } = item;
-
-    let connection = await this.db.drizzle.query.connectionsTable
+    return this.db.drizzle.query.connectionsTable
       .findFirst({
         where: and(
           eq(connectionsTable.connectionId, connectionId),
@@ -380,14 +361,53 @@ export class ConnectionsService {
           eq(connectionsTable.projectId, projectId)
         )
       })
-      .then(x => this.tabService.connectionEntToTab(x));
+      .then(connectionEnt =>
+        isDefined(connectionEnt)
+          ? Result.fail({ code: 'BACKEND_CONNECTION_ALREADY_EXISTS' })
+          : Result.succeed()
+      );
+  }
 
-    if (isUndefined(connection)) {
-      throw new ServerError({
-        message: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
-      });
+  async getConnectionCheckExists(item: {
+    connectionId: string;
+    envId: string;
+    projectId: string;
+  }): Promise<ConnectionTab> {
+    let result: Result.Result<
+      ConnectionTab,
+      GetConnectionCheckExistsResultError
+    > = await this.getConnectionCheckExistsResult(item);
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
+    let connection: ConnectionTab = result.value;
+
     return connection;
+  }
+
+  async getConnectionCheckExistsResult(item: {
+    connectionId: string;
+    envId: string;
+    projectId: string;
+  }): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsResultError> {
+    let { projectId, envId, connectionId } = item;
+
+    return this.db.drizzle.query.connectionsTable
+      .findFirst({
+        where: and(
+          eq(connectionsTable.connectionId, connectionId),
+          eq(connectionsTable.envId, envId),
+          eq(connectionsTable.projectId, projectId)
+        )
+      })
+      .then(connectionEnt =>
+        isUndefined(connectionEnt)
+          ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
+          : this.tabService.connectionEntToTabResult({
+              connectionEnt: connectionEnt
+            })
+      );
   }
 }

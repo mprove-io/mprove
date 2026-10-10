@@ -75,6 +75,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
 import type { BranchEntToTabResultError } from '#common/types/backend/function-errors/branch-ent-to-tab-result-error';
 import type { BridgeEntToTabResultError } from '#common/types/backend/function-errors/bridge-ent-to-tab-result-error';
+import type { CachedColumnEntToTabResultError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-result-error';
 import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
 import type { DashboardEntToTabResultError } from '#common/types/backend/function-errors/dashboard-ent-to-tab-result-error';
 import type { DconfigEntToTabResultError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-result-error';
@@ -100,6 +101,8 @@ import type { BranchLt } from '#common/types/shared/st-lt/branches/branch-lt';
 import type { BranchSt } from '#common/types/shared/st-lt/branches/branch-st';
 import type { BridgeLt } from '#common/types/shared/st-lt/bridges/bridge-lt';
 import type { BridgeSt } from '#common/types/shared/st-lt/bridges/bridge-st';
+import type { CachedColumnLt } from '#common/types/shared/st-lt/cached-columns/cached-column-lt';
+import type { CachedColumnSt } from '#common/types/shared/st-lt/cached-columns/cached-column-st';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
 import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 import type { DashboardLt } from '#common/types/shared/st-lt/dashboards/dashboard-lt';
@@ -478,12 +481,41 @@ export class TabService {
       return;
     }
 
-    let cachedColumn: CachedColumnTab = {
-      ...cachedColumnEnt,
-      ...this.getTabProps({ ent: cachedColumnEnt })
-    };
+    let result: Result.Result<
+      CachedColumnTab,
+      CachedColumnEntToTabResultError
+    > = this.cachedColumnEntToTabResult({ cachedColumnEnt: cachedColumnEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let cachedColumn: CachedColumnTab = result.value;
 
     return cachedColumn;
+  }
+
+  cachedColumnEntToTabResult(item: {
+    cachedColumnEnt: CachedColumnsEnt;
+  }): Result.Result<CachedColumnTab, CachedColumnEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<CachedColumnSt, CachedColumnLt>,
+          GetTabPropsResultError
+        > =>
+          this.getTabPropsResult<CachedColumnSt, CachedColumnLt>({
+            ent: v.cachedColumnEnt
+          })
+      ),
+      Result.map(
+        (v): CachedColumnTab => ({ ...v.cachedColumnEnt, ...v.tabProps.props })
+      )
+    );
   }
 
   cachedPartEntToTab(cachedPartEnt: CachedPartsEnt): CachedPartTab {

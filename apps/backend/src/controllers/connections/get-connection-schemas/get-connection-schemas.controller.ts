@@ -9,9 +9,9 @@ import { GetConnectionSchemasService } from '#backend/controllers/connections/ge
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
-import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -33,20 +33,10 @@ export class GetConnectionSchemasController {
   async getConnectionSchemas(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetConnectionSchemasRequestDto
-  ) {
-    let { projectId, envId, repoId, branchId, isRefreshExistingCache } =
-      body.input;
-
-    let payload: ToBackendGetConnectionSchemasOutput =
-      await this.getConnectionSchemasService.getConnectionSchemas({
-        userId: user.userId,
-        projectId: projectId,
-        envId: envId,
-        repoId: repoId,
-        branchId: branchId,
-        isRefreshExistingCache: isRefreshExistingCache
-      });
-
-    return payload;
+  ): Promise<BackendResultForOperation<'getConnectionSchemas'>> {
+    return this.getConnectionSchemasService.getConnectionSchemasResult({
+      ...body.input,
+      userId: user.userId
+    });
   }
 }

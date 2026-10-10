@@ -71,24 +71,9 @@ export class RunTool {
     let traceId = makeId();
 
     let payload: ToBackendRunOutput = await this.runService.run({
+      ...item,
       traceId: traceId,
-      user: user,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      branchId: item.branchId,
-      envId: item.envId,
-      concurrency: item.concurrency,
-      wait: item.wait,
-      sleep: item.sleep,
-      dashboardIds: item.dashboardIds,
-      chartIds: item.chartIds,
-      noDashboards: item.noDashboards,
-      noCharts: item.noCharts,
-      getDashboards: item.getDashboards,
-      getCharts: item.getCharts,
-      reportIds: item.reportIds,
-      noReports: item.noReports,
-      getReports: item.getReports
+      user: user
     });
 
     return payload;

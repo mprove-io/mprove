@@ -26,12 +26,7 @@ export class MessageService {
   }): Promise<ToBlockmlResponseForOperation<ToBlockmlOperation>> {
     let { request } = item;
 
-    let response: ToBlockmlResponseForOperation<ToBlockmlOperation> =
-      await this.dispatch({
-        request: request
-      });
-
-    return response;
+    return await this.dispatch({ request: request });
   }
 
   async handleMessage(item: { message: unknown }): Promise<ToBlockmlResponse> {

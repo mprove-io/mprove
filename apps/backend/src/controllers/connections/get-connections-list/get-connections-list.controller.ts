@@ -9,9 +9,9 @@ import { GetConnectionsListService } from '#backend/controllers/connections/get-
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
-import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -32,16 +32,10 @@ export class GetConnectionsListController {
   async getConnectionsList(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetConnectionsListRequestDto
-  ) {
-    let { projectId, envId } = body.input;
-
-    let payload: ToBackendGetConnectionsListOutput =
-      await this.getConnectionsListService.getConnectionsList({
-        userId: user.userId,
-        projectId: projectId,
-        envId: envId
-      });
-
-    return payload;
+  ): Promise<BackendResultForOperation<'getConnectionsList'>> {
+    return this.getConnectionsListService.getConnectionsListResult({
+      ...body.input,
+      userId: user.userId
+    });
   }
 }

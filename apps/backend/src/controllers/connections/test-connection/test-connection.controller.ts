@@ -9,14 +9,18 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { BackendConfig } from '#backend/config/backend-config';
+import { Result } from '@praha/byethrow';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendTestConnectionRequestDto,
   ToBackendTestConnectionResponseDto
 } from '#backend/controllers/connections/test-connection/test-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ConnectionTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -31,12 +35,11 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.serv
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { StoreService } from '#backend/services/store/store.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes/connections/test-connection/test-connection-output';
 
@@ -75,92 +78,113 @@ export class TestConnectionController {
   async testConnection(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendTestConnectionRequestDto
-  ) {
-    let { projectId, envId, connectionId, type, options, storeMethod } =
-      body.input;
+  ): Promise<BackendResultForOperation<'testConnection'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        envId: body.input.envId,
+        connectionId: body.input.connectionId,
+        type: body.input.type,
+        options: body.input.options,
+        userId: user.userId
+      }),
+      Result.andThrough(v => {
+        if (isUndefined(v.options.motherduck)) {
+          return Result.succeed();
+        }
 
-    if (isDefined(options.motherduck)) {
-      let wrongChars: string[] = getMotherduckDatabaseWrongChars({
-        databaseName: options.motherduck.database
-      });
-
-      if (wrongChars?.length > 0) {
-        throw new ServerError({
-          message: 'BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS'
+        let wrongChars: string[] = getMotherduckDatabaseWrongChars({
+          databaseName: v.options.motherduck.database
         });
-      }
-    }
 
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    await this.membersService.getMemberCheckIsAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    let member = await this.membersService.getMemberCheckExists({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    let testConnection = this.connectionsService.makeConnection({
-      projectId: projectId,
-      envId: envId,
-      connectionId: connectionId,
-      type: type,
-      options: options
-    });
-
-    let testConnectionResult =
-      testConnection.type === 'MySQL'
-        ? await this.mysqlService.testConnection({ connection: testConnection })
-        : testConnection.type === 'PostgreSQL'
-          ? await this.pgService.testConnection({ connection: testConnection })
-          : testConnection.type === 'MotherDuck'
-            ? await this.duckDbService.testConnection({
-                connection: testConnection
-              })
-            : testConnection.type === 'Trino'
-              ? await this.trinoService.testConnection({
-                  connection: testConnection
+        return wrongChars?.length > 0
+          ? Result.fail({
+              code: 'BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS'
+            })
+          : Result.succeed();
+      }),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        this.membersService.getMemberCheckIsAdminResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.andThrough(v =>
+        this.membersService.getMemberCheckExistsResult({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'connection',
+        (v): Result.Result<ConnectionTab, never> =>
+          Result.succeed(
+            this.connectionsService.makeConnection({
+              projectId: v.projectId,
+              envId: v.envId,
+              connectionId: v.connectionId,
+              type: v.type,
+              options: v.options
+            })
+          )
+      ),
+      Result.bind(
+        'testConnectionResult',
+        async (v): Result.ResultAsync<TestConnectionResult, never> => {
+          let testConnectionResult: TestConnectionResult =
+            v.connection.type === 'MySQL'
+              ? await this.mysqlService.testConnection({
+                  connection: v.connection
                 })
-              : testConnection.type === 'Presto'
-                ? await this.prestoService.testConnection({
-                    connection: testConnection
+              : v.connection.type === 'PostgreSQL'
+                ? await this.pgService.testConnection({
+                    connection: v.connection
                   })
-                : testConnection.type === 'BigQuery'
-                  ? await this.bigQueryService.testConnection({
-                      connection: testConnection
+                : v.connection.type === 'MotherDuck'
+                  ? await this.duckDbService.testConnection({
+                      connection: v.connection
                     })
-                  : testConnection.type === 'SnowFlake'
-                    ? await this.snowFlakeService.testConnection({
-                        connection: testConnection
+                  : v.connection.type === 'Trino'
+                    ? await this.trinoService.testConnection({
+                        connection: v.connection
                       })
-                    : testConnection.type === 'Databricks'
-                      ? await this.databricksService.testConnection({
-                          connection: testConnection
+                    : v.connection.type === 'Presto'
+                      ? await this.prestoService.testConnection({
+                          connection: v.connection
                         })
-                      : undefined;
-    // testConnection.type === 'Api' ||
-    //     testConnection.type === 'GoogleApi'
-    //   ? await this.storeService.testConnection({
-    //       connection: testConnection,
-    //       storeMethod: storeMethod
-    //     })
-    //   : undefined;
-
-    if (isUndefined(testConnectionResult)) {
-      throw new ServerError({
-        message: 'BACKEND_TEST_CONNECTION_RESULT_IS_NOT_DEFINED'
-      });
-    }
-
-    let payload: ToBackendTestConnectionOutput = {
-      testConnectionResult: testConnectionResult
-    };
-
-    return payload;
+                      : v.connection.type === 'BigQuery'
+                        ? await this.bigQueryService.testConnection({
+                            connection: v.connection
+                          })
+                        : v.connection.type === 'SnowFlake'
+                          ? await this.snowFlakeService.testConnection({
+                              connection: v.connection
+                            })
+                          : v.connection.type === 'Databricks'
+                            ? await this.databricksService.testConnection({
+                                connection: v.connection
+                              })
+                            : undefined;
+          return Result.succeed(testConnectionResult);
+        }
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.testConnectionResult)
+          ? Result.fail({
+              code: 'BACKEND_TEST_CONNECTION_RESULT_IS_NOT_DEFINED'
+            })
+          : Result.succeed()
+      ),
+      Result.map(
+        (v): ToBackendTestConnectionOutput => ({
+          testConnectionResult: v.testConnectionResult
+        })
+      )
+    );
   }
 }

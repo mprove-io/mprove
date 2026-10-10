@@ -12,7 +12,10 @@ import {
   type McpToolSearchDocsInput,
   zMcpToolSearchDocsInput
 } from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-input';
-import { zMcpToolSearchDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-output';
+import {
+  type McpToolSearchDocsOutput,
+  zMcpToolSearchDocsOutput
+} from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
@@ -28,8 +31,8 @@ export class SearchDocsTool {
     })
   })
   async searchDocs(item: McpToolSearchDocsInput) {
-    return this.docsService.searchDocs({
-      query: item.query
-    });
+    let output: McpToolSearchDocsOutput = this.docsService.searchDocs(item);
+
+    return output;
   }
 }

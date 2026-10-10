@@ -32,18 +32,10 @@ export class RunQueriesController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRunQueriesRequestDto
   ) {
-    let { projectId, repoId, branchId, envId, mconfigIds, poolSize } =
-      body.input;
-
     let payload: ToBackendRunQueriesOutput =
       await this.runQueriesService.runQueries({
-        user: user,
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        mconfigIds: mconfigIds,
-        poolSize: poolSize
+        ...body.input,
+        user: user
       });
 
     return payload;

@@ -6,6 +6,7 @@ import {
   CHART_ID_PLACEHOLDER,
   ProduceExplorerChartService
 } from '#backend/services/explorer/tools/produce-chart/produce-explorer-chart/produce-explorer-chart.service';
+import type { ToBackendProduceExplorerChartOutput } from '#common/types/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-output';
 
 @Injectable()
 export class ProduceChartToolService {
@@ -32,7 +33,7 @@ The YAML is compiled immediately. If errors are returned, FIX the YAML and call 
           )
       }),
       execute: async input => {
-        let result =
+        let result: ToBackendProduceExplorerChartOutput =
           await this.produceExplorerChartService.produceExplorerChart({
             user: user,
             traceId: traceId,

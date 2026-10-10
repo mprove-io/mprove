@@ -71,12 +71,9 @@ export class ValidateFilesTool {
     let traceId = makeId();
 
     let result = await this.validateFilesService.validateFiles({
+      ...item,
       traceId: traceId,
-      userId: user.userId,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      branchId: item.branchId,
-      envId: item.envId
+      userId: user.userId
     });
 
     let hostUrl = this.cs

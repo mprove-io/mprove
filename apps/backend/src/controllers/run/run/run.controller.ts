@@ -29,45 +29,10 @@ export class RunController {
     type: ToBackendRunResponseDto
   })
   async run(@AttachUser() user: UserTab, @Body() body: ToBackendRunRequestDto) {
-    let { traceId } = body;
-    let {
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      concurrency,
-      wait,
-      sleep,
-      dashboardIds,
-      chartIds,
-      noDashboards,
-      noCharts,
-      getDashboards,
-      getCharts,
-      reportIds,
-      noReports,
-      getReports
-    } = body.input;
-
     let payload: ToBackendRunOutput = await this.runService.run({
-      traceId: traceId,
-      user: user,
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId,
-      concurrency: concurrency,
-      wait: wait,
-      sleep: sleep,
-      dashboardIds: dashboardIds,
-      chartIds: chartIds,
-      noDashboards: noDashboards,
-      noCharts: noCharts,
-      getDashboards: getDashboards,
-      getCharts: getCharts,
-      reportIds: reportIds,
-      noReports: noReports,
-      getReports: getReports
+      ...body.input,
+      traceId: body.traceId,
+      user: user
     });
 
     return payload;
