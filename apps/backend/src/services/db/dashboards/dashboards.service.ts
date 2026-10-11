@@ -4,6 +4,7 @@ import { and, eq, inArray, or } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 import type { DashboardEntToTabResultError } from '#common/types/backend/function-errors/dashboard-ent-to-tab-result-error';
 import type { GetDashboardPartsResultError } from '#common/types/backend/function-errors/get-dashboard-parts-result-error';
+import type { GetDashboardsCatalogResultError } from '#common/types/backend/function-errors/get-dashboards-catalog-result-error';
 
 const { forEachSeries } = pIteration;
 
@@ -54,11 +55,17 @@ import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
 import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { Space } from '#common/types/blockml/parts/space';
+
+export type DashboardsCatalog = {
+  dashboardUnitDrafts: DashboardUnit[];
+  dashboardSpaceNodes: SpaceNode[];
+};
 
 @Injectable()
 export class DashboardsService {
@@ -80,87 +87,150 @@ export class DashboardsService {
     user: UserTab;
     apiUserMember: Member;
     spaces: Space[];
-  }): Promise<{
-    dashboardUnitDrafts: DashboardUnit[];
-    dashboardSpaceNodes: SpaceNode[];
-  }> {
+  }): Promise<DashboardsCatalog> {
     let { projectId, structId, user, apiUserMember, spaces } = item;
 
-    let dashboards = await this.db.drizzle.query.dashboardsTable
-      .findMany({
-        where: and(
-          eq(dashboardsTable.structId, structId),
-          or(
-            eq(dashboardsTable.draft, false),
-            and(
-              eq(dashboardsTable.draft, true),
-              eq(dashboardsTable.creatorId, user.userId)
-            )
-          )
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.dashboardEntToTab(x)));
-
-    let dashboardTabsGrantedAccess = dashboards.filter(dashboard => {
-      if (dashboard.draft === true) {
-        return true;
-      }
-
-      return checkAccess({
-        member: apiUserMember,
-        accessRoles: dashboard.accessRolesCombined,
-        filePath: dashboard.filePath
-      });
+    let result: Result.Result<
+      DashboardsCatalog,
+      GetDashboardsCatalogResultError
+    > = await this.getDashboardsCatalogResult({
+      projectId: projectId,
+      structId: structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      spaces: spaces
     });
 
-    let draftDashboards = dashboardTabsGrantedAccess.filter(
-      dashboard => dashboard.draft === true
-    );
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    let savedDashboards = dashboardTabsGrantedAccess.filter(
-      dashboard => dashboard.draft === false
-    );
+    let catalog: DashboardsCatalog = result.value;
 
-    let dashboardTargetIds = savedDashboards.map(
-      dashboard => dashboard.dashboardId
-    );
+    return catalog;
+  }
 
-    let favoriteDashboardIds = await this.favoritesService.getFavoriteTargetIds(
-      {
-        projectId: projectId,
-        userId: user.userId,
-        type: 'Dashboard',
-        targetIds: dashboardTargetIds
-      }
-    );
-
-    let dashboardSpaceUnits = savedDashboards.map(dashboard =>
-      this.unitsService.makeDashboardSpaceUnit({
-        dashboard: dashboard,
-        member: apiUserMember,
-        favoriteDashboardIds: favoriteDashboardIds
-      })
-    );
-
-    return {
-      dashboardUnitDrafts: draftDashboards.map(dashboard =>
-        this.unitsService.makeDashboardUnit({
-          dashboard: dashboard,
-          member: apiUserMember,
-          favoriteDashboardIds: [],
-          space: dashboard.space,
-          spaceFullTitle: dashboard.space
-            ? spaces.find(space => space.space === dashboard.space)?.fullTitle
-            : ''
-        })
+  async getDashboardsCatalogResult(item: {
+    projectId: string;
+    structId: string;
+    user: UserTab;
+    apiUserMember: Member;
+    spaces: Space[];
+  }): Result.ResultAsync<DashboardsCatalog, GetDashboardsCatalogResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'dashboards',
+        (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabResultError> =>
+          this.db.drizzle.query.dashboardsTable
+            .findMany({
+              where: and(
+                eq(dashboardsTable.structId, v.structId),
+                or(
+                  eq(dashboardsTable.draft, false),
+                  and(
+                    eq(dashboardsTable.draft, true),
+                    eq(dashboardsTable.creatorId, v.user.userId)
+                  )
+                )
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.dashboardEntToTabResult({ dashboardEnt: x })
+              )
+            )
       ),
-      dashboardSpaceNodes: this.spaceService.makeSpaceNodes({
-        spaces: spaces ?? [],
-        units: dashboardSpaceUnits,
-        member: apiUserMember,
-        mySpaceTitle: MY_DASHBOARDS_SPACE_TITLE
-      })
-    };
+      Result.bind(
+        'dashboardsGrantedAccess',
+        (v): Result.Result<DashboardTab[], never> =>
+          Result.succeed(
+            v.dashboards.filter(dashboard => {
+              if (dashboard.draft === true) {
+                return true;
+              }
+
+              return checkAccess({
+                member: v.apiUserMember,
+                accessRoles: dashboard.accessRolesCombined,
+                filePath: dashboard.filePath
+              });
+            })
+          )
+      ),
+      Result.bind(
+        'draftDashboards',
+        (v): Result.Result<DashboardTab[], never> =>
+          Result.succeed(
+            v.dashboardsGrantedAccess.filter(
+              dashboard => dashboard.draft === true
+            )
+          )
+      ),
+      Result.bind(
+        'savedDashboards',
+        (v): Result.Result<DashboardTab[], never> =>
+          Result.succeed(
+            v.dashboardsGrantedAccess.filter(
+              dashboard => dashboard.draft === false
+            )
+          )
+      ),
+      Result.bind(
+        'dashboardTargetIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(
+            v.savedDashboards.map(dashboard => dashboard.dashboardId)
+          )
+      ),
+      Result.bind(
+        'favoriteDashboardIds',
+        (v): Result.ResultAsync<string[], never> =>
+          this.favoritesService
+            .getFavoriteTargetIds({
+              projectId: v.projectId,
+              userId: v.user.userId,
+              type: 'Dashboard',
+              targetIds: v.dashboardTargetIds
+            })
+            .then(ids => Result.succeed(ids))
+      ),
+      Result.bind(
+        'dashboardSpaceUnits',
+        (v): Result.Result<SpaceUnit[], never> =>
+          Result.succeed(
+            v.savedDashboards.map(dashboard =>
+              this.unitsService.makeDashboardSpaceUnit({
+                dashboard: dashboard,
+                member: v.apiUserMember,
+                favoriteDashboardIds: v.favoriteDashboardIds
+              })
+            )
+          )
+      ),
+      Result.map(
+        (v): DashboardsCatalog => ({
+          dashboardUnitDrafts: v.draftDashboards.map(dashboard =>
+            this.unitsService.makeDashboardUnit({
+              dashboard: dashboard,
+              member: v.apiUserMember,
+              favoriteDashboardIds: [],
+              space: dashboard.space,
+              spaceFullTitle: dashboard.space
+                ? v.spaces.find(space => space.space === dashboard.space)
+                    ?.fullTitle
+                : ''
+            })
+          ),
+          dashboardSpaceNodes: this.spaceService.makeSpaceNodes({
+            spaces: v.spaces ?? [],
+            units: v.dashboardSpaceUnits,
+            member: v.apiUserMember,
+            mySpaceTitle: MY_DASHBOARDS_SPACE_TITLE
+          })
+        })
+      )
+    );
   }
 
   tabToApi(item: {

@@ -174,7 +174,79 @@ export class AppInterceptor implements NestInterceptor {
     let execution: Observable<ToBackendResponse>;
 
     if (isUndefined(idemp)) {
-      if (req.operation === 'getQuery') {
+      if (req.operation === 'getCharts') {
+        execution = makeBackendResultResponse({
+          operation: 'getCharts',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteDraftCharts') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteDraftCharts',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getDashboards') {
+        execution = makeBackendResultResponse({
+          operation: 'getDashboards',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteDraftDashboards') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteDraftDashboards',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getReports') {
+        execution = makeBackendResultResponse({
+          operation: 'getReports',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteDraftReports') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteDraftReports',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getQuery') {
         execution = makeBackendResultResponse({
           operation: 'getQuery',
           execution: next.handle(),

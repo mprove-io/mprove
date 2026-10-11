@@ -30,11 +30,14 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { GetReportCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-result-error';
+import type { GetReportsCatalogResultError } from '#common/types/backend/function-errors/get-reports-catalog-result-error';
+import type { ReportEntToTabResultError } from '#common/types/backend/function-errors/report-ent-to-tab-result-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { Column } from '#common/types/blockml/parts/report/column';
@@ -43,6 +46,11 @@ import type { ReportField } from '#common/types/blockml/parts/report/report-fiel
 import type { Row } from '#common/types/blockml/parts/report/row/row';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
+
+export type ReportsCatalog = {
+  reportUnitDrafts: ReportUnit[];
+  reportSpaceNodes: SpaceNode[];
+};
 
 @Injectable()
 export class ReportsService {
@@ -64,94 +72,173 @@ export class ReportsService {
     userMember: MemberTab;
     apiUserMember: Member;
     spaces: Space[];
-  }): Promise<{
-    reportUnitDrafts: ReportUnit[];
-    reportSpaceNodes: SpaceNode[];
-  }> {
+  }): Promise<ReportsCatalog> {
     let { projectId, structId, user, userMember, apiUserMember, spaces } = item;
 
-    let reports = await this.db.drizzle.query.reportsTable
-      .findMany({
-        where: and(
-          eq(reportsTable.structId, structId),
-          or(
-            eq(reportsTable.draft, false),
-            and(
-              eq(reportsTable.draft, true),
-              eq(reportsTable.creatorId, user.userId)
+    let result: Result.Result<ReportsCatalog, GetReportsCatalogResultError> =
+      await this.getReportsCatalogResult({
+        projectId: projectId,
+        structId: structId,
+        user: user,
+        userMember: userMember,
+        apiUserMember: apiUserMember,
+        spaces: spaces
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let catalog: ReportsCatalog = result.value;
+
+    return catalog;
+  }
+
+  async getReportsCatalogResult(item: {
+    projectId: string;
+    structId: string;
+    user: UserTab;
+    userMember: MemberTab;
+    apiUserMember: Member;
+    spaces: Space[];
+  }): Result.ResultAsync<ReportsCatalog, GetReportsCatalogResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'reports',
+        (v): Result.ResultAsync<ReportTab[], ReportEntToTabResultError> =>
+          this.db.drizzle.query.reportsTable
+            .findMany({
+              where: and(
+                eq(reportsTable.structId, v.structId),
+                or(
+                  eq(reportsTable.draft, false),
+                  and(
+                    eq(reportsTable.draft, true),
+                    eq(reportsTable.creatorId, v.user.userId)
+                  )
+                )
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.reportEntToTabResult({ reportEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'draftReports',
+        (v): Result.Result<ReportTab[], never> =>
+          Result.succeed(v.reports.filter(report => report.draft === true))
+      ),
+      Result.bind(
+        'savedReports',
+        (v): Result.Result<ReportTab[], never> =>
+          Result.succeed(v.reports.filter(report => report.draft === false))
+      ),
+      Result.bind(
+        'reportsGrantedAccess',
+        (v): Result.Result<ReportTab[], never> =>
+          Result.succeed(
+            v.savedReports.filter(report =>
+              checkAccess({
+                member: v.userMember,
+                accessRoles: report.accessRolesCombined,
+                filePath: report.filePath
+              })
             )
           )
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
-
-    let draftReports = reports.filter(x => x.draft === true);
-
-    let savedReports = reports.filter(x => x.draft === false);
-
-    let reportsGrantedAccess = savedReports.filter(x =>
-      checkAccess({
-        member: userMember,
-        accessRoles: x.accessRolesCombined,
-        filePath: x.filePath
-      })
-    );
-
-    let sortedDraftReports = draftReports
-      .sort((a, b) =>
-        a.draftCreatedTs > b.draftCreatedTs
-          ? 1
-          : b.draftCreatedTs > a.draftCreatedTs
-            ? -1
-            : 0
-      )
-      .reverse();
-
-    let sortedNonDraftReports = reportsGrantedAccess.sort((a, b) => {
-      let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
-      let bTitle = b.title.toLowerCase() || b.reportId.toLowerCase();
-
-      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-    });
-
-    let reportTargetIds = sortedNonDraftReports.map(report => report.reportId);
-
-    let favoriteReportIds = await this.favoritesService.getFavoriteTargetIds({
-      projectId: projectId,
-      userId: user.userId,
-      type: 'Report',
-      targetIds: reportTargetIds
-    });
-
-    let reportSpaceUnits = sortedNonDraftReports.map(report =>
-      this.unitsService.makeReportSpaceUnit({
-        report: report,
-        member: apiUserMember,
-        favoriteReportIds: favoriteReportIds
-      })
-    );
-
-    let reportSpaceNodes = this.spaceService.makeSpaceNodes({
-      spaces: spaces ?? [],
-      units: reportSpaceUnits,
-      member: apiUserMember,
-      mySpaceTitle: MY_REPORTS_SPACE_TITLE
-    });
-
-    return {
-      reportUnitDrafts: sortedDraftReports.map(x =>
-        this.unitsService.makeReportUnit({
-          report: x,
-          member: apiUserMember,
-          favoriteReportIds: [],
-          space: x.space,
-          spaceFullTitle: x.space
-            ? spaces.find(space => space.space === x.space)?.fullTitle
-            : ''
-        })
       ),
-      reportSpaceNodes: reportSpaceNodes
-    };
+      Result.bind(
+        'sortedDraftReports',
+        (v): Result.Result<ReportTab[], never> =>
+          Result.succeed(
+            v.draftReports
+              .sort((a, b) =>
+                a.draftCreatedTs > b.draftCreatedTs
+                  ? 1
+                  : b.draftCreatedTs > a.draftCreatedTs
+                    ? -1
+                    : 0
+              )
+              .reverse()
+          )
+      ),
+      Result.bind(
+        'sortedNonDraftReports',
+        (v): Result.Result<ReportTab[], never> =>
+          Result.succeed(
+            v.reportsGrantedAccess.sort((a, b) => {
+              let aTitle: string =
+                a.title.toLowerCase() || a.reportId.toLowerCase();
+
+              let bTitle: string =
+                b.title.toLowerCase() || b.reportId.toLowerCase();
+
+              return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+            })
+          )
+      ),
+      Result.bind(
+        'reportTargetIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.sortedNonDraftReports.map(report => report.reportId))
+      ),
+      Result.bind(
+        'favoriteReportIds',
+        (v): Result.ResultAsync<string[], never> =>
+          this.favoritesService
+            .getFavoriteTargetIds({
+              projectId: v.projectId,
+              userId: v.user.userId,
+              type: 'Report',
+              targetIds: v.reportTargetIds
+            })
+            .then(ids => Result.succeed(ids))
+      ),
+      Result.bind(
+        'reportSpaceUnits',
+        (v): Result.Result<SpaceUnit[], never> =>
+          Result.succeed(
+            v.sortedNonDraftReports.map(report =>
+              this.unitsService.makeReportSpaceUnit({
+                report: report,
+                member: v.apiUserMember,
+                favoriteReportIds: v.favoriteReportIds
+              })
+            )
+          )
+      ),
+      Result.bind(
+        'reportSpaceNodes',
+        (v): Result.Result<SpaceNode[], never> =>
+          Result.succeed(
+            this.spaceService.makeSpaceNodes({
+              spaces: v.spaces ?? [],
+              units: v.reportSpaceUnits,
+              member: v.apiUserMember,
+              mySpaceTitle: MY_REPORTS_SPACE_TITLE
+            })
+          )
+      ),
+      Result.map(
+        (v): ReportsCatalog => ({
+          reportUnitDrafts: v.sortedDraftReports.map(report =>
+            this.unitsService.makeReportUnit({
+              report: report,
+              member: v.apiUserMember,
+              favoriteReportIds: [],
+              space: report.space,
+              spaceFullTitle: report.space
+                ? v.spaces.find(space => space.space === report.space)
+                    ?.fullTitle
+                : ''
+            })
+          ),
+          reportSpaceNodes: v.reportSpaceNodes
+        })
+      )
+    );
   }
 
   makeReport(item: {

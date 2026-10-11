@@ -9,16 +9,23 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteDraftReportsRequestDto,
   ToBackendDeleteDraftReportsResponseDto
 } from '#backend/controllers/reports/delete-draft-reports/delete-draft-reports.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BranchTab,
+  BridgeTab,
+  MemberTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -27,12 +34,22 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { ReportsService } from '#backend/services/db/reports/reports.service';
+import {
+  type ReportsCatalog,
+  ReportsService
+} from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetReportsCatalogResultError } from '#common/types/backend/function-errors/get-reports-catalog-result-error';
+import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
+import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
+import type { ToBackendDeleteDraftReportsOutput } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-output';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -40,7 +57,6 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class DeleteDraftReportsController {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
@@ -65,83 +81,113 @@ export class DeleteDraftReportsController {
   async deleteDraftReports(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteDraftReportsRequestDto
-  ) {
-    let { traceId } = body;
-    let { projectId, repoId, branchId, envId, reportIds } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let member = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: member
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(reportsTable)
-            .where(
-              and(
-                inArray(reportsTable.reportId, reportIds),
-                eq(reportsTable.projectId, projectId),
-                eq(reportsTable.draft, true),
-                eq(reportsTable.creatorId, user.userId),
-                eq(reportsTable.structId, bridge.structId)
-              )
-            );
-        }),
-      getRetryOption(this.cs, this.logger)
+  ): Promise<BackendResultForOperation<'deleteDraftReports'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        reportIds: body.input.reportIds,
+        user: user
+      }),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'member',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.member
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(async v => {
+        await retry(
+          async () =>
+            await this.db.drizzle.transaction(async tx => {
+              await tx
+                .delete(reportsTable)
+                .where(
+                  and(
+                    inArray(reportsTable.reportId, v.reportIds),
+                    eq(reportsTable.projectId, v.projectId),
+                    eq(reportsTable.draft, true),
+                    eq(reportsTable.creatorId, v.user.userId),
+                    eq(reportsTable.structId, v.bridge.structId)
+                  )
+                );
+            }),
+          getRetryOption(this.cs, this.logger)
+        );
+        return Result.succeed();
+      }),
+      Result.bind(
+        'apiUserMember',
+        (v): Result.Result<Member, never> =>
+          Result.succeed(this.membersService.tabToApi({ member: v.member }))
+      ),
+      Result.bind(
+        'reportsCatalog',
+        (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogResultError> =>
+          this.reportsService.getReportsCatalogResult({
+            projectId: v.projectId,
+            structId: v.bridge.structId,
+            user: v.user,
+            userMember: v.member,
+            apiUserMember: v.apiUserMember,
+            spaces: v.struct.spaces
+          })
+      ),
+      Result.map(
+        (v): ToBackendDeleteDraftReportsOutput => ({
+          reportUnitDrafts: v.reportsCatalog.reportUnitDrafts
+        })
+      )
     );
-
-    let apiUserMember = this.membersService.tabToApi({ member: member });
-
-    let reportsCatalog = await this.reportsService.getReportsCatalog({
-      projectId: projectId,
-      structId: bridge.structId,
-      user: user,
-      userMember: member,
-      apiUserMember: apiUserMember,
-      spaces: struct.spaces
-    });
-
-    let payload = {
-      reportUnitDrafts: reportsCatalog.reportUnitDrafts
-    };
-
-    return payload;
   }
 }

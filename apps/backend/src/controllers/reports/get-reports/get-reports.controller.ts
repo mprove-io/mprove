@@ -1,5 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import {
   ToBackendGetReportsRequestDto,
@@ -7,7 +8,14 @@ import {
 } from '#backend/controllers/reports/get-reports/get-reports.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BranchTab,
+  BridgeTab,
+  MemberTab,
+  ModelTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -17,12 +25,23 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { ReportsService } from '#backend/services/db/reports/reports.service';
+import {
+  type ReportsCatalog,
+  ReportsService
+} from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { TabService } from '#backend/services/tab/tab.service';
-
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetReportsCatalogResultError } from '#common/types/backend/function-errors/get-reports-catalog-result-error';
+import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
+import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
+import type { Member } from '#common/types/backend/parts/member';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetReportsOutput } from '#common/types/backend/routes/reports/get-reports/get-reports-output';
 
@@ -55,95 +74,140 @@ export class GetReportsController {
   async getReports(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetReportsRequestDto
-  ) {
-    let { projectId, repoId, branchId, envId } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let modelIds = struct.metrics
-      .filter(m => isDefined(m.modelId))
-      .map(x => x.modelId);
-
-    let models = await this.db.drizzle.query.modelsTable
-      .findMany({
-        where: and(
-          inArray(modelsTable.modelId, modelIds),
-          eq(modelsTable.structId, struct.structId)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
-
-    let apiModels = models.map(model =>
-      this.modelsService.tabToApi({
-        model: model,
-        hasAccess: checkModelAccess({
-          member: userMember,
-          modelAccessRoles: model.accessRolesCombined
-        })
-      })
-    );
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    let reportsCatalog = await this.reportsService.getReportsCatalog({
-      projectId: projectId,
-      structId: bridge.structId,
-      user: user,
-      userMember: userMember,
-      apiUserMember: apiUserMember,
-      spaces: struct.spaces
-    });
-
-    let payload: ToBackendGetReportsOutput = {
-      needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({
-        struct: struct,
-        modelPartXs: apiModels
+  ): Promise<BackendResultForOperation<'getReports'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        user: user
       }),
-      userMember: apiUserMember,
-      reportUnitDrafts: reportsCatalog.reportUnitDrafts,
-      reportSpaceNodes: reportsCatalog.reportSpaceNodes,
-      storeModels: apiModels.filter(model => model.type === 'Store')
-    };
-
-    return payload;
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'modelIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(
+            v.struct.metrics
+              .filter(m => isDefined(m.modelId))
+              .map(x => x.modelId)
+          )
+      ),
+      Result.bind(
+        'models',
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
+          this.db.drizzle.query.modelsTable
+            .findMany({
+              where: and(
+                inArray(modelsTable.modelId, v.modelIds),
+                eq(modelsTable.structId, v.struct.structId)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.modelEntToTabResult({ modelEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'apiModels',
+        (v): Result.Result<ModelX[], never> =>
+          Result.succeed(
+            v.models.map(model =>
+              this.modelsService.tabToApi({
+                model: model,
+                hasAccess: checkModelAccess({
+                  member: v.userMember,
+                  modelAccessRoles: model.accessRolesCombined
+                })
+              })
+            )
+          )
+      ),
+      Result.bind(
+        'apiUserMember',
+        (v): Result.Result<Member, never> =>
+          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      ),
+      Result.bind(
+        'reportsCatalog',
+        (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogResultError> =>
+          this.reportsService.getReportsCatalogResult({
+            projectId: v.projectId,
+            structId: v.bridge.structId,
+            user: v.user,
+            userMember: v.userMember,
+            apiUserMember: v.apiUserMember,
+            spaces: v.struct.spaces
+          })
+      ),
+      Result.map(
+        (v): ToBackendGetReportsOutput => ({
+          needValidate: v.bridge.needValidate,
+          struct: this.structsService.tabToApi({
+            struct: v.struct,
+            modelPartXs: v.apiModels
+          }),
+          userMember: v.apiUserMember,
+          reportUnitDrafts: v.reportsCatalog.reportUnitDrafts,
+          reportSpaceNodes: v.reportsCatalog.reportSpaceNodes,
+          storeModels: v.apiModels.filter(model => model.type === 'Store')
+        })
+      )
+    );
   }
 }

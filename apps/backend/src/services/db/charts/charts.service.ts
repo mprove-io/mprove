@@ -29,6 +29,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ChartEntToTabResultError } from '#common/types/backend/function-errors/chart-ent-to-tab-result-error';
 import type { CheckChartOrModelAccessResultError } from '#common/types/backend/function-errors/check-chart-or-model-access-result-error';
 import type { GetChartCheckExistsResultError } from '#common/types/backend/function-errors/get-chart-check-exists-result-error';
+import type { GetChartsCatalogResultError } from '#common/types/backend/function-errors/get-charts-catalog-result-error';
 import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
@@ -45,6 +46,11 @@ import type { Space } from '#common/types/blockml/parts/space';
 export type ChartOrModelAccess = {
   hasChartAccess: boolean;
   hasModelAccess: boolean;
+};
+
+export type ChartsCatalog = {
+  chartUnitDrafts: ChartUnit[];
+  chartSpaceNodes: SpaceNode[];
 };
 
 @Injectable()
@@ -65,129 +71,202 @@ export class ChartsService {
     apiUserMember: Member;
     models: ModelTab[];
     spaces: Space[];
-  }): Promise<{
-    chartUnitDrafts: ChartUnit[];
-    chartSpaceNodes: SpaceNode[];
-  }> {
+  }): Promise<ChartsCatalog> {
     let { projectId, structId, user, apiUserMember, models, spaces } = item;
 
-    let charts = await this.db.drizzle.query.chartsTable
-      .findMany({
-        where: and(
-          eq(chartsTable.structId, structId),
-          or(isNull(chartsTable.isExplorer), eq(chartsTable.isExplorer, false)),
-          or(
-            eq(chartsTable.draft, false),
-            and(
-              eq(chartsTable.draft, true),
-              eq(chartsTable.creatorId, user.userId)
-            )
-          )
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
-
-    let chartsGrantedAccess = charts.filter(chart => {
-      if (chart.draft === true) {
-        let model = models.find(x => x.modelId === chart.modelId);
-
-        if (isUndefined(model)) {
-          return false;
-        }
-
-        let hasModelAccess = checkModelAccess({
-          member: apiUserMember,
-          modelAccessRoles: model.accessRolesCombined
-        });
-
-        return hasModelAccess === true;
-      }
-
-      let hasChartAccess = checkAccess({
-        member: apiUserMember,
-        accessRoles: chart.accessRolesCombined,
-        filePath: chart.filePath
+    let result: Result.Result<ChartsCatalog, GetChartsCatalogResultError> =
+      await this.getChartsCatalogResult({
+        projectId: projectId,
+        structId: structId,
+        user: user,
+        apiUserMember: apiUserMember,
+        models: models,
+        spaces: spaces
       });
 
-      return hasChartAccess === true;
-    });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    let draftCharts = chartsGrantedAccess.filter(chart => chart.draft === true);
+    let catalog: ChartsCatalog = result.value;
 
-    let savedCharts = chartsGrantedAccess.filter(
-      chart => chart.draft === false
+    return catalog;
+  }
+
+  async getChartsCatalogResult(item: {
+    projectId: string;
+    structId: string;
+    user: UserTab;
+    apiUserMember: Member;
+    models: ModelTab[];
+    spaces: Space[];
+  }): Result.ResultAsync<ChartsCatalog, GetChartsCatalogResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'charts',
+        (v): Result.ResultAsync<ChartTab[], ChartEntToTabResultError> =>
+          this.db.drizzle.query.chartsTable
+            .findMany({
+              where: and(
+                eq(chartsTable.structId, v.structId),
+                or(
+                  isNull(chartsTable.isExplorer),
+                  eq(chartsTable.isExplorer, false)
+                ),
+                or(
+                  eq(chartsTable.draft, false),
+                  and(
+                    eq(chartsTable.draft, true),
+                    eq(chartsTable.creatorId, v.user.userId)
+                  )
+                )
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.chartEntToTabResult({ chartEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'chartsGrantedAccess',
+        (v): Result.Result<ChartTab[], never> =>
+          Result.succeed(
+            v.charts.filter(chart => {
+              if (chart.draft === true) {
+                let model: ModelTab = v.models.find(
+                  model => model.modelId === chart.modelId
+                );
+
+                if (isUndefined(model)) {
+                  return false;
+                }
+
+                let isModelAccessGranted: boolean = checkModelAccess({
+                  member: v.apiUserMember,
+                  modelAccessRoles: model.accessRolesCombined
+                });
+
+                return isModelAccessGranted === true;
+              }
+
+              let isChartAccessGranted: boolean = checkAccess({
+                member: v.apiUserMember,
+                accessRoles: chart.accessRolesCombined,
+                filePath: chart.filePath
+              });
+
+              return isChartAccessGranted === true;
+            })
+          )
+      ),
+      Result.bind(
+        'draftCharts',
+        (v): Result.Result<ChartTab[], never> =>
+          Result.succeed(
+            v.chartsGrantedAccess.filter(chart => chart.draft === true)
+          )
+      ),
+      Result.bind(
+        'savedCharts',
+        (v): Result.Result<ChartTab[], never> =>
+          Result.succeed(
+            v.chartsGrantedAccess.filter(chart => chart.draft === false)
+          )
+      ),
+      Result.bind(
+        'favoriteChartIds',
+        (v): Result.ResultAsync<string[], never> =>
+          this.favoritesService
+            .getFavoriteTargetIds({
+              projectId: v.projectId,
+              userId: v.user.userId,
+              type: 'Chart',
+              targetIds: v.savedCharts.map(chart => chart.chartId)
+            })
+            .then(ids => Result.succeed(ids))
+      ),
+      Result.bind(
+        'sortedDraftCharts',
+        (v): Result.Result<ChartTab[], never> =>
+          Result.succeed(
+            v.draftCharts.sort((a, b) => {
+              let aTitle: string = (a.title || a.chartId).toLowerCase();
+
+              let bTitle: string = (b.title || b.chartId).toLowerCase();
+
+              return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+            })
+          )
+      ),
+      Result.bind(
+        'sortedSavedCharts',
+        (v): Result.Result<ChartTab[], never> =>
+          Result.succeed(
+            v.savedCharts.sort((a, b) => {
+              let aTitle: string = (a.title || a.chartId).toLowerCase();
+
+              let bTitle: string = (b.title || b.chartId).toLowerCase();
+
+              return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+            })
+          )
+      ),
+      Result.bind(
+        'chartSpaceUnits',
+        (v): Result.Result<SpaceUnit[], never> =>
+          Result.succeed(
+            v.sortedSavedCharts.map(chart =>
+              this.unitsService.makeChartSpaceUnit({
+                chart: chart,
+                model: v.models.find(model => model.modelId === chart.modelId),
+                member: v.apiUserMember,
+                favoriteChartIds: v.favoriteChartIds
+              })
+            )
+          )
+      ),
+      Result.bind(
+        'chartUnitDrafts',
+        (v): Result.Result<ChartUnit[], never> =>
+          Result.succeed(
+            v.sortedDraftCharts.map(chart =>
+              this.unitsService.makeChartUnit({
+                chart: chart,
+                model: v.models.find(model => model.modelId === chart.modelId),
+                member: v.apiUserMember,
+                favoriteChartIds: [],
+                space: chart.space,
+                spaceFullTitle: chart.space
+                  ? v.spaces.find(space => space.space === chart.space)
+                      ?.fullTitle
+                  : ''
+              })
+            )
+          )
+      ),
+      Result.bind(
+        'chartSpaceNodes',
+        (v): Result.Result<SpaceNode[], never> =>
+          Result.succeed(
+            this.spaceService.makeSpaceNodes({
+              spaces: v.spaces ?? [],
+              units: v.chartSpaceUnits,
+              member: v.apiUserMember,
+              mySpaceTitle: MY_CHARTS_SPACE_TITLE
+            })
+          )
+      ),
+      Result.map(
+        (v): ChartsCatalog => ({
+          chartUnitDrafts: v.chartUnitDrafts,
+          chartSpaceNodes: this.addModelLevelToChartSpaceNodes({
+            nodes: v.chartSpaceNodes
+          })
+        })
+      )
     );
-
-    let favoriteChartIds = await this.favoritesService.getFavoriteTargetIds({
-      projectId: projectId,
-      userId: user.userId,
-      type: 'Chart',
-      targetIds: savedCharts.map(chart => chart.chartId)
-    });
-
-    let sortedDraftCharts = draftCharts.sort((a, b) => {
-      let aTitle = (a.title || a.chartId).toLowerCase();
-      let bTitle = (b.title || b.chartId).toLowerCase();
-
-      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-    });
-
-    let sortedSavedCharts = savedCharts.sort((a, b) => {
-      let aTitle = (a.title || a.chartId).toLowerCase();
-      let bTitle = (b.title || b.chartId).toLowerCase();
-
-      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-    });
-
-    let chartSpaceUnits: SpaceUnit[] = [];
-
-    sortedSavedCharts.forEach(chart => {
-      let model = models.find(x => x.modelId === chart.modelId);
-
-      chartSpaceUnits.push(
-        this.unitsService.makeChartSpaceUnit({
-          chart: chart,
-          model: model,
-          member: apiUserMember,
-          favoriteChartIds: favoriteChartIds
-        })
-      );
-    });
-
-    let chartUnitDrafts: ChartUnit[] = [];
-
-    sortedDraftCharts.forEach(chart => {
-      let model = models.find(x => x.modelId === chart.modelId);
-
-      let spaceFullTitle = chart.space
-        ? spaces.find(space => space.space === chart.space)?.fullTitle
-        : '';
-
-      chartUnitDrafts.push(
-        this.unitsService.makeChartUnit({
-          chart: chart,
-          model: model,
-          member: apiUserMember,
-          favoriteChartIds: [],
-          space: chart.space,
-          spaceFullTitle: spaceFullTitle
-        })
-      );
-    });
-
-    let chartSpaceNodes = this.spaceService.makeSpaceNodes({
-      spaces: spaces ?? [],
-      units: chartSpaceUnits,
-      member: apiUserMember,
-      mySpaceTitle: MY_CHARTS_SPACE_TITLE
-    });
-
-    return {
-      chartUnitDrafts: chartUnitDrafts,
-      chartSpaceNodes: this.addModelLevelToChartSpaceNodes({
-        nodes: chartSpaceNodes
-      })
-    };
   }
 
   addModelLevelToChartSpaceNodes(item: { nodes: SpaceNode[] }): SpaceNode[] {
