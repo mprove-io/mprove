@@ -17,6 +17,7 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetModelCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-result-error';
 import type { GetModelCheckExistsResultError } from '#common/types/backend/function-errors/get-model-check-exists-result-error';
 import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
 import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
@@ -160,10 +161,10 @@ export class ModelsService {
           eq(modelsTable.modelId, modelId)
         )
       })
-      .then(modelEnt =>
-        isUndefined(modelEnt)
+      .then(x =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_MODEL_DOES_NOT_EXIST' })
-          : this.tabService.modelEntToTabResult({ modelEnt: modelEnt })
+          : this.tabService.modelEntToTabResult({ modelEnt: x })
       );
   }
 
@@ -174,39 +175,54 @@ export class ModelsService {
   }): Promise<ModelTab> {
     let { modelId, structId, userMember } = item;
 
-    if (isUndefined(modelId)) {
-      throw new ServerError({
-        message: 'BACKEND_MODEL_ID_IS_NOT_DEFINED'
-      });
-    }
-
-    let model = await this.db.drizzle.query.modelsTable
-      .findFirst({
-        where: and(
-          eq(modelsTable.structId, structId),
-          eq(modelsTable.modelId, modelId)
-        )
-      })
-      .then(x => this.tabService.modelEntToTab(x));
-
-    if (isUndefined(model)) {
-      throw new ServerError({
-        message: 'BACKEND_MODEL_DOES_NOT_EXIST'
-      });
-    }
-
-    let isAccessGranted = checkModelAccess({
-      member: userMember,
-      modelAccessRoles: model.accessRolesCombined
+    let result: Result.Result<
+      ModelTab,
+      GetModelCheckExistsAndAccessResultError
+    > = await this.getModelCheckExistsAndAccessResult({
+      modelId: modelId,
+      structId: structId,
+      userMember: userMember
     });
 
-    if (isAccessGranted === false) {
-      throw new ServerError({
-        message: 'BACKEND_FORBIDDEN_MODEL'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
+    let model: ModelTab = result.value;
+
     return model;
+  }
+
+  async getModelCheckExistsAndAccessResult(item: {
+    modelId: string;
+    structId: string;
+    userMember: MemberTab;
+  }): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThrough(v =>
+        isUndefined(v.modelId)
+          ? Result.fail({ code: 'BACKEND_MODEL_ID_IS_NOT_DEFINED' })
+          : Result.succeed()
+      ),
+      Result.bind(
+        'model',
+        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> =>
+          this.getModelCheckExistsResult({
+            modelId: v.modelId,
+            structId: v.structId
+          })
+      ),
+      Result.andThrough(v =>
+        checkModelAccess({
+          member: v.userMember,
+          modelAccessRoles: v.model.accessRolesCombined
+        })
+          ? Result.succeed()
+          : Result.fail({ code: 'BACKEND_FORBIDDEN_MODEL' })
+      ),
+      Result.map((v): ModelTab => v.model)
+    );
   }
 
   async getModelPartXs(item: {
@@ -243,10 +259,10 @@ export class ModelsService {
             })
             .from(modelsTable)
             .where(and(eq(modelsTable.structId, v.structId)))
-            .then(modelEnts =>
-              Result.sequence(modelEnts, modelEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.modelEntToTabResult({
-                  modelEnt: modelEnt as ModelEnt
+                  modelEnt: x as ModelEnt
                 })
               )
             )

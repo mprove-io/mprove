@@ -99,10 +99,10 @@ export class GetConnectionsListService {
                 )
               )
             })
-            .then(connectionEnts =>
-              Result.sequence(connectionEnts, connectionEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.connectionEntToTabResult({
-                  connectionEnt: connectionEnt
+                  connectionEnt: x
                 })
               )
             )

@@ -441,10 +441,10 @@ export class ReportsService {
                 eq(reportsTable.reportId, v.reportId)
               )
             })
-            .then(reportEnt =>
-              isUndefined(reportEnt)
+            .then(x =>
+              isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_REPORT_NOT_FOUND' })
-                : this.tabService.reportEntToTabResult({ reportEnt: reportEnt })
+                : this.tabService.reportEntToTabResult({ reportEnt: x })
             );
         }
       ),

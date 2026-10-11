@@ -402,11 +402,11 @@ export class ConnectionsService {
           eq(connectionsTable.projectId, projectId)
         )
       })
-      .then(connectionEnt =>
-        isUndefined(connectionEnt)
+      .then(x =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
           : this.tabService.connectionEntToTabResult({
-              connectionEnt: connectionEnt
+              connectionEnt: x
             })
       );
   }

@@ -281,10 +281,10 @@ export class MembersService {
           eq(membersTable.projectId, projectId)
         )
       })
-      .then((memberEnt: MemberEnt) =>
-        isUndefined(memberEnt)
+      .then((x: MemberEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' })
-          : this.tabService.memberEntToTabResult({ memberEnt: memberEnt })
+          : this.tabService.memberEntToTabResult({ memberEnt: x })
       );
   }
 

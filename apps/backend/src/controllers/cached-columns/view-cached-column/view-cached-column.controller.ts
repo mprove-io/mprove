@@ -130,10 +130,10 @@ export class ViewCachedColumnController {
               limit: 100,
               offset: v.offset
             })
-            .then(cachedPartEnts =>
-              Result.sequence(cachedPartEnts, cachedPartEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.cachedPartEntToTabResult({
-                  cachedPartEnt: cachedPartEnt
+                  cachedPartEnt: x
                 })
               )
             )
@@ -160,11 +160,11 @@ export class ViewCachedColumnController {
                 })
               )
             })
-            .then(cachedColumnEnt =>
-              isUndefined(cachedColumnEnt)
+            .then(x =>
+              isUndefined(x)
                 ? Result.succeed(undefined)
                 : this.tabService.cachedColumnEntToTabResult({
-                    cachedColumnEnt: cachedColumnEnt
+                    cachedColumnEnt: x
                   })
             )
       ),

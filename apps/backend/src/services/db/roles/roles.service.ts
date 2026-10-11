@@ -95,10 +95,10 @@ export class RolesService {
           eq(rolesTable.roleId, roleId)
         )
       })
-      .then((roleEnt: RoleEnt) =>
-        isUndefined(roleEnt)
+      .then((x: RoleEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_ROLE_DOES_NOT_EXIST' })
-          : this.tabService.roleEntToTabResult({ roleEnt: roleEnt })
+          : this.tabService.roleEntToTabResult({ roleEnt: x })
       );
   }
 
@@ -178,9 +178,9 @@ export class RolesService {
       .findMany({
         where: eq(rolesTable.projectId, projectId)
       })
-      .then(roleEnts =>
-        Result.sequence(roleEnts, roleEnt =>
-          this.tabService.roleEntToTabResult({ roleEnt: roleEnt })
+      .then(xs =>
+        Result.sequence(xs, x =>
+          this.tabService.roleEntToTabResult({ roleEnt: x })
         )
       );
   }
@@ -208,9 +208,9 @@ export class RolesService {
         (v): Result.ResultAsync<RoleTab[], RoleEntToTabResultError> =>
           this.db.drizzle.query.rolesTable
             .findMany({ where: eq(rolesTable.projectId, v.projectId) })
-            .then(roleEnts =>
-              Result.sequence(roleEnts, roleEnt =>
-                this.tabService.roleEntToTabResult({ roleEnt: roleEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.roleEntToTabResult({ roleEnt: x })
               )
             )
       ),

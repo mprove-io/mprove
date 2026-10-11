@@ -257,9 +257,9 @@ export class GetStateService {
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
           this.db.drizzle.query.modelsTable
             .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
-            .then(modelEnts =>
-              Result.sequence(modelEnts, modelEnt =>
-                this.tabService.modelEntToTabResult({ modelEnt: modelEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.modelEntToTabResult({ modelEnt: x })
               )
             )
       ),
@@ -280,9 +280,9 @@ export class GetStateService {
         (v): Result.ResultAsync<ChartTab[], ChartEntToTabResultError> =>
           this.db.drizzle.query.chartsTable
             .findMany({ where: eq(chartsTable.structId, v.bridge.structId) })
-            .then(chartEnts =>
-              Result.sequence(chartEnts, chartEnt =>
-                this.tabService.chartEntToTabResult({ chartEnt: chartEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.chartEntToTabResult({ chartEnt: x })
               )
             )
       ),
@@ -326,9 +326,9 @@ export class GetStateService {
                 eq(reportsTable.structId, v.bridge.structId)
               )
             })
-            .then(reportEnts =>
-              Result.sequence(reportEnts, reportEnt =>
-                this.tabService.reportEntToTabResult({ reportEnt: reportEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.reportEntToTabResult({ reportEnt: x })
               )
             )
       ),
@@ -342,9 +342,9 @@ export class GetStateService {
                 eq(reportsTable.structId, v.bridge.structId)
               )
             })
-            .then(reportEnts =>
-              Result.sequence(reportEnts, reportEnt =>
-                this.tabService.reportEntToTabResult({ reportEnt: reportEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.reportEntToTabResult({ reportEnt: x })
               )
             )
       ),

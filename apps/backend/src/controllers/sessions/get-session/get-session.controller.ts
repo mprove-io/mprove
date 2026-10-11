@@ -151,8 +151,8 @@ export class GetSessionController {
       orderBy: [asc(ocMessagesTable.messageId)]
     });
 
-    messages = messageEnts.map(ent => {
-      let tab = this.tabService.ocMessageEntToTab(ent);
+    messages = messageEnts.map(x => {
+      let tab = this.tabService.ocMessageEntToTab(x);
       return {
         messageId: tab.messageId,
         sessionId: tab.sessionId,
@@ -166,8 +166,8 @@ export class GetSessionController {
       orderBy: [asc(ocPartsTable.partId)]
     });
 
-    parts = partEnts.map(ent => {
-      let tab = this.tabService.ocPartEntToTab(ent);
+    parts = partEnts.map(x => {
+      let tab = this.tabService.ocPartEntToTab(x);
       return {
         partId: tab.partId,
         messageId: tab.messageId,
@@ -186,8 +186,8 @@ export class GetSessionController {
       orderBy: [asc(ocEventsTable.eventIndex)]
     });
 
-    let events: SessionEventApi[] = eventEnts.map(ent => {
-      let tab = this.tabService.ocEventEntToTab(ent);
+    let events: SessionEventApi[] = eventEnts.map(x => {
+      let tab = this.tabService.ocEventEntToTab(x);
       return {
         eventId: tab.eventId,
         eventIndex: tab.eventIndex,

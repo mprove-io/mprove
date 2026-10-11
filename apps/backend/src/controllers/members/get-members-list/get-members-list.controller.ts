@@ -71,9 +71,9 @@ export class GetMembersListController {
         (v): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
           this.db.drizzle.query.membersTable
             .findMany({ where: eq(membersTable.projectId, v.projectId) })
-            .then(memberEnts =>
-              Result.sequence(memberEnts, memberEnt =>
-                this.tabService.memberEntToTabResult({ memberEnt: memberEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.memberEntToTabResult({ memberEnt: x })
               )
             )
       ),

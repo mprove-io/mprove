@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, isNull, or } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -25,6 +26,9 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ChartEntToTabResultError } from '#common/types/backend/function-errors/chart-ent-to-tab-result-error';
+import type { CheckChartOrModelAccessResultError } from '#common/types/backend/function-errors/check-chart-or-model-access-result-error';
+import type { GetChartCheckExistsResultError } from '#common/types/backend/function-errors/get-chart-check-exists-result-error';
 import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
@@ -37,6 +41,11 @@ import type { Chart } from '#common/types/blockml/parts/chart/chart';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { Space } from '#common/types/blockml/parts/space';
+
+export type ChartOrModelAccess = {
+  hasChartAccess: boolean;
+  hasModelAccess: boolean;
+};
 
 @Injectable()
 export class ChartsService {
@@ -340,58 +349,112 @@ export class ChartsService {
   }): Promise<ChartTab> {
     let { chartId, structId, userMember, user } = item;
 
-    let chart = await this.db.drizzle.query.chartsTable
-      .findFirst({
-        where: and(
-          eq(chartsTable.structId, structId),
-          eq(chartsTable.chartId, chartId)
-        )
-      })
-      .then(x => this.tabService.chartEntToTab(x));
-
-    if (isUndefined(chart)) {
-      throw new ServerError({
-        message: 'BACKEND_CHART_DOES_NOT_EXIST'
+    let result: Result.Result<ChartTab, GetChartCheckExistsResultError> =
+      await this.getChartCheckExistsResult({
+        chartId: chartId,
+        structId: structId,
+        userMember: userMember,
+        user: user
       });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (chart.draft === true && chart.creatorId !== user.userId) {
-      throw new ServerError({
-        message: 'BACKEND_CHART_CREATOR_ID_MISMATCH'
-      });
-    }
+    let chart: ChartTab = result.value;
 
     return chart;
+  }
+
+  async getChartCheckExistsResult(item: {
+    chartId: string;
+    structId: string;
+    userMember: MemberTab;
+    user: UserTab;
+  }): Result.ResultAsync<ChartTab, GetChartCheckExistsResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'chart',
+        (v): Result.ResultAsync<ChartTab, ChartEntToTabResultError> =>
+          this.db.drizzle.query.chartsTable
+            .findFirst({
+              where: and(
+                eq(chartsTable.structId, v.structId),
+                eq(chartsTable.chartId, v.chartId)
+              )
+            })
+            .then(x =>
+              isUndefined(x)
+                ? Result.succeed(undefined)
+                : this.tabService.chartEntToTabResult({ chartEnt: x })
+            )
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.chart)
+          ? Result.fail({ code: 'BACKEND_CHART_DOES_NOT_EXIST' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.chart.draft === true && v.chart.creatorId !== v.user.userId
+          ? Result.fail({ code: 'BACKEND_CHART_CREATOR_ID_MISMATCH' })
+          : Result.succeed()
+      ),
+      Result.map((v): ChartTab => v.chart)
+    );
   }
 
   checkChartOrModelAccess(item: {
     chart: ChartTab;
     model: ModelTab;
     userMember: MemberTab | Member;
-  }): { hasChartAccess: boolean; hasModelAccess: boolean } {
+  }): ChartOrModelAccess {
     let { chart, model, userMember } = item;
 
-    let hasChartAccess = checkAccess({
+    let result: Result.Result<
+      ChartOrModelAccess,
+      CheckChartOrModelAccessResultError
+    > = this.checkChartOrModelAccessResult({
+      chart: chart,
+      model: model,
+      userMember: userMember
+    });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let access: ChartOrModelAccess = result.value;
+
+    return access;
+  }
+
+  checkChartOrModelAccessResult(item: {
+    chart: ChartTab;
+    model: ModelTab;
+    userMember: MemberTab | Member;
+  }): Result.Result<ChartOrModelAccess, CheckChartOrModelAccessResultError> {
+    let { chart, model, userMember } = item;
+
+    let hasChartAccess: boolean = checkAccess({
       member: userMember,
       accessRoles: chart.accessRolesCombined,
       filePath: chart.filePath
     });
 
-    let hasModelAccess = checkModelAccess({
+    let hasModelAccess: boolean = checkModelAccess({
       member: userMember,
       modelAccessRoles: model.accessRolesCombined
     });
 
     if (hasChartAccess === false && hasModelAccess === false) {
-      throw new ServerError({
-        message: 'BACKEND_FORBIDDEN_MODEL'
-      });
+      return Result.fail({ code: 'BACKEND_FORBIDDEN_MODEL' });
     }
 
-    return {
+    return Result.succeed({
       hasChartAccess: hasChartAccess,
       hasModelAccess: hasModelAccess
-    };
+    });
   }
 
   checkChartPath(item: { filePath: string; userAlias: string }) {

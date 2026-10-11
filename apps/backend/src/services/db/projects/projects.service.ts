@@ -124,10 +124,10 @@ export class ProjectsService {
       .findFirst({
         where: eq(projectsTable.projectId, projectId)
       })
-      .then((projectEnt: ProjectEnt) =>
-        isUndefined(projectEnt)
+      .then((x: ProjectEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_PROJECT_DOES_NOT_EXIST' })
-          : this.tabService.projectEntToTabResult({ projectEnt: projectEnt })
+          : this.tabService.projectEntToTabResult({ projectEnt: x })
       );
   }
 

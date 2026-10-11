@@ -186,10 +186,10 @@ export class GetConnectionSchemasService {
                 )
               )
             })
-            .then(connectionEnts =>
-              Result.sequence(connectionEnts, connectionEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.connectionEntToTabResult({
-                  connectionEnt: connectionEnt
+                  connectionEnt: x
                 })
               )
             )
@@ -288,10 +288,10 @@ export class GetConnectionSchemasService {
                     inArray(cachedColumnsTable.connectionId, v.connectionIds)
                   )
                 })
-                .then(cachedColumnEnts =>
-                  Result.sequence(cachedColumnEnts, cachedColumnEnt =>
+                .then(xs =>
+                  Result.sequence(xs, x =>
                     this.tabService.cachedColumnEntToTabResult({
-                      cachedColumnEnt: cachedColumnEnt
+                      cachedColumnEnt: x
                     })
                   )
                 )

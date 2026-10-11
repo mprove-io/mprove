@@ -152,10 +152,10 @@ export class EditMemberController {
             })
             .from(avatarsTable)
             .where(eq(avatarsTable.userId, v.member.memberId))
-            .then(avatarEnts =>
-              Result.sequence(avatarEnts, avatarEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.avatarEntToTabResult({
-                  avatarEnt: avatarEnt as AvatarEnt
+                  avatarEnt: x as AvatarEnt
                 })
               )
             )

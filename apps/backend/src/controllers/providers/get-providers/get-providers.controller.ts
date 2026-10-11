@@ -82,10 +82,10 @@ export class GetProvidersController {
             .findMany({
               where: eq(providersTable.projectId, v.projectId)
             })
-            .then((providerEnts: ProviderEnt[]) =>
-              Result.sequence(providerEnts, providerEnt =>
+            .then((xs: ProviderEnt[]) =>
+              Result.sequence(xs, x =>
                 this.tabService.providerEntToTabResult({
-                  providerEnt: providerEnt
+                  providerEnt: x
                 })
               )
             )

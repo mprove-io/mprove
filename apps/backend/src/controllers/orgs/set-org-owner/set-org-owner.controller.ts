@@ -109,10 +109,10 @@ export class SetOrgOwnerController {
                 eq(usersTable.isEmailVerified, true)
               )
             })
-            .then((newOwnerEnt: UserEnt) =>
-              isUndefined(newOwnerEnt)
+            .then((x: UserEnt) =>
+              isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' })
-                : Result.succeed(this.tabService.userEntToTab(newOwnerEnt))
+                : Result.succeed(this.tabService.userEntToTab(x))
             )
       ),
       Result.map(v => {

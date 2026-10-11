@@ -47,7 +47,7 @@ import type { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
 import type { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
 import type { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
-import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
+import type { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import type { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import type { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
@@ -58,7 +58,7 @@ import type { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions'
 import type { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
-import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
+import type { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import type { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import type { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
 import type { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
@@ -84,6 +84,7 @@ import type { DconfigEntToTabResultError } from '#common/types/backend/function-
 import type { EnvEntToTabResultError } from '#common/types/backend/function-errors/env-ent-to-tab-result-error';
 import type { GetTabPropsResultError } from '#common/types/backend/function-errors/get-tab-props-result-error';
 import type { GivenEntToTabResultError } from '#common/types/backend/function-errors/given-ent-to-tab-result-error';
+import type { MconfigEntToTabResultError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-result-error';
 import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
 import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
 import type { NoteEntToTabResultError } from '#common/types/backend/function-errors/note-ent-to-tab-result-error';
@@ -91,6 +92,7 @@ import type { OcSessionEntToTabResultError } from '#common/types/backend/functio
 import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
 import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
 import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
+import type { QueryEntToTabResultError } from '#common/types/backend/function-errors/query-ent-to-tab-result-error';
 import type { ReportEntToTabResultError } from '#common/types/backend/function-errors/report-ent-to-tab-result-error';
 import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
 import type { SessionEntToTabResultError } from '#common/types/backend/function-errors/session-ent-to-tab-result-error';
@@ -119,6 +121,8 @@ import type { EnvLt } from '#common/types/shared/st-lt/envs/env-lt';
 import type { EnvSt } from '#common/types/shared/st-lt/envs/env-st';
 import type { GivenLt } from '#common/types/shared/st-lt/givens/given-lt';
 import type { GivenSt } from '#common/types/shared/st-lt/givens/given-st';
+import type { MconfigLt } from '#common/types/shared/st-lt/mconfigs/mconfig-lt';
+import type { MconfigSt } from '#common/types/shared/st-lt/mconfigs/mconfig-st';
 import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';
 import type { MemberSt } from '#common/types/shared/st-lt/members/member-st';
 import type { ModelLt } from '#common/types/shared/st-lt/models/model-lt';
@@ -133,6 +137,8 @@ import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-lt';
 import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';
+import type { QueryLt } from '#common/types/shared/st-lt/queries/query-lt';
+import type { QuerySt } from '#common/types/shared/st-lt/queries/query-st';
 import type { ReportLt } from '#common/types/shared/st-lt/reports/report-lt';
 import type { ReportSt } from '#common/types/shared/st-lt/reports/report-st';
 import type { RoleLt } from '#common/types/shared/st-lt/roles/role-lt';
@@ -841,12 +847,34 @@ export class TabService {
       return;
     }
 
-    let mconfig: MconfigTab = {
-      ...mconfigEnt,
-      ...this.getTabProps({ ent: mconfigEnt })
-    };
+    let result: Result.Result<MconfigTab, MconfigEntToTabResultError> =
+      this.mconfigEntToTabResult({ mconfigEnt: mconfigEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let mconfig: MconfigTab = result.value;
 
     return mconfig;
+  }
+
+  mconfigEntToTabResult(item: {
+    mconfigEnt: MconfigEnt;
+  }): Result.Result<MconfigTab, MconfigEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<MconfigSt, MconfigLt>,
+          GetTabPropsResultError
+        > => this.getTabPropsResult<MconfigSt, MconfigLt>({ ent: v.mconfigEnt })
+      ),
+      Result.map((v): MconfigTab => ({ ...v.mconfigEnt, ...v.tabProps.props }))
+    );
   }
 
   memberEntToTab(memberEnt: MemberEnt): MemberTab {
@@ -1068,12 +1096,32 @@ export class TabService {
       return;
     }
 
-    let query: QueryTab = {
-      ...queryEnt,
-      ...this.getTabProps({ ent: queryEnt })
-    };
+    let result: Result.Result<QueryTab, QueryEntToTabResultError> =
+      this.queryEntToTabResult({ queryEnt: queryEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let query: QueryTab = result.value;
 
     return query;
+  }
+
+  queryEntToTabResult(item: {
+    queryEnt: QueryEnt;
+  }): Result.Result<QueryTab, QueryEntToTabResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<TabProps<QuerySt, QueryLt>, GetTabPropsResultError> =>
+          this.getTabPropsResult<QuerySt, QueryLt>({ ent: v.queryEnt })
+      ),
+      Result.map((v): QueryTab => ({ ...v.queryEnt, ...v.tabProps.props }))
+    );
   }
 
   reportEntToTab(reportEnt: ReportEnt): ReportTab {

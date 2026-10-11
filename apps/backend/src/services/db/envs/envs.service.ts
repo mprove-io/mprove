@@ -246,8 +246,8 @@ export class EnvsService {
     });
 
     let envsResult: Result.Result<EnvTab[], GetApiEnvsResultError> =
-      Result.sequence(envEnts, envEnt =>
-        this.tabService.envEntToTabResult({ envEnt: envEnt })
+      Result.sequence(envEnts, x =>
+        this.tabService.envEntToTabResult({ envEnt: x })
       );
 
     if (Result.isFailure(envsResult)) {
@@ -270,8 +270,8 @@ export class EnvsService {
     let connectionsResult: Result.Result<
       ConnectionTab[],
       GetApiEnvsResultError
-    > = Result.sequence(connectionEnts, connectionEnt =>
-      this.tabService.connectionEntToTabResult({ connectionEnt: connectionEnt })
+    > = Result.sequence(connectionEnts, x =>
+      this.tabService.connectionEntToTabResult({ connectionEnt: x })
     );
 
     if (Result.isFailure(connectionsResult)) {
@@ -286,9 +286,9 @@ export class EnvsService {
       });
 
     let membersResult: Result.Result<MemberTab[], GetApiEnvsResultError> =
-      Result.sequence(memberEnts, memberEnt =>
+      Result.sequence(memberEnts, x =>
         this.tabService.memberEntToTabResult({
-          memberEnt: memberEnt
+          memberEnt: x
         })
       );
 

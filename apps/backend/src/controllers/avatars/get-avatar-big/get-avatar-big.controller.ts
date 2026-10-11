@@ -56,10 +56,10 @@ export class GetAvatarBigController {
             .findFirst({
               where: eq(avatarsTable.userId, v.avatarUserId)
             })
-            .then((avatarEnt: AvatarEnt) =>
-              isUndefined(avatarEnt)
+            .then((x: AvatarEnt) =>
+              isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+                : this.tabService.avatarEntToTabResult({ avatarEnt: x })
             )
       ),
       Result.map(

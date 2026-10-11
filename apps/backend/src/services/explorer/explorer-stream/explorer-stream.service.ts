@@ -1226,8 +1226,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
       orderBy: [asc(ocMessagesTable.createdTs)]
     });
 
-    let messageTabs = messageEnts.map(m =>
-      this.tabService.ocMessageEntToTab(m)
+    let messageTabs = messageEnts.map(x =>
+      this.tabService.ocMessageEntToTab(x)
     );
 
     let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
@@ -1235,7 +1235,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       orderBy: [asc(ocPartsTable.createdTs)]
     });
 
-    let partTabs = partEnts.map(p => this.tabService.ocPartEntToTab(p));
+    let partTabs = partEnts.map(x => this.tabService.ocPartEntToTab(x));
 
     let partsByMessageId = new Map<string, typeof partTabs>();
 

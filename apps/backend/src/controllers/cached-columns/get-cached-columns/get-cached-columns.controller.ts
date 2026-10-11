@@ -127,10 +127,10 @@ export class GetCachedColumnsController {
                     v.cachedColumnFullIds
                   )
                 })
-                .then(cachedColumnEnts =>
-                  Result.sequence(cachedColumnEnts, cachedColumnEnt =>
+                .then(xs =>
+                  Result.sequence(xs, x =>
                     this.tabService.cachedColumnEntToTabResult({
-                      cachedColumnEnt: cachedColumnEnt
+                      cachedColumnEnt: x
                     })
                   )
                 )

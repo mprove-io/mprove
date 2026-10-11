@@ -133,11 +133,11 @@ export class CreateProjectController {
                 eq(projectsTable.nameHash, v.nameHash)
               )
             })
-            .then((projectEnt: ProjectEnt) =>
-              isUndefined(projectEnt)
+            .then((x: ProjectEnt) =>
+              isUndefined(x)
                 ? Result.succeed(undefined)
                 : this.tabService.projectEntToTabResult({
-                    projectEnt: projectEnt
+                    projectEnt: x
                   })
             )
       ),
@@ -160,11 +160,11 @@ export class CreateProjectController {
                 .findFirst({
                   where: eq(notesTable.noteId, v.noteId)
                 })
-                .then((noteEnt: NoteEnt) =>
-                  isUndefined(noteEnt)
+                .then((x: NoteEnt) =>
+                  isUndefined(x)
                     ? Result.fail({ code: 'BACKEND_NOTE_DOES_NOT_EXIST' })
                     : this.tabService.noteEntToTabResult({
-                        noteEnt: noteEnt
+                        noteEnt: x
                       })
                 )
       ),

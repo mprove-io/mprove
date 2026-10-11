@@ -149,9 +149,9 @@ export class GetSuggestFieldsController {
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
           this.db.drizzle.query.modelsTable
             .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
-            .then(modelEnts =>
-              Result.sequence(modelEnts, modelEnt =>
-                this.tabService.modelEntToTabResult({ modelEnt: modelEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.modelEntToTabResult({ modelEnt: x })
               )
             )
       ),

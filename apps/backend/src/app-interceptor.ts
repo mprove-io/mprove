@@ -174,7 +174,43 @@ export class AppInterceptor implements NestInterceptor {
     let execution: Observable<ToBackendResponse>;
 
     if (isUndefined(idemp)) {
-      if (req.operation === 'setProjectInfo') {
+      if (req.operation === 'getQuery') {
+        execution = makeBackendResultResponse({
+          operation: 'getQuery',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getQueries') {
+        execution = makeBackendResultResponse({
+          operation: 'getQueries',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'duplicateMconfigAndQuery') {
+        execution = makeBackendResultResponse({
+          operation: 'duplicateMconfigAndQuery',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'setProjectInfo') {
         execution = makeBackendResultResponse({
           operation: 'setProjectInfo',
           execution: next.handle(),

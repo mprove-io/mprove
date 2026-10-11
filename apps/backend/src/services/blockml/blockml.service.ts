@@ -203,9 +203,9 @@ export class BlockmlService {
       let connectionsResult: Result.Result<
         ConnectionTab[],
         ConnectionEntToTabResultError
-      > = Result.sequence(connectionsWithFallbackEnts, connectionEnt =>
+      > = Result.sequence(connectionsWithFallbackEnts, x =>
         this.tabService.connectionEntToTabResult({
-          connectionEnt: connectionEnt
+          connectionEnt: x
         })
       );
 

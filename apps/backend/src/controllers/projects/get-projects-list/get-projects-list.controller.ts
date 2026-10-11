@@ -92,10 +92,10 @@ export class GetProjectsListController {
                     eq(projectsTable.orgId, v.orgId)
                   )
                 })
-                .then((projectEnts: ProjectEnt[]) =>
-                  Result.sequence(projectEnts, projectEnt =>
+                .then((xs: ProjectEnt[]) =>
+                  Result.sequence(xs, x =>
                     this.tabService.projectEntToTabResult({
-                      projectEnt: projectEnt
+                      projectEnt: x
                     })
                   )
                 )

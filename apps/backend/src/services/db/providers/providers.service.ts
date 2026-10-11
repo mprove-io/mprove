@@ -317,10 +317,10 @@ export class ProvidersService {
           eq(providersTable.providerId, providerId)
         )
       })
-      .then((providerEnt: ProviderEnt) =>
-        isUndefined(providerEnt)
+      .then((x: ProviderEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_PROVIDER_DOES_NOT_EXIST' })
-          : this.tabService.providerEntToTabResult({ providerEnt: providerEnt })
+          : this.tabService.providerEntToTabResult({ providerEnt: x })
       );
   }
 
@@ -351,9 +351,9 @@ export class ProvidersService {
           eq(providersTable.isEnabled, true)
         )
       })
-      .then(providerEnts =>
-        Result.sequence(providerEnts, providerEnt =>
-          this.tabService.providerEntToTabResult({ providerEnt: providerEnt })
+      .then(xs =>
+        Result.sequence(xs, x =>
+          this.tabService.providerEntToTabResult({ providerEnt: x })
         )
       );
   }

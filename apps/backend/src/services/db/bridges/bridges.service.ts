@@ -87,10 +87,10 @@ export class BridgesService {
           eq(bridgesTable.envId, envId)
         )
       })
-      .then((bridgeEnt: BridgeEnt) =>
-        isUndefined(bridgeEnt)
+      .then((x: BridgeEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST' })
-          : this.tabService.bridgeEntToTabResult({ bridgeEnt: bridgeEnt })
+          : this.tabService.bridgeEntToTabResult({ bridgeEnt: x })
       );
   }
 }

@@ -96,9 +96,9 @@ export class GetMembersController {
         (v): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
           this.db.drizzle.query.membersTable
             .findMany({ where: and(eq(membersTable.projectId, v.projectId)) })
-            .then(memberEnts =>
-              Result.sequence(memberEnts, memberEnt =>
-                this.tabService.memberEntToTabResult({ memberEnt: memberEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.memberEntToTabResult({ memberEnt: x })
               )
             )
       ),
@@ -138,10 +138,10 @@ export class GetMembersController {
                 })
                 .from(avatarsTable)
                 .where(inArray(avatarsTable.userId, v.memberIds))
-                .then(avatarEnts =>
-                  Result.sequence(avatarEnts, avatarEnt =>
+                .then(xs =>
+                  Result.sequence(xs, x =>
                     this.tabService.avatarEntToTabResult({
-                      avatarEnt: avatarEnt as AvatarEnt
+                      avatarEnt: x as AvatarEnt
                     })
                   )
                 )

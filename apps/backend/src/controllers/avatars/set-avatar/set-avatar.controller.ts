@@ -77,8 +77,8 @@ export class SetAvatarController {
             .findFirst({
               where: eq(avatarsTable.userId, v.user.userId)
             })
-            .then((avatarEnt: AvatarEnt) =>
-              isUndefined(avatarEnt)
+            .then((x: AvatarEnt) =>
+              isUndefined(x)
                 ? Result.succeed({
                     userId: v.user.userId,
                     avatarSmall: v.avatarSmall,
@@ -86,7 +86,7 @@ export class SetAvatarController {
                     keyTag: undefined,
                     serverTs: undefined
                   })
-                : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+                : this.tabService.avatarEntToTabResult({ avatarEnt: x })
             )
       ),
       Result.map(v => {

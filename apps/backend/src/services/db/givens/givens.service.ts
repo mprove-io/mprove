@@ -164,10 +164,10 @@ export class GivensService {
           eq(givensTable.givenId, givenId)
         )
       })
-      .then((givenEnt: GivenEnt) =>
-        isUndefined(givenEnt)
+      .then((x: GivenEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_GIVEN_DOES_NOT_EXIST' })
-          : this.tabService.givenEntToTabResult({ givenEnt: givenEnt })
+          : this.tabService.givenEntToTabResult({ givenEnt: x })
       );
   }
 
@@ -194,9 +194,9 @@ export class GivensService {
         (v): Result.ResultAsync<GivenTab[], GivenEntToTabResultError> =>
           this.db.drizzle.query.givensTable
             .findMany({ where: eq(givensTable.projectId, v.projectId) })
-            .then(givenEnts =>
-              Result.sequence(givenEnts, givenEnt =>
-                this.tabService.givenEntToTabResult({ givenEnt: givenEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.givenEntToTabResult({ givenEnt: x })
               )
             )
       ),

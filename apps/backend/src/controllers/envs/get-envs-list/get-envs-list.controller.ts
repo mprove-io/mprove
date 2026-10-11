@@ -69,9 +69,9 @@ export class GetEnvsListController {
             .findMany({
               where: eq(envsTable.projectId, v.projectId)
             })
-            .then((envEnts: EnvEnt[]) =>
-              Result.sequence(envEnts, envEnt =>
-                this.tabService.envEntToTabResult({ envEnt: envEnt })
+            .then((xs: EnvEnt[]) =>
+              Result.sequence(xs, x =>
+                this.tabService.envEntToTabResult({ envEnt: x })
               )
             )
       ),

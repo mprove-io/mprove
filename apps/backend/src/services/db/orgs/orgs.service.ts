@@ -80,10 +80,10 @@ export class OrgsService {
       .findFirst({
         where: eq(orgsTable.orgId, orgId)
       })
-      .then((orgEnt: OrgEnt) =>
-        isUndefined(orgEnt)
+      .then((x: OrgEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_ORG_DOES_NOT_EXIST' })
-          : this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+          : this.tabService.orgEntToTabResult({ orgEnt: x })
       );
   }
 

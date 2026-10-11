@@ -111,10 +111,10 @@ export class GetNavController {
                 .findMany({
                   where: inArray(projectsTable.projectId, v.projectIds)
                 })
-                .then(projectEnts =>
-                  Result.sequence(projectEnts, projectEnt =>
+                .then(xs =>
+                  Result.sequence(xs, x =>
                     this.tabService.projectEntToTabResult({
-                      projectEnt: projectEnt
+                      projectEnt: x
                     })
                   )
                 )
@@ -133,9 +133,9 @@ export class GetNavController {
                 .findMany({
                   where: inArray(orgsTable.orgId, v.orgIds)
                 })
-                .then(orgEnts =>
-                  Result.sequence(orgEnts, orgEnt =>
-                    this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+                .then(xs =>
+                  Result.sequence(xs, x =>
+                    this.tabService.orgEntToTabResult({ orgEnt: x })
                   )
                 )
       ),
@@ -146,9 +146,9 @@ export class GetNavController {
             .findMany({
               where: eq(orgsTable.ownerId, v.user.userId)
             })
-            .then(orgEnts =>
-              Result.sequence(orgEnts, orgEnt =>
-                this.tabService.orgEntToTabResult({ orgEnt: orgEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.orgEntToTabResult({ orgEnt: x })
               )
             )
       ),
@@ -223,10 +223,10 @@ export class GetNavController {
             .findFirst({
               where: eq(avatarsTable.userId, v.user.userId)
             })
-            .then((avatarEnt: AvatarEnt) =>
-              isUndefined(avatarEnt)
+            .then((x: AvatarEnt) =>
+              isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+                : this.tabService.avatarEntToTabResult({ avatarEnt: x })
             )
       ),
       Result.bind(

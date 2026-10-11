@@ -30,6 +30,7 @@ import {
   PROJECT_CONFIG_THOUSANDS_SEPARATOR
 } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetStructCheckExistsAndNotChangedResultError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-result-error';
 import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
 import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
@@ -132,12 +133,12 @@ export class StructsService {
           eq(structsTable.projectId, projectId)
         )
       })
-      .then((structEnt: StructEnt) =>
-        isUndefined(structEnt)
+      .then((x: StructEnt) =>
+        isUndefined(x)
           ? isGetEmptyStructOnError === true
             ? Result.succeed(emptyStruct)
             : Result.fail({ code: 'BACKEND_STRUCT_DOES_NOT_EXIST' })
-          : this.tabService.structEntToTabResult({ structEnt: structEnt })
+          : this.tabService.structEntToTabResult({ structEnt: x })
       );
   }
 
@@ -145,21 +146,52 @@ export class StructsService {
     bridgeStructId: string;
     projectId: string;
     structId: string;
-  }) {
+  }): Promise<StructTab> {
     let { bridgeStructId, projectId, structId } = item;
 
-    let struct = await this.getStructCheckExists({
-      structId: bridgeStructId,
-      projectId: projectId
+    let result: Result.Result<
+      StructTab,
+      GetStructCheckExistsAndNotChangedResultError
+    > = await this.getStructCheckExistsAndNotChangedResult({
+      bridgeStructId: bridgeStructId,
+      projectId: projectId,
+      structId: structId
     });
 
-    if (structId !== bridgeStructId) {
-      throw new ServerError({
-        message: 'BACKEND_STRUCT_ID_CHANGED'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
+    let struct: StructTab = result.value;
+
     return struct;
+  }
+
+  async getStructCheckExistsAndNotChangedResult(item: {
+    bridgeStructId: string;
+    projectId: string;
+    structId: string;
+  }): Result.ResultAsync<
+    StructTab,
+    GetStructCheckExistsAndNotChangedResultError
+  > {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          this.getStructCheckExistsResult({
+            structId: v.bridgeStructId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        v.structId !== v.bridgeStructId
+          ? Result.fail({ code: 'BACKEND_STRUCT_ID_CHANGED' })
+          : Result.succeed()
+      ),
+      Result.map((v): StructTab => v.struct)
+    );
   }
 
   async removeStructs() {

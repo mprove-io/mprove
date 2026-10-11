@@ -79,10 +79,10 @@ export class BranchesService {
           eq(branchesTable.branchId, branchId)
         )
       })
-      .then((branchEnt: BranchEnt) =>
-        isUndefined(branchEnt)
+      .then((x: BranchEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_BRANCH_DOES_NOT_EXIST' })
-          : this.tabService.branchEntToTabResult({ branchEnt: branchEnt })
+          : this.tabService.branchEntToTabResult({ branchEnt: x })
       );
   }
 

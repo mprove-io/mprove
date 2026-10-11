@@ -9,9 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDuplicateMconfigAndQueryRequestDto,
   ToBackendDuplicateMconfigAndQueryResponseDto
@@ -19,11 +20,17 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BranchTab,
+  BridgeTab,
   MconfigTab,
+  MemberTab,
+  ModelTab,
+  ProjectTab,
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
@@ -38,16 +45,31 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ParentService } from '#backend/services/parent/parent.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   DEFAULT_PIVOT_COLUMNS_WIDTH,
   DEFAULT_PIVOT_FIRST_COLUMN_WIDTH
 } from '#common/constants/mconfig-chart';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetMconfigCheckExistsResultError } from '#common/types/backend/function-errors/get-mconfig-check-exists-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetModelCheckExistsResultError } from '#common/types/backend/function-errors/get-model-check-exists-result-error';
+import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
+import type { QueryEntToTabResultError } from '#common/types/backend/function-errors/query-ent-to-tab-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDuplicateMconfigAndQueryOutput } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-output';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
+
+type DuplicatedMconfigAndQuery = {
+  newMconfig: MconfigTab;
+  newQuery: QueryTab;
+};
 
 @ApiTags('Mconfigs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -83,147 +105,193 @@ export class DuplicateMconfigAndQueryController {
   async duplicateMconfigAndQuery(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDuplicateMconfigAndQueryRequestDto
-  ) {
-    let { traceId } = body;
-    let { projectId, repoId, branchId, envId, oldMconfigId, setPivotDefaults } =
-      body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let oldMconfig = await this.mconfigsService.getMconfigCheckExists({
-      structId: bridge.structId,
-      mconfigId: oldMconfigId
-    });
-
-    await this.structsService.getStructCheckExistsAndNotChanged({
-      projectId: projectId,
-      bridgeStructId: bridge.structId,
-      structId: oldMconfig.structId
-    });
-
-    await this.parentService.checkParentAccess({
-      parentId: oldMconfig.parentId,
-      parentType: oldMconfig.parentType,
-      modelId: oldMconfig.modelId,
-      user: user,
-      userMember: userMember,
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    // user can see dashboard tile or report metric without model access - OK
-    let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.structId,
-      modelId: oldMconfig.modelId
-    });
-
-    let oldQuery = await this.db.drizzle.query.queriesTable
-      .findFirst({
-        where: and(
-          eq(queriesTable.queryId, oldMconfig.queryId),
-          eq(queriesTable.projectId, projectId)
-        )
-      })
-      .then(x => this.tabService.queryEntToTab(x));
-
-    let newMconfigId = makeId();
-
-    let newMconfigParentType: MconfigParentType =
-      oldMconfig.parentType === 'Dashboard'
-        ? 'ChartDialogDashboard'
-        : oldMconfig.parentType === 'Report'
-          ? 'ChartDialogReport'
-          : oldMconfig.parentType;
-
-    let newQueryId = makeQueryId({
-      projectId: project.projectId,
-      connectionId: model.connectionId,
-      envId: envId,
-      mconfigParentType: newMconfigParentType,
-      mconfigParentId: oldMconfig.parentId,
-      sql: oldQuery.sql,
-      store: model.storeContent,
-      storeTransformedRequestString: oldMconfig.storePart?.reqJsonParts
-    });
-
-    let chart =
-      setPivotDefaults === true
-        ? {
-            ...oldMconfig.chart,
-            firstColumnWidth: DEFAULT_PIVOT_FIRST_COLUMN_WIDTH,
-            valueColumnsWidth: DEFAULT_PIVOT_COLUMNS_WIDTH
-          }
-        : oldMconfig.chart;
-
-    let newMconfig = Object.assign({}, oldMconfig, <MconfigTab>{
-      mconfigId: newMconfigId,
-      queryId: newQueryId,
-      parentType: newMconfigParentType,
-      chart: chart
-    });
-
-    let newQuery = Object.assign({}, oldQuery, <QueryTab>{
-      queryId: newQueryId
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                mconfigs: [newMconfig]
-              },
-              insertOrUpdate: {
-                queries: [newQuery]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    let payload: ToBackendDuplicateMconfigAndQueryOutput = {
-      mconfig: this.mconfigsService.tabToApi({
-        mconfig: newMconfig,
-        modelFields: model.fields
+  ): Promise<BackendResultForOperation<'duplicateMconfigAndQuery'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        oldMconfigId: body.input.oldMconfigId,
+        setPivotDefaults: body.input.setPivotDefaults,
+        user: user
       }),
-      query: this.queriesService.tabToApi({ query: newQuery })
-    };
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'oldMconfig',
+        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsResultError> =>
+          this.mconfigsService.getMconfigCheckExistsResult({
+            structId: v.bridge.structId,
+            mconfigId: v.oldMconfigId
+          })
+      ),
+      Result.andThrough(v =>
+        this.structsService.getStructCheckExistsAndNotChangedResult({
+          projectId: v.projectId,
+          bridgeStructId: v.bridge.structId,
+          structId: v.oldMconfig.structId
+        })
+      ),
+      Result.andThrough(v =>
+        this.parentService.checkParentAccessResult({
+          parentId: v.oldMconfig.parentId,
+          parentType: v.oldMconfig.parentType,
+          modelId: v.oldMconfig.modelId,
+          user: v.user,
+          userMember: v.userMember,
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
+      ),
+      // Dashboard tiles and report metrics do not require model access here.
+      Result.bind(
+        'model',
+        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> =>
+          this.modelsService.getModelCheckExistsResult({
+            structId: v.bridge.structId,
+            modelId: v.oldMconfig.modelId
+          })
+      ),
+      Result.bind(
+        'oldQuery',
+        (v): Result.ResultAsync<QueryTab, QueryEntToTabResultError> =>
+          this.db.drizzle.query.queriesTable
+            .findFirst({
+              where: and(
+                eq(queriesTable.queryId, v.oldMconfig.queryId),
+                eq(queriesTable.projectId, v.projectId)
+              )
+            })
+            .then(x =>
+              isUndefined(x)
+                ? Result.succeed(undefined)
+                : this.tabService.queryEntToTabResult({ queryEnt: x })
+            )
+      ),
+      Result.bind(
+        'duplicated',
+        (v): Result.Result<DuplicatedMconfigAndQuery, never> => {
+          let newMconfigId: string = makeId();
 
-    return payload;
+          let newMconfigParentType: MconfigParentType =
+            v.oldMconfig.parentType === 'Dashboard'
+              ? 'ChartDialogDashboard'
+              : v.oldMconfig.parentType === 'Report'
+                ? 'ChartDialogReport'
+                : v.oldMconfig.parentType;
+
+          let newQueryId: string = makeQueryId({
+            projectId: v.project.projectId,
+            connectionId: v.model.connectionId,
+            envId: v.envId,
+            mconfigParentType: newMconfigParentType,
+            mconfigParentId: v.oldMconfig.parentId,
+            sql: v.oldQuery.sql,
+            store: v.model.storeContent,
+            storeTransformedRequestString: v.oldMconfig.storePart?.reqJsonParts
+          });
+
+          let chart: MconfigChart =
+            v.setPivotDefaults === true
+              ? {
+                  ...v.oldMconfig.chart,
+                  firstColumnWidth: DEFAULT_PIVOT_FIRST_COLUMN_WIDTH,
+                  valueColumnsWidth: DEFAULT_PIVOT_COLUMNS_WIDTH
+                }
+              : v.oldMconfig.chart;
+
+          let newMconfig: MconfigTab = {
+            ...v.oldMconfig,
+            mconfigId: newMconfigId,
+            queryId: newQueryId,
+            parentType: newMconfigParentType,
+            chart: chart
+          };
+
+          let newQuery: QueryTab = { ...v.oldQuery, queryId: newQueryId };
+
+          return Result.succeed({ newMconfig: newMconfig, newQuery: newQuery });
+        }
+      ),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insert: {
+                        mconfigs: [v.duplicated.newMconfig]
+                      },
+                      insertOrUpdate: {
+                        queries: [v.duplicated.newQuery]
+                      }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendDuplicateMconfigAndQueryOutput => ({
+          mconfig: this.mconfigsService.tabToApi({
+            mconfig: v.duplicated.newMconfig,
+            modelFields: v.model.fields
+          }),
+          query: this.queriesService.tabToApi({ query: v.duplicated.newQuery })
+        })
+      )
+    );
   }
 }

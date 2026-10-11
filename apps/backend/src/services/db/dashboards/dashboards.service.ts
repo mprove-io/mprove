@@ -352,11 +352,11 @@ export class DashboardsService {
                 eq(dashboardsTable.dashboardId, v.dashboardId)
               )
             })
-            .then(dashboardEnt =>
-              isUndefined(dashboardEnt)
+            .then(x =>
+              isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_DASHBOARD_DOES_NOT_EXIST' })
                 : this.tabService.dashboardEntToTabResult({
-                    dashboardEnt: dashboardEnt
+                    dashboardEnt: x
                   })
             )
       ),
@@ -575,10 +575,10 @@ export class DashboardsService {
                 )
               )
             )
-            .then(dashboardEnts =>
-              Result.sequence(dashboardEnts, dashboardEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.dashboardEntToTabResult({
-                  dashboardEnt: dashboardEnt as DashboardEnt
+                  dashboardEnt: x as DashboardEnt
                 })
               )
             )

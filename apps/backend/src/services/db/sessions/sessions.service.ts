@@ -142,10 +142,10 @@ export class SessionsService {
       .findFirst({
         where: eq(sessionsTable.sessionId, sessionId)
       })
-      .then((sessionEnt: SessionEnt) =>
-        isUndefined(sessionEnt)
+      .then((x: SessionEnt) =>
+        isUndefined(x)
           ? Result.fail({ code: 'BACKEND_SESSION_NOT_FOUND' })
-          : this.tabService.sessionEntToTabResult({ sessionEnt: sessionEnt })
+          : this.tabService.sessionEntToTabResult({ sessionEnt: x })
       );
   }
 
@@ -339,12 +339,12 @@ export class SessionsService {
           })
         : [];
 
-    let ocSessionTabs = ocSessionEnts.map(e =>
-      this.tabService.ocSessionEntToTab(e)
+    let ocSessionTabs = ocSessionEnts.map(x =>
+      this.tabService.ocSessionEntToTab(x)
     );
 
-    return allEnts.map(ent => {
-      let session = this.tabService.sessionEntToTab(ent);
+    return allEnts.map(x => {
+      let session = this.tabService.sessionEntToTab(x);
       let ocSession = ocSessionTabs.find(
         o => o.sessionId === session.sessionId
       );

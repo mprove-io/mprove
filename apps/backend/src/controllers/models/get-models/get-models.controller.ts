@@ -141,9 +141,9 @@ export class GetModelsController {
 
           return this.db.drizzle.query.modelsTable
             .findMany({ where: and(...where) })
-            .then(modelEnts =>
-              Result.sequence(modelEnts, modelEnt =>
-                this.tabService.modelEntToTabResult({ modelEnt: modelEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.modelEntToTabResult({ modelEnt: x })
               )
             );
         }

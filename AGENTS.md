@@ -708,6 +708,24 @@ For database entities and their converted Tab values:
   use explicit prefixes such as `apiProject` and `baseProject` to distinguish
   them from Tabs.
 
+Exception: in query promise callbacks that immediately convert entities with
+`...EntToTab` or `...EntToTabResult`, name the entity collection `xs` and each
+entity `x`. Use `x` for single-entity `.then(...)` conversion callbacks too.
+This exception includes collection conversion callbacks passed to `map` or
+`Result.sequence`, and missing-entity guards within these conversion callbacks.
+Keep entity-specific argument keys such as `queryEnt` unchanged. Entities
+retained for other operations still follow the naming rules above.
+
+```ts
+.then(xs =>
+  Result.sequence(xs, x =>
+    this.tabService.modelEntToTabResult({
+      modelEnt: x
+    })
+  )
+)
+```
+
 ```ts
 let projectEnt: ProjectEnt;
 
@@ -1025,7 +1043,8 @@ by a Tab binding.
 
 Use the query promise's `.then(...)` for conversion, following "Result callback
 return types" and the promise-chain exception under "Explicit variable types".
-The outer callback follows "Async promise chains".
+The outer callback follows "Async promise chains". Conversion callback names
+follow the exception under "Entity and Tab variable names".
 
 ```ts
 Result.bind(
@@ -1035,10 +1054,10 @@ Result.bind(
       .findFirst({
         where: eq(avatarsTable.userId, v.avatarUserId)
       })
-      .then((avatarEnt: AvatarEnt) =>
-        isUndefined(avatarEnt)
+      .then((x: AvatarEnt) =>
+        isUndefined(x)
           ? Result.succeed(undefined)
-          : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+          : this.tabService.avatarEntToTabResult({ avatarEnt: x })
       )
 );
 ```

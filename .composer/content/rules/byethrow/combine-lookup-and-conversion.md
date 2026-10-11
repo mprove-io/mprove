@@ -7,7 +7,8 @@ by a Tab binding.
 
 Use the query promise's `.then(...)` for conversion, following "Result callback
 return types" and the promise-chain exception under "Explicit variable types".
-The outer callback follows "Async promise chains".
+The outer callback follows "Async promise chains". Conversion callback names
+follow the exception under "Entity and Tab variable names".
 
 ```ts
 Result.bind(
@@ -17,10 +18,10 @@ Result.bind(
       .findFirst({
         where: eq(avatarsTable.userId, v.avatarUserId)
       })
-      .then((avatarEnt: AvatarEnt) =>
-        isUndefined(avatarEnt)
+      .then((x: AvatarEnt) =>
+        isUndefined(x)
           ? Result.succeed(undefined)
-          : this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+          : this.tabService.avatarEntToTabResult({ avatarEnt: x })
       )
 );
 ```

@@ -187,10 +187,10 @@ export class RefreshCachedColumnController {
                 )
               )
             })
-            .then(connectionEnts =>
-              Result.sequence(connectionEnts, connectionEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.connectionEntToTabResult({
-                  connectionEnt: connectionEnt
+                  connectionEnt: x
                 })
               )
             )
@@ -284,11 +284,11 @@ export class RefreshCachedColumnController {
                 })
               )
             })
-            .then(cachedColumnEnt =>
-              isUndefined(cachedColumnEnt)
+            .then(x =>
+              isUndefined(x)
                 ? Result.succeed(undefined)
                 : this.tabService.cachedColumnEntToTabResult({
-                    cachedColumnEnt: cachedColumnEnt
+                    cachedColumnEnt: x
                   })
             )
       ),

@@ -148,10 +148,10 @@ export class GetBranchesListController {
                 .findMany({
                   where: inArray(ocSessionsTable.sessionId, v.sessionIds)
                 })
-                .then(ocSessionEnts =>
-                  Result.sequence(ocSessionEnts, ocSessionEnt =>
+                .then(xs =>
+                  Result.sequence(xs, x =>
                     this.tabService.ocSessionEntToTabResult({
-                      ocSessionEnt: ocSessionEnt
+                      ocSessionEnt: x
                     })
                   )
                 )
@@ -160,9 +160,9 @@ export class GetBranchesListController {
       Result.bind(
         'sessions',
         (v): Result.Result<SessionTab[], SessionEntToTabResultError> =>
-          Result.sequence(v.sessionEnts, sessionEnt =>
+          Result.sequence(v.sessionEnts, x =>
             this.tabService.sessionEntToTabResult({
-              sessionEnt: sessionEnt
+              sessionEnt: x
             })
           )
       ),

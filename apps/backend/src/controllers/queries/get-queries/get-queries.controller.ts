@@ -1,15 +1,22 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import pIteration from 'p-iteration';
 import {
   ToBackendGetQueriesRequestDto,
   ToBackendGetQueriesResponseDto
 } from '#backend/controllers/queries/get-queries/get-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BranchTab,
+  BridgeTab,
+  MconfigTab,
+  MemberTab,
+  QueryTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
@@ -22,11 +29,16 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ParentService } from '#backend/services/parent/parent.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetQueriesCheckExistResultError } from '#common/types/backend/function-errors/get-queries-check-exist-result-error';
+import type { GetQueriesCheckExistSkipSqlDataResultError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-result-error';
+import type { MconfigEntToTabResultError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-result-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueriesOutput } from '#common/types/backend/routes/queries/get-queries/get-queries-output';
-
-const { forEachSeries } = pIteration;
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -73,92 +85,145 @@ export class GetQueriesController {
   async getQueries(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetQueriesRequestDto
-  ) {
-    let { projectId, repoId, branchId, envId, mconfigIds, skipData } =
-      body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let mconfigs = await this.db.drizzle.query.mconfigsTable
-      .findMany({
-        where: and(
-          eq(mconfigsTable.structId, bridge.structId),
-          inArray(mconfigsTable.mconfigId, mconfigIds)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
-
-    let uniqueParentIds = [...new Set(mconfigs.map(x => x.parentId))];
-
-    await forEachSeries(uniqueParentIds, async parentId => {
-      let mconfig = mconfigs.find(x => x.parentId === parentId); // any mconfig
-
-      await this.parentService.checkParentAccess({
-        parentId: mconfig.parentId,
-        parentType: mconfig.parentType,
-        modelId: mconfig.modelId, // for chart as parent
-        user: user,
-        userMember: userMember,
-        structId: bridge.structId,
-        projectId: projectId
-      });
-    });
-
-    let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
-
-    let queries =
-      skipData === true
-        ? await this.queriesService.getQueriesCheckExistSkipSqlData({
-            queryIds: queryIds,
-            projectId: projectId
+  ): Promise<BackendResultForOperation<'getQueries'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        mconfigIds: body.input.mconfigIds,
+        skipData: body.input.skipData,
+        user: user
+      }),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
           })
-        : await this.queriesService.getQueriesCheckExist({
-            queryIds: queryIds,
-            projectId: projectId
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.andThrough(v =>
+        this.structsService.getStructCheckExistsResult({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'mconfigs',
+        (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabResultError> =>
+          this.db.drizzle.query.mconfigsTable
+            .findMany({
+              where: and(
+                eq(mconfigsTable.structId, v.bridge.structId),
+                inArray(mconfigsTable.mconfigId, v.mconfigIds)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.mconfigEntToTabResult({
+                  mconfigEnt: x
+                })
+              )
+            )
+      ),
+      Result.bind(
+        'uniqueParentIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([
+            ...new Set(v.mconfigs.map(mconfig => mconfig.parentId))
+          ])
+      ),
+      Result.andThrough(v =>
+        Result.sequence(v.uniqueParentIds, parentId => {
+          let mconfig: MconfigTab = v.mconfigs.find(
+            mconfig => mconfig.parentId === parentId
+          );
+
+          return this.parentService.checkParentAccessResult({
+            parentId: mconfig.parentId,
+            parentType: mconfig.parentType,
+            modelId: mconfig.modelId,
+            user: v.user,
+            userMember: v.userMember,
+            structId: v.bridge.structId,
+            projectId: v.projectId
           });
-
-    let payload: ToBackendGetQueriesOutput = {
-      queries: queries.map(x => this.queriesService.tabToApi({ query: x }))
-    };
-
-    return payload;
+        })
+      ),
+      Result.bind(
+        'queryIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([
+            ...new Set(v.mconfigs.map(mconfig => mconfig.queryId))
+          ])
+      ),
+      Result.bind(
+        'queries',
+        (
+          v
+        ): Result.ResultAsync<
+          QueryTab[],
+          | GetQueriesCheckExistResultError
+          | GetQueriesCheckExistSkipSqlDataResultError
+        > =>
+          v.skipData === true
+            ? this.queriesService.getQueriesCheckExistSkipSqlDataResult({
+                queryIds: v.queryIds,
+                projectId: v.projectId
+              })
+            : this.queriesService.getQueriesCheckExistResult({
+                queryIds: v.queryIds,
+                projectId: v.projectId
+              })
+      ),
+      Result.map(
+        (v): ToBackendGetQueriesOutput => ({
+          queries: v.queries.map(query =>
+            this.queriesService.tabToApi({ query: query })
+          )
+        })
+      )
+    );
   }
 }

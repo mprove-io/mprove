@@ -1,11 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  ChartTab,
+  DashboardTab,
   MemberTab,
   ModelTab,
+  ReportTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
@@ -15,7 +19,11 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckParentAccessResultError } from '#common/types/backend/function-errors/check-parent-access-result-error';
+import type { GetChartCheckExistsResultError } from '#common/types/backend/function-errors/get-chart-check-exists-result-error';
+import type { GetDashboardCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-result-error';
+import type { GetModelCheckExistsResultError } from '#common/types/backend/function-errors/get-model-check-exists-result-error';
+import type { GetReportCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-result-error';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
 @Injectable()
@@ -42,7 +50,7 @@ export class ParentService {
     suggestFieldId?: string;
     suggestRowId?: string;
     suggestModel?: ModelTab;
-  }) {
+  }): Promise<void> {
     let {
       user,
       userMember,
@@ -57,98 +65,180 @@ export class ParentService {
       suggestModel
     } = item;
 
-    if (
-      parentType === 'Dashboard' ||
-      parentType === 'ChartDialogDashboard' ||
-      parentType === 'SuggestDimensionDashboard'
-    ) {
-      let dashboard =
-        await this.dashboardsService.getDashboardCheckExistsAndAccess({
-          structId: structId,
-          dashboardId: parentId,
-          userMember: userMember,
-          user: user
-        });
-
-      if (isCheckSuggest === true) {
-        let field = dashboard.fields.find(
-          field =>
-            field.suggestModelDimension === `${modelId}.${suggestFieldId}`
-        );
-
-        if (isUndefined(field)) {
-          throw new ServerError({
-            message: 'BACKEND_SUGGEST_FIELD_NOT_FOUND'
-          });
-        }
-      }
-    } else if (
-      parentType === 'Report' ||
-      parentType === 'ChartDialogReport' ||
-      parentType === 'SuggestDimensionReport'
-    ) {
-      let report = await this.reportsService.getReportCheckExistsAndAccess({
+    let result: Result.Result<void, CheckParentAccessResultError> =
+      await this.checkParentAccessResult({
+        user: user,
+        userMember: userMember,
+        structId: structId,
         projectId: projectId,
-        structId: structId,
-        reportId: parentId,
-        userMember: userMember,
-        user: user
+        parentType: parentType,
+        parentId: parentId,
+        modelId: modelId,
+        isCheckSuggest: isCheckSuggest,
+        suggestFieldId: suggestFieldId,
+        suggestRowId: suggestRowId,
+        suggestModel: suggestModel
       });
 
-      if (isCheckSuggest === true) {
-        if (isDefined(suggestRowId)) {
-          let row = report.rows.find(x => x.rowId === suggestRowId);
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+  }
 
-          let rowParameters = row.parametersFiltersWithExcludedTime.map(x =>
-            suggestModel.fields.find(y => y.id === x.fieldId)
-          );
-
-          let parameter = rowParameters.find(
-            x => x.suggestModelDimension === `${modelId}.${suggestFieldId}`
-          );
-
-          if (isUndefined(parameter)) {
-            throw new ServerError({
-              message: 'BACKEND_SUGGEST_FIELD_NOT_FOUND'
-            });
-          }
-        } else {
-          let field = report.fields.find(
-            field =>
-              field.suggestModelDimension === `${modelId}.${suggestFieldId}`
-          );
-
-          if (isUndefined(field)) {
-            throw new ServerError({
-              message: 'BACKEND_SUGGEST_FIELD_NOT_FOUND'
-            });
+  async checkParentAccessResult(item: {
+    user: UserTab;
+    userMember: MemberTab;
+    structId: string;
+    projectId: string;
+    parentType: MconfigParentType;
+    parentId: string;
+    modelId?: string;
+    isCheckSuggest?: boolean;
+    suggestFieldId?: string;
+    suggestRowId?: string;
+    suggestModel?: ModelTab;
+  }): Result.ResultAsync<void, CheckParentAccessResultError> {
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        isDashboard:
+          item.parentType === 'Dashboard' ||
+          item.parentType === 'ChartDialogDashboard' ||
+          item.parentType === 'SuggestDimensionDashboard',
+        isReport:
+          item.parentType === 'Report' ||
+          item.parentType === 'ChartDialogReport' ||
+          item.parentType === 'SuggestDimensionReport'
+      }),
+      Result.bind(
+        'dashboard',
+        async (
+          v
+        ): Result.ResultAsync<
+          DashboardTab,
+          GetDashboardCheckExistsAndAccessResultError
+        > =>
+          v.isDashboard
+            ? this.dashboardsService.getDashboardCheckExistsAndAccessResult({
+                structId: v.structId,
+                dashboardId: v.parentId,
+                userMember: v.userMember,
+                user: v.user
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.andThrough(v => {
+        if (v.isDashboard && v.isCheckSuggest === true) {
+          if (
+            v.dashboard.fields.findIndex(
+              field =>
+                field.suggestModelDimension ===
+                `${v.modelId}.${v.suggestFieldId}`
+            ) < 0
+          ) {
+            return Result.fail({ code: 'BACKEND_SUGGEST_FIELD_NOT_FOUND' });
           }
         }
-      }
-    } else if (parentType === 'Chart') {
-      let chart = await this.chartsService.getChartCheckExists({
-        structId: structId,
-        chartId: parentId,
-        userMember: userMember,
-        user: user
-      });
 
-      let model = await this.modelsService.getModelCheckExists({
-        structId: structId,
-        modelId: chart.modelId
-      });
+        return Result.succeed();
+      }),
+      Result.bind(
+        'report',
+        async (
+          v
+        ): Result.ResultAsync<
+          ReportTab,
+          GetReportCheckExistsAndAccessResultError
+        > =>
+          v.isReport
+            ? this.reportsService.getReportCheckExistsAndAccessResult({
+                projectId: v.projectId,
+                structId: v.structId,
+                reportId: v.parentId,
+                userMember: v.userMember,
+                user: v.user
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.andThrough(v => {
+        if (v.isReport && v.isCheckSuggest === true) {
+          if (isDefined(v.suggestRowId)) {
+            let row: ReportTab['rows'][number] = v.report.rows.find(
+              row => row.rowId === v.suggestRowId
+            );
 
-      this.chartsService.checkChartOrModelAccess({
-        chart: chart,
-        model: model,
-        userMember: userMember
-      });
-    } else {
-      await this.modelsService.getModelCheckExistsAndAccess({
-        structId: structId,
-        modelId: modelId,
-        userMember: userMember
-      });
-    }
+            let rowParameters: ModelTab['fields'] =
+              row.parametersFiltersWithExcludedTime.map(filter =>
+                v.suggestModel.fields.find(field => field.id === filter.fieldId)
+              );
+
+            if (
+              rowParameters.findIndex(
+                field =>
+                  field.suggestModelDimension ===
+                  `${v.modelId}.${v.suggestFieldId}`
+              ) < 0
+            ) {
+              return Result.fail({ code: 'BACKEND_SUGGEST_FIELD_NOT_FOUND' });
+            }
+          } else if (
+            v.report.fields.findIndex(
+              field =>
+                field.suggestModelDimension ===
+                `${v.modelId}.${v.suggestFieldId}`
+            ) < 0
+          ) {
+            return Result.fail({ code: 'BACKEND_SUGGEST_FIELD_NOT_FOUND' });
+          }
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind(
+        'chart',
+        async (
+          v
+        ): Result.ResultAsync<ChartTab, GetChartCheckExistsResultError> =>
+          v.parentType === 'Chart'
+            ? this.chartsService.getChartCheckExistsResult({
+                structId: v.structId,
+                chartId: v.parentId,
+                userMember: v.userMember,
+                user: v.user
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.bind(
+        'chartModel',
+        async (
+          v
+        ): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> =>
+          v.parentType === 'Chart'
+            ? this.modelsService.getModelCheckExistsResult({
+                structId: v.structId,
+                modelId: v.chart.modelId
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.andThrough(v =>
+        v.parentType === 'Chart'
+          ? this.chartsService.checkChartOrModelAccessResult({
+              chart: v.chart,
+              model: v.chartModel,
+              userMember: v.userMember
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.isDashboard || v.isReport || v.parentType === 'Chart'
+          ? Result.succeed()
+          : this.modelsService.getModelCheckExistsAndAccessResult({
+              structId: v.structId,
+              modelId: v.modelId,
+              userMember: v.userMember
+            })
+      ),
+      Result.map((v): void => undefined)
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
@@ -9,7 +10,7 @@ import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import {
-  QueryEnt,
+  type QueryEnt,
   queriesTable
 } from '#backend/drizzle/postgres/schema/queries';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
@@ -22,6 +23,11 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetQueriesCheckExistResultError } from '#common/types/backend/function-errors/get-queries-check-exist-result-error';
+import type { GetQueriesCheckExistSkipSqlDataResultError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-result-error';
+import type { GetQueryCheckExistsResultError } from '#common/types/backend/function-errors/get-query-check-exists-result-error';
+import type { GetQueryCheckExistsSkipDataResultError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-result-error';
+import type { QueryEntToTabResultError } from '#common/types/backend/function-errors/query-ent-to-tab-result-error';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
 
@@ -123,169 +129,287 @@ export class QueriesService {
   async getQueryCheckExistsSkipData(item: {
     queryId: string;
     projectId: string;
-  }) {
-    let { queryId: queryId, projectId: projectId } = item;
+  }): Promise<QueryTab> {
+    let { queryId, projectId } = item;
 
-    let queries = await this.db.drizzle
-      .select({
-        keyTag: queriesTable.keyTag,
-        projectId: queriesTable.projectId,
-        envId: queriesTable.envId,
-        connectionId: queriesTable.connectionId,
-        connectionType: queriesTable.connectionType,
-        queryId: queriesTable.queryId,
-        reportId: queriesTable.reportId,
-        reportStructId: queriesTable.reportStructId,
-        status: queriesTable.status,
-        lastRunBy: queriesTable.lastRunBy,
-        lastRunTs: queriesTable.lastRunTs,
-        lastCancelTs: queriesTable.lastCancelTs,
-        lastCompleteTs: queriesTable.lastCompleteTs,
-        lastCompleteDuration: queriesTable.lastCompleteDuration,
-        lastErrorTs: queriesTable.lastErrorTs,
-        queryJobId: queriesTable.queryJobId,
-        bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
-        bigqueryConsecutiveErrorsGetJob:
-          queriesTable.bigqueryConsecutiveErrorsGetJob,
-        bigqueryConsecutiveErrorsGetResults:
-          queriesTable.bigqueryConsecutiveErrorsGetResults,
-        st: queriesTable.st,
-        // lt: {},
-        serverTs: queriesTable.serverTs
-      })
-      .from(queriesTable)
-      .where(
-        and(
-          eq(queriesTable.queryId, queryId),
-          eq(queriesTable.projectId, projectId)
-        )
-      )
-      .then(xs => xs.map(x => this.tabService.queryEntToTab(x as QueryEnt)));
+    let result: Result.Result<
+      QueryTab,
+      GetQueryCheckExistsSkipDataResultError
+    > = await this.getQueryCheckExistsSkipDataResult({
+      queryId: queryId,
+      projectId: projectId
+    });
 
-    let query = queries.length < 0 ? undefined : queries[0];
-
-    if (isUndefined(query)) {
-      throw new ServerError({
-        message: 'BACKEND_QUERY_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
+
+    let query: QueryTab = result.value;
 
     return query;
   }
 
-  async getQueryCheckExists(item: { queryId: string; projectId: string }) {
+  async getQueryCheckExistsSkipDataResult(item: {
+    queryId: string;
+    projectId: string;
+  }): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'queries',
+        (v): Result.ResultAsync<QueryTab[], QueryEntToTabResultError> =>
+          this.db.drizzle
+            .select({
+              keyTag: queriesTable.keyTag,
+              projectId: queriesTable.projectId,
+              envId: queriesTable.envId,
+              connectionId: queriesTable.connectionId,
+              connectionType: queriesTable.connectionType,
+              queryId: queriesTable.queryId,
+              reportId: queriesTable.reportId,
+              reportStructId: queriesTable.reportStructId,
+              status: queriesTable.status,
+              lastRunBy: queriesTable.lastRunBy,
+              lastRunTs: queriesTable.lastRunTs,
+              lastCancelTs: queriesTable.lastCancelTs,
+              lastCompleteTs: queriesTable.lastCompleteTs,
+              lastCompleteDuration: queriesTable.lastCompleteDuration,
+              lastErrorTs: queriesTable.lastErrorTs,
+              queryJobId: queriesTable.queryJobId,
+              bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
+              bigqueryConsecutiveErrorsGetJob:
+                queriesTable.bigqueryConsecutiveErrorsGetJob,
+              bigqueryConsecutiveErrorsGetResults:
+                queriesTable.bigqueryConsecutiveErrorsGetResults,
+              st: queriesTable.st,
+              // lt: {},
+              serverTs: queriesTable.serverTs
+            })
+            .from(queriesTable)
+            .where(
+              and(
+                eq(queriesTable.queryId, v.queryId),
+                eq(queriesTable.projectId, v.projectId)
+              )
+            )
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.queryEntToTabResult({
+                  queryEnt: x as QueryEnt
+                })
+              )
+            )
+      ),
+      Result.andThen(
+        (v): Result.Result<QueryTab, GetQueryCheckExistsSkipDataResultError> =>
+          isUndefined(v.queries[0])
+            ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
+            : Result.succeed(v.queries[0])
+      )
+    );
+  }
+
+  async getQueryCheckExists(item: {
+    queryId: string;
+    projectId: string;
+  }): Promise<QueryTab> {
     let { queryId, projectId } = item;
 
-    let query = await this.db.drizzle.query.queriesTable
+    let result: Result.Result<QueryTab, GetQueryCheckExistsResultError> =
+      await this.getQueryCheckExistsResult({
+        queryId: queryId,
+        projectId: projectId
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let query: QueryTab = result.value;
+
+    return query;
+  }
+
+  async getQueryCheckExistsResult(item: {
+    queryId: string;
+    projectId: string;
+  }): Result.ResultAsync<QueryTab, GetQueryCheckExistsResultError> {
+    let { queryId, projectId } = item;
+
+    return this.db.drizzle.query.queriesTable
       .findFirst({
         where: and(
           eq(queriesTable.queryId, queryId),
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.tabService.queryEntToTab(x));
-
-    if (isUndefined(query)) {
-      throw new ServerError({
-        message: 'BACKEND_QUERY_DOES_NOT_EXIST'
-      });
-    }
-
-    return query;
+      .then(x =>
+        isUndefined(x)
+          ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
+          : this.tabService.queryEntToTabResult({ queryEnt: x })
+      );
   }
 
   async getQueriesCheckExistSkipSqlData(item: {
     queryIds: string[];
     projectId: string;
-  }) {
+  }): Promise<QueryTab[]> {
     let { queryIds, projectId } = item;
 
-    let queries = await this.db.drizzle
-      .select({
-        keyTag: queriesTable.keyTag,
-        projectId: queriesTable.projectId,
-        envId: queriesTable.envId,
-        connectionId: queriesTable.connectionId,
-        connectionType: queriesTable.connectionType,
-        queryId: queriesTable.queryId,
-        reportId: queriesTable.reportId,
-        reportStructId: queriesTable.reportStructId,
-        status: queriesTable.status,
-        lastRunBy: queriesTable.lastRunBy,
-        lastRunTs: queriesTable.lastRunTs,
-        lastCancelTs: queriesTable.lastCancelTs,
-        lastCompleteTs: queriesTable.lastCompleteTs,
-        lastCompleteDuration: queriesTable.lastCompleteDuration,
-        lastErrorTs: queriesTable.lastErrorTs,
-        queryJobId: queriesTable.queryJobId,
-        bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
-        bigqueryConsecutiveErrorsGetJob:
-          queriesTable.bigqueryConsecutiveErrorsGetJob,
-        bigqueryConsecutiveErrorsGetResults:
-          queriesTable.bigqueryConsecutiveErrorsGetResults,
-        st: queriesTable.st,
-        // lt: {},
-        serverTs: queriesTable.serverTs
-      })
-      .from(queriesTable)
-      .where(
-        and(
-          inArray(queriesTable.queryId, queryIds),
-          eq(queriesTable.projectId, projectId)
-        )
-      )
-      .then(xs => xs.map(x => this.tabService.queryEntToTab(x as QueryEnt)));
-
-    let notFoundQueryIds: string[] = [];
-
-    queryIds.forEach(x => {
-      if (queries.map(query => query.queryId).indexOf(x) < -1) {
-        notFoundQueryIds.push(x);
-      }
+    let result: Result.Result<
+      QueryTab[],
+      GetQueriesCheckExistSkipSqlDataResultError
+    > = await this.getQueriesCheckExistSkipSqlDataResult({
+      queryIds: queryIds,
+      projectId: projectId
     });
 
-    if (notFoundQueryIds.length > 0) {
+    if (Result.isFailure(result)) {
       throw new ServerError({
-        message: 'BACKEND_QUERIES_DO_NOT_EXIST',
-        displayData: {
-          notFoundQueryIds: notFoundQueryIds
-        }
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined
       });
     }
+
+    let queries: QueryTab[] = result.value;
 
     return queries;
   }
 
-  async getQueriesCheckExist(item: { queryIds: string[]; projectId: string }) {
+  async getQueriesCheckExistSkipSqlDataResult(item: {
+    queryIds: string[];
+    projectId: string;
+  }): Result.ResultAsync<
+    QueryTab[],
+    GetQueriesCheckExistSkipSqlDataResultError
+  > {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'queries',
+        (v): Result.ResultAsync<QueryTab[], QueryEntToTabResultError> =>
+          this.db.drizzle
+            .select({
+              keyTag: queriesTable.keyTag,
+              projectId: queriesTable.projectId,
+              envId: queriesTable.envId,
+              connectionId: queriesTable.connectionId,
+              connectionType: queriesTable.connectionType,
+              queryId: queriesTable.queryId,
+              reportId: queriesTable.reportId,
+              reportStructId: queriesTable.reportStructId,
+              status: queriesTable.status,
+              lastRunBy: queriesTable.lastRunBy,
+              lastRunTs: queriesTable.lastRunTs,
+              lastCancelTs: queriesTable.lastCancelTs,
+              lastCompleteTs: queriesTable.lastCompleteTs,
+              lastCompleteDuration: queriesTable.lastCompleteDuration,
+              lastErrorTs: queriesTable.lastErrorTs,
+              queryJobId: queriesTable.queryJobId,
+              bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
+              bigqueryConsecutiveErrorsGetJob:
+                queriesTable.bigqueryConsecutiveErrorsGetJob,
+              bigqueryConsecutiveErrorsGetResults:
+                queriesTable.bigqueryConsecutiveErrorsGetResults,
+              st: queriesTable.st,
+              // lt: {},
+              serverTs: queriesTable.serverTs
+            })
+            .from(queriesTable)
+            .where(
+              and(
+                inArray(queriesTable.queryId, v.queryIds),
+                eq(queriesTable.projectId, v.projectId)
+              )
+            )
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.queryEntToTabResult({
+                  queryEnt: x as QueryEnt
+                })
+              )
+            )
+      ),
+      Result.andThrough(v => {
+        // Preserve the existing missing-ID predicate during signature migration.
+        let notFoundQueryIds: string[] = v.queryIds.filter(
+          queryId => v.queries.map(query => query.queryId).indexOf(queryId) < -1
+        );
+
+        return notFoundQueryIds.length > 0
+          ? Result.fail({
+              code: 'BACKEND_QUERIES_DO_NOT_EXIST',
+              displayData: { notFoundQueryIds: notFoundQueryIds }
+            })
+          : Result.succeed();
+      }),
+      Result.map((v): QueryTab[] => v.queries)
+    );
+  }
+
+  async getQueriesCheckExist(item: {
+    queryIds: string[];
+    projectId: string;
+  }): Promise<QueryTab[]> {
     let { queryIds, projectId } = item;
 
-    let queries = await this.db.drizzle.query.queriesTable
-      .findMany({
-        where: and(
-          inArray(queriesTable.queryId, queryIds),
-          eq(queriesTable.projectId, projectId)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
+    let result: Result.Result<QueryTab[], GetQueriesCheckExistResultError> =
+      await this.getQueriesCheckExistResult({
+        queryIds: queryIds,
+        projectId: projectId
+      });
 
-    let notFoundQueryIds: string[] = [];
-
-    queryIds.forEach(x => {
-      if (queries.map(query => query.queryId).indexOf(x) < -1) {
-        notFoundQueryIds.push(x);
-      }
-    });
-
-    if (notFoundQueryIds.length > 0) {
+    if (Result.isFailure(result)) {
       throw new ServerError({
-        message: 'BACKEND_QUERIES_DO_NOT_EXIST',
-        displayData: {
-          notFoundQueryIds: notFoundQueryIds
-        }
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined
       });
     }
 
+    let queries: QueryTab[] = result.value;
+
     return queries;
+  }
+
+  async getQueriesCheckExistResult(item: {
+    queryIds: string[];
+    projectId: string;
+  }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistResultError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'queries',
+        (v): Result.ResultAsync<QueryTab[], QueryEntToTabResultError> =>
+          this.db.drizzle.query.queriesTable
+            .findMany({
+              where: and(
+                inArray(queriesTable.queryId, v.queryIds),
+                eq(queriesTable.projectId, v.projectId)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.queryEntToTabResult({ queryEnt: x })
+              )
+            )
+      ),
+      Result.andThrough(v => {
+        // Preserve the existing missing-ID predicate during signature migration.
+        let notFoundQueryIds: string[] = v.queryIds.filter(
+          queryId => v.queries.map(query => query.queryId).indexOf(queryId) < -1
+        );
+
+        return notFoundQueryIds.length > 0
+          ? Result.fail({
+              code: 'BACKEND_QUERIES_DO_NOT_EXIST',
+              displayData: { notFoundQueryIds: notFoundQueryIds }
+            })
+          : Result.succeed();
+      }),
+      Result.map((v): QueryTab[] => v.queries)
+    );
   }
 
   async removeQueries() {

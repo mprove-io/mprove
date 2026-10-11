@@ -15,6 +15,24 @@ For database entities and their converted Tab values:
   use explicit prefixes such as `apiProject` and `baseProject` to distinguish
   them from Tabs.
 
+Exception: in query promise callbacks that immediately convert entities with
+`...EntToTab` or `...EntToTabResult`, name the entity collection `xs` and each
+entity `x`. Use `x` for single-entity `.then(...)` conversion callbacks too.
+This exception includes collection conversion callbacks passed to `map` or
+`Result.sequence`, and missing-entity guards within these conversion callbacks.
+Keep entity-specific argument keys such as `queryEnt` unchanged. Entities
+retained for other operations still follow the naming rules above.
+
+```ts
+.then(xs =>
+  Result.sequence(xs, x =>
+    this.tabService.modelEntToTabResult({
+      modelEnt: x
+    })
+  )
+)
+```
+
 ```ts
 let projectEnt: ProjectEnt;
 

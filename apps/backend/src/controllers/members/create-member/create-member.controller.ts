@@ -189,10 +189,10 @@ export class CreateMemberController {
         (v): Result.ResultAsync<UserTab, UserEntToTabResultError> =>
           this.db.drizzle.query.usersTable
             .findFirst({ where: eq(usersTable.emailHash, v.emailHash) })
-            .then((userEnt: UserEnt) =>
-              isUndefined(userEnt)
+            .then((x: UserEnt) =>
+              isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.userEntToTabResult({ userEnt: userEnt })
+                : this.tabService.userEntToTabResult({ userEnt: x })
             )
       ),
       Result.bind(
@@ -415,10 +415,10 @@ export class CreateMemberController {
             })
             .from(avatarsTable)
             .where(eq(avatarsTable.userId, v.newMember.memberId))
-            .then(avatarEnts =>
-              Result.sequence(avatarEnts, avatarEnt =>
+            .then(xs =>
+              Result.sequence(xs, x =>
                 this.tabService.avatarEntToTabResult({
-                  avatarEnt: avatarEnt as AvatarEnt
+                  avatarEnt: x as AvatarEnt
                 })
               )
             )

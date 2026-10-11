@@ -206,10 +206,10 @@ export class PushRepoController {
                 eq(branchesTable.branchId, v.branchId)
               )
             })
-            .then((branchEnt: BranchEnt) =>
-              isUndefined(branchEnt)
+            .then((x: BranchEnt) =>
+              isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.branchEntToTabResult({ branchEnt: branchEnt })
+                : this.tabService.branchEntToTabResult({ branchEnt: x })
             )
       ),
       Result.bind(
@@ -223,9 +223,9 @@ export class PushRepoController {
                 eq(bridgesTable.branchId, v.branch.branchId)
               )
             })
-            .then(bridgeEnts =>
-              Result.sequence(bridgeEnts, bridgeEnt =>
-                this.tabService.bridgeEntToTabResult({ bridgeEnt: bridgeEnt })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.bridgeEntToTabResult({ bridgeEnt: x })
               )
             )
       ),

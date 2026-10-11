@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
@@ -24,6 +25,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetMconfigCheckExistsResultError } from '#common/types/backend/function-errors/get-mconfig-check-exists-result-error';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
@@ -122,25 +124,45 @@ export class MconfigsService {
     return mconfig;
   }
 
-  async getMconfigCheckExists(item: { mconfigId: string; structId: string }) {
+  async getMconfigCheckExists(item: {
+    mconfigId: string;
+    structId: string;
+  }): Promise<MconfigTab> {
     let { mconfigId, structId } = item;
 
-    let mconfig = await this.db.drizzle.query.mconfigsTable
+    let result: Result.Result<MconfigTab, GetMconfigCheckExistsResultError> =
+      await this.getMconfigCheckExistsResult({
+        mconfigId: mconfigId,
+        structId: structId
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let mconfig: MconfigTab = result.value;
+
+    return mconfig;
+  }
+
+  async getMconfigCheckExistsResult(item: {
+    mconfigId: string;
+    structId: string;
+  }): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsResultError> {
+    let { mconfigId, structId } = item;
+
+    return this.db.drizzle.query.mconfigsTable
       .findFirst({
         where: and(
           eq(mconfigsTable.mconfigId, mconfigId),
           eq(mconfigsTable.structId, structId)
         )
       })
-      .then(x => this.tabService.mconfigEntToTab(x));
-
-    if (isUndefined(mconfig)) {
-      throw new ServerError({
-        message: 'BACKEND_MCONFIG_DOES_NOT_EXIST'
-      });
-    }
-
-    return mconfig;
+      .then(x =>
+        isUndefined(x)
+          ? Result.fail({ code: 'BACKEND_MCONFIG_DOES_NOT_EXIST' })
+          : this.tabService.mconfigEntToTabResult({ mconfigEnt: x })
+      );
   }
 
   async prepStoreMconfigQuery(item: {

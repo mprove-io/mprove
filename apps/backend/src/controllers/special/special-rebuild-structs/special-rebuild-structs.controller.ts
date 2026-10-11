@@ -125,10 +125,10 @@ export class SpecialRebuildStructsController {
             ? Result.succeed([])
             : this.db.drizzle.query.membersTable
                 .findMany({ where: inArray(membersTable.memberId, v.userIds) })
-                .then(memberEnts =>
-                  Result.sequence(memberEnts, memberEnt =>
+                .then(xs =>
+                  Result.sequence(xs, x =>
                     this.tabService.memberEntToTabResult({
-                      memberEnt: memberEnt
+                      memberEnt: x
                     })
                   )
                 )
@@ -146,9 +146,9 @@ export class SpecialRebuildStructsController {
                 where: inArray(projectsTable.projectId, v.projectIds)
               })
             : this.db.drizzle.select().from(projectsTable)
-          ).then(projectEnts =>
-            Result.sequence(projectEnts, projectEnt =>
-              this.tabService.projectEntToTabResult({ projectEnt: projectEnt })
+          ).then(xs =>
+            Result.sequence(xs, x =>
+              this.tabService.projectEntToTabResult({ projectEnt: x })
             )
           )
       ),
