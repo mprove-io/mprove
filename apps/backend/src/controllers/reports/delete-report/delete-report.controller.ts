@@ -9,19 +9,31 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import pIteration from 'p-iteration';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteReportRequestDto,
   ToBackendDeleteReportResponseDto
 } from '#backend/controllers/reports/delete-report/delete-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import type {
+  BranchTab,
+  BridgeTab,
+  MemberTab,
+  ProjectTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  type BridgeEnt,
+  bridgesTable
+} from '#backend/drizzle/postgres/schema/bridges';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
@@ -29,16 +41,27 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { ReportsService } from '#backend/services/db/reports/reports.service';
+import {
+  type ReportsCatalog,
+  ReportsService
+} from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
+import type { GetReportCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-result-error';
+import type { GetReportsCatalogResultError } from '#common/types/backend/function-errors/get-reports-catalog-result-error';
+import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
+import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
-
-const { forEachSeries } = pIteration;
+import type { ToBackendDeleteReportOutput } from '#common/types/backend/routes/reports/delete-report/delete-report-output';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -72,136 +95,185 @@ export class DeleteReportController {
   async deleteRep(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteReportRequestDto
-  ) {
-    let { traceId } = body;
-    let { projectId, repoId, branchId, envId, reportId } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    await this.projectsService.checkProjectIsNotRestricted({
-      projectId: projectId,
-      userMember: userMember,
-      repoId: repoId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let existingReport =
-      await this.reportsService.getReportCheckExistsAndAccess({
-        projectId: projectId,
-        reportId: reportId,
-        structId: bridge.structId,
-        user: user,
-        userMember: userMember
-      });
-
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
-
-    await this.rpcService.sendToDiskUnwrapOutput({
-      request: {
-        operation: 'deleteFile',
+  ): Promise<BackendResultForOperation<'deleteReport'>> {
+    return Result.pipe(
+      Result.succeed({
         traceId: body.traceId,
-        input: {
-          baseProject: baseProject,
-          repoId: repoId,
-          branch: branchId,
-          fileNodeId: existingReport.filePath,
-          userAlias: user.alias
-        }
-      }
-    });
-
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, branch.repoId),
-        eq(bridgesTable.branchId, branch.branchId)
-      )
-    });
-
-    await forEachSeries(branchBridges, async x => {
-      if (x.envId !== envId) {
-        x.structId = EMPTY_STRUCT_ID;
-        x.needValidate = true;
-      }
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(reportsTable)
-            .where(
-              and(
-                eq(reportsTable.reportId, reportId),
-                eq(reportsTable.structId, bridge.structId)
-              )
-            );
-
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              bridges: [...branchBridges]
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        reportId: body.input.reportId,
+        user: user
+      }),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.andThrough(v =>
+        this.projectsService.checkProjectIsNotRestrictedResult({
+          projectId: v.projectId,
+          userMember: v.userMember,
+          repoId: v.repoId
+        })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'existingReport',
+        (
+          v
+        ): Result.ResultAsync<
+          ReportTab,
+          GetReportCheckExistsAndAccessResultError
+        > =>
+          this.reportsService.getReportCheckExistsAndAccessResult({
+            projectId: v.projectId,
+            structId: v.bridge.structId,
+            reportId: v.reportId,
+            userMember: v.userMember,
+            user: v.user
+          })
+      ),
+      Result.andThrough(v =>
+        this.rpcService.sendToDiskResult({
+          request: {
+            operation: 'deleteFile',
+            traceId: v.traceId,
+            input: {
+              baseProject: this.tabService.projectTabToBaseProject({
+                project: v.project
+              }),
+              repoId: v.repoId,
+              branch: v.branchId,
+              fileNodeId: v.existingReport.filePath,
+              userAlias: v.user.alias
             }
-          });
-        }),
-      getRetryOption(this.cs, this.logger)
+          }
+        })
+      ),
+      Result.bind(
+        'branchBridgeEnts',
+        (v): Result.ResultAsync<BridgeEnt[], never> =>
+          this.db.drizzle.query.bridgesTable
+            .findMany({
+              where: and(
+                eq(bridgesTable.projectId, v.branch.projectId),
+                eq(bridgesTable.repoId, v.branch.repoId),
+                eq(bridgesTable.branchId, v.branch.branchId)
+              )
+            })
+            .then(xs => Result.succeed(xs))
+      ),
+      Result.map(v => {
+        v.branchBridgeEnts.forEach(bridgeEnt => {
+          if (bridgeEnt.envId !== v.envId) {
+            bridgeEnt.structId = EMPTY_STRUCT_ID;
+
+            bridgeEnt.needValidate = true;
+          }
+        });
+        return v;
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(async tx => {
+                  await tx
+                    .delete(reportsTable)
+                    .where(
+                      and(
+                        eq(reportsTable.reportId, v.reportId),
+                        eq(reportsTable.structId, v.bridge.structId)
+                      )
+                    );
+
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: { bridges: [...v.branchBridgeEnts] }
+                  });
+                }),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.bind(
+        'apiUserMember',
+        (v): Result.Result<Member, never> =>
+          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      ),
+      Result.bind(
+        'reportsCatalog',
+        (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogResultError> =>
+          this.reportsService.getReportsCatalogResult({
+            projectId: v.projectId,
+            structId: v.bridge.structId,
+            user: v.user,
+            userMember: v.userMember,
+            apiUserMember: v.apiUserMember,
+            spaces: v.struct.spaces
+          })
+      ),
+      Result.map(
+        (v): ToBackendDeleteReportOutput => ({
+          reportUnitDrafts: v.reportsCatalog.reportUnitDrafts,
+          reportSpaceNodes: v.reportsCatalog.reportSpaceNodes
+        })
+      )
     );
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    let reportsCatalog = await this.reportsService.getReportsCatalog({
-      projectId: projectId,
-      structId: bridge.structId,
-      user: user,
-      userMember: userMember,
-      apiUserMember: apiUserMember,
-      spaces: struct.spaces
-    });
-
-    let payload = {
-      reportUnitDrafts: reportsCatalog.reportUnitDrafts,
-      reportSpaceNodes: reportsCatalog.reportSpaceNodes
-    };
-
-    return payload;
   }
 }

@@ -28,6 +28,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ChartEntToTabResultError } from '#common/types/backend/function-errors/chart-ent-to-tab-result-error';
 import type { CheckChartOrModelAccessResultError } from '#common/types/backend/function-errors/check-chart-or-model-access-result-error';
+import type { CheckChartPathResultError } from '#common/types/backend/function-errors/check-chart-path-result-error';
 import type { GetChartCheckExistsResultError } from '#common/types/backend/function-errors/get-chart-check-exists-result-error';
 import type { GetChartsCatalogResultError } from '#common/types/backend/function-errors/get-charts-catalog-result-error';
 import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
@@ -537,20 +538,36 @@ export class ChartsService {
   }
 
   checkChartPath(item: { filePath: string; userAlias: string }) {
-    let filePathArray = item.filePath.split('/');
+    let { filePath, userAlias } = item;
 
-    let usersFolderIndex = filePathArray.findIndex(
+    let result: Result.Result<void, CheckChartPathResultError> =
+      this.checkChartPathResult({ filePath: filePath, userAlias: userAlias });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+  }
+
+  checkChartPathResult(item: {
+    filePath: string;
+    userAlias: string;
+  }): Result.Result<void, CheckChartPathResultError> {
+    let { filePath, userAlias } = item;
+
+    let filePathArray: string[] = filePath.split('/');
+
+    let usersFolderIndex: number = filePathArray.findIndex(
       x => x === MPROVE_USERS_FOLDER
     );
 
     if (
       usersFolderIndex < 0 ||
       filePathArray.length === usersFolderIndex + 1 ||
-      filePathArray[usersFolderIndex + 1] !== item.userAlias
+      filePathArray[usersFolderIndex + 1] !== userAlias
     ) {
-      throw new ServerError({
-        message: 'BACKEND_FORBIDDEN_CHART_PATH'
-      });
+      return Result.fail({ code: 'BACKEND_FORBIDDEN_CHART_PATH' });
     }
+
+    return Result.succeed();
   }
 }
