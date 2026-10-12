@@ -1746,6 +1746,54 @@ export class AppInterceptor implements NestInterceptor {
             wrappedError = error;
           }
         });
+      } else if (req.operation === 'cloneTestRepo') {
+        execution = makeBackendResultResponse({
+          operation: 'cloneTestRepo',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getRebuildStruct') {
+        execution = makeBackendResultResponse({
+          operation: 'getRebuildStruct',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'seedRecords') {
+        execution = makeBackendResultResponse({
+          operation: 'seedRecords',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'deleteRecords') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteRecords',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
       } else if (req.operation === 'validateFiles') {
         execution = makeBackendResultResponse({
           operation: 'validateFiles',

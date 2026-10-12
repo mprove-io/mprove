@@ -8,8 +8,8 @@ import {
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
-import type { ToBackendCloneTestRepoOutput } from '#common/types/backend/routes/test-routes/clone-test-repo/clone-test-repo-output';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()
@@ -30,21 +30,17 @@ export class CloneTestRepoController {
   @ApiOkResponse({
     type: ToBackendCloneTestRepoResponseDto
   })
-  async cloneTestRepo(@Body() body: ToBackendCloneTestRepoRequestDto) {
-    let { testId } = body.input;
-
-    await this.rpcService.sendToDiskUnwrapOutput({
+  async cloneTestRepo(
+    @Body() body: ToBackendCloneTestRepoRequestDto
+  ): Promise<BackendResultForOperation<'cloneTestRepo'>> {
+    return this.rpcService.sendToDiskResult({
       request: {
         operation: 'cloneTestRepo',
         traceId: body.traceId,
         input: {
-          testId: testId
+          testId: body.input.testId
         }
       }
     });
-
-    let payload: ToBackendCloneTestRepoOutput = {};
-
-    return payload;
   }
 }

@@ -1,6 +1,7 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendGetRebuildStructRequestDto,
   ToBackendGetRebuildStructResponseDto
@@ -8,18 +9,29 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
+import {
+  EnvsService,
+  type GetApiEnvConnectionsWithFallbackOutput
+} from '#backend/services/db/envs/envs.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { GetApiEnvConnectionsWithFallbackError } from '#common/types/backend/function-errors/get-api-env-connections-with-fallback-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { SendToBlockmlError } from '#common/types/backend/function-errors/send-to-blockml-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
-import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-output';
-import type { ToBlockmlRebuildStructRequest } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-request';
+import type { ToBackendGetRebuildStructOutput } from '#common/types/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-output';
 import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
 
 @ApiTags('TestRoutes')
@@ -50,82 +62,104 @@ export class GetRebuildStructController {
   async getRebuildStruct(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetRebuildStructRequestDto
-  ) {
-    let {
-      orgId,
-      projectId,
-      repoId,
-      branch,
-      envId,
-      overrideTimezone,
-      isUseCache,
-      cachedMproveConfig,
-      cachedModels,
-      cachedMetrics
-    } = body.input;
-
-    let structId = makeId();
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    // to disk
-
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
-
-    let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput =
-      await this.rpcService.sendToDiskUnwrapOutput({
-        request: {
-          operation: 'getCatalogFiles',
-          traceId: body.traceId,
-          input: {
-            baseProject: baseProject,
-            repoId: repoId,
-            branch: branch
-          }
-        }
-      });
-
-    let { apiEnv, connectionsWithFallback } =
-      await this.envsService.getApiEnvConnectionsWithFallback({
-        projectId: projectId,
-        envId: envId
-      });
-
-    // to blockml
-
-    let rebuildStructRequest: ToBlockmlRebuildStructRequest = {
-      operation: 'rebuildStruct',
-      traceId: body.traceId,
-      input: {
-        structId: structId,
-        projectId: projectId,
-        mproveDir: diskGetCatalogFilesOutput.mproveDir,
-        files: diskFilesToBlockmlFiles(diskGetCatalogFilesOutput.files),
-        envId: envId,
-        evs: apiEnv.evsWithFallback,
-        baseConnections: connectionsWithFallback.map(x =>
-          this.connectionsService.tabToBaseConnection({ connection: x })
-        ),
-        selectedGivens: [],
-        overrideTimezone: overrideTimezone,
-        isUseCache: isUseCache,
-        cachedMproveConfig: cachedMproveConfig,
-        cachedModels: cachedModels,
-        cachedMetrics: cachedMetrics
-      }
-    };
-
-    let output: ToBlockmlRebuildStructOutput =
-      await this.rpcService.sendToBlockmlUnwrapOutput({
-        request: rebuildStructRequest,
-        orgId: orgId,
-        repoId: repoId
-      });
-
-    return output;
+  ): Promise<BackendResultForOperation<'getRebuildStruct'>> {
+    return Result.pipe(
+      Result.succeed({
+        orgId: body.input.orgId,
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branch: body.input.branch,
+        envId: body.input.envId,
+        overrideTimezone: body.input.overrideTimezone,
+        isUseCache: body.input.isUseCache,
+        cachedMproveConfig: body.input.cachedMproveConfig,
+        cachedModels: body.input.cachedModels,
+        cachedMetrics: body.input.cachedMetrics,
+        traceId: body.traceId,
+        structId: makeId()
+      }),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'baseProject',
+        (v): Result.Result<BaseProject, never> =>
+          Result.succeed(
+            this.tabService.projectTabToBaseProject({ project: v.project })
+          )
+      ),
+      Result.bind(
+        'diskGetCatalogFilesOutput',
+        (v): Result.ResultAsync<ToDiskGetCatalogFilesOutput, SendToDiskError> =>
+          this.rpcService.sendToDiskResult({
+            request: {
+              operation: 'getCatalogFiles',
+              traceId: v.traceId,
+              input: {
+                baseProject: v.baseProject,
+                repoId: v.repoId,
+                branch: v.branch
+              }
+            }
+          })
+      ),
+      Result.bind(
+        'getApiEnvConnectionsWithFallbackOutput',
+        (
+          v
+        ): Result.ResultAsync<
+          GetApiEnvConnectionsWithFallbackOutput,
+          GetApiEnvConnectionsWithFallbackError
+        > =>
+          this.envsService.getApiEnvConnectionsWithFallbackResult({
+            projectId: v.projectId,
+            envId: v.envId
+          })
+      ),
+      Result.andThen(
+        (
+          v
+        ): Result.ResultAsync<
+          ToBackendGetRebuildStructOutput,
+          SendToBlockmlError
+        > =>
+          this.rpcService.sendToBlockmlResult({
+            request: {
+              operation: 'rebuildStruct',
+              traceId: v.traceId,
+              input: {
+                structId: v.structId,
+                projectId: v.projectId,
+                mproveDir: v.diskGetCatalogFilesOutput.mproveDir,
+                files: diskFilesToBlockmlFiles(
+                  v.diskGetCatalogFilesOutput.files
+                ),
+                envId: v.envId,
+                evs: v.getApiEnvConnectionsWithFallbackOutput.apiEnv
+                  .evsWithFallback,
+                baseConnections:
+                  v.getApiEnvConnectionsWithFallbackOutput.connectionsWithFallback.map(
+                    x =>
+                      this.connectionsService.tabToBaseConnection({
+                        connection: x
+                      })
+                  ),
+                selectedGivens: [],
+                overrideTimezone: v.overrideTimezone,
+                isUseCache: v.isUseCache,
+                cachedMproveConfig: v.cachedMproveConfig,
+                cachedModels: v.cachedModels,
+                cachedMetrics: v.cachedMetrics
+              }
+            },
+            orgId: v.orgId,
+            repoId: v.repoId
+          })
+      )
+    );
   }
 }
