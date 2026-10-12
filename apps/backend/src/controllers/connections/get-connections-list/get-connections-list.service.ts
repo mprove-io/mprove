@@ -8,7 +8,6 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
@@ -27,25 +26,6 @@ export class GetConnectionsListService {
     private membersService: MembersService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getConnectionsList(item: {
-    userId: string;
-    projectId: string;
-    envId: string;
-  }): Promise<ToBackendGetConnectionsListOutput> {
-    let result: Result.Result<
-      ToBackendGetConnectionsListOutput,
-      GetConnectionsListError
-    > = await this.getConnectionsListResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let output: ToBackendGetConnectionsListOutput = result.value;
-
-    return output;
-  }
 
   async getConnectionsListResult(item: {
     userId: string;

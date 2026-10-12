@@ -12,15 +12,15 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import axios from 'axios';
 import type { Response } from 'express';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_TELEMETRY } from '#common/constants/top-backend';
 
 import type { ToBackendTelemetryRoute } from '#common/types/backend/request/to-backend-telemetry-route';
+import type { Er } from '#common/types/shared/errors/er';
 
 @ApiTags('Telemetry')
 @UseGuards(ThrottlerUserIdGuard)
@@ -76,10 +76,10 @@ export class TelemetryMetricsController {
         .json({ partialSuccess: { rejectedSpans: 0 } });
     } catch (er) {
       logToConsoleBackend({
-        log: new ServerError({
-          message: 'BACKEND_FORWARD_TELEMETRY_METRICS_ERROR',
+        log: {
+          code: 'BACKEND_FORWARD_TELEMETRY_METRICS_ERROR' satisfies Er,
           originalError: er
-        }),
+        },
         logLevel: 'Error',
         logger: this.logger,
         cs: this.cs

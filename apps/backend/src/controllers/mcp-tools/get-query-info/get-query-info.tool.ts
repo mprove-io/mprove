@@ -1,11 +1,13 @@
 import { UseFilters } from '@nestjs/common';
 import { Payload } from '@nestjs/microservices';
+import { Result } from '@praha/byethrow';
 import { McpController, McpRawRequest, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetQueryInfoService } from '#backend/controllers/queries/get-query-info/get-query-info.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
 import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
+import { makeMcpToolResponse } from '#backend/functions/make-mcp-tool-response/make-mcp-tool-response';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool/tool.service';
 import {
@@ -13,6 +15,7 @@ import {
   MCP_TOOL_GET_QUERY_INFO_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { GetQueryInfoError } from '#common/types/backend/function-errors/get-query-info-error';
 import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput
@@ -40,41 +43,9 @@ export class GetQueryInfoTool {
   async getQueryInfo(
     @Payload() item: McpToolGetQueryInfoInput,
     @McpRawRequest() request: Request
-  ) {
-    let user = (request as any).user as UserTab;
-
-    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
-
-    if (apiKeyType === 'PK') {
-      this.toolService.validateUserRepoId({
-        repoId: item.repoId,
-        userId: user.userId
-      });
-    } else if (apiKeyType === 'SK') {
-      this.toolService.validateSessionProjectId({
-        projectId: item.projectId,
-        request: request
-      });
-      this.toolService.validateSessionRepoId({
-        repoId: item.repoId,
-        request: request
-      });
-      this.toolService.validateSessionBranchId({
-        branchId: item.branchId,
-        request: request
-      });
-      this.toolService.validateSessionEnvId({
-        envId: item.envId,
-        request: request
-      });
-    }
-
-    let traceId = makeId();
-
-    let payload: ToBackendGetQueryInfoOutput =
-      await this.getQueryInfoService.getQueryInfo({
-        traceId: traceId,
-        user: user,
+  ): Promise<ToBackendGetQueryInfoOutput> {
+    let result = await Result.pipe(
+      Result.succeed({
         projectId: item.projectId,
         repoId: item.repoId,
         branchId: item.branchId,
@@ -85,14 +56,87 @@ export class GetQueryInfoTool {
         reportId: item.reportId,
         rowId: item.rowId,
         timezone: item.timezone,
-        timeSpec: item.timeSpec as any,
+        timeSpec: item.timeSpec,
         timeRangeFractionBrick: item.timeRangeFractionBrick,
         getMalloy: item.getMalloy,
         getSql: item.getSql,
         getData: item.getData,
-        isFetch: item.isFetch
-      });
+        isFetch: item.isFetch,
+        user: (request as any).user as UserTab,
+        apiKeyType: (request as any).apiKeyType as ApiKeyType,
+        request: request
+      }),
+      Result.andThrough(v =>
+        v.apiKeyType === 'PK'
+          ? this.toolService.validateUserRepoIdResult({
+              repoId: v.repoId,
+              userId: v.user.userId
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionProjectIdResult({
+              projectId: v.projectId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionRepoIdResult({
+              repoId: v.repoId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionBranchIdResult({
+              branchId: v.branchId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionEnvIdResult({
+              envId: v.envId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThen(
+        (
+          v
+        ): Result.ResultAsync<ToBackendGetQueryInfoOutput, GetQueryInfoError> =>
+          this.getQueryInfoService.getQueryInfoResult({
+            traceId: makeId(),
+            user: v.user,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId,
+            envId: v.envId,
+            chartId: v.chartId,
+            dashboardId: v.dashboardId,
+            tileIndex: v.tileIndex,
+            reportId: v.reportId,
+            rowId: v.rowId,
+            timezone: v.timezone,
+            timeSpec: v.timeSpec as any,
+            timeRangeFractionBrick: v.timeRangeFractionBrick,
+            getMalloy: v.getMalloy,
+            getSql: v.getSql,
+            getData: v.getData,
+            isFetch: v.isFetch
+          })
+      )
+    );
 
-    return payload;
+    let output: ToBackendGetQueryInfoOutput = makeMcpToolResponse({
+      result: result
+    });
+
+    return output;
   }
 }

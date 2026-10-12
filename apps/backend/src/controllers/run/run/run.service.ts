@@ -32,7 +32,6 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { sleep } from '#common/functions/sleep/sleep';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
@@ -77,83 +76,6 @@ export class RunService {
     private runDashboardService: RunDashboardService,
     private runReportService: RunReportService
   ) {}
-
-  async run(item: {
-    traceId: string;
-    user: UserTab;
-    projectId: string;
-    repoId: string;
-    branchId: string;
-    envId: string;
-    concurrency?: number;
-    wait: boolean;
-    sleep?: number;
-    dashboardIds?: string;
-    chartIds?: string;
-    noDashboards: boolean;
-    noCharts: boolean;
-    getDashboards: boolean;
-    getCharts: boolean;
-    reportIds?: string;
-    noReports: boolean;
-    getReports: boolean;
-  }): Promise<ToBackendRunOutput> {
-    let {
-      traceId,
-      user,
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      concurrency,
-      wait,
-      sleep,
-      dashboardIds,
-      chartIds,
-      noDashboards,
-      noCharts,
-      getDashboards,
-      getCharts,
-      reportIds,
-      noReports,
-      getReports
-    } = item;
-
-    let result: Result.Result<ToBackendRunOutput, RunError> =
-      await this.runResult({
-        traceId: traceId,
-        user: user,
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        concurrency: concurrency,
-        wait: wait,
-        sleep: sleep,
-        dashboardIds: dashboardIds,
-        chartIds: chartIds,
-        noDashboards: noDashboards,
-        noCharts: noCharts,
-        getDashboards: getDashboards,
-        getCharts: getCharts,
-        reportIds: reportIds,
-        noReports: noReports,
-        getReports: getReports
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: ToBackendRunOutput = result.value;
-
-    return output;
-  }
 
   async runResult(item: {
     traceId: string;

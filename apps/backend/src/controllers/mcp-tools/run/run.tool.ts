@@ -1,11 +1,13 @@
 import { UseFilters } from '@nestjs/common';
 import { Payload } from '@nestjs/microservices';
+import { Result } from '@praha/byethrow';
 import { McpController, McpRawRequest, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { RunService } from '#backend/controllers/run/run/run.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
 import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
+import { makeMcpToolResponse } from '#backend/functions/make-mcp-tool-response/make-mcp-tool-response';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool/tool.service';
 import {
@@ -13,6 +15,7 @@ import {
   MCP_TOOL_RUN_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { RunError } from '#common/types/backend/function-errors/run-error';
 import {
   type McpToolRunInput,
   zMcpToolRunInput
@@ -40,42 +43,96 @@ export class RunTool {
   async run(
     @Payload() item: McpToolRunInput,
     @McpRawRequest() request: Request
-  ) {
-    let user = (request as any).user as UserTab;
-    let apiKeyType = (request as any).apiKeyType as ApiKeyType;
-
-    if (apiKeyType === 'PK') {
-      this.toolService.validateUserRepoId({
-        repoId: item.repoId,
-        userId: user.userId
-      });
-    } else if (apiKeyType === 'SK') {
-      this.toolService.validateSessionProjectId({
+  ): Promise<ToBackendRunOutput> {
+    let result = await Result.pipe(
+      Result.succeed({
         projectId: item.projectId,
-        request: request
-      });
-      this.toolService.validateSessionRepoId({
         repoId: item.repoId,
-        request: request
-      });
-      this.toolService.validateSessionBranchId({
         branchId: item.branchId,
-        request: request
-      });
-      this.toolService.validateSessionEnvId({
         envId: item.envId,
+        concurrency: item.concurrency,
+        wait: item.wait,
+        sleep: item.sleep,
+        dashboardIds: item.dashboardIds,
+        chartIds: item.chartIds,
+        noDashboards: item.noDashboards,
+        noCharts: item.noCharts,
+        getDashboards: item.getDashboards,
+        getCharts: item.getCharts,
+        reportIds: item.reportIds,
+        noReports: item.noReports,
+        getReports: item.getReports,
+        user: (request as any).user as UserTab,
+        apiKeyType: (request as any).apiKeyType as ApiKeyType,
         request: request
-      });
-    }
+      }),
+      Result.andThrough(v =>
+        v.apiKeyType === 'PK'
+          ? this.toolService.validateUserRepoIdResult({
+              repoId: v.repoId,
+              userId: v.user.userId
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionProjectIdResult({
+              projectId: v.projectId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionRepoIdResult({
+              repoId: v.repoId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionBranchIdResult({
+              branchId: v.branchId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.apiKeyType === 'SK'
+          ? this.toolService.validateSessionEnvIdResult({
+              envId: v.envId,
+              request: v.request
+            })
+          : Result.succeed()
+      ),
+      Result.andThen(
+        (v): Result.ResultAsync<ToBackendRunOutput, RunError> =>
+          this.runService.runResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId,
+            envId: v.envId,
+            concurrency: v.concurrency,
+            wait: v.wait,
+            sleep: v.sleep,
+            dashboardIds: v.dashboardIds,
+            chartIds: v.chartIds,
+            noDashboards: v.noDashboards,
+            noCharts: v.noCharts,
+            getDashboards: v.getDashboards,
+            getCharts: v.getCharts,
+            reportIds: v.reportIds,
+            noReports: v.noReports,
+            getReports: v.getReports,
+            traceId: makeId(),
+            user: v.user
+          })
+      )
+    );
 
-    let traceId = makeId();
+    let output: ToBackendRunOutput = makeMcpToolResponse({ result: result });
 
-    let payload: ToBackendRunOutput = await this.runService.run({
-      ...item,
-      traceId: traceId,
-      user: user
-    });
-
-    return payload;
+    return output;
   }
 }

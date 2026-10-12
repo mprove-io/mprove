@@ -16,7 +16,6 @@ import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -47,30 +46,6 @@ export class GetConnectionSampleService {
     private trinoService: TrinoService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getConnectionSample(item: {
-    userId: string;
-    projectId: string;
-    envId: string;
-    connectionId: string;
-    schemaName: string;
-    tableName: string;
-    columnName?: string;
-    offset?: number;
-  }): Promise<ToBackendGetConnectionSampleOutput> {
-    let result: Result.Result<
-      ToBackendGetConnectionSampleOutput,
-      GetConnectionSampleError
-    > = await this.getConnectionSampleResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let output: ToBackendGetConnectionSampleOutput = result.value;
-
-    return output;
-  }
 
   async getConnectionSampleResult(item: {
     userId: string;

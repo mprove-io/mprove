@@ -21,7 +21,6 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { QueryInfoChartService } from '#backend/services/query-info-chart/query-info-chart.service';
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard/query-info-dashboard.service';
 import { QueryInfoReportService } from '#backend/services/query-info-report/query-info-report.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
@@ -60,83 +59,6 @@ export class GetQueryInfoService {
     private queryInfoDashboardService: QueryInfoDashboardService,
     private queryInfoReportService: QueryInfoReportService
   ) {}
-
-  async getQueryInfo(item: {
-    traceId: string;
-    user: UserTab;
-    projectId: string;
-    repoId: string;
-    branchId: string;
-    envId: string;
-    chartId?: string;
-    dashboardId?: string;
-    tileIndex?: number;
-    reportId?: string;
-    rowId?: string;
-    timezone: string;
-    timeSpec?: TimeSpec;
-    timeRangeFractionBrick?: string;
-    getMalloy: boolean;
-    getSql: boolean;
-    getData: boolean;
-    isFetch: boolean;
-  }): Promise<ToBackendGetQueryInfoOutput> {
-    let {
-      traceId,
-      user,
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      chartId,
-      dashboardId,
-      tileIndex,
-      reportId,
-      rowId,
-      timezone,
-      timeSpec,
-      timeRangeFractionBrick,
-      getMalloy,
-      getSql,
-      getData,
-      isFetch
-    } = item;
-
-    let result: Result.Result<ToBackendGetQueryInfoOutput, GetQueryInfoError> =
-      await this.getQueryInfoResult({
-        traceId: traceId,
-        user: user,
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        chartId: chartId,
-        dashboardId: dashboardId,
-        tileIndex: tileIndex,
-        reportId: reportId,
-        rowId: rowId,
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFractionBrick: timeRangeFractionBrick,
-        getMalloy: getMalloy,
-        getSql: getSql,
-        getData: getData,
-        isFetch: isFetch
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: ToBackendGetQueryInfoOutput = result.value;
-
-    return output;
-  }
 
   async getQueryInfoResult(item: {
     traceId: string;

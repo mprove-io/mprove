@@ -34,7 +34,6 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
 import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
@@ -69,86 +68,6 @@ export class GetStateService {
     private dashboardsService: DashboardsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getState(item: {
-    traceId: string;
-    user: UserTab;
-    projectId: string;
-    repoId: string;
-    branchId: string;
-    envId: string;
-    isFetch: boolean;
-    getErrors: boolean;
-    getRepo: boolean;
-    getRepoNodes: boolean;
-    getModels: boolean;
-    getDashboards: boolean;
-    getCharts: boolean;
-    getMetrics: boolean;
-    getReports: boolean;
-  }): Promise<ToBackendGetStateOutput> {
-    let {
-      traceId,
-      user,
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      isFetch,
-      getErrors,
-      getRepo,
-      getRepoNodes,
-      getModels,
-      getDashboards,
-      getCharts,
-      getMetrics,
-      getReports
-    } = item;
-
-    let result: Result.Result<ToBackendGetStateOutput, GetStateError> =
-      await this.getStateResult({
-        traceId: traceId,
-        user: user,
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        isFetch: isFetch,
-        getErrors: getErrors,
-        getRepo: getRepo,
-        getRepoNodes: getRepoNodes,
-        getModels: getModels,
-        getDashboards: getDashboards,
-        getCharts: getCharts,
-        getMetrics: getMetrics,
-        getReports: getReports
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData:
-          result.error.code === 'BACKEND_RPC_TIMEOUT'
-            ? { timeout: `${this.rpcService.rpcDiskTimeoutMs} ms` }
-            : undefined,
-        originalError:
-          'originalError' in result.error && result.error.originalError
-            ? Object.assign(new Error(result.error.originalError.code), {
-                displayData:
-                  'displayData' in result.error.originalError
-                    ? result.error.originalError.displayData
-                    : undefined
-              })
-            : undefined
-      });
-    }
-
-    let payload: ToBackendGetStateOutput = result.value;
-
-    return payload;
-  }
 
   async getStateResult(item: {
     traceId: string;

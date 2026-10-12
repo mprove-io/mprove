@@ -30,7 +30,9 @@ export class SearchDocsTool {
       schema: zMcpToolSearchDocsOutput
     })
   })
-  async searchDocs(item: McpToolSearchDocsInput) {
+  async searchDocs(
+    item: McpToolSearchDocsInput
+  ): Promise<McpToolSearchDocsOutput> {
     let output: McpToolSearchDocsOutput = this.docsService.searchDocs(item);
 
     return output;

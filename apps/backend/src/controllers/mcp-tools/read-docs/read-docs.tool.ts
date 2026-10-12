@@ -30,7 +30,7 @@ export class ReadDocsTool {
       schema: zMcpToolReadDocsOutput
     })
   })
-  async readDocs(item: McpToolReadDocsInput) {
+  async readDocs(item: McpToolReadDocsInput): Promise<McpToolReadDocsOutput> {
     let output: McpToolReadDocsOutput = this.docsService.readDocs(item);
 
     return output;

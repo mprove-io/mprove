@@ -30,7 +30,6 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
@@ -61,41 +60,6 @@ export class ValidateFilesService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async validateFiles(item: {
-    traceId: string;
-    userId: string;
-    projectId: string;
-    repoId: string;
-    branchId: string;
-    envId: string;
-  }): Promise<ToBackendValidateFilesOutput> {
-    let result: Result.Result<
-      ToBackendValidateFilesOutput,
-      ValidateFilesError
-    > = await this.validateFilesResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        originalError:
-          'originalError' in result.error && result.error.originalError
-            ? Object.assign(new Error(result.error.originalError.code), {
-                displayData:
-                  'displayData' in result.error.originalError
-                    ? result.error.originalError.displayData
-                    : undefined
-              })
-            : undefined
-      });
-    }
-
-    let payload: ToBackendValidateFilesOutput = result.value;
-
-    return payload;
-  }
 
   async validateFilesResult(item: {
     traceId: string;

@@ -16,7 +16,6 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
 import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
@@ -41,27 +40,6 @@ export class GetModelService {
     private modelsService: ModelsService,
     private structsService: StructsService
   ) {}
-
-  async getModel(item: {
-    userId: string;
-    projectId: string;
-    repoId: string;
-    branchId: string;
-    envId: string;
-    modelId: string;
-    getMalloy: boolean;
-  }): Promise<ToBackendGetModelOutput> {
-    let result: Result.Result<ToBackendGetModelOutput, GetModelError> =
-      await this.getModelResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let payload: ToBackendGetModelOutput = result.value;
-
-    return payload;
-  }
 
   async getModelResult(item: {
     userId: string;

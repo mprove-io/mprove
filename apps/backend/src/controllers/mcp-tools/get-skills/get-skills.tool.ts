@@ -9,7 +9,10 @@ import {
   MCP_TOOL_GET_SKILLS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { zMcpToolGetSkillsInput } from '#common/types/backend/mcp-tools/mcp-tool-get-skills/mcp-tool-get-skills-input';
-import { zMcpToolGetSkillsOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-skills/mcp-tool-get-skills-output';
+import {
+  type McpToolGetSkillsOutput,
+  zMcpToolGetSkillsOutput
+} from '#common/types/backend/mcp-tools/mcp-tool-get-skills/mcp-tool-get-skills-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
@@ -24,7 +27,10 @@ export class GetSkillsTool {
       schema: zMcpToolGetSkillsOutput
     })
   })
-  async getSkills() {
-    return await this.getSkillsService.getSkills();
+  async getSkills(): Promise<McpToolGetSkillsOutput> {
+    let output: McpToolGetSkillsOutput =
+      await this.getSkillsService.getSkills();
+
+    return output;
   }
 }

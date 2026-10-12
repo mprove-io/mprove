@@ -36,6 +36,8 @@ export class FullMcpJsonController {
   })
   @ApiOkResponse()
   async getFullMcpJson(): Promise<FullMcpJson> {
-    return this.mcpJsonService.getFullMcpJsonCached();
+    let output: FullMcpJson = this.mcpJsonService.getFullMcpJsonCached();
+
+    return output;
   }
 }
