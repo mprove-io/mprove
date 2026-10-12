@@ -9,19 +9,28 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import pIteration from 'p-iteration';
-import asyncPool from 'tiny-async-pool';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendRunQueriesDryRequestDto,
   ToBackendRunQueriesDryResponseDto
 } from '#backend/controllers/queries/run-queries-dry/run-queries-dry.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { QueryTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BranchTab,
+  BridgeTab,
+  ConnectionTab,
+  MconfigTab,
+  MemberTab,
+  QueryTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { asyncPoolResult } from '#backend/functions/async-pool-result/async-pool-result';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
@@ -35,14 +44,27 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { ParentService } from '#backend/services/parent/parent.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetConnectionCheckExistsError } from '#common/types/backend/function-errors/get-connection-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
+import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
+import type { RunQueryDryError } from '#common/types/backend/function-errors/run-query-dry-error';
+import type { Env } from '#common/types/backend/parts/env';
 import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRunQueriesDryOutput } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-output';
 
-const { forEachSeries } = pIteration;
+type RunQueryDryOutput = {
+  validEstimate?: QueryEstimate;
+  errorQuery?: QueryTab;
+};
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -67,145 +89,215 @@ export class RunQueriesDryController {
   ) {}
 
   @Post('api/ToBackendRunQueriesDry' satisfies ToBackendRoute)
-  @ApiOperation({
-    summary: 'RunQueriesDry',
-    description: 'Dry-run queries'
-  })
-  @ApiOkResponse({
-    type: ToBackendRunQueriesDryResponseDto
-  })
+  @ApiOperation({ summary: 'RunQueriesDry', description: 'Dry-run queries' })
+  @ApiOkResponse({ type: ToBackendRunQueriesDryResponseDto })
   async runQueriesDry(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRunQueriesDryRequestDto
-  ) {
-    let { projectId, repoId, branchId, envId, mconfigIds, dryId } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let mconfigs = await this.db.drizzle.query.mconfigsTable
-      .findMany({
-        where: and(
-          eq(mconfigsTable.structId, bridge.structId),
-          inArray(mconfigsTable.mconfigId, mconfigIds)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
-
-    let uniqueParentIds = [...new Set(mconfigs.map(x => x.parentId))];
-
-    await forEachSeries(uniqueParentIds, async parentId => {
-      let mconfig = mconfigs.find(x => x.parentId === parentId); // any mconfig
-
-      await this.parentService.checkParentAccess({
-        parentId: mconfig.parentId,
-        parentType: mconfig.parentType,
-        modelId: mconfig.modelId, // for chart as parent
-        user: user,
-        userMember: userMember,
-        structId: bridge.structId,
-        projectId: projectId
-      });
-    });
-
-    let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
-
-    let results: {
-      validEstimate: QueryEstimate;
-      errorQuery: QueryTab;
-    }[] = await asyncPool(8, queryIds, async queryId => {
-      let query = await this.queriesService.getQueryCheckExistsSkipData({
-        projectId: projectId,
-        queryId: queryId
-      });
-
-      let apiEnvs = await this.envsService.getApiEnvs({
-        projectId: projectId
-      });
-
-      let apiEnv = apiEnvs.find(x => x.envId === query.envId);
-
-      let connection = await this.connectionsService.getConnectionCheckExists({
-        projectId: query.projectId,
-        envId:
-          apiEnv.isFallbackToProdConnections === true &&
-          apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
-            ? PROJECT_ENV_PROD
-            : query.envId,
-        connectionId: query.connectionId
-      });
-
-      let result = await this.bigqueryService.runQueryDry({
-        query: query,
-        connection: connection
-      });
-
-      return result;
-    });
-
-    let validEstimates = results
-      .filter(result => isDefined(result.validEstimate))
-      .map(x => x.validEstimate);
-
-    let errorQueries = results
-      .filter(result => isDefined(result.errorQuery))
-      .map(x => x.errorQuery);
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                queries: errorQueries
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    let payload: ToBackendRunQueriesDryOutput = {
-      dryId: dryId,
-      errorQueries: errorQueries.map(x =>
-        this.queriesService.tabToApi({ query: x })
+  ): Promise<BackendResultForOperation<'runQueriesDry'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        mconfigIds: body.input.mconfigIds,
+        dryId: body.input.dryId,
+        user: user
+      }),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
       ),
-      validQueryEstimates: validEstimates
-    };
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.andThrough(v =>
+        this.structsService.getStructCheckExistsResult({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'mconfigs',
+        (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+          this.db.drizzle.query.mconfigsTable
+            .findMany({
+              where: and(
+                eq(mconfigsTable.structId, v.bridge.structId),
+                inArray(mconfigsTable.mconfigId, v.mconfigIds)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.mconfigEntToTabResult({ mconfigEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'uniqueParentIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([...new Set(v.mconfigs.map(x => x.parentId))])
+      ),
+      Result.andThrough(v =>
+        Result.sequence(v.uniqueParentIds, parentId => {
+          let mconfig: MconfigTab = v.mconfigs.find(
+            x => x.parentId === parentId
+          );
 
-    return payload;
+          return this.parentService.checkParentAccessResult({
+            parentId: mconfig.parentId,
+            parentType: mconfig.parentType,
+            modelId: mconfig.modelId, // for chart as parent
+            user: v.user,
+            userMember: v.userMember,
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          });
+        })
+      ),
+      Result.bind(
+        'queryIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([...new Set(v.mconfigs.map(x => x.queryId))])
+      ),
+      Result.bind(
+        'runQueryDryOutputs',
+        (v): Result.ResultAsync<RunQueryDryOutput[], RunQueryDryError> =>
+          asyncPoolResult({
+            poolSize: 8,
+            inputs: v.queryIds,
+            callback: queryId =>
+              this.runQueryDryResult({
+                projectId: v.projectId,
+                queryId: queryId
+              })
+          })
+      ),
+      Result.bind(
+        'validEstimates',
+        (v): Result.Result<QueryEstimate[], never> =>
+          Result.succeed(
+            v.runQueryDryOutputs
+              .filter(x => isDefined(x.validEstimate))
+              .map(x => x.validEstimate)
+          )
+      ),
+      Result.bind(
+        'errorQueries',
+        (v): Result.Result<QueryTab[], never> =>
+          Result.succeed(
+            v.runQueryDryOutputs
+              .filter(x => isDefined(x.errorQuery))
+              .map(x => x.errorQuery)
+          )
+      ),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async (): Promise<void> => {
+            await retry(
+              async () =>
+                this.db.drizzle.transaction(async tx =>
+                  this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: { queries: v.errorQueries }
+                  })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendRunQueriesDryOutput => ({
+          dryId: v.dryId,
+          errorQueries: v.errorQueries.map(x =>
+            this.queriesService.tabToApi({ query: x })
+          ),
+          validQueryEstimates: v.validEstimates
+        })
+      )
+    );
+  }
+
+  private async runQueryDryResult(item: {
+    projectId: string;
+    queryId: string;
+  }): Result.ResultAsync<RunQueryDryOutput, RunQueryDryError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'query',
+        (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> =>
+          this.queriesService.getQueryCheckExistsSkipDataResult({
+            projectId: v.projectId,
+            queryId: v.queryId
+          })
+      ),
+      Result.bind(
+        'apiEnvs',
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
+          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+      ),
+      Result.bind(
+        'connection',
+        async (
+          v
+        ): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsError> => {
+          let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);
+
+          let isFallbackConnection: boolean =
+            apiEnv.isFallbackToProdConnections === true &&
+            apiEnv.fallbackConnectionIds.includes(v.query.connectionId);
+
+          return this.connectionsService.getConnectionCheckExistsResult({
+            projectId: v.query.projectId,
+            envId: isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId,
+            connectionId: v.query.connectionId
+          });
+        }
+      ),
+      Result.andThen(
+        (v): Result.ResultAsync<RunQueryDryOutput, never> =>
+          this.bigqueryService
+            .runQueryDry({ query: v.query, connection: v.connection })
+            .then(x => Result.succeed(x))
+      )
+    );
   }
 }

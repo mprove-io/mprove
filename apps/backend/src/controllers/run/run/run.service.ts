@@ -1,11 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '#backend/config/backend-config';
+import { Result } from '@praha/byethrow';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import { RunChartService } from '#backend/controllers/run/run/run-chart.service';
-import { RunDashboardService } from '#backend/controllers/run/run/run-dashboard.service';
-import { RunReportService } from '#backend/controllers/run/run/run-report.service';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  type PrepareRunChartOutput,
+  RunChartService
+} from '#backend/controllers/run/run/run-chart.service';
+import {
+  type PrepareRunDashboardOutput,
+  RunDashboardService
+} from '#backend/controllers/run/run/run-dashboard.service';
+import {
+  type PrepareRunReportOutput,
+  RunReportService
+} from '#backend/controllers/run/run/run-report.service';
+import type {
+  BranchTab,
+  BridgeTab,
+  MemberTab,
+  ProjectTab,
+  QueryTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
@@ -15,15 +33,32 @@ import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { sleep } from '#common/functions/sleep/sleep';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { PrepareRunChartError } from '#common/types/backend/function-errors/prepare-run-chart-error';
+import type { PrepareRunDashboardError } from '#common/types/backend/function-errors/prepare-run-dashboard-error';
+import type { PrepareRunReportError } from '#common/types/backend/function-errors/prepare-run-report-error';
+import type { RunError } from '#common/types/backend/function-errors/run-error';
+import type { RunQueriesError } from '#common/types/backend/function-errors/run-queries-error';
 import type { RunChart } from '#common/types/backend/parts/run/run-chart';
 import type { RunDashboard } from '#common/types/backend/parts/run/run-dashboard';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 import type { RunReport } from '#common/types/backend/parts/run/run-report';
+import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import type { ToBackendRunOutput } from '#common/types/backend/routes/run/run/run-output';
+import type { Query } from '#common/types/blockml/parts/query/query';
 import type { McliQueriesStats } from '#common/types/mcli/mcli-queries-stats';
+
+type RunMconfigPart = {
+  mconfigId: string;
+  queryId: string;
+};
 
 @Injectable()
 export class RunService {
@@ -72,6 +107,7 @@ export class RunService {
       envId,
       concurrency,
       wait,
+      sleep,
       dashboardIds,
       chartIds,
       noDashboards,
@@ -83,301 +119,419 @@ export class RunService {
       getReports
     } = item;
 
-    if (noDashboards === true && getDashboards === true) {
-      let serverError = new ServerError({
-        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
-        displayData: `noDashboards and getDashboards`,
-        originalError: null
+    let result: Result.Result<ToBackendRunOutput, RunError> =
+      await this.runResult({
+        traceId: traceId,
+        user: user,
+        projectId: projectId,
+        repoId: repoId,
+        branchId: branchId,
+        envId: envId,
+        concurrency: concurrency,
+        wait: wait,
+        sleep: sleep,
+        dashboardIds: dashboardIds,
+        chartIds: chartIds,
+        noDashboards: noDashboards,
+        noCharts: noCharts,
+        getDashboards: getDashboards,
+        getCharts: getCharts,
+        reportIds: reportIds,
+        noReports: noReports,
+        getReports: getReports
       });
-      throw serverError;
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined,
+        customData: 'info' in result.error ? result.error.info : undefined
+      });
     }
 
-    if (noDashboards === true && isDefined(dashboardIds)) {
-      let serverError = new ServerError({
-        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
-        displayData: `noDashboards and dashboardIds`,
-        originalError: null
-      });
-      throw serverError;
-    }
+    let output: ToBackendRunOutput = result.value;
 
-    if (noCharts === true && getCharts === true) {
-      let serverError = new ServerError({
-        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
-        displayData: `noCharts and getCharts`,
-        originalError: null
-      });
-      throw serverError;
-    }
+    return output;
+  }
 
-    if (noCharts === true && isDefined(chartIds)) {
-      let serverError = new ServerError({
-        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
-        displayData: `noCharts and chartIds`,
-        originalError: null
-      });
-      throw serverError;
-    }
-
-    if (noReports === true && getReports === true) {
-      let serverError = new ServerError({
-        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
-        displayData: `noReports and getReports`,
-        originalError: null
-      });
-      throw serverError;
-    }
-
-    if (noReports === true && isDefined(reportIds)) {
-      let serverError = new ServerError({
-        message: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
-        displayData: `noReports and reportIds`,
-        originalError: null
-      });
-      throw serverError;
-    }
-
-    if (isDefined(item.sleep) && wait === false) {
-      let serverError = new ServerError({
-        message: 'BACKEND_SLEEP_DOES_NOT_WORK_WITHOUT_WAIT',
-        originalError: null
-      });
-      throw serverError;
-    }
-
-    let sleepSeconds = isDefined(item.sleep) ? item.sleep : 3;
-
-    await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let hostUrl = this.cs
-      .get<BackendConfig['hostUrl']>('hostUrl')
-      .split(',')[0];
-
-    let orgId = project.orgId;
-    let defaultTimezone = struct.mproveConfig.defaultTimezone;
-
-    let chartResult =
-      noCharts === false
-        ? await this.runChartService.prepare({
-            structId: bridge.structId,
-            userMember: userMember,
-            chartIds: chartIds,
-            hostUrl: hostUrl,
-            orgId: orgId,
-            projectId: projectId,
-            repoId: repoId,
-            branchId: branchId,
-            envId: envId,
-            defaultTimezone: defaultTimezone
+  async runResult(item: {
+    traceId: string;
+    user: UserTab;
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    concurrency?: number;
+    wait: boolean;
+    sleep?: number;
+    dashboardIds?: string;
+    chartIds?: string;
+    noDashboards: boolean;
+    noCharts: boolean;
+    getDashboards: boolean;
+    getCharts: boolean;
+    reportIds?: string;
+    noReports: boolean;
+    getReports: boolean;
+  }): Result.ResultAsync<ToBackendRunOutput, RunError> {
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        sleepSeconds: isDefined(item.sleep) ? item.sleep : 3
+      }),
+      Result.andThrough(v =>
+        v.noDashboards === true && v.getDashboards === true
+          ? Result.fail({
+              code: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
+              displayData: 'noDashboards and getDashboards'
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.noDashboards === true && isDefined(v.dashboardIds)
+          ? Result.fail({
+              code: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
+              displayData: 'noDashboards and dashboardIds'
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.noCharts === true && v.getCharts === true
+          ? Result.fail({
+              code: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
+              displayData: 'noCharts and getCharts'
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.noCharts === true && isDefined(v.chartIds)
+          ? Result.fail({
+              code: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
+              displayData: 'noCharts and chartIds'
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.noReports === true && v.getReports === true
+          ? Result.fail({
+              code: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
+              displayData: 'noReports and getReports'
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        v.noReports === true && isDefined(v.reportIds)
+          ? Result.fail({
+              code: 'BACKEND_MUTUALLY_EXCLUSIVE_PARAMS',
+              displayData: 'noReports and reportIds'
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        isDefined(v.sleep) && v.wait === false
+          ? Result.fail({ code: 'BACKEND_SLEEP_DOES_NOT_WORK_WITHOUT_WAIT' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
           })
-        : { prepCharts: [], mconfigParts: [] };
-
-    let dashboardResult =
-      noDashboards === false
-        ? await this.runDashboardService.prepare({
-            structId: bridge.structId,
-            user: user,
-            userMember: userMember,
-            dashboardIds: dashboardIds,
-            hostUrl: hostUrl,
-            orgId: orgId,
-            projectId: projectId,
-            repoId: repoId,
-            branchId: branchId,
-            envId: envId,
-            defaultTimezone: defaultTimezone
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
           })
-        : { prepDashboards: [], mconfigParts: [] };
-
-    let reportResult =
-      noReports === false
-        ? await this.runReportService.prepare({
-            structId: bridge.structId,
-            user: user,
-            userMember: userMember,
-            reportIds: reportIds,
-            hostUrl: hostUrl,
-            orgId: orgId,
-            projectId: projectId,
-            repoId: repoId,
-            branchId: branchId,
-            envId: envId,
-            defaultTimezone: defaultTimezone
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
           })
-        : { prepReports: [], mconfigParts: [] };
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'hostUrl',
+        (v): Result.Result<string, never> =>
+          Result.succeed(
+            this.cs.get<BackendConfig['hostUrl']>('hostUrl').split(',')[0]
+          )
+      ),
+      Result.bind(
+        'prepareRunChartOutput',
+        async (
+          v
+        ): Result.ResultAsync<PrepareRunChartOutput, PrepareRunChartError> =>
+          v.noCharts === false
+            ? this.runChartService.prepareRunChartResult({
+                structId: v.bridge.structId,
+                userMember: v.userMember,
+                chartIds: v.chartIds,
+                hostUrl: v.hostUrl,
+                orgId: v.project.orgId,
+                projectId: v.projectId,
+                repoId: v.repoId,
+                branchId: v.branchId,
+                envId: v.envId,
+                defaultTimezone: v.struct.mproveConfig.defaultTimezone
+              })
+            : Result.succeed({ prepCharts: [], mconfigParts: [] })
+      ),
+      Result.bind(
+        'prepareRunDashboardOutput',
+        async (
+          v
+        ): Result.ResultAsync<
+          PrepareRunDashboardOutput,
+          PrepareRunDashboardError
+        > =>
+          v.noDashboards === false
+            ? this.runDashboardService.prepareRunDashboardResult({
+                structId: v.bridge.structId,
+                user: v.user,
+                userMember: v.userMember,
+                dashboardIds: v.dashboardIds,
+                hostUrl: v.hostUrl,
+                orgId: v.project.orgId,
+                projectId: v.projectId,
+                repoId: v.repoId,
+                branchId: v.branchId,
+                envId: v.envId,
+                defaultTimezone: v.struct.mproveConfig.defaultTimezone
+              })
+            : Result.succeed({ prepDashboards: [], mconfigParts: [] })
+      ),
+      Result.bind(
+        'prepareRunReportOutput',
+        async (
+          v
+        ): Result.ResultAsync<PrepareRunReportOutput, PrepareRunReportError> =>
+          v.noReports === false
+            ? this.runReportService.prepareRunReportResult({
+                structId: v.bridge.structId,
+                user: v.user,
+                userMember: v.userMember,
+                reportIds: v.reportIds,
+                hostUrl: v.hostUrl,
+                orgId: v.project.orgId,
+                projectId: v.projectId,
+                repoId: v.repoId,
+                branchId: v.branchId,
+                envId: v.envId,
+                defaultTimezone: v.struct.mproveConfig.defaultTimezone
+              })
+            : Result.succeed({ prepReports: [], mconfigParts: [] })
+      ),
+      Result.bind(
+        'mconfigParts',
+        (v): Result.Result<RunMconfigPart[], never> =>
+          Result.succeed([
+            ...v.prepareRunChartOutput.mconfigParts,
+            ...v.prepareRunDashboardOutput.mconfigParts,
+            ...v.prepareRunReportOutput.mconfigParts
+          ])
+      ),
+      Result.bind(
+        'queriesStart',
+        (
+          v
+        ): Result.ResultAsync<
+          QueryTab[],
+          GetQueriesCheckExistSkipSqlDataError
+        > =>
+          this.queriesService.getQueriesCheckExistSkipSqlDataResult({
+            queryIds: v.mconfigParts.map(x => x.queryId),
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'apiQueriesStart',
+        (v): Result.Result<Query[], never> =>
+          Result.succeed(
+            v.queriesStart.map(q => this.queriesService.tabToApi({ query: q }))
+          )
+      ),
+      Result.bind(
+        'runQueriesOutput',
+        (v): Result.ResultAsync<ToBackendRunQueriesOutput, RunQueriesError> =>
+          this.runQueriesService.runQueriesResult({
+            user: v.user,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId,
+            envId: v.envId,
+            mconfigIds: v.mconfigParts.map(x => x.mconfigId),
+            poolSize: v.concurrency
+          })
+      ),
+      Result.bind(
+        'waitQueries',
+        async (
+          v
+        ): Result.ResultAsync<
+          RunQuery[],
+          GetQueriesCheckExistSkipSqlDataError
+        > => {
+          let mconfigPartsToGet: RunMconfigPart[] = [...v.mconfigParts];
 
-    let mconfigParts = [
-      ...chartResult.mconfigParts,
-      ...dashboardResult.mconfigParts,
-      ...reportResult.mconfigParts
-    ];
+          let waitQueries: RunQuery[] = [];
 
-    //
-    let mconfigIds = mconfigParts.map(x => x.mconfigId);
+          if (v.wait === true) {
+            await sleep(v.sleepSeconds * 1000);
 
-    let queriesStart =
-      await this.queriesService.getQueriesCheckExistSkipSqlData({
-        queryIds: mconfigParts.map(x => x.queryId),
-        projectId: projectId
-      });
+            while (mconfigPartsToGet.length > 0) {
+              let queriesResult: Result.Result<
+                QueryTab[],
+                GetQueriesCheckExistSkipSqlDataError
+              > =
+                await this.queriesService.getQueriesCheckExistSkipSqlDataResult(
+                  {
+                    queryIds: mconfigPartsToGet.map(x => x.queryId),
+                    projectId: v.projectId
+                  }
+                );
 
-    let apiQueriesStart = queriesStart.map(q =>
-      this.queriesService.tabToApi({ query: q })
-    );
-    //
+              if (Result.isFailure(queriesResult)) {
+                return queriesResult;
+              }
 
-    let runQueriesResp = await this.runQueriesService.runQueries({
-      user: user,
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId,
-      mconfigIds: mconfigIds,
-      poolSize: concurrency
-    });
+              let apiQueries: Query[] = queriesResult.value.map(q =>
+                this.queriesService.tabToApi({ query: q })
+              );
 
-    let mconfigPartsToGet = [...mconfigParts];
+              apiQueries.forEach(query => {
+                let queryStart: Query = v.apiQueriesStart.find(
+                  y => y.queryId === query.queryId
+                );
 
-    let waitQueries: RunQuery[] = [];
+                if (
+                  query.status !== 'Running' &&
+                  query.serverTs > queryStart.serverTs
+                ) {
+                  waitQueries.push(query);
 
-    if (wait === true) {
-      await sleep(sleepSeconds * 1000);
+                  mconfigPartsToGet = mconfigPartsToGet.filter(
+                    x => x.queryId !== query.queryId
+                  );
+                }
+              });
 
-      while (mconfigPartsToGet.length > 0) {
-        let queries = await this.queriesService.getQueriesCheckExistSkipSqlData(
-          {
-            queryIds: mconfigPartsToGet.map(x => x.queryId),
-            projectId: projectId
+              if (mconfigPartsToGet.length > 0) {
+                await sleep(v.sleepSeconds * 1000);
+              }
+            }
           }
-        );
 
-        let apiQueries = queries.map(q =>
-          this.queriesService.tabToApi({ query: q })
-        );
+          return Result.succeed(waitQueries);
+        }
+      ),
+      Result.map((v): ToBackendRunOutput => {
+        let queriesForStats: RunQuery[] =
+          v.wait === true ? v.waitQueries : v.runQueriesOutput.runningQueries;
 
-        apiQueries.forEach(query => {
-          let queryStart = apiQueriesStart.find(
-            y => y.queryId === query.queryId
+        let findQuery = (item: { queryId: string }): RunQuery => {
+          let { queryId } = item;
+
+          let query: RunQuery = queriesForStats.find(
+            q => q.queryId === queryId
           );
 
-          if (
-            query.status !== 'Running' &&
-            query.serverTs > queryStart.serverTs
-          ) {
-            waitQueries.push(query);
+          let output: RunQuery = isDefined(query)
+            ? {
+                queryId: query.queryId,
+                status: query.status,
+                lastErrorMessage: query.lastErrorMessage
+              }
+            : { queryId: queryId, status: 'New' };
 
-            mconfigPartsToGet = mconfigPartsToGet.filter(
-              x => x.queryId !== query.queryId
-            );
-          }
+          return output;
+        };
+
+        let chartParts: RunChart[] = this.runChartService.build({
+          prepCharts: v.prepareRunChartOutput.prepCharts,
+          findQuery: findQuery
         });
 
-        if (mconfigPartsToGet.length > 0) {
-          await sleep(sleepSeconds * 1000);
-        }
-      }
-    }
+        let dashboardParts: RunDashboard[] = this.runDashboardService.build({
+          prepDashboards: v.prepareRunDashboardOutput.prepDashboards,
+          findQuery: findQuery
+        });
 
-    let queriesForStats =
-      wait === true ? waitQueries : runQueriesResp.runningQueries;
+        let reportParts: RunReport[] = this.runReportService.build({
+          prepReports: v.prepareRunReportOutput.prepReports,
+          findQuery: findQuery
+        });
 
-    let findQuery = (item: { queryId: string }): RunQuery => {
-      let query = queriesForStats.find(q => q.queryId === item.queryId);
-      if (isDefined(query)) {
-        return {
-          queryId: query.queryId,
-          status: query.status,
-          lastErrorMessage: query.lastErrorMessage
+        let queriesStats: McliQueriesStats = {
+          started:
+            v.wait === true ? 0 : v.runQueriesOutput.startedQueryIds.length,
+          running: queriesForStats.filter(q => q.status === 'Running').length,
+          completed: queriesForStats.filter(q => q.status === 'Completed')
+            .length,
+          error: queriesForStats.filter(q => q.status === 'Error').length,
+          canceled: queriesForStats.filter(q => q.status === 'Canceled').length
         };
-      }
-      return { queryId: item.queryId, status: 'New' };
-    };
 
-    let chartParts: RunChart[] = this.runChartService.build({
-      prepCharts: chartResult.prepCharts,
-      findQuery: findQuery
-    });
+        let isError: boolean = queriesStats.error > 0;
 
-    let dashboardParts: RunDashboard[] = this.runDashboardService.build({
-      prepDashboards: dashboardResult.prepDashboards,
-      findQuery: findQuery
-    });
-
-    let reportParts: RunReport[] = this.runReportService.build({
-      prepReports: reportResult.prepReports,
-      findQuery: findQuery
-    });
-
-    let queriesStats: McliQueriesStats = {
-      started: wait === true ? 0 : runQueriesResp.startedQueryIds.length,
-      running: queriesForStats.filter(q => q.status === 'Running').length,
-      completed: queriesForStats.filter(q => q.status === 'Completed').length,
-      error: queriesForStats.filter(q => q.status === 'Error').length,
-      canceled: queriesForStats.filter(q => q.status === 'Canceled').length
-    };
-
-    let hasErrors = queriesStats.error > 0;
-
-    let errorCharts: RunChart[] = hasErrors
-      ? this.runChartService.filterErrors({ charts: chartParts })
-      : [];
-
-    let errorDashboards: RunDashboard[] = hasErrors
-      ? this.runDashboardService.filterErrors({ dashboards: dashboardParts })
-      : [];
-
-    let errorReports: RunReport[] = hasErrors
-      ? this.runReportService.filterErrors({ reports: reportParts })
-      : [];
-
-    let payload: ToBackendRunOutput = {
-      charts: getCharts === true ? chartParts : [],
-      dashboards: getDashboards === true ? dashboardParts : [],
-      reports: getReports === true ? reportParts : [],
-      errorCharts: errorCharts,
-      errorDashboards: errorDashboards,
-      errorReports: errorReports,
-      queriesStats: queriesStats
-    };
-
-    return payload;
+        return {
+          charts: v.getCharts === true ? chartParts : [],
+          dashboards: v.getDashboards === true ? dashboardParts : [],
+          reports: v.getReports === true ? reportParts : [],
+          errorCharts: isError
+            ? this.runChartService.filterErrors({ charts: chartParts })
+            : [],
+          errorDashboards: isError
+            ? this.runDashboardService.filterErrors({
+                dashboards: dashboardParts
+              })
+            : [],
+          errorReports: isError
+            ? this.runReportService.filterErrors({ reports: reportParts })
+            : [],
+          queriesStats: queriesStats
+        };
+      })
+    );
   }
 }

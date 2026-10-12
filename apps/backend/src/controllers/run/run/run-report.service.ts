@@ -1,19 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
+  ReportTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { PrepareRunReportError } from '#common/types/backend/function-errors/prepare-run-report-error';
+import type { ReportEntToTabError } from '#common/types/backend/function-errors/report-ent-to-tab-error';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 import type { RunReport } from '#common/types/backend/parts/run/run-report';
 
@@ -34,6 +36,11 @@ interface RunReportMconfigPart {
   queryId: string;
 }
 
+export type PrepareRunReportOutput = {
+  prepReports: RunReportPrep[];
+  mconfigParts: RunReportMconfigPart[];
+};
+
 @Injectable()
 export class RunReportService {
   constructor(
@@ -41,11 +48,11 @@ export class RunReportService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async prepare(item: {
+  async prepareRunReportResult(item: {
     structId: string;
     user: UserTab;
     userMember: MemberTab;
-    reportIds: string | undefined;
+    reportIds?: string;
     hostUrl: string;
     orgId: string;
     projectId: string;
@@ -53,112 +60,112 @@ export class RunReportService {
     branchId: string;
     envId: string;
     defaultTimezone: string;
-  }) {
-    let {
-      structId,
-      user,
-      userMember,
-      reportIds,
-      hostUrl,
-      orgId,
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      defaultTimezone
-    } = item;
-
-    let prepReports: RunReportPrep[] = [];
-
-    let mconfigParts: RunReportMconfigPart[] = [];
-
-    let allDbReports = await this.db.drizzle.query.reportsTable
-      .findMany({
-        where: and(
-          eq(reportsTable.structId, structId),
-          or(
-            eq(reportsTable.draft, false),
-            eq(reportsTable.creatorId, user.userId)
+  }): Result.ResultAsync<PrepareRunReportOutput, PrepareRunReportError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'reports',
+        (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
+          this.db.drizzle.query.reportsTable
+            .findMany({
+              where: and(
+                eq(reportsTable.structId, v.structId),
+                or(
+                  eq(reportsTable.draft, false),
+                  eq(reportsTable.creatorId, v.user.userId)
+                )
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.reportEntToTabResult({ reportEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'reportsGrantedAccess',
+        (v): Result.Result<ReportTab[], never> =>
+          Result.succeed(
+            v.reports.filter(
+              x =>
+                x.draft === true ||
+                checkAccess({
+                  member: v.userMember,
+                  accessRoles: x.accessRolesCombined,
+                  filePath: x.filePath
+                })
+            )
           )
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
+      ),
+      Result.bind(
+        'reportIdsList',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.reportIds?.split(','))
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.reportIdsList)
+          ? Result.succeed()
+          : Result.sequence(v.reportIdsList, reportId =>
+              v.reportsGrantedAccess.some(x => x.reportId === reportId)
+                ? Result.succeed()
+                : Result.fail({
+                    code: 'BACKEND_REPORT_NOT_FOUND',
+                    displayData: { id: reportId }
+                  })
+            )
+      ),
+      Result.map((v): PrepareRunReportOutput => {
+        let prepReports: RunReportPrep[] = [];
 
-    let allReports = allDbReports.filter(x => {
-      if (x.draft === true) {
-        return true;
-      }
+        let mconfigParts: RunReportMconfigPart[] = [];
 
-      return checkAccess({
-        member: userMember,
-        accessRoles: x.accessRolesCombined,
-        filePath: x.filePath
-      });
-    });
+        v.reportsGrantedAccess
+          .filter(
+            report =>
+              isUndefined(v.reportIdsList) ||
+              v.reportIdsList.includes(report.reportId)
+          )
+          .forEach(report => {
+            let prepRows: RunReportPrepRow[] = [];
 
-    let reportIdsList = reportIds?.split(',');
+            report.rows.forEach(row => {
+              if (isDefined(row.mconfig)) {
+                prepRows.push({
+                  title: row.name,
+                  queryId: row.mconfig.queryId
+                });
 
-    if (isDefined(reportIdsList)) {
-      reportIdsList.forEach(reportId => {
-        let isFound =
-          allReports.map(report => report.reportId).indexOf(reportId) > -1;
+                mconfigParts.push({
+                  mconfigId: row.mconfig.mconfigId,
+                  queryId: row.mconfig.queryId
+                });
+              }
+            });
 
-        if (isFound === false) {
-          let serverError = new ServerError({
-            message: 'BACKEND_REPORT_NOT_FOUND',
-            displayData: { id: reportId },
-            originalError: null
+            let url: string = getReportUrl({
+              host: v.hostUrl,
+              orgId: v.orgId,
+              projectId: v.projectId,
+              repoId: v.repoId,
+              branch: v.branchId,
+              env: v.envId,
+              reportId: report.reportId,
+              timezone: v.defaultTimezone,
+              timeSpec: 'days',
+              timeRange: 'f`last 5 days`'
+            });
+
+            prepReports.push({
+              title: report.title,
+              reportId: report.reportId,
+              url: url,
+              rows: prepRows
+            });
           });
-          throw serverError;
-        }
-      });
-    }
 
-    allReports
-      .filter(
-        report =>
-          isUndefined(reportIdsList) ||
-          reportIdsList.indexOf(report.reportId) > -1
-      )
-      .forEach(report => {
-        let prepRows: RunReportPrepRow[] = [];
-
-        report.rows.forEach(row => {
-          if (isDefined(row.mconfig)) {
-            prepRows.push({
-              title: row.name,
-              queryId: row.mconfig.queryId
-            });
-
-            mconfigParts.push({
-              mconfigId: row.mconfig.mconfigId,
-              queryId: row.mconfig.queryId
-            });
-          }
-        });
-
-        let url = getReportUrl({
-          host: hostUrl,
-          orgId: orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          env: envId,
-          reportId: report.reportId,
-          timezone: defaultTimezone,
-          timeSpec: 'days',
-          timeRange: 'f`last 5 days`'
-        });
-
-        prepReports.push({
-          title: report.title,
-          reportId: report.reportId,
-          url: url,
-          rows: prepRows
-        });
-      });
-
-    return { prepReports: prepReports, mconfigParts: mconfigParts };
+        return { prepReports: prepReports, mconfigParts: mconfigParts };
+      })
+    );
   }
 
   build(item: {
@@ -167,7 +174,7 @@ export class RunReportService {
   }): RunReport[] {
     let { prepReports, findQuery } = item;
 
-    return prepReports.map(meta => ({
+    let reports: RunReport[] = prepReports.map(meta => ({
       title: meta.title,
       reportId: meta.reportId,
       url: meta.url,
@@ -176,12 +183,14 @@ export class RunReportService {
         query: findQuery({ queryId: row.queryId })
       }))
     }));
+
+    return reports;
   }
 
   filterErrors(item: { reports: RunReport[] }): RunReport[] {
     let { reports } = item;
 
-    return reports
+    let errorReports: RunReport[] = reports
       .filter(x => x.rows.filter(y => y.query.status === 'Error').length > 0)
       .map(r => ({
         title: r.title,
@@ -189,5 +198,7 @@ export class RunReportService {
         url: r.url,
         rows: r.rows.filter(row => row.query.status === 'Error')
       }));
+
+    return errorReports;
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import type {
   MemberTab,
   UserTab
@@ -6,10 +7,11 @@ import type {
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ServerError } from '#common/classes/server-error/server-error';
-
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetDashboardPartsError } from '#common/types/backend/function-errors/get-dashboard-parts-error';
+import type { PrepareRunDashboardError } from '#common/types/backend/function-errors/prepare-run-dashboard-error';
+import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
+import type { Member } from '#common/types/backend/parts/member';
 import type { RunDashboard } from '#common/types/backend/parts/run/run-dashboard';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 
@@ -30,6 +32,11 @@ interface RunDashboardMconfigPart {
   queryId: string;
 }
 
+export type PrepareRunDashboardOutput = {
+  prepDashboards: RunDashboardPrep[];
+  mconfigParts: RunDashboardMconfigPart[];
+};
+
 @Injectable()
 export class RunDashboardService {
   constructor(
@@ -37,11 +44,11 @@ export class RunDashboardService {
     private dashboardsService: DashboardsService
   ) {}
 
-  async prepare(item: {
+  async prepareRunDashboardResult(item: {
     structId: string;
     user: UserTab;
     userMember: MemberTab;
-    dashboardIds: string | undefined;
+    dashboardIds?: string;
     hostUrl: string;
     orgId: string;
     projectId: string;
@@ -49,96 +56,85 @@ export class RunDashboardService {
     branchId: string;
     envId: string;
     defaultTimezone: string;
-  }) {
-    let {
-      structId,
-      user,
-      userMember,
-      dashboardIds,
-      hostUrl,
-      orgId,
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      defaultTimezone
-    } = item;
+  }): Result.ResultAsync<PrepareRunDashboardOutput, PrepareRunDashboardError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'apiUserMember',
+        (v): Result.Result<Member, never> =>
+          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      ),
+      Result.bind(
+        'dashboards',
+        (v): Result.ResultAsync<DashboardPart[], GetDashboardPartsError> =>
+          this.dashboardsService.getDashboardPartsResult({
+            structId: v.structId,
+            user: v.user,
+            apiUserMember: v.apiUserMember
+          })
+      ),
+      Result.bind(
+        'dashboardIdsList',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.dashboardIds?.split(','))
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.dashboardIdsList)
+          ? Result.succeed()
+          : Result.sequence(v.dashboardIdsList, dashboardId =>
+              v.dashboards.some(x => x.dashboardId === dashboardId)
+                ? Result.succeed()
+                : Result.fail({
+                    code: 'BACKEND_DASHBOARD_NOT_FOUND',
+                    displayData: { id: dashboardId }
+                  })
+            )
+      ),
+      Result.map((v): PrepareRunDashboardOutput => {
+        let prepDashboards: RunDashboardPrep[] = [];
 
-    let prepDashboards: RunDashboardPrep[] = [];
+        let mconfigParts: RunDashboardMconfigPart[] = [];
 
-    let mconfigParts: RunDashboardMconfigPart[] = [];
+        v.dashboards
+          .filter(
+            dashboard =>
+              isUndefined(v.dashboardIdsList) ||
+              v.dashboardIdsList.includes(dashboard.dashboardId)
+          )
+          .forEach(dashboard => {
+            let prepTiles: RunDashboardPrepTile[] = [];
 
-    let apiUserMember = this.membersService.tabToApi({
-      member: userMember
-    });
+            dashboard.tiles.forEach(tile => {
+              prepTiles.push({ title: tile.title, queryId: tile.queryId });
 
-    let dashboards = await this.dashboardsService.getDashboardParts({
-      structId: structId,
-      user: user,
-      apiUserMember: apiUserMember
-    });
+              mconfigParts.push({
+                mconfigId: tile.mconfigId,
+                queryId: tile.queryId
+              });
+            });
 
-    let dashboardIdsList = dashboardIds?.split(',');
+            let url: string = getDashboardUrl({
+              host: v.hostUrl,
+              orgId: v.orgId,
+              projectId: v.projectId,
+              repoId: v.repoId,
+              branch: v.branchId,
+              env: v.envId,
+              dashboardId: dashboard.dashboardId,
+              timezone: v.defaultTimezone
+            });
 
-    if (isDefined(dashboardIdsList)) {
-      dashboardIdsList.forEach(dashboardId => {
-        let isFound =
-          dashboards
-            .map(dashboard => dashboard.dashboardId)
-            .indexOf(dashboardId) > -1;
-
-        if (isFound === false) {
-          let serverError = new ServerError({
-            message: 'BACKEND_DASHBOARD_NOT_FOUND',
-            displayData: { id: dashboardId },
-            originalError: null
+            prepDashboards.push({
+              title: dashboard.title,
+              dashboardId: dashboard.dashboardId,
+              url: url,
+              tiles: prepTiles
+            });
           });
-          throw serverError;
-        }
-      });
-    }
 
-    dashboards
-      .filter(
-        dashboard =>
-          isUndefined(dashboardIdsList) ||
-          dashboardIdsList.indexOf(dashboard.dashboardId) > -1
-      )
-      .forEach(dashboard => {
-        let prepTiles: RunDashboardPrepTile[] = [];
-
-        dashboard.tiles.forEach(tile => {
-          prepTiles.push({
-            title: tile.title,
-            queryId: tile.queryId
-          });
-
-          mconfigParts.push({
-            mconfigId: tile.mconfigId,
-            queryId: tile.queryId
-          });
-        });
-
-        let url = getDashboardUrl({
-          host: hostUrl,
-          orgId: orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          env: envId,
-          dashboardId: dashboard.dashboardId,
-          timezone: defaultTimezone
-        });
-
-        prepDashboards.push({
-          title: dashboard.title,
-          dashboardId: dashboard.dashboardId,
-          url: url,
-          tiles: prepTiles
-        });
-      });
-
-    return { prepDashboards: prepDashboards, mconfigParts: mconfigParts };
+        return { prepDashboards: prepDashboards, mconfigParts: mconfigParts };
+      })
+    );
   }
 
   build(item: {
@@ -147,7 +143,7 @@ export class RunDashboardService {
   }): RunDashboard[] {
     let { prepDashboards, findQuery } = item;
 
-    return prepDashboards.map(meta => ({
+    let dashboards: RunDashboard[] = prepDashboards.map(meta => ({
       title: meta.title,
       dashboardId: meta.dashboardId,
       url: meta.url,
@@ -156,12 +152,14 @@ export class RunDashboardService {
         query: findQuery({ queryId: tile.queryId })
       }))
     }));
+
+    return dashboards;
   }
 
   filterErrors(item: { dashboards: RunDashboard[] }): RunDashboard[] {
     let { dashboards } = item;
 
-    return dashboards
+    let errorDashboards: RunDashboard[] = dashboards
       .filter(x => x.tiles.filter(y => y.query.status === 'Error').length > 0)
       .map(d => ({
         title: d.title,
@@ -169,5 +167,7 @@ export class RunDashboardService {
         url: d.url,
         tiles: d.tiles.filter(t => t.query.status === 'Error')
       }));
+
+    return errorDashboards;
   }
 }

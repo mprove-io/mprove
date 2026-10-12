@@ -9,9 +9,9 @@ import { RunService } from '#backend/controllers/run/run/run.service';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
-import type { ToBackendRunOutput } from '#common/types/backend/routes/run/run/run-output';
 
 @ApiTags('Run')
 @UseGuards(ThrottlerUserIdGuard)
@@ -28,13 +28,14 @@ export class RunController {
   @ApiOkResponse({
     type: ToBackendRunResponseDto
   })
-  async run(@AttachUser() user: UserTab, @Body() body: ToBackendRunRequestDto) {
-    let payload: ToBackendRunOutput = await this.runService.run({
+  async run(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendRunRequestDto
+  ): Promise<BackendResultForOperation<'run'>> {
+    return this.runService.runResult({
       ...body.input,
       traceId: body.traceId,
       user: user
     });
-
-    return payload;
   }
 }

@@ -1,17 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ChartTab,
+  MemberTab,
+  ModelTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
-
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
+import type { PrepareRunChartError } from '#common/types/backend/function-errors/prepare-run-chart-error';
 import type { RunChart } from '#common/types/backend/parts/run/run-chart';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 
@@ -27,6 +32,11 @@ interface RunChartMconfigPart {
   queryId: string;
 }
 
+export type PrepareRunChartOutput = {
+  prepCharts: RunChartPrep[];
+  mconfigParts: RunChartMconfigPart[];
+};
+
 @Injectable()
 export class RunChartService {
   constructor(
@@ -34,10 +44,10 @@ export class RunChartService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async prepare(item: {
+  async prepareRunChartResult(item: {
     structId: string;
     userMember: MemberTab;
-    chartIds: string | undefined;
+    chartIds?: string;
     hostUrl: string;
     orgId: string;
     projectId: string;
@@ -45,93 +55,102 @@ export class RunChartService {
     branchId: string;
     envId: string;
     defaultTimezone: string;
-  }) {
-    let {
-      structId,
-      userMember,
-      chartIds,
-      hostUrl,
-      orgId,
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      defaultTimezone
-    } = item;
+  }): Result.ResultAsync<PrepareRunChartOutput, PrepareRunChartError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'charts',
+        (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
+          this.db.drizzle.query.chartsTable
+            .findMany({ where: eq(chartsTable.structId, v.structId) })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.chartEntToTabResult({ chartEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'models',
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+          this.db.drizzle.query.modelsTable
+            .findMany({ where: eq(modelsTable.structId, v.structId) })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.modelEntToTabResult({ modelEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'chartsGrantedAccess',
+        (v): Result.Result<ChartTab[], never> =>
+          Result.succeed(
+            v.charts.filter(x => {
+              let model: ModelTab = v.models.find(y => y.modelId === x.modelId);
 
-    let prepCharts: RunChartPrep[] = [];
+              return checkModelAccess({
+                member: v.userMember,
+                modelAccessRoles: model.accessRolesCombined
+              });
+            })
+          )
+      ),
+      Result.bind(
+        'chartIdsList',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.chartIds?.split(','))
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.chartIdsList)
+          ? Result.succeed()
+          : Result.sequence(v.chartIdsList, chartId =>
+              v.chartsGrantedAccess.some(chart => chart.chartId === chartId)
+                ? Result.succeed()
+                : Result.fail({
+                    code: 'BACKEND_CHART_NOT_FOUND',
+                    displayData: { id: chartId }
+                  })
+            )
+      ),
+      Result.map((v): PrepareRunChartOutput => {
+        let prepCharts: RunChartPrep[] = [];
 
-    let mconfigParts: RunChartMconfigPart[] = [];
+        let mconfigParts: RunChartMconfigPart[] = [];
 
-    let charts = await this.db.drizzle.query.chartsTable
-      .findMany({
-        where: eq(chartsTable.structId, structId)
-      })
-      .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
+        v.chartsGrantedAccess
+          .filter(
+            chart =>
+              isUndefined(v.chartIdsList) ||
+              v.chartIdsList.includes(chart.chartId)
+          )
+          .forEach(x => {
+            let url: string = getChartUrl({
+              host: v.hostUrl,
+              orgId: v.orgId,
+              projectId: v.projectId,
+              repoId: v.repoId,
+              branch: v.branchId,
+              env: v.envId,
+              modelId: x.modelId,
+              chartId: x.chartId,
+              timezone: v.defaultTimezone
+            });
 
-    let models = await this.db.drizzle.query.modelsTable
-      .findMany({ where: eq(modelsTable.structId, structId) })
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+            prepCharts.push({
+              title: x.title,
+              chartId: x.chartId,
+              url: url,
+              queryId: x.tiles[0].queryId
+            });
 
-    let chartsGrantedAccess = charts.filter(x => {
-      let model = models.find(y => y.modelId === x.modelId);
-
-      return checkModelAccess({
-        member: userMember,
-        modelAccessRoles: model.accessRolesCombined
-      });
-    });
-
-    let chartIdsList = chartIds?.split(',');
-
-    if (isDefined(chartIdsList)) {
-      chartIdsList.forEach(chartId => {
-        let isFound =
-          chartsGrantedAccess.map(chart => chart.chartId).indexOf(chartId) > -1;
-
-        if (isFound === false) {
-          let serverError = new ServerError({
-            message: 'BACKEND_CHART_NOT_FOUND',
-            displayData: { id: chartId },
-            originalError: null
+            mconfigParts.push({
+              mconfigId: x.tiles[0].mconfigId,
+              queryId: x.tiles[0].queryId
+            });
           });
-          throw serverError;
-        }
-      });
-    }
 
-    chartsGrantedAccess
-      .filter(
-        chart =>
-          isUndefined(chartIdsList) || chartIdsList.indexOf(chart.chartId) > -1
-      )
-      .forEach(x => {
-        let url = getChartUrl({
-          host: hostUrl,
-          orgId: orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          env: envId,
-          modelId: x.modelId,
-          chartId: x.chartId,
-          timezone: defaultTimezone
-        });
-
-        prepCharts.push({
-          title: x.title,
-          chartId: x.chartId,
-          url: url,
-          queryId: x.tiles[0].queryId
-        });
-
-        mconfigParts.push({
-          mconfigId: x.tiles[0].mconfigId,
-          queryId: x.tiles[0].queryId
-        });
-      });
-
-    return { prepCharts: prepCharts, mconfigParts: mconfigParts };
+        return { prepCharts: prepCharts, mconfigParts: mconfigParts };
+      })
+    );
   }
 
   build(item: {
@@ -140,17 +159,23 @@ export class RunChartService {
   }): RunChart[] {
     let { prepCharts, findQuery } = item;
 
-    return prepCharts.map(meta => ({
+    let charts: RunChart[] = prepCharts.map(meta => ({
       title: meta.title,
       chartId: meta.chartId,
       url: meta.url,
       query: findQuery({ queryId: meta.queryId })
     }));
+
+    return charts;
   }
 
   filterErrors(item: { charts: RunChart[] }): RunChart[] {
     let { charts } = item;
 
-    return charts.filter(x => x.query.status === 'Error');
+    let errorCharts: RunChart[] = charts.filter(
+      x => x.query.status === 'Error'
+    );
+
+    return errorCharts;
   }
 }

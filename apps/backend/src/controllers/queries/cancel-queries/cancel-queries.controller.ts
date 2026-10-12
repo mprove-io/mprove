@@ -1,4 +1,4 @@
-import { BigQuery } from '@google-cloud/bigquery';
+import { BigQuery, type Job } from '@google-cloud/bigquery';
 import {
   Body,
   Controller,
@@ -10,11 +10,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import pIteration from 'p-iteration';
-import asyncPool from 'tiny-async-pool';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCancelQueriesRequestDto,
   ToBackendCancelQueriesResponseDto
@@ -22,12 +21,18 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BranchTab,
+  BridgeTab,
   ConnectionTab,
+  MconfigTab,
+  MemberTab,
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { asyncPoolResult } from '#backend/functions/async-pool-result/async-pool-result';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
@@ -42,15 +47,23 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ParentService } from '#backend/services/parent/parent.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendConnectionDoesNotExistError } from '#common/types/backend/errors/backend-connection-does-not-exist-error';
+import type { CancelQueryError } from '#common/types/backend/function-errors/cancel-query-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
+import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
+import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
-
-const { forEachSeries } = pIteration;
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -78,134 +91,234 @@ export class CancelQueriesController {
     summary: 'CancelQueries',
     description: 'Cancel running queries for specified mconfigs'
   })
-  @ApiOkResponse({
-    type: ToBackendCancelQueriesResponseDto
-  })
+  @ApiOkResponse({ type: ToBackendCancelQueriesResponseDto })
   async cancelQueries(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCancelQueriesRequestDto
-  ) {
-    let { projectId, repoId, branchId, envId, mconfigIds } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let mconfigs = await this.db.drizzle.query.mconfigsTable
-      .findMany({
-        where: and(
-          eq(mconfigsTable.structId, bridge.structId),
-          inArray(mconfigsTable.mconfigId, mconfigIds)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
-
-    let uniqueParentIds = [...new Set(mconfigs.map(x => x.parentId))];
-
-    await forEachSeries(uniqueParentIds, async parentId => {
-      let mconfig = mconfigs.find(x => x.parentId === parentId); // any mconfig
-
-      await this.parentService.checkParentAccess({
-        parentId: mconfig.parentId,
-        parentType: mconfig.parentType,
-        modelId: mconfig.modelId, // for chart as parent
-        user: user,
-        userMember: userMember,
-        structId: bridge.structId,
-        projectId: projectId
-      });
-    });
-
-    let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
-
-    let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
-      queryIds: queryIds,
-      projectId: projectId
-    });
-
-    let connectionsWithAnyEnvId: ConnectionTab[] =
-      await this.db.drizzle.query.connectionsTable
-        .findMany({
-          where: and(
-            eq(connectionsTable.projectId, projectId),
-            inArray(
-              connectionsTable.connectionId,
-              queries.map(q => q.connectionId)
+  ): Promise<BackendResultForOperation<'cancelQueries'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        mconfigIds: body.input.mconfigIds,
+        user: user
+      }),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.andThrough(v =>
+        this.structsService.getStructCheckExistsResult({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'mconfigs',
+        (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+          this.db.drizzle.query.mconfigsTable
+            .findMany({
+              where: and(
+                eq(mconfigsTable.structId, v.bridge.structId),
+                inArray(mconfigsTable.mconfigId, v.mconfigIds)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.mconfigEntToTabResult({ mconfigEnt: x })
+              )
             )
+      ),
+      Result.bind(
+        'uniqueParentIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([...new Set(v.mconfigs.map(x => x.parentId))])
+      ),
+      Result.andThrough(v =>
+        Result.sequence(v.uniqueParentIds, parentId => {
+          let mconfig: MconfigTab = v.mconfigs.find(
+            x => x.parentId === parentId
+          );
+
+          return this.parentService.checkParentAccessResult({
+            parentId: mconfig.parentId,
+            parentType: mconfig.parentType,
+            modelId: mconfig.modelId,
+            user: v.user,
+            userMember: v.userMember,
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          });
+        })
+      ),
+      Result.bind(
+        'queryIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([...new Set(v.mconfigs.map(x => x.queryId))])
+      ),
+      Result.bind(
+        'queries',
+        (
+          v
+        ): Result.ResultAsync<
+          QueryTab[],
+          GetQueriesCheckExistSkipSqlDataError
+        > =>
+          this.queriesService.getQueriesCheckExistSkipSqlDataResult({
+            queryIds: v.queryIds,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'connectionsWithAnyEnvId',
+        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
+          this.db.drizzle.query.connectionsTable
+            .findMany({
+              where: and(
+                eq(connectionsTable.projectId, v.projectId),
+                inArray(
+                  connectionsTable.connectionId,
+                  v.queries.map(q => q.connectionId)
+                )
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.connectionEntToTabResult({ connectionEnt: x })
+              )
+            )
+      ),
+      Result.andThrough(v =>
+        asyncPoolResult({
+          poolSize: 8,
+          inputs: v.queries.filter(q => q.status === 'Running'),
+          callback: query =>
+            this.cancelQueryResult({
+              query: query,
+              connectionsWithAnyEnvId: v.connectionsWithAnyEnvId
+            })
+        })
+      ),
+      Result.bind(
+        'canceledQueries',
+        (v): Result.Result<QueryTab[], never> =>
+          Result.succeed(v.queries.filter(x => x.status === 'Canceled'))
+      ),
+      Result.andThrough(v =>
+        v.canceledQueries.length === 0
+          ? Result.succeed()
+          : dbErrorToResult({
+              action: async (): Promise<void> => {
+                await retry(
+                  async () =>
+                    this.db.drizzle.transaction(async tx =>
+                      this.db.packer.write({
+                        tx: tx,
+                        insertOrUpdate: { queries: v.canceledQueries }
+                      })
+                    ),
+                  getRetryOption(this.cs, this.logger)
+                );
+              }
+            })
+      ),
+      Result.map(
+        (v): ToBackendCancelQueriesOutput => ({
+          queries: v.canceledQueries.map(x =>
+            this.queriesService.tabToApi({ query: x })
           )
         })
-        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
+      )
+    );
+  }
 
-    await asyncPool(
-      8,
-      queries.filter(q => q.status === 'Running'),
-      async (query: QueryTab) => {
-        let apiEnvs = await this.envsService.getApiEnvs({
-          projectId: query.projectId
-        });
+  private async cancelQueryResult(item: {
+    query: QueryTab;
+    connectionsWithAnyEnvId: ConnectionTab[];
+  }): Result.ResultAsync<void, CancelQueryError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'apiEnvs',
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
+          this.envsService.getApiEnvsResult({ projectId: v.query.projectId })
+      ),
+      Result.bind(
+        'connection',
+        (
+          v
+        ): Result.Result<ConnectionTab, BackendConnectionDoesNotExistError> => {
+          let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);
 
-        let apiEnv = apiEnvs.find(x => x.envId === query.envId);
+          let connection: ConnectionTab = v.connectionsWithAnyEnvId.find(
+            x =>
+              x.connectionId === v.query.connectionId &&
+              x.envId ===
+                (apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
+                  ? PROJECT_ENV_PROD
+                  : v.query.envId)
+          );
 
-        let connection: ConnectionTab = connectionsWithAnyEnvId.find(
-          x =>
-            x.connectionId === query.connectionId &&
-            x.envId ===
-              (apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
-                ? PROJECT_ENV_PROD
-                : query.envId)
-        );
-
-        if (isUndefined(connection)) {
-          throw new ServerError({
-            message: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
-          });
+          return isUndefined(connection)
+            ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
+            : Result.succeed(connection);
         }
-        if (connection.type === 'BigQuery') {
-          let bigquery = new BigQuery({
-            projectId: connection.options.bigquery.googleCloudProject,
-            credentials: connection.options.bigquery.serviceAccountCredentials
+      ),
+      Result.andThrough(v => {
+        if (v.connection.type === 'BigQuery') {
+          let bigquery: BigQuery = new BigQuery({
+            projectId: v.connection.options.bigquery.googleCloudProject,
+            credentials: v.connection.options.bigquery.serviceAccountCredentials
           });
 
-          let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);
+          let bigqueryQueryJob: Job = bigquery.job(v.query.bigqueryQueryJobId);
 
-          // do not await
-          bigqueryQueryJob.cancel().catch((e: any) => {
+          void bigqueryQueryJob.cancel().catch((e: unknown) => {
             logToConsoleBackend({
               log: new ServerError({
                 message: 'BACKEND_BIGQUERY_CANCEL_QUERY_JOB_FAIL',
@@ -218,37 +331,20 @@ export class CancelQueriesController {
           });
         }
 
-        query.status = 'Canceled';
-        query.data = [];
-        query.lastCancelTs = makeTsNumber();
-        query.queryJobId = undefined;
-      }
+        return Result.succeed();
+      }),
+      Result.map(v => {
+        v.query.status = 'Canceled';
+
+        v.query.data = [];
+
+        v.query.lastCancelTs = makeTsNumber();
+
+        v.query.queryJobId = undefined;
+
+        return v;
+      }),
+      Result.map((v): void => undefined)
     );
-
-    let canceledQueries = queries.filter(x => x.status === 'Canceled');
-
-    if (canceledQueries.length > 0) {
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insertOrUpdate: {
-                  queries: canceledQueries
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let payload: ToBackendCancelQueriesOutput = {
-      queries: canceledQueries.map(x =>
-        this.queriesService.tabToApi({ query: x })
-      )
-    };
-
-    return payload;
   }
 }
