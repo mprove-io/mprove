@@ -20,7 +20,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
+import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetAvatarBigOutput } from '#common/types/backend/routes/avatars/get-avatar-big/get-avatar-big-output';
 
@@ -51,7 +51,7 @@ export class GetAvatarBigController {
       }),
       Result.bind(
         'avatar',
-        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
           this.db.drizzle.query.avatarsTable
             .findFirst({
               where: eq(avatarsTable.userId, v.avatarUserId)

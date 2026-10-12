@@ -28,11 +28,11 @@ import { ParentService } from '#backend/services/parent/parent.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
-import type { GetMconfigCheckExistsResultError } from '#common/types/backend/function-errors/get-mconfig-check-exists-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetQueryCheckExistsResultError } from '#common/types/backend/function-errors/get-query-check-exists-result-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetQueryCheckExistsError } from '#common/types/backend/function-errors/get-query-check-exists-error';
 
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
@@ -108,7 +108,7 @@ export class GetQueryController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -116,7 +116,7 @@ export class GetQueryController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -132,7 +132,7 @@ export class GetQueryController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
           this.bridgesService.getBridgeCheckExistsResult({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
@@ -142,7 +142,7 @@ export class GetQueryController {
       ),
       Result.bind(
         'mconfig',
-        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsResultError> =>
+        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
           this.mconfigsService.getMconfigCheckExistsResult({
             mconfigId: v.mconfigId,
             structId: v.bridge.structId
@@ -166,7 +166,7 @@ export class GetQueryController {
       ),
       Result.bind(
         'query',
-        (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsResultError> =>
+        (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsError> =>
           this.queriesService.getQueryCheckExistsResult({
             queryId: v.queryId,
             projectId: v.projectId

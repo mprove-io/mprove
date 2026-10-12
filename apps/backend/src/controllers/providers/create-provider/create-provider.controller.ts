@@ -33,7 +33,7 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { MakeProviderResultError } from '#common/types/backend/function-errors/make-provider-result-error';
+import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProviderOutput } from '#common/types/backend/routes/providers/create-provider/create-provider-output';
 
@@ -103,7 +103,7 @@ export class CreateProviderController {
       ),
       Result.bind(
         'provider',
-        (v): Result.Result<ProviderTab, MakeProviderResultError> =>
+        (v): Result.Result<ProviderTab, MakeProviderError> =>
           this.providersService.makeProviderResult({
             ...v.input,
             isEnabled: true,

@@ -35,8 +35,8 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteMemberOutput } from '#common/types/backend/routes/members/delete-member/delete-member-output';
 
@@ -76,7 +76,7 @@ export class DeleteMemberController {
       }),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
@@ -94,7 +94,7 @@ export class DeleteMemberController {
       ),
       Result.bind(
         'member',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             memberId: v.memberId,
             projectId: v.projectId

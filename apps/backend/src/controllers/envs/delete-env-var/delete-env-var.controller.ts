@@ -37,9 +37,9 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetEnvCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteEnvVarOutput } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-output';
@@ -87,10 +87,7 @@ export class DeleteEnvVarController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -105,9 +102,7 @@ export class DeleteEnvVarController {
       ),
       Result.bind(
         'env',
-        (
-          v
-        ): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessResultError> =>
+        (v): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessError> =>
           this.envsService.getEnvCheckExistsAndAccessResult({
             projectId: v.projectId,
             envId: v.envId,
@@ -157,7 +152,7 @@ export class DeleteEnvVarController {
       ),
       Result.bind(
         'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.map(

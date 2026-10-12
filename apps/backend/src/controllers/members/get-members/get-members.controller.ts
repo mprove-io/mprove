@@ -29,10 +29,10 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
-import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
+import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -78,7 +78,7 @@ export class GetMembersController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -93,7 +93,7 @@ export class GetMembersController {
       ),
       Result.bind(
         'projectMembers',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
+        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
           this.db.drizzle.query.membersTable
             .findMany({ where: and(eq(membersTable.projectId, v.projectId)) })
             .then(xs =>
@@ -125,9 +125,7 @@ export class GetMembersController {
       ),
       Result.bind(
         'avatars',
-        async (
-          v
-        ): Result.ResultAsync<AvatarTab[], AvatarEntToTabResultError> =>
+        async (v): Result.ResultAsync<AvatarTab[], AvatarEntToTabError> =>
           v.memberIds.length === 0
             ? Result.succeed([])
             : this.db.drizzle
@@ -162,7 +160,7 @@ export class GetMembersController {
       ),
       Result.bind(
         'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
           this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.map(v => {

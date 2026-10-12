@@ -17,7 +17,7 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { EnvEntToTabResultError } from '#common/types/backend/function-errors/env-ent-to-tab-result-error';
+import type { EnvEntToTabError } from '#common/types/backend/function-errors/env-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-output';
 
@@ -64,7 +64,7 @@ export class GetEnvsListController {
       ),
       Result.bind(
         'envs',
-        (v): Result.ResultAsync<EnvTab[], EnvEntToTabResultError> =>
+        (v): Result.ResultAsync<EnvTab[], EnvEntToTabError> =>
           this.db.drizzle.query.envsTable
             .findMany({
               where: eq(envsTable.projectId, v.projectId)

@@ -15,8 +15,8 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetGivensOutput } from '#common/types/backend/routes/givens/get-givens/get-givens-output';
@@ -57,10 +57,7 @@ export class GetGivensController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -68,7 +65,7 @@ export class GetGivensController {
       ),
       Result.bind(
         'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
           this.givensService.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.map(

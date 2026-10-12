@@ -9,10 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import pIteration from 'p-iteration';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSaveModifyChartRequestDto,
   ToBackendSaveModifyChartResponseDto
@@ -20,25 +20,39 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BranchTab,
+  BridgeTab,
+  ChartTab,
   MconfigTab,
+  MemberTab,
+  ModelTab,
+  ProjectTab,
   QueryTab,
+  StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import {
+  type BridgeEnt,
+  bridgesTable
+} from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path/get-report-space-from-file-path';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text/make-chart-file-text';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import type { ChartsCatalog } from '#backend/services/db/charts/charts.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
+import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -49,18 +63,86 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendMemberIsNotEditorOrAdminError } from '#common/types/backend/errors/backend-member-is-not-editor-or-admin-error';
+import type { BackendMemberIsNotExplorerError } from '#common/types/backend/errors/backend-member-is-not-explorer-error';
+import type { BackendModifyChartFailError } from '#common/types/backend/errors/backend-modify-chart-fail-error';
+import type { CheckChartPathError } from '#common/types/backend/function-errors/check-chart-path-error';
+import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
+import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
+import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
+import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
+import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
+import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
+import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { Member } from '#common/types/backend/parts/member';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveModifyChartOutput } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-output';
+import type { Chart } from '#common/types/blockml/parts/chart/chart';
 import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
+import type { Query } from '#common/types/blockml/parts/query/query';
+import type { Tile } from '#common/types/blockml/parts/tile/tile';
+import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
+import type { ToDiskMoveCatalogNodeOutput } from '#common/types/disk/routes/catalogs/move-catalog-node/move-catalog-node-output';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 
-const { forEachSeries } = pIteration;
+type PrepareChartFilePayload = {
+  chartFileText: string;
+  baseProject: BaseProject;
+  currentChartSpace: string;
+};
+
+type PrepareChartFileMovePayload = {
+  chartFileName: string;
+  isSpaceChanged: boolean;
+  targetChartFilePath: string;
+  isChartPathChanged: boolean;
+  isMoveChartRequired: boolean;
+  finalChartFilePath: string;
+};
+
+type PrepareRebuildPayload = {
+  diskFiles: DiskCatalogFile[];
+  selectedSpaceFilePath: string;
+  modelIds: string[];
+};
+
+type PrepareQueryPayload = {
+  chartTile: Tile;
+  chartApiMconfig: Mconfig;
+  chartApiQuery: Query;
+  newMconfig: MconfigTab;
+  newQuery: QueryTab;
+  isError: boolean;
+};
+
+type SaveChartPayload = {
+  chart: ChartTab;
+};
+
+type AssembleChartResponsePayload = {
+  apiUserMember: Member;
+  modelApi: ModelX;
+};
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -99,426 +181,755 @@ export class SaveModifyChartController {
   async saveModifyChart(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSaveModifyChartRequestDto
-  ) {
-    this.usersService.checkUserIsNotRestricted({ user: user });
-
-    let { traceId } = body;
-    let {
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      fromChartId,
-      chartId,
-      tileTitle,
-      space,
-      accessRoles,
-      timezone
-    } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    await this.projectsService.checkProjectIsNotRestricted({
-      projectId: projectId,
-      userMember: userMember,
-      repoId: repoId
-    });
-
-    if (userMember.isExplorer === false) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
-      });
-    }
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let currentStruct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let existingChart = await this.chartsService.getChartCheckExists({
-      structId: bridge.structId,
-      chartId: chartId,
-      userMember: userMember,
-      user: user
-    });
-
-    if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.chartsService.checkChartPath({
-        userAlias: user.alias,
-        filePath: existingChart.filePath
-      });
-    }
-
-    let mconfig = await this.mconfigsService.getMconfigCheckExists({
-      structId: bridge.structId,
-      mconfigId: existingChart.tiles[0].mconfigId
-    });
-
-    let model = await this.modelsService.getModelCheckExistsAndAccess({
-      structId: bridge.structId,
-      modelId: mconfig.modelId,
-      userMember: userMember
-    });
-
-    let { chartFileText } = makeChartFileText({
-      mconfig: this.mconfigsService.tabToApi({
-        mconfig: mconfig,
-        modelFields: model.fields
+  ): Promise<BackendResultForOperation<'saveModifyChart'>> {
+    return Result.pipe(
+      Result.succeed({
+        user: user,
+        traceId: body.traceId,
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        fromChartId: body.input.fromChartId,
+        chartId: body.input.chartId,
+        tileTitle: body.input.tileTitle,
+        space: body.input.space,
+        accessRoles: body.input.accessRoles,
+        timezone: body.input.timezone
       }),
-      tileTitle: tileTitle,
-      chartId: chartId,
-      accessRoles: accessRoles
-    });
+      Result.andThrough(async v => {
+        let userRestrictionResult: Result.Result<
+          void,
+          CheckUserIsNotRestrictedError
+        > = this.usersService.checkUserIsNotRestrictedResult({ user: v.user });
 
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
-
-    let currentChartSpace = getReportSpaceFromFilePath({
-      filePath: existingChart.filePath,
-      spaces: currentStruct.spaces
-    });
-
-    if (
-      currentChartSpace !== space &&
-      userMember.isAdmin === false &&
-      userMember.isEditor === false
-    ) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
-      });
-    }
-
-    let chartFileName = `${chartId}${'.chart' satisfies FileExtension}`;
-
-    let isSpaceChanged = currentChartSpace !== space;
-
-    let targetChartFilePath = existingChart.filePath;
-
-    if (isSpaceChanged) {
-      let targetParentNodeId = getTargetParentNodeId({
-        projectId: projectId,
-        mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
-        userAlias: user.alias,
-        space: space,
-        spaces: currentStruct.spaces,
-        targetFolder: 'charts'
-      });
-
-      targetChartFilePath = `${targetParentNodeId}/${chartFileName}`;
-    }
-
-    let isChartPathChanged = existingChart.filePath !== targetChartFilePath;
-
-    let shouldMoveChart = isSpaceChanged && isChartPathChanged;
-
-    let finalChartFilePath = shouldMoveChart
-      ? targetChartFilePath
-      : existingChart.filePath;
-
-    if (shouldMoveChart) {
-      await this.rpcService.sendToDiskUnwrapOutput({
-        request: {
-          operation: 'moveCatalogNode',
-          traceId: body.traceId,
-          input: {
-            baseProject: baseProject,
-            repoId: repoId,
-            branch: branchId,
-            fromNodeId: existingChart.filePath,
-            toNodeId: targetChartFilePath
-          }
+        if (Result.isFailure(userRestrictionResult)) {
+          return userRestrictionResult;
         }
-      });
-    }
 
-    let diskSaveFileOutput: ToDiskSaveFileOutput =
-      await this.rpcService.sendToDiskUnwrapOutput({
-        request: {
-          operation: 'saveFile',
-          traceId: body.traceId,
-          input: {
-            baseProject: baseProject,
-            repoId: repoId,
-            branch: branchId,
-            fileNodeId: finalChartFilePath,
-            userAlias: user.alias,
-            content: chartFileText
-          }
+        let repoAccessResult: Result.Result<
+          'session' | 'production' | 'dev',
+          CheckRepoIdError
+        > = await this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        });
+
+        if (Result.isFailure(repoAccessResult)) {
+          return repoAccessResult;
         }
-      });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, branch.repoId),
-        eq(bridgesTable.branchId, branch.branchId)
-      )
-    });
-
-    await forEachSeries(branchBridges, async x => {
-      if (x.envId !== envId) {
-        x.structId = EMPTY_STRUCT_ID;
-        x.needValidate = true;
-      }
-    });
-
-    let diskFiles = diskSaveFileOutput.files.filter(
-      file => file.fileNodeId === finalChartFilePath
-    );
-
-    let selectedSpaceFilePath = currentStruct.spaces.find(
-      x => x.space === space
-    )?.filePath;
-
-    if (isDefined(selectedSpaceFilePath)) {
-      let spaceDiskFile = diskSaveFileOutput.files.find(
-        file => file.fileNodeId === selectedSpaceFilePath
-      );
-
-      if (isDefined(spaceDiskFile)) {
-        diskFiles.push(spaceDiskFile);
-      }
-    }
-
-    let modelIds = [mconfig.modelId];
-
-    let cachedModels = await this.db.drizzle.query.modelsTable
-      .findMany({
-        where: and(
-          eq(modelsTable.structId, bridge.structId),
-          inArray(modelsTable.modelId, modelIds)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
-
-    let {
-      struct: tempStruct,
-      charts: apiCharts,
-      mconfigs: apiMconfigs,
-      queries: apiQueries
-    } = await this.blockmlService.rebuildStruct({
-      traceId: traceId,
-      orgId: project.orgId,
-      projectId: projectId,
-      repoId: repoId,
-      structId: bridge.structId,
-      diskFiles: diskFiles,
-      mproveDir: currentStruct.mproveConfig.mproveDirValue,
-      skipDb: true,
-      envId: envId,
-      selectedGivens: [],
-      overrideTimezone: timezone,
-      isUseCache: true,
-      cachedMproveConfig: currentStruct.mproveConfig,
-      cachedModels: cachedModels,
-      cachedMetrics: []
-    });
-
-    currentStruct.errors = [...currentStruct.errors, ...tempStruct.errors];
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              structs: [currentStruct],
-              bridges: [...branchBridges]
-            }
+        return Result.succeed();
+      }),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        async (
+          v
+        ): Result.ResultAsync<
+          MemberTab,
+          | GetMemberCheckExistsError
+          | CheckProjectIsNotRestrictedError
+          | BackendMemberIsNotExplorerError
+        > => {
+          let userMemberResult: Result.Result<
+            MemberTab,
+            GetMemberCheckExistsError
+          > = await this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
           });
-        }),
-      getRetryOption(this.cs, this.logger)
-    );
 
-    let apiChart = apiCharts.find(x => x.chartId === chartId);
+          if (Result.isFailure(userMemberResult)) {
+            return userMemberResult;
+          }
 
-    if (isUndefined(apiChart)) {
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(async tx => {
-            await tx
-              .delete(chartsTable)
-              .where(
-                and(
-                  eq(chartsTable.chartId, chartId),
-                  eq(chartsTable.structId, bridge.structId)
-                )
-              );
-          }),
-        getRetryOption(this.cs, this.logger)
-      );
+          let userMember: MemberTab = userMemberResult.value;
 
-      let fileIdAr = finalChartFilePath.split('/');
-      fileIdAr.shift();
-      let filePath = fileIdAr.join('/');
+          let projectRestrictionResult: Result.Result<
+            void,
+            CheckProjectIsNotRestrictedError
+          > = await this.projectsService.checkProjectIsNotRestrictedResult({
+            projectId: v.projectId,
+            userMember: userMember,
+            repoId: v.repoId
+          });
 
-      throw new ServerError({
-        message: 'BACKEND_MODIFY_CHART_FAIL',
-        displayData: {
-          encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: tempStruct.errors
+          if (Result.isFailure(projectRestrictionResult)) {
+            return projectRestrictionResult;
+          }
+
+          if (userMember.isExplorer === false) {
+            return Result.fail({
+              code: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
+            });
+          }
+
+          return Result.succeed(userMember);
         }
-      });
-    }
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'currentStruct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'existingChart',
+        async (
+          v
+        ): Result.ResultAsync<
+          ChartTab,
+          GetChartCheckExistsError | CheckChartPathError
+        > => {
+          let existingChartResult: Result.Result<
+            ChartTab,
+            GetChartCheckExistsError
+          > = await this.chartsService.getChartCheckExistsResult({
+            structId: v.bridge.structId,
+            chartId: v.chartId,
+            userMember: v.userMember,
+            user: v.user
+          });
 
-    let chartTile = apiChart.tiles[0];
+          if (Result.isFailure(existingChartResult)) {
+            return existingChartResult;
+          }
 
-    let chartApiMconfig = apiMconfigs.find(
-      x => x.mconfigId === chartTile.mconfigId
-    );
+          let existingChart: ChartTab = existingChartResult.value;
 
-    let chartApiQuery = apiQueries.find(x => x.queryId === chartTile.queryId);
+          if (
+            v.userMember.isAdmin === false &&
+            v.userMember.isEditor === false
+          ) {
+            let chartPathResult: Result.Result<void, CheckChartPathError> =
+              this.chartsService.checkChartPathResult({
+                userAlias: v.user.alias,
+                filePath: existingChart.filePath
+              });
 
-    let newMconfig: MconfigTab = this.mconfigsService.apiToTab({
-      apiMconfig: chartApiMconfig
-    });
+            if (Result.isFailure(chartPathResult)) {
+              return chartPathResult;
+            }
+          }
 
-    let newQuery: QueryTab = this.queriesService.apiToTab({
-      apiQuery: chartApiQuery
-    });
+          return Result.succeed(existingChart);
+        }
+      ),
+      Result.bind(
+        'mconfig',
+        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
+          this.mconfigsService.getMconfigCheckExistsResult({
+            structId: v.bridge.structId,
+            mconfigId: v.existingChart.tiles[0].mconfigId
+          })
+      ),
+      Result.bind(
+        'model',
+        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessError> =>
+          this.modelsService.getModelCheckExistsAndAccessResult({
+            structId: v.bridge.structId,
+            modelId: v.mconfig.modelId,
+            userMember: v.userMember
+          })
+      ),
+      Result.bind(
+        'prepareChartFilePayload',
+        async (
+          v
+        ): Result.ResultAsync<
+          PrepareChartFilePayload,
+          BackendMemberIsNotEditorOrAdminError
+        > => {
+          let chartFileText: string = makeChartFileText({
+            mconfig: this.mconfigsService.tabToApi({
+              mconfig: v.mconfig,
+              modelFields: v.model.fields
+            }),
+            tileTitle: v.tileTitle,
+            chartId: v.chartId,
+            accessRoles: v.accessRoles
+          });
 
-    let isError = false;
+          let baseProject: BaseProject =
+            this.tabService.projectTabToBaseProject({
+              project: v.project
+            });
 
-    if (model.type === 'Store') {
-      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-        struct: tempStruct,
-        project: project,
-        envId: envId,
-        mconfigParentType: 'Chart',
-        mconfigParentId: chartId,
-        model: model,
-        mconfig: newMconfig,
-        metricsStartDateYYYYMMDD: undefined,
-        metricsEndDateYYYYMMDD: undefined
-      });
+          let currentChartSpace: string = getReportSpaceFromFilePath({
+            filePath: v.existingChart.filePath,
+            spaces: v.currentStruct.spaces
+          });
 
-      newMconfig = mqe.newMconfig;
-      newQuery = mqe.newQuery;
-      isError = mqe.isError;
-    }
+          let prepareChartFilePayload: PrepareChartFilePayload = {
+            chartFileText: chartFileText,
+            baseProject: baseProject,
+            currentChartSpace: currentChartSpace
+          };
 
-    let chart = this.chartsService.apiToTab({
-      apiChart: apiChart,
-      chartType: chartApiMconfig.chart.type
-    });
+          if (
+            prepareChartFilePayload.currentChartSpace !== v.space &&
+            v.userMember.isAdmin === false &&
+            v.userMember.isEditor === false
+          ) {
+            return Result.fail({
+              code: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
+            });
+          }
 
-    chart.tiles[0].mconfigId = newMconfig.mconfigId;
-    chart.tiles[0].queryId = newMconfig.queryId;
+          return Result.succeed(prepareChartFilePayload);
+        }
+      ),
+      Result.bind(
+        'prepareChartFileMovePayload',
+        async (
+          v
+        ): Result.ResultAsync<PrepareChartFileMovePayload, SendToDiskError> => {
+          let chartFileName: string = `${v.chartId}${'.chart' satisfies FileExtension}`;
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(chartsTable)
-            .where(
-              and(
-                eq(chartsTable.draft, true),
-                eq(chartsTable.chartId, fromChartId),
-                eq(chartsTable.structId, bridge.structId)
+          let isSpaceChanged: boolean =
+            v.prepareChartFilePayload.currentChartSpace !== v.space;
+
+          let targetChartFilePath: string = v.existingChart.filePath;
+
+          if (isSpaceChanged) {
+            let targetParentNodeId: string = getTargetParentNodeId({
+              projectId: v.projectId,
+              mproveDirValue: v.currentStruct.mproveConfig.mproveDirValue,
+              userAlias: v.user.alias,
+              space: v.space,
+              spaces: v.currentStruct.spaces,
+              targetFolder: 'charts'
+            });
+
+            targetChartFilePath = `${targetParentNodeId}/${chartFileName}`;
+          }
+
+          let isChartPathChanged: boolean =
+            v.existingChart.filePath !== targetChartFilePath;
+
+          let isMoveChartRequired: boolean =
+            isSpaceChanged && isChartPathChanged;
+
+          let finalChartFilePath: string = isMoveChartRequired
+            ? targetChartFilePath
+            : v.existingChart.filePath;
+
+          let prepareChartFileMovePayload: PrepareChartFileMovePayload = {
+            chartFileName: chartFileName,
+            isSpaceChanged: isSpaceChanged,
+            targetChartFilePath: targetChartFilePath,
+            isChartPathChanged: isChartPathChanged,
+            isMoveChartRequired: isMoveChartRequired,
+            finalChartFilePath: finalChartFilePath
+          };
+
+          if (prepareChartFileMovePayload.isMoveChartRequired) {
+            let toDiskMoveCatalogNodeOutput: Result.Result<
+              ToDiskMoveCatalogNodeOutput,
+              SendToDiskError
+            > = await this.rpcService.sendToDiskResult({
+              request: {
+                operation: 'moveCatalogNode',
+                traceId: body.traceId,
+                input: {
+                  baseProject: v.prepareChartFilePayload.baseProject,
+                  repoId: v.repoId,
+                  branch: v.branchId,
+                  fromNodeId: v.existingChart.filePath,
+                  toNodeId: prepareChartFileMovePayload.targetChartFilePath
+                }
+              }
+            });
+
+            if (Result.isFailure(toDiskMoveCatalogNodeOutput)) {
+              return toDiskMoveCatalogNodeOutput;
+            }
+          }
+
+          return Result.succeed(prepareChartFileMovePayload);
+        }
+      ),
+      Result.bind(
+        'diskSaveFileOutput',
+        (v): Result.ResultAsync<ToDiskSaveFileOutput, SendToDiskError> =>
+          this.rpcService.sendToDiskResult({
+            request: {
+              operation: 'saveFile',
+              traceId: body.traceId,
+              input: {
+                baseProject: v.prepareChartFilePayload.baseProject,
+                repoId: v.repoId,
+                branch: v.branchId,
+                fileNodeId: v.prepareChartFileMovePayload.finalChartFilePath,
+                userAlias: v.user.alias,
+                content: v.prepareChartFilePayload.chartFileText
+              }
+            }
+          })
+      ),
+      Result.bind(
+        'branchBridgeEnts',
+        async (v): Result.ResultAsync<BridgeEnt[], never> => {
+          let branchBridgeEnts: BridgeEnt[] =
+            await this.db.drizzle.query.bridgesTable.findMany({
+              where: and(
+                eq(bridgesTable.projectId, v.branch.projectId),
+                eq(bridgesTable.repoId, v.branch.repoId),
+                eq(bridgesTable.branchId, v.branch.branchId)
               )
+            });
+
+          let bridgeInvalidationResult: Result.Result<void[], never> =
+            Result.sequence(
+              branchBridgeEnts,
+              (x): Result.Result<void, never> => {
+                if (x.envId !== v.envId) {
+                  x.structId = EMPTY_STRUCT_ID;
+
+                  x.needValidate = true;
+                }
+
+                return Result.succeed();
+              }
             );
 
-          await this.db.packer.write({
-            tx: tx,
-            insert: {
-              mconfigs: [newMconfig]
-            },
-            insertOrUpdate: {
-              charts: [chart],
-              queries: isError === true ? [newQuery] : []
-            },
-            insertOrDoNothing: {
-              queries: isError === false ? [newQuery] : []
+          if (Result.isFailure(bridgeInvalidationResult)) {
+            return bridgeInvalidationResult;
+          }
+
+          return Result.succeed(branchBridgeEnts);
+        }
+      ),
+      Result.bind(
+        'prepareRebuildPayload',
+        (v): Result.Result<PrepareRebuildPayload, never> => {
+          let diskFiles: DiskCatalogFile[] = v.diskSaveFileOutput.files.filter(
+            file =>
+              file.fileNodeId ===
+              v.prepareChartFileMovePayload.finalChartFilePath
+          );
+
+          let selectedSpaceFilePath: string = v.currentStruct.spaces.find(
+            x => x.space === v.space
+          )?.filePath;
+
+          if (isDefined(selectedSpaceFilePath)) {
+            let spaceDiskFile: DiskCatalogFile =
+              v.diskSaveFileOutput.files.find(
+                file => file.fileNodeId === selectedSpaceFilePath
+              );
+
+            if (isDefined(spaceDiskFile)) {
+              diskFiles.push(spaceDiskFile);
             }
+          }
+
+          let modelIds: string[] = [v.mconfig.modelId];
+
+          return Result.succeed({
+            diskFiles: diskFiles,
+            selectedSpaceFilePath: selectedSpaceFilePath,
+            modelIds: modelIds
           });
-        }),
-      getRetryOption(this.cs, this.logger)
-    );
+        }
+      ),
+      Result.bind(
+        'cachedModels',
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+          this.db.drizzle.query.modelsTable
+            .findMany({
+              where: and(
+                eq(modelsTable.structId, v.bridge.structId),
+                inArray(modelsTable.modelId, v.prepareRebuildPayload.modelIds)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.modelEntToTabResult({
+                      modelEnt: x
+                    })
+              )
+            )
+      ),
+      Result.bind(
+        'rebuild',
+        async (
+          v
+        ): Result.ResultAsync<
+          RebuildStructOutput,
+          RebuildStructError | DbErrorToError
+        > => {
+          let rebuildStructOutput: Result.Result<
+            RebuildStructOutput,
+            RebuildStructError
+          > = await this.blockmlService.rebuildStructResult({
+            traceId: v.traceId,
+            orgId: v.project.orgId,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            structId: v.bridge.structId,
+            diskFiles: v.prepareRebuildPayload.diskFiles,
+            mproveDir: v.currentStruct.mproveConfig.mproveDirValue,
+            skipDb: true,
+            envId: v.envId,
+            selectedGivens: [],
+            overrideTimezone: v.timezone,
+            isUseCache: true,
+            cachedMproveConfig: v.currentStruct.mproveConfig,
+            cachedModels: v.cachedModels,
+            cachedMetrics: []
+          });
 
-    let query = await this.db.drizzle.query.queriesTable
-      .findFirst({
-        where: and(
-          eq(queriesTable.queryId, newQuery.queryId),
-          eq(queriesTable.projectId, newQuery.projectId)
-        )
-      })
-      .then(x => this.tabService.queryEntToTab(x));
+          if (Result.isFailure(rebuildStructOutput)) {
+            return rebuildStructOutput;
+          }
 
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+          let rebuild: RebuildStructOutput = rebuildStructOutput.value;
 
-    let modelApi = this.modelsService.tabToApi({
-      model: model,
-      hasAccess: checkModelAccess({
-        member: userMember,
-        modelAccessRoles: model.accessRolesCombined
-      })
-    });
+          v.currentStruct.errors = [
+            ...v.currentStruct.errors,
+            ...rebuild.struct.errors
+          ];
 
-    let models = await this.db.drizzle.query.modelsTable
-      .findMany({ where: eq(modelsTable.structId, bridge.structId) })
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+          let persistenceResult: Result.Result<void, DbErrorToError> =
+            await dbErrorToResult({
+              action: async () => {
+                await retry(
+                  async () =>
+                    await this.db.drizzle.transaction(async tx => {
+                      await this.db.packer.write({
+                        tx: tx,
+                        insertOrUpdate: {
+                          structs: [v.currentStruct],
+                          bridges: [...v.branchBridgeEnts]
+                        }
+                      });
+                    }),
+                  getRetryOption(this.cs, this.logger)
+                );
+              }
+            });
 
-    let chartsCatalog = await this.chartsService.getChartsCatalog({
-      projectId: projectId,
-      structId: bridge.structId,
-      user: user,
-      apiUserMember: apiUserMember,
-      models: models,
-      spaces: currentStruct.spaces
-    });
+          if (Result.isFailure(persistenceResult)) {
+            return persistenceResult;
+          }
 
-    let payload: ToBackendSaveModifyChartOutput = {
-      chart: this.chartsService.tabToApi({
-        chart: chart,
-        mconfigs: [
-          this.mconfigsService.tabToApi({
-            mconfig: newMconfig,
-            modelFields: modelApi.fields
+          return Result.succeed(rebuild);
+        }
+      ),
+      Result.bind(
+        'apiChart',
+        async (v): Result.ResultAsync<Chart, BackendModifyChartFailError> => {
+          let apiChartResult: Result.Result<Chart, never> = Result.succeed(
+            v.rebuild.charts.find(x => x.chartId === v.chartId)
+          );
+
+          if (Result.isFailure(apiChartResult)) {
+            return apiChartResult;
+          }
+
+          let apiChart: Chart = apiChartResult.value;
+
+          if (isUndefined(apiChart)) {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(async tx => {
+                  await tx
+                    .delete(chartsTable)
+                    .where(
+                      and(
+                        eq(chartsTable.chartId, v.chartId),
+                        eq(chartsTable.structId, v.bridge.structId)
+                      )
+                    );
+                }),
+              getRetryOption(this.cs, this.logger)
+            );
+
+            let fileIdAr: string[] =
+              v.prepareChartFileMovePayload.finalChartFilePath.split('/');
+
+            fileIdAr.shift();
+
+            let filePath: string = fileIdAr.join('/');
+
+            return Result.fail({
+              code: 'BACKEND_MODIFY_CHART_FAIL',
+              displayData: {
+                encodedFileId: encodeFilePath({ filePath: filePath }),
+                structErrors: v.rebuild.struct.errors
+              }
+            });
+          }
+
+          return Result.succeed(apiChart);
+        }
+      ),
+      Result.bind(
+        'prepareQueryPayload',
+        async (
+          v
+        ): Result.ResultAsync<
+          PrepareQueryPayload,
+          PrepStoreMconfigQueryError
+        > => {
+          let chartTile: Tile = v.apiChart.tiles[0];
+
+          let chartApiMconfig: Mconfig = v.rebuild.mconfigs.find(
+            x => x.mconfigId === chartTile.mconfigId
+          );
+
+          let chartApiQuery: Query = v.rebuild.queries.find(
+            x => x.queryId === chartTile.queryId
+          );
+
+          let newMconfig: MconfigTab = this.mconfigsService.apiToTab({
+            apiMconfig: chartApiMconfig
+          });
+
+          let newQuery: QueryTab = this.queriesService.apiToTab({
+            apiQuery: chartApiQuery
+          });
+
+          let isError: boolean = false;
+
+          let prepareQueryPayload: PrepareQueryPayload = {
+            chartTile: chartTile,
+            chartApiMconfig: chartApiMconfig,
+            chartApiQuery: chartApiQuery,
+            newMconfig: newMconfig,
+            newQuery: newQuery,
+            isError: isError
+          };
+
+          if (v.model.type === 'Store') {
+            let prepStoreMconfigQueryOutput: Result.Result<
+              PrepStoreMconfigQueryOutput,
+              PrepStoreMconfigQueryError
+            > = await this.mconfigsService.prepStoreMconfigQueryResult({
+              struct: v.rebuild.struct,
+              project: v.project,
+              envId: v.envId,
+              mconfigParentType: 'Chart',
+              mconfigParentId: v.chartId,
+              model: v.model,
+              mconfig: prepareQueryPayload.newMconfig,
+              metricsStartDateYYYYMMDD: undefined,
+              metricsEndDateYYYYMMDD: undefined
+            });
+
+            if (Result.isFailure(prepStoreMconfigQueryOutput)) {
+              return prepStoreMconfigQueryOutput;
+            }
+
+            let mqe: {
+              isError: boolean;
+              newMconfig: MconfigTab;
+              newQuery: QueryTab;
+            } = prepStoreMconfigQueryOutput.value;
+
+            prepareQueryPayload.newMconfig = mqe.newMconfig;
+
+            prepareQueryPayload.newQuery = mqe.newQuery;
+
+            prepareQueryPayload.isError = mqe.isError;
+          }
+
+          return Result.succeed(prepareQueryPayload);
+        }
+      ),
+      Result.bind(
+        'saveChartPayload',
+        async (v): Result.ResultAsync<SaveChartPayload, DbErrorToError> => {
+          let chart: ChartTab = this.chartsService.apiToTab({
+            apiChart: v.apiChart,
+            chartType: v.prepareQueryPayload.chartApiMconfig.chart.type
+          });
+
+          chart.tiles[0].mconfigId = v.prepareQueryPayload.newMconfig.mconfigId;
+
+          chart.tiles[0].queryId = v.prepareQueryPayload.newMconfig.queryId;
+
+          let saveChartPayload: SaveChartPayload = { chart: chart };
+
+          let persistenceResult: Result.Result<void, DbErrorToError> =
+            await dbErrorToResult({
+              action: async () => {
+                await retry(
+                  async () =>
+                    await this.db.drizzle.transaction(async tx => {
+                      await tx
+                        .delete(chartsTable)
+                        .where(
+                          and(
+                            eq(chartsTable.draft, true),
+                            eq(chartsTable.chartId, v.fromChartId),
+                            eq(chartsTable.structId, v.bridge.structId)
+                          )
+                        );
+
+                      await this.db.packer.write({
+                        tx: tx,
+                        insert: {
+                          mconfigs: [v.prepareQueryPayload.newMconfig]
+                        },
+                        insertOrUpdate: {
+                          charts: [saveChartPayload.chart],
+                          queries:
+                            v.prepareQueryPayload.isError === true
+                              ? [v.prepareQueryPayload.newQuery]
+                              : []
+                        },
+                        insertOrDoNothing: {
+                          queries:
+                            v.prepareQueryPayload.isError === false
+                              ? [v.prepareQueryPayload.newQuery]
+                              : []
+                        }
+                      });
+                    }),
+                  getRetryOption(this.cs, this.logger)
+                );
+              }
+            });
+
+          if (Result.isFailure(persistenceResult)) {
+            return persistenceResult;
+          }
+
+          return Result.succeed(saveChartPayload);
+        }
+      ),
+      Result.bind(
+        'query',
+        (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
+          this.db.drizzle.query.queriesTable
+            .findFirst({
+              where: and(
+                eq(
+                  queriesTable.queryId,
+                  v.prepareQueryPayload.newQuery.queryId
+                ),
+                eq(
+                  queriesTable.projectId,
+                  v.prepareQueryPayload.newQuery.projectId
+                )
+              )
+            })
+            .then(x =>
+              isUndefined(x)
+                ? Result.succeed(undefined)
+                : this.tabService.queryEntToTabResult({
+                    queryEnt: x
+                  })
+            )
+      ),
+      Result.bind(
+        'assembleChartResponsePayload',
+        (v): Result.Result<AssembleChartResponsePayload, never> => {
+          let apiUserMember: Member = this.membersService.tabToApi({
+            member: v.userMember
+          });
+
+          let modelApi: ModelX = this.modelsService.tabToApi({
+            model: v.model,
+            hasAccess: checkModelAccess({
+              member: v.userMember,
+              modelAccessRoles: v.model.accessRolesCombined
+            })
+          });
+
+          return Result.succeed({
+            apiUserMember: apiUserMember,
+            modelApi: modelApi
+          });
+        }
+      ),
+      Result.bind(
+        'models',
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+          this.db.drizzle.query.modelsTable
+            .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.modelEntToTabResult({
+                      modelEnt: x
+                    })
+              )
+            )
+      ),
+      Result.bind(
+        'chartsCatalog',
+        (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
+          this.chartsService.getChartsCatalogResult({
+            projectId: v.projectId,
+            structId: v.bridge.structId,
+            user: v.user,
+            apiUserMember: v.assembleChartResponsePayload.apiUserMember,
+            models: v.models,
+            spaces: v.currentStruct.spaces
           })
-        ],
-        queries: [this.queriesService.tabToApi({ query: query })],
-        member: apiUserMember,
-        models: [modelApi],
-        isAddMconfigAndQuery: true
-      }),
-      chartUnitDrafts: chartsCatalog.chartUnitDrafts,
-      chartSpaceNodes: chartsCatalog.chartSpaceNodes
-    };
-
-    return payload;
+      ),
+      Result.map(
+        (v): ToBackendSaveModifyChartOutput => ({
+          chart: this.chartsService.tabToApi({
+            chart: v.saveChartPayload.chart,
+            mconfigs: [
+              this.mconfigsService.tabToApi({
+                mconfig: v.prepareQueryPayload.newMconfig,
+                modelFields: v.assembleChartResponsePayload.modelApi.fields
+              })
+            ],
+            queries: [this.queriesService.tabToApi({ query: v.query })],
+            member: v.assembleChartResponsePayload.apiUserMember,
+            models: [v.assembleChartResponsePayload.modelApi],
+            isAddMconfigAndQuery: true
+          }),
+          chartUnitDrafts: v.chartsCatalog.chartUnitDrafts,
+          chartSpaceNodes: v.chartsCatalog.chartSpaceNodes
+        })
+      )
+    );
   }
 }

@@ -21,9 +21,9 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendConnectionDoesNotExistError } from '#common/types/backend/errors/backend-connection-does-not-exist-error';
-import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetConnectionSampleResultError } from '#common/types/backend/function-errors/get-connection-sample-result-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetConnectionSampleError } from '#common/types/backend/function-errors/get-connection-sample-error';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { RawSchemaTable } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-table';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
@@ -60,7 +60,7 @@ export class GetConnectionSampleService {
   }): Promise<ToBackendGetConnectionSampleOutput> {
     let result: Result.Result<
       ToBackendGetConnectionSampleOutput,
-      GetConnectionSampleResultError
+      GetConnectionSampleError
     > = await this.getConnectionSampleResult(item);
 
     if (Result.isFailure(result)) {
@@ -83,7 +83,7 @@ export class GetConnectionSampleService {
     offset?: number;
   }): Result.ResultAsync<
     ToBackendGetConnectionSampleOutput,
-    GetConnectionSampleResultError
+    GetConnectionSampleError
   > {
     return Result.pipe(
       Result.succeed(item),
@@ -105,7 +105,7 @@ export class GetConnectionSampleService {
       ),
       Result.bind(
         'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.bind(
@@ -115,9 +115,7 @@ export class GetConnectionSampleService {
       ),
       Result.bind(
         'connections',
-        (
-          v
-        ): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabResultError> =>
+        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
           this.db.drizzle.query.connectionsTable
             .findMany({
               where: and(

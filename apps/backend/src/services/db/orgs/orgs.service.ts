@@ -16,9 +16,9 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { AddOrgResultError } from '#common/types/backend/function-errors/add-org-result-error';
-import type { CheckUserIsOrgOwnerResultError } from '#common/types/backend/function-errors/check-user-is-org-owner-result-error';
-import type { GetOrgCheckExistsResultError } from '#common/types/backend/function-errors/get-org-check-exists-result-error';
+import type { AddOrgError } from '#common/types/backend/function-errors/add-org-error';
+import type { CheckUserIsOrgOwnerError } from '#common/types/backend/function-errors/check-user-is-org-owner-error';
+import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 import type { Org } from '#common/types/backend/parts/org';
 import type { OrgsItem } from '#common/types/backend/parts/orgs-item';
 
@@ -59,7 +59,7 @@ export class OrgsService {
   }
 
   async getOrgCheckExists(item: { orgId: string }): Promise<OrgTab> {
-    let result: Result.Result<OrgTab, GetOrgCheckExistsResultError> =
+    let result: Result.Result<OrgTab, GetOrgCheckExistsError> =
       await this.getOrgCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -73,7 +73,7 @@ export class OrgsService {
 
   async getOrgCheckExistsResult(item: {
     orgId: string;
-  }): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> {
+  }): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> {
     let { orgId } = item;
 
     return this.db.drizzle.query.orgsTable
@@ -91,7 +91,7 @@ export class OrgsService {
     userId: string;
     org: OrgTab;
   }): Promise<void> {
-    let result: Result.Result<void, CheckUserIsOrgOwnerResultError> =
+    let result: Result.Result<void, CheckUserIsOrgOwnerError> =
       this.checkUserIsOrgOwnerResult(item);
 
     if (Result.isFailure(result)) {
@@ -102,7 +102,7 @@ export class OrgsService {
   checkUserIsOrgOwnerResult(item: {
     userId: string;
     org: OrgTab;
-  }): Result.Result<void, CheckUserIsOrgOwnerResultError> {
+  }): Result.Result<void, CheckUserIsOrgOwnerError> {
     let { org, userId } = item;
 
     if (org.ownerId !== userId) {
@@ -119,7 +119,7 @@ export class OrgsService {
     traceId: string;
     orgId?: string;
   }): Promise<OrgTab> {
-    let result: Result.Result<OrgTab, AddOrgResultError> =
+    let result: Result.Result<OrgTab, AddOrgError> =
       await this.addOrgResult(item);
 
     if (Result.isFailure(result)) {
@@ -137,7 +137,7 @@ export class OrgsService {
     name: string;
     traceId: string;
     orgId?: string;
-  }): Result.ResultAsync<OrgTab, AddOrgResultError> {
+  }): Result.ResultAsync<OrgTab, AddOrgError> {
     let { ownerId, ownerEmail, name, orgId } = item;
 
     let newOrg: OrgTab = {

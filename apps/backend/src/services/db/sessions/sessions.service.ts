@@ -15,8 +15,8 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CheckRepoIdResultError } from '#common/types/backend/function-errors/check-repo-id-result-error';
-import type { GetSessionByIdCheckExistsResultError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-result-error';
+import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
@@ -119,10 +119,8 @@ export class SessionsService {
   async getSessionByIdCheckExists(item: {
     sessionId: string;
   }): Promise<SessionTab> {
-    let result: Result.Result<
-      SessionTab,
-      GetSessionByIdCheckExistsResultError
-    > = await this.getSessionByIdCheckExistsResult(item);
+    let result: Result.Result<SessionTab, GetSessionByIdCheckExistsError> =
+      await this.getSessionByIdCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -135,7 +133,7 @@ export class SessionsService {
 
   async getSessionByIdCheckExistsResult(item: {
     sessionId: string;
-  }): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsResultError> {
+  }): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> {
     let { sessionId } = item;
 
     return this.db.drizzle.query.sessionsTable
@@ -195,7 +193,7 @@ export class SessionsService {
     projectId: string;
     allowProdRepo: boolean;
   }): Promise<RepoType> {
-    let result: Result.Result<RepoType, CheckRepoIdResultError> =
+    let result: Result.Result<RepoType, CheckRepoIdError> =
       await this.checkRepoIdResult(item);
 
     if (Result.isFailure(result)) {
@@ -212,7 +210,7 @@ export class SessionsService {
     userId: string;
     projectId: string;
     allowProdRepo: boolean;
-  }): Result.ResultAsync<RepoType, CheckRepoIdResultError> {
+  }): Result.ResultAsync<RepoType, CheckRepoIdError> {
     let { repoId, userId, projectId, allowProdRepo } = item;
 
     if (repoId === PROD_REPO_ID) {

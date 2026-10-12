@@ -26,11 +26,11 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ChartEntToTabResultError } from '#common/types/backend/function-errors/chart-ent-to-tab-result-error';
-import type { CheckChartOrModelAccessResultError } from '#common/types/backend/function-errors/check-chart-or-model-access-result-error';
-import type { CheckChartPathResultError } from '#common/types/backend/function-errors/check-chart-path-result-error';
-import type { GetChartCheckExistsResultError } from '#common/types/backend/function-errors/get-chart-check-exists-result-error';
-import type { GetChartsCatalogResultError } from '#common/types/backend/function-errors/get-charts-catalog-result-error';
+import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
+import type { CheckChartOrModelAccessError } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
+import type { CheckChartPathError } from '#common/types/backend/function-errors/check-chart-path-error';
+import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
+import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
 import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
@@ -75,7 +75,7 @@ export class ChartsService {
   }): Promise<ChartsCatalog> {
     let { projectId, structId, user, apiUserMember, models, spaces } = item;
 
-    let result: Result.Result<ChartsCatalog, GetChartsCatalogResultError> =
+    let result: Result.Result<ChartsCatalog, GetChartsCatalogError> =
       await this.getChartsCatalogResult({
         projectId: projectId,
         structId: structId,
@@ -101,12 +101,12 @@ export class ChartsService {
     apiUserMember: Member;
     models: ModelTab[];
     spaces: Space[];
-  }): Result.ResultAsync<ChartsCatalog, GetChartsCatalogResultError> {
+  }): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'charts',
-        (v): Result.ResultAsync<ChartTab[], ChartEntToTabResultError> =>
+        (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
           this.db.drizzle.query.chartsTable
             .findMany({
               where: and(
@@ -429,7 +429,7 @@ export class ChartsService {
   }): Promise<ChartTab> {
     let { chartId, structId, userMember, user } = item;
 
-    let result: Result.Result<ChartTab, GetChartCheckExistsResultError> =
+    let result: Result.Result<ChartTab, GetChartCheckExistsError> =
       await this.getChartCheckExistsResult({
         chartId: chartId,
         structId: structId,
@@ -451,12 +451,12 @@ export class ChartsService {
     structId: string;
     userMember: MemberTab;
     user: UserTab;
-  }): Result.ResultAsync<ChartTab, GetChartCheckExistsResultError> {
+  }): Result.ResultAsync<ChartTab, GetChartCheckExistsError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'chart',
-        (v): Result.ResultAsync<ChartTab, ChartEntToTabResultError> =>
+        (v): Result.ResultAsync<ChartTab, ChartEntToTabError> =>
           this.db.drizzle.query.chartsTable
             .findFirst({
               where: and(
@@ -493,7 +493,7 @@ export class ChartsService {
 
     let result: Result.Result<
       ChartOrModelAccess,
-      CheckChartOrModelAccessResultError
+      CheckChartOrModelAccessError
     > = this.checkChartOrModelAccessResult({
       chart: chart,
       model: model,
@@ -513,7 +513,7 @@ export class ChartsService {
     chart: ChartTab;
     model: ModelTab;
     userMember: MemberTab | Member;
-  }): Result.Result<ChartOrModelAccess, CheckChartOrModelAccessResultError> {
+  }): Result.Result<ChartOrModelAccess, CheckChartOrModelAccessError> {
     let { chart, model, userMember } = item;
 
     let hasChartAccess: boolean = checkAccess({
@@ -540,7 +540,7 @@ export class ChartsService {
   checkChartPath(item: { filePath: string; userAlias: string }) {
     let { filePath, userAlias } = item;
 
-    let result: Result.Result<void, CheckChartPathResultError> =
+    let result: Result.Result<void, CheckChartPathError> =
       this.checkChartPathResult({ filePath: filePath, userAlias: userAlias });
 
     if (Result.isFailure(result)) {
@@ -551,7 +551,7 @@ export class ChartsService {
   checkChartPathResult(item: {
     filePath: string;
     userAlias: string;
-  }): Result.Result<void, CheckChartPathResultError> {
+  }): Result.Result<void, CheckChartPathError> {
     let { filePath, userAlias } = item;
 
     let filePathArray: string[] = filePath.split('/');

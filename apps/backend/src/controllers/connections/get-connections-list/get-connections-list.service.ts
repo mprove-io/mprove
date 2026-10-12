@@ -11,9 +11,9 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetConnectionsListResultError } from '#common/types/backend/function-errors/get-connections-list-result-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetConnectionsListError } from '#common/types/backend/function-errors/get-connections-list-error';
 import type { ConnectionItem } from '#common/types/backend/parts/connections/connection-item';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
@@ -35,7 +35,7 @@ export class GetConnectionsListService {
   }): Promise<ToBackendGetConnectionsListOutput> {
     let result: Result.Result<
       ToBackendGetConnectionsListOutput,
-      GetConnectionsListResultError
+      GetConnectionsListError
     > = await this.getConnectionsListResult(item);
 
     if (Result.isFailure(result)) {
@@ -53,7 +53,7 @@ export class GetConnectionsListService {
     envId: string;
   }): Result.ResultAsync<
     ToBackendGetConnectionsListOutput,
-    GetConnectionsListResultError
+    GetConnectionsListError
   > {
     return Result.pipe(
       Result.succeed(item),
@@ -70,7 +70,7 @@ export class GetConnectionsListService {
       ),
       Result.bind(
         'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.bind(
@@ -80,9 +80,7 @@ export class GetConnectionsListService {
       ),
       Result.bind(
         'connections',
-        (
-          v
-        ): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabResultError> =>
+        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
           this.db.drizzle.query.connectionsTable
             .findMany({
               where: and(

@@ -12,7 +12,7 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
 
 @Injectable()
 export class BridgesService {
@@ -58,7 +58,7 @@ export class BridgesService {
     branchId: string;
     envId: string;
   }): Promise<BridgeTab> {
-    let result: Result.Result<BridgeTab, GetBridgeCheckExistsResultError> =
+    let result: Result.Result<BridgeTab, GetBridgeCheckExistsError> =
       await this.getBridgeCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -75,7 +75,7 @@ export class BridgesService {
     repoId: string;
     branchId: string;
     envId: string;
-  }): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> {
+  }): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> {
     let { projectId, repoId, branchId, envId } = item;
 
     return this.db.drizzle.query.bridgesTable

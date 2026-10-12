@@ -37,17 +37,17 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ChartEntToTabResultError } from '#common/types/backend/function-errors/chart-ent-to-tab-result-error';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
-import type { GetDashboardPartsResultError } from '#common/types/backend/function-errors/get-dashboard-parts-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { GetStateResultError } from '#common/types/backend/function-errors/get-state-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
-import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
-import type { ReportEntToTabResultError } from '#common/types/backend/function-errors/report-ent-to-tab-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetDashboardPartsError } from '#common/types/backend/function-errors/get-dashboard-parts-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetStateError } from '#common/types/backend/function-errors/get-state-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
+import type { ReportEntToTabError } from '#common/types/backend/function-errors/report-ent-to-tab-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
 import type { ToBackendGetStateOutput } from '#common/types/backend/routes/state/get-state/get-state-output';
 import type { ToDiskGetCatalogNodesOutput } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
@@ -105,7 +105,7 @@ export class GetStateService {
       getReports
     } = item;
 
-    let result: Result.Result<ToBackendGetStateOutput, GetStateResultError> =
+    let result: Result.Result<ToBackendGetStateOutput, GetStateError> =
       await this.getStateResult({
         traceId: traceId,
         user: user,
@@ -166,7 +166,7 @@ export class GetStateService {
     getCharts: boolean;
     getMetrics: boolean;
     getReports: boolean;
-  }): Result.ResultAsync<ToBackendGetStateOutput, GetStateResultError> {
+  }): Result.ResultAsync<ToBackendGetStateOutput, GetStateError> {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
@@ -179,14 +179,14 @@ export class GetStateService {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -194,7 +194,7 @@ export class GetStateService {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -210,7 +210,7 @@ export class GetStateService {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
           this.bridgesService.getBridgeCheckExistsResult({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
@@ -222,10 +222,7 @@ export class GetStateService {
         'diskGetCatalogNodesOutput',
         async (
           v
-        ): Result.ResultAsync<
-          ToDiskGetCatalogNodesOutput,
-          SendToDiskResultError
-        > =>
+        ): Result.ResultAsync<ToDiskGetCatalogNodesOutput, SendToDiskError> =>
           v.getRepo === true
             ? this.rpcService.sendToDiskResult({
                 request: {
@@ -245,7 +242,7 @@ export class GetStateService {
       ),
       Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExistsResult({
             structId: v.bridge.structId,
             projectId: v.projectId,
@@ -254,7 +251,7 @@ export class GetStateService {
       ),
       Result.bind(
         'allModels',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
           this.db.drizzle.query.modelsTable
             .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
             .then(xs =>
@@ -277,7 +274,7 @@ export class GetStateService {
       ),
       Result.bind(
         'charts',
-        (v): Result.ResultAsync<ChartTab[], ChartEntToTabResultError> =>
+        (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
           this.db.drizzle.query.chartsTable
             .findMany({ where: eq(chartsTable.structId, v.bridge.structId) })
             .then(xs =>
@@ -304,9 +301,7 @@ export class GetStateService {
       ),
       Result.bind(
         'dashboardParts',
-        (
-          v
-        ): Result.ResultAsync<DashboardPart[], GetDashboardPartsResultError> =>
+        (v): Result.ResultAsync<DashboardPart[], GetDashboardPartsError> =>
           this.dashboardsService.getDashboardPartsResult({
             structId: v.bridge.structId,
             user: v.user,
@@ -317,7 +312,7 @@ export class GetStateService {
       ),
       Result.bind(
         'draftReports',
-        (v): Result.ResultAsync<ReportTab[], ReportEntToTabResultError> =>
+        (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
           this.db.drizzle.query.reportsTable
             .findMany({
               where: and(
@@ -334,7 +329,7 @@ export class GetStateService {
       ),
       Result.bind(
         'structReports',
-        (v): Result.ResultAsync<ReportTab[], ReportEntToTabResultError> =>
+        (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
           this.db.drizzle.query.reportsTable
             .findMany({
               where: and(

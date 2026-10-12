@@ -40,8 +40,8 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateEnvOutput } from '#common/types/backend/routes/envs/create-env/create-env-output';
@@ -87,7 +87,7 @@ export class CreateEnvController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
           this.membersService.getMemberCheckIsAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -152,7 +152,7 @@ export class CreateEnvController {
       ),
       Result.bind(
         'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.map(

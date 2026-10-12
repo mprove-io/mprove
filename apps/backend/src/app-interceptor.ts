@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { makeBackendResultResponse } from '#backend/functions/temp/make-backend-result-response/make-backend-result-response';
@@ -237,6 +237,198 @@ export class AppInterceptor implements NestInterceptor {
       } else if (req.operation === 'deleteDraftReports') {
         execution = makeBackendResultResponse({
           operation: 'deleteDraftReports',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getChart') {
+        execution = makeBackendResultResponse({
+          operation: 'getChart',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getExplorerChartTab') {
+        execution = makeBackendResultResponse({
+          operation: 'getExplorerChartTab',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createDraftChart') {
+        execution = makeBackendResultResponse({
+          operation: 'createDraftChart',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editDraftChart') {
+        execution = makeBackendResultResponse({
+          operation: 'editDraftChart',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'saveCreateChart') {
+        execution = makeBackendResultResponse({
+          operation: 'saveCreateChart',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'saveModifyChart') {
+        execution = makeBackendResultResponse({
+          operation: 'saveModifyChart',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getDashboard') {
+        execution = makeBackendResultResponse({
+          operation: 'getDashboard',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createDraftDashboard') {
+        execution = makeBackendResultResponse({
+          operation: 'createDraftDashboard',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editDraftDashboard') {
+        execution = makeBackendResultResponse({
+          operation: 'editDraftDashboard',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'saveCreateDashboard') {
+        execution = makeBackendResultResponse({
+          operation: 'saveCreateDashboard',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'saveModifyDashboard') {
+        execution = makeBackendResultResponse({
+          operation: 'saveModifyDashboard',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'getReport') {
+        execution = makeBackendResultResponse({
+          operation: 'getReport',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'createDraftReport') {
+        execution = makeBackendResultResponse({
+          operation: 'createDraftReport',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'editDraftReport') {
+        execution = makeBackendResultResponse({
+          operation: 'editDraftReport',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'saveCreateReport') {
+        execution = makeBackendResultResponse({
+          operation: 'saveCreateReport',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts,
+          onUnexpectedError: error => {
+            wrappedError = error;
+          }
+        });
+      } else if (req.operation === 'saveModifyReport') {
+        execution = makeBackendResultResponse({
+          operation: 'saveModifyReport',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,

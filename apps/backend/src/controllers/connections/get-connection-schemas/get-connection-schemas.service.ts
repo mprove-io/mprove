@@ -34,13 +34,13 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CachedColumnEntToTabResultError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-result-error';
-import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
-import type { GetConnectionSchemasResultError } from '#common/types/backend/function-errors/get-connection-schemas-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
+import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetConnectionSchemasError } from '#common/types/backend/function-errors/get-connection-schemas-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { ColumnCombinedReference } from '#common/types/backend/parts/connection-schemas/combined-schemas/column-combined-reference';
 import type { CombinedSchema } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema';
 import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
@@ -94,7 +94,7 @@ export class GetConnectionSchemasService {
   }): Promise<ToBackendGetConnectionSchemasOutput> {
     let result: Result.Result<
       ToBackendGetConnectionSchemasOutput,
-      GetConnectionSchemasResultError
+      GetConnectionSchemasError
     > = await this.getConnectionSchemasResult(item);
 
     if (Result.isFailure(result)) {
@@ -115,7 +115,7 @@ export class GetConnectionSchemasService {
     isRefreshExistingCache: boolean;
   }): Result.ResultAsync<
     ToBackendGetConnectionSchemasOutput,
-    GetConnectionSchemasResultError
+    GetConnectionSchemasError
   > {
     return Result.pipe(
       Result.succeed(item),
@@ -128,10 +128,7 @@ export class GetConnectionSchemasService {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -139,7 +136,7 @@ export class GetConnectionSchemasService {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
           this.bridgesService.getBridgeCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -149,7 +146,7 @@ export class GetConnectionSchemasService {
       ),
       Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExistsResult({
             structId: v.bridge.structId,
             projectId: v.projectId
@@ -157,7 +154,7 @@ export class GetConnectionSchemasService {
       ),
       Result.bind(
         'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.bind(
@@ -167,9 +164,7 @@ export class GetConnectionSchemasService {
       ),
       Result.bind(
         'connections',
-        (
-          v
-        ): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabResultError> =>
+        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
           this.db.drizzle.query.connectionsTable
             .findMany({
               where: and(
@@ -274,10 +269,7 @@ export class GetConnectionSchemasService {
         'cachedColumns',
         async (
           v
-        ): Result.ResultAsync<
-          CachedColumnTab[],
-          CachedColumnEntToTabResultError
-        > =>
+        ): Result.ResultAsync<CachedColumnTab[], CachedColumnEntToTabError> =>
           v.connectionIds.length === 0
             ? Result.succeed([])
             : this.db.drizzle.query.cachedColumnsTable

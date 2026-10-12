@@ -6,7 +6,7 @@ import { Redis } from 'ioredis';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { KEY_EDITOR_SESSION_LOCK } from '#common/constants/top-backend';
-import type { AcquireSessionLockResultError } from '#common/types/backend/function-errors/acquire-session-lock-result-error';
+import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
 
 @Injectable()
 export class EditorSessionLockService implements OnModuleDestroy {
@@ -33,7 +33,7 @@ export class EditorSessionLockService implements OnModuleDestroy {
   }
 
   async acquireSessionLock(item: { sessionId: string }): Promise<string> {
-    let result: Result.Result<string, AcquireSessionLockResultError> =
+    let result: Result.Result<string, AcquireSessionLockError> =
       await this.acquireSessionLockResult(item);
 
     if (Result.isFailure(result)) {
@@ -47,7 +47,7 @@ export class EditorSessionLockService implements OnModuleDestroy {
 
   async acquireSessionLockResult(item: {
     sessionId: string;
-  }): Result.ResultAsync<string, AcquireSessionLockResultError> {
+  }): Result.ResultAsync<string, AcquireSessionLockError> {
     let { sessionId } = item;
 
     let token: string = crypto.randomUUID();

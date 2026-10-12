@@ -28,10 +28,10 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendWrongOffsetError } from '#common/types/backend/errors/backend-wrong-offset-error';
-import type { CachedColumnEntToTabResultError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-result-error';
-import type { CachedPartEntToTabResultError } from '#common/types/backend/function-errors/cached-part-ent-to-tab-result-error';
-import type { GetCacheEnvIdResultError } from '#common/types/backend/function-errors/get-cache-env-id-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
+import type { CachedPartEntToTabError } from '#common/types/backend/function-errors/cached-part-ent-to-tab-error';
+import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
 
@@ -87,10 +87,7 @@ export class ViewCachedColumnController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -105,7 +102,7 @@ export class ViewCachedColumnController {
       ),
       Result.bind(
         'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdResultError> =>
+        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
           this.cachedColumnService.getCacheEnvIdResult({
             projectId: v.projectId,
             envId: v.envId
@@ -113,9 +110,7 @@ export class ViewCachedColumnController {
       ),
       Result.bind(
         'rows',
-        (
-          v
-        ): Result.ResultAsync<CachedPartTab[], CachedPartEntToTabResultError> =>
+        (v): Result.ResultAsync<CachedPartTab[], CachedPartEntToTabError> =>
           this.db.drizzle.query.cachedPartsTable
             .findMany({
               where: and(
@@ -140,12 +135,7 @@ export class ViewCachedColumnController {
       ),
       Result.bind(
         'cachedColumn',
-        (
-          v
-        ): Result.ResultAsync<
-          CachedColumnTab,
-          CachedColumnEntToTabResultError
-        > =>
+        (v): Result.ResultAsync<CachedColumnTab, CachedColumnEntToTabError> =>
           this.db.drizzle.query.cachedColumnsTable
             .findFirst({
               where: eq(

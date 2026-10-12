@@ -6,7 +6,7 @@ import { checkApiHostname } from '#backend/services/url/check-api-hostname/check
 import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { CheckApiUrlResultError } from '#common/types/backend/function-errors/check-api-url-result-error';
+import type { CheckApiUrlError } from '#common/types/backend/function-errors/check-api-url-error';
 
 @Injectable()
 export class UrlService {
@@ -80,7 +80,7 @@ export class UrlService {
 
   async checkApiUrlResult(item: {
     urlStr: string;
-  }): Result.ResultAsync<void, CheckApiUrlResultError> {
+  }): Result.ResultAsync<void, CheckApiUrlError> {
     try {
       await this.checkApiUrl(item);
 

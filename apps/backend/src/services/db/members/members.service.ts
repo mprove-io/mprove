@@ -5,8 +5,6 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 
-const { forEachSeries } = pIteration;
-
 import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -40,14 +38,16 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
-import type { CheckMemberDoesNotExistResultError } from '#common/types/backend/function-errors/check-member-does-not-exist-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
-import type { GetMemberCheckIsEditorResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-result-error';
-import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
+import type { CheckMemberDoesNotExistError } from '#common/types/backend/function-errors/check-member-does-not-exist-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
+import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class MembersService {
@@ -126,7 +126,7 @@ export class MembersService {
     memberId: string;
     projectId: string;
   }): Promise<MemberTab> {
-    let result: Result.Result<MemberTab, GetMemberCheckIsAdminResultError> =
+    let result: Result.Result<MemberTab, GetMemberCheckIsAdminError> =
       await this.getMemberCheckIsAdminResult(item);
 
     if (Result.isFailure(result)) {
@@ -141,7 +141,7 @@ export class MembersService {
   async getMemberCheckIsAdminResult(item: {
     memberId: string;
     projectId: string;
-  }): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> {
+  }): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
@@ -166,7 +166,7 @@ export class MembersService {
           : Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_ADMIN' })
       ),
       Result.andThen(
-        (v): Result.Result<MemberTab, MemberEntToTabResultError> =>
+        (v): Result.Result<MemberTab, MemberEntToTabError> =>
           this.tabService.memberEntToTabResult({ memberEnt: v.memberEnt })
       )
     );
@@ -176,10 +176,8 @@ export class MembersService {
     memberId: string;
     projectId: string;
   }): Promise<MemberTab> {
-    let result: Result.Result<
-      MemberTab,
-      GetMemberCheckIsEditorOrAdminResultError
-    > = await this.getMemberCheckIsEditorOrAdminResult(item);
+    let result: Result.Result<MemberTab, GetMemberCheckIsEditorOrAdminError> =
+      await this.getMemberCheckIsEditorOrAdminResult(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -193,12 +191,12 @@ export class MembersService {
   async getMemberCheckIsEditorOrAdminResult(item: {
     memberId: string;
     projectId: string;
-  }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminResultError> {
+  }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'member',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.getMemberCheckExistsResult({
             memberId: v.memberId,
             projectId: v.projectId
@@ -217,7 +215,7 @@ export class MembersService {
     memberId: string;
     projectId: string;
   }): Promise<MemberTab> {
-    let result: Result.Result<MemberTab, GetMemberCheckIsEditorResultError> =
+    let result: Result.Result<MemberTab, GetMemberCheckIsEditorError> =
       await this.getMemberCheckIsEditorResult(item);
 
     if (Result.isFailure(result)) {
@@ -232,12 +230,12 @@ export class MembersService {
   async getMemberCheckIsEditorResult(item: {
     memberId: string;
     projectId: string;
-  }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> {
+  }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'member',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.memberId
@@ -256,7 +254,7 @@ export class MembersService {
     memberId: string;
     projectId: string;
   }): Promise<MemberTab> {
-    let result: Result.Result<MemberTab, GetMemberCheckExistsResultError> =
+    let result: Result.Result<MemberTab, GetMemberCheckExistsError> =
       await this.getMemberCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -271,7 +269,7 @@ export class MembersService {
   async getMemberCheckExistsResult(item: {
     memberId: string;
     projectId: string;
-  }): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> {
+  }): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> {
     let { projectId, memberId } = item;
 
     return this.db.drizzle.query.membersTable
@@ -291,7 +289,7 @@ export class MembersService {
   async checkMemberDoesNotExistResult(item: {
     memberId: string;
     projectId: string;
-  }): Result.ResultAsync<void, CheckMemberDoesNotExistResultError> {
+  }): Result.ResultAsync<void, CheckMemberDoesNotExistError> {
     let { projectId, memberId } = item;
 
     let memberEnt: MemberEnt =

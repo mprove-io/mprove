@@ -34,7 +34,7 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import {
   BlockmlService,
-  type RebuildStructResultValue
+  type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -44,17 +44,17 @@ import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbErrorToResultError } from '#common/types/backend/function-errors/db-error-to-result-error';
-import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
-import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
-import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
+import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { BridgeItem } from '#common/types/backend/parts/special/bridge-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSpecialRebuildStructsOutput } from '#common/types/backend/routes/special/special-rebuild-structs/special-rebuild-structs-output';
 import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
 
-type RebuildSummary = {
+type PrepareRebuildPayload = {
   notFoundProjectIds: string[];
   errorGetCatalogBridgeItems: BridgeItem[];
   successBridgeItems: BridgeItem[];
@@ -118,9 +118,7 @@ export class SpecialRebuildStructsController {
       }),
       Result.bind(
         'members',
-        async (
-          v
-        ): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
+        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
           v.userIds.length === 0
             ? Result.succeed([])
             : this.db.drizzle.query.membersTable
@@ -140,7 +138,7 @@ export class SpecialRebuildStructsController {
       ),
       Result.bind(
         'projects',
-        (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> =>
+        (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
           (v.projectIds.length > 0
             ? this.db.drizzle.query.projectsTable.findMany({
                 where: inArray(projectsTable.projectId, v.projectIds)
@@ -163,8 +161,8 @@ export class SpecialRebuildStructsController {
           ).then(bridgeEnts => Result.succeed(bridgeEnts))
       ),
       Result.bind(
-        'summary',
-        (v): Result.Result<RebuildSummary, never> =>
+        'prepareRebuildPayload',
+        (v): Result.Result<PrepareRebuildPayload, never> =>
           Result.succeed({
             notFoundProjectIds: [],
             errorGetCatalogBridgeItems: [],
@@ -176,16 +174,15 @@ export class SpecialRebuildStructsController {
           v.bridgeEnts,
           async (
             bridgeEnt
-          ): Result.ResultAsync<
-            void,
-            RebuildStructResultError | DbErrorToResultError
-          > => {
+          ): Result.ResultAsync<void, RebuildStructError | DbErrorToError> => {
             let project: ProjectTab = v.projects.find(
               project => project.projectId === bridgeEnt.projectId
             );
 
             if (isUndefined(project)) {
-              v.summary.notFoundProjectIds.push(bridgeEnt.projectId);
+              v.prepareRebuildPayload.notFoundProjectIds.push(
+                bridgeEnt.projectId
+              );
 
               return Result.succeed();
             }
@@ -203,7 +200,7 @@ export class SpecialRebuildStructsController {
             if (v.skipRebuild === false) {
               let diskResult: Result.Result<
                 ToDiskGetCatalogFilesOutput,
-                SendToDiskResultError
+                SendToDiskError
               > = await this.rpcService.sendToDiskResult({
                 request: {
                   operation: 'getCatalogFiles',
@@ -223,7 +220,9 @@ export class SpecialRebuildStructsController {
                 // nested cause, so the legacy per-bridge message is the outer code.
                 bridgeItem.errorMessage = diskResult.error.code;
 
-                v.summary.errorGetCatalogBridgeItems.push(bridgeItem);
+                v.prepareRebuildPayload.errorGetCatalogBridgeItems.push(
+                  bridgeItem
+                );
 
                 return Result.succeed();
               }
@@ -231,8 +230,8 @@ export class SpecialRebuildStructsController {
               let structId: string = makeId();
 
               let rebuildResult: Result.Result<
-                RebuildStructResultValue,
-                RebuildStructResultError
+                RebuildStructOutput,
+                RebuildStructError
               > = await this.blockmlService.rebuildStructResult({
                 traceId: v.traceId,
                 orgId: project.orgId,
@@ -257,7 +256,7 @@ export class SpecialRebuildStructsController {
               bridgeEnt.needValidate = true;
             }
 
-            let writeResult: Result.Result<void, DbErrorToResultError> =
+            let writeResult: Result.Result<void, DbErrorToError> =
               await dbErrorToResult({
                 action: async () => {
                   await retry(
@@ -281,7 +280,7 @@ export class SpecialRebuildStructsController {
             bridgeItem.structId = bridgeEnt.structId;
             bridgeItem.needValidate = bridgeEnt.needValidate;
 
-            v.summary.successBridgeItems.push(bridgeItem);
+            v.prepareRebuildPayload.successBridgeItems.push(bridgeItem);
 
             return Result.succeed();
           }
@@ -289,11 +288,12 @@ export class SpecialRebuildStructsController {
       ),
       Result.map(
         (v): ToBackendSpecialRebuildStructsOutput => ({
-          notFoundProjectIds: v.summary.notFoundProjectIds,
-          successTotal: v.summary.successBridgeItems.length,
-          errorTotal: v.summary.errorGetCatalogBridgeItems.length,
-          successBridgeItems: v.summary.successBridgeItems,
-          errorGetCatalogBridgeItems: v.summary.errorGetCatalogBridgeItems
+          notFoundProjectIds: v.prepareRebuildPayload.notFoundProjectIds,
+          successTotal: v.prepareRebuildPayload.successBridgeItems.length,
+          errorTotal: v.prepareRebuildPayload.errorGetCatalogBridgeItems.length,
+          successBridgeItems: v.prepareRebuildPayload.successBridgeItems,
+          errorGetCatalogBridgeItems:
+            v.prepareRebuildPayload.errorGetCatalogBridgeItems
         })
       )
     );

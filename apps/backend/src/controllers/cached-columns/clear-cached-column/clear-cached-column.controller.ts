@@ -24,8 +24,8 @@ import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetCacheEnvIdResultError } from '#common/types/backend/function-errors/get-cache-env-id-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendClearCachedColumnOutput } from '#common/types/backend/routes/connections/clear-cached-column/clear-cached-column-output';
 
@@ -72,10 +72,7 @@ export class ClearCachedColumnController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -90,7 +87,7 @@ export class ClearCachedColumnController {
       ),
       Result.bind(
         'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdResultError> =>
+        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
           this.cachedColumnService.getCacheEnvIdResult({
             projectId: v.projectId,
             envId: v.envId

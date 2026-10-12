@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import * as bcrypt from 'bcrypt';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 
 @Injectable()
 export class HashService {
@@ -30,7 +30,7 @@ export class HashService {
   }
 
   makeHash(item: { input: string; hashSecret: string }) {
-    let result: Result.Result<string, MakeHashResultError> =
+    let result: Result.Result<string, MakeHashError> =
       this.makeHashResult(item);
 
     if (Result.isFailure(result)) {
@@ -45,7 +45,7 @@ export class HashService {
   makeHashResult(item: {
     input?: string;
     hashSecret?: string;
-  }): Result.Result<string, MakeHashResultError> {
+  }): Result.Result<string, MakeHashError> {
     let { input, hashSecret } = item;
 
     if (isUndefined(input)) {

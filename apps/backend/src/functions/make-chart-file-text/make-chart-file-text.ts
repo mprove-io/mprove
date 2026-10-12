@@ -8,7 +8,7 @@ export function makeChartFileText(item: {
   chartId: string;
   tileTitle: string;
   accessRoles: string[];
-}) {
+}): string {
   let { mconfig, chartId, tileTitle, accessRoles } = item;
 
   let filePartTile: FilePartTile = prepareTile({
@@ -18,14 +18,12 @@ export function makeChartFileText(item: {
 
   filePartTile.title = tileTitle;
 
-  let chartFileText = toYaml({
+  let chartFileText: string = toYaml({
     chart: chartId,
     access_roles:
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
     tiles: [filePartTile]
   });
 
-  return {
-    chartFileText: chartFileText
-  };
+  return chartFileText;
 }

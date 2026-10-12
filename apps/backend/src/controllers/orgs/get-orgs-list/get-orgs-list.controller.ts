@@ -22,7 +22,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
+import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgsListOutput } from '#common/types/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
 
@@ -99,7 +99,7 @@ export class GetOrgsListController {
       ),
       Result.bind(
         'orgs',
-        (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> =>
+        (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
           this.db.drizzle.query.orgsTable
             .findMany({
               where: eq(orgsTable.ownerId, v.userId)

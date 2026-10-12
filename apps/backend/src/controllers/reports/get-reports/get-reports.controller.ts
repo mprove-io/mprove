@@ -34,12 +34,12 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetReportsCatalogResultError } from '#common/types/backend/function-errors/get-reports-catalog-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
-import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetReportsCatalogError } from '#common/types/backend/function-errors/get-reports-catalog-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -98,7 +98,7 @@ export class GetReportsController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -106,7 +106,7 @@ export class GetReportsController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -122,7 +122,7 @@ export class GetReportsController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
           this.bridgesService.getBridgeCheckExistsResult({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
@@ -132,7 +132,7 @@ export class GetReportsController {
       ),
       Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExistsResult({
             structId: v.bridge.structId,
             projectId: v.projectId
@@ -149,7 +149,7 @@ export class GetReportsController {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
           this.db.drizzle.query.modelsTable
             .findMany({
               where: and(
@@ -185,7 +185,7 @@ export class GetReportsController {
       ),
       Result.bind(
         'reportsCatalog',
-        (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogResultError> =>
+        (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogError> =>
           this.reportsService.getReportsCatalogResult({
             projectId: v.projectId,
             structId: v.bridge.structId,

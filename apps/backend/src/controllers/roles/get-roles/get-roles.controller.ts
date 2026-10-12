@@ -16,9 +16,9 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
-import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
+import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
+import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -59,7 +59,7 @@ export class GetRolesController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             memberId: v.user.userId,
             projectId: v.projectId
@@ -67,12 +67,12 @@ export class GetRolesController {
       ),
       Result.bind(
         'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
           this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.bind(
         'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
           this.givensService.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.map(

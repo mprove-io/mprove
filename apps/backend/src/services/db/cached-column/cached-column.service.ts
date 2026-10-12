@@ -4,8 +4,8 @@ import type { CachedColumnTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetCacheEnvIdResultError } from '#common/types/backend/function-errors/get-cache-env-id-result-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { Env } from '#common/types/backend/parts/env';
 
@@ -19,7 +19,7 @@ export class CachedColumnService {
   }): Promise<string> {
     let { projectId, envId } = item;
 
-    let result: Result.Result<string, GetCacheEnvIdResultError> =
+    let result: Result.Result<string, GetCacheEnvIdError> =
       await this.getCacheEnvIdResult({ projectId: projectId, envId: envId });
 
     if (Result.isFailure(result)) {
@@ -34,12 +34,12 @@ export class CachedColumnService {
   async getCacheEnvIdResult(item: {
     projectId: string;
     envId: string;
-  }): Result.ResultAsync<string, GetCacheEnvIdResultError> {
+  }): Result.ResultAsync<string, GetCacheEnvIdError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.map((v): string =>

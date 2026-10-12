@@ -9,10 +9,10 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { calculateDiskShardResult } from '#backend/functions/calculate-disk-shard-result/calculate-disk-shard-result';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
-import type { CalculateDiskShardResultError } from '#common/types/backend/function-errors/calculate-disk-shard-result-error';
-import type { RequestResultError } from '#common/types/backend/function-errors/request-result-error';
-import type { SendToBlockmlResultError } from '#common/types/backend/function-errors/send-to-blockml-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { CalculateDiskShardError } from '#common/types/backend/function-errors/calculate-disk-shard-error';
+import type { RequestError } from '#common/types/backend/function-errors/request-error';
+import type { SendToBlockmlError } from '#common/types/backend/function-errors/send-to-blockml-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import { zToBlockmlOperationRegistry } from '#common/types/blockml/request/to-blockml-operation-registry';
 import type { ToBlockmlRequest } from '#common/types/blockml/request/to-blockml-request';
 import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
@@ -97,7 +97,7 @@ export class RpcService implements OnModuleDestroy {
     message: any;
     timeout: number;
   }): Promise<T> {
-    let result: Result.Result<T, RequestResultError> =
+    let result: Result.Result<T, RequestError> =
       await this.requestResult<T>(item);
 
     if (Result.isFailure(result)) {
@@ -120,7 +120,7 @@ export class RpcService implements OnModuleDestroy {
     groupId: string;
     message: any;
     timeout: number;
-  }): Result.ResultAsync<T, RequestResultError> {
+  }): Result.ResultAsync<T, RequestError> {
     let { namespace, groupId, message, timeout } = item;
 
     let correlationId: string = uuidv4();
@@ -143,7 +143,7 @@ export class RpcService implements OnModuleDestroy {
       data: data
     });
 
-    let execution: Result.ResultAsync<T, RequestResultError> = new Promise(
+    let execution: Result.ResultAsync<T, RequestError> = new Promise(
       resolve => {
         let timer: NodeJS.Timeout = setTimeout(() => {
           sub.quit();
@@ -179,7 +179,7 @@ export class RpcService implements OnModuleDestroy {
   }): Promise<BlockmlSuccessOutput<TRequest>> {
     let result: Result.Result<
       BlockmlSuccessOutput<TRequest>,
-      SendToBlockmlResultError
+      SendToBlockmlError
     > = await this.sendToBlockmlResult(item);
 
     if (Result.isFailure(result)) {
@@ -215,10 +215,7 @@ export class RpcService implements OnModuleDestroy {
     request: TRequest;
     orgId: string;
     repoId: string;
-  }): Result.ResultAsync<
-    BlockmlSuccessOutput<TRequest>,
-    SendToBlockmlResultError
-  > {
+  }): Result.ResultAsync<BlockmlSuccessOutput<TRequest>, SendToBlockmlError> {
     let { request, orgId, repoId } = item;
 
     let validation: ZodSafeParseResult<ToBlockmlRequest>;
@@ -238,7 +235,7 @@ export class RpcService implements OnModuleDestroy {
 
     let result: Result.Result<
       ToBlockmlResponseForOperation<TRequest['operation']>,
-      RequestResultError
+      RequestError
     > = await this.requestResult<
       ToBlockmlResponseForOperation<TRequest['operation']>
     >({
@@ -364,7 +361,7 @@ export class RpcService implements OnModuleDestroy {
   }): Promise<DiskSuccessOutput<TRequest>> {
     let result: Result.Result<
       DiskSuccessOutput<TRequest>,
-      SendToDiskResultError
+      SendToDiskError
     > = await this.sendToDiskResult(item);
 
     if (Result.isFailure(result)) {
@@ -398,7 +395,7 @@ export class RpcService implements OnModuleDestroy {
 
   async sendToDiskResult<TRequest extends ToDiskRequest>(item: {
     request: TRequest;
-  }): Result.ResultAsync<DiskSuccessOutput<TRequest>, SendToDiskResultError> {
+  }): Result.ResultAsync<DiskSuccessOutput<TRequest>, SendToDiskError> {
     let { request } = item;
 
     let validation: ZodSafeParseResult<ToDiskRequest>;
@@ -416,7 +413,7 @@ export class RpcService implements OnModuleDestroy {
 
     let route: DiskRoute = this.getDiskRoute({ request: request });
 
-    let diskShard: Result.Result<string, CalculateDiskShardResultError> =
+    let diskShard: Result.Result<string, CalculateDiskShardError> =
       calculateDiskShardResult({
         shardKey: route.shardKey,
         totalDiskShards: this.totalDiskShards
@@ -428,7 +425,7 @@ export class RpcService implements OnModuleDestroy {
 
     let result: Result.Result<
       ToDiskResponseForOperation<TRequest['operation']>,
-      RequestResultError
+      RequestError
     > = await this.requestResult<
       ToDiskResponseForOperation<TRequest['operation']>
     >({

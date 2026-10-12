@@ -34,14 +34,14 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
-import type { GetDashboardCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
-import type { GetReportCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
-import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
+import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { SuggestField } from '#common/types/backend/parts/suggest-field';
@@ -104,7 +104,7 @@ export class GetSuggestFieldsController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -112,7 +112,7 @@ export class GetSuggestFieldsController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -128,7 +128,7 @@ export class GetSuggestFieldsController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
           this.bridgesService.getBridgeCheckExistsResult({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
@@ -138,7 +138,7 @@ export class GetSuggestFieldsController {
       ),
       Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExistsResult({
             structId: v.bridge.structId,
             projectId: v.projectId
@@ -146,7 +146,7 @@ export class GetSuggestFieldsController {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
           this.db.drizzle.query.modelsTable
             .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
             .then(xs =>
@@ -161,7 +161,7 @@ export class GetSuggestFieldsController {
           v
         ): Result.ResultAsync<
           DashboardTab,
-          GetDashboardCheckExistsAndAccessResultError
+          GetDashboardCheckExistsAndAccessError
         > =>
           v.parentType === 'Dashboard'
             ? this.dashboardsService.getDashboardCheckExistsAndAccessResult({
@@ -176,10 +176,7 @@ export class GetSuggestFieldsController {
         'report',
         async (
           v
-        ): Result.ResultAsync<
-          ReportTab,
-          GetReportCheckExistsAndAccessResultError
-        > =>
+        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
           v.parentType === 'Report'
             ? this.reportsService.getReportCheckExistsAndAccessResult({
                 projectId: v.projectId,
@@ -285,7 +282,7 @@ export class GetSuggestFieldsController {
       ),
       Result.bind(
         'modelPartXs',
-        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> =>
+        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
           this.modelsService.getModelPartXsResult({
             structId: v.struct.structId,
             apiUserMember: v.apiUserMember

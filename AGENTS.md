@@ -281,6 +281,48 @@ export function doSomething(item: { orgId: string; projectId: string }) {
 }
 ```
 
+## Function return types
+
+Standalone named functions must declare an explicit return type. Reuse an
+existing domain or output type when it fits; do not create a new contract merely
+for naming.
+
+When a function only produces a single primitive value, return that primitive
+directly with an explicit type, such as `string`. Do not introduce a
+single-field object wrapper merely to define an `Output` contract.
+
+When a function or method needs a dedicated return contract, name it
+`<FunctionName>Output`, omitting a trailing `Result` and any service prefix. Use
+`Output`, not `ResultValue`: `editMalloyQueryResult` → `EditMalloyQueryOutput`.
+For Result-returning functions, this names the success type, not the Result
+wrapper.
+
+Reserve `Payload` for new, step-specific intermediate inline pipe types as
+described in "Singular and plural names". Final pipe projections use the
+enclosing function's return or success contract, not a step-specific `Payload`.
+
+## Decorated parameters
+
+Keep parameter decorators on the same line as the parameter declaration,
+including constructor injection and controller handler parameters. Do not put
+the decorator on its own line.
+
+```ts
+// correct
+@Inject(DRIZZLE) private db: Db
+
+@AttachUser() user: UserTab,
+
+@Body() body: ToBackendEditDraftReportRequestDto
+
+// wrong
+@Inject(DRIZZLE)
+private db: Db
+
+@AttachUser()
+user: UserTab,
+```
+
 ## Item destructuring
 
 Destructure `item` inside a named function or method when individual properties
@@ -364,6 +406,11 @@ let stat: import('fs-extra').Stats;
 Why: the apps run via `@swc-node/register/esm-register`, which does not elide
 value-style imports of names that turn out to be type-only. Native Node ESM
 resolution then fails because the source file exports the name only as a `type`.
+
+## Import order
+
+Place all imports before other top-level declarations and statements, including
+types and interfaces. Import spacing follows "Empty lines between statements".
 
 ## Domain literals
 
@@ -736,6 +783,19 @@ let projectEnts: ProjectEnt[];
 let projects: ProjectTab[];
 ```
 
+## Singular and plural names
+
+Use plural names only for arrays. Use singular names for non-array variables,
+properties, pipeline bindings, and types, including objects that group arrays.
+
+Intermediate inline pipe steps may reuse an existing domain or output type when
+it fits. Do not create a `Payload` type merely to rename an existing contract.
+When a grouped intermediate object needs a new, step-specific type, use the
+step's action name plus `Payload` for both the type and binding, such as
+`PrepareReportQueriesPayload` / `prepareReportQueriesPayload`, not
+`ReportQueries` / `reportQueries`. Keep array fields inside the payload plural.
+Function return contracts follow "Function return types" instead.
+
 ## Local object projections
 
 For local object projections, prefer a named handwritten type over `Pick`. Use
@@ -761,6 +821,10 @@ type ResponseModelPart = Pick<LlmModel, 'modelId' | 'name'>;
 
 Add an empty line between code statements. Do not add empty lines within a
 single multiline statement.
+
+This includes top-level declarations and statements, such as types, constants,
+classes, functions, and schema equality assertions. Consecutive imports do not
+require empty lines; separate the import group from other top-level statements.
 
 Exception: in callbacks passed to byethrow `Result` combinators, an empty line
 before `return` may be omitted when the callback body contains exactly one
@@ -974,6 +1038,38 @@ rule in these cases:
 
 Standalone Result-producing functions must retain explicit return types.
 
+### Result variable names
+
+Use context-specific names:
+
+- **Named function in a pipe:** bind its success value by domain, optionally
+  prefixed: `getCarResult` returning `Result<Car, GetCarError>` may bind to
+  `car` or `originalCar`. Reuse the callee's success type.
+- **Throwing compatibility wrapper:** when `getCar` delegates to `getCarResult`,
+  name the local Result variable `result`.
+- **Inline pipe computation:** match the binding and its named handwritten
+  success type when introducing a step-specific contract: `prepareQueryPayload`
+  / `PrepareQueryPayload`. When reusing an existing type, bind by domain
+  instead. Avoid redundant enclosing-operation prefixes. Type requirements and
+  exceptions follow "Result callback return types"; grouped object naming and
+  type reuse follow "Singular and plural names".
+- **Other local Result variables:** prefer the named output contract in lower
+  camel case when there is a dedicated output contract. Otherwise, use the
+  success value's domain name plus `Result`: `carResult` or `originalCarResult`
+  for `Result<Car, GetCarError>`. Do not derive an `Output` name merely from the
+  called function name. For guarded conversions, name the conversion rather than
+  the guard or fallback.
+
+Dedicated output contract naming follows "Function return types". Its local
+Result variable uses lower camel case: `EditMalloyQueryOutput` /
+`editMalloyQueryOutput`.
+
+Keep meaningful domain names for unwrapped values and intermediate state; entity
+names follow "Entity and Tab variable names". Do not use placeholders such as
+`operationResult9`, `prepared1`, `SomeOperationState14`, `bindingResult`, or
+`boundValue`. Distinguish values with meaningful prefixes, not numeric suffixes.
+Meaningful numeric names such as `keyBase64` are allowed.
+
 ### Result callback return types
 
 Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
@@ -982,8 +1078,9 @@ type, matching whether the callback returns a synchronous Result or a promise.
 
 Use named handwritten types for object-shaped callback success values, including
 array elements, rather than inline object types. Keep local types in the same
-file unless shared. Function parameter types still follow "Function and method
-args".
+file unless shared. Type reuse and intermediate naming follow "Singular and
+plural names"; final projection contracts follow "Function return types".
+Function parameter types still follow "Function and method args".
 
 ```ts
 Result.bind(
@@ -1049,7 +1146,7 @@ follow the exception under "Entity and Tab variable names".
 ```ts
 Result.bind(
   'avatar',
-  (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+  (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
     this.db.drizzle.query.avatarsTable
       .findFirst({
         where: eq(avatarsTable.userId, v.avatarUserId)
@@ -1091,6 +1188,11 @@ chains", "Guard optional operations at caller", and "Pipe step granularity".
 
 For every Result-producing function with anticipated errors, define a named
 `<FunctionName>Error` type in `types/function-errors/<function-name>-error.ts`.
+
+Omit a trailing `Result` from the function name when naming the error type,
+schema, and file: `editMalloyQueryResult` → `EditMalloyQueryError`,
+`zEditMalloyQueryError`, and `edit-malloy-query-error.ts`. Keep the function
+name unchanged.
 
 The function error type must union errors created directly by the function with
 the function error types of directly called lower-level functions. Import

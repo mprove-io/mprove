@@ -33,7 +33,7 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
+import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/providers/edit-provider/edit-provider-output';
 
@@ -82,9 +82,7 @@ export class EditProviderController {
       ),
       Result.bind(
         'provider',
-        (
-          v
-        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
           this.providersService.getProviderCheckExistsResult({
             projectId: v.input.projectId,
             providerId: v.input.providerId

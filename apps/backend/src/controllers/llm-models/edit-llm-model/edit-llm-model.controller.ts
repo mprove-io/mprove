@@ -36,10 +36,10 @@ import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
-import type { GetDiscoveredLlmModelPartResultError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-result-error';
-import type { GetLlmModelCheckExistsResultError } from '#common/types/backend/function-errors/get-llm-model-check-exists-result-error';
-import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
-import type { ReconcileDiscoveredModelVariantsResultError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-result-error';
+import type { GetDiscoveredLlmModelPartError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-error';
+import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
+import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
+import type { ReconcileDiscoveredModelVariantsError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
@@ -99,9 +99,7 @@ export class EditLlmModelController {
       ),
       Result.bind(
         'provider',
-        (
-          v
-        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
           this.providersService.getProviderCheckExistsResult({
             projectId: v.projectId,
             providerId: v.providerId
@@ -109,7 +107,7 @@ export class EditLlmModelController {
       ),
       Result.bind(
         'model',
-        (v): Result.Result<LlmModel, GetLlmModelCheckExistsResultError> =>
+        (v): Result.Result<LlmModel, GetLlmModelCheckExistsError> =>
           this.providersService.getLlmModelCheckExistsResult({
             provider: v.provider,
             modelId: v.modelId
@@ -126,10 +124,7 @@ export class EditLlmModelController {
         'modelPart',
         async (
           v
-        ): Result.ResultAsync<
-          LlmModelPart,
-          GetDiscoveredLlmModelPartResultError
-        > =>
+        ): Result.ResultAsync<LlmModelPart, GetDiscoveredLlmModelPartError> =>
           v.provider.type === 'OpenAICompatible' || v.model.isManual === true
             ? Result.succeed(undefined)
             : this.llmModelService.getDiscoveredLlmModelPartResult({
@@ -150,7 +145,7 @@ export class EditLlmModelController {
           v
         ): Result.Result<
           LlmModelVariant[],
-          ReconcileDiscoveredModelVariantsResultError
+          ReconcileDiscoveredModelVariantsError
         > =>
           isUndefined(v.modelPart)
             ? Result.succeed(v.submittedVariants)

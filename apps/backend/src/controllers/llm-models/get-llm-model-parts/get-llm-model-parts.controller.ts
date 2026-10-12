@@ -38,8 +38,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendProviderTypeMismatchError } from '#common/types/backend/errors/backend-provider-type-mismatch-error';
-import type { GetModelPartsResultError } from '#common/types/backend/function-errors/get-model-parts-result-error';
-import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
+import type { GetModelPartsError } from '#common/types/backend/function-errors/get-model-parts-error';
+import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
@@ -91,9 +91,7 @@ export class GetLlmModelPartsController {
       ),
       Result.bind(
         'provider',
-        (
-          v
-        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
           this.providersService.getProviderCheckExistsResult({
             projectId: v.projectId,
             providerId: v.providerId
@@ -105,7 +103,7 @@ export class GetLlmModelPartsController {
           v
         ): Result.ResultAsync<
           LlmModelPartsResult,
-          GetModelPartsResultError | BackendProviderTypeMismatchError
+          GetModelPartsError | BackendProviderTypeMismatchError
         > =>
           v.provider.type === 'OpenAICompatible'
             ? Result.fail({ code: 'BACKEND_PROVIDER_TYPE_MISMATCH' })

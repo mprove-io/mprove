@@ -34,8 +34,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
-import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
-import type { RefreshModelResultError } from '#common/types/backend/function-errors/refresh-model-result-error';
+import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
+import type { RefreshModelError } from '#common/types/backend/function-errors/refresh-model-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateLlmModelOutput } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-output';
@@ -94,9 +94,7 @@ export class CreateLlmModelController {
       ),
       Result.bind(
         'provider',
-        (
-          v
-        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
           this.providersService.getProviderCheckExistsResult({
             projectId: v.projectId,
             providerId: v.providerId
@@ -110,7 +108,7 @@ export class CreateLlmModelController {
       ),
       Result.bind(
         'model',
-        (v): Result.ResultAsync<LlmModel, RefreshModelResultError> =>
+        (v): Result.ResultAsync<LlmModel, RefreshModelError> =>
           this.llmModelService.refreshModelResult({
             providerType: v.provider.type,
             apiKey:

@@ -9,19 +9,33 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateDraftReportRequestDto,
   ToBackendCreateDraftReportResponseDto
 } from '#backend/controllers/reports/create-draft-report/create-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BranchTab,
+  BridgeTab,
+  KitTab,
+  MconfigTab,
+  MemberTab,
+  ModelTab,
+  ProjectTab,
+  QueryTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -31,20 +45,72 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import type { ReportsCatalog } from '#backend/services/db/reports/reports.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { ReportRowService } from '#backend/services/report-row/report-row.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
+import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
+import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
+import type { GetReportsCatalogError } from '#common/types/backend/function-errors/get-reports-catalog-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { KitEntToTabError } from '#common/types/backend/function-errors/kit-ent-to-tab-error';
+import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
+import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import type { Member } from '#common/types/backend/parts/member';
+import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateDraftReportOutput } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-output';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Row } from '#common/types/blockml/parts/report/row/row';
 import type { Rq } from '#common/types/blockml/parts/report/row/rq';
+
+type PrepareReportCopiesPayload = {
+  reportId: string;
+  copyMconfigsMap: MconfigCopies;
+  copyQueriesMap: QueryCopies;
+  copyKitsMap: KitCopies;
+  fromCopyQueryIds: string[];
+  fromCopyMconfigIds: string[];
+  fromCopyKitIds: string[];
+};
+
+type PrepareDraftReportPayload = {
+  processedRows: Row[];
+  enabledChartRowIds: string[];
+  report: ReportTab;
+  apiUserMember: Member;
+};
+
+type MconfigCopies = {
+  fromMconfigId: string;
+  toMconfigId: string;
+}[];
+
+type QueryCopies = {
+  fromQueryId: string;
+  toQueryId: string;
+}[];
+
+type KitCopies = {
+  fromKitId: string;
+  toKitId: string;
+}[];
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -80,311 +146,453 @@ export class CreateDraftReportController {
   async createDraftRep(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateDraftReportRequestDto
-  ) {
-    let { traceId } = body;
-    let {
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      fromReportId,
-      changeType,
-      rowChange,
-      rowIds,
-      timeSpec,
-      timezone,
-      timeRangeFractionBrick,
-      newReportFields,
-      listeners,
-      chart
-    } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let fromReport = await this.reportsService.getReportCheckExistsAndAccess({
-      projectId: projectId,
-      reportId: fromReportId,
-      structId: bridge.structId,
-      user: user,
-      userMember: userMember
-    });
-
-    if (
-      isDefined(rowChange?.metricId) &&
-      fromReport.rows.map(row => row.metricId).indexOf(rowChange.metricId) < 0
-    ) {
-      let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
-
-      await this.modelsService.getModelCheckExistsAndAccess({
-        structId: bridge.structId,
-        modelId: metric.modelId,
-        userMember: userMember
-      });
-    }
-
-    if (isDefined(newReportFields)) {
-      fromReport.rows
-        .filter(row => isDefined(row.parameters))
-        .forEach(row => {
-          row.parameters = row.parameters.filter(
-            parameter =>
-              !parameter.listen ||
-              newReportFields.map(y => y.id).indexOf(parameter.listen) > -1
-          );
-        });
-    }
-
-    let reportId = makeId();
-
-    let copyMconfigsMap: { fromMconfigId: string; toMconfigId: string }[] = [];
-    let copyQueriesMap: { fromQueryId: string; toQueryId: string }[] = [];
-    let copyKitsMap: { fromKitId: string; toKitId: string }[] = [];
-
-    fromReport.rows.forEach(row => {
-      if (row.rowType === 'metric' || row.rowType === 'formula') {
-        // copy to draft current rq only (not all rqs)
-        let rq: Rq = row.rqs.find(
-          y =>
-            y.fractionBrick === timeRangeFractionBrick &&
-            y.timeSpec === timeSpec &&
-            y.timezone === timezone
-        );
-
-        if (isDefined(rq)) {
-          if (row.rowType === 'metric' && isDefined(rq.mconfigId)) {
-            let newMconfigId = makeId();
-            let newQueryId = makeId();
-
-            copyMconfigsMap.push({
-              fromMconfigId: rq.mconfigId,
-              toMconfigId: newMconfigId
-            });
-
-            rq.mconfigId = newMconfigId;
-
-            if (isDefined(rq.queryId)) {
-              copyQueriesMap.push({
-                fromQueryId: rq.queryId,
-                toQueryId: newQueryId
-              });
-
-              rq.queryId = newQueryId;
-            }
-          }
-
-          if (row.rowType === 'formula' && isDefined(rq.kitId)) {
-            let newKitId = makeId();
-
-            copyKitsMap.push({
-              fromKitId: rq.kitId,
-              toKitId: newKitId
-            });
-
-            rq.kitId = newKitId;
-          }
-
-          row.rqs = [rq];
-        } else {
-          row.rqs = [];
-        }
-      }
-    });
-
-    let fromCopyQueryIds = copyQueriesMap.map(x => x.fromQueryId);
-    let fromCopyMconfigIds = copyMconfigsMap.map(x => x.fromMconfigId);
-    let fromCopyKitIds = copyKitsMap.map(x => x.fromKitId);
-
-    let copyQueries = await this.db.drizzle.query.queriesTable
-      .findMany({
-        where: and(
-          inArray(queriesTable.queryId, fromCopyQueryIds),
-          eq(queriesTable.projectId, projectId)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
-
-    let copyMconfigs = await this.db.drizzle.query.mconfigsTable
-      .findMany({
-        where: and(
-          inArray(mconfigsTable.mconfigId, fromCopyMconfigIds),
-          eq(mconfigsTable.structId, struct.structId)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
-
-    let copyKits = await this.db.drizzle.query.kitsTable
-      .findMany({
-        where: and(
-          inArray(kitsTable.kitId, fromCopyKitIds),
-          eq(kitsTable.structId, struct.structId),
-          eq(kitsTable.reportId, fromReportId)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.kitEntToTab(x)));
-
-    copyQueries.forEach(x => {
-      x.queryId = copyQueriesMap.find(
-        y => y.fromQueryId === x.queryId
-      ).toQueryId;
-
-      x.reportId = reportId;
-      x.reportStructId = bridge.structId;
-    });
-
-    copyMconfigs.forEach(x => {
-      x.mconfigId = copyMconfigsMap.find(
-        y => y.fromMconfigId === x.mconfigId
-      ).toMconfigId;
-
-      x.queryId = copyQueriesMap.find(
-        y => y.fromQueryId === x.queryId
-      ).toQueryId;
-    });
-
-    copyKits.forEach(x => {
-      x.kitId = copyKitsMap.find(y => y.fromKitId === x.kitId).toKitId;
-      x.reportId = reportId;
-    });
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                mconfigs: copyMconfigs,
-                kits: copyKits
-              },
-              insertOrDoNothing: {
-                queries: copyQueries
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    let processedRows: Row[] = this.reportRowService.getProcessedRows({
-      rows: fromReport.rows,
-      rowChange: rowChange,
-      rowIds: rowIds,
-      changeType: changeType,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFractionBrick: timeRangeFractionBrick,
-      metrics: struct.metrics,
-      struct: struct,
-      newReportFields: newReportFields,
-      listeners: listeners
-    });
-
-    let enabledChartRowIds = processedRows
-      .filter(row => row.showChart === true)
-      .map(row => row.rowId);
-
-    chart.series = chart.series
-      .filter(s => enabledChartRowIds.indexOf(s.dataRowId) > -1)
-      .sort((a, b) =>
-        a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
-      );
-
-    let report = this.reportsService.makeReport({
-      projectId: projectId,
-      structId: bridge.structId,
-      reportId: reportId,
-      draft: true,
-      space: undefined,
-      accessRoles: [],
-      creatorId: user.userId,
-      filePath: undefined,
-      title: reportId,
-      rows: processedRows,
-      chart: chart,
-      draftCreatedTs: makeTsNumber(),
-      fields: newReportFields
-    });
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    let apiReport = await this.reportDataService.getReportData({
-      report: report,
-      traceId: traceId,
-      project: project,
-      apiUserMember: apiUserMember,
-      userMember: userMember,
-      user: user,
-      envId: envId,
-      struct: struct,
-      metrics: struct.metrics,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFractionBrick: timeRangeFractionBrick,
-      isSaveToDb: true
-    });
-
-    let modelPartXs = await this.modelsService.getModelPartXs({
-      structId: struct.structId,
-      apiUserMember: apiUserMember
-    });
-
-    let reportsCatalog = await this.reportsService.getReportsCatalog({
-      projectId: projectId,
-      structId: bridge.structId,
-      user: user,
-      userMember: userMember,
-      apiUserMember: apiUserMember,
-      spaces: struct.spaces
-    });
-
-    let payload: ToBackendCreateDraftReportOutput = {
-      needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({
-        struct: struct,
-        modelPartXs: modelPartXs
+  ): Promise<BackendResultForOperation<'createDraftReport'>> {
+    return Result.pipe(
+      Result.succeed({
+        user: user,
+        traceId: body.traceId,
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        fromReportId: body.input.fromReportId,
+        changeType: body.input.changeType,
+        rowChange: body.input.rowChange,
+        rowIds: body.input.rowIds,
+        timeSpec: body.input.timeSpec,
+        timezone: body.input.timezone,
+        timeRangeFractionBrick: body.input.timeRangeFractionBrick,
+        newReportFields: body.input.newReportFields,
+        listeners: body.input.listeners,
+        chart: body.input.chart
       }),
-      userMember: apiUserMember,
-      report: apiReport,
-      reportUnitDrafts: reportsCatalog.reportUnitDrafts
-    };
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'fromReport',
+        (
+          v
+        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
+          this.reportsService.getReportCheckExistsAndAccessResult({
+            projectId: v.projectId,
+            reportId: v.fromReportId,
+            structId: v.bridge.structId,
+            user: v.user,
+            userMember: v.userMember
+          })
+      ),
+      Result.andThrough(async v => {
+        if (
+          isDefined(v.rowChange?.metricId) &&
+          v.fromReport.rows
+            .map(row => row.metricId)
+            .indexOf(v.rowChange.metricId) < 0
+        ) {
+          let metric: ModelMetric = v.struct.metrics.find(
+            x => x.metricId === v.rowChange.metricId
+          );
 
-    return payload;
+          let modelAccessResult: Result.Result<
+            ModelTab,
+            GetModelCheckExistsAndAccessError
+          > = await this.modelsService.getModelCheckExistsAndAccessResult({
+            structId: v.bridge.structId,
+            modelId: metric.modelId,
+            userMember: v.userMember
+          });
+
+          if (Result.isFailure(modelAccessResult)) {
+            return modelAccessResult;
+          }
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind(
+        'prepareReportCopiesPayload',
+        (v): Result.Result<PrepareReportCopiesPayload, never> => {
+          if (isDefined(v.newReportFields)) {
+            v.fromReport.rows
+              .filter(row => isDefined(row.parameters))
+              .forEach(row => {
+                row.parameters = row.parameters.filter(
+                  parameter =>
+                    !parameter.listen ||
+                    v.newReportFields.map(y => y.id).indexOf(parameter.listen) >
+                      -1
+                );
+              });
+          }
+
+          let reportId: string = makeId();
+
+          let copyMconfigsMap: MconfigCopies = [];
+
+          let copyQueriesMap: QueryCopies = [];
+
+          let copyKitsMap: KitCopies = [];
+
+          v.fromReport.rows.forEach(row => {
+            if (row.rowType === 'metric' || row.rowType === 'formula') {
+              let rq: Rq = row.rqs.find(
+                y =>
+                  y.fractionBrick === v.timeRangeFractionBrick &&
+                  y.timeSpec === v.timeSpec &&
+                  y.timezone === v.timezone
+              );
+
+              if (isDefined(rq)) {
+                if (row.rowType === 'metric' && isDefined(rq.mconfigId)) {
+                  let newMconfigId = makeId();
+
+                  let newQueryId = makeId();
+
+                  copyMconfigsMap.push({
+                    fromMconfigId: rq.mconfigId,
+                    toMconfigId: newMconfigId
+                  });
+
+                  rq.mconfigId = newMconfigId;
+
+                  if (isDefined(rq.queryId)) {
+                    copyQueriesMap.push({
+                      fromQueryId: rq.queryId,
+                      toQueryId: newQueryId
+                    });
+
+                    rq.queryId = newQueryId;
+                  }
+                }
+
+                if (row.rowType === 'formula' && isDefined(rq.kitId)) {
+                  let newKitId = makeId();
+
+                  copyKitsMap.push({
+                    fromKitId: rq.kitId,
+                    toKitId: newKitId
+                  });
+
+                  rq.kitId = newKitId;
+                }
+
+                row.rqs = [rq];
+              } else {
+                row.rqs = [];
+              }
+            }
+          });
+
+          let fromCopyQueryIds: string[] = copyQueriesMap.map(
+            x => x.fromQueryId
+          );
+
+          let fromCopyMconfigIds: string[] = copyMconfigsMap.map(
+            x => x.fromMconfigId
+          );
+
+          let fromCopyKitIds: string[] = copyKitsMap.map(x => x.fromKitId);
+
+          return Result.succeed({
+            reportId: reportId,
+            copyMconfigsMap: copyMconfigsMap,
+            copyQueriesMap: copyQueriesMap,
+            copyKitsMap: copyKitsMap,
+            fromCopyQueryIds: fromCopyQueryIds,
+            fromCopyMconfigIds: fromCopyMconfigIds,
+            fromCopyKitIds: fromCopyKitIds
+          });
+        }
+      ),
+      Result.bind(
+        'copyQueries',
+        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
+          this.db.drizzle.query.queriesTable
+            .findMany({
+              where: and(
+                inArray(
+                  queriesTable.queryId,
+                  v.prepareReportCopiesPayload.fromCopyQueryIds
+                ),
+                eq(queriesTable.projectId, v.projectId)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.queryEntToTabResult({
+                      queryEnt: x
+                    })
+              )
+            )
+      ),
+      Result.bind(
+        'copyMconfigs',
+        (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+          this.db.drizzle.query.mconfigsTable
+            .findMany({
+              where: and(
+                inArray(
+                  mconfigsTable.mconfigId,
+                  v.prepareReportCopiesPayload.fromCopyMconfigIds
+                ),
+                eq(mconfigsTable.structId, v.struct.structId)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.mconfigEntToTabResult({
+                      mconfigEnt: x
+                    })
+              )
+            )
+      ),
+      Result.bind(
+        'copyKits',
+        (v): Result.ResultAsync<KitTab[], KitEntToTabError> =>
+          this.db.drizzle.query.kitsTable
+            .findMany({
+              where: and(
+                inArray(
+                  kitsTable.kitId,
+                  v.prepareReportCopiesPayload.fromCopyKitIds
+                ),
+                eq(kitsTable.structId, v.struct.structId),
+                eq(kitsTable.reportId, v.fromReportId)
+              )
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.kitEntToTabResult({ kitEnt: x })
+              )
+            )
+      ),
+      Result.andThrough(v => {
+        v.copyQueries.forEach(x => {
+          x.queryId = v.prepareReportCopiesPayload.copyQueriesMap.find(
+            y => y.fromQueryId === x.queryId
+          ).toQueryId;
+
+          x.reportId = v.prepareReportCopiesPayload.reportId;
+
+          x.reportStructId = v.bridge.structId;
+        });
+
+        v.copyMconfigs.forEach(x => {
+          x.mconfigId = v.prepareReportCopiesPayload.copyMconfigsMap.find(
+            y => y.fromMconfigId === x.mconfigId
+          ).toMconfigId;
+
+          x.queryId = v.prepareReportCopiesPayload.copyQueriesMap.find(
+            y => y.fromQueryId === x.queryId
+          ).toQueryId;
+        });
+
+        v.copyKits.forEach(x => {
+          x.kitId = v.prepareReportCopiesPayload.copyKitsMap.find(
+            y => y.fromKitId === x.kitId
+          ).toKitId;
+
+          x.reportId = v.prepareReportCopiesPayload.reportId;
+        });
+
+        return Result.succeed({});
+      }),
+      Result.andThrough(async v => {
+        let persistenceResult: Result.Result<void, DbErrorToError> =
+          await dbErrorToResult({
+            action: async () => {
+              await retry(
+                async () =>
+                  await this.db.drizzle.transaction(
+                    async tx =>
+                      await this.db.packer.write({
+                        tx: tx,
+                        insert: {
+                          mconfigs: v.copyMconfigs,
+                          kits: v.copyKits
+                        },
+                        insertOrDoNothing: {
+                          queries: v.copyQueries
+                        }
+                      })
+                  ),
+                getRetryOption(this.cs, this.logger)
+              );
+            }
+          });
+
+        if (Result.isFailure(persistenceResult)) {
+          return persistenceResult;
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind(
+        'prepareDraftReportPayload',
+        (v): Result.Result<PrepareDraftReportPayload, never> => {
+          let processedRows: Row[] = this.reportRowService.getProcessedRows({
+            rows: v.fromReport.rows,
+            rowChange: v.rowChange,
+            rowIds: v.rowIds,
+            changeType: v.changeType,
+            timezone: v.timezone,
+            timeSpec: v.timeSpec,
+            timeRangeFractionBrick: v.timeRangeFractionBrick,
+            metrics: v.struct.metrics,
+            struct: v.struct,
+            newReportFields: v.newReportFields,
+            listeners: v.listeners
+          });
+
+          let enabledChartRowIds: string[] = processedRows
+            .filter(row => row.showChart === true)
+            .map(row => row.rowId);
+
+          v.chart.series = v.chart.series
+            .filter(s => enabledChartRowIds.indexOf(s.dataRowId) > -1)
+            .sort((a, b) =>
+              a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
+            );
+
+          let report: ReportTab = this.reportsService.makeReport({
+            projectId: v.projectId,
+            structId: v.bridge.structId,
+            reportId: v.prepareReportCopiesPayload.reportId,
+            draft: true,
+            space: undefined,
+            accessRoles: [],
+            creatorId: v.user.userId,
+            filePath: undefined,
+            title: v.prepareReportCopiesPayload.reportId,
+            rows: processedRows,
+            chart: v.chart,
+            draftCreatedTs: makeTsNumber(),
+            fields: v.newReportFields
+          });
+
+          let apiUserMember: Member = this.membersService.tabToApi({
+            member: v.userMember
+          });
+
+          return Result.succeed({
+            processedRows: processedRows,
+            enabledChartRowIds: enabledChartRowIds,
+            report: report,
+            apiUserMember: apiUserMember
+          });
+        }
+      ),
+      Result.bind(
+        'apiReport',
+        (v): Result.ResultAsync<ReportX, GetReportDataError> =>
+          this.reportDataService.getReportDataResult({
+            report: v.prepareDraftReportPayload.report,
+            traceId: v.traceId,
+            project: v.project,
+            apiUserMember: v.prepareDraftReportPayload.apiUserMember,
+            userMember: v.userMember,
+            user: v.user,
+            envId: v.envId,
+            struct: v.struct,
+            metrics: v.struct.metrics,
+            timezone: v.timezone,
+            timeSpec: v.timeSpec,
+            timeRangeFractionBrick: v.timeRangeFractionBrick,
+            isSaveToDb: true
+          })
+      ),
+      Result.bind(
+        'modelPartXs',
+        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
+          this.modelsService.getModelPartXsResult({
+            structId: v.struct.structId,
+            apiUserMember: v.prepareDraftReportPayload.apiUserMember
+          })
+      ),
+      Result.bind(
+        'reportsCatalog',
+        (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogError> =>
+          this.reportsService.getReportsCatalogResult({
+            projectId: v.projectId,
+            structId: v.bridge.structId,
+            user: v.user,
+            userMember: v.userMember,
+            apiUserMember: v.prepareDraftReportPayload.apiUserMember,
+            spaces: v.struct.spaces
+          })
+      ),
+      Result.map(
+        (v): ToBackendCreateDraftReportOutput => ({
+          needValidate: v.bridge.needValidate,
+          struct: this.structsService.tabToApi({
+            struct: v.struct,
+            modelPartXs: v.modelPartXs
+          }),
+          userMember: v.prepareDraftReportPayload.apiUserMember,
+          report: v.apiReport,
+          reportUnitDrafts: v.reportsCatalog.reportUnitDrafts
+        })
+      )
+    );
   }
 }

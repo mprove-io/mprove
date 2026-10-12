@@ -23,22 +23,24 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendLlmModelNotDiscoveredError } from '#common/types/backend/errors/backend-llm-model-not-discovered-error';
-import type { GetAnthropicModelPartsResultError } from '#common/types/backend/function-errors/get-anthropic-model-parts-result-error';
-import type { GetDiscoveredLlmModelPartResultError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-result-error';
-import type { GetModelPartsResultError } from '#common/types/backend/function-errors/get-model-parts-result-error';
-import type { ReconcileDiscoveredModelVariantsResultError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-result-error';
-import type { RefreshModelResultError } from '#common/types/backend/function-errors/refresh-model-result-error';
-import type { ValidateManualModelLimitsResultError } from '#common/types/backend/function-errors/validate-manual-model-limits-result-error';
-import type { ValidateModelVariantsResultError } from '#common/types/backend/function-errors/validate-model-variants-result-error';
+import type { GetAnthropicModelPartsError } from '#common/types/backend/function-errors/get-anthropic-model-parts-error';
+import type { GetDiscoveredLlmModelPartError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-error';
+import type { GetModelPartsError } from '#common/types/backend/function-errors/get-model-parts-error';
+import type { ReconcileDiscoveredModelVariantsError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-error';
+import type { RefreshModelError } from '#common/types/backend/function-errors/refresh-model-error';
+import type { ValidateManualModelLimitsError } from '#common/types/backend/function-errors/validate-manual-model-limits-error';
+import type { ValidateModelVariantsError } from '#common/types/backend/function-errors/validate-model-variants-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelInput } from '#common/types/backend/parts/llm-models/llm-model-input';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
+
 export type LlmModelPartsResult = {
   modelParts: LlmModelPart[];
   errorMessage?: string;
 };
+
 @Injectable()
 export class LlmModelService {
   private readonly modelsDevTtlMs = 60 * 60 * 1000;
@@ -53,7 +55,7 @@ export class LlmModelService {
     modelInput: LlmModelInput;
     variants: LlmModelVariant[];
     isForceRefresh?: boolean;
-  }): Result.ResultAsync<LlmModel, RefreshModelResultError> {
+  }): Result.ResultAsync<LlmModel, RefreshModelError> {
     let {
       providerType,
       apiKey,
@@ -73,10 +75,8 @@ export class LlmModelService {
       providerType === 'OpenAICompatible' || isManualCodexModel;
 
     if (isManualModel) {
-      let limitsResult: Result.Result<
-        void,
-        ValidateManualModelLimitsResultError
-      > = this.validateManualModelLimitsResult({ modelInput: modelInput });
+      let limitsResult: Result.Result<void, ValidateManualModelLimitsError> =
+        this.validateManualModelLimitsResult({ modelInput: modelInput });
 
       if (Result.isFailure(limitsResult)) {
         return limitsResult;
@@ -104,14 +104,12 @@ export class LlmModelService {
         refreshedTs: refreshedTs
       };
 
-      let variantsResult: Result.Result<
-        void,
-        ValidateModelVariantsResultError
-      > = this.validateModelVariantsResult({
-        variants: model.variants,
-        isExplorer: model.isExplorer,
-        isBuilder: model.isBuilder
-      });
+      let variantsResult: Result.Result<void, ValidateModelVariantsError> =
+        this.validateModelVariantsResult({
+          variants: model.variants,
+          isExplorer: model.isExplorer,
+          isBuilder: model.isBuilder
+        });
 
       if (Result.isFailure(variantsResult)) {
         return variantsResult;
@@ -122,7 +120,7 @@ export class LlmModelService {
 
     let discoveryResult: Result.Result<
       LlmModelPart,
-      GetDiscoveredLlmModelPartResultError
+      GetDiscoveredLlmModelPartError
     > = await this.getDiscoveredLlmModelPartResult({
       providerType: providerType,
       modelId: modelInput.modelId,
@@ -155,7 +153,7 @@ export class LlmModelService {
 
     let reconciledResult: Result.Result<
       LlmModelVariant[],
-      ReconcileDiscoveredModelVariantsResultError
+      ReconcileDiscoveredModelVariantsError
     > = this.reconcileDiscoveredModelVariantsResult({
       variants: model.variants,
       storedVariants: [],
@@ -170,7 +168,7 @@ export class LlmModelService {
 
     model.variants = reconciledResult.value;
 
-    let variantsResult: Result.Result<void, ValidateModelVariantsResultError> =
+    let variantsResult: Result.Result<void, ValidateModelVariantsError> =
       this.validateModelVariantsResult({
         variants: model.variants,
         isExplorer: model.isExplorer,
@@ -191,14 +189,12 @@ export class LlmModelService {
     userId?: string;
     isCodexAuthSet?: boolean;
     isForceRefresh?: boolean;
-  }): Result.ResultAsync<LlmModelPart, GetDiscoveredLlmModelPartResultError> {
+  }): Result.ResultAsync<LlmModelPart, GetDiscoveredLlmModelPartError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'discovery',
-        (
-          v
-        ): Result.ResultAsync<LlmModelPartsResult, GetModelPartsResultError> =>
+        (v): Result.ResultAsync<LlmModelPartsResult, GetModelPartsError> =>
           this.getModelPartsResult({
             providerType: v.providerType,
             apiKey: v.apiKey,
@@ -225,7 +221,7 @@ export class LlmModelService {
     variants: LlmModelVariant[];
     isExplorer: boolean;
     isBuilder: boolean;
-  }): Result.Result<void, ValidateModelVariantsResultError> {
+  }): Result.Result<void, ValidateModelVariantsError> {
     let { variants, isExplorer, isBuilder } = item;
 
     let variantNames: string[] = variants.map(variant => variant.variant);
@@ -276,10 +272,7 @@ export class LlmModelService {
     currentVariantNames: string[];
     isExplorer: boolean;
     isBuilder: boolean;
-  }): Result.Result<
-    LlmModelVariant[],
-    ReconcileDiscoveredModelVariantsResultError
-  > {
+  }): Result.Result<LlmModelVariant[], ReconcileDiscoveredModelVariantsError> {
     let {
       variants,
       storedVariants,
@@ -395,7 +388,7 @@ export class LlmModelService {
 
   validateManualModelLimitsResult(item: {
     modelInput: LlmModelInput;
-  }): Result.Result<void, ValidateManualModelLimitsResultError> {
+  }): Result.Result<void, ValidateManualModelLimitsError> {
     let { modelInput } = item;
 
     if (isUndefined(modelInput.contextLimit)) {
@@ -425,7 +418,7 @@ export class LlmModelService {
     userId?: string;
     isCodexAuthSet?: boolean;
     isForceRefresh?: boolean;
-  }): Result.ResultAsync<LlmModelPartsResult, GetModelPartsResultError> {
+  }): Result.ResultAsync<LlmModelPartsResult, GetModelPartsError> {
     let { providerType, apiKey, userId, isCodexAuthSet, isForceRefresh } = item;
 
     if (providerType !== 'OpenAICodex' && !isDefinedAndNotEmpty(apiKey)) {
@@ -554,7 +547,7 @@ export class LlmModelService {
 
   private async getAnthropicModelPartsResult(item: {
     apiKey: string;
-  }): Result.ResultAsync<LlmModelPart[], GetAnthropicModelPartsResultError> {
+  }): Result.ResultAsync<LlmModelPart[], GetAnthropicModelPartsError> {
     let { apiKey } = item;
 
     let anthropicModels: Anthropic.Models.ModelInfo[] = [];

@@ -3,6 +3,10 @@
 Add an empty line between code statements. Do not add empty lines within a
 single multiline statement.
 
+This includes top-level declarations and statements, such as types, constants,
+classes, functions, and schema equality assertions. Consecutive imports do not
+require empty lines; separate the import group from other top-level statements.
+
 Exception: in callbacks passed to byethrow `Result` combinators, an empty line
 before `return` may be omitted when the callback body contains exactly one
 preceding statement.

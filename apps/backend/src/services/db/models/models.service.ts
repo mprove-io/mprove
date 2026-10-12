@@ -17,10 +17,10 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetModelCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-result-error';
-import type { GetModelCheckExistsResultError } from '#common/types/backend/function-errors/get-model-check-exists-result-error';
-import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
-import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
+import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
+import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
+import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPart } from '#common/types/backend/parts/model/model-part';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
@@ -136,7 +136,7 @@ export class ModelsService {
     modelId: string;
     structId: string;
   }): Promise<ModelTab> {
-    let result: Result.Result<ModelTab, GetModelCheckExistsResultError> =
+    let result: Result.Result<ModelTab, GetModelCheckExistsError> =
       await this.getModelCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -151,7 +151,7 @@ export class ModelsService {
   async getModelCheckExistsResult(item: {
     modelId: string;
     structId: string;
-  }): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> {
+  }): Result.ResultAsync<ModelTab, GetModelCheckExistsError> {
     let { modelId, structId } = item;
 
     return this.db.drizzle.query.modelsTable
@@ -175,14 +175,12 @@ export class ModelsService {
   }): Promise<ModelTab> {
     let { modelId, structId, userMember } = item;
 
-    let result: Result.Result<
-      ModelTab,
-      GetModelCheckExistsAndAccessResultError
-    > = await this.getModelCheckExistsAndAccessResult({
-      modelId: modelId,
-      structId: structId,
-      userMember: userMember
-    });
+    let result: Result.Result<ModelTab, GetModelCheckExistsAndAccessError> =
+      await this.getModelCheckExistsAndAccessResult({
+        modelId: modelId,
+        structId: structId,
+        userMember: userMember
+      });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -197,7 +195,7 @@ export class ModelsService {
     modelId: string;
     structId: string;
     userMember: MemberTab;
-  }): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessResultError> {
+  }): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessError> {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
@@ -207,7 +205,7 @@ export class ModelsService {
       ),
       Result.bind(
         'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> =>
+        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
           this.getModelCheckExistsResult({
             modelId: v.modelId,
             structId: v.structId
@@ -230,7 +228,7 @@ export class ModelsService {
     // user: UserTab;
     apiUserMember: Member;
   }): Promise<ModelPartX[]> {
-    let result: Result.Result<ModelPartX[], GetModelPartXsResultError> =
+    let result: Result.Result<ModelPartX[], GetModelPartXsError> =
       await this.getModelPartXsResult(item);
 
     if (Result.isFailure(result)) {
@@ -245,12 +243,12 @@ export class ModelsService {
   async getModelPartXsResult(item: {
     structId: string;
     apiUserMember: Member;
-  }): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> {
+  }): Result.ResultAsync<ModelPartX[], GetModelPartXsError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
           this.db.drizzle
             .select({
               keyTag: modelsTable.keyTag,

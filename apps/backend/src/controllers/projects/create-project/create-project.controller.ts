@@ -44,12 +44,12 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendNoteDoesNotExistError } from '#common/types/backend/errors/backend-note-does-not-exist-error';
-import type { AddProjectResultError } from '#common/types/backend/function-errors/add-project-result-error';
-import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
-import type { GetOrgCheckExistsResultError } from '#common/types/backend/function-errors/get-org-check-exists-result-error';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
-import type { NoteEntToTabResultError } from '#common/types/backend/function-errors/note-ent-to-tab-result-error';
-import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
+import type { AddProjectError } from '#common/types/backend/function-errors/add-project-error';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
+import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
+import type { NoteEntToTabError } from '#common/types/backend/function-errors/note-ent-to-tab-error';
+import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/projects/create-project/create-project-output';
 
@@ -93,7 +93,7 @@ export class CreateProjectController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
+        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
           this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
@@ -112,12 +112,12 @@ export class CreateProjectController {
       }),
       Result.bind(
         'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
           this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'nameHash',
-        (v): Result.Result<string, MakeHashResultError> =>
+        (v): Result.Result<string, MakeHashError> =>
           this.hashService.makeHashResult({
             input: v.name,
             hashSecret: v.hashSecret
@@ -125,7 +125,7 @@ export class CreateProjectController {
       ),
       Result.bind(
         'existingProject',
-        (v): Result.ResultAsync<ProjectTab, ProjectEntToTabResultError> =>
+        (v): Result.ResultAsync<ProjectTab, ProjectEntToTabError> =>
           this.db.drizzle.query.projectsTable
             .findFirst({
               where: and(
@@ -152,7 +152,7 @@ export class CreateProjectController {
           v
         ): Result.ResultAsync<
           NoteTab,
-          BackendNoteDoesNotExistError | NoteEntToTabResultError
+          BackendNoteDoesNotExistError | NoteEntToTabError
         > =>
           v.remoteType !== 'GitClone'
             ? Result.succeed(undefined)
@@ -170,7 +170,7 @@ export class CreateProjectController {
       ),
       Result.bind(
         'newProject',
-        (v): Result.ResultAsync<ProjectTab, AddProjectResultError> =>
+        (v): Result.ResultAsync<ProjectTab, AddProjectError> =>
           this.projectsService.addProjectResult({
             orgId: v.orgId,
             name: v.name,

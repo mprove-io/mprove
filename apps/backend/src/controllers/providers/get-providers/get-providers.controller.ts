@@ -23,8 +23,8 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
-import type { ProviderEntToTabResultError } from '#common/types/backend/function-errors/provider-ent-to-tab-result-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
+import type { ProviderEntToTabError } from '#common/types/backend/function-errors/provider-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
 
@@ -66,10 +66,7 @@ export class GetProvidersController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -77,7 +74,7 @@ export class GetProvidersController {
       ),
       Result.bind(
         'providers',
-        (v): Result.ResultAsync<ProviderTab[], ProviderEntToTabResultError> =>
+        (v): Result.ResultAsync<ProviderTab[], ProviderEntToTabError> =>
           this.db.drizzle.query.providersTable
             .findMany({
               where: eq(providersTable.projectId, v.projectId)

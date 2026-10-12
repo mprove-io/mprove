@@ -15,7 +15,7 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { StopSandboxResultError } from '#common/types/backend/function-errors/stop-sandbox-result-error';
+import type { StopSandboxError } from '#common/types/backend/function-errors/stop-sandbox-error';
 import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
@@ -76,7 +76,7 @@ export class EditorSandboxService {
     sandboxId: string;
     e2bApiKey: string;
   }): Promise<void> {
-    let result: Result.Result<void, StopSandboxResultError> =
+    let result: Result.Result<void, StopSandboxError> =
       await this.stopSandboxResult(item);
 
     if (Result.isFailure(result)) {
@@ -88,7 +88,7 @@ export class EditorSandboxService {
     sandboxType?: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
-  }): Result.ResultAsync<void, StopSandboxResultError> {
+  }): Result.ResultAsync<void, StopSandboxError> {
     let { sandboxType, sandboxId, e2bApiKey } = item;
 
     if (isDefinedAndNotEmpty(e2bApiKey) === false) {

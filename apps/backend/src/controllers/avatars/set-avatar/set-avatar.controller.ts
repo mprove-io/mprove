@@ -33,7 +33,7 @@ import { UsersService } from '#backend/services/db/users/users.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
+import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetAvatarOutput } from '#common/types/backend/routes/avatars/set-avatar/set-avatar-output';
 
@@ -72,7 +72,7 @@ export class SetAvatarController {
       ),
       Result.bind(
         'avatar',
-        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
           this.db.drizzle.query.avatarsTable
             .findFirst({
               where: eq(avatarsTable.userId, v.user.userId)

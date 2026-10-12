@@ -21,7 +21,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetOrgCheckExistsResultError } from '#common/types/backend/function-errors/get-org-check-exists-result-error';
+import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgOutput } from '#common/types/backend/routes/orgs/get-org/get-org-output';
@@ -55,7 +55,7 @@ export class GetOrgController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
+        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
           this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(async v => {

@@ -14,8 +14,8 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsOrgExistOutput } from '#common/types/backend/routes/orgs/is-org-exist/is-org-exist-output';
 
@@ -47,12 +47,12 @@ export class IsOrgExistController {
       }),
       Result.bind(
         'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
           this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'nameHash',
-        (v): Result.Result<string, MakeHashResultError> =>
+        (v): Result.Result<string, MakeHashError> =>
           this.hashService.makeHashResult({
             input: v.name,
             hashSecret: v.hashSecret

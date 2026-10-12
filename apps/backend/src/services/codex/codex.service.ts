@@ -23,49 +23,62 @@ import {
 
 // Reference: external/opencode/packages/opencode/src/plugin/codex.ts
 const CODEX_CLIENT_ID = 'app_EMoamEEZ73f0CkXaXp7hrann';
+
 const CODEX_ISSUER = 'https://auth.openai.com';
+
 const CODEX_API_ENDPOINT = 'https://chatgpt.com/backend-api/codex/responses';
+
 const CODEX_MODELS_ENDPOINT = 'https://chatgpt.com/backend-api/codex/models';
+
 const CODEX_DEVICE_VERIFICATION_URL = `${CODEX_ISSUER}/codex/device`;
+
 const CODEX_DEVICE_REDIRECT_URI = `${CODEX_ISSUER}/deviceauth/callback`;
+
 // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 589-594
 const CODEX_ORIGINATOR = 'mprove';
+
 // Refresh Codex auth before expiry, ahead of opencode's at-expiry refresh
 // (external/opencode/packages/opencode/src/plugin/codex.ts line 410). Keeps
 // the backend as the sole refresher, avoiding refresh_token rotation races.
 const CODEX_AUTH_REFRESH_BUFFER_SEC = 5 * 60 * 60;
+
 const CODEX_AUTH_REFRESH_BUFFER_MS = CODEX_AUTH_REFRESH_BUFFER_SEC * 1000;
+
 const CODEX_USER_AGENT_VERSION: string = backendPackageJson.version;
+
 interface CodexTokenState {
   access: string;
   refresh: string;
   expires: number;
   accountId?: string;
 }
+
 interface CodexTokenResponse {
   id_token: string;
   access_token: string;
   refresh_token: string;
   expires_in?: number;
 }
+
 interface CodexDeviceAuthStart {
   deviceAuthId: string;
   userCode: string;
   intervalSec: number;
   verificationUrl: string;
 }
+
 export type CodexModelsResult = {
   codexModels: CodexModel[];
   errorMessage?: string;
 };
+
 @Injectable()
 export class CodexService {
   constructor(
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE)
-    private db: Db
+    @Inject(DRIZZLE) private db: Db
   ) {}
   async prewarmCodexAuth(item: { userId: string }): Promise<void> {
     let { userId } = item;

@@ -33,7 +33,7 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import type { GitKeyPair } from '#backend/types/git-key-pair';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetOrgCheckExistsResultError } from '#common/types/backend/function-errors/get-org-check-exists-result-error';
+import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-output';
 
@@ -72,7 +72,7 @@ export class GenerateProjectRemoteKeyController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
+        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
           this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>

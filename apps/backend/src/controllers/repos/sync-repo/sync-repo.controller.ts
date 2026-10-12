@@ -35,7 +35,7 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import {
   BlockmlService,
-  type RebuildStructResultValue
+  type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -50,12 +50,12 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetMemberCheckIsEditorResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
-import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSyncRepoOutput } from '#common/types/backend/routes/repos/sync-repo/sync-repo-output';
 import type { ToDiskSyncRepoOutput } from '#common/types/disk/routes/repos/sync-repo/sync-repo-output';
@@ -118,14 +118,14 @@ export class SyncRepoController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
           this.membersService.getMemberCheckIsEditorResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -133,7 +133,7 @@ export class SyncRepoController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -157,7 +157,7 @@ export class SyncRepoController {
       ),
       Result.bind(
         'diskSyncRepoOutput',
-        (v): Result.ResultAsync<ToDiskSyncRepoOutput, SendToDiskResultError> =>
+        (v): Result.ResultAsync<ToDiskSyncRepoOutput, SendToDiskError> =>
           this.rpcService.sendToDiskResult({
             request:
               v.input.direction === 'to-server'
@@ -211,15 +211,13 @@ export class SyncRepoController {
       Result.andThrough(v =>
         Result.sequence(
           v.branchBridgeEnts,
-          async (
-            bridgeEnt
-          ): Result.ResultAsync<void, RebuildStructResultError> => {
+          async (bridgeEnt): Result.ResultAsync<void, RebuildStructError> => {
             if (bridgeEnt.envId === v.envId) {
               let structId: string = makeId();
 
               let result: Result.Result<
-                RebuildStructResultValue,
-                RebuildStructResultError
+                RebuildStructOutput,
+                RebuildStructError
               > = await this.blockmlService.rebuildStructResult({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
@@ -276,7 +274,7 @@ export class SyncRepoController {
       ),
       Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExistsResult({
             structId: v.currentBridgeEnt.structId,
             projectId: v.projectId

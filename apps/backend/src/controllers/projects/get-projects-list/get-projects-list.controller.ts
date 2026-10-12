@@ -29,7 +29,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
+import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';
 
@@ -80,9 +80,7 @@ export class GetProjectsListController {
       ),
       Result.bind(
         'projects',
-        async (
-          v
-        ): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> =>
+        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
             : this.db.drizzle.query.projectsTable

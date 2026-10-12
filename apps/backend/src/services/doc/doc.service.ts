@@ -1,20 +1,21 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { format, fromUnixTime } from 'date-fns';
 import dayjs from 'dayjs';
 import { DateTime } from 'luxon';
 import pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix/node-format-ts-unix';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { makeTs } from '#backend/services/doc/make-ts/make-ts';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   DOUBLE_UNDERSCORE,
   SOME_ROWS_HAVE_FORMULA_ERRORS
@@ -22,19 +23,27 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { CalculateDataError } from '#common/types/backend/function-errors/calculate-data-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { MakeReportDataColumnsError } from '#common/types/backend/function-errors/make-report-data-columns-error';
 import type { ReportDataColumn } from '#common/types/backend/parts/report/report-data-column';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
+import type { Column } from '#common/types/blockml/parts/report/column';
 import type { Row } from '#common/types/blockml/parts/report/row/row';
 import type { RowRecord } from '#common/types/blockml/parts/report/row/row-record';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { CycleGraph } from '#node-common/classes/cycle-graph/cycle-graph';
 
+type IndexedReportColumn = {
+  column: Column;
+  index: number;
+};
+
 @Injectable()
 export class DocService implements OnModuleDestroy {
   private pgp: pgPromise.IMain;
   private calcDb: pgPromise.IDatabase<unknown>;
-
   constructor(
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -62,17 +71,18 @@ export class DocService implements OnModuleDestroy {
     this.calcDb.$pool.end();
   }
 
-  async calculateData(item: {
+  async calculateDataResult(item: {
     report: ReportX;
     timezone: string;
     timeSpec: TimeSpec;
     timeRangeFraction: Fraction;
     traceId: string;
-  }) {
+  }): Result.ResultAsync<ReportX, CalculateDataError> {
     let { report, timeSpec, timeRangeFraction, timezone, traceId } = item;
 
     // check for cycles
     let g = new CycleGraph();
+
     // graph for toposort
     let gr: string[][] = [];
 
@@ -86,14 +96,14 @@ export class DocService implements OnModuleDestroy {
           if (report.rows.map(r => r.rowId).indexOf(dep) < 0) {
             wrongReferences.push(dep);
           }
+
           g.add(x.rowId, [dep]);
+
           gr.push([x.rowId, dep]);
         });
 
         if (wrongReferences.length > 0) {
-          x.formulaError = `Formula references not valid rows: ${wrongReferences.join(
-            ', '
-          )}`;
+          x.formulaError = `Formula references not valid rows: ${wrongReferences.join(', ')}`;
         }
       }
     });
@@ -113,16 +123,27 @@ export class DocService implements OnModuleDestroy {
           if (isUndefined(x.formulaError)) {
             x.formulaError = `Cycle in formula references of rows: ${cycledNamesStr}`;
           }
+
           return x;
         });
     }
 
-    let reportDataColumns = this.makeReportDataColumns({
+    let reportDataColumnsResult: Result.Result<
+      ReportDataColumn[],
+      MakeReportDataColumnsError
+    > = this.makeReportDataColumnsResult({
       report: report,
       timeSpec: timeSpec
     });
 
+    if (Result.isFailure(reportDataColumnsResult)) {
+      return reportDataColumnsResult;
+    }
+
+    let reportDataColumns: ReportDataColumn[] = reportDataColumnsResult.value;
+
     let topQueryData: any[] = [];
+
     let topQueryError: any;
 
     if (report.rows.filter(x => isDefined(x.formulaError)).length > 0) {
@@ -140,7 +161,9 @@ export class DocService implements OnModuleDestroy {
             let values = reportDataColumns.map(r =>
               isDefined(r.fields[row.rowId]) ? r.fields[row.rowId] : 'NULL'
             );
+
             let str = `    unnest(ARRAY[${values}]::numeric[]) AS ${row.rowId}`;
+
             return str;
           })
       ];
@@ -156,7 +179,9 @@ export class DocService implements OnModuleDestroy {
           .filter(row => row.rowType === 'formula')
           .map(row => {
             let newFormula = row.formula;
+
             let reg = MyRegex.CAPTURE_ROW_REF();
+
             let r;
 
             while ((r = reg.exec(newFormula))) {
@@ -228,6 +253,7 @@ FROM main;`;
       .forEach(row => {
         if (row.rowType === 'formula' && isDefined(row.formulaError)) {
           row.topQueryError = row.formulaError;
+
           row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = y.fields['timestamp'];
 
@@ -243,6 +269,7 @@ FROM main;`;
           });
         } else if (row.rowType === 'formula' && isDefined(topQueryError)) {
           row.topQueryError = topQueryError;
+
           row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = y.fields['timestamp'];
 
@@ -316,25 +343,37 @@ FROM main;`;
       });
 
     if (newKits.length > 0) {
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  kits: newKits
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      let persistenceResult: Result.Result<void, DbErrorToError> =
+        await dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insert: {
+                        kits: newKits
+                      }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        });
+
+      if (Result.isFailure(persistenceResult)) {
+        return persistenceResult;
+      }
     }
 
-    return report;
+    return Result.succeed(report);
   }
 
-  makeReportDataColumns(item: { report: ReportX; timeSpec: TimeSpec }) {
+  makeReportDataColumnsResult(item: {
+    report: ReportX;
+    timeSpec: TimeSpec;
+  }): Result.Result<ReportDataColumn[], MakeReportDataColumnsError> {
     let { report, timeSpec } = item;
 
     let reportDataColumns: ReportDataColumn[] = [];
@@ -355,6 +394,7 @@ FROM main;`;
                 .map((x: any) => {
                   x.row = Object.keys(x.row).reduce((destination: any, key) => {
                     destination[key.toLowerCase()] = x.row[key];
+
                     return destination;
                   }, {});
 
@@ -363,13 +403,23 @@ FROM main;`;
             : row.query.data.map((x: any) =>
                 Object.keys(x).reduce((destination: any, key) => {
                   destination[key.toLowerCase()] = x[key];
+
                   return destination;
                 }, {})
               );
       });
 
     if (timeSpec !== 'timestamps') {
-      reportDataColumns = report.columns.map((column, i) => {
+      let indexedColumns: IndexedReportColumn[] = report.columns.map(
+        (column, i) => ({ column: column, index: i })
+      );
+
+      let reportDataColumnsResult: Result.Result<
+        ReportDataColumn[],
+        MakeReportDataColumnsError
+      > = Result.sequence(indexedColumns, indexedColumn => {
+        let { column, index: i } = indexedColumn;
+
         let reportDataColumn: ReportDataColumn = {
           id: i,
           fields: {
@@ -377,108 +427,124 @@ FROM main;`;
           }
         };
 
-        report.rows
-          .filter(
-            row => row.rowType === 'metric' && row.mconfig.select.length > 0
-          )
-          .forEach((row: Row) => {
-            let timeFieldId = this.getReportDataFieldSqlName({
-              row: row,
-              selectIndex: 0
-            });
+        let rows: Row[] = report.rows.filter(
+          row => row.rowType === 'metric' && row.mconfig.select.length > 0
+        );
 
-            let fieldId = this.getReportDataFieldSqlName({
-              row: row,
-              selectIndex: 1
-            });
-
-            let dataRow;
-
-            if (row.mconfig.modelType === 'Store') {
-              dataRow = row.query?.data?.find(
-                (r: any) => r[timeFieldId] === column.columnId
-              );
-            } else {
-              let tsDate = fromUnixTime(column.columnId);
-
-              let zonedDate = DateTime.fromJSDate(tsDate, {
-                zone: 'utc'
-              }).setZone(row.mconfig.timezone);
-
-              if (!zonedDate.isValid) {
-                throw new ServerError({
-                  message: 'BACKEND_DATE_CONVERSION_FAILED'
-                });
-              }
-
-              let offsetMs = zonedDate.offset * 60 * 1000;
-
-              let inverseOffsetMs = -offsetMs;
-
-              let inverseDate = new Date(tsDate.getTime() + inverseOffsetMs);
-
-              let inverseZonedDate = DateTime.fromJSDate(inverseDate, {
-                zone: 'utc'
-              });
-
-              let zonedTimeValue = inverseZonedDate.toFormat(
-                'yyyy-MM-dd HH:mm:ss'
-              );
-
-              let timeValue =
-                row.mconfig?.modelType === 'Malloy'
-                  ? zonedTimeValue
-                  : timeSpec === 'years'
-                    ? format(tsDate, 'yyyy')
-                    : timeSpec === 'quarters'
-                      ? format(tsDate, 'yyyy-MM')
-                      : timeSpec === 'months'
-                        ? format(tsDate, 'yyyy-MM')
-                        : timeSpec === 'weeks'
-                          ? format(tsDate, 'yyyy-MM-dd')
-                          : timeSpec === 'days'
-                            ? format(tsDate, 'yyyy-MM-dd')
-                            : timeSpec === 'hours'
-                              ? format(tsDate, 'yyyy-MM-dd HH')
-                              : timeSpec === 'minutes'
-                                ? format(tsDate, 'yyyy-MM-dd HH:mm')
-                                : undefined;
-
-              let normalizeTimeValue = (v: string) => {
-                const match = v?.match(
-                  /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(\.\d{3})?(?: UTC|Z|[+-]\d{2}(?::?\d{2})?)?$/
-                );
-                return match
-                  ? `${match[1]}T${match[2]}${match[3] || '.000'}`
-                  : null;
-              };
-
-              dataRow =
-                row.mconfig?.modelType === 'Malloy' &&
-                row.query.connectionType === 'PostgreSQL'
-                  ? row.query?.data?.find(
-                      (r: any) =>
-                        normalizeTimeValue(timeValue) ===
-                        normalizeTimeValue(r.row?.[timeFieldId]?.toString())
-                    )?.row
-                  : row.query?.data?.find(
-                      (r: any) =>
-                        normalizeTimeValue(timeValue) ===
-                        normalizeTimeValue(r[timeFieldId]?.toString())
-                    );
-            }
-
-            if (isDefined(dataRow)) {
-              reportDataColumn.fields[row.rowId] = isUndefined(dataRow[fieldId])
-                ? undefined
-                : isNaN(dataRow[fieldId]) === false
-                  ? Number(dataRow[fieldId])
-                  : dataRow[fieldId];
-            }
+        let columnRowsResult: Result.Result<
+          void[],
+          MakeReportDataColumnsError
+        > = Result.sequence(rows, row => {
+          let timeFieldId = this.getReportDataFieldSqlName({
+            row: row,
+            selectIndex: 0
           });
 
-        return reportDataColumn;
+          let fieldId = this.getReportDataFieldSqlName({
+            row: row,
+            selectIndex: 1
+          });
+
+          let dataRow;
+
+          if (row.mconfig.modelType === 'Store') {
+            dataRow = row.query?.data?.find(
+              (r: any) => r[timeFieldId] === column.columnId
+            );
+          } else {
+            let tsDate = fromUnixTime(column.columnId);
+
+            let zonedDate = DateTime.fromJSDate(tsDate, {
+              zone: 'utc'
+            }).setZone(row.mconfig.timezone);
+
+            if (!zonedDate.isValid) {
+              return Result.fail({
+                code: 'BACKEND_DATE_CONVERSION_FAILED'
+              });
+            }
+
+            let offsetMs = zonedDate.offset * 60 * 1000;
+
+            let inverseOffsetMs = -offsetMs;
+
+            let inverseDate = new Date(tsDate.getTime() + inverseOffsetMs);
+
+            let inverseZonedDate = DateTime.fromJSDate(inverseDate, {
+              zone: 'utc'
+            });
+
+            let zonedTimeValue = inverseZonedDate.toFormat(
+              'yyyy-MM-dd HH:mm:ss'
+            );
+
+            let timeValue =
+              row.mconfig?.modelType === 'Malloy'
+                ? zonedTimeValue
+                : timeSpec === 'years'
+                  ? format(tsDate, 'yyyy')
+                  : timeSpec === 'quarters'
+                    ? format(tsDate, 'yyyy-MM')
+                    : timeSpec === 'months'
+                      ? format(tsDate, 'yyyy-MM')
+                      : timeSpec === 'weeks'
+                        ? format(tsDate, 'yyyy-MM-dd')
+                        : timeSpec === 'days'
+                          ? format(tsDate, 'yyyy-MM-dd')
+                          : timeSpec === 'hours'
+                            ? format(tsDate, 'yyyy-MM-dd HH')
+                            : timeSpec === 'minutes'
+                              ? format(tsDate, 'yyyy-MM-dd HH:mm')
+                              : undefined;
+
+            let normalizeTimeValue = (v: string) => {
+              const match = v?.match(
+                /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(\.\d{3})?(?: UTC|Z|[+-]\d{2}(?::?\d{2})?)?$/
+              );
+
+              return match
+                ? `${match[1]}T${match[2]}${match[3] || '.000'}`
+                : null;
+            };
+
+            dataRow =
+              row.mconfig?.modelType === 'Malloy' &&
+              row.query.connectionType === 'PostgreSQL'
+                ? row.query?.data?.find(
+                    (r: any) =>
+                      normalizeTimeValue(timeValue) ===
+                      normalizeTimeValue(r.row?.[timeFieldId]?.toString())
+                  )?.row
+                : row.query?.data?.find(
+                    (r: any) =>
+                      normalizeTimeValue(timeValue) ===
+                      normalizeTimeValue(r[timeFieldId]?.toString())
+                  );
+          }
+
+          if (isDefined(dataRow)) {
+            reportDataColumn.fields[row.rowId] = isUndefined(dataRow[fieldId])
+              ? undefined
+              : isNaN(dataRow[fieldId]) === false
+                ? Number(dataRow[fieldId])
+                : dataRow[fieldId];
+          }
+
+          return Result.succeed();
+        });
+
+        if (Result.isFailure(columnRowsResult)) {
+          return columnRowsResult;
+        }
+
+        return Result.succeed(reportDataColumn);
       });
+
+      if (Result.isFailure(reportDataColumnsResult)) {
+        return reportDataColumnsResult;
+      }
+
+      reportDataColumns = reportDataColumnsResult.value;
     } else {
       report.columns = [];
 
@@ -526,6 +592,7 @@ FROM main;`;
                   [row.rowId]: dataValue
                 }
               };
+
               reportDataColumns.push(reportDataColumn);
             } else {
               reportDataColumn.fields[row.rowId] = dataValue;
@@ -543,6 +610,7 @@ FROM main;`;
                   unixTimeZoned: columnId
                 })
               };
+
               report.columns.push(reportColumn);
             }
           });
@@ -562,11 +630,12 @@ FROM main;`;
 
       reportDataColumns = reportDataColumns.map((x, i) => {
         x.id = i;
+
         return x;
       });
     }
 
-    return reportDataColumns;
+    return Result.succeed(reportDataColumns);
   }
 
   private getReportDataFieldSqlName(item: {

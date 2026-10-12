@@ -18,7 +18,7 @@ import { ProvidersService } from '#backend/services/db/providers/providers.servi
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { GetEnabledProvidersResultError } from '#common/types/backend/function-errors/get-enabled-providers-result-error';
+import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
 import type { LlmModelWithProvider } from '#common/types/backend/parts/llm-models/llm-model-with-provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
@@ -66,9 +66,7 @@ export class GetLlmModelsWithProviderController {
       ),
       Result.bind(
         'providers',
-        (
-          v
-        ): Result.ResultAsync<ProviderTab[], GetEnabledProvidersResultError> =>
+        (v): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> =>
           this.providersService.getEnabledProvidersResult({
             projectId: v.projectId
           })

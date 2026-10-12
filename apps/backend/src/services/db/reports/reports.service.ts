@@ -29,9 +29,9 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { GetReportCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-result-error';
-import type { GetReportsCatalogResultError } from '#common/types/backend/function-errors/get-reports-catalog-result-error';
-import type { ReportEntToTabResultError } from '#common/types/backend/function-errors/report-ent-to-tab-result-error';
+import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
+import type { GetReportsCatalogError } from '#common/types/backend/function-errors/get-reports-catalog-error';
+import type { ReportEntToTabError } from '#common/types/backend/function-errors/report-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
@@ -75,7 +75,7 @@ export class ReportsService {
   }): Promise<ReportsCatalog> {
     let { projectId, structId, user, userMember, apiUserMember, spaces } = item;
 
-    let result: Result.Result<ReportsCatalog, GetReportsCatalogResultError> =
+    let result: Result.Result<ReportsCatalog, GetReportsCatalogError> =
       await this.getReportsCatalogResult({
         projectId: projectId,
         structId: structId,
@@ -101,12 +101,12 @@ export class ReportsService {
     userMember: MemberTab;
     apiUserMember: Member;
     spaces: Space[];
-  }): Result.ResultAsync<ReportsCatalog, GetReportsCatalogResultError> {
+  }): Result.ResultAsync<ReportsCatalog, GetReportsCatalogError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'reports',
-        (v): Result.ResultAsync<ReportTab[], ReportEntToTabResultError> =>
+        (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
           this.db.drizzle.query.reportsTable
             .findMany({
               where: and(
@@ -466,10 +466,8 @@ export class ReportsService {
     user: UserTab;
     userMember: MemberTab | Member;
   }): Promise<ReportTab> {
-    let result: Result.Result<
-      ReportTab,
-      GetReportCheckExistsAndAccessResultError
-    > = await this.getReportCheckExistsAndAccessResult(item);
+    let result: Result.Result<ReportTab, GetReportCheckExistsAndAccessError> =
+      await this.getReportCheckExistsAndAccessResult(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -486,7 +484,7 @@ export class ReportsService {
     structId: string;
     user: UserTab;
     userMember: MemberTab | Member;
-  }): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessResultError> {
+  }): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
@@ -495,7 +493,7 @@ export class ReportsService {
           v
         ): Result.ResultAsync<
           ReportTab,
-          GetReportCheckExistsAndAccessResultError
+          GetReportCheckExistsAndAccessError
         > => {
           let chart: MconfigChart = makeCopy(DEFAULT_CHART);
 

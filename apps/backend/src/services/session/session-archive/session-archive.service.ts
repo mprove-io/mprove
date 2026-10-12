@@ -14,10 +14,10 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { AcquireSessionLockResultError } from '#common/types/backend/function-errors/acquire-session-lock-result-error';
-import type { ArchiveSessionResultError } from '#common/types/backend/function-errors/archive-session-result-error';
-import type { ArchiveSessionWhileLockedResultError } from '#common/types/backend/function-errors/archive-session-while-locked-result-error';
-import type { GetSessionByIdCheckExistsResultError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-result-error';
+import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { ArchiveSessionError } from '#common/types/backend/function-errors/archive-session-error';
+import type { ArchiveSessionWhileLockedError } from '#common/types/backend/function-errors/archive-session-while-locked-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { ArchiveReason } from '#common/types/backend/parts/session/archive-reason';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
@@ -39,7 +39,7 @@ export class SessionArchiveService {
     archiveReason: ArchiveReason;
     e2bApiKey: string;
   }): Promise<SessionApi> {
-    let result: Result.Result<SessionApi, ArchiveSessionResultError> =
+    let result: Result.Result<SessionApi, ArchiveSessionError> =
       await this.archiveSessionResult(item);
 
     if (Result.isFailure(result)) {
@@ -55,14 +55,14 @@ export class SessionArchiveService {
     session: SessionTab;
     archiveReason: ArchiveReason;
     e2bApiKey: string;
-  }): Result.ResultAsync<SessionApi, ArchiveSessionResultError> {
+  }): Result.ResultAsync<SessionApi, ArchiveSessionError> {
     let { session } = item;
 
     let sessionLockToken: string;
 
     // TODO: check session type is editor
     if (session.type === 'Editor') {
-      let lockResult: Result.Result<string, AcquireSessionLockResultError> =
+      let lockResult: Result.Result<string, AcquireSessionLockError> =
         await this.editorSessionLockService.acquireSessionLockResult({
           sessionId: session.sessionId
         });
@@ -75,10 +75,8 @@ export class SessionArchiveService {
     }
 
     try {
-      let result: Result.Result<
-        SessionApi,
-        ArchiveSessionWhileLockedResultError
-      > = await this.archiveSessionWhileLockedResult(item);
+      let result: Result.Result<SessionApi, ArchiveSessionWhileLockedError> =
+        await this.archiveSessionWhileLockedResult(item);
 
       return result;
     } finally {
@@ -95,17 +93,14 @@ export class SessionArchiveService {
     session: SessionTab;
     archiveReason: ArchiveReason;
     e2bApiKey: string;
-  }): Result.ResultAsync<SessionApi, ArchiveSessionWhileLockedResultError> {
+  }): Result.ResultAsync<SessionApi, ArchiveSessionWhileLockedError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'freshSession',
         async (
           v
-        ): Result.ResultAsync<
-          SessionTab,
-          GetSessionByIdCheckExistsResultError
-        > =>
+        ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
           v.session.type === 'Editor'
             ? this.sessionsService.getSessionByIdCheckExistsResult({
                 sessionId: v.session.sessionId

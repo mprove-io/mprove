@@ -22,12 +22,12 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CheckLlmModelDoesNotExistResultError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-result-error';
-import type { CheckProviderDoesNotExistResultError } from '#common/types/backend/function-errors/check-provider-does-not-exist-result-error';
-import type { GetEnabledProvidersResultError } from '#common/types/backend/function-errors/get-enabled-providers-result-error';
-import type { GetLlmModelCheckExistsResultError } from '#common/types/backend/function-errors/get-llm-model-check-exists-result-error';
-import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
-import type { MakeProviderResultError } from '#common/types/backend/function-errors/make-provider-result-error';
+import type { CheckLlmModelDoesNotExistError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-error';
+import type { CheckProviderDoesNotExistError } from '#common/types/backend/function-errors/check-provider-does-not-exist-error';
+import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
+import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
+import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
+import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ProviderOptionsAnthropic } from '#common/types/backend/parts/provider/options/provider-options-anthropic';
@@ -71,7 +71,7 @@ export class ProvidersService {
         }
     )
   ): ProviderTab {
-    let result: Result.Result<ProviderTab, MakeProviderResultError> =
+    let result: Result.Result<ProviderTab, MakeProviderError> =
       this.makeProviderResult(item);
 
     if (Result.isFailure(result)) {
@@ -108,7 +108,7 @@ export class ProvidersService {
           options: ProviderOptionsCodex;
         }
     )
-  ): Result.Result<ProviderTab, MakeProviderResultError> {
+  ): Result.Result<ProviderTab, MakeProviderError> {
     let { projectId, providerId, isEnabled, models } = item;
 
     let expectedProviderType: ProviderType = PROVIDER_TYPE_BY_ID[providerId];
@@ -261,7 +261,7 @@ export class ProvidersService {
     projectId: string;
     providerId: string;
   }): Promise<void> {
-    let result: Result.Result<void, CheckProviderDoesNotExistResultError> =
+    let result: Result.Result<void, CheckProviderDoesNotExistError> =
       await this.checkProviderDoesNotExistResult(item);
 
     if (Result.isFailure(result)) {
@@ -272,7 +272,7 @@ export class ProvidersService {
   async checkProviderDoesNotExistResult(item: {
     projectId: string;
     providerId: string;
-  }): Result.ResultAsync<void, CheckProviderDoesNotExistResultError> {
+  }): Result.ResultAsync<void, CheckProviderDoesNotExistError> {
     let { projectId, providerId } = item;
 
     let providerEnt: ProviderEnt =
@@ -292,7 +292,7 @@ export class ProvidersService {
     projectId: string;
     providerId: string;
   }): Promise<ProviderTab> {
-    let result: Result.Result<ProviderTab, GetProviderCheckExistsResultError> =
+    let result: Result.Result<ProviderTab, GetProviderCheckExistsError> =
       await this.getProviderCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -307,7 +307,7 @@ export class ProvidersService {
   async getProviderCheckExistsResult(item: {
     projectId: string;
     providerId: string;
-  }): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> {
+  }): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> {
     let { projectId, providerId } = item;
 
     return this.db.drizzle.query.providersTable
@@ -327,7 +327,7 @@ export class ProvidersService {
   async getEnabledProviders(item: {
     projectId: string;
   }): Promise<ProviderTab[]> {
-    let result: Result.Result<ProviderTab[], GetEnabledProvidersResultError> =
+    let result: Result.Result<ProviderTab[], GetEnabledProvidersError> =
       await this.getEnabledProvidersResult(item);
 
     if (Result.isFailure(result)) {
@@ -341,7 +341,7 @@ export class ProvidersService {
 
   async getEnabledProvidersResult(item: {
     projectId: string;
-  }): Result.ResultAsync<ProviderTab[], GetEnabledProvidersResultError> {
+  }): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> {
     let { projectId } = item;
 
     return this.db.drizzle.query.providersTable
@@ -449,7 +449,7 @@ export class ProvidersService {
   checkLlmModelDoesNotExistResult(item: {
     provider: ProviderTab;
     modelId: string;
-  }): Result.Result<void, CheckLlmModelDoesNotExistResultError> {
+  }): Result.Result<void, CheckLlmModelDoesNotExistError> {
     let { provider, modelId } = item;
 
     if (provider.models.some(model => model.modelId === modelId)) {
@@ -463,7 +463,7 @@ export class ProvidersService {
     provider: ProviderTab;
     modelId: string;
   }): LlmModel {
-    let result: Result.Result<LlmModel, GetLlmModelCheckExistsResultError> =
+    let result: Result.Result<LlmModel, GetLlmModelCheckExistsError> =
       this.getLlmModelCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -478,7 +478,7 @@ export class ProvidersService {
   getLlmModelCheckExistsResult(item: {
     provider: ProviderTab;
     modelId: string;
-  }): Result.Result<LlmModel, GetLlmModelCheckExistsResultError> {
+  }): Result.Result<LlmModel, GetLlmModelCheckExistsError> {
     let { provider, modelId } = item;
 
     let model: LlmModel = provider.models.find(

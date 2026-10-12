@@ -23,9 +23,9 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetConnectionsOutput } from '#common/types/backend/routes/connections/get-connections/get-connections-output';
@@ -70,10 +70,7 @@ export class GetConnectionsController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -81,7 +78,7 @@ export class GetConnectionsController {
       ),
       Result.bind(
         'apiEnvs',
-        async (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        async (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           isDefined(v.envId)
             ? this.envsService.getApiEnvsResult({ projectId: v.projectId })
             : Result.succeed([])
@@ -93,9 +90,7 @@ export class GetConnectionsController {
       ),
       Result.bind(
         'connections',
-        (
-          v
-        ): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabResultError> =>
+        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
           this.db.drizzle.query.connectionsTable
             .findMany({
               where: isDefined(v.envId)

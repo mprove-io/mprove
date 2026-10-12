@@ -24,9 +24,9 @@ import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { AddOrgResultError } from '#common/types/backend/function-errors/add-org-result-error';
-import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
+import type { AddOrgError } from '#common/types/backend/function-errors/add-org-error';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs/create-org/create-org-output';
 
@@ -83,12 +83,12 @@ export class CreateOrgController {
       }),
       Result.bind(
         'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
           this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'nameHash',
-        (v): Result.Result<string, MakeHashResultError> =>
+        (v): Result.Result<string, MakeHashError> =>
           this.hashService.makeHashResult({
             input: v.name,
             hashSecret: v.hashSecret
@@ -115,7 +115,7 @@ export class CreateOrgController {
       ),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, AddOrgResultError> =>
+        (v): Result.ResultAsync<OrgTab, AddOrgError> =>
           this.orgsService.addOrgResult({
             name: v.name,
             ownerId: v.user.userId,

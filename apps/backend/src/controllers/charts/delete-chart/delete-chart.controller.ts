@@ -55,14 +55,14 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
-import type { GetChartCheckExistsResultError } from '#common/types/backend/function-errors/get-chart-check-exists-result-error';
-import type { GetChartsCatalogResultError } from '#common/types/backend/function-errors/get-charts-catalog-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
-import type { ModelEntToTabResultError } from '#common/types/backend/function-errors/model-ent-to-tab-result-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
+import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteChartOutput } from '#common/types/backend/routes/charts/delete-chart/delete-chart-output';
@@ -124,14 +124,14 @@ export class DeleteChartController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -151,7 +151,7 @@ export class DeleteChartController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -167,7 +167,7 @@ export class DeleteChartController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
           this.bridgesService.getBridgeCheckExistsResult({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
@@ -177,7 +177,7 @@ export class DeleteChartController {
       ),
       Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExistsResult({
             structId: v.bridge.structId,
             projectId: v.projectId
@@ -185,7 +185,7 @@ export class DeleteChartController {
       ),
       Result.bind(
         'existingChart',
-        (v): Result.ResultAsync<ChartTab, GetChartCheckExistsResultError> =>
+        (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
           this.chartsService.getChartCheckExistsResult({
             structId: v.bridge.structId,
             chartId: v.chartId,
@@ -273,7 +273,7 @@ export class DeleteChartController {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabResultError> =>
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
           this.db.drizzle.query.modelsTable
             .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
             .then(xs =>
@@ -284,7 +284,7 @@ export class DeleteChartController {
       ),
       Result.bind(
         'chartsCatalog',
-        (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogResultError> =>
+        (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
           this.chartsService.getChartsCatalogResult({
             projectId: v.projectId,
             structId: v.bridge.structId,

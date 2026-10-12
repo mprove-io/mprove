@@ -1,19 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import pIteration from 'p-iteration';
-import type { DashboardEntToTabResultError } from '#common/types/backend/function-errors/dashboard-ent-to-tab-result-error';
-import type { GetDashboardPartsResultError } from '#common/types/backend/function-errors/get-dashboard-parts-result-error';
-import type { GetDashboardsCatalogResultError } from '#common/types/backend/function-errors/get-dashboards-catalog-result-error';
-
-const { forEachSeries } = pIteration;
-
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   DashboardTab,
   MconfigTab,
   MemberTab,
+  ModelTab,
   ProjectTab,
   QueryTab,
   StructTab,
@@ -31,6 +25,7 @@ import { checkModelAccess } from '#backend/functions/check-model-access/check-mo
 import { makeTilesX } from '#backend/functions/make-tiles-x/make-tiles-x';
 import { makeDashboardFiltersX } from '#backend/services/db/dashboards/make-dashboard-filters-x/make-dashboard-filters-x';
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
+import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
@@ -47,7 +42,17 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetDashboardCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-result-error';
+import type { DashboardEntToTabError } from '#common/types/backend/function-errors/dashboard-ent-to-tab-error';
+import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
+import type { GetDashboardPartsError } from '#common/types/backend/function-errors/get-dashboard-parts-error';
+import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
+import type { GetDashboardXUsingDashboardTabError } from '#common/types/backend/function-errors/get-dashboard-x-using-dashboard-tab-error';
+import type { GetDashboardsCatalogError } from '#common/types/backend/function-errors/get-dashboards-catalog-error';
+import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
+import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
+import type { ProcessDashboardError } from '#common/types/backend/function-errors/process-dashboard-error';
+import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
@@ -61,6 +66,38 @@ import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { Tile } from '#common/types/blockml/parts/tile/tile';
+
+type AssembleDashboardProjectionPayload = {
+  apiModels: ModelX[];
+  dashboardX: DashboardX;
+};
+
+type PrepareDashboardQueriesPayload = {
+  dashboardMconfigIds: string[];
+  dashboardMconfigs: Mconfig[];
+  dashboardQueryIds: string[];
+  dashboardQueries: QueryTab[];
+  insertMconfigs: MconfigTab[];
+  insertOrUpdateQueries: QueryTab[];
+  insertOrDoNothingQueries: QueryTab[];
+  dashboardMalloyMconfigs: Mconfig[];
+  dashboardMalloyQueries: QueryTab[];
+  dashboardStoreMconfigs: Mconfig[];
+  storeQueries: QueryTab[];
+};
+
+type AssembleDashboardPayload = {
+  combinedQueries: QueryTab[];
+  newDashboard: DashboardTab;
+};
+
+export type ProcessDashboardOutput = {
+  newDashboard: DashboardTab;
+  insertMconfigs: MconfigTab[];
+  insertOrUpdateQueries: QueryTab[];
+  insertOrDoNothingQueries: QueryTab[];
+};
 
 export type DashboardsCatalog = {
   dashboardUnitDrafts: DashboardUnit[];
@@ -90,16 +127,14 @@ export class DashboardsService {
   }): Promise<DashboardsCatalog> {
     let { projectId, structId, user, apiUserMember, spaces } = item;
 
-    let result: Result.Result<
-      DashboardsCatalog,
-      GetDashboardsCatalogResultError
-    > = await this.getDashboardsCatalogResult({
-      projectId: projectId,
-      structId: structId,
-      user: user,
-      apiUserMember: apiUserMember,
-      spaces: spaces
-    });
+    let result: Result.Result<DashboardsCatalog, GetDashboardsCatalogError> =
+      await this.getDashboardsCatalogResult({
+        projectId: projectId,
+        structId: structId,
+        user: user,
+        apiUserMember: apiUserMember,
+        spaces: spaces
+      });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -116,12 +151,12 @@ export class DashboardsService {
     user: UserTab;
     apiUserMember: Member;
     spaces: Space[];
-  }): Result.ResultAsync<DashboardsCatalog, GetDashboardsCatalogResultError> {
+  }): Result.ResultAsync<DashboardsCatalog, GetDashboardsCatalogError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'dashboards',
-        (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabResultError> =>
+        (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabError> =>
           this.db.drizzle.query.dashboardsTable
             .findMany({
               where: and(
@@ -137,7 +172,9 @@ export class DashboardsService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.dashboardEntToTabResult({ dashboardEnt: x })
+                isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.dashboardEntToTabResult({ dashboardEnt: x })
               )
             )
       ),
@@ -145,17 +182,15 @@ export class DashboardsService {
         'dashboardsGrantedAccess',
         (v): Result.Result<DashboardTab[], never> =>
           Result.succeed(
-            v.dashboards.filter(dashboard => {
-              if (dashboard.draft === true) {
-                return true;
-              }
-
-              return checkAccess({
-                member: v.apiUserMember,
-                accessRoles: dashboard.accessRolesCombined,
-                filePath: dashboard.filePath
-              });
-            })
+            v.dashboards.filter(dashboard =>
+              dashboard.draft === true
+                ? true
+                : checkAccess({
+                    member: v.apiUserMember,
+                    accessRoles: dashboard.accessRolesCombined,
+                    filePath: dashboard.filePath
+                  })
+            )
           )
       ),
       Result.bind(
@@ -281,12 +316,16 @@ export class DashboardsService {
       title: dashboard.title,
       fields: dashboard.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
+
         let labelB = b.label.toUpperCase();
+
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
       extendedFilters: dashboardExtendedFilters.sort((a, b) => {
         let labelA = a.fieldId.toUpperCase();
+
         let labelB = b.fieldId.toUpperCase();
+
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
       tiles: makeTilesX({
@@ -382,9 +421,11 @@ export class DashboardsService {
     userMember: MemberTab | Member;
     user: UserTab;
   }): Promise<DashboardTab> {
+    let { dashboardId, structId, userMember, user } = item;
+
     let result: Result.Result<
       DashboardTab,
-      GetDashboardCheckExistsAndAccessResultError
+      GetDashboardCheckExistsAndAccessError
     > = await this.getDashboardCheckExistsAndAccessResult(item);
 
     if (Result.isFailure(result)) {
@@ -401,10 +442,7 @@ export class DashboardsService {
     structId: string;
     userMember: MemberTab | Member;
     user: UserTab;
-  }): Result.ResultAsync<
-    DashboardTab,
-    GetDashboardCheckExistsAndAccessResultError
-  > {
+  }): Result.ResultAsync<DashboardTab, GetDashboardCheckExistsAndAccessError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
@@ -413,7 +451,7 @@ export class DashboardsService {
           v
         ): Result.ResultAsync<
           DashboardTab,
-          GetDashboardCheckExistsAndAccessResultError
+          GetDashboardCheckExistsAndAccessError
         > =>
           this.db.drizzle.query.dashboardsTable
             .findFirst({
@@ -425,9 +463,11 @@ export class DashboardsService {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_DASHBOARD_DOES_NOT_EXIST' })
-                : this.tabService.dashboardEntToTabResult({
-                    dashboardEnt: x
-                  })
+                : isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.dashboardEntToTabResult({
+                      dashboardEnt: x
+                    })
             )
       ),
       Result.andThrough(v =>
@@ -456,23 +496,74 @@ export class DashboardsService {
     user: UserTab;
     apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
   }): Promise<DashboardX> {
-    let { projectId, dashboardId, structId, apiUserMember, user } = item;
+    let { dashboardId, structId, projectId, user, apiUserMember } = item;
 
-    let dashboard = await this.getDashboardCheckExistsAndAccess({
-      structId: structId,
+    let result: Result.Result<
+      DashboardX,
+      GetDashboardXCheckExistsAndAccessError
+    > = await this.getDashboardXCheckExistsAndAccessResult({
       dashboardId: dashboardId,
-      userMember: apiUserMember,
-      user: user
-    });
-
-    let dashboardX = this.getDashboardXUsingDashboardTab({
-      dashboard: dashboard,
       structId: structId,
       projectId: projectId,
+      user: user,
       apiUserMember: apiUserMember
     });
 
-    return dashboardX;
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined,
+        customData: 'info' in result.error ? result.error.info : undefined
+      });
+    }
+
+    let output: DashboardX = result.value;
+
+    return output;
+  }
+
+  async getDashboardXCheckExistsAndAccessResult(item: {
+    dashboardId: string;
+    structId: string;
+    projectId: string;
+    user: UserTab;
+    apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
+  }): Result.ResultAsync<DashboardX, GetDashboardXCheckExistsAndAccessError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'dashboard',
+        (
+          v
+        ): Result.ResultAsync<
+          DashboardTab,
+          GetDashboardCheckExistsAndAccessError
+        > =>
+          this.getDashboardCheckExistsAndAccessResult({
+            structId: v.structId,
+            dashboardId: v.dashboardId,
+            userMember: v.apiUserMember,
+            user: v.user
+          })
+      ),
+      Result.bind(
+        'dashboardX',
+        (
+          v
+        ): Result.ResultAsync<
+          DashboardX,
+          GetDashboardXUsingDashboardTabError
+        > =>
+          this.getDashboardXUsingDashboardTabResult({
+            dashboard: v.dashboard,
+            structId: v.structId,
+            projectId: v.projectId,
+            apiUserMember: v.apiUserMember
+          })
+      ),
+      Result.map((v): DashboardX => v.dashboardX)
+    );
   }
 
   async getDashboardXUsingDashboardTab(item: {
@@ -483,61 +574,143 @@ export class DashboardsService {
   }): Promise<DashboardX> {
     let { dashboard, structId, projectId, apiUserMember } = item;
 
-    let mconfigIds = dashboard.tiles.map(x => x.mconfigId);
+    let result: Result.Result<DashboardX, GetDashboardXUsingDashboardTabError> =
+      await this.getDashboardXUsingDashboardTabResult({
+        dashboard: dashboard,
+        structId: structId,
+        projectId: projectId,
+        apiUserMember: apiUserMember
+      });
 
-    let mconfigs =
-      mconfigIds.length === 0
-        ? []
-        : await this.db.drizzle.query.mconfigsTable
-            .findMany({
-              where: inArray(mconfigsTable.mconfigId, mconfigIds)
-            })
-            .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined,
+        customData: 'info' in result.error ? result.error.info : undefined
+      });
+    }
 
-    let queryIds = dashboard.tiles.map(x => x.queryId);
-    let queries =
-      queryIds.length === 0
-        ? []
-        : await this.db.drizzle.query.queriesTable
-            .findMany({
-              where: and(
-                inArray(queriesTable.queryId, queryIds),
-                eq(queriesTable.projectId, projectId)
-              )
-            })
-            .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
+    let output: DashboardX = result.value;
 
-    let models = await this.db.drizzle.query.modelsTable
-      .findMany({
-        where: eq(modelsTable.structId, structId)
-      })
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+    return output;
+  }
 
-    let apiModels = models.map(model =>
-      this.modelsService.tabToApi({
-        model: model,
-        hasAccess: checkModelAccess({
-          member: apiUserMember,
-          modelAccessRoles: model.accessRolesCombined
-        })
-      })
-    );
-
-    let dashboardX = this.tabToApi({
-      dashboard: dashboard,
-      mconfigs: mconfigs.map(x =>
-        this.mconfigsService.tabToApi({
-          mconfig: x,
-          modelFields: apiModels.find(m => m.modelId === x.modelId).fields
-        })
+  async getDashboardXUsingDashboardTabResult(item: {
+    dashboard: DashboardTab;
+    structId: string;
+    projectId: string;
+    apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
+  }): Result.ResultAsync<DashboardX, GetDashboardXUsingDashboardTabError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'mconfigIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.dashboard.tiles.map(x => x.mconfigId))
       ),
-      queries: queries.map(x => this.queriesService.tabToApi({ query: x })),
-      member: apiUserMember,
-      models: apiModels,
-      isAddMconfigAndQuery: true
-    });
+      Result.bind(
+        'mconfigs',
+        async (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+          v.mconfigIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.mconfigsTable
+                .findMany({
+                  where: inArray(mconfigsTable.mconfigId, v.mconfigIds)
+                })
+                .then(xs =>
+                  Result.sequence(xs, x =>
+                    isUndefined(x)
+                      ? Result.succeed(undefined)
+                      : this.tabService.mconfigEntToTabResult({
+                          mconfigEnt: x
+                        })
+                  )
+                )
+      ),
+      Result.bind(
+        'queryIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.dashboard.tiles.map(x => x.queryId))
+      ),
+      Result.bind(
+        'queries',
+        async (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
+          v.queryIds.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.queriesTable
+                .findMany({
+                  where: and(
+                    inArray(queriesTable.queryId, v.queryIds),
+                    eq(queriesTable.projectId, v.projectId)
+                  )
+                })
+                .then(xs =>
+                  Result.sequence(xs, x =>
+                    isUndefined(x)
+                      ? Result.succeed(undefined)
+                      : this.tabService.queryEntToTabResult({
+                          queryEnt: x
+                        })
+                  )
+                )
+      ),
+      Result.bind(
+        'models',
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+          this.db.drizzle.query.modelsTable
+            .findMany({
+              where: eq(modelsTable.structId, v.structId)
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                isUndefined(x)
+                  ? Result.succeed(undefined)
+                  : this.tabService.modelEntToTabResult({
+                      modelEnt: x
+                    })
+              )
+            )
+      ),
+      Result.bind(
+        'assembleDashboardProjectionPayload',
+        (v): Result.Result<AssembleDashboardProjectionPayload, never> => {
+          let apiModels: ModelX[] = v.models.map(model =>
+            this.modelsService.tabToApi({
+              model: model,
+              hasAccess: checkModelAccess({
+                member: v.apiUserMember,
+                modelAccessRoles: model.accessRolesCombined
+              })
+            })
+          );
 
-    return dashboardX;
+          let dashboardX: DashboardX = this.tabToApi({
+            dashboard: v.dashboard,
+            mconfigs: v.mconfigs.map(x =>
+              this.mconfigsService.tabToApi({
+                mconfig: x,
+                modelFields: apiModels.find(m => m.modelId === x.modelId).fields
+              })
+            ),
+            queries: v.queries.map(x =>
+              this.queriesService.tabToApi({ query: x })
+            ),
+            member: v.apiUserMember,
+            models: apiModels,
+            isAddMconfigAndQuery: true
+          });
+
+          return Result.succeed({
+            apiModels: apiModels,
+            dashboardX: dashboardX
+          });
+        }
+      ),
+      Result.map(
+        (v): DashboardX => v.assembleDashboardProjectionPayload.dashboardX
+      )
+    );
   }
 
   async getDashboardPart(item: {
@@ -571,17 +744,15 @@ export class DashboardsService {
         xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
       );
 
-    let dashboardPartsGrantedAccess = dashboardParts.filter(x => {
-      if (x.draft === true) {
-        return true;
-      }
-
-      return checkAccess({
-        member: apiUserMember,
-        accessRoles: x.accessRolesCombined,
-        filePath: x.filePath
-      });
-    });
+    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
+      x.draft === true
+        ? true
+        : checkAccess({
+            member: apiUserMember,
+            accessRoles: x.accessRolesCombined,
+            filePath: x.filePath
+          })
+    );
 
     let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
       this.tabToDashboardPart({
@@ -600,7 +771,7 @@ export class DashboardsService {
   }): Promise<DashboardPart[]> {
     let { structId, user, apiUserMember } = item;
 
-    let result: Result.Result<DashboardPart[], GetDashboardPartsResultError> =
+    let result: Result.Result<DashboardPart[], GetDashboardPartsError> =
       await this.getDashboardPartsResult({
         structId: structId,
         user: user,
@@ -620,12 +791,12 @@ export class DashboardsService {
     structId: string;
     user: UserTab;
     apiUserMember: Member;
-  }): Result.ResultAsync<DashboardPart[], GetDashboardPartsResultError> {
+  }): Result.ResultAsync<DashboardPart[], GetDashboardPartsError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'dashboards',
-        (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabResultError> =>
+        (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabError> =>
           this.db.drizzle
             .select({
               keyTag: dashboardsTable.keyTag,
@@ -647,9 +818,11 @@ export class DashboardsService {
             )
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.dashboardEntToTabResult({
-                  dashboardEnt: x as DashboardEnt
-                })
+                isUndefined(x as DashboardEnt)
+                  ? Result.succeed(undefined)
+                  : this.tabService.dashboardEntToTabResult({
+                      dashboardEnt: x as DashboardEnt
+                    })
               )
             )
       ),
@@ -657,17 +830,15 @@ export class DashboardsService {
         'dashboardsGrantedAccess',
         (v): Result.Result<DashboardTab[], never> =>
           Result.succeed(
-            v.dashboards.filter(dashboard => {
-              if (dashboard.draft === true) {
-                return true;
-              }
-
-              return checkAccess({
-                member: v.apiUserMember,
-                accessRoles: dashboard.accessRolesCombined,
-                filePath: dashboard.filePath
-              });
-            })
+            v.dashboards.filter(dashboard =>
+              dashboard.draft === true
+                ? true
+                : checkAccess({
+                    member: v.apiUserMember,
+                    accessRoles: dashboard.accessRolesCombined,
+                    filePath: dashboard.filePath
+                  })
+            )
           )
       ),
       Result.map((v): DashboardPart[] =>
@@ -694,7 +865,7 @@ export class DashboardsService {
     newDashboardId: string;
     tempStruct: StructTab;
     project: ProjectTab;
-  }) {
+  }): Promise<ProcessDashboardOutput> {
     let {
       newApiDashboard,
       apiMconfigs,
@@ -702,150 +873,302 @@ export class DashboardsService {
       apiModels,
       fromDashboardX,
       isQueryCache,
-      cachedQueries,
       cachedMconfigs,
+      cachedQueries,
       envId,
       newDashboardId,
       tempStruct,
       project
     } = item;
 
-    let dashboardMconfigIds = newApiDashboard.tiles.map(x => x.mconfigId);
-    let dashboardMconfigs = apiMconfigs.filter(
-      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
-    );
-
-    let dashboardQueryIds = newApiDashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = apiQueries
-      .filter(x => dashboardQueryIds.indexOf(x.queryId) > -1)
-      .map(x => this.queriesService.apiToTab({ apiQuery: x }));
-
-    let insertMconfigs: MconfigTab[] = [];
-    let insertOrUpdateQueries: QueryTab[] = [];
-    let insertOrDoNothingQueries: QueryTab[] = [];
-
-    let dashboardMalloyMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === 'Malloy'
-    );
-
-    let dashboardMalloyQueries: QueryTab[] = [];
-
-    dashboardMalloyMconfigs.forEach(apiMconfig => {
-      let mconfig = this.mconfigsService.apiToTab({ apiMconfig: apiMconfig });
-
-      insertMconfigs.push(mconfig);
-
-      let query = dashboardQueries.find(x => x.queryId === mconfig.queryId);
-
-      if (
-        dashboardMalloyQueries.map(x => x.queryId).indexOf(query.queryId) < 0
-      ) {
-        dashboardMalloyQueries.push(query);
-      }
-    });
-
-    let dashboardStoreMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === 'Store'
-    );
-
-    let storeQueries: QueryTab[] = [];
-
-    await forEachSeries(dashboardStoreMconfigs, async apiMconfig => {
-      let newMconfig: MconfigTab;
-      let newQuery: QueryTab;
-      let isError = false;
-
-      let apiModel = apiModels.find(y => y.modelId === apiMconfig.modelId);
-
-      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-        struct: tempStruct,
-        project: project,
+    let result: Result.Result<ProcessDashboardOutput, ProcessDashboardError> =
+      await this.processDashboardResult({
+        newApiDashboard: newApiDashboard,
+        apiMconfigs: apiMconfigs,
+        apiQueries: apiQueries,
+        apiModels: apiModels,
+        fromDashboardX: fromDashboardX,
+        isQueryCache: isQueryCache,
+        cachedMconfigs: cachedMconfigs,
+        cachedQueries: cachedQueries,
         envId: envId,
-        mconfigParentType: 'Dashboard',
-        mconfigParentId: newDashboardId,
-        model: this.modelsService.apiToTab({ apiModel: apiModel }),
-        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
-        metricsStartDateYYYYMMDD: undefined,
-        metricsEndDateYYYYMMDD: undefined
+        newDashboardId: newDashboardId,
+        tempStruct: tempStruct,
+        project: project
       });
 
-      newMconfig = mqe.newMconfig;
-      newQuery = mqe.newQuery;
-      isError = mqe.isError;
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined,
+        customData: 'info' in result.error ? result.error.info : undefined
+      });
+    }
 
-      let newDashboardTile = newApiDashboard.tiles.find(
-        tile => tile.mconfigId === apiMconfig.mconfigId
-      );
-      newDashboardTile.queryId = newMconfig.queryId;
-      newDashboardTile.mconfigId = newMconfig.mconfigId;
-      newDashboardTile.trackChangeId = makeId();
+    let output: ProcessDashboardOutput = result.value;
 
-      insertMconfigs.push(newMconfig);
-      storeQueries.push(newQuery);
-    });
+    return output;
+  }
 
-    let combinedQueries = [...dashboardMalloyQueries, ...storeQueries];
+  async processDashboardResult(item: {
+    newApiDashboard: Dashboard;
+    apiMconfigs: Mconfig[];
+    apiQueries: Query[];
+    apiModels: Model[];
+    fromDashboardX: DashboardX;
+    isQueryCache: boolean;
+    cachedMconfigs: MconfigTab[];
+    cachedQueries: QueryTab[];
+    envId: string;
+    newDashboardId: string;
+    tempStruct: StructTab;
+    project: ProjectTab;
+  }): Result.ResultAsync<ProcessDashboardOutput, ProcessDashboardError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'prepareDashboardQueriesPayload',
+        (v): Result.Result<PrepareDashboardQueriesPayload, never> => {
+          let dashboardMconfigIds: string[] = v.newApiDashboard.tiles.map(
+            x => x.mconfigId
+          );
 
-    insertMconfigs.forEach(mconfig => {
-      let query = combinedQueries.find(y => y.queryId === mconfig.queryId);
+          let dashboardMconfigs: Mconfig[] = v.apiMconfigs.filter(
+            x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+          );
 
-      // prev query and new query has different queryId (different parent dashboardId)
-      let prevTile = fromDashboardX.tiles.find(
-        y => y.title === mconfig.chart.title
-      );
+          let dashboardQueryIds: string[] = v.newApiDashboard.tiles.map(
+            x => x.queryId
+          );
 
-      let prevQuery = prevTile?.query;
+          let dashboardQueries: QueryTab[] = v.apiQueries
+            .filter(x => dashboardQueryIds.indexOf(x.queryId) > -1)
+            .map(x => this.queriesService.apiToTab({ apiQuery: x }));
 
-      if (
-        isQueryCache === true &&
-        query.status !== 'Error' &&
-        isDefined(prevQuery) &&
-        prevQuery.status === 'Completed'
-      ) {
-        query.data = prevQuery.data;
-        query.status = prevQuery.status;
-        query.lastCompleteTs = prevQuery.lastCompleteTs;
-        query.lastCompleteDuration = prevQuery.lastCompleteDuration;
+          let insertMconfigs: MconfigTab[] = [];
 
-        insertOrUpdateQueries.push(query);
-      } else if (
-        isQueryCache === true &&
-        query.status !== 'Error' &&
-        prevTile.queryId === EMPTY_QUERY_ID &&
-        cachedQueries.length > 0
-      ) {
-        let cachedMconfig = cachedMconfigs.find(
-          x => x.chart.title === mconfig.chart.title
-        );
+          let insertOrUpdateQueries: QueryTab[] = [];
 
-        let cachedQuery = cachedQueries.find(
-          x => x.queryId === cachedMconfig.queryId
-        );
+          let insertOrDoNothingQueries: QueryTab[] = [];
 
-        if (cachedQuery.status === 'Completed') {
-          query.data = cachedQuery.data;
-          query.status = cachedQuery.status;
-          query.lastCompleteTs = cachedQuery.lastCompleteTs;
-          query.lastCompleteDuration = cachedQuery.lastCompleteDuration;
+          let dashboardMalloyMconfigs: Mconfig[] = dashboardMconfigs.filter(
+            mconfig => mconfig.modelType === 'Malloy'
+          );
 
-          insertOrUpdateQueries.push(query);
-        } else {
-          insertOrDoNothingQueries.push(query);
+          let dashboardMalloyQueries: QueryTab[] = [];
+
+          dashboardMalloyMconfigs.forEach(apiMconfig => {
+            let mconfig = this.mconfigsService.apiToTab({
+              apiMconfig: apiMconfig
+            });
+
+            insertMconfigs.push(mconfig);
+
+            let query = dashboardQueries.find(
+              x => x.queryId === mconfig.queryId
+            );
+
+            if (
+              dashboardMalloyQueries
+                .map(x => x.queryId)
+                .indexOf(query.queryId) < 0
+            ) {
+              dashboardMalloyQueries.push(query);
+            }
+          });
+
+          let dashboardStoreMconfigs: Mconfig[] = dashboardMconfigs.filter(
+            mconfig => mconfig.modelType === 'Store'
+          );
+
+          let storeQueries: QueryTab[] = [];
+
+          return Result.succeed({
+            dashboardMconfigIds: dashboardMconfigIds,
+            dashboardMconfigs: dashboardMconfigs,
+            dashboardQueryIds: dashboardQueryIds,
+            dashboardQueries: dashboardQueries,
+            insertMconfigs: insertMconfigs,
+            insertOrUpdateQueries: insertOrUpdateQueries,
+            insertOrDoNothingQueries: insertOrDoNothingQueries,
+            dashboardMalloyMconfigs: dashboardMalloyMconfigs,
+            dashboardMalloyQueries: dashboardMalloyQueries,
+            dashboardStoreMconfigs: dashboardStoreMconfigs,
+            storeQueries: storeQueries
+          });
         }
-      } else {
-        insertOrDoNothingQueries.push(query);
-      }
-    });
+      ),
+      Result.andThrough(async v => {
+        let storeQueriesResult: Result.Result<
+          void[],
+          PrepStoreMconfigQueryError
+        > = await Result.sequence(
+          v.prepareDashboardQueriesPayload.dashboardStoreMconfigs,
+          async (
+            apiMconfig
+          ): Result.ResultAsync<void, PrepStoreMconfigQueryError> => {
+            let newMconfig: MconfigTab;
 
-    let newDashboard = this.apiToTab({
-      apiDashboard: newApiDashboard
-    });
+            let newQuery: QueryTab;
 
-    return {
-      newDashboard: newDashboard,
-      insertMconfigs: insertMconfigs,
-      insertOrUpdateQueries: insertOrUpdateQueries,
-      insertOrDoNothingQueries: insertOrDoNothingQueries
-    };
+            let isError: boolean = false;
+
+            let apiModel: Model = v.apiModels.find(
+              y => y.modelId === apiMconfig.modelId
+            );
+
+            let prepStoreMconfigQueryOutput: Result.Result<
+              PrepStoreMconfigQueryOutput,
+              PrepStoreMconfigQueryError
+            > = await this.mconfigsService.prepStoreMconfigQueryResult({
+              struct: v.tempStruct,
+              project: v.project,
+              envId: v.envId,
+              mconfigParentType: 'Dashboard',
+              mconfigParentId: v.newDashboardId,
+              model: this.modelsService.apiToTab({ apiModel: apiModel }),
+              mconfig: this.mconfigsService.apiToTab({
+                apiMconfig: apiMconfig
+              }),
+              metricsStartDateYYYYMMDD: undefined,
+              metricsEndDateYYYYMMDD: undefined
+            });
+
+            if (Result.isFailure(prepStoreMconfigQueryOutput)) {
+              return prepStoreMconfigQueryOutput;
+            }
+
+            let mqe: {
+              isError: boolean;
+              newMconfig: MconfigTab;
+              newQuery: QueryTab;
+            } = prepStoreMconfigQueryOutput.value;
+
+            newMconfig = mqe.newMconfig;
+
+            newQuery = mqe.newQuery;
+
+            isError = mqe.isError;
+
+            let newDashboardTile: Tile = v.newApiDashboard.tiles.find(
+              tile => tile.mconfigId === apiMconfig.mconfigId
+            );
+
+            newDashboardTile.queryId = newMconfig.queryId;
+
+            newDashboardTile.mconfigId = newMconfig.mconfigId;
+
+            newDashboardTile.trackChangeId = makeId();
+
+            v.prepareDashboardQueriesPayload.insertMconfigs.push(newMconfig);
+
+            v.prepareDashboardQueriesPayload.storeQueries.push(newQuery);
+
+            return Result.succeed();
+          }
+        );
+
+        if (Result.isFailure(storeQueriesResult)) {
+          return storeQueriesResult;
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind(
+        'assembleDashboardPayload',
+        (v): Result.Result<AssembleDashboardPayload, never> => {
+          let combinedQueries: QueryTab[] = [
+            ...v.prepareDashboardQueriesPayload.dashboardMalloyQueries,
+            ...v.prepareDashboardQueriesPayload.storeQueries
+          ];
+
+          v.prepareDashboardQueriesPayload.insertMconfigs.forEach(mconfig => {
+            let query = combinedQueries.find(
+              y => y.queryId === mconfig.queryId
+            );
+
+            let prevTile = v.fromDashboardX.tiles.find(
+              y => y.title === mconfig.chart.title
+            );
+
+            let prevQuery = prevTile?.query;
+
+            if (
+              v.isQueryCache === true &&
+              query.status !== 'Error' &&
+              isDefined(prevQuery) &&
+              prevQuery.status === 'Completed'
+            ) {
+              query.data = prevQuery.data;
+
+              query.status = prevQuery.status;
+
+              query.lastCompleteTs = prevQuery.lastCompleteTs;
+
+              query.lastCompleteDuration = prevQuery.lastCompleteDuration;
+
+              v.prepareDashboardQueriesPayload.insertOrUpdateQueries.push(
+                query
+              );
+            } else if (
+              v.isQueryCache === true &&
+              query.status !== 'Error' &&
+              prevTile.queryId === EMPTY_QUERY_ID &&
+              v.cachedQueries.length > 0
+            ) {
+              let cachedMconfig = v.cachedMconfigs.find(
+                x => x.chart.title === mconfig.chart.title
+              );
+
+              let cachedQuery = v.cachedQueries.find(
+                x => x.queryId === cachedMconfig.queryId
+              );
+
+              if (cachedQuery.status === 'Completed') {
+                query.data = cachedQuery.data;
+
+                query.status = cachedQuery.status;
+
+                query.lastCompleteTs = cachedQuery.lastCompleteTs;
+
+                query.lastCompleteDuration = cachedQuery.lastCompleteDuration;
+
+                v.prepareDashboardQueriesPayload.insertOrUpdateQueries.push(
+                  query
+                );
+              } else {
+                v.prepareDashboardQueriesPayload.insertOrDoNothingQueries.push(
+                  query
+                );
+              }
+            } else {
+              v.prepareDashboardQueriesPayload.insertOrDoNothingQueries.push(
+                query
+              );
+            }
+          });
+
+          let newDashboard: DashboardTab = this.apiToTab({
+            apiDashboard: v.newApiDashboard
+          });
+
+          return Result.succeed({
+            combinedQueries: combinedQueries,
+            newDashboard: newDashboard
+          });
+        }
+      ),
+      Result.map(
+        (v): ProcessDashboardOutput => ({
+          newDashboard: v.assembleDashboardPayload.newDashboard,
+          insertMconfigs: v.prepareDashboardQueriesPayload.insertMconfigs,
+          insertOrUpdateQueries:
+            v.prepareDashboardQueriesPayload.insertOrUpdateQueries,
+          insertOrDoNothingQueries:
+            v.prepareDashboardQueriesPayload.insertOrDoNothingQueries
+        })
+      )
+    );
   }
 }

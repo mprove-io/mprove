@@ -49,11 +49,11 @@ import type { BackendConnectionSchemaIsNotFoundError } from '#common/types/backe
 import type { BackendWrongColumnNameError } from '#common/types/backend/errors/backend-wrong-column-name-error';
 import type { BackendWrongSchemaNameError } from '#common/types/backend/errors/backend-wrong-schema-name-error';
 import type { BackendWrongTableNameError } from '#common/types/backend/errors/backend-wrong-table-name-error';
-import type { CachedColumnEntToTabResultError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-result-error';
-import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { GetCacheEnvIdResultError } from '#common/types/backend/function-errors/get-cache-env-id-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { RawSchemaTable } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-table';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -61,7 +61,7 @@ import type { ToBackendRefreshCachedColumnOutput } from '#common/types/backend/r
 
 const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 
-type RefreshSettings = {
+type PrepareRefreshPayload = {
   cacheLimit: number;
   sourceSampleSize?: number;
   startedTs: number;
@@ -122,10 +122,7 @@ export class RefreshCachedColumnController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -140,7 +137,7 @@ export class RefreshCachedColumnController {
       ),
       Result.bind(
         'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdResultError> =>
+        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
           this.cachedColumnService.getCacheEnvIdResult({
             projectId: v.projectId,
             envId: v.envId
@@ -156,7 +153,7 @@ export class RefreshCachedColumnController {
       ),
       Result.bind(
         'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsResultError> =>
+        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           this.envsService.getApiEnvsResult({ projectId: v.projectId })
       ),
       Result.bind(
@@ -168,9 +165,7 @@ export class RefreshCachedColumnController {
       ),
       Result.bind(
         'connections',
-        (
-          v
-        ): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabResultError> =>
+        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
           this.db.drizzle.query.connectionsTable
             .findMany({
               where: and(
@@ -251,8 +246,8 @@ export class RefreshCachedColumnController {
             } satisfies BackendWrongColumnNameError)
       ),
       Result.bind(
-        'refreshSettings',
-        (v): Result.Result<RefreshSettings, never> =>
+        'prepareRefreshPayload',
+        (v): Result.Result<PrepareRefreshPayload, never> =>
           Result.succeed({
             cacheLimit: this.cs.get<
               BackendConfig['dwhColumnUniqueValuesCacheLimit']
@@ -264,12 +259,7 @@ export class RefreshCachedColumnController {
       ),
       Result.bind(
         'currentCachedColumn',
-        (
-          v
-        ): Result.ResultAsync<
-          CachedColumnTab,
-          CachedColumnEntToTabResultError
-        > =>
+        (v): Result.ResultAsync<CachedColumnTab, CachedColumnEntToTabError> =>
           this.db.drizzle.query.cachedColumnsTable
             .findFirst({
               where: eq(
@@ -315,11 +305,11 @@ export class RefreshCachedColumnController {
               status: 'running',
               errorMessage: undefined,
               keyTag: undefined,
-              startedTs: v.refreshSettings.startedTs,
+              startedTs: v.prepareRefreshPayload.startedTs,
               completedTs: undefined,
               completedDurationMs: undefined,
               uniqueValuesCount: 0,
-              limit: v.refreshSettings.cacheLimit,
+              limit: v.prepareRefreshPayload.cacheLimit,
               sampleSize: undefined,
               isLimitReached: undefined,
               serverTs: undefined
@@ -329,7 +319,7 @@ export class RefreshCachedColumnController {
           v.currentCachedColumn.requestedByUserId = v.userId;
           v.currentCachedColumn.status = 'running';
           v.currentCachedColumn.errorMessage = undefined;
-          v.currentCachedColumn.startedTs = v.refreshSettings.startedTs;
+          v.currentCachedColumn.startedTs = v.prepareRefreshPayload.startedTs;
 
           return Result.succeed(v.currentCachedColumn);
         }
@@ -366,9 +356,9 @@ export class RefreshCachedColumnController {
           tableName: v.tableName,
           columnName: v.columnName,
           connection: v.connection,
-          sampleSize: v.refreshSettings.sourceSampleSize,
-          cacheLimit: v.refreshSettings.cacheLimit,
-          startedTs: v.refreshSettings.startedTs
+          sampleSize: v.prepareRefreshPayload.sourceSampleSize,
+          cacheLimit: v.prepareRefreshPayload.cacheLimit,
+          startedTs: v.prepareRefreshPayload.startedTs
         });
         return Result.succeed();
       }),

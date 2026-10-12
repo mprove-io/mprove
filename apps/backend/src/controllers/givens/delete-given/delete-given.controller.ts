@@ -34,9 +34,9 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
-import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
-import type { GetRolesResultError } from '#common/types/backend/function-errors/get-roles-result-error';
+import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
+import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
+import type { GetRolesError } from '#common/types/backend/function-errors/get-roles-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteGivenOutput } from '#common/types/backend/routes/givens/delete-given/delete-given-output';
@@ -81,7 +81,7 @@ export class DeleteGivenController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
           this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
@@ -95,7 +95,7 @@ export class DeleteGivenController {
       ),
       Result.bind(
         'roles',
-        (v): Result.ResultAsync<RoleTab[], GetRolesResultError> =>
+        (v): Result.ResultAsync<RoleTab[], GetRolesError> =>
           this.rolesService.getRolesResult({ projectId: v.projectId })
       ),
       Result.bind(
@@ -140,7 +140,7 @@ export class DeleteGivenController {
       ),
       Result.bind(
         'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
           this.givensService.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.map(

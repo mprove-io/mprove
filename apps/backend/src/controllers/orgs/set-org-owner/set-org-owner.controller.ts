@@ -36,9 +36,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendNewOwnerNotFoundError } from '#common/types/backend/errors/backend-new-owner-not-found-error';
-import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
-import type { GetOrgCheckExistsResultError } from '#common/types/backend/function-errors/get-org-check-exists-result-error';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
+import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetOrgOwnerOutput } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-output';
 
@@ -77,7 +77,7 @@ export class SetOrgOwnerController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsResultError> =>
+        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
           this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
@@ -88,12 +88,12 @@ export class SetOrgOwnerController {
       ),
       Result.bind(
         'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
           this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'ownerEmailHash',
-        (v): Result.Result<string, MakeHashResultError> =>
+        (v): Result.Result<string, MakeHashError> =>
           this.hashService.makeHashResult({
             input: v.ownerEmail,
             hashSecret: v.hashSecret

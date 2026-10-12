@@ -31,9 +31,9 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
-import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
-import type { GetRoleCheckExistsResultError } from '#common/types/backend/function-errors/get-role-check-exists-result-error';
+import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
+import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
+import type { GetRoleCheckExistsError } from '#common/types/backend/function-errors/get-role-check-exists-error';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRoleGivenOutput } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-output';
@@ -78,7 +78,7 @@ export class DeleteRoleGivenController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
           this.membersService.getMemberCheckIsAdminResult({
             memberId: v.user.userId,
             projectId: v.projectId
@@ -86,7 +86,7 @@ export class DeleteRoleGivenController {
       ),
       Result.bind(
         'role',
-        (v): Result.ResultAsync<RoleTab, GetRoleCheckExistsResultError> =>
+        (v): Result.ResultAsync<RoleTab, GetRoleCheckExistsError> =>
           this.rolesService.getRoleCheckExistsResult({
             projectId: v.projectId,
             roleId: v.roleId
@@ -115,7 +115,7 @@ export class DeleteRoleGivenController {
       ),
       Result.bind(
         'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
           this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.map(

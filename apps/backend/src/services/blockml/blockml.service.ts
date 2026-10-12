@@ -31,11 +31,11 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ConnectionEntToTabResultError } from '#common/types/backend/function-errors/connection-ent-to-tab-result-error';
-import type { DbErrorToResultError } from '#common/types/backend/function-errors/db-error-to-result-error';
-import type { GetApiEnvsResultError } from '#common/types/backend/function-errors/get-api-envs-result-error';
-import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
-import type { SendToBlockmlResultError } from '#common/types/backend/function-errors/send-to-blockml-result-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { SendToBlockmlError } from '#common/types/backend/function-errors/send-to-blockml-error';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { Env } from '#common/types/backend/parts/env';
 import type { Ev } from '#common/types/backend/parts/ev';
@@ -53,7 +53,7 @@ import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/
 import type { ToBlockmlRebuildStructRequest } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-request';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 
-export type RebuildStructResultValue = {
+export type RebuildStructOutput = {
   struct: StructTab;
   models: Model[];
   reports: Report[];
@@ -100,11 +100,9 @@ export class BlockmlService {
     cachedMproveConfig?: MproveConfig;
     cachedModels?: Model[];
     cachedMetrics?: ModelMetric[];
-  }): Promise<RebuildStructResultValue> {
-    let result: Result.Result<
-      RebuildStructResultValue,
-      RebuildStructResultError
-    > = await this.rebuildStructResult(item);
+  }): Promise<RebuildStructOutput> {
+    let result: Result.Result<RebuildStructOutput, RebuildStructError> =
+      await this.rebuildStructResult(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({
@@ -126,7 +124,7 @@ export class BlockmlService {
       });
     }
 
-    let value: RebuildStructResultValue = result.value;
+    let value: RebuildStructOutput = result.value;
 
     return value;
   }
@@ -149,7 +147,7 @@ export class BlockmlService {
     cachedMproveConfig?: MproveConfig;
     cachedModels?: Model[];
     cachedMetrics?: ModelMetric[];
-  }): Result.ResultAsync<RebuildStructResultValue, RebuildStructResultError> {
+  }): Result.ResultAsync<RebuildStructOutput, RebuildStructError> {
     let {
       traceId,
       structId,
@@ -170,7 +168,7 @@ export class BlockmlService {
       cachedMetrics
     } = item;
 
-    let apiEnvsResult: Result.Result<Env[], GetApiEnvsResultError> =
+    let apiEnvsResult: Result.Result<Env[], GetApiEnvsError> =
       await this.envsService.getApiEnvsResult({
         projectId: projectId
       });
@@ -202,7 +200,7 @@ export class BlockmlService {
 
       let connectionsResult: Result.Result<
         ConnectionTab[],
-        ConnectionEntToTabResultError
+        ConnectionEntToTabError
       > = Result.sequence(connectionsWithFallbackEnts, x =>
         this.tabService.connectionEntToTabResult({
           connectionEnt: x
@@ -246,7 +244,7 @@ export class BlockmlService {
 
     let rpcResult: Result.Result<
       ToBlockmlRebuildStructOutput,
-      SendToBlockmlResultError
+      SendToBlockmlError
     > = await this.rpcService.sendToBlockmlResult({
       request: toBlockmlRebuildStructRequest,
       orgId: orgId,
@@ -286,7 +284,7 @@ export class BlockmlService {
     });
 
     if (isUndefined(skipDb) || skipDb === false) {
-      let persistence: Result.Result<void, DbErrorToResultError> =
+      let persistence: Result.Result<void, DbErrorToError> =
         await dbErrorToResult({
           action: async () => {
             await retry(
@@ -343,7 +341,7 @@ export class BlockmlService {
       }
     }
 
-    let value: RebuildStructResultValue = {
+    let value: RebuildStructOutput = {
       struct: struct,
       models: rs.models,
       reports: rs.reports,

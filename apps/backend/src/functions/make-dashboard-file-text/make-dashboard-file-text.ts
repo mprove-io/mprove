@@ -22,7 +22,7 @@ export function makeDashboardFileText(item: {
   roles: string[] | null | undefined;
   timezone: string;
   caseSensitiveStringFilters: boolean;
-}) {
+}): string {
   let {
     dashboard,
     newDashboardId,
@@ -181,9 +181,7 @@ export function makeDashboardFileText(item: {
         : undefined
   };
 
-  let dashboardFileText = toYaml(dashboardFile);
+  let dashboardFileText: string = toYaml(dashboardFile);
 
-  return {
-    dashboardFileText: dashboardFileText
-  };
+  return dashboardFileText;
 }

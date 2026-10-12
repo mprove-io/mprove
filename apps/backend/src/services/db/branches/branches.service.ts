@@ -13,8 +13,8 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CheckBranchDoesNotExistResultError } from '#common/types/backend/function-errors/check-branch-does-not-exist-result-error';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
+import type { CheckBranchDoesNotExistError } from '#common/types/backend/function-errors/check-branch-does-not-exist-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 
 @Injectable()
 export class BranchesService {
@@ -52,7 +52,7 @@ export class BranchesService {
     repoId: string;
     branchId: string;
   }): Promise<BranchTab> {
-    let result: Result.Result<BranchTab, GetBranchCheckExistsResultError> =
+    let result: Result.Result<BranchTab, GetBranchCheckExistsError> =
       await this.getBranchCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -68,7 +68,7 @@ export class BranchesService {
     projectId: string;
     repoId: string;
     branchId: string;
-  }): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> {
+  }): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> {
     let { projectId, repoId, branchId } = item;
 
     return this.db.drizzle.query.branchesTable
@@ -90,7 +90,7 @@ export class BranchesService {
     projectId: string;
     repoId: string;
     branchId: string;
-  }): Result.ResultAsync<void, CheckBranchDoesNotExistResultError> {
+  }): Result.ResultAsync<void, CheckBranchDoesNotExistError> {
     let { projectId, repoId, branchId } = item;
 
     let branchEnt: BranchEnt =

@@ -6,8 +6,9 @@ type, matching whether the callback returns a synchronous Result or a promise.
 
 Use named handwritten types for object-shaped callback success values, including
 array elements, rather than inline object types. Keep local types in the same
-file unless shared. Function parameter types still follow "Function and method
-args".
+file unless shared. Type reuse and intermediate naming follow "Singular and
+plural names"; final projection contracts follow "Function return types".
+Function parameter types still follow "Function and method args".
 
 ```ts
 Result.bind(

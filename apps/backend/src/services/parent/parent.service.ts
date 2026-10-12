@@ -19,11 +19,11 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { CheckParentAccessResultError } from '#common/types/backend/function-errors/check-parent-access-result-error';
-import type { GetChartCheckExistsResultError } from '#common/types/backend/function-errors/get-chart-check-exists-result-error';
-import type { GetDashboardCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-result-error';
-import type { GetModelCheckExistsResultError } from '#common/types/backend/function-errors/get-model-check-exists-result-error';
-import type { GetReportCheckExistsAndAccessResultError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-result-error';
+import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
+import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
+import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
+import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
+import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
 @Injectable()
@@ -65,7 +65,7 @@ export class ParentService {
       suggestModel
     } = item;
 
-    let result: Result.Result<void, CheckParentAccessResultError> =
+    let result: Result.Result<void, CheckParentAccessError> =
       await this.checkParentAccessResult({
         user: user,
         userMember: userMember,
@@ -97,7 +97,7 @@ export class ParentService {
     suggestFieldId?: string;
     suggestRowId?: string;
     suggestModel?: ModelTab;
-  }): Result.ResultAsync<void, CheckParentAccessResultError> {
+  }): Result.ResultAsync<void, CheckParentAccessError> {
     return Result.pipe(
       Result.succeed({
         ...item,
@@ -116,7 +116,7 @@ export class ParentService {
           v
         ): Result.ResultAsync<
           DashboardTab,
-          GetDashboardCheckExistsAndAccessResultError
+          GetDashboardCheckExistsAndAccessError
         > =>
           v.isDashboard
             ? this.dashboardsService.getDashboardCheckExistsAndAccessResult({
@@ -146,10 +146,7 @@ export class ParentService {
         'report',
         async (
           v
-        ): Result.ResultAsync<
-          ReportTab,
-          GetReportCheckExistsAndAccessResultError
-        > =>
+        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
           v.isReport
             ? this.reportsService.getReportCheckExistsAndAccessResult({
                 projectId: v.projectId,
@@ -196,9 +193,7 @@ export class ParentService {
       }),
       Result.bind(
         'chart',
-        async (
-          v
-        ): Result.ResultAsync<ChartTab, GetChartCheckExistsResultError> =>
+        async (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
           v.parentType === 'Chart'
             ? this.chartsService.getChartCheckExistsResult({
                 structId: v.structId,
@@ -210,9 +205,7 @@ export class ParentService {
       ),
       Result.bind(
         'chartModel',
-        async (
-          v
-        ): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> =>
+        async (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
           v.parentType === 'Chart'
             ? this.modelsService.getModelCheckExistsResult({
                 structId: v.structId,

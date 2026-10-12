@@ -13,14 +13,14 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CheckRoleDoesNotExistResultError } from '#common/types/backend/function-errors/check-role-does-not-exist-result-error';
-import type { CheckRoleGivenDoesNotExistResultError } from '#common/types/backend/function-errors/check-role-given-does-not-exist-result-error';
-import type { CheckRolesExistResultError } from '#common/types/backend/function-errors/check-roles-exist-result-error';
-import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
-import type { GetRoleCheckExistsResultError } from '#common/types/backend/function-errors/get-role-check-exists-result-error';
-import type { GetRoleGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-role-given-check-exists-result-error';
-import type { GetRolesResultError } from '#common/types/backend/function-errors/get-roles-result-error';
-import type { RoleEntToTabResultError } from '#common/types/backend/function-errors/role-ent-to-tab-result-error';
+import type { CheckRoleDoesNotExistError } from '#common/types/backend/function-errors/check-role-does-not-exist-error';
+import type { CheckRoleGivenDoesNotExistError } from '#common/types/backend/function-errors/check-role-given-does-not-exist-error';
+import type { CheckRolesExistError } from '#common/types/backend/function-errors/check-roles-exist-error';
+import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
+import type { GetRoleCheckExistsError } from '#common/types/backend/function-errors/get-role-check-exists-error';
+import type { GetRoleGivenCheckExistsError } from '#common/types/backend/function-errors/get-role-given-check-exists-error';
+import type { GetRolesError } from '#common/types/backend/function-errors/get-roles-error';
+import type { RoleEntToTabError } from '#common/types/backend/function-errors/role-ent-to-tab-error';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
 
@@ -67,7 +67,7 @@ export class RolesService {
   async checkRoleDoesNotExistResult(item: {
     projectId: string;
     roleId: string;
-  }): Result.ResultAsync<void, CheckRoleDoesNotExistResultError> {
+  }): Result.ResultAsync<void, CheckRoleDoesNotExistError> {
     let { projectId, roleId } = item;
 
     let roleEnt: RoleEnt = await this.db.drizzle.query.rolesTable.findFirst({
@@ -85,7 +85,7 @@ export class RolesService {
   async getRoleCheckExistsResult(item: {
     projectId: string;
     roleId: string;
-  }): Result.ResultAsync<RoleTab, GetRoleCheckExistsResultError> {
+  }): Result.ResultAsync<RoleTab, GetRoleCheckExistsError> {
     let { projectId, roleId } = item;
 
     return this.db.drizzle.query.rolesTable
@@ -105,7 +105,7 @@ export class RolesService {
   async checkRolesExistResult(item: {
     projectId: string;
     roleIds: string[];
-  }): Result.ResultAsync<void, CheckRolesExistResultError> {
+  }): Result.ResultAsync<void, CheckRolesExistError> {
     let { projectId, roleIds } = item;
 
     let uniqueRoleIds: string[] = [];
@@ -148,7 +148,7 @@ export class RolesService {
   checkRoleGivenDoesNotExistResult(item: {
     role: RoleTab;
     givenId: string;
-  }): Result.Result<void, CheckRoleGivenDoesNotExistResultError> {
+  }): Result.Result<void, CheckRoleGivenDoesNotExistError> {
     let { role, givenId } = item;
 
     return role.gvs.some(gv => gv.givenId === givenId)
@@ -159,7 +159,7 @@ export class RolesService {
   getRoleGivenCheckExistsResult(item: {
     role: RoleTab;
     givenId: string;
-  }): Result.Result<Gv, GetRoleGivenCheckExistsResultError> {
+  }): Result.Result<Gv, GetRoleGivenCheckExistsError> {
     let { role, givenId } = item;
 
     let roleGiven: Gv = role.gvs.find(gv => gv.givenId === givenId);
@@ -171,7 +171,7 @@ export class RolesService {
 
   async getRolesResult(item: {
     projectId: string;
-  }): Result.ResultAsync<RoleTab[], GetRolesResultError> {
+  }): Result.ResultAsync<RoleTab[], GetRolesError> {
     let { projectId } = item;
 
     return this.db.drizzle.query.rolesTable
@@ -186,7 +186,7 @@ export class RolesService {
   }
 
   async getApiRoles(item: { projectId: string }): Promise<Role[]> {
-    let result: Result.Result<Role[], GetApiRolesResultError> =
+    let result: Result.Result<Role[], GetApiRolesError> =
       await this.getApiRolesResult(item);
 
     if (Result.isFailure(result)) {
@@ -200,12 +200,12 @@ export class RolesService {
 
   async getApiRolesResult(item: {
     projectId: string;
-  }): Result.ResultAsync<Role[], GetApiRolesResultError> {
+  }): Result.ResultAsync<Role[], GetApiRolesError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'roles',
-        (v): Result.ResultAsync<RoleTab[], RoleEntToTabResultError> =>
+        (v): Result.ResultAsync<RoleTab[], RoleEntToTabError> =>
           this.db.drizzle.query.rolesTable
             .findMany({ where: eq(rolesTable.projectId, v.projectId) })
             .then(xs =>

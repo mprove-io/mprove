@@ -48,7 +48,7 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import {
   BlockmlService,
-  type RebuildStructResultValue
+  type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -85,14 +85,14 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendRestrictedUserError } from '#common/types/backend/errors/backend-restricted-user-error';
-import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
-import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { MakeAliasResultError } from '#common/types/backend/function-errors/make-alias-result-error';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
-import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
-import type { UserEntToTabResultError } from '#common/types/backend/function-errors/user-ent-to-tab-result-error';
+import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
+import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/members/create-member/create-member-output';
@@ -160,7 +160,7 @@ export class CreateMemberController {
       }),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
@@ -173,12 +173,12 @@ export class CreateMemberController {
       ),
       Result.bind(
         'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
           this.dconfigsService.getDconfigHashSecretResult()
       ),
       Result.bind(
         'emailHash',
-        (v): Result.Result<string, MakeHashResultError> =>
+        (v): Result.Result<string, MakeHashError> =>
           this.hashService.makeHashResult({
             input: v.email,
             hashSecret: v.hashSecret
@@ -186,7 +186,7 @@ export class CreateMemberController {
       ),
       Result.bind(
         'invitedUser',
-        (v): Result.ResultAsync<UserTab, UserEntToTabResultError> =>
+        (v): Result.ResultAsync<UserTab, UserEntToTabError> =>
           this.db.drizzle.query.usersTable
             .findFirst({ where: eq(usersTable.emailHash, v.emailHash) })
             .then((x: UserEnt) =>
@@ -201,13 +201,13 @@ export class CreateMemberController {
           v
         ): Result.ResultAsync<
           UserTab,
-          MakeAliasResultError | BackendRestrictedUserError
+          MakeAliasError | BackendRestrictedUserError
         > => {
           if (isDefined(v.invitedUser)) {
             return Result.succeed(undefined);
           }
 
-          let aliasResult: Result.Result<string, MakeAliasResultError> =
+          let aliasResult: Result.Result<string, MakeAliasError> =
             await this.usersService.makeAliasResult({ email: v.email });
 
           if (Result.isFailure(aliasResult)) {
@@ -274,12 +274,7 @@ export class CreateMemberController {
       ),
       Result.bind(
         'diskCreateDevRepoOutput',
-        (
-          v
-        ): Result.ResultAsync<
-          ToDiskCreateDevRepoOutput,
-          SendToDiskResultError
-        > =>
+        (v): Result.ResultAsync<ToDiskCreateDevRepoOutput, SendToDiskError> =>
           this.rpcService.sendToDiskResult({
             request: {
               operation: 'createDevRepo',
@@ -352,8 +347,8 @@ export class CreateMemberController {
             let structId: string = makeId();
 
             let rebuildResult: Result.Result<
-              RebuildStructResultValue,
-              RebuildStructResultError
+              RebuildStructOutput,
+              RebuildStructError
             > = await this.blockmlService.rebuildStructResult({
               traceId: v.traceId,
               orgId: v.project.orgId,
@@ -405,7 +400,7 @@ export class CreateMemberController {
       ),
       Result.bind(
         'avatars',
-        (v): Result.ResultAsync<AvatarTab[], AvatarEntToTabResultError> =>
+        (v): Result.ResultAsync<AvatarTab[], AvatarEntToTabError> =>
           this.db.drizzle
             .select({
               keyTag: avatarsTable.keyTag,

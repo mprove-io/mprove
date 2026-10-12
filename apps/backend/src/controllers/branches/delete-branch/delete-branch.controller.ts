@@ -37,9 +37,9 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { BackendDefaultBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-default-branch-cannot-be-deleted-error';
 import type { BackendSessionBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-session-branch-cannot-be-deleted-error';
-import type { CheckRepoIdResultError } from '#common/types/backend/function-errors/check-repo-id-result-error';
-import type { GetMemberCheckIsEditorResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
+import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
+import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteBranchOutput } from '#common/types/backend/routes/branches/delete-branch/delete-branch-output';
@@ -83,7 +83,7 @@ export class DeleteBranchController {
       }),
       Result.bind(
         'repoType',
-        (v): Result.ResultAsync<RepoType, CheckRepoIdResultError> =>
+        (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
           this.sessionsService.checkRepoIdResult({
             repoId: v.repoId,
             userId: v.userId,
@@ -100,14 +100,14 @@ export class DeleteBranchController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
           this.membersService.getMemberCheckIsEditorResult({
             memberId: v.userId,
             projectId: v.projectId

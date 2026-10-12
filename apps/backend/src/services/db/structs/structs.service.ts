@@ -30,8 +30,8 @@ import {
   PROJECT_CONFIG_THOUSANDS_SEPARATOR
 } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetStructCheckExistsAndNotChangedResultError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
+import type { GetStructCheckExistsAndNotChangedError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { ModelMetricX } from '#common/types/backend/parts/model/model-metric-x';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { StructX } from '#common/types/backend/parts/struct/struct-x';
@@ -76,7 +76,7 @@ export class StructsService {
     projectId: string;
     isGetEmptyStructOnError?: boolean;
   }): Promise<StructTab> {
-    let result: Result.Result<StructTab, GetStructCheckExistsResultError> =
+    let result: Result.Result<StructTab, GetStructCheckExistsError> =
       await this.getStructCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -92,7 +92,7 @@ export class StructsService {
     structId: string;
     projectId: string;
     isGetEmptyStructOnError?: boolean;
-  }): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> {
+  }): Result.ResultAsync<StructTab, GetStructCheckExistsError> {
     let { structId, projectId, isGetEmptyStructOnError } = item;
 
     let emptyStruct: StructTab = {
@@ -151,7 +151,7 @@ export class StructsService {
 
     let result: Result.Result<
       StructTab,
-      GetStructCheckExistsAndNotChangedResultError
+      GetStructCheckExistsAndNotChangedError
     > = await this.getStructCheckExistsAndNotChangedResult({
       bridgeStructId: bridgeStructId,
       projectId: projectId,
@@ -171,15 +171,12 @@ export class StructsService {
     bridgeStructId: string;
     projectId: string;
     structId: string;
-  }): Result.ResultAsync<
-    StructTab,
-    GetStructCheckExistsAndNotChangedResultError
-  > {
+  }): Result.ResultAsync<StructTab, GetStructCheckExistsAndNotChangedError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.getStructCheckExistsResult({
             structId: v.bridgeStructId,
             projectId: v.projectId

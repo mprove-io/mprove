@@ -23,11 +23,11 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetQueriesCheckExistResultError } from '#common/types/backend/function-errors/get-queries-check-exist-result-error';
-import type { GetQueriesCheckExistSkipSqlDataResultError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-result-error';
-import type { GetQueryCheckExistsResultError } from '#common/types/backend/function-errors/get-query-check-exists-result-error';
-import type { GetQueryCheckExistsSkipDataResultError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-result-error';
-import type { QueryEntToTabResultError } from '#common/types/backend/function-errors/query-ent-to-tab-result-error';
+import type { GetQueriesCheckExistError } from '#common/types/backend/function-errors/get-queries-check-exist-error';
+import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
+import type { GetQueryCheckExistsError } from '#common/types/backend/function-errors/get-query-check-exists-error';
+import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
+import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
 
@@ -132,13 +132,11 @@ export class QueriesService {
   }): Promise<QueryTab> {
     let { queryId, projectId } = item;
 
-    let result: Result.Result<
-      QueryTab,
-      GetQueryCheckExistsSkipDataResultError
-    > = await this.getQueryCheckExistsSkipDataResult({
-      queryId: queryId,
-      projectId: projectId
-    });
+    let result: Result.Result<QueryTab, GetQueryCheckExistsSkipDataError> =
+      await this.getQueryCheckExistsSkipDataResult({
+        queryId: queryId,
+        projectId: projectId
+      });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -152,12 +150,12 @@ export class QueriesService {
   async getQueryCheckExistsSkipDataResult(item: {
     queryId: string;
     projectId: string;
-  }): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataResultError> {
+  }): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'queries',
-        (v): Result.ResultAsync<QueryTab[], QueryEntToTabResultError> =>
+        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
           this.db.drizzle
             .select({
               keyTag: queriesTable.keyTag,
@@ -201,7 +199,7 @@ export class QueriesService {
             )
       ),
       Result.andThen(
-        (v): Result.Result<QueryTab, GetQueryCheckExistsSkipDataResultError> =>
+        (v): Result.Result<QueryTab, GetQueryCheckExistsSkipDataError> =>
           isUndefined(v.queries[0])
             ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
             : Result.succeed(v.queries[0])
@@ -215,7 +213,7 @@ export class QueriesService {
   }): Promise<QueryTab> {
     let { queryId, projectId } = item;
 
-    let result: Result.Result<QueryTab, GetQueryCheckExistsResultError> =
+    let result: Result.Result<QueryTab, GetQueryCheckExistsError> =
       await this.getQueryCheckExistsResult({
         queryId: queryId,
         projectId: projectId
@@ -233,7 +231,7 @@ export class QueriesService {
   async getQueryCheckExistsResult(item: {
     queryId: string;
     projectId: string;
-  }): Result.ResultAsync<QueryTab, GetQueryCheckExistsResultError> {
+  }): Result.ResultAsync<QueryTab, GetQueryCheckExistsError> {
     let { queryId, projectId } = item;
 
     return this.db.drizzle.query.queriesTable
@@ -258,7 +256,7 @@ export class QueriesService {
 
     let result: Result.Result<
       QueryTab[],
-      GetQueriesCheckExistSkipSqlDataResultError
+      GetQueriesCheckExistSkipSqlDataError
     > = await this.getQueriesCheckExistSkipSqlDataResult({
       queryIds: queryIds,
       projectId: projectId
@@ -280,15 +278,12 @@ export class QueriesService {
   async getQueriesCheckExistSkipSqlDataResult(item: {
     queryIds: string[];
     projectId: string;
-  }): Result.ResultAsync<
-    QueryTab[],
-    GetQueriesCheckExistSkipSqlDataResultError
-  > {
+  }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistSkipSqlDataError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'queries',
-        (v): Result.ResultAsync<QueryTab[], QueryEntToTabResultError> =>
+        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
           this.db.drizzle
             .select({
               keyTag: queriesTable.keyTag,
@@ -354,7 +349,7 @@ export class QueriesService {
   }): Promise<QueryTab[]> {
     let { queryIds, projectId } = item;
 
-    let result: Result.Result<QueryTab[], GetQueriesCheckExistResultError> =
+    let result: Result.Result<QueryTab[], GetQueriesCheckExistError> =
       await this.getQueriesCheckExistResult({
         queryIds: queryIds,
         projectId: projectId
@@ -376,12 +371,12 @@ export class QueriesService {
   async getQueriesCheckExistResult(item: {
     queryIds: string[];
     projectId: string;
-  }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistResultError> {
+  }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'queries',
-        (v): Result.ResultAsync<QueryTab[], QueryEntToTabResultError> =>
+        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
           this.db.drizzle.query.queriesTable
             .findMany({
               where: and(

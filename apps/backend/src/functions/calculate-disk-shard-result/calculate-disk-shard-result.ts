@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { CalculateDiskShardResultError } from '#common/types/backend/function-errors/calculate-disk-shard-result-error';
+import type { CalculateDiskShardError } from '#common/types/backend/function-errors/calculate-disk-shard-error';
 
 let FIRST_CHAR_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -10,7 +10,7 @@ let MAX_BUCKETS = FIRST_CHAR_ALPHABET.length * SECOND_CHAR_ALPHABET.length;
 export function calculateDiskShardResult(item: {
   shardKey: string;
   totalDiskShards: number;
-}): Result.Result<string, CalculateDiskShardResultError> {
+}): Result.Result<string, CalculateDiskShardError> {
   let { shardKey, totalDiskShards } = item;
 
   if (totalDiskShards <= 0 || totalDiskShards > MAX_BUCKETS) {

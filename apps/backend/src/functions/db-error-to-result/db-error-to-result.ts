@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { ServerError } from '#common/classes/server-error/server-error';
-import type { DbErrorToResultError } from '#common/types/backend/function-errors/db-error-to-result-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 
 /**
  * Pass the entire transaction/retry operation as action so known domain errors
@@ -8,7 +8,7 @@ import type { DbErrorToResultError } from '#common/types/backend/function-errors
  */
 export async function dbErrorToResult(item: {
   action: () => Promise<void>;
-}): Result.ResultAsync<void, DbErrorToResultError> {
+}): Result.ResultAsync<void, DbErrorToError> {
   let { action } = item;
 
   try {

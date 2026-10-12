@@ -71,8 +71,8 @@ import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { HashService } from '#backend/services/hash/hash.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
-import type { ProjectTabToEntResultError } from '#common/types/backend/function-errors/project-tab-to-ent-result-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
+import type { ProjectTabToEntError } from '#common/types/backend/function-errors/project-tab-to-ent-error';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
 import type { AvatarSt } from '#common/types/shared/st-lt/avatars/avatar-st';
 import type { BranchLt } from '#common/types/shared/st-lt/branches/branch-lt';
@@ -1017,7 +1017,7 @@ export class TabToEntService {
   }
 
   projectTabToEnt(item: { tab: ProjectTab; hashSecret: string }): ProjectEnt {
-    let result: Result.Result<ProjectEnt, ProjectTabToEntResultError> =
+    let result: Result.Result<ProjectEnt, ProjectTabToEntError> =
       this.projectTabToEntResult(item);
 
     if (Result.isFailure(result)) {
@@ -1032,7 +1032,7 @@ export class TabToEntService {
   projectTabToEntResult(item: {
     tab: ProjectTab;
     hashSecret?: string;
-  }): Result.Result<ProjectEnt, ProjectTabToEntResultError> {
+  }): Result.Result<ProjectEnt, ProjectTabToEntError> {
     let { tab } = item;
 
     let projectSt: ProjectSt = {
@@ -1062,7 +1062,7 @@ export class TabToEntService {
       }),
       Result.bind(
         'nameHash',
-        (v): Result.Result<string, MakeHashResultError> =>
+        (v): Result.Result<string, MakeHashError> =>
           this.hashService.makeHashResult({
             input: v.tab.name,
             hashSecret: v.hashSecret
@@ -1070,7 +1070,7 @@ export class TabToEntService {
       ),
       Result.bind(
         'gitUrlHash',
-        (v): Result.Result<string, MakeHashResultError> =>
+        (v): Result.Result<string, MakeHashError> =>
           this.hashService.makeHashResult({
             input: v.tab.gitUrl,
             hashSecret: v.hashSecret

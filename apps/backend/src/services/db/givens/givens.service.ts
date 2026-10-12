@@ -14,13 +14,13 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CheckGivenDoesNotExistResultError } from '#common/types/backend/function-errors/check-given-does-not-exist-result-error';
-import type { GetApiGivensResultError } from '#common/types/backend/function-errors/get-api-givens-result-error';
-import type { GetApiRolesResultError } from '#common/types/backend/function-errors/get-api-roles-result-error';
-import type { GetGivenCheckExistsResultError } from '#common/types/backend/function-errors/get-given-check-exists-result-error';
-import type { GetMemberGivensForSelectionResultError } from '#common/types/backend/function-errors/get-member-givens-for-selection-result-error';
-import type { GivenEntToTabResultError } from '#common/types/backend/function-errors/given-ent-to-tab-result-error';
-import type { ValidateGivenValuesResultError } from '#common/types/backend/function-errors/validate-given-values-result-error';
+import type { CheckGivenDoesNotExistError } from '#common/types/backend/function-errors/check-given-does-not-exist-error';
+import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
+import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
+import type { GetGivenCheckExistsError } from '#common/types/backend/function-errors/get-given-check-exists-error';
+import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
+import type { GivenEntToTabError } from '#common/types/backend/function-errors/given-ent-to-tab-error';
+import type { ValidateGivenValuesError } from '#common/types/backend/function-errors/validate-given-values-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
@@ -81,7 +81,7 @@ export class GivensService {
     isMultiple: boolean;
     values: string[];
   }): void {
-    let result: Result.Result<void, ValidateGivenValuesResultError> =
+    let result: Result.Result<void, ValidateGivenValuesError> =
       this.validateGivenValuesResult(item);
 
     if (Result.isFailure(result)) {
@@ -96,7 +96,7 @@ export class GivensService {
     type: GivenType;
     isMultiple: boolean;
     values: string[];
-  }): Result.Result<void, ValidateGivenValuesResultError> {
+  }): Result.Result<void, ValidateGivenValuesError> {
     let { type, isMultiple, values } = item;
 
     let error: string = getGivenValueValidationError({
@@ -120,7 +120,7 @@ export class GivensService {
   async checkGivenDoesNotExistResult(item: {
     projectId: string;
     givenId: string;
-  }): Result.ResultAsync<void, CheckGivenDoesNotExistResultError> {
+  }): Result.ResultAsync<void, CheckGivenDoesNotExistError> {
     let { projectId, givenId } = item;
 
     let givenEnt: GivenEnt = await this.db.drizzle.query.givensTable.findFirst({
@@ -139,7 +139,7 @@ export class GivensService {
     projectId: string;
     givenId: string;
   }): Promise<GivenTab> {
-    let result: Result.Result<GivenTab, GetGivenCheckExistsResultError> =
+    let result: Result.Result<GivenTab, GetGivenCheckExistsError> =
       await this.getGivenCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -154,7 +154,7 @@ export class GivensService {
   async getGivenCheckExistsResult(item: {
     projectId: string;
     givenId: string;
-  }): Result.ResultAsync<GivenTab, GetGivenCheckExistsResultError> {
+  }): Result.ResultAsync<GivenTab, GetGivenCheckExistsError> {
     let { projectId, givenId } = item;
 
     return this.db.drizzle.query.givensTable
@@ -172,7 +172,7 @@ export class GivensService {
   }
 
   async getApiGivens(item: { projectId: string }): Promise<Given[]> {
-    let result: Result.Result<Given[], GetApiGivensResultError> =
+    let result: Result.Result<Given[], GetApiGivensError> =
       await this.getApiGivensResult(item);
 
     if (Result.isFailure(result)) {
@@ -186,12 +186,12 @@ export class GivensService {
 
   async getApiGivensResult(item: {
     projectId: string;
-  }): Result.ResultAsync<Given[], GetApiGivensResultError> {
+  }): Result.ResultAsync<Given[], GetApiGivensError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'givens',
-        (v): Result.ResultAsync<GivenTab[], GivenEntToTabResultError> =>
+        (v): Result.ResultAsync<GivenTab[], GivenEntToTabError> =>
           this.db.drizzle.query.givensTable
             .findMany({ where: eq(givensTable.projectId, v.projectId) })
             .then(xs =>
@@ -214,10 +214,8 @@ export class GivensService {
     projectId: string;
     roles: string[];
   }): Promise<MemberGiven[]> {
-    let result: Result.Result<
-      MemberGiven[],
-      GetMemberGivensForSelectionResultError
-    > = await this.getMemberGivensForSelectionResult(item);
+    let result: Result.Result<MemberGiven[], GetMemberGivensForSelectionError> =
+      await this.getMemberGivensForSelectionResult(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -231,20 +229,17 @@ export class GivensService {
   async getMemberGivensForSelectionResult(item: {
     projectId: string;
     roles: string[];
-  }): Result.ResultAsync<
-    MemberGiven[],
-    GetMemberGivensForSelectionResultError
-  > {
+  }): Result.ResultAsync<MemberGiven[], GetMemberGivensForSelectionError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
         'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensResultError> =>
+        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
           this.getApiGivensResult({ projectId: v.projectId })
       ),
       Result.bind(
         'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesResultError> =>
+        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
           this.rolesService.getApiRolesResult({ projectId: v.projectId })
       ),
       Result.map((v): MemberGiven[] => {

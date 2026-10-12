@@ -25,11 +25,14 @@
 - rules/typecheck-and-lint.md
 - rules/one-function-per-file.md
 - rules/function-and-method-args.md
+- rules/function-return-types.md
+- rules/decorated-parameters.md
 - rules/item-destructuring.md
 - rules/recursive-function-names.md
 - rules/object-properties.md
 - rules/no-for-let-of-and-for-let-in.md
 - rules/type-only-imports.md
+- rules/import-order.md
 - rules/domain-literals.md
 - rules/domain-literals/canonical-values.md
 - rules/domain-literals/named-declarations.md
@@ -45,6 +48,7 @@
 - rules/async-promise-chains.md
 - rules/fire-and-forget-promises.md
 - rules/entity-and-tab-variable-names.md
+- rules/singular-and-plural-names.md
 - rules/local-object-projections.md
 - rules/empty-lines-between-statements.md
 - rules/optional-typescript-properties.md
@@ -61,6 +65,7 @@
 - rules/byethrow.md
 - rules/byethrow/no-nested-pipes-in-a-single-function.md
 - rules/byethrow/result-type-inference.md
+- rules/byethrow/result-variable-names.md
 - rules/byethrow/result-callback-return-types.md
 - rules/byethrow/combine-lookup-and-conversion.md
 - rules/byethrow/inline-guarded-result-callbacks.md

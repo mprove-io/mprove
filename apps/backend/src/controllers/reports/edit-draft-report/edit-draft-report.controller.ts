@@ -1,13 +1,23 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendEditDraftReportRequestDto,
   ToBackendEditDraftReportResponseDto
 } from '#backend/controllers/reports/edit-draft-report/edit-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  BranchTab,
+  BridgeTab,
+  MemberTab,
+  ModelTab,
+  ProjectTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -21,10 +31,31 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { ReportRowService } from '#backend/services/report-row/report-row.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
+import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
+import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { Member } from '#common/types/backend/parts/member';
+import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
+import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditDraftReportOutput } from '#common/types/backend/routes/reports/edit-draft-report/edit-draft-report-output';
+import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
+import type { Row } from '#common/types/blockml/parts/report/row/row';
+
+type PrepareReportChangesPayload = {
+  processedRows: Row[];
+  enabledChartRowIds: string[];
+  apiUserMember: Member;
+};
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -58,159 +89,217 @@ export class EditDraftReportController {
   async editDraftRep(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditDraftReportRequestDto
-  ) {
-    let { traceId } = body;
-    let {
-      projectId,
-      repoId,
-      branchId,
-      envId,
-      reportId,
-      changeType,
-      rowChange,
-      rowIds,
-      timeSpec,
-      timezone,
-      timeRangeFractionBrick,
-      newReportFields,
-      listeners,
-      chart
-    } = body.input;
-
-    let repoType = await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let report = await this.reportsService.getReportCheckExistsAndAccess({
-      projectId: projectId,
-      reportId: reportId,
-      structId: bridge.structId,
-      user: user,
-      userMember: userMember
-    });
-
-    if (
-      isDefined(rowChange?.metricId) &&
-      report.rows.map(row => row.metricId).indexOf(rowChange.metricId) < 0
-    ) {
-      let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
-
-      await this.modelsService.getModelCheckExistsAndAccess({
-        structId: bridge.structId,
-        modelId: metric.modelId,
-        userMember: userMember
-      });
-    }
-
-    if (isDefined(newReportFields)) {
-      report.rows
-        .filter(row => isDefined(row.parameters))
-        .forEach(row => {
-          row.parameters = row.parameters.filter(
-            parameter =>
-              !parameter.listen ||
-              newReportFields.map(y => y.id).indexOf(parameter.listen) > -1
-          );
-        });
-    }
-
-    let processedRows = this.reportRowService.getProcessedRows({
-      rows: report.rows,
-      rowChange: rowChange,
-      rowIds: rowIds,
-      changeType: changeType,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFractionBrick: timeRangeFractionBrick,
-      metrics: struct.metrics,
-      struct: struct,
-      newReportFields: newReportFields,
-      listeners: listeners
-    });
-
-    report.fields = newReportFields;
-    report.rows = processedRows;
-    report.chart = chart;
-
-    let enabledChartRowIds = processedRows
-      .filter(row => row.showChart === true)
-      .map(row => row.rowId);
-
-    report.chart.series = report.chart.series
-      .filter(s => enabledChartRowIds.indexOf(s.dataRowId) > -1)
-      .sort((a, b) =>
-        a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
-      );
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    let repApi = await this.reportDataService.getReportData({
-      report: report,
-      traceId: traceId,
-      project: project,
-      apiUserMember: apiUserMember,
-      userMember: userMember,
-      user: user,
-      envId: envId,
-      struct: struct,
-      metrics: struct.metrics,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFractionBrick: timeRangeFractionBrick,
-      isSaveToDb: true
-    });
-
-    let modelPartXs = await this.modelsService.getModelPartXs({
-      structId: struct.structId,
-      apiUserMember: apiUserMember
-    });
-
-    let payload: ToBackendEditDraftReportOutput = {
-      needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({
-        struct: struct,
-        modelPartXs: modelPartXs
+  ): Promise<BackendResultForOperation<'editDraftReport'>> {
+    return Result.pipe(
+      Result.succeed({
+        user: user,
+        traceId: body.traceId,
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        reportId: body.input.reportId,
+        changeType: body.input.changeType,
+        rowChange: body.input.rowChange,
+        rowIds: body.input.rowIds,
+        timeSpec: body.input.timeSpec,
+        timezone: body.input.timezone,
+        timeRangeFractionBrick: body.input.timeRangeFractionBrick,
+        newReportFields: body.input.newReportFields,
+        listeners: body.input.listeners,
+        chart: body.input.chart
       }),
-      userMember: apiUserMember,
-      report: repApi
-    };
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'report',
+        (
+          v
+        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
+          this.reportsService.getReportCheckExistsAndAccessResult({
+            projectId: v.projectId,
+            reportId: v.reportId,
+            structId: v.bridge.structId,
+            user: v.user,
+            userMember: v.userMember
+          })
+      ),
+      Result.andThrough(async v => {
+        if (
+          isDefined(v.rowChange?.metricId) &&
+          v.report.rows.map(row => row.metricId).indexOf(v.rowChange.metricId) <
+            0
+        ) {
+          let metric: ModelMetric = v.struct.metrics.find(
+            x => x.metricId === v.rowChange.metricId
+          );
 
-    return payload;
+          let modelAccessResult: Result.Result<
+            ModelTab,
+            GetModelCheckExistsAndAccessError
+          > = await this.modelsService.getModelCheckExistsAndAccessResult({
+            structId: v.bridge.structId,
+            modelId: metric.modelId,
+            userMember: v.userMember
+          });
+
+          if (Result.isFailure(modelAccessResult)) {
+            return modelAccessResult;
+          }
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind(
+        'prepareReportChangesPayload',
+        (v): Result.Result<PrepareReportChangesPayload, never> => {
+          if (isDefined(v.newReportFields)) {
+            v.report.rows
+              .filter(row => isDefined(row.parameters))
+              .forEach(row => {
+                row.parameters = row.parameters.filter(
+                  parameter =>
+                    !parameter.listen ||
+                    v.newReportFields.map(y => y.id).indexOf(parameter.listen) >
+                      -1
+                );
+              });
+          }
+
+          let processedRows: Row[] = this.reportRowService.getProcessedRows({
+            rows: v.report.rows,
+            rowChange: v.rowChange,
+            rowIds: v.rowIds,
+            changeType: v.changeType,
+            timezone: v.timezone,
+            timeSpec: v.timeSpec,
+            timeRangeFractionBrick: v.timeRangeFractionBrick,
+            metrics: v.struct.metrics,
+            struct: v.struct,
+            newReportFields: v.newReportFields,
+            listeners: v.listeners
+          });
+
+          v.report.fields = v.newReportFields;
+
+          v.report.rows = processedRows;
+
+          v.report.chart = v.chart;
+
+          let enabledChartRowIds: string[] = processedRows
+            .filter(row => row.showChart === true)
+            .map(row => row.rowId);
+
+          v.report.chart.series = v.report.chart.series
+            .filter(s => enabledChartRowIds.indexOf(s.dataRowId) > -1)
+            .sort((a, b) =>
+              a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
+            );
+
+          let apiUserMember: Member = this.membersService.tabToApi({
+            member: v.userMember
+          });
+
+          return Result.succeed({
+            processedRows: processedRows,
+            enabledChartRowIds: enabledChartRowIds,
+            apiUserMember: apiUserMember
+          });
+        }
+      ),
+      Result.bind(
+        'repApi',
+        (v): Result.ResultAsync<ReportX, GetReportDataError> =>
+          this.reportDataService.getReportDataResult({
+            report: v.report,
+            traceId: v.traceId,
+            project: v.project,
+            apiUserMember: v.prepareReportChangesPayload.apiUserMember,
+            userMember: v.userMember,
+            user: v.user,
+            envId: v.envId,
+            struct: v.struct,
+            metrics: v.struct.metrics,
+            timezone: v.timezone,
+            timeSpec: v.timeSpec,
+            timeRangeFractionBrick: v.timeRangeFractionBrick,
+            isSaveToDb: true
+          })
+      ),
+      Result.bind(
+        'modelPartXs',
+        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
+          this.modelsService.getModelPartXsResult({
+            structId: v.struct.structId,
+            apiUserMember: v.prepareReportChangesPayload.apiUserMember
+          })
+      ),
+      Result.map(
+        (v): ToBackendEditDraftReportOutput => ({
+          needValidate: v.bridge.needValidate,
+          struct: this.structsService.tabToApi({
+            struct: v.struct,
+            modelPartXs: v.modelPartXs
+          }),
+          userMember: v.prepareReportChangesPayload.apiUserMember,
+          report: v.repApi
+        })
+      )
+    );
   }
 }

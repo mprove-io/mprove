@@ -53,20 +53,20 @@ import {
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetBridgeCheckExistsResultError } from '#common/types/backend/function-errors/get-bridge-check-exists-result-error';
-import type { GetMconfigCheckExistsResultError } from '#common/types/backend/function-errors/get-mconfig-check-exists-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetModelCheckExistsResultError } from '#common/types/backend/function-errors/get-model-check-exists-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { QueryEntToTabResultError } from '#common/types/backend/function-errors/query-ent-to-tab-result-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDuplicateMconfigAndQueryOutput } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-output';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 
-type DuplicatedMconfigAndQuery = {
+type DuplicateMconfigAndQueryPayload = {
   newMconfig: MconfigTab;
   newQuery: QueryTab;
 };
@@ -126,14 +126,14 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -141,7 +141,7 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -157,7 +157,7 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsResultError> =>
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
           this.bridgesService.getBridgeCheckExistsResult({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
@@ -167,7 +167,7 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'oldMconfig',
-        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsResultError> =>
+        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
           this.mconfigsService.getMconfigCheckExistsResult({
             structId: v.bridge.structId,
             mconfigId: v.oldMconfigId
@@ -194,7 +194,7 @@ export class DuplicateMconfigAndQueryController {
       // Dashboard tiles and report metrics do not require model access here.
       Result.bind(
         'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsResultError> =>
+        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
           this.modelsService.getModelCheckExistsResult({
             structId: v.bridge.structId,
             modelId: v.oldMconfig.modelId
@@ -202,7 +202,7 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'oldQuery',
-        (v): Result.ResultAsync<QueryTab, QueryEntToTabResultError> =>
+        (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
           this.db.drizzle.query.queriesTable
             .findFirst({
               where: and(
@@ -217,8 +217,8 @@ export class DuplicateMconfigAndQueryController {
             )
       ),
       Result.bind(
-        'duplicated',
-        (v): Result.Result<DuplicatedMconfigAndQuery, never> => {
+        'duplicateMconfigAndQueryPayload',
+        (v): Result.Result<DuplicateMconfigAndQueryPayload, never> => {
           let newMconfigId: string = makeId();
 
           let newMconfigParentType: MconfigParentType =
@@ -271,10 +271,10 @@ export class DuplicateMconfigAndQueryController {
                     await this.db.packer.write({
                       tx: tx,
                       insert: {
-                        mconfigs: [v.duplicated.newMconfig]
+                        mconfigs: [v.duplicateMconfigAndQueryPayload.newMconfig]
                       },
                       insertOrUpdate: {
-                        queries: [v.duplicated.newQuery]
+                        queries: [v.duplicateMconfigAndQueryPayload.newQuery]
                       }
                     })
                 ),
@@ -286,10 +286,12 @@ export class DuplicateMconfigAndQueryController {
       Result.map(
         (v): ToBackendDuplicateMconfigAndQueryOutput => ({
           mconfig: this.mconfigsService.tabToApi({
-            mconfig: v.duplicated.newMconfig,
+            mconfig: v.duplicateMconfigAndQueryPayload.newMconfig,
             modelFields: v.model.fields
           }),
-          query: this.queriesService.tabToApi({ query: v.duplicated.newQuery })
+          query: this.queriesService.tabToApi({
+            query: v.duplicateMconfigAndQueryPayload.newQuery
+          })
         })
       )
     );

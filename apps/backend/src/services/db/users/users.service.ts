@@ -6,7 +6,10 @@ import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import {
   type UserEnt,
@@ -26,11 +29,17 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendUserAliasIsUndefinedError } from '#common/types/backend/errors/backend-user-alias-is-undefined-error';
-import type { CheckUserIsNotRestrictedResultError } from '#common/types/backend/function-errors/check-user-is-not-restricted-result-error';
-import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
-import type { MakeAliasResultError } from '#common/types/backend/function-errors/make-alias-result-error';
-import type { MakeHashResultError } from '#common/types/backend/function-errors/make-hash-result-error';
-import { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
+import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
+import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
+import type { GetSelectedGivensError } from '#common/types/backend/function-errors/get-selected-givens-error';
+import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
+import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
+import type { SelectUnselectedGivensError } from '#common/types/backend/function-errors/select-unselected-givens-error';
+import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
+import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
 import type { User } from '#common/types/backend/parts/user';
 
@@ -140,55 +149,132 @@ export class UsersService {
     return apiUser;
   }
 
-  async getSelectedGivens(item: { user: UserTab; projectId: string }) {
+  async getSelectedGivens(item: {
+    user: UserTab;
+    projectId: string;
+  }): Promise<SelectedGiven[]> {
     let { user, projectId } = item;
 
-    await this.selectUnselectedGivens({ user: user, projectId: projectId });
+    let result: Result.Result<SelectedGiven[], GetSelectedGivensError> =
+      await this.getSelectedGivensResult({ user: user, projectId: projectId });
 
-    let projectSelectedGivenLink = user.ui.projectSelectedGivenLinks?.find(
-      link => link.projectId === projectId
-    );
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
 
-    return projectSelectedGivenLink?.givens ?? [];
+    let selectedGivens: SelectedGiven[] = result.value;
+
+    return selectedGivens;
   }
 
-  async selectUnselectedGivens(item: { user: UserTab; projectId: string }) {
+  async getSelectedGivensResult(item: {
+    user: UserTab;
+    projectId: string;
+  }): Result.ResultAsync<SelectedGiven[], GetSelectedGivensError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThrough(v =>
+        this.selectUnselectedGivensResult({
+          user: v.user,
+          projectId: v.projectId
+        })
+      ),
+      Result.map(
+        (v): SelectedGiven[] =>
+          v.user.ui.projectSelectedGivenLinks?.find(
+            link => link.projectId === v.projectId
+          )?.givens ?? []
+      )
+    );
+  }
+
+  async selectUnselectedGivens(item: {
+    user: UserTab;
+    projectId: string;
+  }): Promise<ProjectSelectedGivenLink[]> {
+    let { user, projectId } = item;
+
+    let result: Result.Result<
+      ProjectSelectedGivenLink[],
+      SelectUnselectedGivensError
+    > = await this.selectUnselectedGivensResult({
+      user: user,
+      projectId: projectId
+    });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let projectSelectedGivenLinks: ProjectSelectedGivenLink[] = result.value;
+
+    return projectSelectedGivenLinks;
+  }
+
+  async selectUnselectedGivensResult(item: {
+    user: UserTab;
+    projectId: string;
+  }): Result.ResultAsync<
+    ProjectSelectedGivenLink[],
+    SelectUnselectedGivensError
+  > {
     let { user, projectId } = item;
 
     user.ui = user.ui ?? makeCopy(DEFAULT_SRV_UI);
 
-    let existingLinks = user.ui.projectSelectedGivenLinks ?? [];
+    let existingLinks: ProjectSelectedGivenLink[] =
+      user.ui.projectSelectedGivenLinks ?? [];
 
-    let member = await this.db.drizzle.query.membersTable
-      .findFirst({
-        where: and(
-          eq(membersTable.memberId, user.userId),
-          eq(membersTable.projectId, projectId)
-        )
-      })
-      .then(x => this.tabService.memberEntToTab(x));
+    let memberResult: Result.Result<MemberTab, MemberEntToTabError> =
+      await this.db.drizzle.query.membersTable
+        .findFirst({
+          where: and(
+            eq(membersTable.memberId, user.userId),
+            eq(membersTable.projectId, projectId)
+          )
+        })
+        .then(x =>
+          isUndefined(x)
+            ? Result.succeed(undefined)
+            : this.tabService.memberEntToTabResult({ memberEnt: x })
+        );
 
-    if (isUndefined(member)) {
-      return user.ui.projectSelectedGivenLinks;
+    if (Result.isFailure(memberResult)) {
+      return memberResult;
     }
 
-    let memberGivens = await this.givensService.getMemberGivensForSelection({
+    let member: MemberTab = memberResult.value;
+
+    if (isUndefined(member)) {
+      return Result.succeed(user.ui.projectSelectedGivenLinks);
+    }
+
+    let memberGivensResult: Result.Result<
+      MemberGiven[],
+      GetMemberGivensForSelectionError
+    > = await this.givensService.getMemberGivensForSelectionResult({
       projectId: member.projectId,
       roles: member.roles
     });
 
-    let existingLink = existingLinks.find(
+    if (Result.isFailure(memberGivensResult)) {
+      return memberGivensResult;
+    }
+
+    let memberGivens: MemberGiven[] = memberGivensResult.value;
+
+    let existingLink: ProjectSelectedGivenLink = existingLinks.find(
       link => link.projectId === member.projectId
     );
 
-    let selectedGivens = existingLink?.givens ?? [];
+    let selectedGivens: SelectedGiven[] = existingLink?.givens ?? [];
 
-    let givens = memberGivens.map(given => {
-      let storedGiven = selectedGivens.find(
+    let givens: SelectedGiven[] = memberGivens.map(given => {
+      let storedGiven: SelectedGiven = selectedGivens.find(
         selectedGiven => selectedGiven.givenId === given.givenId
       );
 
-      let availableValues = given.memberGivenValues.map(
+      let availableValues: string[] = given.memberGivenValues.map(
         memberGivenValue => memberGivenValue.value
       );
 
@@ -229,15 +315,15 @@ export class UsersService {
       navTs: existingLink?.navTs ?? Date.now()
     };
 
-    let hasExistingLink = isDefined(existingLink);
+    let isExistingLink: boolean = isDefined(existingLink);
 
-    user.ui.projectSelectedGivenLinks = hasExistingLink
+    user.ui.projectSelectedGivenLinks = isExistingLink
       ? existingLinks.map(link =>
           link.projectId === projectId ? projectSelectedGivenLink : link
         )
       : [...existingLinks, projectSelectedGivenLink];
 
-    return user.ui.projectSelectedGivenLinks;
+    return Result.succeed(user.ui.projectSelectedGivenLinks);
   }
 
   checkUserPasswordHashIsDefined(item: { user: UserTab }) {
@@ -250,26 +336,39 @@ export class UsersService {
     }
   }
 
-  async getUserCheckExists(item: { userId: string }) {
+  async getUserCheckExists(item: { userId: string }): Promise<UserTab> {
     let { userId } = item;
 
-    let user = await this.db.drizzle.query.usersTable
-      .findFirst({
-        where: eq(usersTable.userId, userId)
-      })
-      .then(x => this.tabService.userEntToTab(x));
+    let result: Result.Result<UserTab, GetUserCheckExistsError> =
+      await this.getUserCheckExistsResult({ userId: userId });
 
-    if (isUndefined(user)) {
-      throw new ServerError({
-        message: 'BACKEND_USER_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
+
+    let user: UserTab = result.value;
 
     return user;
   }
 
+  async getUserCheckExistsResult(item: {
+    userId: string;
+  }): Result.ResultAsync<UserTab, GetUserCheckExistsError> {
+    let { userId } = item;
+
+    return this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.userId, userId)
+      })
+      .then(x =>
+        isUndefined(x)
+          ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
+          : this.tabService.userEntToTabResult({ userEnt: x })
+      );
+  }
+
   checkUserIsNotRestricted(item: { user: UserTab }) {
-    let result: Result.Result<void, CheckUserIsNotRestrictedResultError> =
+    let result: Result.Result<void, CheckUserIsNotRestrictedError> =
       this.checkUserIsNotRestrictedResult(item);
 
     if (Result.isFailure(result)) {
@@ -279,7 +378,7 @@ export class UsersService {
 
   checkUserIsNotRestrictedResult(item: {
     user: UserTab;
-  }): Result.Result<void, CheckUserIsNotRestrictedResultError> {
+  }): Result.Result<void, CheckUserIsNotRestrictedError> {
     let { user } = item;
 
     return user.alias === RESTRICTED_USER_ALIAS
@@ -421,7 +520,7 @@ export class UsersService {
   }
 
   async makeAlias(email: string): Promise<string> {
-    let result: Result.Result<string, MakeAliasResultError> =
+    let result: Result.Result<string, MakeAliasError> =
       await this.makeAliasResult({ email: email });
 
     if (Result.isFailure(result)) {
@@ -435,7 +534,7 @@ export class UsersService {
 
   async makeAliasResult(item: {
     email: string;
-  }): Result.ResultAsync<string, MakeAliasResultError> {
+  }): Result.ResultAsync<string, MakeAliasError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
@@ -454,45 +553,43 @@ export class UsersService {
       ),
       Result.bind(
         'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretResultError> =>
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
           this.dconfigsService.getDconfigHashSecretResult()
       ),
-      Result.andThen(
-        async (v): Result.ResultAsync<string, MakeHashResultError> => {
-          let alias: string = v.alias;
+      Result.andThen(async (v): Result.ResultAsync<string, MakeHashError> => {
+        let alias: string = v.alias;
 
-          let count = 2;
+        let count = 2;
 
-          let isRestart = true;
+        let isRestart = true;
 
-          while (isRestart) {
-            let aliasHashResult: Result.Result<string, MakeHashResultError> =
-              this.hashService.makeHashResult({
-                input: alias,
-                hashSecret: v.hashSecret
-              });
+        while (isRestart) {
+          let aliasHashResult: Result.Result<string, MakeHashError> =
+            this.hashService.makeHashResult({
+              input: alias,
+              hashSecret: v.hashSecret
+            });
 
-            if (Result.isFailure(aliasHashResult)) {
-              return Result.fail(aliasHashResult.error);
-            }
-
-            let aliasUserEnt: UserEnt =
-              await this.db.drizzle.query.usersTable.findFirst({
-                where: eq(usersTable.aliasHash, aliasHashResult.value)
-              });
-
-            if (isDefined(aliasUserEnt)) {
-              alias = `${alias}${count}`;
-
-              count++;
-            } else {
-              isRestart = false;
-            }
+          if (Result.isFailure(aliasHashResult)) {
+            return Result.fail(aliasHashResult.error);
           }
 
-          return Result.succeed(alias);
+          let aliasUserEnt: UserEnt =
+            await this.db.drizzle.query.usersTable.findFirst({
+              where: eq(usersTable.aliasHash, aliasHashResult.value)
+            });
+
+          if (isDefined(aliasUserEnt)) {
+            alias = `${alias}${count}`;
+
+            count++;
+          } else {
+            isRestart = false;
+          }
         }
-      )
+
+        return Result.succeed(alias);
+      })
     );
   }
 }

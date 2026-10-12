@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import {
   add,
   differenceInDays,
@@ -27,12 +28,12 @@ import {
   startOfYear,
   sub
 } from 'date-fns';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix/node-format-ts-unix';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { TIME_COLUMNS_LIMIT } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetTimeColumnsError } from '#common/types/backend/function-errors/get-time-columns-error';
 import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
@@ -45,6 +46,22 @@ const upperBoundTimeFractionTypes = [
   'TsIsThrough'
 ] satisfies FractionType[];
 
+type TimeRangeValidation = {
+  valid: number;
+  brick?: string;
+  rangeStart?: number;
+  rangeEnd?: number;
+};
+
+export type GetTimeColumnsOutput = {
+  columns: Column[];
+  isTimeColumnsLimitExceeded: boolean;
+  timeColumnsLimit: number;
+  timeRangeFraction: Fraction;
+  rangeStart: number;
+  rangeEnd: number;
+};
+
 @Injectable()
 export class ReportTimeColumnsService {
   constructor(
@@ -52,14 +69,14 @@ export class ReportTimeColumnsService {
     private logger: Logger
   ) {}
 
-  async getTimeColumns(item: {
+  async getTimeColumnsResult(item: {
     traceId: string;
     timezone: string;
     timeSpec: TimeSpec;
     timeRangeFractionBrick: string;
     projectWeekStart: ProjectWeekStart;
     caseSensitiveStringFilters: boolean;
-  }) {
+  }): Result.ResultAsync<GetTimeColumnsOutput, GetTimeColumnsError> {
     let {
       traceId,
       timezone,
@@ -73,7 +90,7 @@ export class ReportTimeColumnsService {
 
     let fractions: Fraction[] = [];
 
-    let p = bricksToFractions({
+    let p: TimeRangeValidation = bricksToFractions({
       filterBricks: [timeRangeFractionBrick],
       result: 'ts',
       fractions: fractions,
@@ -84,17 +101,18 @@ export class ReportTimeColumnsService {
     });
 
     if (p.valid !== 1) {
-      throw new ServerError({
-        message: 'BACKEND_WRONG_TIME_RANGE'
+      return Result.fail({
+        code: 'BACKEND_WRONG_TIME_RANGE'
       });
     }
 
     let timeRangeFraction = fractions[0];
 
     let respRangeStart = p.rangeStart;
+
     let respRangeEnd = p.rangeEnd;
 
-    let rangeStart =
+    let rangeStart: number =
       isUndefined(respRangeStart) && isUndefined(respRangeEnd)
         ? undefined
         : isDefined(respRangeStart)
@@ -122,7 +140,7 @@ export class ReportTimeColumnsService {
                 )
               );
 
-    let rangeEnd =
+    let rangeEnd: number =
       isUndefined(respRangeStart) && isUndefined(respRangeEnd)
         ? undefined
         : isDefined(respRangeEnd)
@@ -150,13 +168,15 @@ export class ReportTimeColumnsService {
                 )
               );
 
-    let startDate = isDefined(rangeStart)
+    let startDate: Date = isDefined(rangeStart)
       ? new Date(rangeStart * 1000)
       : undefined;
 
-    let endDate = isDefined(rangeEnd) ? new Date(rangeEnd * 1000) : undefined;
+    let endDate: Date = isDefined(rangeEnd)
+      ? new Date(rangeEnd * 1000)
+      : undefined;
 
-    let diffColumnsLength =
+    let diffColumnsLength: number =
       timeSpec === 'timestamps'
         ? 0
         : timeSpec === 'years'
@@ -226,7 +246,7 @@ export class ReportTimeColumnsService {
       }
     }
 
-    let timeColumns =
+    let timeColumns: Date[] =
       isDefined(startDate) &&
       isDefined(endDate) &&
       getUnixTime(startDate) === getUnixTime(endDate)
@@ -321,8 +341,8 @@ export class ReportTimeColumnsService {
       }
     }
 
-    let columns = timeColumns.map(x => {
-      let unixTimeZoned = getUnixTime(x);
+    let columns: Column[] = timeColumns.map(x => {
+      let unixTimeZoned: number = getUnixTime(x);
 
       let column: Column = {
         columnId: unixTimeZoned,
@@ -335,13 +355,13 @@ export class ReportTimeColumnsService {
       return column;
     });
 
-    return {
+    return Result.succeed({
       columns: columns,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
       timeColumnsLimit: timeColumnsLimit,
       timeRangeFraction: timeRangeFraction,
       rangeStart: rangeStart,
       rangeEnd: rangeEnd
-    };
+    });
   }
 }

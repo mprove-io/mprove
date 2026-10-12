@@ -13,7 +13,7 @@ follow the exception under "Entity and Tab variable names".
 ```ts
 Result.bind(
   'avatar',
-  (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+  (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
     this.db.drizzle.query.avatarsTable
       .findFirst({
         where: eq(avatarsTable.userId, v.avatarUserId)

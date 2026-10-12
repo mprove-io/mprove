@@ -24,12 +24,12 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ArchiveSessionResultError } from '#common/types/backend/function-errors/archive-session-result-error';
-import type { CheckRepoIdResultError } from '#common/types/backend/function-errors/check-repo-id-result-error';
-import type { GetMemberCheckIsEditorResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { GetSessionByIdCheckExistsResultError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { ArchiveSessionError } from '#common/types/backend/function-errors/archive-session-error';
+import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
+import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/repos/commit-repo/commit-repo-output';
@@ -74,7 +74,7 @@ export class CommitRepoController {
       }),
       Result.bind(
         'repoType',
-        (v): Result.ResultAsync<RepoType, CheckRepoIdResultError> =>
+        (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
           this.sessionsService.checkRepoIdResult({
             repoId: v.repoId,
             userId: v.user.userId,
@@ -91,14 +91,14 @@ export class CommitRepoController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
           this.membersService.getMemberCheckIsEditorResult({
             projectId: v.projectId,
             memberId: v.user.userId
@@ -120,9 +120,7 @@ export class CommitRepoController {
       ),
       Result.bind(
         'diskCommitRepoOutput',
-        (
-          v
-        ): Result.ResultAsync<ToDiskCommitRepoOutput, SendToDiskResultError> =>
+        (v): Result.ResultAsync<ToDiskCommitRepoOutput, SendToDiskError> =>
           this.rpcService.sendToDiskResult({
             request: {
               operation: 'commitRepo',
@@ -143,10 +141,7 @@ export class CommitRepoController {
         'session',
         async (
           v
-        ): Result.ResultAsync<
-          SessionTab,
-          GetSessionByIdCheckExistsResultError
-        > =>
+        ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
           v.repoType !== 'session'
             ? Result.succeed(undefined)
             : this.sessionsService.getSessionByIdCheckExistsResult({
@@ -155,7 +150,7 @@ export class CommitRepoController {
       ),
       Result.bind(
         'apiSession',
-        async (v): Result.ResultAsync<SessionApi, ArchiveSessionResultError> =>
+        async (v): Result.ResultAsync<SessionApi, ArchiveSessionError> =>
           isUndefined(v.session)
             ? Result.succeed(undefined)
             : this.sessionArchiveService.archiveSessionResult({

@@ -30,7 +30,7 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetProviderCheckExistsResultError } from '#common/types/backend/function-errors/get-provider-check-exists-result-error';
+import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendToggleProviderOutput } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-output';
 
@@ -78,9 +78,7 @@ export class ToggleProviderController {
       ),
       Result.bind(
         'provider',
-        (
-          v
-        ): Result.ResultAsync<ProviderTab, GetProviderCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
           this.providersService.getProviderCheckExistsResult({
             projectId: v.projectId,
             providerId: v.providerId

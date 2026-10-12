@@ -38,13 +38,13 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { AvatarEntToTabResultError } from '#common/types/backend/function-errors/avatar-ent-to-tab-result-error';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetModelPartXsResultError } from '#common/types/backend/function-errors/get-model-part-xs-result-error';
-import type { GetStructCheckExistsResultError } from '#common/types/backend/function-errors/get-struct-check-exists-result-error';
-import type { OrgEntToTabResultError } from '#common/types/backend/function-errors/org-ent-to-tab-result-error';
-import type { ProjectEntToTabResultError } from '#common/types/backend/function-errors/project-ent-to-tab-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
+import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { StructX } from '#common/types/backend/parts/struct/struct-x';
@@ -102,9 +102,7 @@ export class GetNavController {
       ),
       Result.bind(
         'projects',
-        async (
-          v
-        ): Result.ResultAsync<ProjectTab[], ProjectEntToTabResultError> =>
+        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
             : this.db.drizzle.query.projectsTable
@@ -126,7 +124,7 @@ export class GetNavController {
       ),
       Result.bind(
         'orgs',
-        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> =>
+        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
           v.orgIds.length === 0
             ? Result.succeed([])
             : this.db.drizzle.query.orgsTable
@@ -141,7 +139,7 @@ export class GetNavController {
       ),
       Result.bind(
         'ownerOrgs',
-        (v): Result.ResultAsync<OrgTab[], OrgEntToTabResultError> =>
+        (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
           this.db.drizzle.query.orgsTable
             .findMany({
               where: eq(orgsTable.ownerId, v.user.userId)
@@ -218,7 +216,7 @@ export class GetNavController {
       ),
       Result.bind(
         'avatar',
-        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabResultError> =>
+        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
           this.db.drizzle.query.avatarsTable
             .findFirst({
               where: eq(avatarsTable.userId, v.user.userId)
@@ -241,9 +239,7 @@ export class GetNavController {
       ),
       Result.bind(
         'userMember',
-        async (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        async (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           v.isGetRepo
             ? this.membersService.getMemberCheckExistsResult({
                 projectId: v.resultProject.projectId,
@@ -262,9 +258,7 @@ export class GetNavController {
       ),
       Result.bind(
         'struct',
-        async (
-          v
-        ): Result.ResultAsync<StructTab, GetStructCheckExistsResultError> =>
+        async (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           v.isGetRepo
             ? this.structsService.getStructCheckExistsResult({
                 structId: v.bridgeEnt.structId,
@@ -274,9 +268,7 @@ export class GetNavController {
       ),
       Result.bind(
         'modelPartXs',
-        async (
-          v
-        ): Result.ResultAsync<ModelPartX[], GetModelPartXsResultError> =>
+        async (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
           v.isGetRepo
             ? this.modelsService.getModelPartXsResult({
                 structId: v.struct.structId,
@@ -302,10 +294,7 @@ export class GetNavController {
         'diskGetCatalogNodesOutput',
         async (
           v
-        ): Result.ResultAsync<
-          ToDiskGetCatalogNodesOutput,
-          SendToDiskResultError
-        > =>
+        ): Result.ResultAsync<ToDiskGetCatalogNodesOutput, SendToDiskError> =>
           v.isGetRepo
             ? this.rpcService.sendToDiskResult({
                 request: {

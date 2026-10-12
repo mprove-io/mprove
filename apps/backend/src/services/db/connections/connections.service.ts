@@ -12,8 +12,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CheckConnectionDoesNotExistResultError } from '#common/types/backend/function-errors/check-connection-does-not-exist-result-error';
-import type { GetConnectionCheckExistsResultError } from '#common/types/backend/function-errors/get-connection-check-exists-result-error';
+import type { CheckConnectionDoesNotExistError } from '#common/types/backend/function-errors/check-connection-does-not-exist-error';
+import type { GetConnectionCheckExistsError } from '#common/types/backend/function-errors/get-connection-check-exists-error';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
@@ -350,7 +350,7 @@ export class ConnectionsService {
     projectId: string;
     envId: string;
     connectionId: string;
-  }): Result.ResultAsync<void, CheckConnectionDoesNotExistResultError> {
+  }): Result.ResultAsync<void, CheckConnectionDoesNotExistError> {
     let { projectId, envId, connectionId } = item;
 
     return this.db.drizzle.query.connectionsTable
@@ -373,10 +373,8 @@ export class ConnectionsService {
     envId: string;
     projectId: string;
   }): Promise<ConnectionTab> {
-    let result: Result.Result<
-      ConnectionTab,
-      GetConnectionCheckExistsResultError
-    > = await this.getConnectionCheckExistsResult(item);
+    let result: Result.Result<ConnectionTab, GetConnectionCheckExistsError> =
+      await this.getConnectionCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -391,7 +389,7 @@ export class ConnectionsService {
     connectionId: string;
     envId: string;
     projectId: string;
-  }): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsResultError> {
+  }): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsError> {
     let { projectId, envId, connectionId } = item;
 
     return this.db.drizzle.query.connectionsTable

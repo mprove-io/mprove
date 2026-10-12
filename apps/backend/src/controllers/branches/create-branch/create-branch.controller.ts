@@ -34,7 +34,7 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import {
   BlockmlService,
-  type RebuildStructResultValue
+  type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -49,11 +49,11 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendSessionBranchCannotBeCreatedError } from '#common/types/backend/errors/backend-session-branch-cannot-be-created-error';
-import type { CheckRepoIdResultError } from '#common/types/backend/function-errors/check-repo-id-result-error';
-import type { GetBranchCheckExistsResultError } from '#common/types/backend/function-errors/get-branch-check-exists-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/branches/create-branch/create-branch-output';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
@@ -101,7 +101,7 @@ export class CreateBranchController {
       }),
       Result.bind(
         'repoType',
-        (v): Result.ResultAsync<RepoType, CheckRepoIdResultError> =>
+        (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
           this.sessionsService.checkRepoIdResult({
             repoId: v.repoId,
             userId: v.userId,
@@ -118,7 +118,7 @@ export class CreateBranchController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> =>
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
           this.projectsService.getProjectCheckExistsResult({
             projectId: v.projectId
           })
@@ -131,7 +131,7 @@ export class CreateBranchController {
       ),
       Result.bind(
         'fromBranch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsResultError> =>
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
           this.branchesService.getBranchCheckExistsResult({
             projectId: v.projectId,
             repoId: v.repoId,
@@ -147,12 +147,7 @@ export class CreateBranchController {
       ),
       Result.bind(
         'diskCreateBranchOutput',
-        (
-          v
-        ): Result.ResultAsync<
-          ToDiskCreateBranchOutput,
-          SendToDiskResultError
-        > =>
+        (v): Result.ResultAsync<ToDiskCreateBranchOutput, SendToDiskError> =>
           this.rpcService.sendToDiskResult({
             request: {
               operation: 'createBranch',
@@ -212,15 +207,13 @@ export class CreateBranchController {
       Result.andThrough(v =>
         Result.sequence(
           v.newBranchBridges,
-          async (
-            bridge
-          ): Result.ResultAsync<void, RebuildStructResultError> => {
+          async (bridge): Result.ResultAsync<void, RebuildStructError> => {
             if (bridge.envId === PROJECT_ENV_PROD) {
               let structId: string = makeId();
 
               let result: Result.Result<
-                RebuildStructResultValue,
-                RebuildStructResultError
+                RebuildStructOutput,
+                RebuildStructError
               > = await this.blockmlService.rebuildStructResult({
                 traceId: v.traceId,
                 orgId: v.project.orgId,

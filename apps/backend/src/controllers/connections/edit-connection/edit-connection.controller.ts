@@ -40,7 +40,7 @@ import {
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetConnectionCheckExistsResultError } from '#common/types/backend/function-errors/get-connection-check-exists-result-error';
+import type { GetConnectionCheckExistsError } from '#common/types/backend/function-errors/get-connection-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditConnectionOutput } from '#common/types/backend/routes/connections/edit-connection/edit-connection-output';
 
@@ -106,12 +106,7 @@ export class EditConnectionController {
       ),
       Result.bind(
         'connection',
-        (
-          v
-        ): Result.ResultAsync<
-          ConnectionTab,
-          GetConnectionCheckExistsResultError
-        > =>
+        (v): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsError> =>
           this.connectionsService.getConnectionCheckExistsResult({
             projectId: v.projectId,
             envId: v.envId,

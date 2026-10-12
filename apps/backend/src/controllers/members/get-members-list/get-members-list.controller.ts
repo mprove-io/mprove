@@ -21,8 +21,8 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetMemberCheckIsAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-admin-result-error';
-import type { MemberEntToTabResultError } from '#common/types/backend/function-errors/member-ent-to-tab-result-error';
+import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMembersListOutput } from '#common/types/backend/routes/members/get-members-list/get-members-list-output';
 
@@ -60,7 +60,7 @@ export class GetMembersListController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
           this.membersService.getMemberCheckIsAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -68,7 +68,7 @@ export class GetMembersListController {
       ),
       Result.bind(
         'members',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabResultError> =>
+        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
           this.db.drizzle.query.membersTable
             .findMany({ where: eq(membersTable.projectId, v.projectId) })
             .then(xs =>

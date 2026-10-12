@@ -12,8 +12,8 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DconfigEntToTabResultError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-result-error';
-import type { GetDconfigHashSecretResultError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-result-error';
+import type { DconfigEntToTabError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-error';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 
 @Injectable()
 export class DconfigsService {
@@ -24,7 +24,7 @@ export class DconfigsService {
   ) {}
 
   async getDconfigHashSecret(): Promise<string> {
-    let result: Result.Result<string, GetDconfigHashSecretResultError> =
+    let result: Result.Result<string, GetDconfigHashSecretError> =
       await this.getDconfigHashSecretResult();
 
     if (Result.isFailure(result)) {
@@ -38,7 +38,7 @@ export class DconfigsService {
 
   async getDconfigHashSecretResult(): Result.ResultAsync<
     string,
-    GetDconfigHashSecretResultError
+    GetDconfigHashSecretError
   > {
     let dconfigEnt: DconfigEnt =
       await this.db.drizzle.query.dconfigsTable.findFirst({
@@ -53,7 +53,7 @@ export class DconfigsService {
       Result.succeed({ dconfigEnt: dconfigEnt }),
       Result.bind(
         'dconfig',
-        (v): Result.Result<DconfigTab, DconfigEntToTabResultError> =>
+        (v): Result.Result<DconfigTab, DconfigEntToTabError> =>
           this.tabService.dconfigEntToTabResult({
             dconfigEnt: v.dconfigEnt
           })

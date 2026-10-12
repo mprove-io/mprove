@@ -23,7 +23,7 @@ import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import {
   BlockmlService,
-  type RebuildStructResultValue
+  type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -37,12 +37,12 @@ import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { AddProjectResultError } from '#common/types/backend/function-errors/add-project-result-error';
-import type { CheckProjectIsNotRestrictedResultError } from '#common/types/backend/function-errors/check-project-is-not-restricted-result-error';
-import type { DbErrorToResultError } from '#common/types/backend/function-errors/db-error-to-result-error';
-import type { GetProjectCheckExistsResultError } from '#common/types/backend/function-errors/get-project-check-exists-result-error';
-import type { RebuildStructResultError } from '#common/types/backend/function-errors/rebuild-struct-result-error';
-import type { SendToDiskResultError } from '#common/types/backend/function-errors/send-to-disk-result-error';
+import type { AddProjectError } from '#common/types/backend/function-errors/add-project-error';
+import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { Ev } from '#common/types/backend/parts/ev';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { Project } from '#common/types/backend/parts/project/project';
@@ -103,7 +103,7 @@ export class ProjectsService {
   async getProjectCheckExists(item: {
     projectId: string;
   }): Promise<ProjectTab> {
-    let result: Result.Result<ProjectTab, GetProjectCheckExistsResultError> =
+    let result: Result.Result<ProjectTab, GetProjectCheckExistsError> =
       await this.getProjectCheckExistsResult(item);
 
     if (Result.isFailure(result)) {
@@ -117,7 +117,7 @@ export class ProjectsService {
 
   async getProjectCheckExistsResult(item: {
     projectId: string;
-  }): Result.ResultAsync<ProjectTab, GetProjectCheckExistsResultError> {
+  }): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> {
     let { projectId } = item;
 
     return this.db.drizzle.query.projectsTable
@@ -136,7 +136,7 @@ export class ProjectsService {
     userMember: MemberTab;
     repoId: string;
   }) {
-    let result: Result.Result<void, CheckProjectIsNotRestrictedResultError> =
+    let result: Result.Result<void, CheckProjectIsNotRestrictedError> =
       this.checkProjectIsNotRestrictedResult(item);
 
     if (Result.isFailure(result)) {
@@ -148,7 +148,7 @@ export class ProjectsService {
     projectId: string;
     userMember: MemberTab;
     repoId?: string;
-  }): Result.Result<void, CheckProjectIsNotRestrictedResultError> {
+  }): Result.Result<void, CheckProjectIsNotRestrictedError> {
     let { projectId, userMember, repoId } = item;
 
     let demoProjectId: string =
@@ -185,7 +185,7 @@ export class ProjectsService {
     connections: ConnectionTab[];
     traceId: string;
   }): Promise<ProjectTab> {
-    let result: Result.Result<ProjectTab, AddProjectResultError> =
+    let result: Result.Result<ProjectTab, AddProjectError> =
       await this.addProjectResult(item);
 
     if (Result.isFailure(result)) {
@@ -231,7 +231,7 @@ export class ProjectsService {
     evs: Ev[];
     connections: ConnectionTab[];
     traceId: string;
-  }): Result.ResultAsync<ProjectTab, AddProjectResultError> {
+  }): Result.ResultAsync<ProjectTab, AddProjectError> {
     let {
       projectId,
       orgId,
@@ -274,21 +274,19 @@ export class ProjectsService {
       project: newProject
     });
 
-    let diskResult: Result.Result<
-      ToDiskCreateProjectOutput,
-      SendToDiskResultError
-    > = await this.rpcService.sendToDiskResult({
-      request: {
-        operation: 'createProject',
-        traceId: traceId,
-        input: {
-          baseProject: baseProject,
-          devRepoId: user.userId,
-          userAlias: user.alias,
-          seedProjectId: seedProjectId
+    let diskResult: Result.Result<ToDiskCreateProjectOutput, SendToDiskError> =
+      await this.rpcService.sendToDiskResult({
+        request: {
+          operation: 'createProject',
+          traceId: traceId,
+          input: {
+            baseProject: baseProject,
+            devRepoId: user.userId,
+            userAlias: user.alias,
+            seedProjectId: seedProjectId
+          }
         }
-      }
-    });
+      });
 
     if (Result.isFailure(diskResult)) {
       return diskResult;
@@ -347,8 +345,8 @@ export class ProjectsService {
     });
 
     let prodStructResult: Result.Result<
-      RebuildStructResultValue,
-      RebuildStructResultError
+      RebuildStructOutput,
+      RebuildStructError
     > = await this.blockmlService.rebuildStructResult({
       traceId: traceId,
       orgId: newProject.orgId,
@@ -369,8 +367,8 @@ export class ProjectsService {
     }
 
     let devStructResult: Result.Result<
-      RebuildStructResultValue,
-      RebuildStructResultError
+      RebuildStructOutput,
+      RebuildStructError
     > = await this.blockmlService.rebuildStructResult({
       traceId: traceId,
       orgId: newProject.orgId,
@@ -390,7 +388,7 @@ export class ProjectsService {
       return devStructResult;
     }
 
-    let persistence: Result.Result<void, DbErrorToResultError> =
+    let persistence: Result.Result<void, DbErrorToError> =
       await dbErrorToResult({
         action: async () => {
           await retry(

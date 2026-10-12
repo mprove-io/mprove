@@ -15,8 +15,8 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetMemberCheckExistsResultError } from '#common/types/backend/function-errors/get-member-check-exists-result-error';
-import type { GetMemberGivensForSelectionResultError } from '#common/types/backend/function-errors/get-member-givens-for-selection-result-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMemberGivensOutput } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-output';
@@ -62,7 +62,7 @@ export class GetMemberGivensController {
       ),
       Result.bind(
         'member',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsResultError> =>
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           this.membersService.getMemberCheckExistsResult({
             memberId: v.memberId,
             projectId: v.projectId
@@ -74,7 +74,7 @@ export class GetMemberGivensController {
           v
         ): Result.ResultAsync<
           MemberGiven[],
-          GetMemberGivensForSelectionResultError
+          GetMemberGivensForSelectionError
         > =>
           this.givensService.getMemberGivensForSelectionResult({
             projectId: v.projectId,

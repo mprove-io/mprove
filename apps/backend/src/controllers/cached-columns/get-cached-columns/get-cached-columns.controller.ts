@@ -24,9 +24,9 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { CachedColumnEntToTabResultError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-result-error';
-import type { GetCacheEnvIdResultError } from '#common/types/backend/function-errors/get-cache-env-id-result-error';
-import type { GetMemberCheckIsEditorOrAdminResultError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-result-error';
+import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
+import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
+import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';
 
@@ -71,10 +71,7 @@ export class GetCachedColumnsController {
         'userMember',
         (
           v
-        ): Result.ResultAsync<
-          MemberTab,
-          GetMemberCheckIsEditorOrAdminResultError
-        > =>
+        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
           this.membersService.getMemberCheckIsEditorOrAdminResult({
             memberId: v.userId,
             projectId: v.projectId
@@ -89,7 +86,7 @@ export class GetCachedColumnsController {
       ),
       Result.bind(
         'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdResultError> =>
+        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
           this.cachedColumnService.getCacheEnvIdResult({
             projectId: v.projectId,
             envId: v.envId
@@ -115,10 +112,7 @@ export class GetCachedColumnsController {
         'cachedColumns',
         async (
           v
-        ): Result.ResultAsync<
-          CachedColumnTab[],
-          CachedColumnEntToTabResultError
-        > =>
+        ): Result.ResultAsync<CachedColumnTab[], CachedColumnEntToTabError> =>
           v.cachedColumnFullIds.length > 0
             ? this.db.drizzle.query.cachedColumnsTable
                 .findMany({
