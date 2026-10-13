@@ -406,7 +406,7 @@ export class MconfigsService {
             bigqueryQueryJobId: undefined,
             bigqueryConsecutiveErrorsGetJob: 0,
             bigqueryConsecutiveErrorsGetResults: 0,
-            apiUrlHash: undefined,
+            apiUrlHash: undefined, // tab-to-ent
             sessionId: undefined,
             keyTag: undefined,
             serverTs: 1

@@ -269,7 +269,7 @@ export class SuggestDimensionValuesController {
                 modelType: 'Store',
                 parentType: v.prepareParentPayload.parentType,
                 parentId: v.prepareParentPayload.parentId,
-                dateRangeIncludesRightSide: undefined,
+                dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
                 storePart: undefined,
                 modelLabel: v.model.label,
                 modelFilePath: v.model.filePath,

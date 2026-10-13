@@ -180,6 +180,7 @@ export class CreateProjectController {
             remoteType: v.remoteType,
             projectId: makeId(),
             gitUrl: v.gitUrl,
+            // Managed projects have no credential note.
             publicKey: v.note?.publicKey,
             privateKey: v.note?.privateKey,
             publicKeyEncrypted: v.note?.publicKeyEncrypted,
