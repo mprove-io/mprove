@@ -1,23 +1,25 @@
+import { Result } from '@praha/byethrow';
 import type { z } from 'zod';
 import { getToBackendOperation } from '#backend/functions/top/get-to-backend-operation/get-to-backend-operation';
-import { ServerError } from '#common/classes/server-error/server-error';
-
+import { makeBackendInvalidRequestError } from '#backend/functions/top/make-backend-invalid-request-error/make-backend-invalid-request-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendInvalidRequestError } from '#common/types/backend/errors/backend-invalid-request-error';
+import type { ValidateToBackendRequestError } from '#common/types/backend/function-errors/validate-to-backend-request-error';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
 import { zToBackendOperationRegistry } from '#common/types/backend/request/to-backend-operation-registry';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 
-export function validateToBackendRequest(item: {
+export function validateToBackendRequestResult(item: {
   path: string;
   body: unknown;
-}): ToBackendRequest {
+}): Result.Result<ToBackendRequest, ValidateToBackendRequestError> {
   let { path, body } = item;
 
   let operation: ToBackendOperation = getToBackendOperation({ path: path });
 
   if (isUndefined(operation)) {
-    throw new ServerError({
-      message: 'BACKEND_INVALID_REQUEST',
+    return Result.fail({
+      code: 'BACKEND_INVALID_REQUEST',
       displayData: []
     });
   }
@@ -26,17 +28,14 @@ export function validateToBackendRequest(item: {
     zToBackendOperationRegistry[operation].request.safeParse(body);
 
   if (validation.success === false) {
-    throw new ServerError({
-      message: 'BACKEND_INVALID_REQUEST',
-      displayData: validation.error.issues.map(issue => ({
-        path: issue.path.join('.'),
-        message: issue.message,
-        code: issue.code
-      }))
+    let error: BackendInvalidRequestError = makeBackendInvalidRequestError({
+      issues: validation.error.issues
     });
+
+    return Result.fail(error);
   }
 
   let request: ToBackendRequest = validation.data;
 
-  return request;
+  return Result.succeed(request);
 }

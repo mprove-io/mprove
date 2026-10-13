@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
+import { type ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import {
@@ -6,13 +6,15 @@ import {
   type ThrottlerModuleOptions,
   ThrottlerStorage
 } from '@nestjs/throttler';
-import { BackendConfig } from '#backend/config/backend-config';
+import { Result } from '@praha/byethrow';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RESTRICTED_USER_EMAIL } from '#common/constants/top';
 
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetUserIdTrackerError } from '#common/types/backend/function-errors/get-user-id-tracker-error';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 
 @Injectable()
@@ -51,18 +53,36 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
   }
 
   protected async getTracker(req: Record<string, any>): Promise<string> {
-    if (isUndefined(req.user?.userId)) {
+    let result: Result.Result<string, GetUserIdTrackerError> =
+      this.getUserIdTrackerResult({ request: req });
+
+    // The framework tracker callback requires a string or rejection.
+    if (Result.isFailure(result)) {
       throw new ServerError({
-        message: 'BACKEND_THROTTLER_USER_ID_IS_NOT_DEFINED'
+        message: result.error.code
       });
     }
 
-    let tracker;
+    let tracker: string = result.value;
 
-    if (req.user.email === RESTRICTED_USER_EMAIL) {
-      let now = new Date();
+    return tracker;
+  }
 
-      let utc = new Date(
+  private getUserIdTrackerResult(item: {
+    request: Record<string, any>;
+  }): Result.Result<string, GetUserIdTrackerError> {
+    let { request } = item;
+
+    if (isUndefined(request.user?.userId)) {
+      return Result.fail({ code: 'BACKEND_THROTTLER_USER_ID_IS_NOT_DEFINED' });
+    }
+
+    let tracker: string;
+
+    if (request.user.email === RESTRICTED_USER_EMAIL) {
+      let now: Date = new Date();
+
+      let utc: Date = new Date(
         Date.UTC(
           now.getUTCFullYear(),
           now.getUTCMonth(),
@@ -74,47 +94,49 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
         )
       );
 
-      let currentMinuteStartTs = Math.floor(utc.getTime() / 1000);
+      let currentMinuteStartTs: number = Math.floor(utc.getTime() / 1000);
 
-      let ipHeaderA = this.cs.get<BackendConfig['backendRequestIpHeaderA']>(
-        'backendRequestIpHeaderA'
-      );
+      let ipHeaderA: string = this.cs.get<
+        BackendConfig['backendRequestIpHeaderA']
+      >('backendRequestIpHeaderA');
 
-      let ipHeaderB = this.cs.get<BackendConfig['backendRequestIpHeaderB']>(
-        'backendRequestIpHeaderB'
-      );
+      let ipHeaderB: string = this.cs.get<
+        BackendConfig['backendRequestIpHeaderB']
+      >('backendRequestIpHeaderB');
 
-      let ipFromHeader =
+      let ipFromHeader: string =
         isDefinedAndNotEmpty(ipHeaderA) &&
-        isDefinedAndNotEmpty(req.headers[ipHeaderA])
-          ? req.headers[ipHeaderA]
+        isDefinedAndNotEmpty(request.headers[ipHeaderA])
+          ? request.headers[ipHeaderA]
           : isDefinedAndNotEmpty(ipHeaderB) &&
-              isDefinedAndNotEmpty(req.headers[ipHeaderB])
-            ? req.headers[ipHeaderB]
+              isDefinedAndNotEmpty(request.headers[ipHeaderB])
+            ? request.headers[ipHeaderB]
             : undefined;
 
-      let ip = ipFromHeader || req.ip || req.ips?.[0] || 'unknownIp';
+      let ip: string =
+        ipFromHeader || request.ip || request.ips?.[0] || 'unknownIp';
 
-      let suffix = ip === 'unknownIp' ? currentMinuteStartTs : ip;
+      let suffix: string | number =
+        ip === 'unknownIp' ? currentMinuteStartTs : ip;
 
-      tracker = `${req.user.userId}-${suffix}`;
+      tracker = `${request.user.userId}-${suffix}`;
     } else {
-      tracker = req.user.userId;
+      tracker = request.user.userId;
     }
 
-    let isLogThrottleTracker = this.cs.get<
+    let isLogThrottleTracker: boolean = this.cs.get<
       BackendConfig['backendLogThrottleTracker']
     >('backendLogThrottleTracker');
 
     if (isLogThrottleTracker === true) {
       logToConsoleBackend({
-        log: `ThrottlerUserIdGuard - ${req.originalUrl} - tracker: ${tracker}`,
+        log: `ThrottlerUserIdGuard - ${request.originalUrl} - tracker: ${tracker}`,
         logLevel: 'Info',
         logger: this.logger,
         cs: this.cs
       });
     }
 
-    return tracker;
+    return Result.succeed(tracker);
   }
 }

@@ -1,21 +1,42 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  type CanActivate,
+  type ExecutionContext,
+  Injectable
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '#backend/config/backend-config';
+import { Result } from '@praha/byethrow';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { ServerError } from '#common/classes/server-error/server-error';
+import type { CheckTestRoutesAllowedError } from '#common/types/backend/function-errors/check-test-routes-allowed-error';
 
 @Injectable()
 export class TestRoutesGuard implements CanActivate {
   constructor(private cs: ConfigService<BackendConfig>) {}
 
-  canActivate(context: ExecutionContext) {
-    if (
-      this.cs.get<BackendConfig['allowTestRoutes']>('allowTestRoutes') === false
-    ) {
+  canActivate(context: ExecutionContext): boolean {
+    let allowTestRoutes: boolean =
+      this.cs.get<BackendConfig['allowTestRoutes']>('allowTestRoutes');
+
+    let result: Result.Result<void, CheckTestRoutesAllowedError> =
+      this.checkTestRoutesAllowedResult({ allowTestRoutes: allowTestRoutes });
+
+    // Nest requires a boolean or rejection, not a domain Result.
+    if (Result.isFailure(result)) {
       throw new ServerError({
-        message: 'BACKEND_TEST_ROUTES_FORBIDDEN'
+        message: result.error.code
       });
     }
 
     return true;
+  }
+
+  private checkTestRoutesAllowedResult(item: {
+    allowTestRoutes?: boolean;
+  }): Result.Result<void, CheckTestRoutesAllowedError> {
+    let { allowTestRoutes } = item;
+
+    return allowTestRoutes === false
+      ? Result.fail({ code: 'BACKEND_TEST_ROUTES_FORBIDDEN' })
+      : Result.succeed();
   }
 }

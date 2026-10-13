@@ -1,5 +1,6 @@
 import { createZodValidationPipe } from 'nestjs-zod';
 import type { z } from 'zod';
+import { makeBackendInvalidRequestError } from '#backend/functions/top/make-backend-invalid-request-error/make-backend-invalid-request-error';
 import { ServerError } from '#common/classes/server-error/server-error';
 import type { BackendInvalidRequestError } from '#common/types/backend/errors/backend-invalid-request-error';
 
@@ -7,16 +8,12 @@ export const ZodValidationPipe = createZodValidationPipe({
   createValidationException: (error: unknown) => {
     let zodError: z.ZodError = error as z.ZodError;
 
-    let constraints: BackendInvalidRequestError['displayData'] =
-      zodError.issues.map(issue => ({
-        path: issue.path.join('.'),
-        message: issue.message,
-        code: issue.code
-      }));
+    let invalidRequestError: BackendInvalidRequestError =
+      makeBackendInvalidRequestError({ issues: zodError.issues });
 
     let exception: ServerError = new ServerError({
-      message: 'BACKEND_INVALID_REQUEST',
-      displayData: constraints,
+      message: invalidRequestError.code,
+      displayData: invalidRequestError.displayData,
       originalError: error
     });
 

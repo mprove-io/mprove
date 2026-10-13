@@ -330,17 +330,6 @@ export class UsersService {
     return Result.succeed(user.ui.projectSelectedGivenLinks);
   }
 
-  checkUserPasswordHashIsDefined(item: { user: UserTab }) {
-    let { user } = item;
-
-    let result: Result.Result<void, CheckUserPasswordHashIsDefinedError> =
-      this.checkUserPasswordHashIsDefinedResult({ user: user });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-  }
-
   checkUserPasswordHashIsDefinedResult(item: {
     user: UserTab;
   }): Result.Result<void, CheckUserPasswordHashIsDefinedError> {
@@ -399,21 +388,6 @@ export class UsersService {
     return user.alias === RESTRICTED_USER_ALIAS
       ? Result.fail({ code: 'BACKEND_RESTRICTED_USER' })
       : Result.succeed();
-  }
-
-  async getUserByEmailCheckExists(item: { email: string }): Promise<UserTab> {
-    let { email } = item;
-
-    let result: Result.Result<UserTab, GetUserByEmailCheckExistsError> =
-      await this.getUserByEmailCheckExistsResult({ email: email });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let user: UserTab = result.value;
-
-    return user;
   }
 
   async getUserByEmailCheckExistsResult(item: {

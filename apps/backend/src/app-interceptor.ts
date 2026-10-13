@@ -6,6 +6,7 @@ import {
   NestInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
@@ -16,12 +17,13 @@ import { logResponseBackend } from '#backend/functions/top/log-response-backend/
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { makeBackendResultResponse } from '#backend/functions/top/make-backend-result-response/make-backend-result-response';
 import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
-import { validateToBackendRequest } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
+import { validateToBackendRequestResult } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ValidateToBackendRequestError } from '#common/types/backend/function-errors/validate-to-backend-request-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
@@ -66,10 +68,24 @@ export class AppInterceptor implements NestInterceptor {
 
     request.start_ts = Date.now();
 
-    let req: ToBackendRequest = validateToBackendRequest({
+    let requestResult: Result.Result<
+      ToBackendRequest,
+      ValidateToBackendRequestError
+    > = validateToBackendRequestResult({
       path: request.url,
       body: request.body
     });
+
+    // Nest rejection remains outside domain validation and before idempotency lookup.
+    if (Result.isFailure(requestResult)) {
+      throw new ServerError({
+        message: requestResult.error.code,
+        displayData: requestResult.error.displayData
+      });
+    }
+
+    let req: ToBackendRequest = requestResult.value;
+
     let user: UserTab = request.user;
 
     let iKey = req?.idempotencyKey;

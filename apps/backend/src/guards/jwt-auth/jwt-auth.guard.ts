@@ -1,11 +1,20 @@
-import { ExecutionContext, Inject, Injectable } from '@nestjs/common';
+import { type ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
+import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
+import type { Observable } from 'rxjs';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  SessionTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { parseApiKey } from '#backend/functions/api-key/parse-api-key/parse-api-key';
+import {
+  type ParseApiKeyOutput,
+  parseApiKeyResult
+} from '#backend/functions/api-key/parse-api-key-result/parse-api-key-result';
 import { validateApiKeySecret } from '#backend/guards/jwt-auth/validate-api-key-secret/validate-api-key-secret';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -13,8 +22,29 @@ import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-sessi
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { SKIP_JWT } from '#common/constants/top-backend';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendApiKeyNotFoundError } from '#common/types/backend/errors/backend-api-key-not-found-error';
+import type { AuthenticateApiKeyError } from '#common/types/backend/function-errors/authenticate-api-key-error';
+import type { AuthenticatePersonalApiKeyError } from '#common/types/backend/function-errors/authenticate-personal-api-key-error';
+import type { AuthenticateSessionApiKeyError } from '#common/types/backend/function-errors/authenticate-session-api-key-error';
+import type { ParseApiKeyError } from '#common/types/backend/function-errors/parse-api-key-error';
+import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
+
+type ApiKeyAuthRequest = {
+  url: string;
+  headers: { authorization?: string };
+  route?: { path?: string };
+  body?: { input?: { repoId?: string; envId?: string; branchId?: string } };
+  user?: UserTab;
+  apiKeyType?: ApiKeyType;
+  apiKeyToValidateSessionId?: string;
+  apiKeyToValidateProjectId?: string;
+  apiKeyToValidateEnvId?: string;
+  apiKeyToValidateBranchId?: string;
+};
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -26,10 +56,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(context: ExecutionContext) {
-    let request = context.switchToHttp().getRequest();
+  canActivate(
+    context: ExecutionContext
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    let request: ApiKeyAuthRequest = context
+      .switchToHttp()
+      .getRequest<ApiKeyAuthRequest>();
 
-    let path = request.route?.path || request.url.split('?')[0];
+    let path: string = request.route?.path || request.url.split('?')[0];
 
     let isTelemetryRoute: boolean = toBackendTelemetryRouteValues.some(
       route => route === path.slice(1)
@@ -39,7 +73,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
-    let skipJwt = this.reflector.getAllAndOverride<boolean>(SKIP_JWT, [
+    let skipJwt: boolean = this.reflector.getAllAndOverride<boolean>(SKIP_JWT, [
       context.getHandler(),
       context.getClass()
     ]);
@@ -51,174 +85,277 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     let authHeader: string = request.headers.authorization;
 
     if (authHeader) {
-      let bearer = authHeader.replace(/^Bearer\s+/i, '');
+      let bearer: string = authHeader.replace(/^Bearer\s+/i, '');
 
       if (
         bearer.startsWith(`${'PK' satisfies ApiKeyType}-`) ||
         bearer.startsWith(`${'SK' satisfies ApiKeyType}-`)
       ) {
-        return this.validateApiKey(request, bearer);
+        // Nest requires rejection here; domain helpers propagate typed failures.
+        let isAuthenticated: Promise<boolean> = this.authenticateApiKeyResult({
+          request: request,
+          fullKey: bearer
+        }).then(result => {
+          if (Result.isFailure(result)) {
+            throw new ServerError({ message: result.error.code });
+          }
+
+          return result.value;
+        });
+
+        return isAuthenticated;
       }
     }
 
-    return super.canActivate(context);
+    let isAuthenticated: boolean | Promise<boolean> | Observable<boolean> =
+      super.canActivate(context);
+
+    return isAuthenticated;
   }
 
-  async validateApiKey(request: any, fullKey: string): Promise<boolean> {
-    let parsed = parseApiKey({ fullKey: fullKey });
+  private async authenticateApiKeyResult(item: {
+    request: ApiKeyAuthRequest;
+    fullKey: string;
+  }): Result.ResultAsync<boolean, AuthenticateApiKeyError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'parsed',
+        (v): Result.Result<ParseApiKeyOutput, ParseApiKeyError> =>
+          parseApiKeyResult({ fullKey: v.fullKey })
+      ),
+      Result.andThrough(v =>
+        v.parsed.type !== 'PK' && v.parsed.type !== 'SK'
+          ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
+          : Result.succeed()
+      ),
+      Result.map(v => {
+        v.request.apiKeyType = v.parsed.type;
+        return v;
+      }),
+      Result.andThen(
+        (
+          v
+        ): Result.ResultAsync<
+          boolean,
+          AuthenticatePersonalApiKeyError | AuthenticateSessionApiKeyError
+        > =>
+          v.parsed.type === 'PK'
+            ? this.authenticatePersonalApiKeyResult({
+                request: v.request,
+                parsed: v.parsed
+              })
+            : this.authenticateSessionApiKeyResult({
+                request: v.request,
+                parsed: v.parsed
+              })
+      )
+    );
+  }
 
-    if (parsed.type !== 'PK' && parsed.type !== 'SK') {
-      throw new ServerError({
-        message: 'BACKEND_API_KEY_NOT_FOUND'
-      });
-    }
-
-    request.apiKeyType = parsed.type;
-
-    if (parsed.type === 'PK') {
-      let user = await this.db.drizzle.query.usersTable
-        .findFirst({
-          where: eq(usersTable.apiKeyPrefix, parsed.prefix)
-        })
-        .then(x => this.tabService.userEntToTab(x));
-
-      if (!user) {
-        throw new ServerError({
-          message: 'BACKEND_API_KEY_NOT_FOUND'
+  private async authenticatePersonalApiKeyResult(item: {
+    request: ApiKeyAuthRequest;
+    parsed: ParseApiKeyOutput;
+  }): Result.ResultAsync<boolean, AuthenticatePersonalApiKeyError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'user',
+        (
+          v
+        ): Result.ResultAsync<
+          UserTab,
+          UserEntToTabError | BackendApiKeyNotFoundError
+        > =>
+          this.db.drizzle.query.usersTable
+            .findFirst({ where: eq(usersTable.apiKeyPrefix, v.parsed.prefix) })
+            .then(x =>
+              isUndefined(x)
+                ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
+                : this.tabService.userEntToTabResult({ userEnt: x })
+            )
+      ),
+      Result.andThrough(v =>
+        v.user.apiKeySecretHash
+          ? Result.succeed()
+          : Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
+      ),
+      Result.andThrough(async v => {
+        let isValid: boolean = await validateApiKeySecret({
+          secret: v.parsed.secret,
+          storedHash: v.user.apiKeySecretHash,
+          storedSalt: v.user.apiKeySalt
         });
-      }
 
-      if (!user.apiKeySecretHash) {
-        throw new ServerError({
-          message: 'BACKEND_API_KEY_NOT_FOUND'
+        return isValid
+          ? Result.succeed()
+          : Result.fail({ code: 'BACKEND_API_KEY_NOT_VALID' });
+      }),
+      Result.map(v => {
+        v.request.user = v.user;
+        return v;
+      }),
+      Result.bind(
+        'path',
+        (v): Result.Result<string, never> =>
+          Result.succeed(v.request.url?.substring(1))
+      ),
+      Result.andThen(
+        (v): Result.Result<boolean, AuthenticatePersonalApiKeyError> => {
+          if (v.path === 'api/mcp' || v.path.startsWith('api/mcp/')) {
+            return Result.succeed(true);
+          }
+
+          if (
+            MCLI_USER_ALLOWED_REQUEST_NAMES.findIndex(
+              route => route === v.path
+            ) < 0
+          ) {
+            return Result.fail({
+              code: 'BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED'
+            });
+          }
+
+          let repoId: string = v.request.body?.input?.repoId;
+
+          if (
+            repoId &&
+            repoId !== v.parsed.entityId &&
+            repoId !== PROD_REPO_ID
+          ) {
+            return Result.fail({ code: 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER' });
+          }
+
+          return Result.succeed(true);
+        }
+      )
+    );
+  }
+
+  private async authenticateSessionApiKeyResult(item: {
+    request: ApiKeyAuthRequest;
+    parsed: ParseApiKeyOutput;
+  }): Result.ResultAsync<boolean, AuthenticateSessionApiKeyError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'session',
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          SessionEntToTabError | BackendApiKeyNotFoundError
+        > =>
+          this.db.drizzle.query.sessionsTable
+            .findFirst({
+              where: eq(sessionsTable.apiKeyPrefix, v.parsed.prefix)
+            })
+            .then(x =>
+              isUndefined(x)
+                ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
+                : this.tabService.sessionEntToTabResult({ sessionEnt: x })
+            )
+      ),
+      Result.andThrough(v =>
+        v.session.apiKeySecretHash
+          ? Result.succeed()
+          : Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
+      ),
+      Result.andThrough(async v => {
+        let isValid: boolean = await validateApiKeySecret({
+          secret: v.parsed.secret,
+          storedHash: v.session.apiKeySecretHash,
+          storedSalt: v.session.apiKeySalt
         });
-      }
 
-      let isValid = await validateApiKeySecret({
-        secret: parsed.secret,
-        storedHash: user.apiKeySecretHash,
-        storedSalt: user.apiKeySalt
-      });
+        return isValid
+          ? Result.succeed()
+          : Result.fail({ code: 'BACKEND_API_KEY_NOT_VALID' });
+      }),
+      Result.bind(
+        'user',
+        (
+          v
+        ): Result.ResultAsync<
+          UserTab,
+          UserEntToTabError | BackendApiKeyNotFoundError
+        > =>
+          this.db.drizzle.query.usersTable
+            .findFirst({ where: eq(usersTable.userId, v.session.userId) })
+            .then(x =>
+              isUndefined(x)
+                ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
+                : this.tabService.userEntToTabResult({ userEnt: x })
+            )
+      ),
+      Result.map(v => {
+        v.request.user = v.user;
+        return v;
+      }),
+      Result.bind(
+        'path',
+        (v): Result.Result<string, never> =>
+          Result.succeed(v.request.url?.substring(1))
+      ),
+      Result.andThen(
+        (v): Result.Result<boolean, AuthenticateSessionApiKeyError> => {
+          if (v.path === 'api/mcp' || v.path.startsWith('api/mcp/')) {
+            v.request.apiKeyToValidateSessionId = v.parsed.entityId;
 
-      if (!isValid) {
-        throw new ServerError({
-          message: 'BACKEND_API_KEY_NOT_VALID'
-        });
-      }
+            v.request.apiKeyToValidateProjectId = v.session.projectId;
 
-      request.user = user;
+            v.request.apiKeyToValidateEnvId = v.session.envId;
 
-      let path = request.url?.substring(1);
+            v.request.apiKeyToValidateBranchId = v.session.branchId;
 
-      let isMcpRequest = path === 'api/mcp' || path.startsWith('api/mcp/');
+            return Result.succeed(true);
+          }
 
-      if (isMcpRequest === true) {
-        return true;
-      }
+          if (
+            MCLI_SESSION_ALLOWED_REQUEST_NAMES.findIndex(
+              route => route === v.path
+            ) < 0
+          ) {
+            return Result.fail({
+              code: 'BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED'
+            });
+          }
 
-      if (MCLI_USER_ALLOWED_REQUEST_NAMES.indexOf(path) < 0) {
-        throw new ServerError({
-          message: 'BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED'
-        });
-      }
+          let repoId: string = v.request.body?.input?.repoId;
 
-      let repoId = request.body?.input?.repoId;
+          if (
+            repoId &&
+            repoId !== v.parsed.entityId &&
+            repoId !== PROD_REPO_ID
+          ) {
+            return Result.fail({
+              code: 'BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION'
+            });
+          }
 
-      if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
-        throw new ServerError({
-          message: 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER'
-        });
-      }
+          let envId: string = v.request.body?.input?.envId;
 
-      return true;
-    } else if (parsed.type === 'SK') {
-      let session = await this.db.drizzle.query.sessionsTable
-        .findFirst({
-          where: eq(sessionsTable.apiKeyPrefix, parsed.prefix)
-        })
-        .then(x => this.tabService.sessionEntToTab(x));
+          if (envId && v.session.envId && envId !== v.session.envId) {
+            return Result.fail({
+              code: 'BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION'
+            });
+          }
 
-      if (!session) {
-        throw new ServerError({
-          message: 'BACKEND_API_KEY_NOT_FOUND'
-        });
-      }
+          let branchId: string = v.request.body?.input?.branchId;
 
-      if (!session.apiKeySecretHash) {
-        throw new ServerError({
-          message: 'BACKEND_API_KEY_NOT_FOUND'
-        });
-      }
+          if (
+            branchId &&
+            v.session.branchId &&
+            branchId !== v.session.branchId
+          ) {
+            return Result.fail({
+              code: 'BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION'
+            });
+          }
 
-      let isValid = await validateApiKeySecret({
-        secret: parsed.secret,
-        storedHash: session.apiKeySecretHash,
-        storedSalt: session.apiKeySalt
-      });
-
-      if (!isValid) {
-        throw new ServerError({
-          message: 'BACKEND_API_KEY_NOT_VALID'
-        });
-      }
-
-      let user = await this.db.drizzle.query.usersTable
-        .findFirst({
-          where: eq(usersTable.userId, session.userId)
-        })
-        .then(x => this.tabService.userEntToTab(x));
-
-      if (!user) {
-        throw new ServerError({
-          message: 'BACKEND_API_KEY_NOT_FOUND'
-        });
-      }
-
-      request.user = user;
-
-      let url = request.url?.substring(1);
-
-      let isMcpRequest = url === 'api/mcp' || url.startsWith('api/mcp/');
-
-      if (isMcpRequest === true) {
-        request.apiKeyToValidateSessionId = parsed.entityId;
-        request.apiKeyToValidateProjectId = session.projectId;
-        request.apiKeyToValidateEnvId = session.envId;
-        request.apiKeyToValidateBranchId = session.branchId;
-        return true;
-      }
-
-      if (MCLI_SESSION_ALLOWED_REQUEST_NAMES.indexOf(url) < 0) {
-        throw new ServerError({
-          message: 'BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED'
-        });
-      }
-
-      let repoId = request.body?.input?.repoId;
-
-      if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
-        throw new ServerError({
-          message: 'BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION'
-        });
-      }
-
-      let envId = request.body?.input?.envId;
-
-      if (envId && session.envId && envId !== session.envId) {
-        throw new ServerError({
-          message: 'BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION'
-        });
-      }
-
-      let branchId = request.body?.input?.branchId;
-
-      if (branchId && session.branchId && branchId !== session.branchId) {
-        throw new ServerError({
-          message: 'BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION'
-        });
-      }
-
-      return true;
-    }
+          return Result.succeed(true);
+        }
+      )
+    );
   }
 }
