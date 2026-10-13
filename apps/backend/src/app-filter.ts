@@ -1,13 +1,13 @@
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
-  ExceptionFilter,
+  type ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logResponseBackend } from '#backend/functions/top/log-response-backend/log-response-backend';
@@ -17,9 +17,11 @@ import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
+import type { Er } from '#common/types/shared/errors/er';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
-import { Idemp } from './interfaces/idemp';
+import type { Idemp } from './interfaces/idemp';
 
 @Catch()
 export class AppFilter implements ExceptionFilter {
@@ -35,17 +37,17 @@ export class AppFilter implements ExceptionFilter {
       const response = ctx.getResponse();
       const request = ctx.getRequest();
 
-      let e =
+      let unauthorizedError: BackendUnauthorizedError =
         (exception as any).message === 'Unauthorized'
-          ? new ServerError({
-              message: 'BACKEND_UNAUTHORIZED',
-              originalError: exception
-            })
-          : exception;
+          ? { code: 'BACKEND_UNAUTHORIZED' }
+          : undefined;
 
       if (request?.url?.startsWith('/api/mcp')) {
-        let errorMessage =
-          e instanceof ServerError ? String(e.message) : 'INTERNAL_ERROR';
+        let errorMessage: string = isDefined(unauthorizedError)
+          ? unauthorizedError.code
+          : exception instanceof ServerError
+            ? String(exception.message)
+            : 'INTERNAL_ERROR';
 
         response.status(400).json({
           jsonrpc: '2.0',
@@ -97,7 +99,8 @@ export class AppFilter implements ExceptionFilter {
       let req: ToBackendRequest = request.body;
 
       let { resp, wrappedError } = makeErrorResponseBackend({
-        e: e,
+        e: exception,
+        unauthorizedError: unauthorizedError,
         body: req,
         path: request.url,
         method: request.method,
@@ -134,10 +137,11 @@ export class AppFilter implements ExceptionFilter {
           });
         } catch (er) {
           logToConsoleBackend({
-            log: new ServerError({
-              message: 'BACKEND_APP_FILTER_SAVE_IDEMP_ERROR',
-              originalError: er
-            }),
+            log: {
+              message: 'BACKEND_APP_FILTER_SAVE_IDEMP_ERROR' satisfies Er,
+              originalError: er,
+              originalErrorStack: (er as Error)?.stack?.split('\n')
+            },
             logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
@@ -156,10 +160,11 @@ export class AppFilter implements ExceptionFilter {
       response.status(HttpStatus.CREATED).json(resp);
     } catch (err) {
       logToConsoleBackend({
-        log: new ServerError({
-          message: 'BACKEND_APP_FILTER_ERROR',
-          originalError: err
-        }),
+        log: {
+          message: 'BACKEND_APP_FILTER_ERROR' satisfies Er,
+          originalError: err,
+          originalErrorStack: (err as Error)?.stack?.split('\n')
+        },
         logLevel: 'Error',
         logger: this.logger,
         cs: this.cs

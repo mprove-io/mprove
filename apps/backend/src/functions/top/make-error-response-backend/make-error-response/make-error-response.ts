@@ -2,6 +2,7 @@ import type { Logger } from '@nestjs/common';
 import { getToBackendOperation } from '#backend/functions/top/get-to-backend-operation/get-to-backend-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseMetadata } from '#common/types/backend/response/to-backend-response-metadata';
@@ -12,9 +13,15 @@ import {
   wrapError
 } from '#node-common/functions/wrap-error/wrap-error';
 
+export type MakeErrorResponseOutput = {
+  resp: ToBackendResponse;
+  wrappedError: WrappedError;
+};
+
 export function makeErrorResponse(item: {
   body: { traceId?: string };
   e: unknown;
+  unauthorizedError?: BackendUnauthorizedError;
   path: string;
   method: string;
   mproveVersion?: string;
@@ -23,10 +30,11 @@ export function makeErrorResponse(item: {
   logIsJson: boolean;
   logger: Logger;
   useLoggerOnlyForErrorLevel: boolean;
-}): { resp: ToBackendResponse; wrappedError: WrappedError } {
+}): MakeErrorResponseOutput {
   let {
     body,
     e,
+    unauthorizedError,
     path,
     method,
     mproveVersion,
@@ -37,7 +45,23 @@ export function makeErrorResponse(item: {
     useLoggerOnlyForErrorLevel
   } = item;
 
-  let wrappedError: WrappedError = wrapError(e);
+  let wrappedError: WrappedError;
+
+  if (isDefined(unauthorizedError)) {
+    // This diagnostic carrier is never thrown or used to classify a domain failure.
+    let unauthorizedExtraError: Error = Object.assign(
+      new Error(unauthorizedError.code),
+      { originalError: e }
+    );
+
+    wrappedError = wrapError(unauthorizedExtraError);
+
+    wrappedError.story = 'DefinedError';
+
+    wrappedError.e = null;
+  } else {
+    wrappedError = wrapError(e);
+  }
 
   let operation: ToBackendOperation = getToBackendOperation({ path: path });
 
@@ -52,8 +76,9 @@ export function makeErrorResponse(item: {
   let response: ToBackendResponse;
 
   if (isDefined(operation)) {
-    let code: string =
-      wrappedError.message === 'ThrottlerException: Too Many Requests'
+    let code: string = isDefined(unauthorizedError)
+      ? unauthorizedError.code
+      : wrappedError.message === 'ThrottlerException: Too Many Requests'
         ? ('TOO_MANY_REQUESTS_ERROR' satisfies Er)
         : wrappedError.name === 'ThrottlerException'
           ? ('THROTTLER_ERROR' satisfies Er)
@@ -117,7 +142,7 @@ export function makeErrorResponse(item: {
     });
   }
 
-  let payload: { resp: ToBackendResponse; wrappedError: WrappedError } = {
+  let payload: MakeErrorResponseOutput = {
     resp: response,
     wrappedError: wrappedError
   };
