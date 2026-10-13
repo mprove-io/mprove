@@ -183,7 +183,187 @@ export class AppInterceptor implements NestInterceptor {
     let execution: Observable<ResponseWithWrappedError>;
 
     if (isUndefined(idemp)) {
-      if (req.operation === 'archiveSession') {
+      if (req.operation === 'completeUserRegistration') {
+        execution = makeBackendResultResponse({
+          operation: 'completeUserRegistration',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'confirmUserEmail') {
+        execution = makeBackendResultResponse({
+          operation: 'confirmUserEmail',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'deleteUser') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteUser',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'deleteUserApiKey') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteUserApiKey',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'deleteUserCodexAuth') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteUserCodexAuth',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'generateUserApiKey') {
+        execution = makeBackendResultResponse({
+          operation: 'generateUserApiKey',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'getOrgUsers') {
+        execution = makeBackendResultResponse({
+          operation: 'getOrgUsers',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'getServerUsers') {
+        execution = makeBackendResultResponse({
+          operation: 'getServerUsers',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'getUserGivens') {
+        execution = makeBackendResultResponse({
+          operation: 'getUserGivens',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'getUserProfile') {
+        execution = makeBackendResultResponse({
+          operation: 'getUserProfile',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'loginUser') {
+        execution = makeBackendResultResponse({
+          operation: 'loginUser',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'logoutUser') {
+        execution = makeBackendResultResponse({
+          operation: 'logoutUser',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'pollUserCodexAuth') {
+        execution = makeBackendResultResponse({
+          operation: 'pollUserCodexAuth',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'registerUser') {
+        execution = makeBackendResultResponse({
+          operation: 'registerUser',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'resendUserEmail') {
+        execution = makeBackendResultResponse({
+          operation: 'resendUserEmail',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'resetUserPassword') {
+        execution = makeBackendResultResponse({
+          operation: 'resetUserPassword',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'setUserName') {
+        execution = makeBackendResultResponse({
+          operation: 'setUserName',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'setUserUi') {
+        execution = makeBackendResultResponse({
+          operation: 'setUserUi',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'startUserCodexAuth') {
+        execution = makeBackendResultResponse({
+          operation: 'startUserCodexAuth',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'updateUserPassword') {
+        execution = makeBackendResultResponse({
+          operation: 'updateUserPassword',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'archiveSession') {
         execution = makeBackendResultResponse({
           operation: 'archiveSession',
           execution: next.handle(),

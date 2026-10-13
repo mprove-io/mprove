@@ -6,17 +6,27 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 
+export type CreateSaltAndHashOutput = {
+  salt: string;
+  hash: string;
+};
+
 @Injectable()
 export class HashService {
   constructor() {}
 
-  async createSaltAndHash(item: { input: string }) {
+  async createSaltAndHash(item: {
+    input: string;
+  }): Promise<CreateSaltAndHashOutput> {
     let { input } = item;
 
-    let salt = await bcrypt.genSalt();
-    let hash = await bcrypt.hash(input, salt);
+    let salt: string = await bcrypt.genSalt();
 
-    return { salt, hash };
+    let hash: string = await bcrypt.hash(input, salt);
+
+    let output: CreateSaltAndHashOutput = { salt: salt, hash: hash };
+
+    return output;
   }
 
   async createHashUsingSalt(item: { salt: string; input: string }) {

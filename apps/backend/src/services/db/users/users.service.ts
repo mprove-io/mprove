@@ -29,15 +29,19 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendUserAliasIsUndefinedError } from '#common/types/backend/errors/backend-user-alias-is-undefined-error';
+import type { BackendUserDoesNotExistError } from '#common/types/backend/errors/backend-user-does-not-exist-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
+import type { CheckUserPasswordHashIsDefinedError } from '#common/types/backend/function-errors/check-user-password-hash-is-defined-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
 import type { GetSelectedGivensError } from '#common/types/backend/function-errors/get-selected-givens-error';
+import type { GetUserByEmailCheckExistsError } from '#common/types/backend/function-errors/get-user-by-email-check-exists-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { SelectUnselectedGivensError } from '#common/types/backend/function-errors/select-unselected-givens-error';
+import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
@@ -329,11 +333,22 @@ export class UsersService {
   checkUserPasswordHashIsDefined(item: { user: UserTab }) {
     let { user } = item;
 
-    if (isUndefined(user.passwordHash)) {
-      throw new ServerError({
-        message: 'BACKEND_SIGN_UP_TO_SET_PASSWORD'
-      });
+    let result: Result.Result<void, CheckUserPasswordHashIsDefinedError> =
+      this.checkUserPasswordHashIsDefinedResult({ user: user });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
+  }
+
+  checkUserPasswordHashIsDefinedResult(item: {
+    user: UserTab;
+  }): Result.Result<void, CheckUserPasswordHashIsDefinedError> {
+    let { user } = item;
+
+    return isUndefined(user.passwordHash)
+      ? Result.fail({ code: 'BACKEND_SIGN_UP_TO_SET_PASSWORD' })
+      : Result.succeed();
   }
 
   async getUserCheckExists(item: { userId: string }): Promise<UserTab> {
@@ -386,29 +401,55 @@ export class UsersService {
       : Result.succeed();
   }
 
-  async getUserByEmailCheckExists(item: { email: string }) {
+  async getUserByEmailCheckExists(item: { email: string }): Promise<UserTab> {
     let { email } = item;
 
-    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+    let result: Result.Result<UserTab, GetUserByEmailCheckExistsError> =
+      await this.getUserByEmailCheckExistsResult({ email: email });
 
-    let emailHash = this.hashService.makeHash({
-      input: email,
-      hashSecret: hashSecret
-    });
-
-    let user = await this.db.drizzle.query.usersTable
-      .findFirst({
-        where: eq(usersTable.emailHash, emailHash)
-      })
-      .then(x => this.tabService.userEntToTab(x));
-
-    if (isUndefined(user)) {
-      throw new ServerError({
-        message: 'BACKEND_USER_DOES_NOT_EXIST'
-      });
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
+    let user: UserTab = result.value;
+
     return user;
+  }
+
+  async getUserByEmailCheckExistsResult(item: {
+    email: string;
+  }): Result.ResultAsync<UserTab, GetUserByEmailCheckExistsError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'hashSecret',
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
+          this.dconfigsService.getDconfigHashSecretResult()
+      ),
+      Result.bind(
+        'emailHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.email,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.andThen(
+        (
+          v
+        ): Result.ResultAsync<
+          UserTab,
+          UserEntToTabError | BackendUserDoesNotExistError
+        > =>
+          this.db.drizzle.query.usersTable
+            .findFirst({ where: eq(usersTable.emailHash, v.emailHash) })
+            .then(x =>
+              isUndefined(x)
+                ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
+                : this.tabService.userEntToTabResult({ userEnt: x })
+            )
+      )
+    );
   }
 
   async addMproveAdminUser(item: { email: string; password: string }) {

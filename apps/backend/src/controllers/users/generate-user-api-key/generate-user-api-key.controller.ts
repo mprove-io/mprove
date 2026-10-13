@@ -9,18 +9,25 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { buildUserApiKey } from '#backend/controllers/users/generate-user-api-key/build-user-api-key/build-user-api-key';
 import { ToBackendGenerateUserApiKeyResponseDto } from '#backend/controllers/users/generate-user-api-key/generate-user-api-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import {
+  type GenerateApiKeyPartsOutput,
+  generateApiKeyParts
+} from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGenerateUserApiKeyOutput } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-output';
 
@@ -45,48 +52,63 @@ export class GenerateUserApiKeyController {
   @ApiOkResponse({
     type: ToBackendGenerateUserApiKeyResponseDto
   })
-  async generateUserApiKey(@AttachUser() user: UserTab, @Req() request: any) {
-    this.usersService.checkUserIsNotRestricted({ user: user });
+  async generateUserApiKey(
+    @AttachUser() user: UserTab,
+    @Req() request: any
+  ): Promise<BackendResultForOperation<'generateUserApiKey'>> {
+    return Result.pipe(
+      Result.succeed({ user: user }),
+      Result.andThrough(v =>
+        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+      ),
+      Result.bind(
+        'apiKeyParts',
+        async (
+          v
+        ): Result.ResultAsync<GenerateApiKeyPartsOutput, DbErrorToError> => {
+          let apiKeyParts: GenerateApiKeyPartsOutput;
 
-    let apiKeyParts: {
-      prefix: string;
-      secret: string;
-      secretHash: string;
-      salt: string;
-    };
+          let persistenceResult: Result.Result<void, DbErrorToError> =
+            await dbErrorToResult({
+              action: async () => {
+                await retry(
+                  async () => {
+                    apiKeyParts = await generateApiKeyParts();
 
-    await retry(
-      async () => {
-        apiKeyParts = await generateApiKeyParts();
+                    v.user.apiKeyPrefix = apiKeyParts.prefix;
+                    v.user.apiKeySecretHash = apiKeyParts.secretHash;
+                    v.user.apiKeySalt = apiKeyParts.salt;
 
-        user.apiKeyPrefix = apiKeyParts.prefix;
-        user.apiKeySecretHash = apiKeyParts.secretHash;
-        user.apiKeySalt = apiKeyParts.salt;
-
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              update: {
-                users: [user]
+                    await this.db.drizzle.transaction(
+                      async tx =>
+                        await this.db.packer.write({
+                          tx: tx,
+                          update: {
+                            users: [v.user]
+                          }
+                        })
+                    );
+                  },
+                  getRetryOption(this.cs, this.logger)
+                );
               }
-            })
-        );
-      },
-      getRetryOption(this.cs, this.logger)
+            });
+
+          return Result.isFailure(persistenceResult)
+            ? Result.fail(persistenceResult.error)
+            : Result.succeed(apiKeyParts);
+        }
+      ),
+      Result.map(
+        (v): ToBackendGenerateUserApiKeyOutput => ({
+          apiKey: buildUserApiKey({
+            prefix: v.apiKeyParts.prefix,
+            userId: v.user.userId,
+            secret: v.apiKeyParts.secret
+          }),
+          apiKeyPrefix: v.apiKeyParts.prefix
+        })
+      )
     );
-
-    let apiKey = buildUserApiKey({
-      prefix: apiKeyParts.prefix,
-      userId: user.userId,
-      secret: apiKeyParts.secret
-    });
-
-    let payload: ToBackendGenerateUserApiKeyOutput = {
-      apiKey: apiKey,
-      apiKeyPrefix: apiKeyParts.prefix
-    };
-
-    return payload;
   }
 }

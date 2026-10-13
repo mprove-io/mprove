@@ -9,16 +9,19 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendConfirmUserEmailRequestDto,
   ToBackendConfirmUserEmailResponseDto
 } from '#backend/controllers/users/confirm-user-email/confirm-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
@@ -26,9 +29,11 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
-
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
+import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
+import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-output';
 
@@ -57,70 +62,89 @@ export class ConfirmUserEmailController {
   @ApiOkResponse({
     type: ToBackendConfirmUserEmailResponseDto
   })
-  async confirmUserEmail(@Body() body: ToBackendConfirmUserEmailRequestDto) {
-    let { traceId } = body;
-    let { emailVerificationToken } = body.input;
+  async confirmUserEmail(
+    @Body() body: ToBackendConfirmUserEmailRequestDto
+  ): Promise<BackendResultForOperation<'confirmUserEmail'>> {
+    return Result.pipe(
+      Result.succeed({
+        traceId: body.traceId,
+        emailVerificationToken: body.input.emailVerificationToken
+      }),
+      Result.bind(
+        'hashSecret',
+        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
+          this.dconfigsService.getDconfigHashSecretResult()
+      ),
+      Result.bind(
+        'emailVerificationTokenHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.emailVerificationToken,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.bind(
+        'user',
+        (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
+          this.db.drizzle.query.usersTable
+            .findFirst({
+              where: eq(
+                usersTable.emailVerificationTokenHash,
+                v.emailVerificationTokenHash
+              )
+            })
+            .then(x =>
+              isUndefined(x)
+                ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
+                : this.tabService.userEntToTabResult({ userEnt: x })
+            )
+      ),
+      Result.andThrough(v =>
+        this.usersService.checkUserPasswordHashIsDefinedResult({ user: v.user })
+      ),
+      Result.andThrough(v =>
+        this.membersService.addMemberToDemoProjectResult({
+          traceId: v.traceId,
+          user: v.user
+        })
+      ),
+      Result.bind(
+        'isVerifyEmail',
+        (v): Result.Result<boolean, never> =>
+          Result.succeed(v.user.isEmailVerified === false)
+      ),
+      Result.andThrough(v =>
+        v.isVerifyEmail
+          ? dbErrorToResult({
+              action: async () => {
+                v.user.isEmailVerified = true;
 
-    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
-
-    let emailVerificationTokenHash = this.hashService.makeHash({
-      input: emailVerificationToken,
-      hashSecret: hashSecret
-    });
-
-    let user = await this.db.drizzle.query.usersTable
-      .findFirst({
-        where: eq(
-          usersTable.emailVerificationTokenHash,
-          emailVerificationTokenHash
-        )
-      })
-      .then(x => this.tabService.userEntToTab(x));
-
-    if (isUndefined(user)) {
-      throw new ServerError({
-        message: 'BACKEND_USER_DOES_NOT_EXIST'
-      });
-    }
-
-    if (isUndefined(user.passwordHash)) {
-      throw new ServerError({
-        message: 'BACKEND_SIGN_UP_TO_SET_PASSWORD'
-      });
-    }
-
-    await this.membersService.addMemberToDemoProject({
-      traceId: traceId,
-      user: user
-    });
-
-    let payload: ToBackendConfirmUserEmailOutput = {};
-
-    if (user.isEmailVerified === false) {
-      user.isEmailVerified = true;
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insertOrUpdate: {
-                  users: [user]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-
-      let token = this.jwtService.sign({ userId: user.userId });
-
-      payload = {
-        token: token,
-        user: this.usersService.tabToApi({ user: user })
-      };
-    }
-
-    return payload;
+                await retry(
+                  async () =>
+                    await this.db.drizzle.transaction(
+                      async tx =>
+                        await this.db.packer.write({
+                          tx: tx,
+                          insertOrUpdate: {
+                            users: [v.user]
+                          }
+                        })
+                    ),
+                  getRetryOption(this.cs, this.logger)
+                );
+              }
+            })
+          : Result.succeed()
+      ),
+      Result.map(
+        (v): ToBackendConfirmUserEmailOutput =>
+          v.isVerifyEmail
+            ? {
+                token: this.jwtService.sign({ userId: v.user.userId }),
+                user: this.usersService.tabToApi({ user: v.user })
+              }
+            : {}
+      )
+    );
   }
 }

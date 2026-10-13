@@ -9,8 +9,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSetUserUiRequestDto,
   ToBackendSetUserUiResponseDto
@@ -18,10 +19,12 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -51,31 +54,37 @@ export class SetUserUiController {
   async setUserUi(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetUserUiRequestDto
-  ) {
-    let { ui } = body.input;
+  ): Promise<BackendResultForOperation<'setUserUi'>> {
+    return Result.pipe(
+      Result.succeed({ user: user, ui: body.input.ui }),
+      Result.andThrough(v =>
+        v.user.alias === RESTRICTED_USER_ALIAS
+          ? Result.succeed()
+          : dbErrorToResult({
+              action: async () => {
+                v.user.ui = v.ui;
 
-    if (user.alias !== RESTRICTED_USER_ALIAS) {
-      user.ui = ui;
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insertOrUpdate: {
-                  users: [user]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let payload: ToBackendSetUserUiOutput = {
-      user: this.usersService.tabToApi({ user: user })
-    };
-
-    return payload;
+                await retry(
+                  async () =>
+                    await this.db.drizzle.transaction(
+                      async tx =>
+                        await this.db.packer.write({
+                          tx: tx,
+                          insertOrUpdate: {
+                            users: [v.user]
+                          }
+                        })
+                    ),
+                  getRetryOption(this.cs, this.logger)
+                );
+              }
+            })
+      ),
+      Result.map(
+        (v): ToBackendSetUserUiOutput => ({
+          user: this.usersService.tabToApi({ user: v.user })
+        })
+      )
+    );
   }
 }

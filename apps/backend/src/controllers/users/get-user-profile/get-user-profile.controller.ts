@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendGetUserProfileRequestDto,
   ToBackendGetUserProfileResponseDto
@@ -10,6 +11,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetUserProfileOutput } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-output';
@@ -35,11 +37,11 @@ export class GetUserProfileController {
   async getUserProfile(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetUserProfileRequestDto
-  ) {
+  ): Promise<BackendResultForOperation<'getUserProfile'>> {
     let payload: ToBackendGetUserProfileOutput = {
       user: this.usersService.tabToApi({ user: user })
     };
 
-    return payload;
+    return Result.succeed(payload);
   }
 }

@@ -9,8 +9,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteUserCodexAuthRequestDto,
   ToBackendDeleteUserCodexAuthResponseDto
@@ -18,9 +19,11 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteUserCodexAuthOutput } from '#common/types/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-output';
@@ -48,31 +51,43 @@ export class DeleteUserCodexAuthController {
   async deleteUserCodexAuth(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteUserCodexAuthRequestDto
-  ) {
-    this.usersService.checkUserIsNotRestricted({ user: user });
+  ): Promise<BackendResultForOperation<'deleteUserCodexAuth'>> {
+    return Result.pipe(
+      Result.succeed({ user: user }),
+      Result.andThrough(v =>
+        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+      ),
+      Result.map(v => {
+        v.user.codexAuth = undefined;
+        v.user.codexAuthUpdateTs = undefined;
+        v.user.codexAuthExpiresTs = undefined;
 
-    user.codexAuth = undefined;
-    user.codexAuthUpdateTs = undefined;
-    user.codexAuthExpiresTs = undefined;
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                users: [user]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
+        return v;
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: {
+                        users: [v.user]
+                      }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.map(
+        (v): ToBackendDeleteUserCodexAuthOutput => ({
+          user: this.usersService.tabToApi({ user: v.user })
+        })
+      )
     );
-
-    let payload: ToBackendDeleteUserCodexAuthOutput = {
-      user: this.usersService.tabToApi({ user: user })
-    };
-
-    return payload;
   }
 }

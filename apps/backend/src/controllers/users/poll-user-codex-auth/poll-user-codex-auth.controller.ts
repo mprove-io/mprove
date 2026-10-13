@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendPollUserCodexAuthRequestDto,
   ToBackendPollUserCodexAuthResponseDto
@@ -10,7 +11,11 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex/codex.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
+import type { PollDeviceAuthError } from '#common/types/backend/function-errors/poll-device-auth-error';
+import type { CodexDeviceAuthStatus } from '#common/types/backend/parts/codex/codex-device-auth-status';
 
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPollUserCodexAuthOutput } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-output';
@@ -37,34 +42,43 @@ export class PollUserCodexAuthController {
   async pollUserCodexAuth(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendPollUserCodexAuthRequestDto
-  ) {
-    this.usersService.checkUserIsNotRestricted({ user: user });
-
-    let { deviceAuthId, userCode } = body.input;
-
-    let status = await this.codexService.pollDeviceAuth({
-      userId: user.userId,
-      deviceAuthId: deviceAuthId,
-      userCode: userCode
-    });
-
-    let payload: ToBackendPollUserCodexAuthOutput;
-
-    if (status === 'Authorized') {
-      let freshUser = await this.usersService.getUserCheckExists({
-        userId: user.userId
-      });
-
-      payload = {
-        status: status,
-        user: this.usersService.tabToApi({ user: freshUser })
-      };
-    } else {
-      payload = {
-        status: status
-      };
-    }
-
-    return payload;
+  ): Promise<BackendResultForOperation<'pollUserCodexAuth'>> {
+    return Result.pipe(
+      Result.succeed({
+        user: user,
+        deviceAuthId: body.input.deviceAuthId,
+        userCode: body.input.userCode
+      }),
+      Result.andThrough(v =>
+        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+      ),
+      Result.bind(
+        'status',
+        (v): Result.ResultAsync<CodexDeviceAuthStatus, PollDeviceAuthError> =>
+          this.codexService.pollDeviceAuthResult({
+            userId: v.user.userId,
+            deviceAuthId: v.deviceAuthId,
+            userCode: v.userCode
+          })
+      ),
+      Result.bind(
+        'freshUser',
+        async (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
+          v.status === 'Authorized'
+            ? this.usersService.getUserCheckExistsResult({
+                userId: v.user.userId
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.map(
+        (v): ToBackendPollUserCodexAuthOutput =>
+          v.status === 'Authorized'
+            ? {
+                status: v.status,
+                user: this.usersService.tabToApi({ user: v.freshUser })
+              }
+            : { status: v.status }
+      )
+    );
   }
 }

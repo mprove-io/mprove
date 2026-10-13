@@ -1,18 +1,29 @@
+import * as crypto from 'node:crypto';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 import { makeIdPrefix } from '#common/functions/make-id-prefix/make-id-prefix';
 
-export async function generateApiKeyParts() {
-  let prefix = makeIdPrefix();
-  let secret = crypto.randomBytes(16).toString('hex').toUpperCase();
+export type GenerateApiKeyPartsOutput = {
+  prefix: string;
+  secret: string;
+  secretHash: string;
+  salt: string;
+};
 
-  let salt = await bcrypt.genSalt();
-  let secretHash = await bcrypt.hash(secret, salt);
+export async function generateApiKeyParts(): Promise<GenerateApiKeyPartsOutput> {
+  let prefix: string = makeIdPrefix();
 
-  return {
+  let secret: string = crypto.randomBytes(16).toString('hex').toUpperCase();
+
+  let salt: string = await bcrypt.genSalt();
+
+  let secretHash: string = await bcrypt.hash(secret, salt);
+
+  let output: GenerateApiKeyPartsOutput = {
     prefix: prefix,
     secret: secret,
     secretHash: secretHash,
     salt: salt
   };
+
+  return output;
 }

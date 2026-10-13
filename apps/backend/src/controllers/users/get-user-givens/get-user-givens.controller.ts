@@ -1,17 +1,25 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendGetUserGivensRequestDto,
   ToBackendGetUserGivensResponseDto
 } from '#backend/controllers/users/get-user-givens/get-user-givens.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  MemberTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
+import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetUserGivensOutput } from '#common/types/backend/routes/users/get-user-givens/get-user-givens-output';
 
@@ -38,29 +46,42 @@ export class GetUserGivensController {
   async getUserGivens(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetUserGivensRequestDto
-  ) {
-    let { projectId } = body.input;
-
-    let member = await this.membersService.getMemberCheckExists({
-      memberId: user.userId,
-      projectId: projectId
-    });
-
-    await this.usersService.selectUnselectedGivens({
-      user: user,
-      projectId: projectId
-    });
-
-    let memberGivens = await this.givensService.getMemberGivensForSelection({
-      projectId: projectId,
-      roles: member.roles
-    });
-
-    let payload: ToBackendGetUserGivensOutput = {
-      user: this.usersService.tabToApi({ user: user }),
-      memberGivens: memberGivens
-    };
-
-    return payload;
+  ): Promise<BackendResultForOperation<'getUserGivens'>> {
+    return Result.pipe(
+      Result.succeed({ user: user, projectId: body.input.projectId }),
+      Result.bind(
+        'member',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            memberId: v.user.userId,
+            projectId: v.projectId
+          })
+      ),
+      Result.andThrough(v =>
+        this.usersService.selectUnselectedGivensResult({
+          user: v.user,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind(
+        'memberGivens',
+        (
+          v
+        ): Result.ResultAsync<
+          MemberGiven[],
+          GetMemberGivensForSelectionError
+        > =>
+          this.givensService.getMemberGivensForSelectionResult({
+            projectId: v.projectId,
+            roles: v.member.roles
+          })
+      ),
+      Result.map(
+        (v): ToBackendGetUserGivensOutput => ({
+          user: this.usersService.tabToApi({ user: v.user }),
+          memberGivens: v.memberGivens
+        })
+      )
+    );
   }
 }

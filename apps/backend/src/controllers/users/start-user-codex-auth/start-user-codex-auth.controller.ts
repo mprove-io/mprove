@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendStartUserCodexAuthRequestDto,
   ToBackendStartUserCodexAuthResponseDto
@@ -8,9 +9,12 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import type { CodexDeviceAuthStart } from '#backend/services/codex/codex.service';
 import { CodexService } from '#backend/services/codex/codex.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { StartDeviceAuthError } from '#common/types/backend/function-errors/start-device-auth-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendStartUserCodexAuthOutput } from '#common/types/backend/routes/users/start-user-codex-auth/start-user-codex-auth-output';
 
@@ -35,18 +39,25 @@ export class StartUserCodexAuthController {
   async startUserCodexAuth(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendStartUserCodexAuthRequestDto
-  ) {
-    this.usersService.checkUserIsNotRestricted({ user: user });
-
-    let started = await this.codexService.startDeviceAuth();
-
-    let payload: ToBackendStartUserCodexAuthOutput = {
-      userCode: started.userCode,
-      verificationUrl: started.verificationUrl,
-      deviceAuthId: started.deviceAuthId,
-      intervalSec: started.intervalSec
-    };
-
-    return payload;
+  ): Promise<BackendResultForOperation<'startUserCodexAuth'>> {
+    return Result.pipe(
+      Result.succeed({ user: user }),
+      Result.andThrough(v =>
+        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+      ),
+      Result.bind(
+        'started',
+        (v): Result.ResultAsync<CodexDeviceAuthStart, StartDeviceAuthError> =>
+          this.codexService.startDeviceAuthResult()
+      ),
+      Result.map(
+        (v): ToBackendStartUserCodexAuthOutput => ({
+          userCode: v.started.userCode,
+          verificationUrl: v.started.verificationUrl,
+          deviceAuthId: v.started.deviceAuthId,
+          intervalSec: v.started.intervalSec
+        })
+      )
+    );
   }
 }

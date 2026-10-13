@@ -18,11 +18,14 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendUserProfileCodexAuthNotSetError } from '#common/types/backend/errors/backend-user-profile-codex-auth-not-set-error';
+import type { ExchangeDeviceAuthCodeError } from '#common/types/backend/function-errors/exchange-device-auth-code-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { LoadAuthError } from '#common/types/backend/function-errors/load-auth-error';
 import type { PersistRefreshedTokensError } from '#common/types/backend/function-errors/persist-refreshed-tokens-error';
+import type { PollDeviceAuthError } from '#common/types/backend/function-errors/poll-device-auth-error';
 import type { PrewarmCodexAuthError } from '#common/types/backend/function-errors/prewarm-codex-auth-error';
 import type { RefreshAccessTokenError } from '#common/types/backend/function-errors/refresh-access-token-error';
+import type { StartDeviceAuthError } from '#common/types/backend/function-errors/start-device-auth-error';
 import type { ValidateExpiresInError } from '#common/types/backend/function-errors/validate-expires-in-error';
 import type { CodexAuthOpenai } from '#common/types/backend/parts/codex/codex-auth-openai';
 import type { CodexDeviceAuthStatus } from '#common/types/backend/parts/codex/codex-device-auth-status';
@@ -70,7 +73,7 @@ interface CodexTokenResponse {
   expires_in?: number;
 }
 
-interface CodexDeviceAuthStart {
+export interface CodexDeviceAuthStart {
   deviceAuthId: string;
   userCode: string;
   intervalSec: number;
@@ -293,25 +296,6 @@ export class CodexService {
       return result;
     }
   }
-  private validateExpiresIn(item: { expiresIn?: number }): number {
-    let { expiresIn } = item;
-
-    let result: Result.Result<number, ValidateExpiresInError> =
-      this.validateExpiresInResult({ expiresIn: expiresIn });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        customData:
-          'customData' in result.error ? result.error.customData : undefined
-      });
-    }
-
-    let seconds: number = result.value;
-
-    return seconds;
-  }
-
   private validateExpiresInResult(item: {
     expiresIn?: number;
   }): Result.Result<number, ValidateExpiresInError> {
@@ -375,8 +359,11 @@ export class CodexService {
     );
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 501-519
-  async startDeviceAuth(): Promise<CodexDeviceAuthStart> {
-    let response = await fetch(
+  async startDeviceAuthResult(): Result.ResultAsync<
+    CodexDeviceAuthStart,
+    StartDeviceAuthError
+  > {
+    let response: Response = await fetch(
       `${CODEX_ISSUER}/api/accounts/deviceauth/usercode`,
       {
         method: 'POST',
@@ -388,37 +375,40 @@ export class CodexService {
       }
     );
     if (!response.ok) {
-      let bodyText = await response.text().catch(() => '<failed to read body>');
-      throw new ServerError({
-        message: 'BACKEND_CODEX_DEVICE_AUTH_START_FAILED',
-        customData: {
-          status: response.status,
-          body: bodyText
-        }
+      let bodyText: string = await response
+        .text()
+        .catch(() => '<failed to read body>');
+
+      return Result.fail({
+        code: 'BACKEND_CODEX_DEVICE_AUTH_START_FAILED',
+        customData: { status: response.status, body: bodyText }
       });
     }
-    let parsed = (await response.json()) as {
+    let parsed: {
       device_auth_id: string;
       user_code: string;
       interval: string;
-    };
-    let intervalSec = Math.max(parseInt(parsed.interval, 10) || 5, 1);
+    } = await response.json();
+
+    let intervalSec: number = Math.max(parseInt(parsed.interval, 10) || 5, 1);
+
     let codexDeviceAuthStart: CodexDeviceAuthStart = {
       deviceAuthId: parsed.device_auth_id,
       userCode: parsed.user_code,
       intervalSec: intervalSec,
       verificationUrl: CODEX_DEVICE_VERIFICATION_URL
     };
-    return codexDeviceAuthStart;
+
+    return Result.succeed(codexDeviceAuthStart);
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 528-577
-  async pollDeviceAuth(item: {
+  async pollDeviceAuthResult(item: {
     userId: string;
     deviceAuthId: string;
     userCode: string;
-  }): Promise<CodexDeviceAuthStatus> {
+  }): Result.ResultAsync<CodexDeviceAuthStatus, PollDeviceAuthError> {
     let { userId, deviceAuthId, userCode } = item;
-    let response = await fetch(
+    let response: Response = await fetch(
       `${CODEX_ISSUER}/api/accounts/deviceauth/token`,
       {
         method: 'POST',
@@ -433,39 +423,65 @@ export class CodexService {
       }
     );
     if (response.status === 403 || response.status === 404) {
-      return 'Pending';
+      return Result.succeed('Pending');
     }
     if (!response.ok) {
-      return 'Failed';
+      return Result.succeed('Failed');
     }
-    let parsed = (await response.json()) as {
+    let parsed: {
       authorization_code: string;
       code_verifier: string;
-    };
-    let tokens = await this.exchangeDeviceAuthCode({
-      authorizationCode: parsed.authorization_code,
-      codeVerifier: parsed.code_verifier
-    });
-    let expiresIn = this.validateExpiresIn({ expiresIn: tokens.expires_in });
-    let newState: CodexTokenState = {
-      access: tokens.access_token,
-      refresh: tokens.refresh_token,
-      expires: Date.now() + expiresIn * 1000,
-      accountId: this.extractAccountId({ tokens: tokens })
-    };
-    await this.persistRefreshedTokens({
-      userId: userId,
-      newState: newState
-    });
-    return 'Authorized';
+    } = await response.json();
+    return Result.pipe(
+      Result.succeed({
+        userId: userId,
+        authorizationCode: parsed.authorization_code,
+        codeVerifier: parsed.code_verifier
+      }),
+      Result.bind(
+        'tokens',
+        (
+          v
+        ): Result.ResultAsync<
+          CodexTokenResponse,
+          ExchangeDeviceAuthCodeError
+        > =>
+          this.exchangeDeviceAuthCodeResult({
+            authorizationCode: v.authorizationCode,
+            codeVerifier: v.codeVerifier
+          })
+      ),
+      Result.bind(
+        'expiresIn',
+        (v): Result.Result<number, ValidateExpiresInError> =>
+          this.validateExpiresInResult({ expiresIn: v.tokens.expires_in })
+      ),
+      Result.bind(
+        'newState',
+        (v): Result.Result<CodexTokenState, never> =>
+          Result.succeed({
+            access: v.tokens.access_token,
+            refresh: v.tokens.refresh_token,
+            expires: Date.now() + v.expiresIn * 1000,
+            accountId: this.extractAccountId({ tokens: v.tokens })
+          })
+      ),
+      Result.andThrough(v =>
+        this.persistRefreshedTokensResult({
+          userId: v.userId,
+          newState: v.newState
+        })
+      ),
+      Result.map((v): CodexDeviceAuthStatus => 'Authorized')
+    );
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 546-556
-  private async exchangeDeviceAuthCode(item: {
+  private async exchangeDeviceAuthCodeResult(item: {
     authorizationCode: string;
     codeVerifier: string;
-  }): Promise<CodexTokenResponse> {
+  }): Result.ResultAsync<CodexTokenResponse, ExchangeDeviceAuthCodeError> {
     let { authorizationCode, codeVerifier } = item;
-    let response = await fetch(`${CODEX_ISSUER}/oauth/token`, {
+    let response: Response = await fetch(`${CODEX_ISSUER}/oauth/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
@@ -477,16 +493,18 @@ export class CodexService {
       }).toString()
     });
     if (!response.ok) {
-      let bodyText = await response.text().catch(() => '<failed to read body>');
-      throw new ServerError({
-        message: 'BACKEND_CODEX_DEVICE_AUTH_START_FAILED',
-        customData: {
-          status: response.status,
-          body: bodyText
-        }
+      let bodyText: string = await response
+        .text()
+        .catch(() => '<failed to read body>');
+
+      return Result.fail({
+        code: 'BACKEND_CODEX_DEVICE_AUTH_START_FAILED',
+        customData: { status: response.status, body: bodyText }
       });
     }
-    return response.json();
+    let tokens: CodexTokenResponse = await response.json();
+
+    return Result.succeed(tokens);
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 131-145
   private async refreshAccessToken(item: {
@@ -598,23 +616,6 @@ export class CodexService {
       claims.organizations?.[0]?.id
     );
   }
-  private async persistRefreshedTokens(item: {
-    userId: string;
-    newState: CodexTokenState;
-  }): Promise<void> {
-    let { userId, newState } = item;
-
-    let result: Result.Result<void, PersistRefreshedTokensError> =
-      await this.persistRefreshedTokensResult({
-        userId: userId,
-        newState: newState
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-  }
-
   private async persistRefreshedTokensResult(item: {
     userId: string;
     newState: CodexTokenState;

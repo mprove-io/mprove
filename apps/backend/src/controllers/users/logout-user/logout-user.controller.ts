@@ -1,5 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendLogoutUserRequestDto,
   ToBackendLogoutUserResponseDto
@@ -8,6 +9,7 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Users')
@@ -27,9 +29,7 @@ export class LogoutUserController {
   async logoutUser(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendLogoutUserRequestDto
-  ) {
-    let payload = {};
-
-    return payload;
+  ): Promise<BackendResultForOperation<'logoutUser'>> {
+    return Result.succeed({});
   }
 }

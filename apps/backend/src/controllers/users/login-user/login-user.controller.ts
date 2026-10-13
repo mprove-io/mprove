@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendLoginUserRequestDto,
   ToBackendLoginUserResponseDto
@@ -12,6 +13,7 @@ import { LocalAuthGuard } from '#backend/guards/local-auth/local-auth.guard';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/users/login-user/login-user-output';
 
@@ -37,14 +39,14 @@ export class LoginUserController {
   async loginUser(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendLoginUserRequestDto
-  ) {
-    let token = this.jwtService.sign({ userId: user.userId });
+  ): Promise<BackendResultForOperation<'loginUser'>> {
+    let token: string = this.jwtService.sign({ userId: user.userId });
 
     let payload: ToBackendLoginUserOutput = {
       token: token,
       user: this.usersService.tabToApi({ user: user })
     };
 
-    return payload;
+    return Result.succeed(payload);
   }
 }
