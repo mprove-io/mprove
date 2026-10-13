@@ -35,6 +35,7 @@ import type { LlmModelInput } from '#common/types/backend/parts/llm-models/llm-m
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
+import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 export type LlmModelPartsResult = {
   modelParts: LlmModelPart[];
@@ -493,7 +494,12 @@ export class LlmModelService {
 
         this.modelsDevTs = Date.now();
       } catch (error) {
-        return Result.fail({ code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED' });
+        return Result.fail({
+          code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED',
+          customData: {
+            originalError: error instanceof Error ? wrapError(error) : error
+          }
+        });
       }
     }
 
@@ -522,10 +528,18 @@ export class LlmModelService {
       );
     } catch (error) {
       if (error instanceof OpenAI.AuthenticationError) {
-        return Result.fail({ code: 'BACKEND_PROVIDER_NOT_VALID_API_KEY' });
+        return Result.fail({
+          code: 'BACKEND_PROVIDER_NOT_VALID_API_KEY',
+          customData: { originalError: wrapError(error) }
+        });
       }
 
-      return Result.fail({ code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED' });
+      return Result.fail({
+        code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED',
+        customData: {
+          originalError: error instanceof Error ? wrapError(error) : error
+        }
+      });
     }
 
     let modelParts: LlmModelPart[] = devModels
@@ -575,10 +589,18 @@ export class LlmModelService {
       }
     } catch (error) {
       if (error instanceof Anthropic.AuthenticationError) {
-        return Result.fail({ code: 'BACKEND_PROVIDER_NOT_VALID_API_KEY' });
+        return Result.fail({
+          code: 'BACKEND_PROVIDER_NOT_VALID_API_KEY',
+          customData: { originalError: wrapError(error) }
+        });
       }
 
-      return Result.fail({ code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED' });
+      return Result.fail({
+        code: 'BACKEND_LLM_MODEL_DISCOVERY_FAILED',
+        customData: {
+          originalError: error instanceof Error ? wrapError(error) : error
+        }
+      });
     }
 
     let modelParts: LlmModelPart[] = anthropicModels.map(anthropicModel =>

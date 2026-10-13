@@ -86,6 +86,10 @@ export function makeBackendResultResponse<
           wrappedError = wrapError(
             new ServerError({
               message: result.error.code,
+              displayData:
+                'displayData' in result.error
+                  ? result.error.displayData
+                  : undefined,
               customData:
                 'customData' in result.error
                   ? result.error.customData

@@ -105,7 +105,7 @@ export class RpcService implements OnModuleDestroy {
         message: result.error.code,
         customData:
           result.error.code === 'BACKEND_RPC_TIMEOUT'
-            ? { timeout: `${item.timeout} ms` }
+            ? result.error.customData
             : undefined
       });
     }
@@ -147,7 +147,12 @@ export class RpcService implements OnModuleDestroy {
       resolve => {
         let timer: NodeJS.Timeout = setTimeout(() => {
           sub.quit();
-          resolve(Result.fail({ code: 'BACKEND_RPC_TIMEOUT' }));
+          resolve(
+            Result.fail({
+              code: 'BACKEND_RPC_TIMEOUT',
+              customData: { timeout: `${timeout} ms` }
+            })
+          );
         }, timeout);
 
         sub.on('message', (channel, message) => {
@@ -191,7 +196,7 @@ export class RpcService implements OnModuleDestroy {
             : undefined,
         customData:
           result.error.code === 'BACKEND_RPC_TIMEOUT'
-            ? { timeout: `${this.rpcBlockmlTimeoutMs} ms` }
+            ? result.error.customData
             : undefined,
         originalError:
           result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML' &&
@@ -373,7 +378,7 @@ export class RpcService implements OnModuleDestroy {
             : undefined,
         customData:
           result.error.code === 'BACKEND_RPC_TIMEOUT'
-            ? { timeout: `${this.rpcDiskTimeoutMs} ms` }
+            ? result.error.customData
             : undefined,
         originalError:
           result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_DISK' &&

@@ -5,8 +5,10 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { checkApiHostname } from '#backend/services/url/check-api-hostname/check-api-hostname';
 import { ServerError } from '#common/classes/server-error/server-error';
 
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { CheckApiUrlError } from '#common/types/backend/function-errors/check-api-url-error';
+import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 @Injectable()
 export class UrlService {
@@ -89,12 +91,24 @@ export class UrlService {
       if (error instanceof ServerError) {
         switch (error.message) {
           case 'BACKEND_API_INVALID_URL':
+          case 'BACKEND_API_HOST_DNS_LOOKUP_FAILED':
+            return Result.fail({
+              code: error.message,
+              displayData: error.displayData,
+              customData: isDefined(error.originalError)
+                ? {
+                    originalError:
+                      error.originalError instanceof Error
+                        ? wrapError(error.originalError)
+                        : error.originalError
+                  }
+                : undefined
+            });
           case 'BACKEND_API_PROTOCOL_MUST_BE_HTTPS_OR_HTTP':
           case 'BACKEND_API_HOST_IS_BLOCKED_BY_LIST':
           case 'BACKEND_API_HOST_IS_BLOCKED_BY_SPEC':
           case 'BACKEND_API_HOST_IS_BLOCKED_BY_SUFFIX':
           case 'BACKEND_API_HOST_IS_BLOCKED_BY_IP':
-          case 'BACKEND_API_HOST_DNS_LOOKUP_FAILED':
             return Result.fail({
               code: error.message,
               displayData: error.displayData

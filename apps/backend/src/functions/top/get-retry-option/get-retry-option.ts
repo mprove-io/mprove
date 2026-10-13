@@ -4,6 +4,7 @@ import type { WrapOptions } from 'retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import type { BackendTransactionRetryError } from '#common/types/backend/errors/backend-transaction-retry-error';
+import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 interface MyWrapOptions extends WrapOptions {
   onRetry: any;
@@ -22,7 +23,7 @@ export function getRetryOption(
       logToConsoleBackend({
         log: {
           code: 'BACKEND_TRANSACTION_RETRY' satisfies BackendTransactionRetryError['code'],
-          originalError: e
+          originalError: e instanceof Error ? wrapError(e) : e
         },
         logLevel: 'Error',
         logger: logger,

@@ -4,11 +4,19 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 export type BackendApiHostDnsLookupFailedError = {
   code: 'BACKEND_API_HOST_DNS_LOOKUP_FAILED';
   displayData?: { hostname: string };
+  customData?: {
+    originalError?: unknown;
+  };
 };
 
 export let zBackendApiHostDnsLookupFailedError = z.object({
   code: z.literal('BACKEND_API_HOST_DNS_LOOKUP_FAILED'),
-  displayData: z.object({ hostname: z.string() }).nullish()
+  displayData: z.object({ hostname: z.string() }).nullish(),
+  customData: z
+    .object({
+      originalError: z.unknown().nullish()
+    })
+    .nullish()
 });
 
 assertTypesEqual<

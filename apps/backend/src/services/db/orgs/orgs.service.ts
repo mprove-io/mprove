@@ -123,7 +123,22 @@ export class OrgsService {
       await this.addOrgResult(item);
 
     if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
+      throw new ServerError({
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined,
+        customData:
+          'customData' in result.error ? result.error.customData : undefined,
+        originalError:
+          'originalError' in result.error && result.error.originalError
+            ? Object.assign(new Error(result.error.originalError.code), {
+                displayData:
+                  'displayData' in result.error.originalError
+                    ? result.error.originalError.displayData
+                    : undefined
+              })
+            : undefined
+      });
     }
 
     let org: OrgTab = result.value;

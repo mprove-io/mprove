@@ -21,6 +21,7 @@ import { THROTTLE_TELEMETRY } from '#common/constants/top-backend';
 
 import type { ToBackendTelemetryRoute } from '#common/types/backend/request/to-backend-telemetry-route';
 import type { Er } from '#common/types/shared/errors/er';
+import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 @ApiTags('Telemetry')
 @UseGuards(ThrottlerUserIdGuard)
@@ -78,7 +79,7 @@ export class TelemetryLogsController {
       logToConsoleBackend({
         log: {
           code: 'BACKEND_FORWARD_TELEMETRY_LOGS_ERROR' satisfies Er,
-          originalError: er
+          originalError: er instanceof Error ? wrapError(er) : er
         },
         logLevel: 'Error',
         logger: this.logger,

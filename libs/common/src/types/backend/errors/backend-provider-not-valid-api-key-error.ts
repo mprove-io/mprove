@@ -3,10 +3,18 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 
 export type BackendProviderNotValidApiKeyError = {
   code: 'BACKEND_PROVIDER_NOT_VALID_API_KEY';
+  customData?: {
+    originalError?: unknown;
+  };
 };
 
 export let zBackendProviderNotValidApiKeyError = z.object({
-  code: z.literal('BACKEND_PROVIDER_NOT_VALID_API_KEY')
+  code: z.literal('BACKEND_PROVIDER_NOT_VALID_API_KEY'),
+  customData: z
+    .object({
+      originalError: z.unknown().nullish()
+    })
+    .nullish()
 });
 
 assertTypesEqual<

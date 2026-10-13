@@ -136,7 +136,12 @@ export class QueryInfoDashboardService {
         message: result.error.code,
         displayData:
           'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined,
+        customData:
+          'customData' in result.error
+            ? result.error.customData
+            : 'info' in result.error
+              ? result.error.info
+              : undefined,
         originalError:
           'originalError' in result.error && result.error.originalError
             ? Object.assign(new Error(result.error.originalError.code), {

@@ -191,6 +191,8 @@ export class ProjectsService {
     if (Result.isFailure(result)) {
       throw new ServerError({
         message: result.error.code,
+        customData:
+          'customData' in result.error ? result.error.customData : undefined,
         displayData:
           result.error.code === 'BACKEND_INVALID_REQUEST'
             ? result.error.displayData

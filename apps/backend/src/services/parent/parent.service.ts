@@ -81,7 +81,11 @@ export class ParentService {
       });
 
     if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
+      throw new ServerError({
+        message: result.error.code,
+        displayData:
+          'displayData' in result.error ? result.error.displayData : undefined
+      });
     }
   }
 
