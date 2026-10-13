@@ -3,7 +3,7 @@ import { Result } from '@praha/byethrow';
 import type { Observable } from 'rxjs';
 import { filter, map, materialize } from 'rxjs/operators';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { omitErrorCustomDataRecursive } from '#backend/functions/temp/make-backend-result-response/omit-error-custom-data-recursive/omit-error-custom-data-recursive';
+import { omitErrorCustomDataRecursive } from '#backend/functions/top/make-backend-result-response/omit-error-custom-data-recursive/omit-error-custom-data-recursive';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -33,11 +33,11 @@ type BackendResultResponse<TOperation extends ToBackendOperation> =
 export type MakeBackendResultResponseOutput<
   TOperation extends ToBackendOperation
 > = {
-  response: BackendResultResponse<TOperation>;
+  response: ToBackendResponseForOperation<TOperation>;
   wrappedError?: WrappedError;
 };
 
-// Only explicitly migrated operations may use this transport boundary.
+// Ordinary API controllers return Results; protocol-specific routes bypass this boundary.
 export function makeBackendResultResponse<
   TOperation extends ToBackendOperation
 >(item: {
@@ -113,7 +113,8 @@ export function makeBackendResultResponse<
         };
 
         let responseOutput: MakeBackendResultResponseOutput<TOperation> = {
-          response: response,
+          // The envelope is checked above; preserve the registry's operation correlation.
+          response: response as ToBackendResponseForOperation<TOperation>,
           wrappedError: wrappedError
         };
 
@@ -127,7 +128,8 @@ export function makeBackendResultResponse<
       };
 
       let responseOutput: MakeBackendResultResponseOutput<TOperation> = {
-        response: response
+        // The envelope is checked above; preserve the registry's operation correlation.
+        response: response as ToBackendResponseForOperation<TOperation>
       };
 
       return responseOutput;

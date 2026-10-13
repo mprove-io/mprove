@@ -6,7 +6,7 @@ type ErrorWithCustomData = {
   originalError?: ErrorWithCustomData;
 };
 
-// Copy only the error chain; keep public details and internal diagnostics intact.
+// Copy only the error chain; retain public details without mutating diagnostics.
 export function omitErrorCustomDataRecursive<
   TError extends ErrorWithCustomData
 >(item: { error: TError }): TError {
