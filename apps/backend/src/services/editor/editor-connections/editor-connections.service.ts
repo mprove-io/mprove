@@ -1,5 +1,6 @@
 import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -17,7 +18,16 @@ import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { GetMalloySandboxEnvsAndFilesError } from '#common/types/backend/function-errors/get-malloy-sandbox-envs-and-files-error';
+import type { Env } from '#common/types/backend/parts/env';
 import type { MalloyConfigPart } from '#common/types/backend/parts/malloy-config-part';
+
+export type GetMalloySandboxEnvsAndFilesOutput = {
+  malloyConnectionEnvs: Record<string, string>;
+  malloySandboxFiles: { path: string; data: string }[];
+};
 
 @Injectable()
 export class EditorConnectionsService {
@@ -35,31 +45,39 @@ export class EditorConnectionsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getMalloySandboxEnvsAndFiles(item: {
+  async getMalloySandboxEnvsAndFilesResult(item: {
     projectId: string;
     envId: string;
-  }): Promise<{
-    malloyConnectionEnvs: Record<string, string>;
-    malloySandboxFiles: { path: string; data: string }[];
-  }> {
+  }): Result.ResultAsync<
+    GetMalloySandboxEnvsAndFilesOutput,
+    GetMalloySandboxEnvsAndFilesError
+  > {
     let { projectId, envId } = item;
 
     let malloyConnectionEnvs: Record<string, string> = {};
 
     let malloySandboxFiles: { path: string; data: string }[] = [];
 
-    let apiEnvs = await this.envsService.getApiEnvs({
-      projectId: projectId
-    });
+    let envResult: Result.Result<Env[], GetApiEnvsError> =
+      await this.envsService.getApiEnvsResult({
+        projectId: projectId
+      });
 
-    let apiEnv = apiEnvs.find(x => x.envId === envId);
+    if (Result.isFailure(envResult)) {
+      return envResult;
+    }
+
+    let apiEnvs: Env[] = envResult.value;
+
+    let apiEnv: Env = apiEnvs.find(env => env.envId === envId);
 
     let connections: ConnectionTab[] = [];
 
-    let apiEnvIsDefined = isDefined(apiEnv);
-
-    if (apiEnvIsDefined) {
-      connections = await this.db.drizzle.query.connectionsTable
+    if (isDefined(apiEnv)) {
+      let connectionsResult: Result.Result<
+        ConnectionTab[],
+        ConnectionEntToTabError
+      > = await this.db.drizzle.query.connectionsTable
         .findMany({
           where: and(
             eq(connectionsTable.projectId, projectId),
@@ -75,14 +93,24 @@ export class EditorConnectionsService {
             )
           )
         })
-        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
+        .then(xs =>
+          Result.sequence(xs, x =>
+            this.tabService.connectionEntToTabResult({ connectionEnt: x })
+          )
+        );
+
+      if (Result.isFailure(connectionsResult)) {
+        return connectionsResult;
+      }
+
+      connections = connectionsResult.value;
     }
 
     let malloyConnectionConfigEntries: Record<string, ConnectionConfigEntry> =
       {};
 
     connections.forEach(connection => {
-      let connectionIdUpperSnakeCase = connection.connectionId
+      let connectionIdUpperSnakeCase: string = connection.connectionId
         .toUpperCase()
         .replace(/[^A-Z0-9]/g, '_');
 
@@ -186,9 +214,9 @@ export class EditorConnectionsService {
       )
     });
 
-    return {
+    return Result.succeed({
       malloyConnectionEnvs: malloyConnectionEnvs,
       malloySandboxFiles: malloySandboxFiles
-    };
+    });
   }
 }

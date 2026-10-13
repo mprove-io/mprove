@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { EventSessionStatus, SessionStatus } from '@opencode-ai/sdk/v2';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -20,9 +21,14 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BranchTab,
+  MemberTab,
+  OcEventTab,
+  OcSessionTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
@@ -34,13 +40,17 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
 
@@ -76,192 +86,227 @@ export class CreateExplorerSessionController {
   async createExplorerSession(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateExplorerSessionRequestDto
-  ) {
-    let {
-      projectId,
-      repoId,
-      providerId,
-      modelId,
-      variant,
-      branchId,
-      envId,
-      firstMessage,
-      messageId,
-      partId
-    } = body.input;
-
-    await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    if (userMember.isExplorer === false) {
-      throw new ServerError({
-        message: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
-      });
-    }
-
-    await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
-    await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
-
-    await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
-      envId: envId
-    });
-
-    let modelSelection = await this.providersService.getModelSelection({
-      projectId: projectId,
-      providerId: providerId,
-      modelId: modelId,
-      variant: variant,
-      isUserCodexAuthSet: isDefined(user.codexAuth),
-      isBuilder: false
-    });
-
-    let isCodex = modelSelection.provider.type === 'OpenAICodex';
-
-    // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
-    if (isCodex) {
-      await this.codexService.prewarmCodexAuth({
-        userId: user.userId
-      });
-    }
-
-    let now = Date.now();
-    let session: SessionTab;
-
-    await retry(
-      async () => {
-        let sessionId = makeSessionId();
-
-        session = this.sessionsService.makeSession({
-          sessionId: sessionId,
-          type: 'Explorer',
-          repoId: repoId,
-          branchId: branchId,
-          userId: user.userId,
-          projectId: projectId,
-          sandboxType: undefined,
-          providerId: providerId,
-          modelId: modelId,
-          lastMessageVariant: variant,
-          agent: undefined,
-          firstMessage: firstMessage,
-          initialBranch: undefined,
-          envId: envId,
-          initialCommit: undefined,
-          status: 'Active',
-          lastActivityTs: now,
-          codexAuthUpdateTs: isCodex ? user.codexAuthUpdateTs : undefined,
-          createdTs: now
-        });
-
-        let ocSession = this.sessionsService.makeOcSession({
-          sessionId: sessionId
-        });
-
-        if (firstMessage) {
-          let busyEvent: EventSessionStatus = {
-            id: crypto.randomUUID(),
-            type: 'session.status',
-            properties: {
-              sessionID: sessionId,
-              status: { type: 'busy' }
-            }
-          };
-
-          let busyStatus: SessionStatus = { type: 'busy' };
-
-          ocSession = {
-            ...ocSession,
-            ocSessionStatus: busyStatus
-          };
-
-          let busyEventTab = this.ocEventsService.makeOcEvent({
-            sessionId: sessionId,
-            event: busyEvent,
-            eventIndex: 0
-          });
-
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  sessions: [session],
-                  ocSessions: [ocSession],
-                  ocEvents: [busyEventTab]
-                }
-              })
-          );
-        } else {
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  sessions: [session],
-                  ocSessions: [ocSession]
-                }
-              })
-          );
-        }
-      },
-      getRetryOption(this.cs, this.logger)
-    );
-
-    // Fire-and-forget first message streaming
-    if (firstMessage) {
-      this.explorerStreamService
-        .streamMessage({
-          sessionId: session.sessionId,
-          provider: providerId,
-          modelId: modelId,
-          variant: variant,
-          userMessage: firstMessage,
-          messageId: messageId,
-          partId: partId,
-          isLockAcquired: false
+  ): Promise<BackendResultForOperation<'createExplorerSession'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        repoId: body.input.repoId,
+        providerId: body.input.providerId,
+        modelId: body.input.modelId,
+        variant: body.input.variant,
+        branchId: body.input.branchId,
+        envId: body.input.envId,
+        firstMessage: body.input.firstMessage,
+        messageId: body.input.messageId,
+        partId: body.input.partId,
+        user: user
+      }),
+      Result.andThrough(v =>
+        this.projectsService.getProjectCheckExistsResult({
+          projectId: v.projectId
         })
-        .catch(e => {
-          logToConsoleBackend({
-            log: e,
-            logLevel: 'Error',
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-    }
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.user.userId
+          })
+      ),
+      Result.andThrough(v =>
+        v.userMember.isExplorer === false
+          ? Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_EXPLORER' })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        this.sessionsService.checkRepoIdResult({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
+      ),
+      Result.bind(
+        'branch',
+        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+          this.branchesService.getBranchCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.andThrough(v =>
+        this.bridgesService.getBridgeCheckExistsResult({
+          projectId: v.branch.projectId,
+          repoId: v.branch.repoId,
+          branchId: v.branch.branchId,
+          envId: v.envId
+        })
+      ),
+      Result.bind(
+        'modelSelection',
+        (
+          v
+        ): Result.ResultAsync<
+          GetModelSelectionOutput,
+          GetModelSelectionError
+        > =>
+          this.providersService.getModelSelectionResult({
+            projectId: v.projectId,
+            providerId: v.providerId,
+            modelId: v.modelId,
+            variant: v.variant,
+            isUserCodexAuthSet: isDefined(v.user.codexAuth),
+            isBuilder: false
+          })
+      ),
+      // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
+      Result.andThrough(async v =>
+        v.modelSelection.provider.type === 'OpenAICodex'
+          ? this.codexService.prewarmCodexAuthResult({ userId: v.user.userId })
+          : Result.succeed()
+      ),
+      Result.bind(
+        'session',
+        async (v): Result.ResultAsync<SessionTab, DbErrorToError> => {
+          let now: number = Date.now();
 
-    let payload: ToBackendCreateExplorerSessionOutput = {
-      sessionId: session.sessionId,
-      repoId: session.repoId,
-      branchId: session.branchId,
-      envId: session.envId
-    };
+          let session: SessionTab;
 
-    return payload;
+          let persistenceResult: Result.Result<void, DbErrorToError> =
+            await dbErrorToResult({
+              action: async () => {
+                await retry(
+                  async () => {
+                    let sessionId: string = makeSessionId();
+
+                    session = this.sessionsService.makeSession({
+                      sessionId: sessionId,
+                      type: 'Explorer',
+                      repoId: v.repoId,
+                      branchId: v.branchId,
+                      userId: v.user.userId,
+                      projectId: v.projectId,
+                      sandboxType: undefined,
+                      providerId: v.providerId,
+                      modelId: v.modelId,
+                      lastMessageVariant: v.variant,
+                      agent: undefined,
+                      firstMessage: v.firstMessage,
+                      initialBranch: undefined,
+                      envId: v.envId,
+                      initialCommit: undefined,
+                      status: 'Active',
+                      lastActivityTs: now,
+                      codexAuthUpdateTs:
+                        v.modelSelection.provider.type === 'OpenAICodex'
+                          ? v.user.codexAuthUpdateTs
+                          : undefined,
+                      createdTs: now
+                    });
+
+                    let ocSession: OcSessionTab =
+                      this.sessionsService.makeOcSession({
+                        sessionId: sessionId
+                      });
+
+                    if (v.firstMessage) {
+                      let busyEvent: EventSessionStatus = {
+                        id: crypto.randomUUID(),
+                        type: 'session.status',
+                        properties: {
+                          sessionID: sessionId,
+                          status: { type: 'busy' }
+                        }
+                      };
+
+                      let busyStatus: SessionStatus = { type: 'busy' };
+
+                      ocSession = { ...ocSession, ocSessionStatus: busyStatus };
+
+                      let busyEventTab: OcEventTab =
+                        this.ocEventsService.makeOcEvent({
+                          sessionId: sessionId,
+                          event: busyEvent,
+                          eventIndex: 0
+                        });
+
+                      await this.db.drizzle.transaction(
+                        async tx =>
+                          await this.db.packer.write({
+                            tx: tx,
+                            insert: {
+                              sessions: [session],
+                              ocSessions: [ocSession],
+                              ocEvents: [busyEventTab]
+                            }
+                          })
+                      );
+                    } else {
+                      await this.db.drizzle.transaction(
+                        async tx =>
+                          await this.db.packer.write({
+                            tx: tx,
+                            insert: {
+                              sessions: [session],
+                              ocSessions: [ocSession]
+                            }
+                          })
+                      );
+                    }
+                  },
+                  getRetryOption(this.cs, this.logger)
+                );
+              }
+            });
+
+          return Result.isFailure(persistenceResult)
+            ? persistenceResult
+            : Result.succeed(session);
+        }
+      ),
+      // Fire-and-forget first message streaming
+      Result.andThrough(v => {
+        if (v.firstMessage) {
+          void this.explorerStreamService
+            .streamMessage({
+              sessionId: v.session.sessionId,
+              provider: v.providerId,
+              modelId: v.modelId,
+              variant: v.variant,
+              userMessage: v.firstMessage,
+              messageId: v.messageId,
+              partId: v.partId,
+              isLockAcquired: false
+            })
+            .catch(e => {
+              logToConsoleBackend({
+                log: e,
+                logLevel: 'Error',
+                logger: this.logger,
+                cs: this.cs
+              });
+            });
+        }
+
+        return Result.succeed();
+      }),
+      Result.map(
+        (v): ToBackendCreateExplorerSessionOutput => ({
+          sessionId: v.session.sessionId,
+          repoId: v.session.repoId,
+          branchId: v.session.branchId,
+          envId: v.session.envId
+        })
+      )
+    );
   }
 }

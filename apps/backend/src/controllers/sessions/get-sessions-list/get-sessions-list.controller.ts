@@ -1,16 +1,30 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { and, desc, eq, gte, inArray, lt, notInArray } from 'drizzle-orm';
+import { Result } from '@praha/byethrow';
+import {
+  and,
+  desc,
+  eq,
+  gte,
+  inArray,
+  lt,
+  notInArray,
+  type SQL
+} from 'drizzle-orm';
 import {
   ToBackendGetSessionsListRequestDto,
   ToBackendGetSessionsListResponseDto
 } from '#backend/controllers/sessions/get-sessions-list/get-sessions-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProjectTab,
+  SessionTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import {
-  SessionEnt,
+  type SessionEnt,
   sessionsTable
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -19,7 +33,16 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { EntsToSessionApisError } from '#common/types/backend/function-errors/ents-to-session-apis-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetSessionListError } from '#common/types/backend/function-errors/get-session-list-error';
+import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { SessionType } from '#common/types/backend/parts/session/session-type';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetSessionsListOutput } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
 
@@ -48,153 +71,213 @@ export class GetSessionsListController {
   async getSessionsList(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetSessionsListRequestDto
-  ) {
-    let {
-      projectId,
-      currentSessionId,
-      includeArchived,
-      archivedLimit,
-      archivedLastCreatedTs,
-      sessionType
-    } = body.input;
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
-
-    await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: user.userId
-    });
-
-    if (project.e2bApiKey && sessionType === 'Editor') {
-      let editorSessions = await this.db.drizzle.query.sessionsTable
-        .findMany({
-          where: and(
-            eq(sessionsTable.projectId, projectId),
-            eq(sessionsTable.userId, user.userId),
-            eq(sessionsTable.type, 'Editor'),
-            inArray(sessionsTable.status, ['Active', 'Paused'])
-          )
-        })
-        .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
-
-      await this.editorSandboxService.syncEditorSessionsStatus({
-        editorSessions: editorSessions,
-        e2bApiKey: project.e2bApiKey
-      });
-    }
-
-    let sessionEnts = await this.db.drizzle.query.sessionsTable.findMany({
-      where: and(
-        eq(sessionsTable.projectId, projectId),
-        eq(sessionsTable.userId, user.userId),
-        notInArray(sessionsTable.status, ['Deleted', 'Archived']),
-        eq(sessionsTable.type, sessionType)
+  ): Promise<BackendResultForOperation<'getSessionsList'>> {
+    return Result.pipe(
+      Result.succeed({
+        projectId: body.input.projectId,
+        currentSessionId: body.input.currentSessionId,
+        includeArchived: body.input.includeArchived,
+        archivedLimit: body.input.archivedLimit,
+        archivedLastCreatedTs: body.input.archivedLastCreatedTs,
+        sessionType: body.input.sessionType,
+        userId: user.userId
+      }),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
       ),
-      orderBy: [desc(sessionsTable.createdTs)]
-    });
-
-    let allEnts: SessionEnt[] = [...sessionEnts];
-
-    let payload: ToBackendGetSessionsListOutput = {
-      sessions: []
-    };
-
-    if (includeArchived === true) {
-      let limit = archivedLimit ?? 10;
-
-      let baseConditions = [
-        eq(sessionsTable.projectId, projectId),
-        eq(sessionsTable.userId, user.userId),
-        eq(sessionsTable.status, 'Archived'),
-        eq(sessionsTable.type, sessionType)
-      ];
-
-      if (
-        archivedLastCreatedTs !== undefined &&
-        archivedLastCreatedTs !== null
-      ) {
-        // All archived sessions above cursor (previously loaded + newly archived)
-        let aboveCursorEnts =
-          await this.db.drizzle.query.sessionsTable.findMany({
-            where: and(
-              ...baseConditions,
-              gte(sessionsTable.createdTs, archivedLastCreatedTs)
-            ),
-            orderBy: [desc(sessionsTable.createdTs)]
+      Result.andThrough(v =>
+        this.membersService.getMemberCheckExistsResult({
+          projectId: v.projectId,
+          memberId: v.userId
+        })
+      ),
+      Result.bind(
+        'editorSessions',
+        async (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+          v.project.e2bApiKey && v.sessionType === 'Editor'
+            ? this.db.drizzle.query.sessionsTable
+                .findMany({
+                  where: and(
+                    eq(sessionsTable.projectId, v.projectId),
+                    eq(sessionsTable.userId, v.userId),
+                    eq(sessionsTable.type, 'Editor'),
+                    inArray(sessionsTable.status, ['Active', 'Paused'])
+                  )
+                })
+                .then(xs =>
+                  Result.sequence(xs, x =>
+                    this.tabService.sessionEntToTabResult({ sessionEnt: x })
+                  )
+                )
+            : Result.succeed([])
+      ),
+      Result.andThrough(async v => {
+        if (v.project.e2bApiKey && v.sessionType === 'Editor') {
+          await this.editorSandboxService.syncEditorSessionsStatus({
+            editorSessions: v.editorSessions,
+            e2bApiKey: v.project.e2bApiKey
           });
-
-        // Next page below cursor
-        let belowCursorEnts =
-          await this.db.drizzle.query.sessionsTable.findMany({
-            where: and(
-              ...baseConditions,
-              lt(sessionsTable.createdTs, archivedLastCreatedTs)
-            ),
-            orderBy: [desc(sessionsTable.createdTs)],
-            limit: limit + 1
-          });
-
-        let hasMore = belowCursorEnts.length > limit;
-        if (hasMore) {
-          belowCursorEnts = belowCursorEnts.slice(0, limit);
         }
 
-        allEnts = [...allEnts, ...aboveCursorEnts, ...belowCursorEnts];
-        payload.hasMoreArchived = hasMore;
-      } else {
-        // First load
-        let archivedEnts = await this.db.drizzle.query.sessionsTable.findMany({
-          where: and(...baseConditions),
-          orderBy: [desc(sessionsTable.createdTs)],
-          limit: limit + 1
-        });
+        return Result.succeed();
+      }),
+      Result.andThen(
+        (
+          v
+        ): Result.ResultAsync<
+          ToBackendGetSessionsListOutput,
+          GetSessionListError
+        > =>
+          this.getSessionListResult({
+            projectId: v.projectId,
+            userId: v.userId,
+            currentSessionId: v.currentSessionId,
+            includeArchived: v.includeArchived,
+            archivedLimit: v.archivedLimit,
+            archivedLastCreatedTs: v.archivedLastCreatedTs,
+            sessionType: v.sessionType
+          })
+      )
+    );
+  }
 
-        let hasMore = archivedEnts.length > limit;
-        if (hasMore) {
-          archivedEnts = archivedEnts.slice(0, limit);
+  private async getSessionListResult(item: {
+    projectId: string;
+    userId: string;
+    currentSessionId?: string;
+    includeArchived?: boolean;
+    archivedLimit?: number;
+    archivedLastCreatedTs?: number;
+    sessionType: SessionType;
+  }): Result.ResultAsync<ToBackendGetSessionsListOutput, GetSessionListError> {
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        archivedPageLimit: item.archivedLimit ?? 10
+      }),
+      Result.bind(
+        'sessionEnts',
+        (v): Result.ResultAsync<SessionEnt[], never> =>
+          this.db.drizzle.query.sessionsTable
+            .findMany({
+              where: and(
+                eq(sessionsTable.projectId, v.projectId),
+                eq(sessionsTable.userId, v.userId),
+                notInArray(sessionsTable.status, ['Deleted', 'Archived']),
+                eq(sessionsTable.type, v.sessionType)
+              ),
+              orderBy: [desc(sessionsTable.createdTs)]
+            })
+            .then(sessionEnts => Result.succeed(sessionEnts))
+      ),
+      Result.bind(
+        'baseConditions',
+        (v): Result.Result<SQL[], never> =>
+          Result.succeed([
+            eq(sessionsTable.projectId, v.projectId),
+            eq(sessionsTable.userId, v.userId),
+            eq(sessionsTable.status, 'Archived'),
+            eq(sessionsTable.type, v.sessionType)
+          ])
+      ),
+      // All archived sessions above cursor (previously loaded + newly archived)
+      Result.bind(
+        'aboveCursorEnts',
+        async (v): Result.ResultAsync<SessionEnt[], never> =>
+          v.includeArchived === true && isDefined(v.archivedLastCreatedTs)
+            ? this.db.drizzle.query.sessionsTable
+                .findMany({
+                  where: and(
+                    ...v.baseConditions,
+                    gte(sessionsTable.createdTs, v.archivedLastCreatedTs)
+                  ),
+                  orderBy: [desc(sessionsTable.createdTs)]
+                })
+                .then(sessionEnts => Result.succeed(sessionEnts))
+            : Result.succeed([])
+      ),
+      // Next page below cursor, or first load when no cursor is provided
+      Result.bind(
+        'archivedPageEnts',
+        async (v): Result.ResultAsync<SessionEnt[], never> =>
+          v.includeArchived === true
+            ? this.db.drizzle.query.sessionsTable
+                .findMany({
+                  where: and(
+                    ...v.baseConditions,
+                    isDefined(v.archivedLastCreatedTs)
+                      ? lt(sessionsTable.createdTs, v.archivedLastCreatedTs)
+                      : undefined
+                  ),
+                  orderBy: [desc(sessionsTable.createdTs)],
+                  limit: v.archivedPageLimit + 1
+                })
+                .then(sessionEnts => Result.succeed(sessionEnts))
+            : Result.succeed([])
+      ),
+      Result.bind(
+        'hasMoreArchived',
+        async (v): Result.ResultAsync<boolean, never> =>
+          v.includeArchived === true
+            ? Result.succeed(v.archivedPageEnts.length > v.archivedPageLimit)
+            : this.db.drizzle.query.sessionsTable
+                .findFirst({
+                  where: and(...v.baseConditions),
+                  columns: { sessionId: true }
+                })
+                .then(sessionEnt => Result.succeed(isDefined(sessionEnt)))
+      ),
+      Result.bind(
+        'listedSessionEnts',
+        (v): Result.Result<SessionEnt[], never> =>
+          Result.succeed([
+            ...v.sessionEnts,
+            ...v.aboveCursorEnts,
+            ...(v.hasMoreArchived
+              ? v.archivedPageEnts.slice(0, v.archivedPageLimit)
+              : v.archivedPageEnts)
+          ])
+      ),
+      Result.bind(
+        'currentSessionEnt',
+        async (v): Result.ResultAsync<SessionEnt, never> => {
+          let isCurrentSessionIncluded: boolean = v.listedSessionEnts.some(
+            sessionEnt => sessionEnt.sessionId === v.currentSessionId
+          );
+
+          return v.currentSessionId && isCurrentSessionIncluded === false
+            ? this.db.drizzle.query.sessionsTable
+                .findFirst({
+                  where: and(
+                    eq(sessionsTable.sessionId, v.currentSessionId),
+                    eq(sessionsTable.projectId, v.projectId),
+                    eq(sessionsTable.userId, v.userId),
+                    eq(sessionsTable.type, v.sessionType)
+                  )
+                })
+                .then(sessionEnt => Result.succeed(sessionEnt))
+            : Result.succeed(undefined);
         }
-
-        allEnts = [...allEnts, ...archivedEnts];
-        payload.hasMoreArchived = hasMore;
-      }
-    } else {
-      let archivedExists = await this.db.drizzle.query.sessionsTable.findFirst({
-        where: and(
-          eq(sessionsTable.projectId, projectId),
-          eq(sessionsTable.userId, user.userId),
-          eq(sessionsTable.status, 'Archived'),
-          eq(sessionsTable.type, sessionType)
-        ),
-        columns: { sessionId: true }
-      });
-
-      payload.hasMoreArchived = archivedExists !== undefined;
-    }
-
-    if (currentSessionId) {
-      let alreadyIncluded = allEnts.some(e => e.sessionId === currentSessionId);
-      if (!alreadyIncluded) {
-        let currentSessionEnt =
-          await this.db.drizzle.query.sessionsTable.findFirst({
-            where: and(
-              eq(sessionsTable.sessionId, currentSessionId),
-              eq(sessionsTable.projectId, projectId),
-              eq(sessionsTable.userId, user.userId),
-              eq(sessionsTable.type, sessionType)
-            )
-          });
-        if (currentSessionEnt) {
-          allEnts = [...allEnts, currentSessionEnt];
-        }
-      }
-    }
-
-    payload.sessions = await this.sessionsService.entsToSessionApis({
-      allEnts
-    });
-
-    return payload;
+      ),
+      Result.bind(
+        'sessions',
+        (v): Result.ResultAsync<SessionApi[], EntsToSessionApisError> =>
+          this.sessionsService.entsToSessionApisResult({
+            allEnts: isUndefined(v.currentSessionEnt)
+              ? v.listedSessionEnts
+              : [...v.listedSessionEnts, v.currentSessionEnt]
+          })
+      ),
+      Result.map(
+        (v): ToBackendGetSessionsListOutput => ({
+          sessions: v.sessions,
+          hasMoreArchived: v.hasMoreArchived
+        })
+      )
+    );
   }
 }

@@ -1,5 +1,10 @@
 import crypto from 'node:crypto';
-import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  type OnModuleDestroy
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
   AssistantMessage,
@@ -10,12 +15,17 @@ import type {
   TextPart,
   UserMessage
 } from '@opencode-ai/sdk/v2';
+import { Result } from '@praha/byethrow';
 import { and, eq, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  OcMessageTab,
+  OcPartTab,
+  SessionTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { OcMessagesService } from '#backend/services/db/oc-messages/oc-messages.service';
@@ -29,6 +39,7 @@ import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/ed
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
 import { SessionDrainService } from '#backend/services/session/session-drain/session-drain.service';
 import type { EditorPermissionReply } from '#backend/types/editor-permission-reply';
+import type { InteractCommandReply } from '#backend/types/interact-command-reply';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
   CODEX_PROVIDER_ID,
@@ -41,10 +52,19 @@ import {
   KEY_OPENCODE_STREAM_OWNER
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
+import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
+import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
+import type { RejectQuestionError } from '#common/types/backend/function-errors/reject-question-error';
+import type { RespondToPermissionError } from '#common/types/backend/function-errors/respond-to-permission-error';
+import type { RespondToQuestionError } from '#common/types/backend/function-errors/respond-to-question-error';
+import type { StartEventStreamError } from '#common/types/backend/function-errors/start-event-stream-error';
 import type { InteractionType } from '#common/types/backend/parts/session/interaction-type';
 import type { OpencodeStreamCommand } from '#common/types/backend/parts/session/opencode-stream-command';
 
 const { forEachSeries } = pIteration;
+
+export type ExecuteInteractionOutput = { success: boolean };
 
 @Injectable()
 export class EditorStreamService implements OnModuleDestroy {
@@ -381,52 +401,85 @@ export class EditorStreamService implements OnModuleDestroy {
     opencodeSessionId: string;
     isSetReload: boolean;
   }): Promise<boolean> {
-    let { isSetReload } = item;
+    let { sessionId, opencodeSessionId, isSetReload } = item;
 
-    if (this.activeStreams.has(item.sessionId)) {
+    let result: Result.Result<boolean, StartEventStreamError> =
+      await this.startEventStreamResult({
+        sessionId: sessionId,
+        opencodeSessionId: opencodeSessionId,
+        isSetReload: isSetReload
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let isStarted: boolean = result.value;
+
+    return isStarted;
+  }
+
+  async startEventStreamResult(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    isSetReload: boolean;
+  }): Result.ResultAsync<boolean, StartEventStreamError> {
+    let { sessionId, opencodeSessionId, isSetReload } = item;
+
+    if (this.activeStreams.has(sessionId)) {
       // console.log(
       //   `[oc-stream] skip startEventStream - already in activeStreams sessionId=${item.sessionId}`
       // );
-      return false;
+      return Result.succeed(false);
     }
 
-    let acquired = await this.tryAcquireStreamLock({
-      sessionId: item.sessionId
+    let isAcquired: boolean = await this.tryAcquireStreamLock({
+      sessionId: sessionId
     });
 
-    if (!acquired) {
+    if (isAcquired === false) {
       // console.log(
       //   `[oc-stream] skip startEventStream - lock not acquired sessionId=${item.sessionId}`
       // );
-      return false;
+      return Result.succeed(false);
     }
 
     // console.log(
     //   `[oc-stream] startEventStream - lock acquired, subscribing sessionId=${item.sessionId}`
     // );
 
-    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
-      sessionId: item.sessionId
-    });
+    let clientResult: Result.Result<OpencodeClient, GetOpenCodeClientError> =
+      await this.editorOpencodeService.getOpenCodeClientResult({
+        sessionId: sessionId
+      });
+
+    if (Result.isFailure(clientResult)) {
+      return clientResult;
+    }
+
+    let opencodeClient: OpencodeClient = clientResult.value;
 
     let abortController = new AbortController();
 
     await this.sessionDrainService.initEventCounter({
-      sessionId: item.sessionId
+      sessionId: sessionId
     });
 
-    let response = await opencodeClient.event.subscribe(
-      {},
-      { signal: abortController.signal }
-    );
+    let response: Awaited<ReturnType<OpencodeClient['event']['subscribe']>> =
+      await opencodeClient.event.subscribe(
+        {},
+        { signal: abortController.signal }
+      );
 
     // console.log(
     //   `[oc-stream] startEventStream - subscribed sessionId=${item.sessionId}`
     // );
 
-    this.activeStreams.set(item.sessionId, () => abortController.abort());
-    this.lastEventTsMap.set(item.sessionId, Date.now());
-    this.pendingStreamData.set(item.sessionId, {
+    this.activeStreams.set(sessionId, () => abortController.abort());
+
+    this.lastEventTsMap.set(sessionId, Date.now());
+
+    this.pendingStreamData.set(sessionId, {
       response: response
     });
 
@@ -435,12 +488,12 @@ export class EditorStreamService implements OnModuleDestroy {
     // );
 
     await this.fetchSessionStateFromOpencode({
-      sessionId: item.sessionId,
-      opencodeSessionId: item.opencodeSessionId,
+      sessionId: sessionId,
+      opencodeSessionId: opencodeSessionId,
       isSetReload: isSetReload
     });
 
-    return true;
+    return Result.succeed(true);
   }
 
   async processEventStream(item: { sessionId: string }): Promise<void> {
@@ -520,49 +573,77 @@ export class EditorStreamService implements OnModuleDestroy {
     // console.log('[oc-stream] stopEventStream completed');
   }
 
-  async respondToPermission(item: {
+  async respondToPermissionResult(item: {
     sessionId: string;
     permissionId: string;
     reply: EditorPermissionReply;
-  }): Promise<void> {
-    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
-      sessionId: item.sessionId
-    });
-
-    await opencodeClient.permission.reply({
-      requestID: item.permissionId,
-      reply: item.reply
-    });
+  }): Result.ResultAsync<void, RespondToPermissionError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'client',
+        (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
+          this.editorOpencodeService.getOpenCodeClientResult({
+            sessionId: v.sessionId
+          })
+      ),
+      Result.andThrough(async v => {
+        await v.client.permission.reply({
+          requestID: v.permissionId,
+          reply: v.reply
+        });
+        return Result.succeed();
+      }),
+      Result.map((v): void => undefined)
+    );
   }
 
-  async respondToQuestion(item: {
+  async respondToQuestionResult(item: {
     sessionId: string;
     opencodeSessionId: string;
     questionId: string;
     answers: string[][];
-  }): Promise<void> {
-    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
-      sessionId: item.sessionId
-    });
-
-    await opencodeClient.question.reply({
-      requestID: item.questionId,
-      answers: item.answers
-    });
+  }): Result.ResultAsync<void, RespondToQuestionError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'client',
+        (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
+          this.editorOpencodeService.getOpenCodeClientResult({
+            sessionId: v.sessionId
+          })
+      ),
+      Result.andThrough(async v => {
+        await v.client.question.reply({
+          requestID: v.questionId,
+          answers: v.answers
+        });
+        return Result.succeed();
+      }),
+      Result.map((v): void => undefined)
+    );
   }
 
-  async rejectQuestion(item: {
+  async rejectQuestionResult(item: {
     sessionId: string;
     opencodeSessionId: string;
     questionId: string;
-  }): Promise<void> {
-    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
-      sessionId: item.sessionId
-    });
-
-    await opencodeClient.question.reject({
-      requestID: item.questionId
-    });
+  }): Result.ResultAsync<void, RejectQuestionError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'client',
+        (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
+          this.editorOpencodeService.getOpenCodeClientResult({
+            sessionId: v.sessionId
+          })
+      ),
+      Result.andThrough(async v => {
+        await v.client.question.reject({ requestID: v.questionId });
+        return Result.succeed();
+      }),
+      Result.map((v): void => undefined)
+    );
   }
 
   async checkStreamStalls(): Promise<void> {
@@ -807,161 +888,55 @@ export class EditorStreamService implements OnModuleDestroy {
     partId?: string;
     system?: string;
   }): Promise<{ success: boolean }> {
-    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
-      sessionId: item.sessionId
+    let {
+      sessionId,
+      opencodeSessionId,
+      interactionType,
+      message,
+      agent,
+      providerId,
+      modelId,
+      variant,
+      permissionId,
+      reply,
+      questionId,
+      answers,
+      messageId,
+      partId,
+      system
+    } = item;
+
+    let result: Result.Result<
+      ExecuteInteractionOutput,
+      ExecuteInteractionError
+    > = await this.executeInteractionResult({
+      sessionId: sessionId,
+      opencodeSessionId: opencodeSessionId,
+      interactionType: interactionType,
+      message: message,
+      agent: agent,
+      providerId: providerId,
+      modelId: modelId,
+      variant: variant,
+      permissionId: permissionId,
+      reply: reply,
+      questionId: questionId,
+      answers: answers,
+      messageId: messageId,
+      partId: partId,
+      system: system
     });
 
-    if (item.interactionType === 'Message') {
-      let message: string = item.message ?? '';
-
-      let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
-        parts: [
-          {
-            type: 'text',
-            text: message,
-            ...(item.partId ? { id: item.partId } : {})
-          }
-        ]
-      };
-
-      if (item.agent) {
-        promptBody.agent = item.agent;
-      }
-
-      let ocProviderId = item.providerId;
-
-      if (item.providerId === CODEX_PROVIDER_ID) {
-        ocProviderId = OPENAI_PROVIDER_ID;
-      } else if (item.providerId === OPENAI_PROVIDER_ID) {
-        ocProviderId = OPENCODE_PROJECT_OPENAI_PROVIDER_ID;
-      }
-
-      if (ocProviderId && item.modelId) {
-        promptBody.model = {
-          providerID: ocProviderId,
-          modelID: item.modelId
-        };
-      }
-
-      if (item.variant) {
-        promptBody.variant = item.variant;
-      }
-
-      if (item.messageId) {
-        promptBody.messageID = item.messageId;
-      }
-
-      if (item.system) {
-        promptBody.system = item.system;
-      }
-
-      await opencodeClient.session.promptAsync(
-        {
-          sessionID: item.opencodeSessionId,
-          ...promptBody
-        },
-        { throwOnError: true }
-      );
-
-      // fix for missing user message part in returned opencode state, if it was sent to paused session
-      if (item.messageId && item.partId) {
-        try {
-          let messageModel: UserMessage['model'] = {
-            providerID: ocProviderId || '',
-            modelID: item.modelId || '',
-            variant: item.variant
-          };
-
-          let userMessage: UserMessage = {
-            id: item.messageId,
-            sessionID: item.opencodeSessionId,
-            role: 'user',
-            time: { created: Date.now() },
-            agent: item.agent ?? '',
-            model: messageModel
-          };
-
-          let userMessageTab = this.ocMessagesService.makeOcMessage({
-            messageId: item.messageId,
-            sessionId: item.sessionId,
-            role: 'user',
-            ocMessage: userMessage
-          });
-
-          let userPart: TextPart = {
-            id: item.partId,
-            sessionID: item.opencodeSessionId,
-            messageID: item.messageId,
-            type: 'text',
-            text: message
-          };
-
-          let userPartTab = this.ocPartsService.makeOcPart({
-            partId: item.partId,
-            messageId: item.messageId,
-            sessionId: item.sessionId,
-            ocPart: userPart
-          });
-
-          await this.db.drizzle.transaction(async tx => {
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                ocMessages: [userMessageTab],
-                ocParts: [userPartTab]
-              }
-            });
-          });
-        } catch (e: any) {
-          // console.log(
-          //   `[oc-exec] failed to persist user message part sessionId=${item.sessionId} messageId=${item.messageId}: ${e?.message}`
-          // );
-        }
-      }
-    } else if (item.interactionType === 'Permission') {
-      if (
-        item.reply !== 'always' &&
-        item.reply !== 'once' &&
-        item.reply !== 'reject'
-      ) {
-        throw new Error('Invalid permission reply');
-      }
-
-      let permissionReply: EditorPermissionReply = item.reply;
-
-      await this.respondToPermission({
-        sessionId: item.sessionId,
-        permissionId: item.permissionId,
-        reply: permissionReply
-      });
-    } else if (item.interactionType === 'Question') {
-      if (item.answers !== undefined) {
-        await this.respondToQuestion({
-          sessionId: item.sessionId,
-          opencodeSessionId: item.opencodeSessionId,
-          questionId: item.questionId,
-          answers: item.answers
-        });
-      } else {
-        await this.rejectQuestion({
-          sessionId: item.sessionId,
-          opencodeSessionId: item.opencodeSessionId,
-          questionId: item.questionId
-        });
-      }
-    } else if (item.interactionType === 'Stop') {
-      await opencodeClient.session.abort(
-        {
-          sessionID: item.opencodeSessionId
-        },
-        { throwOnError: true }
-      );
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    return { success: true };
+    let interaction: ExecuteInteractionOutput = result.value;
+
+    return interaction;
   }
 
-  async publishInteractCommand(item: {
+  async executeInteractionResult(item: {
     sessionId: string;
     opencodeSessionId: string;
     interactionType: InteractionType;
@@ -977,11 +952,241 @@ export class EditorStreamService implements OnModuleDestroy {
     messageId?: string;
     partId?: string;
     system?: string;
-  }): Promise<{ success: boolean }> {
-    let correlationId = crypto.randomUUID();
+  }): Result.ResultAsync<ExecuteInteractionOutput, ExecuteInteractionError> {
+    let {
+      sessionId,
+      opencodeSessionId,
+      interactionType,
+      message: inputMessage,
+      agent,
+      providerId,
+      modelId,
+      variant,
+      permissionId,
+      reply,
+      questionId,
+      answers,
+      messageId,
+      partId,
+      system
+    } = item;
+
+    let clientResult: Result.Result<OpencodeClient, GetOpenCodeClientError> =
+      await this.editorOpencodeService.getOpenCodeClientResult({
+        sessionId: sessionId
+      });
+
+    if (Result.isFailure(clientResult)) {
+      return clientResult;
+    }
+
+    let opencodeClient: OpencodeClient = clientResult.value;
+
+    if (interactionType === 'Message') {
+      let message: string = inputMessage ?? '';
+
+      let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
+        parts: [
+          {
+            type: 'text',
+            text: message,
+            ...(partId ? { id: partId } : {})
+          }
+        ]
+      };
+
+      if (agent) {
+        promptBody.agent = agent;
+      }
+
+      let ocProviderId = providerId;
+
+      if (providerId === CODEX_PROVIDER_ID) {
+        ocProviderId = OPENAI_PROVIDER_ID;
+      } else if (providerId === OPENAI_PROVIDER_ID) {
+        ocProviderId = OPENCODE_PROJECT_OPENAI_PROVIDER_ID;
+      }
+
+      if (ocProviderId && modelId) {
+        promptBody.model = {
+          providerID: ocProviderId,
+          modelID: modelId
+        };
+      }
+
+      if (variant) {
+        promptBody.variant = variant;
+      }
+
+      if (messageId) {
+        promptBody.messageID = messageId;
+      }
+
+      if (system) {
+        promptBody.system = system;
+      }
+
+      await opencodeClient.session.promptAsync(
+        {
+          sessionID: opencodeSessionId,
+          ...promptBody
+        },
+        { throwOnError: true }
+      );
+
+      // fix for missing user message part in returned opencode state, if it was sent to paused session
+      if (messageId && partId) {
+        try {
+          let messageModel: UserMessage['model'] = {
+            providerID: ocProviderId || '',
+            modelID: modelId || '',
+            variant: variant
+          };
+
+          let userMessage: UserMessage = {
+            id: messageId,
+            sessionID: opencodeSessionId,
+            role: 'user',
+            time: { created: Date.now() },
+            agent: agent ?? '',
+            model: messageModel
+          };
+
+          let userOcMessage: OcMessageTab =
+            this.ocMessagesService.makeOcMessage({
+              messageId: messageId,
+              sessionId: sessionId,
+              role: 'user',
+              ocMessage: userMessage
+            });
+
+          let userPart: TextPart = {
+            id: partId,
+            sessionID: opencodeSessionId,
+            messageID: messageId,
+            type: 'text',
+            text: message
+          };
+
+          let userOcPart: OcPartTab = this.ocPartsService.makeOcPart({
+            partId: partId,
+            messageId: messageId,
+            sessionId: sessionId,
+            ocPart: userPart
+          });
+
+          await this.db.drizzle.transaction(async tx => {
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                ocMessages: [userOcMessage],
+                ocParts: [userOcPart]
+              }
+            });
+          });
+        } catch (e: any) {
+          // console.log(
+          //   `[oc-exec] failed to persist user message part sessionId=${item.sessionId} messageId=${item.messageId}: ${e?.message}`
+          // );
+        }
+      }
+    } else if (interactionType === 'Permission') {
+      if (reply !== 'always' && reply !== 'once' && reply !== 'reject') {
+        throw new Error('Invalid permission reply');
+      }
+
+      let permissionReply: EditorPermissionReply = reply;
+
+      let permissionResult: Result.Result<void, RespondToPermissionError> =
+        await this.respondToPermissionResult({
+          sessionId: sessionId,
+          permissionId: permissionId,
+          reply: permissionReply
+        });
+
+      if (Result.isFailure(permissionResult)) {
+        return permissionResult;
+      }
+    } else if (interactionType === 'Question') {
+      if (answers !== undefined) {
+        let questionResult: Result.Result<void, RespondToQuestionError> =
+          await this.respondToQuestionResult({
+            sessionId: sessionId,
+            opencodeSessionId: opencodeSessionId,
+            questionId: questionId,
+            answers: answers
+          });
+
+        if (Result.isFailure(questionResult)) {
+          return questionResult;
+        }
+      } else {
+        let questionResult: Result.Result<void, RejectQuestionError> =
+          await this.rejectQuestionResult({
+            sessionId: sessionId,
+            opencodeSessionId: opencodeSessionId,
+            questionId: questionId
+          });
+
+        if (Result.isFailure(questionResult)) {
+          return questionResult;
+        }
+      }
+    } else if (interactionType === 'Stop') {
+      await opencodeClient.session.abort(
+        {
+          sessionID: opencodeSessionId
+        },
+        { throwOnError: true }
+      );
+    }
+
+    return Result.succeed({ success: true });
+  }
+
+  async publishInteractCommandResult(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    interactionType: InteractionType;
+    message?: string;
+    agent?: string;
+    providerId?: string;
+    modelId?: string;
+    variant?: string;
+    permissionId?: string;
+    reply?: string;
+    questionId?: string;
+    answers?: string[][];
+    messageId?: string;
+    partId?: string;
+    system?: string;
+  }): Result.ResultAsync<
+    ExecuteInteractionOutput,
+    PublishInteractCommandError
+  > {
+    let {
+      sessionId,
+      opencodeSessionId,
+      interactionType,
+      message,
+      agent,
+      providerId,
+      modelId,
+      variant,
+      permissionId,
+      reply,
+      questionId,
+      answers,
+      messageId,
+      partId,
+      system
+    } = item;
+
+    let correlationId: string = crypto.randomUUID();
+
     let replyTo = `${CHANNEL_OPENCODE_INTERACT_REPLY}:${correlationId}`;
 
-    let sub = this.redisClient.duplicate();
+    let sub: Redis = this.redisClient.duplicate();
 
     await sub.subscribe(replyTo);
 
@@ -989,70 +1194,76 @@ export class EditorStreamService implements OnModuleDestroy {
       CHANNEL_OPENCODE_STREAM_COMMAND,
       JSON.stringify({
         command: 'interact' satisfies OpencodeStreamCommand,
-        sessionId: item.sessionId,
+        sessionId: sessionId,
         replyTo: replyTo,
         payload: {
-          opencodeSessionId: item.opencodeSessionId,
-          interactionType: item.interactionType,
-          message: item.message,
-          agent: item.agent,
-          providerId: item.providerId,
-          modelId: item.modelId,
-          variant: item.variant,
-          permissionId: item.permissionId,
-          reply: item.reply,
-          questionId: item.questionId,
-          answers: item.answers,
-          messageId: item.messageId,
-          partId: item.partId,
-          system: item.system
+          opencodeSessionId: opencodeSessionId,
+          interactionType: interactionType,
+          message: message,
+          agent: agent,
+          providerId: providerId,
+          modelId: modelId,
+          variant: variant,
+          permissionId: permissionId,
+          reply: reply,
+          questionId: questionId,
+          answers: answers,
+          messageId: messageId,
+          partId: partId,
+          system: system
         }
       })
     );
 
     let timeoutMs = 30_000;
 
-    return new Promise<{ success: boolean }>((resolve, reject) => {
-      let timer = setTimeout(() => {
-        sub.quit();
-        reject(
-          new ServerError({
-            message: 'BACKEND_INTERACT_TIMEOUT',
-            customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
+    let interactionResult: Result.Result<
+      ExecuteInteractionOutput,
+      PublishInteractCommandError
+    > = await new Promise<
+      Result.Result<ExecuteInteractionOutput, PublishInteractCommandError>
+    >(resolve => {
+      let timer: ReturnType<typeof setTimeout> = setTimeout(() => {
+        void sub.quit();
+
+        resolve(
+          Result.fail({
+            code: 'BACKEND_INTERACT_TIMEOUT',
+            customData: { sessionId: sessionId, timeoutMs: timeoutMs }
           })
         );
       }, timeoutMs);
 
       sub.on('message', (_channel, rawMessage) => {
         clearTimeout(timer);
-        sub.quit();
+
+        void sub.quit();
 
         try {
-          let result = JSON.parse(rawMessage);
+          let interaction: InteractCommandReply = JSON.parse(rawMessage);
 
-          if (result.success) {
-            resolve(result);
+          if (interaction.success) {
+            resolve(Result.succeed(interaction));
           } else {
-            reject(
-              new ServerError({
-                message: 'BACKEND_INTERACT_FAILED',
-                customData: {
-                  sessionId: item.sessionId,
-                  error: result.error
-                }
+            resolve(
+              Result.fail({
+                code: 'BACKEND_INTERACT_FAILED',
+                customData: { sessionId: sessionId, error: interaction.error }
               })
             );
           }
         } catch {
-          reject(
-            new ServerError({
-              message: 'BACKEND_INTERACT_FAILED',
-              customData: { sessionId: item.sessionId }
+          resolve(
+            Result.fail({
+              code: 'BACKEND_INTERACT_FAILED',
+              customData: { sessionId: sessionId }
             })
           );
         }
       });
     });
+
+    return interactionResult;
   }
 
   async publishFetchFromOpencodeCommand(item: {

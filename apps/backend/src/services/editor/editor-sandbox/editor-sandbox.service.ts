@@ -6,8 +6,12 @@ import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProjectTab,
+  SessionTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
@@ -15,6 +19,11 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { PauseSandboxError } from '#common/types/backend/function-errors/pause-sandbox-error';
+import type { PauseSessionByIdError } from '#common/types/backend/function-errors/pause-session-by-id-error';
+import type { ResumeSandboxError } from '#common/types/backend/function-errors/resume-sandbox-error';
 import type { StopSandboxError } from '#common/types/backend/function-errors/stop-sandbox-error';
 import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
@@ -71,19 +80,6 @@ export class EditorSandboxService {
     return all;
   }
 
-  async stopSandbox(item: {
-    sandboxType: SandboxType;
-    sandboxId: string;
-    e2bApiKey: string;
-  }): Promise<void> {
-    let result: Result.Result<void, StopSandboxError> =
-      await this.stopSandboxResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-  }
-
   async stopSandboxResult(item: {
     sandboxType?: SandboxType;
     sandboxId: string;
@@ -107,47 +103,46 @@ export class EditorSandboxService {
     }
   }
 
-  async pauseSandbox(item: {
-    sandboxType: SandboxType;
+  async pauseSandboxResult(item: {
+    sandboxType?: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
-  }): Promise<void> {
-    let isApiKeySet = isDefinedAndNotEmpty(item.e2bApiKey);
-    if (isApiKeySet === false) {
-      return;
+  }): Result.ResultAsync<void, PauseSandboxError> {
+    let { sandboxType, sandboxId, e2bApiKey } = item;
+
+    if (isDefinedAndNotEmpty(e2bApiKey) === false) {
+      return Result.succeed();
     }
 
-    switch (item.sandboxType) {
+    switch (sandboxType) {
       case 'E2B':
-        await Sandbox.betaPause(item.sandboxId, { apiKey: item.e2bApiKey });
+        await Sandbox.betaPause(sandboxId, { apiKey: e2bApiKey });
 
-        break;
+        return Result.succeed();
       default:
-        throw new ServerError({
-          message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
-        });
+        return Result.fail({ code: 'BACKEND_UNKNOWN_SANDBOX_TYPE' });
     }
   }
 
-  async resumeSandbox(item: {
-    sandboxType: SandboxType;
+  async resumeSandboxResult(item: {
+    sandboxType?: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
     timeoutMs: number;
-  }): Promise<void> {
-    switch (item.sandboxType) {
+  }): Result.ResultAsync<void, ResumeSandboxError> {
+    let { sandboxType, sandboxId, e2bApiKey, timeoutMs } = item;
+
+    switch (sandboxType) {
       case 'E2B':
-        await Sandbox.connect(item.sandboxId, { apiKey: item.e2bApiKey });
+        await Sandbox.connect(sandboxId, { apiKey: e2bApiKey });
 
-        await Sandbox.setTimeout(item.sandboxId, item.timeoutMs, {
-          apiKey: item.e2bApiKey
+        await Sandbox.setTimeout(sandboxId, timeoutMs, {
+          apiKey: e2bApiKey
         });
 
-        break;
+        return Result.succeed();
       default:
-        throw new ServerError({
-          message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
-        });
+        return Result.fail({ code: 'BACKEND_UNKNOWN_SANDBOX_TYPE' });
     }
   }
 
@@ -183,46 +178,76 @@ export class EditorSandboxService {
     sessionId: string;
     pauseReason: PauseReason;
   }): Promise<void> {
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: item.sessionId
-    });
+    let { sessionId, pauseReason } = item;
 
-    if (
-      session.type !== 'Editor' ||
-      session.status !== 'Active' ||
-      !session.sandboxId
-    ) {
-      return;
+    let result: Result.Result<void, PauseSessionByIdError> =
+      await this.pauseSessionByIdResult({
+        sessionId: sessionId,
+        pauseReason: pauseReason
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
+  }
 
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: session.projectId
-    });
+  async pauseSessionByIdResult(item: {
+    sessionId: string;
+    pauseReason: PauseReason;
+  }): Result.ResultAsync<void, PauseSessionByIdError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'session',
+        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+          this.sessionsService.getSessionByIdCheckExistsResult({
+            sessionId: v.sessionId
+          })
+      ),
+      Result.bind(
+        'project',
+        async (
+          v
+        ): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          v.session.type !== 'Editor' ||
+          v.session.status !== 'Active' ||
+          !v.session.sandboxId
+            ? Result.succeed(undefined)
+            : this.projectsService.getProjectCheckExistsResult({
+                projectId: v.session.projectId
+              })
+      ),
+      Result.andThrough(v =>
+        !v.project?.e2bApiKey
+          ? Result.succeed()
+          : this.pauseSandboxResult({
+              sandboxType: v.session.sandboxType,
+              sandboxId: v.session.sandboxId,
+              e2bApiKey: v.project.e2bApiKey
+            })
+      ),
+      Result.andThrough(v =>
+        !v.project?.e2bApiKey
+          ? Result.succeed()
+          : dbErrorToResult({
+              action: async () => {
+                let updatedSession: SessionTab = {
+                  ...v.session,
+                  status: 'Paused',
+                  pauseReason: v.pauseReason
+                };
 
-    if (!project.e2bApiKey) {
-      return;
-    }
-
-    await this.pauseSandbox({
-      sandboxType: session.sandboxType as SandboxType,
-      sandboxId: session.sandboxId,
-      e2bApiKey: project.e2bApiKey
-    });
-
-    let updatedSession: SessionTab = {
-      ...session,
-      status: 'Paused',
-      pauseReason: item.pauseReason
-    };
-
-    await this.db.drizzle.transaction(
-      async tx =>
-        await this.db.packer.write({
-          tx: tx,
-          insertOrUpdate: {
-            sessions: [updatedSession]
-          }
-        })
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: { sessions: [updatedSession] }
+                    })
+                );
+              }
+            })
+      ),
+      Result.map((v): void => undefined)
     );
   }
 

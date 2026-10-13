@@ -33,6 +33,11 @@ import {
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
 import { Idemp } from './interfaces/idemp';
 
+type ResponseWithWrappedError = {
+  response: ToBackendResponse;
+  wrappedError?: WrappedError;
+};
+
 @Injectable()
 export class AppInterceptor implements NestInterceptor {
   constructor(
@@ -98,8 +103,7 @@ export class AppInterceptor implements NestInterceptor {
       });
     }
 
-    let wrappedError: WrappedError;
-    let respX;
+    let idempResponseOutput: ResponseWithWrappedError;
 
     if (isDefined(idemp) && isUndefined(idemp.resp)) {
       try {
@@ -113,7 +117,7 @@ export class AppInterceptor implements NestInterceptor {
               bail(new Error(`Idemp resp is still empty, attempt ${num}`));
             }
 
-            respX = idempX.resp;
+            idempResponseOutput = { response: idempX.resp };
           },
           {
             retries: 2, // (default 10)
@@ -139,26 +143,31 @@ export class AppInterceptor implements NestInterceptor {
           originalError: e
         });
 
-        let resultX = makeErrorResponseBackend({
-          e: err,
-          body: req,
-          path: request.url,
-          method: request.method,
-          mproveVersion:
-            this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
-          duration: Date.now() - request.start_ts,
-          cs: this.cs,
-          logger: this.logger
-        });
+        let resultX: ReturnType<typeof makeErrorResponseBackend> =
+          makeErrorResponseBackend({
+            e: err,
+            body: req,
+            path: request.url,
+            method: request.method,
+            mproveVersion:
+              this.cs.get<BackendConfig['mproveReleaseTag']>(
+                'mproveReleaseTag'
+              ),
+            duration: Date.now() - request.start_ts,
+            cs: this.cs,
+            logger: this.logger
+          });
 
-        respX = resultX.resp;
-        wrappedError = resultX.wrappedError;
+        idempResponseOutput = {
+          response: resultX.resp,
+          wrappedError: resultX.wrappedError
+        };
 
         let idempA: Idemp = {
           idempotencyKey: iKey,
           stId: stId,
           req: req,
-          resp: respX,
+          resp: idempResponseOutput.response,
           serverTs: makeTsNumber()
         };
 
@@ -171,20 +180,125 @@ export class AppInterceptor implements NestInterceptor {
 
     // Explicit operation cutover: other endpoints retain their payload path.
     // Do not infer the transport mode from the shape of the returned value.
-    let execution: Observable<ToBackendResponse>;
+    let execution: Observable<ResponseWithWrappedError>;
 
     if (isUndefined(idemp)) {
-      if (req.operation === 'getCharts') {
+      if (req.operation === 'archiveSession') {
+        execution = makeBackendResultResponse({
+          operation: 'archiveSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'closeExplorerSessionTab') {
+        execution = makeBackendResultResponse({
+          operation: 'closeExplorerSessionTab',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'createEditorSession') {
+        execution = makeBackendResultResponse({
+          operation: 'createEditorSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'createExplorerSession') {
+        execution = makeBackendResultResponse({
+          operation: 'createExplorerSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'createSessionSseTicket') {
+        execution = makeBackendResultResponse({
+          operation: 'createSessionSseTicket',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'deleteSession') {
+        execution = makeBackendResultResponse({
+          operation: 'deleteSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'getSession') {
+        execution = makeBackendResultResponse({
+          operation: 'getSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'getSessionsList') {
+        execution = makeBackendResultResponse({
+          operation: 'getSessionsList',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'pauseEditorSession') {
+        execution = makeBackendResultResponse({
+          operation: 'pauseEditorSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'sendMessageToEditorSession') {
+        execution = makeBackendResultResponse({
+          operation: 'sendMessageToEditorSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'sendMessageToExplorerSession') {
+        execution = makeBackendResultResponse({
+          operation: 'sendMessageToExplorerSession',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'setSessionTitle') {
+        execution = makeBackendResultResponse({
+          operation: 'setSessionTitle',
+          execution: next.handle(),
+          traceId: req.traceId,
+          method: request.method,
+          cs: this.cs,
+          startTs: request.start_ts
+        });
+      } else if (req.operation === 'getCharts') {
         execution = makeBackendResultResponse({
           operation: 'getCharts',
           execution: next.handle(),
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteDraftCharts') {
         execution = makeBackendResultResponse({
@@ -193,10 +307,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getDashboards') {
         execution = makeBackendResultResponse({
@@ -205,10 +316,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteDraftDashboards') {
         execution = makeBackendResultResponse({
@@ -217,10 +325,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getReports') {
         execution = makeBackendResultResponse({
@@ -229,10 +334,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteDraftReports') {
         execution = makeBackendResultResponse({
@@ -241,10 +343,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getChart') {
         execution = makeBackendResultResponse({
@@ -253,10 +352,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getExplorerChartTab') {
         execution = makeBackendResultResponse({
@@ -265,10 +361,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createDraftChart') {
         execution = makeBackendResultResponse({
@@ -277,10 +370,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editDraftChart') {
         execution = makeBackendResultResponse({
@@ -289,10 +379,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'saveCreateChart') {
         execution = makeBackendResultResponse({
@@ -301,10 +388,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'saveModifyChart') {
         execution = makeBackendResultResponse({
@@ -313,10 +397,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getDashboard') {
         execution = makeBackendResultResponse({
@@ -325,10 +406,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createDraftDashboard') {
         execution = makeBackendResultResponse({
@@ -337,10 +415,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editDraftDashboard') {
         execution = makeBackendResultResponse({
@@ -349,10 +424,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'saveCreateDashboard') {
         execution = makeBackendResultResponse({
@@ -361,10 +433,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'saveModifyDashboard') {
         execution = makeBackendResultResponse({
@@ -373,10 +442,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getReport') {
         execution = makeBackendResultResponse({
@@ -385,10 +451,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createDraftReport') {
         execution = makeBackendResultResponse({
@@ -397,10 +460,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editDraftReport') {
         execution = makeBackendResultResponse({
@@ -409,10 +469,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'saveCreateReport') {
         execution = makeBackendResultResponse({
@@ -421,10 +478,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'saveModifyReport') {
         execution = makeBackendResultResponse({
@@ -433,10 +487,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteChart') {
         execution = makeBackendResultResponse({
@@ -445,10 +496,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteDashboard') {
         execution = makeBackendResultResponse({
@@ -457,10 +505,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteReport') {
         execution = makeBackendResultResponse({
@@ -469,10 +514,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getQuery') {
         execution = makeBackendResultResponse({
@@ -481,10 +523,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getQueries') {
         execution = makeBackendResultResponse({
@@ -493,10 +532,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'cancelQueries') {
         execution = makeBackendResultResponse({
@@ -505,10 +541,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'runQueries') {
         execution = makeBackendResultResponse({
@@ -517,10 +550,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'runQueriesDry') {
         execution = makeBackendResultResponse({
@@ -529,10 +559,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getQueryInfo') {
         execution = makeBackendResultResponse({
@@ -541,10 +568,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'groupMetricByDimension') {
         execution = makeBackendResultResponse({
@@ -553,10 +577,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'suggestDimensionValues') {
         execution = makeBackendResultResponse({
@@ -565,10 +586,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'run') {
         execution = makeBackendResultResponse({
@@ -577,10 +595,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'duplicateMconfigAndQuery') {
         execution = makeBackendResultResponse({
@@ -589,10 +604,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'setProjectInfo') {
         execution = makeBackendResultResponse({
@@ -601,10 +613,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'setProjectSandboxProvider') {
         execution = makeBackendResultResponse({
@@ -613,10 +622,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createProject') {
         execution = makeBackendResultResponse({
@@ -625,10 +631,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteProject') {
         execution = makeBackendResultResponse({
@@ -637,10 +640,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'generateProjectRemoteKey') {
         execution = makeBackendResultResponse({
@@ -649,10 +649,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getProject') {
         execution = makeBackendResultResponse({
@@ -661,10 +658,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getProjectsList') {
         execution = makeBackendResultResponse({
@@ -673,10 +667,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'isProjectExist') {
         execution = makeBackendResultResponse({
@@ -685,10 +676,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createOrg') {
         execution = makeBackendResultResponse({
@@ -697,10 +685,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteOrg') {
         execution = makeBackendResultResponse({
@@ -709,10 +694,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getOrg') {
         execution = makeBackendResultResponse({
@@ -721,10 +703,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getOrgsList') {
         execution = makeBackendResultResponse({
@@ -733,10 +712,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'isOrgExist') {
         execution = makeBackendResultResponse({
@@ -745,10 +721,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'setOrgInfo') {
         execution = makeBackendResultResponse({
@@ -757,10 +730,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'setOrgOwner') {
         execution = makeBackendResultResponse({
@@ -769,10 +739,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createProvider') {
         execution = makeBackendResultResponse({
@@ -781,10 +748,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteProvider') {
         execution = makeBackendResultResponse({
@@ -793,10 +757,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editProvider') {
         execution = makeBackendResultResponse({
@@ -805,10 +766,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getProviders') {
         execution = makeBackendResultResponse({
@@ -817,10 +775,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'toggleProvider') {
         execution = makeBackendResultResponse({
@@ -829,10 +784,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createEnv') {
         execution = makeBackendResultResponse({
@@ -841,10 +793,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteEnv') {
         execution = makeBackendResultResponse({
@@ -853,10 +802,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createEnvUser') {
         execution = makeBackendResultResponse({
@@ -865,10 +811,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteEnvUser') {
         execution = makeBackendResultResponse({
@@ -877,10 +820,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createEnvVar') {
         execution = makeBackendResultResponse({
@@ -889,10 +829,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteEnvVar') {
         execution = makeBackendResultResponse({
@@ -901,10 +838,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editEnvVar') {
         execution = makeBackendResultResponse({
@@ -913,10 +847,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editEnvFallbacks') {
         execution = makeBackendResultResponse({
@@ -925,10 +856,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getEnvs') {
         execution = makeBackendResultResponse({
@@ -937,10 +865,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getEnvsList') {
         execution = makeBackendResultResponse({
@@ -949,10 +874,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getAvatarBig') {
         execution = makeBackendResultResponse({
@@ -961,10 +883,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'setAvatar') {
         execution = makeBackendResultResponse({
@@ -973,10 +892,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createRole') {
         execution = makeBackendResultResponse({
@@ -985,10 +901,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteRole') {
         execution = makeBackendResultResponse({
@@ -997,10 +910,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createRoleGiven') {
         execution = makeBackendResultResponse({
@@ -1009,10 +919,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteRoleGiven') {
         execution = makeBackendResultResponse({
@@ -1021,10 +928,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editRoleGiven') {
         execution = makeBackendResultResponse({
@@ -1033,10 +937,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getRoles') {
         execution = makeBackendResultResponse({
@@ -1045,10 +946,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createGiven') {
         execution = makeBackendResultResponse({
@@ -1057,10 +955,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteGiven') {
         execution = makeBackendResultResponse({
@@ -1069,10 +964,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editGiven') {
         execution = makeBackendResultResponse({
@@ -1081,10 +973,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getGivens') {
         execution = makeBackendResultResponse({
@@ -1093,10 +982,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createFolder') {
         execution = makeBackendResultResponse({
@@ -1105,10 +991,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteFolder') {
         execution = makeBackendResultResponse({
@@ -1117,10 +1000,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'moveCatalogNode') {
         execution = makeBackendResultResponse({
@@ -1129,10 +1009,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'renameCatalogNode') {
         execution = makeBackendResultResponse({
@@ -1141,10 +1018,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getSkills') {
         execution = makeBackendResultResponse({
@@ -1153,10 +1027,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createBranch') {
         execution = makeBackendResultResponse({
@@ -1165,10 +1036,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteBranch') {
         execution = makeBackendResultResponse({
@@ -1177,10 +1045,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getBranchesList') {
         execution = makeBackendResultResponse({
@@ -1189,10 +1054,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'isBranchExist') {
         execution = makeBackendResultResponse({
@@ -1201,10 +1063,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getStruct') {
         execution = makeBackendResultResponse({
@@ -1213,10 +1072,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getModel') {
         execution = makeBackendResultResponse({
@@ -1225,10 +1081,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getModels') {
         execution = makeBackendResultResponse({
@@ -1237,10 +1090,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getSuggestFields') {
         execution = makeBackendResultResponse({
@@ -1249,10 +1099,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createLlmModel') {
         execution = makeBackendResultResponse({
@@ -1261,10 +1108,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editLlmModel') {
         execution = makeBackendResultResponse({
@@ -1273,10 +1117,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteLlmModel') {
         execution = makeBackendResultResponse({
@@ -1285,10 +1126,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getLlmModelParts') {
         execution = makeBackendResultResponse({
@@ -1297,10 +1135,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getLlmModelsWithProvider') {
         execution = makeBackendResultResponse({
@@ -1309,10 +1144,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'checkSignUp') {
         execution = makeBackendResultResponse({
@@ -1321,10 +1153,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'setFavorite') {
         execution = makeBackendResultResponse({
@@ -1333,10 +1162,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'commitRepo') {
         execution = makeBackendResultResponse({
@@ -1345,10 +1171,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getRepo') {
         execution = makeBackendResultResponse({
@@ -1357,10 +1180,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'mergeRepo') {
         execution = makeBackendResultResponse({
@@ -1369,10 +1189,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'pullRepo') {
         execution = makeBackendResultResponse({
@@ -1381,10 +1198,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'pushRepo') {
         execution = makeBackendResultResponse({
@@ -1393,10 +1207,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'revertRepoToLastCommit') {
         execution = makeBackendResultResponse({
@@ -1405,10 +1216,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'revertRepoToRemote') {
         execution = makeBackendResultResponse({
@@ -1417,10 +1225,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'syncRepo') {
         execution = makeBackendResultResponse({
@@ -1429,10 +1234,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createFile') {
         execution = makeBackendResultResponse({
@@ -1441,10 +1243,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteFile') {
         execution = makeBackendResultResponse({
@@ -1453,10 +1252,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getFile') {
         execution = makeBackendResultResponse({
@@ -1465,10 +1261,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'saveFile') {
         execution = makeBackendResultResponse({
@@ -1477,10 +1270,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createMember') {
         execution = makeBackendResultResponse({
@@ -1489,10 +1279,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteMember') {
         execution = makeBackendResultResponse({
@@ -1501,10 +1288,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editMember') {
         execution = makeBackendResultResponse({
@@ -1513,10 +1297,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getMembers') {
         execution = makeBackendResultResponse({
@@ -1525,10 +1306,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getMembersList') {
         execution = makeBackendResultResponse({
@@ -1537,10 +1315,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getMemberGivens') {
         execution = makeBackendResultResponse({
@@ -1549,10 +1324,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getNav') {
         execution = makeBackendResultResponse({
@@ -1561,10 +1333,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'checkLastNav') {
         execution = makeBackendResultResponse({
@@ -1573,10 +1342,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'createConnection') {
         execution = makeBackendResultResponse({
@@ -1585,10 +1351,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'editConnection') {
         execution = makeBackendResultResponse({
@@ -1597,10 +1360,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteConnection') {
         execution = makeBackendResultResponse({
@@ -1609,10 +1369,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getConnections') {
         execution = makeBackendResultResponse({
@@ -1621,10 +1378,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getConnectionsList') {
         execution = makeBackendResultResponse({
@@ -1633,10 +1387,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getConnectionSample') {
         execution = makeBackendResultResponse({
@@ -1645,10 +1396,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getConnectionSchemas') {
         execution = makeBackendResultResponse({
@@ -1657,10 +1405,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'testConnection') {
         execution = makeBackendResultResponse({
@@ -1669,10 +1414,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'specialRebuildStructs') {
         execution = makeBackendResultResponse({
@@ -1681,10 +1423,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'clearCachedColumn') {
         execution = makeBackendResultResponse({
@@ -1693,10 +1432,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getCachedColumns') {
         execution = makeBackendResultResponse({
@@ -1705,10 +1441,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'refreshCachedColumn') {
         execution = makeBackendResultResponse({
@@ -1717,10 +1450,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'viewCachedColumn') {
         execution = makeBackendResultResponse({
@@ -1729,10 +1459,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getState') {
         execution = makeBackendResultResponse({
@@ -1741,10 +1468,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'cloneTestRepo') {
         execution = makeBackendResultResponse({
@@ -1753,10 +1477,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'getRebuildStruct') {
         execution = makeBackendResultResponse({
@@ -1765,10 +1486,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'seedRecords') {
         execution = makeBackendResultResponse({
@@ -1777,10 +1495,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'deleteRecords') {
         execution = makeBackendResultResponse({
@@ -1789,10 +1504,7 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else if (req.operation === 'validateFiles') {
         execution = makeBackendResultResponse({
@@ -1801,15 +1513,12 @@ export class AppInterceptor implements NestInterceptor {
           traceId: req.traceId,
           method: request.method,
           cs: this.cs,
-          startTs: request.start_ts,
-          onUnexpectedError: error => {
-            wrappedError = error;
-          }
+          startTs: request.start_ts
         });
       } else {
         execution = next.handle().pipe(
-          map(payload =>
-            makeOkResponseBackend({
+          map(payload => {
+            let response: ToBackendResponse = makeOkResponseBackend({
               payload: payload,
               path: request.url,
               method: request.method,
@@ -1821,15 +1530,23 @@ export class AppInterceptor implements NestInterceptor {
               body: req,
               cs: this.cs,
               logger: this.logger
-            })
-          )
+            });
+
+            let responseOutput: ResponseWithWrappedError = {
+              response: response
+            };
+
+            return responseOutput;
+          })
         );
       }
     }
 
-    return isUndefined(idemp)
+    let responseExecution: Observable<ToBackendResponse> = isUndefined(idemp)
       ? execution.pipe(
-          mergeMap(async resp => {
+          mergeMap(async responseOutput => {
+            let { response: resp } = responseOutput;
+
             if (
               isDefined(iKey) &&
               req.operation === resp.operation &&
@@ -1874,17 +1591,18 @@ export class AppInterceptor implements NestInterceptor {
 
             resp.duration = Date.now() - request.start_ts; // update
 
-            return resp;
+            return responseOutput;
           }),
           tap(x =>
             logResponseBackend({
-              response: x,
-              wrappedError: wrappedError,
+              response: x.response,
+              wrappedError: x.wrappedError,
               logLevel: 'Info',
               cs: this.cs,
               logger: this.logger
             })
-          )
+          ),
+          map(x => x.response)
         )
       : isDefined(idemp.resp)
         ? of(idemp.resp).pipe(
@@ -1902,20 +1620,24 @@ export class AppInterceptor implements NestInterceptor {
               })
             )
           )
-        : of({ respX: respX, wrappedError: wrappedError }).pipe(
+        : of(idempResponseOutput).pipe(
             map(x => {
-              x.respX.duration = Date.now() - request.start_ts; // update
-              return x.respX;
+              x.response.duration = Date.now() - request.start_ts; // update
+
+              return x;
             }),
             tap(y =>
               logResponseBackend({
-                response: y,
-                wrappedError: wrappedError,
+                response: y.response,
+                wrappedError: y.wrappedError,
                 logLevel: 'Info',
                 cs: this.cs,
                 logger: this.logger
               })
-            )
+            ),
+            map(x => x.response)
           );
+
+    return responseExecution;
   }
 }

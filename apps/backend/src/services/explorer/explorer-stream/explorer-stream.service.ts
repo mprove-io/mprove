@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { EventMessagePartUpdated, ToolPart } from '@opencode-ai/sdk/v2';
+import { Result } from '@praha/byethrow';
 import {
   type LanguageModelUsage,
   type ModelMessage,
@@ -25,6 +26,7 @@ import { ProvidersService } from '#backend/services/db/providers/providers.servi
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ExplorerEventsMakerService } from '#backend/services/explorer/explorer-events-maker/explorer-events-maker.service';
 import { ExplorerModelPartsService } from '#backend/services/explorer/explorer-model-parts/explorer-model-parts.service';
 import { ExplorerModelsService } from '#backend/services/explorer/explorer-models/explorer-models.service';
@@ -33,6 +35,7 @@ import { ExplorerTitleService } from '#backend/services/explorer/explorer-title/
 import { ExplorerToolsService } from '#backend/services/explorer/explorer-tools/explorer-tools.service';
 import { SessionDrainService } from '#backend/services/session/session-drain/session-drain.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { InteractCommandReply } from '#backend/types/interact-command-reply';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_ASSISTANT_RESPONSE_MESSAGE } from '#common/constants/top';
 import {
@@ -42,6 +45,7 @@ import {
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { AiStreamCommand } from '#common/types/backend/parts/session/ai-stream-command';
 
@@ -208,7 +212,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     return true;
   }
 
-  async publishInteractCommand(item: {
+  async publishInteractCommandResult(item: {
     sessionId: string;
     provider: string;
     modelId: string;
@@ -216,12 +220,25 @@ export class ExplorerStreamService implements OnModuleDestroy {
     userMessage: string;
     messageId: string;
     partId: string;
-  }): Promise<{ success: boolean }> {
-    let correlationId = crypto.randomUUID();
+  }): Result.ResultAsync<
+    ExecuteInteractionOutput,
+    PublishInteractCommandError
+  > {
+    let {
+      sessionId,
+      provider,
+      modelId,
+      variant,
+      userMessage,
+      messageId,
+      partId
+    } = item;
+
+    let correlationId: string = crypto.randomUUID();
 
     let replyTo = `${CHANNEL_AI_INTERACT_REPLY}:${correlationId}`;
 
-    let sub = this.redisClient.duplicate();
+    let sub: Redis = this.redisClient.duplicate();
 
     await sub.subscribe(replyTo);
 
@@ -229,62 +246,68 @@ export class ExplorerStreamService implements OnModuleDestroy {
       CHANNEL_AI_STREAM_COMMAND,
       JSON.stringify({
         command: 'interact' satisfies AiStreamCommand,
-        sessionId: item.sessionId,
+        sessionId: sessionId,
         replyTo: replyTo,
         payload: {
-          provider: item.provider,
-          modelId: item.modelId,
-          variant: item.variant,
-          userMessage: item.userMessage,
-          messageId: item.messageId,
-          partId: item.partId
+          provider: provider,
+          modelId: modelId,
+          variant: variant,
+          userMessage: userMessage,
+          messageId: messageId,
+          partId: partId
         }
       })
     );
 
     let timeoutMs = 30_000;
 
-    return new Promise<{ success: boolean }>((resolve, reject) => {
-      let timer = setTimeout(() => {
-        sub.quit();
-        reject(
-          new ServerError({
-            message: 'BACKEND_INTERACT_TIMEOUT',
-            customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
+    let interactionResult: Result.Result<
+      ExecuteInteractionOutput,
+      PublishInteractCommandError
+    > = await new Promise<
+      Result.Result<ExecuteInteractionOutput, PublishInteractCommandError>
+    >(resolve => {
+      let timer: ReturnType<typeof setTimeout> = setTimeout(() => {
+        void sub.quit();
+
+        resolve(
+          Result.fail({
+            code: 'BACKEND_INTERACT_TIMEOUT',
+            customData: { sessionId: sessionId, timeoutMs: timeoutMs }
           })
         );
       }, timeoutMs);
 
       sub.on('message', (_channel: string, rawMessage: string) => {
         clearTimeout(timer);
-        sub.quit();
+
+        void sub.quit();
 
         try {
-          let result = JSON.parse(rawMessage);
+          let interaction: InteractCommandReply = JSON.parse(rawMessage);
 
-          if (result.success) {
-            resolve(result);
+          if (interaction.success) {
+            resolve(Result.succeed(interaction));
           } else {
-            reject(
-              new ServerError({
-                message: 'BACKEND_INTERACT_FAILED',
-                customData: {
-                  sessionId: item.sessionId,
-                  error: result.error
-                }
+            resolve(
+              Result.fail({
+                code: 'BACKEND_INTERACT_FAILED',
+                customData: { sessionId: sessionId, error: interaction.error }
               })
             );
           }
         } catch {
-          reject(
-            new ServerError({
-              message: 'BACKEND_INTERACT_FAILED',
-              customData: { sessionId: item.sessionId }
+          resolve(
+            Result.fail({
+              code: 'BACKEND_INTERACT_FAILED',
+              customData: { sessionId: sessionId }
             })
           );
         }
       });
     });
+
+    return interactionResult;
   }
 
   async setTitle(item: { sessionId: string; title: string }): Promise<void> {

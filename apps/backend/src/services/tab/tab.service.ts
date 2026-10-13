@@ -89,6 +89,9 @@ import type { MconfigEntToTabError } from '#common/types/backend/function-errors
 import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { NoteEntToTabError } from '#common/types/backend/function-errors/note-ent-to-tab-error';
+import type { OcEventEntToTabError } from '#common/types/backend/function-errors/oc-event-ent-to-tab-error';
+import type { OcMessageEntToTabError } from '#common/types/backend/function-errors/oc-message-ent-to-tab-error';
+import type { OcPartEntToTabError } from '#common/types/backend/function-errors/oc-part-ent-to-tab-error';
 import type { OcSessionEntToTabError } from '#common/types/backend/function-errors/oc-session-ent-to-tab-error';
 import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
@@ -132,6 +135,12 @@ import type { ModelLt } from '#common/types/shared/st-lt/models/model-lt';
 import type { ModelSt } from '#common/types/shared/st-lt/models/model-st';
 import type { NoteLt } from '#common/types/shared/st-lt/notes/note-lt';
 import type { NoteSt } from '#common/types/shared/st-lt/notes/note-st';
+import type { OcEventLt } from '#common/types/shared/st-lt/oc-events/oc-event-lt';
+import type { OcEventSt } from '#common/types/shared/st-lt/oc-events/oc-event-st';
+import type { OcMessageLt } from '#common/types/shared/st-lt/oc-messages/oc-message-lt';
+import type { OcMessageSt } from '#common/types/shared/st-lt/oc-messages/oc-message-st';
+import type { OcPartLt } from '#common/types/shared/st-lt/oc-parts/oc-part-lt';
+import type { OcPartSt } from '#common/types/shared/st-lt/oc-parts/oc-part-st';
 import type { OcSessionLt } from '#common/types/shared/st-lt/oc-sessions/oc-session-lt';
 import type { OcSessionSt } from '#common/types/shared/st-lt/oc-sessions/oc-session-st';
 import type { OrgLt } from '#common/types/shared/st-lt/orgs/org-lt';
@@ -1284,12 +1293,30 @@ export class TabService {
       return;
     }
 
-    let event: OcEventTab = {
-      ...eventEnt,
-      ...this.getTabProps({ ent: eventEnt })
-    };
+    let result: Result.Result<OcEventTab, OcEventEntToTabError> =
+      this.ocEventEntToTabResult({ eventEnt: eventEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let event: OcEventTab = result.value;
 
     return event;
+  }
+
+  ocEventEntToTabResult(item: {
+    eventEnt: OcEventEnt;
+  }): Result.Result<OcEventTab, OcEventEntToTabError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<OcEventSt, OcEventLt>, GetTabPropsError> =>
+          this.getTabPropsResult<OcEventSt, OcEventLt>({ ent: v.eventEnt })
+      ),
+      Result.map((v): OcEventTab => ({ ...v.eventEnt, ...v.tabProps.props }))
+    );
   }
 
   ocMessageEntToTab(messageEnt: OcMessageEnt): OcMessageTab {
@@ -1297,12 +1324,39 @@ export class TabService {
       return;
     }
 
-    let message: OcMessageTab = {
-      ...messageEnt,
-      ...this.getTabProps({ ent: messageEnt })
-    };
+    let result: Result.Result<OcMessageTab, OcMessageEntToTabError> =
+      this.ocMessageEntToTabResult({ messageEnt: messageEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let message: OcMessageTab = result.value;
 
     return message;
+  }
+
+  ocMessageEntToTabResult(item: {
+    messageEnt: OcMessageEnt;
+  }): Result.Result<OcMessageTab, OcMessageEntToTabError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (
+          v
+        ): Result.Result<
+          TabProps<OcMessageSt, OcMessageLt>,
+          GetTabPropsError
+        > =>
+          this.getTabPropsResult<OcMessageSt, OcMessageLt>({
+            ent: v.messageEnt
+          })
+      ),
+      Result.map(
+        (v): OcMessageTab => ({ ...v.messageEnt, ...v.tabProps.props })
+      )
+    );
   }
 
   ocPartEntToTab(partEnt: OcPartEnt): OcPartTab {
@@ -1310,11 +1364,29 @@ export class TabService {
       return;
     }
 
-    let part: OcPartTab = {
-      ...partEnt,
-      ...this.getTabProps({ ent: partEnt })
-    };
+    let result: Result.Result<OcPartTab, OcPartEntToTabError> =
+      this.ocPartEntToTabResult({ partEnt: partEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let part: OcPartTab = result.value;
 
     return part;
+  }
+
+  ocPartEntToTabResult(item: {
+    partEnt: OcPartEnt;
+  }): Result.Result<OcPartTab, OcPartEntToTabError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<OcPartSt, OcPartLt>, GetTabPropsError> =>
+          this.getTabPropsResult<OcPartSt, OcPartLt>({ ent: v.partEnt })
+      ),
+      Result.map((v): OcPartTab => ({ ...v.partEnt, ...v.tabProps.props }))
+    );
   }
 }

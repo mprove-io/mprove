@@ -3,10 +3,20 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 
 export type BackendInteractFailedError = {
   code: 'BACKEND_INTERACT_FAILED';
+  customData?: {
+    sessionId: string;
+    error?: unknown;
+  };
 };
 
 export let zBackendInteractFailedError = z.object({
-  code: z.literal('BACKEND_INTERACT_FAILED')
+  code: z.literal('BACKEND_INTERACT_FAILED'),
+  customData: z
+    .object({
+      sessionId: z.string(),
+      error: z.unknown().nullish()
+    })
+    .nullish()
 });
 
 assertTypesEqual<

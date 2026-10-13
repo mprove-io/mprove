@@ -2,6 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  HttpException,
   HttpStatus,
   Logger
 } from '@nestjs/common';
@@ -54,9 +55,42 @@ export class AppFilter implements ExceptionFilter {
       }
 
       if (request?.url?.startsWith('/' + SSE_SESSION_EVENTS_PATH)) {
-        if (!response.headersSent) {
-          response.status(401).json({ message: 'Unauthorized' });
+        let status: number =
+          exception instanceof HttpException
+            ? exception.getStatus()
+            : HttpStatus.INTERNAL_SERVER_ERROR;
+
+        if (
+          status !== HttpStatus.UNAUTHORIZED &&
+          status !== HttpStatus.NOT_FOUND
+        ) {
+          status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+          logToConsoleBackend({
+            log:
+              exception instanceof HttpException
+                ? (exception.cause ?? exception)
+                : exception,
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
+          });
         }
+
+        if (!response.headersSent) {
+          response.status(status).json({
+            statusCode: status,
+            message:
+              status === HttpStatus.UNAUTHORIZED
+                ? 'Unauthorized'
+                : status === HttpStatus.NOT_FOUND
+                  ? 'Not Found'
+                  : 'Internal Server Error'
+          });
+        } else if (!response.writableEnded) {
+          response.end();
+        }
+
         return;
       }
 

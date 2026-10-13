@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
+import { Result } from '@praha/byethrow';
 import {
   type CommandHandle,
   type ProcessInfo,
@@ -12,14 +13,20 @@ import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   ProjectTab,
-  ProviderTab
+  ProviderTab,
+  SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { anthropicModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/anthropic-model-to-open-code-config/anthropic-model-to-open-code-config';
 import { llmModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/llm-model-to-open-code-config/llm-model-to-open-code-config';
 import { openAiModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/open-ai-model-to-open-code-config/open-ai-model-to-open-code-config';
 import { ServerError } from '#common/classes/server-error/server-error';
+import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { HealthCheckOpenCodeError } from '#common/types/backend/function-errors/health-check-open-code-error';
+import type { RestartOpencodeServerError } from '#common/types/backend/function-errors/restart-opencode-server-error';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
+import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 const { forEachSeries } = pIteration;
 export const OPENCODE_PROJECT_OPENAI_PROVIDER_ID = '_mprove_openai';
@@ -200,17 +207,52 @@ export class EditorOpencodeService {
     sandboxBaseUrl?: string;
     opencodePassword?: string;
   }): Promise<OpencodeClient> {
-    let client = this.opencodeClients.find(
-      x => x.sessionId === item.sessionId
+    let { sessionId, sandboxBaseUrl, opencodePassword } = item;
+
+    let result: Result.Result<OpencodeClient, GetOpenCodeClientError> =
+      await this.getOpenCodeClientResult({
+        sessionId: sessionId,
+        sandboxBaseUrl: sandboxBaseUrl,
+        opencodePassword: opencodePassword
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let client: OpencodeClient = result.value;
+
+    return client;
+  }
+
+  async getOpenCodeClientResult(item: {
+    sessionId: string;
+    sandboxBaseUrl?: string;
+    opencodePassword?: string;
+  }): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> {
+    let { sessionId, sandboxBaseUrl, opencodePassword } = item;
+
+    let client: OpencodeClient = this.opencodeClients.find(
+      x => x.sessionId === sessionId
     )?.client;
+
     if (!client) {
-      let sandboxBaseUrl = item.sandboxBaseUrl;
-      let opencodePassword = item.opencodePassword;
       if (!sandboxBaseUrl || !opencodePassword) {
-        let session = await this.sessionsService.getSessionByIdCheckExists({
-          sessionId: item.sessionId
+        let sessionResult: Result.Result<
+          SessionTab,
+          GetSessionByIdCheckExistsError
+        > = await this.sessionsService.getSessionByIdCheckExistsResult({
+          sessionId: sessionId
         });
+
+        if (Result.isFailure(sessionResult)) {
+          return sessionResult;
+        }
+
+        let session: SessionTab = sessionResult.value;
+
         sandboxBaseUrl = session.sandboxBaseUrl;
+
         opencodePassword = session.opencodePassword;
       }
       client = createOpencodeClient({
@@ -220,9 +262,10 @@ export class EditorOpencodeService {
           Authorization: `Basic ${Buffer.from(`opencode:${opencodePassword}`).toString('base64')}`
         }
       });
-      this.opencodeClients.push({ sessionId: item.sessionId, client: client });
+      this.opencodeClients.push({ sessionId: sessionId, client: client });
     }
-    return client;
+
+    return Result.succeed(client);
   }
   async startOpencodeServer(item: {
     sandboxType: SandboxType;
@@ -316,7 +359,7 @@ export class EditorOpencodeService {
       });
     }
   }
-  async restartOpencodeServer(item: {
+  async restartOpencodeServerResult(item: {
     sessionId: string;
     sandboxType: SandboxType;
     sandboxId: string;
@@ -325,66 +368,105 @@ export class EditorOpencodeService {
     opencodePassword: string;
     sandboxEnvs: Record<string, string>;
     sessionApiKey: string;
-  }): Promise<void> {
+  }): Result.ResultAsync<void, RestartOpencodeServerError> {
+    let {
+      sessionId,
+      sandboxType,
+      sandboxId,
+      e2bApiKey,
+      sandboxBaseUrl,
+      opencodePassword,
+      sandboxEnvs,
+      sessionApiKey
+    } = item;
+
     try {
-      switch (item.sandboxType) {
+      switch (sandboxType) {
         case 'E2B': {
-          let sandbox: Sandbox = await Sandbox.connect(item.sandboxId, {
-            apiKey: item.e2bApiKey
+          let sandbox: Sandbox = await Sandbox.connect(sandboxId, {
+            apiKey: e2bApiKey
           });
+
           let processes: ProcessInfo[] = await sandbox.commands.list();
+
           let opencodeProcesses: ProcessInfo[] = processes.filter(process =>
             [process.cmd, ...process.args].join(' ').includes('opencode serve')
           );
-          let sandboxEnvs: Record<string, string> = {
-            ...item.sandboxEnvs,
-            MPROVE_CLI_API_KEY: item.sessionApiKey
+          let refreshedSandboxEnvs: Record<string, string> = {
+            ...sandboxEnvs,
+            MPROVE_CLI_API_KEY: sessionApiKey
           };
+
           for (let i = 0; i < opencodeProcesses.length; i++) {
             let processKilled: boolean = await sandbox.commands.kill(
               opencodeProcesses[i].pid
             );
+
             if (processKilled === false) {
               throw new Error(
                 'Previous OpenCode server process was not killed'
               );
             }
           }
-          this.disposeOpenCodeClient({ sessionId: item.sessionId });
+
+          this.disposeOpenCodeClient({ sessionId: sessionId });
+
           let serverProcess: CommandHandle = await sandbox.commands.run(
             `cd /home/user/project && opencode serve --port 3000`,
             {
               background: true,
               timeoutMs: 0,
               envs: {
-                ...sandboxEnvs,
-                OPENCODE_SERVER_PASSWORD: item.opencodePassword
+                ...refreshedSandboxEnvs,
+                OPENCODE_SERVER_PASSWORD: opencodePassword
               }
             }
           );
-          await this.healthCheckOpenCode({
-            sandboxBaseUrl: item.sandboxBaseUrl,
-            opencodePassword: item.opencodePassword,
-            maxAttempts: 30
-          });
+
+          let healthResult: Result.Result<void, HealthCheckOpenCodeError> =
+            await this.healthCheckOpenCodeResult({
+              sandboxBaseUrl: sandboxBaseUrl,
+              opencodePassword: opencodePassword,
+              maxAttempts: 30
+            });
+
+          if (Result.isFailure(healthResult)) {
+            return Result.fail({
+              code: 'BACKEND_SANDBOX_OPENCODE_REFRESH_FAILED',
+              customData: {
+                originalError: wrapError(
+                  new ServerError({ message: healthResult.error.code })
+                )
+              }
+            });
+          }
+
           let runningProcesses: ProcessInfo[] = await sandbox.commands.list();
+
           let startedProcesses: ProcessInfo[] = runningProcesses.filter(
             process => process.pid === serverProcess.pid
           );
+
           if (startedProcesses.length === 0) {
             throw new Error('Refreshed OpenCode server process exited');
           }
-          return;
+
+          return Result.succeed();
         }
         default:
-          throw new ServerError({
-            message: 'BACKEND_UNKNOWN_SANDBOX_TYPE'
+          return Result.fail({
+            code: 'BACKEND_SANDBOX_OPENCODE_REFRESH_FAILED',
+            customData: {
+              originalError: wrapError(
+                new ServerError({ message: 'BACKEND_UNKNOWN_SANDBOX_TYPE' })
+              )
+            }
           });
       }
     } catch (e) {
-      throw new ServerError({
-        message: 'BACKEND_SANDBOX_OPENCODE_REFRESH_FAILED',
-        originalError: e
+      return Result.fail({
+        code: 'BACKEND_SANDBOX_OPENCODE_REFRESH_FAILED',
+        customData: { originalError: e instanceof Error ? wrapError(e) : e }
       });
     }
   }
@@ -393,25 +475,52 @@ export class EditorOpencodeService {
     opencodePassword?: string;
     maxAttempts?: number;
   }): Promise<void> {
-    let maxAttempts = item.maxAttempts ?? 15;
-    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
-    let healthy = false;
-    let headers: Record<string, string> = {};
-    if (item.opencodePassword) {
-      headers.Authorization = `Basic ${Buffer.from(`opencode:${item.opencodePassword}`).toString('base64')}`;
+    let { sandboxBaseUrl, opencodePassword, maxAttempts } = item;
+
+    let result: Result.Result<void, HealthCheckOpenCodeError> =
+      await this.healthCheckOpenCodeResult({
+        sandboxBaseUrl: sandboxBaseUrl,
+        opencodePassword: opencodePassword,
+        maxAttempts: maxAttempts
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
+  }
+
+  async healthCheckOpenCodeResult(item: {
+    sandboxBaseUrl: string;
+    opencodePassword?: string;
+    maxAttempts?: number;
+  }): Result.ResultAsync<void, HealthCheckOpenCodeError> {
+    let { sandboxBaseUrl, opencodePassword, maxAttempts = 15 } = item;
+
+    let backendEnv: BackendConfig['backendEnv'] =
+      this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+    let isHealthy = false;
+
+    let headers: Record<string, string> = {};
+
+    if (opencodePassword) {
+      headers.Authorization = `Basic ${Buffer.from(`opencode:${opencodePassword}`).toString('base64')}`;
+    }
+
     for (let i = 0; i < maxAttempts; i++) {
       try {
-        let res = await fetch(`${item.sandboxBaseUrl}/config`, {
+        let res: Response = await fetch(`${sandboxBaseUrl}/config`, {
           headers: headers
         });
-        let isExpectedStatus = item.opencodePassword
+
+        let isExpectedStatus: boolean = opencodePassword
           ? res.ok
           : res.status === 401;
+
         if (isExpectedStatus) {
-          healthy = true;
+          isHealthy = true;
+
           break;
-        } else {
         }
       } catch (e: any) {
         if (backendEnv !== 'PROD') {
@@ -420,13 +529,15 @@ export class EditorOpencodeService {
           );
         }
       }
+
       await new Promise(r => setTimeout(r, 1000));
     }
-    if (!healthy) {
-      throw new ServerError({
-        message: 'BACKEND_SANDBOX_HEALTH_CHECK_FAILED'
-      });
+
+    if (isHealthy === false) {
+      return Result.fail({ code: 'BACKEND_SANDBOX_HEALTH_CHECK_FAILED' });
     }
+
+    return Result.succeed();
   }
   async cloneRepoInSandbox(item: {
     sandbox: Sandbox;

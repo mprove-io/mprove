@@ -1,20 +1,27 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import type { OpencodeClient } from '@opencode-ai/sdk/v2';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendSetSessionTitleRequestDto,
   ToBackendSetSessionTitleResponseDto
 } from '#backend/controllers/sessions/set-session-title/set-session-title.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  SessionTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
+import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
+import type { ToBackendSetSessionTitleOutput } from '#common/types/backend/routes/sessions/set-session-title/set-session-title-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -38,42 +45,54 @@ export class SetSessionTitleController {
   async setSessionTitle(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetSessionTitleRequestDto
-  ) {
-    let { sessionId, title } = body.input;
+  ): Promise<BackendResultForOperation<'setSessionTitle'>> {
+    return Result.pipe(
+      Result.succeed({
+        sessionId: body.input.sessionId,
+        title: body.input.title,
+        userId: user.userId
+      }),
+      Result.bind(
+        'session',
+        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+          this.sessionsService.getSessionByIdCheckExistsResult({
+            sessionId: v.sessionId
+          })
+      ),
+      Result.andThrough(v =>
+        v.session.userId !== v.userId
+          ? Result.fail({ code: 'BACKEND_UNAUTHORIZED' })
+          : Result.succeed()
+      ),
+      Result.andThrough(async v => {
+        if (v.session.type === 'Editor') {
+          // Type Editor: proxy to OpenCode
+          let opencodeClientResult: Result.Result<
+            OpencodeClient,
+            GetOpenCodeClientError
+          > = await this.editorOpencodeService.getOpenCodeClientResult({
+            sessionId: v.sessionId
+          });
 
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
-    });
+          if (Result.isFailure(opencodeClientResult)) {
+            return opencodeClientResult;
+          }
 
-    if (session.userId !== user.userId) {
-      throw new ServerError({
-        message: 'BACKEND_UNAUTHORIZED'
-      });
-    }
+          await opencodeClientResult.value.session.update(
+            { sessionID: v.session.opencodeSessionId, title: v.title },
+            { throwOnError: true }
+          );
+        } else {
+          // Type Explorer: set title via lock-holding pod (or acquire lock if none)
+          await this.explorerStreamService.setTitle({
+            sessionId: v.sessionId,
+            title: v.title
+          });
+        }
 
-    if (session.type === 'Editor') {
-      // Type Editor: proxy to OpenCode
-      let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
-        sessionId: sessionId
-      });
-
-      await opencodeClient.session.update(
-        {
-          sessionID: session.opencodeSessionId,
-          title: title
-        },
-        { throwOnError: true }
-      );
-    } else {
-      // Type Explorer: set title via lock-holding pod (or acquire lock if none)
-      await this.explorerStreamService.setTitle({
-        sessionId: sessionId,
-        title: title
-      });
-    }
-
-    let payload = {};
-
-    return payload;
+        return Result.succeed();
+      }),
+      Result.map((v): ToBackendSetSessionTitleOutput => ({}))
+    );
   }
 }

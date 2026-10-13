@@ -1,12 +1,15 @@
 import os from 'node:os';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { z } from 'zod';
 import { backendPackageJson } from '#backend/backend-package-json';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { isCodexModelAvailable } from '#backend/services/codex/is-codex-model-available/is-codex-model-available';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -14,6 +17,13 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BackendUserProfileCodexAuthNotSetError } from '#common/types/backend/errors/backend-user-profile-codex-auth-not-set-error';
+import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
+import type { LoadAuthError } from '#common/types/backend/function-errors/load-auth-error';
+import type { PersistRefreshedTokensError } from '#common/types/backend/function-errors/persist-refreshed-tokens-error';
+import type { PrewarmCodexAuthError } from '#common/types/backend/function-errors/prewarm-codex-auth-error';
+import type { RefreshAccessTokenError } from '#common/types/backend/function-errors/refresh-access-token-error';
+import type { ValidateExpiresInError } from '#common/types/backend/function-errors/validate-expires-in-error';
 import type { CodexAuthOpenai } from '#common/types/backend/parts/codex/codex-auth-openai';
 import type { CodexDeviceAuthStatus } from '#common/types/backend/parts/codex/codex-device-auth-status';
 import {
@@ -82,28 +92,70 @@ export class CodexService {
   ) {}
   async prewarmCodexAuth(item: { userId: string }): Promise<void> {
     let { userId } = item;
-    let auth = await this.loadAuth({ userId: userId });
-    let isFresh =
-      auth.access && auth.expires > Date.now() + CODEX_AUTH_REFRESH_BUFFER_MS;
-    if (isFresh) {
-      return;
+
+    let result: Result.Result<void, PrewarmCodexAuthError> =
+      await this.prewarmCodexAuthResult({ userId: userId });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        customData:
+          'customData' in result.error ? result.error.customData : undefined
+      });
     }
-    let tokens = await this.refreshAccessToken({
-      refreshToken: auth.refresh
-    });
-    let expiresIn = this.validateExpiresIn({ expiresIn: tokens.expires_in });
-    let newAccountId =
-      this.extractAccountId({ tokens: tokens }) || auth.accountId;
-    let newState: CodexTokenState = {
-      access: tokens.access_token,
-      refresh: tokens.refresh_token,
-      expires: Date.now() + expiresIn * 1000,
-      accountId: newAccountId
-    };
-    await this.persistRefreshedTokens({
-      userId: userId,
-      newState: newState
-    });
+  }
+
+  async prewarmCodexAuthResult(item: {
+    userId: string;
+  }): Result.ResultAsync<void, PrewarmCodexAuthError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'auth',
+        (v): Result.ResultAsync<CodexAuthOpenai, LoadAuthError> =>
+          this.loadAuthResult({ userId: v.userId })
+      ),
+      Result.bind(
+        'tokens',
+        async (
+          v
+        ): Result.ResultAsync<CodexTokenResponse, RefreshAccessTokenError> =>
+          v.auth.access &&
+          v.auth.expires > Date.now() + CODEX_AUTH_REFRESH_BUFFER_MS
+            ? Result.succeed(undefined)
+            : this.refreshAccessTokenResult({ refreshToken: v.auth.refresh })
+      ),
+      Result.bind(
+        'expiresIn',
+        (v): Result.Result<number, ValidateExpiresInError> =>
+          isUndefined(v.tokens)
+            ? Result.succeed(undefined)
+            : this.validateExpiresInResult({ expiresIn: v.tokens.expires_in })
+      ),
+      Result.bind(
+        'accountId',
+        (v): Result.Result<string, never> =>
+          Result.succeed(
+            isUndefined(v.tokens)
+              ? undefined
+              : this.extractAccountId({ tokens: v.tokens }) || v.auth.accountId
+          )
+      ),
+      Result.andThrough(v =>
+        isUndefined(v.tokens)
+          ? Result.succeed()
+          : this.persistRefreshedTokensResult({
+              userId: v.userId,
+              newState: {
+                access: v.tokens.access_token,
+                refresh: v.tokens.refresh_token,
+                expires: Date.now() + v.expiresIn * 1000,
+                accountId: v.accountId
+              }
+            })
+      ),
+      Result.map((v): void => undefined)
+    );
   }
   async buildCodexFetch(item: {
     userId: string;
@@ -241,36 +293,86 @@ export class CodexService {
       return result;
     }
   }
-  private validateExpiresIn(item: { expiresIn: number | undefined }): number {
+  private validateExpiresIn(item: { expiresIn?: number }): number {
     let { expiresIn } = item;
-    if (isUndefined(expiresIn)) {
+
+    let result: Result.Result<number, ValidateExpiresInError> =
+      this.validateExpiresInResult({ expiresIn: expiresIn });
+
+    if (Result.isFailure(result)) {
       throw new ServerError({
-        message: 'BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_MISSING'
+        message: result.error.code,
+        customData:
+          'customData' in result.error ? result.error.customData : undefined
       });
     }
+
+    let seconds: number = result.value;
+
+    return seconds;
+  }
+
+  private validateExpiresInResult(item: {
+    expiresIn?: number;
+  }): Result.Result<number, ValidateExpiresInError> {
+    let { expiresIn } = item;
+
+    if (isUndefined(expiresIn)) {
+      return Result.fail({
+        code: 'BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_MISSING'
+      });
+    }
+
     if (expiresIn < CODEX_AUTH_REFRESH_BUFFER_SEC) {
-      throw new ServerError({
-        message: 'BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_TOO_SHORT',
+      return Result.fail({
+        code: 'BACKEND_CODEX_AUTH_TOKEN_EXPIRES_IN_IS_TOO_SHORT',
         customData: {
           expiresInSec: expiresIn,
           minExpiresInSec: CODEX_AUTH_REFRESH_BUFFER_SEC
         }
       });
     }
-    return expiresIn;
+
+    return Result.succeed(expiresIn);
   }
   private async loadAuth(item: { userId: string }): Promise<CodexAuthOpenai> {
     let { userId } = item;
-    // Always read fresh user data from DB (multi-pod safe)
-    let user = await this.usersService.getUserCheckExists({
-      userId: userId
-    });
-    if (isUndefined(user.codexAuth)) {
-      throw new ServerError({
-        message: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET'
-      });
+
+    let result: Result.Result<CodexAuthOpenai, LoadAuthError> =
+      await this.loadAuthResult({ userId: userId });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
-    return user.codexAuth.openai;
+
+    let auth: CodexAuthOpenai = result.value;
+
+    return auth;
+  }
+
+  private async loadAuthResult(item: {
+    userId: string;
+  }): Result.ResultAsync<CodexAuthOpenai, LoadAuthError> {
+    return Result.pipe(
+      Result.succeed(item),
+      // Always read fresh user data from DB (multi-pod safe)
+      Result.bind(
+        'user',
+        (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
+          this.usersService.getUserCheckExistsResult({ userId: v.userId })
+      ),
+      Result.andThen(
+        (
+          v
+        ): Result.Result<
+          CodexAuthOpenai,
+          BackendUserProfileCodexAuthNotSetError
+        > =>
+          isUndefined(v.user.codexAuth)
+            ? Result.fail({ code: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET' })
+            : Result.succeed(v.user.codexAuth.openai)
+      )
+    );
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 501-519
   async startDeviceAuth(): Promise<CodexDeviceAuthStart> {
@@ -391,7 +493,28 @@ export class CodexService {
     refreshToken: string;
   }): Promise<CodexTokenResponse> {
     let { refreshToken } = item;
-    let response = await fetch(`${CODEX_ISSUER}/oauth/token`, {
+
+    let result: Result.Result<CodexTokenResponse, RefreshAccessTokenError> =
+      await this.refreshAccessTokenResult({ refreshToken: refreshToken });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        customData: result.error.customData
+      });
+    }
+
+    let tokens: CodexTokenResponse = result.value;
+
+    return tokens;
+  }
+
+  private async refreshAccessTokenResult(item: {
+    refreshToken: string;
+  }): Result.ResultAsync<CodexTokenResponse, RefreshAccessTokenError> {
+    let { refreshToken } = item;
+
+    let response: Response = await fetch(`${CODEX_ISSUER}/oauth/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
@@ -400,26 +523,36 @@ export class CodexService {
         client_id: CODEX_CLIENT_ID
       }).toString()
     });
+
     if (!response.ok) {
-      let bodyText = await response.text().catch(() => '<failed to read body>');
+      let bodyText: string = await response
+        .text()
+        .catch(() => '<failed to read body>');
+
       let body: unknown;
+
       try {
         body = JSON.parse(bodyText);
       } catch {
         body = bodyText;
       }
+
       let isSignInRequired = response.status === 401;
-      throw new ServerError({
-        message: isSignInRequired
-          ? 'BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED'
-          : 'BACKEND_PROMPT_FAILED',
-        customData: {
-          status: response.status,
-          body: body
-        }
-      });
+
+      return isSignInRequired
+        ? Result.fail({
+            code: 'BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED',
+            customData: { status: response.status, body: body }
+          })
+        : Result.fail({
+            code: 'BACKEND_PROMPT_FAILED',
+            customData: { status: response.status, body: body }
+          });
     }
-    return response.json();
+
+    let tokens: CodexTokenResponse = await response.json();
+
+    return Result.succeed(tokens);
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 59-88
   private extractAccountId(item: {
@@ -470,32 +603,63 @@ export class CodexService {
     newState: CodexTokenState;
   }): Promise<void> {
     let { userId, newState } = item;
-    let user = await this.usersService.getUserCheckExists({
-      userId: userId
-    });
-    user.codexAuth = {
-      openai: {
-        type: 'oauth',
-        refresh: newState.refresh,
-        access: newState.access,
-        expires: newState.expires,
-        accountId: newState.accountId
-      }
-    };
-    user.codexAuthUpdateTs = Date.now();
-    user.codexAuthExpiresTs = newState.expires;
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                users: [user]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
+
+    let result: Result.Result<void, PersistRefreshedTokensError> =
+      await this.persistRefreshedTokensResult({
+        userId: userId,
+        newState: newState
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+  }
+
+  private async persistRefreshedTokensResult(item: {
+    userId: string;
+    newState: CodexTokenState;
+  }): Result.ResultAsync<void, PersistRefreshedTokensError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'user',
+        (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
+          this.usersService.getUserCheckExistsResult({ userId: v.userId })
+      ),
+      Result.map(v => {
+        v.user.codexAuth = {
+          openai: {
+            type: 'oauth',
+            refresh: v.newState.refresh,
+            access: v.newState.access,
+            expires: v.newState.expires,
+            accountId: v.newState.accountId
+          }
+        };
+
+        v.user.codexAuthUpdateTs = Date.now();
+
+        v.user.codexAuthExpiresTs = v.newState.expires;
+        return v;
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await retry(
+              async () =>
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: { users: [v.user] }
+                    })
+                ),
+              getRetryOption(this.cs, this.logger)
+            );
+          }
+        })
+      ),
+      Result.map((v): void => undefined)
     );
   }
 }

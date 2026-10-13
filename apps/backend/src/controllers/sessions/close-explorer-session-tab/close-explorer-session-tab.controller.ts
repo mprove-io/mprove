@@ -1,19 +1,25 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import {
   ToBackendCloseExplorerSessionTabRequestDto,
   ToBackendCloseExplorerSessionTabResponseDto
 } from '#backend/controllers/sessions/close-explorer-session-tab/close-explorer-session-tab.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  SessionTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
+import type { ToBackendCloseExplorerSessionTabOutput } from '#common/types/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -36,32 +42,42 @@ export class CloseExplorerSessionTabController {
   async closeExplorerSessionTab(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCloseExplorerSessionTabRequestDto
-  ) {
-    let { sessionId, closedExplorerTabIds } = body.input;
-
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
-    });
-
-    if (session.userId !== user.userId) {
-      throw new ServerError({
-        message: 'BACKEND_UNAUTHORIZED'
-      });
-    }
-
-    session.closedExplorerTabIds = [...new Set(closedExplorerTabIds)];
-
-    await this.db.drizzle.transaction(async tx => {
-      await this.db.packer.write({
-        tx: tx,
-        insertOrUpdate: {
-          sessions: [session]
-        }
-      });
-    });
-
-    let payload = {};
-
-    return payload;
+  ): Promise<BackendResultForOperation<'closeExplorerSessionTab'>> {
+    return Result.pipe(
+      Result.succeed({
+        sessionId: body.input.sessionId,
+        closedExplorerTabIds: body.input.closedExplorerTabIds,
+        userId: user.userId
+      }),
+      Result.bind(
+        'session',
+        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+          this.sessionsService.getSessionByIdCheckExistsResult({
+            sessionId: v.sessionId
+          })
+      ),
+      Result.andThrough(v =>
+        v.session.userId !== v.userId
+          ? Result.fail({ code: 'BACKEND_UNAUTHORIZED' })
+          : Result.succeed()
+      ),
+      Result.map(v => {
+        v.session.closedExplorerTabIds = [...new Set(v.closedExplorerTabIds)];
+        return v;
+      }),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await this.db.drizzle.transaction(async tx => {
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: { sessions: [v.session] }
+              });
+            });
+          }
+        })
+      ),
+      Result.map((v): ToBackendCloseExplorerSessionTabOutput => ({}))
+    );
   }
 }

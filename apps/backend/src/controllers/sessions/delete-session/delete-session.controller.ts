@@ -9,9 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteSessionRequestDto,
   ToBackendDeleteSessionResponseDto
@@ -19,6 +20,7 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  ProjectTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -31,6 +33,7 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -42,12 +45,17 @@ import { EditorStreamService } from '#backend/services/editor/editor-stream/edit
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
+import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { DeleteWhileLockedError } from '#common/types/backend/function-errors/delete-while-locked-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
+import type { ToBackendDeleteSessionOutput } from '#common/types/backend/routes/sessions/delete-session/delete-session-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -79,176 +87,233 @@ export class DeleteSessionController {
   async deleteSession(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteSessionRequestDto
-  ) {
-    let { traceId } = body;
-    let { sessionId } = body.input;
-
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
-    });
-
-    if (session.userId !== user.userId) {
-      throw new ServerError({
-        message: 'BACKEND_UNAUTHORIZED'
-      });
-    }
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: session.projectId
-    });
-
-    let sessionLockToken =
-      session.type === 'Editor'
-        ? await this.editorSessionLockService.acquireSessionLock({
-            sessionId: session.sessionId
+  ): Promise<BackendResultForOperation<'deleteSession'>> {
+    return Result.pipe(
+      Result.succeed({
+        traceId: body.traceId,
+        sessionId: body.input.sessionId,
+        userId: user.userId
+      }),
+      Result.bind(
+        'session',
+        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+          this.sessionsService.getSessionByIdCheckExistsResult({
+            sessionId: v.sessionId
           })
-        : undefined;
+      ),
+      Result.andThrough(v =>
+        v.session.userId !== v.userId
+          ? Result.fail({ code: 'BACKEND_UNAUTHORIZED' })
+          : Result.succeed()
+      ),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.session.projectId
+          })
+      ),
+      Result.bind(
+        'sessionLockToken',
+        async (v): Result.ResultAsync<string, AcquireSessionLockError> =>
+          v.session.type === 'Editor'
+            ? this.editorSessionLockService.acquireSessionLockResult({
+                sessionId: v.session.sessionId
+              })
+            : Result.succeed(undefined)
+      ),
+      Result.andThen(
+        (
+          v
+        ): Result.ResultAsync<
+          ToBackendDeleteSessionOutput,
+          DeleteWhileLockedError
+        > =>
+          this.deleteWhileLocked({
+            traceId: v.traceId,
+            sessionId: v.sessionId,
+            session: v.session,
+            project: v.project,
+            sessionLockToken: v.sessionLockToken
+          })
+      )
+    );
+  }
+
+  private async deleteWhileLocked(item: {
+    traceId: string;
+    sessionId: string;
+    session: SessionTab;
+    project: ProjectTab;
+    sessionLockToken?: string;
+  }): Result.ResultAsync<ToBackendDeleteSessionOutput, DeleteWhileLockedError> {
+    let { session, sessionLockToken } = item;
 
     try {
-      if (session.type === 'Editor') {
-        session = await this.sessionsService.getSessionByIdCheckExists({
-          sessionId: session.sessionId
-        });
-      }
+      let result = await Result.pipe(
+        Result.succeed(item),
+        Result.bind(
+          'freshSession',
+          async (
+            v
+          ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+            v.session.type === 'Editor'
+              ? this.sessionsService.getSessionByIdCheckExistsResult({
+                  sessionId: v.session.sessionId
+                })
+              : Result.succeed(v.session)
+        ),
+        Result.andThrough(v => {
+          let isActiveOrPaused: boolean = (
+            ['Active', 'Paused'] satisfies SessionStatus[]
+          ).some(status => status === v.freshSession.status);
 
-      if (
-        session.type === 'Editor' &&
-        (['Active', 'Paused'] satisfies SessionStatus[]).findIndex(
-          candidate => candidate === session.status
-        ) > -1
-      ) {
-        await this.editorSandboxService.stopSandbox({
-          sandboxType: session.sandboxType as SandboxType,
-          sandboxId: session.sandboxId,
-          e2bApiKey: project.e2bApiKey
-        });
-      }
-
-      if (session.type === 'Editor') {
-        let baseProject = this.tabService.projectTabToBaseProject({
-          project: project
-        });
-
-        await this.rpcService.sendToDiskUnwrapOutput({
-          request: {
-            operation: 'deleteDevRepo',
-            traceId: traceId,
-            input: {
-              baseProject: baseProject,
-              devRepoId: sessionId
-            }
+          return v.freshSession.type === 'Editor' && isActiveOrPaused
+            ? this.editorSandboxService.stopSandboxResult({
+                sandboxType: v.freshSession.sandboxType,
+                sandboxId: v.freshSession.sandboxId,
+                e2bApiKey: v.project.e2bApiKey
+              })
+            : Result.succeed();
+        }),
+        Result.andThrough(async v => {
+          if (v.freshSession.type !== 'Editor') {
+            return Result.succeed();
           }
-        });
-      }
 
-      let updatedSession: SessionTab = {
-        ...session,
-        status: 'Deleted'
-      };
+          let baseProject: BaseProject =
+            this.tabService.projectTabToBaseProject({ project: v.project });
 
-      await this.db.drizzle.transaction(
-        async tx =>
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              sessions: [updatedSession]
+          return this.rpcService.sendToDiskResult({
+            request: {
+              operation: 'deleteDevRepo',
+              traceId: v.traceId,
+              input: {
+                baseProject: baseProject,
+                devRepoId: v.sessionId
+              }
+            }
+          });
+        }),
+        Result.bind(
+          'updatedSession',
+          (v): Result.Result<SessionTab, never> =>
+            Result.succeed({ ...v.freshSession, status: 'Deleted' })
+        ),
+        Result.andThrough(v =>
+          dbErrorToResult({
+            action: async () => {
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      sessions: [v.updatedSession]
+                    }
+                  })
+              );
             }
           })
+        ),
+        Result.andThrough(async v => {
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(async tx => {
+                await tx
+                  .delete(ocMessagesTable)
+                  .where(and(eq(ocMessagesTable.sessionId, v.sessionId)));
+
+                await tx
+                  .delete(ocPartsTable)
+                  .where(and(eq(ocPartsTable.sessionId, v.sessionId)));
+
+                await tx
+                  .delete(ocEventsTable)
+                  .where(and(eq(ocEventsTable.sessionId, v.sessionId)));
+
+                await tx
+                  .delete(ocSessionsTable)
+                  .where(and(eq(ocSessionsTable.sessionId, v.sessionId)));
+
+                if (v.freshSession.type === 'Explorer') {
+                  await tx
+                    .delete(chartsTable)
+                    .where(eq(chartsTable.sessionId, v.sessionId));
+
+                  await tx
+                    .delete(mconfigsTable)
+                    .where(eq(mconfigsTable.sessionId, v.sessionId));
+
+                  await tx
+                    .delete(queriesTable)
+                    .where(eq(queriesTable.sessionId, v.sessionId));
+                }
+
+                if (v.freshSession.type === 'Editor') {
+                  await tx
+                    .delete(branchesTable)
+                    .where(
+                      and(
+                        eq(branchesTable.projectId, v.freshSession.projectId),
+                        eq(branchesTable.repoId, v.sessionId)
+                      )
+                    );
+
+                  await tx
+                    .delete(bridgesTable)
+                    .where(
+                      and(
+                        eq(bridgesTable.projectId, v.freshSession.projectId),
+                        eq(bridgesTable.repoId, v.sessionId)
+                      )
+                    );
+                }
+              }),
+            getRetryOption(this.cs, this.logger)
+          );
+          return Result.succeed();
+        }),
+        Result.andThrough(v => {
+          let backendEnv: BackendConfig['backendEnv'] =
+            this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+          let stopDelay = backendEnv === 'TEST' ? 0 : 10_000;
+
+          setTimeout(() => {
+            if (v.freshSession.type === 'Explorer') {
+              void this.explorerStreamService
+                .publishStopSessionStream({
+                  sessionId: v.sessionId
+                })
+                .catch(e => {
+                  logToConsoleBackend({
+                    log: e,
+                    logLevel: 'Error',
+                    logger: this.logger,
+                    cs: this.cs
+                  });
+                });
+            } else if (v.freshSession.type === 'Editor') {
+              void this.editorStreamService
+                .publishStopSessionStream({
+                  sessionId: v.sessionId
+                })
+                .catch(e => {
+                  logToConsoleBackend({
+                    log: e,
+                    logLevel: 'Error',
+                    logger: this.logger,
+                    cs: this.cs
+                  });
+                });
+            }
+          }, stopDelay);
+          return Result.succeed();
+        }),
+        Result.map((v): ToBackendDeleteSessionOutput => ({}))
       );
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(async tx => {
-            await tx
-              .delete(ocMessagesTable)
-              .where(and(eq(ocMessagesTable.sessionId, sessionId)));
-
-            await tx
-              .delete(ocPartsTable)
-              .where(and(eq(ocPartsTable.sessionId, sessionId)));
-
-            await tx
-              .delete(ocEventsTable)
-              .where(and(eq(ocEventsTable.sessionId, sessionId)));
-
-            await tx
-              .delete(ocSessionsTable)
-              .where(and(eq(ocSessionsTable.sessionId, sessionId)));
-
-            if (session.type === 'Explorer') {
-              await tx
-                .delete(chartsTable)
-                .where(eq(chartsTable.sessionId, sessionId));
-
-              await tx
-                .delete(mconfigsTable)
-                .where(eq(mconfigsTable.sessionId, sessionId));
-
-              await tx
-                .delete(queriesTable)
-                .where(eq(queriesTable.sessionId, sessionId));
-            }
-
-            if (session.type === 'Editor') {
-              await tx
-                .delete(branchesTable)
-                .where(
-                  and(
-                    eq(branchesTable.projectId, session.projectId),
-                    eq(branchesTable.repoId, sessionId)
-                  )
-                );
-
-              await tx
-                .delete(bridgesTable)
-                .where(
-                  and(
-                    eq(bridgesTable.projectId, session.projectId),
-                    eq(bridgesTable.repoId, sessionId)
-                  )
-                );
-            }
-          }),
-        getRetryOption(this.cs, this.logger)
-      );
-
-      let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
-
-      let stopDelay = backendEnv === 'TEST' ? 0 : 10_000;
-
-      setTimeout(() => {
-        if (session.type === 'Explorer') {
-          this.explorerStreamService
-            .publishStopSessionStream({
-              sessionId: sessionId
-            })
-            .catch(e => {
-              logToConsoleBackend({
-                log: e,
-                logLevel: 'Error',
-                logger: this.logger,
-                cs: this.cs
-              });
-            });
-        } else if (session.type === 'Editor') {
-          this.editorStreamService
-            .publishStopSessionStream({
-              sessionId: sessionId
-            })
-            .catch(e => {
-              logToConsoleBackend({
-                log: e,
-                logLevel: 'Error',
-                logger: this.logger,
-                cs: this.cs
-              });
-            });
-        }
-      }, stopDelay);
-
-      let payload = {};
-
-      return payload;
+      return result;
     } finally {
       if (isDefined(sessionLockToken)) {
         await this.editorSessionLockService.releaseSessionLock({

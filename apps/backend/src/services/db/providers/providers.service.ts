@@ -24,8 +24,10 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckLlmModelDoesNotExistError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-error';
 import type { CheckProviderDoesNotExistError } from '#common/types/backend/function-errors/check-provider-does-not-exist-error';
+import type { GetEnabledProviderCheckExistsError } from '#common/types/backend/function-errors/get-enabled-provider-check-exists-error';
 import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
 import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
+import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
 import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
@@ -36,6 +38,11 @@ import type { ProviderOptionsOpenAI } from '#common/types/backend/parts/provider
 import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
+
+export type GetModelSelectionOutput = {
+  provider: ProviderTab;
+  model: LlmModel;
+};
 
 @Injectable()
 export class ProvidersService {
@@ -324,21 +331,6 @@ export class ProvidersService {
       );
   }
 
-  async getEnabledProviders(item: {
-    projectId: string;
-  }): Promise<ProviderTab[]> {
-    let result: Result.Result<ProviderTab[], GetEnabledProvidersError> =
-      await this.getEnabledProvidersResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let providers: ProviderTab[] = result.value;
-
-    return providers;
-  }
-
   async getEnabledProvidersResult(item: {
     projectId: string;
   }): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> {
@@ -358,22 +350,27 @@ export class ProvidersService {
       );
   }
 
-  async getEnabledProviderCheckExists(item: {
+  async getEnabledProviderCheckExistsResult(item: {
     projectId: string;
     providerId: string;
-  }): Promise<ProviderTab> {
-    let provider = await this.getProviderCheckExists({
-      projectId: item.projectId,
-      providerId: item.providerId
-    });
-
-    if (provider.isEnabled === false) {
-      throw new ServerError({
-        message: 'BACKEND_PROVIDER_IS_DISABLED'
-      });
-    }
-
-    return provider;
+  }): Result.ResultAsync<ProviderTab, GetEnabledProviderCheckExistsError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'provider',
+        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
+          this.getProviderCheckExistsResult({
+            projectId: v.projectId,
+            providerId: v.providerId
+          })
+      ),
+      Result.andThrough(v =>
+        v.provider.isEnabled === false
+          ? Result.fail({ code: 'BACKEND_PROVIDER_IS_DISABLED' })
+          : Result.succeed()
+      ),
+      Result.map((v): ProviderTab => v.provider)
+    );
   }
 
   async getModelSelection(item: {
@@ -383,67 +380,130 @@ export class ProvidersService {
     variant?: string;
     isUserCodexAuthSet: boolean;
     isBuilder: boolean;
-  }) {
-    let provider = await this.getEnabledProviderCheckExists({
-      projectId: item.projectId,
-      providerId: item.providerId
-    });
+  }): Promise<GetModelSelectionOutput> {
+    let {
+      projectId,
+      providerId,
+      modelId,
+      variant,
+      isUserCodexAuthSet,
+      isBuilder
+    } = item;
 
-    let model = this.getModelCheckExists({
-      provider: provider,
-      modelId: item.modelId
-    });
-
-    if (provider.type === 'OpenAICodex') {
-      if (item.isUserCodexAuthSet === false) {
-        throw new ServerError({
-          message: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET'
-        });
-      }
-    } else if (provider.type !== 'OpenAICompatible') {
-      let isApiKeySet = isDefinedAndNotEmpty(provider.options.apiKey);
-      if (isApiKeySet === false) {
-        throw new ServerError({
-          message: 'BACKEND_PROVIDER_API_KEY_REQUIRED'
-        });
-      }
-    }
-
-    if (item.isBuilder === true) {
-      if (model.isOpencodeSupported === false || model.isBuilder === false) {
-        throw new ServerError({
-          message: 'BACKEND_LLM_MODEL_NOT_AVAILABLE_IN_BUILDER'
-        });
-      }
-    } else if (model.isExplorer === false) {
-      throw new ServerError({
-        message: 'BACKEND_LLM_MODEL_NOT_AVAILABLE_IN_EXPLORER'
+    let result: Result.Result<GetModelSelectionOutput, GetModelSelectionError> =
+      await this.getModelSelectionResult({
+        projectId: projectId,
+        providerId: providerId,
+        modelId: modelId,
+        variant: variant,
+        isUserCodexAuthSet: isUserCodexAuthSet,
+        isBuilder: isBuilder
       });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
     }
 
-    if (!isDefined(item.variant)) {
-      throw new ServerError({
-        message: 'BACKEND_MESSAGE_VARIANT_REQUIRED'
-      });
-    }
+    let modelSelection: GetModelSelectionOutput = result.value;
 
-    let matchingModelVariants: LlmModelVariant[] = model.variants.filter(
-      variant => variant.variant === item.variant
+    return modelSelection;
+  }
+
+  async getModelSelectionResult(item: {
+    projectId: string;
+    providerId: string;
+    modelId: string;
+    variant?: string;
+    isUserCodexAuthSet: boolean;
+    isBuilder: boolean;
+  }): Result.ResultAsync<GetModelSelectionOutput, GetModelSelectionError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'provider',
+        (
+          v
+        ): Result.ResultAsync<
+          ProviderTab,
+          GetEnabledProviderCheckExistsError
+        > =>
+          this.getEnabledProviderCheckExistsResult({
+            projectId: v.projectId,
+            providerId: v.providerId
+          })
+      ),
+      Result.bind(
+        'model',
+        (v): Result.Result<LlmModel, GetLlmModelCheckExistsError> =>
+          this.getLlmModelCheckExistsResult({
+            provider: v.provider,
+            modelId: v.modelId
+          })
+      ),
+      Result.andThrough(v => {
+        if (v.provider.type === 'OpenAICodex') {
+          if (v.isUserCodexAuthSet === false) {
+            return Result.fail({
+              code: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET'
+            });
+          }
+        } else if (
+          v.provider.type !== 'OpenAICompatible' &&
+          isDefinedAndNotEmpty(v.provider.options.apiKey) === false
+        ) {
+          return Result.fail({ code: 'BACKEND_PROVIDER_API_KEY_REQUIRED' });
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(v => {
+        if (v.isBuilder === true) {
+          if (
+            v.model.isOpencodeSupported === false ||
+            v.model.isBuilder === false
+          ) {
+            return Result.fail({
+              code: 'BACKEND_LLM_MODEL_NOT_AVAILABLE_IN_BUILDER'
+            });
+          }
+        } else if (v.model.isExplorer === false) {
+          return Result.fail({
+            code: 'BACKEND_LLM_MODEL_NOT_AVAILABLE_IN_EXPLORER'
+          });
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(v =>
+        isUndefined(v.variant)
+          ? Result.fail({ code: 'BACKEND_MESSAGE_VARIANT_REQUIRED' })
+          : Result.succeed()
+      ),
+      Result.bind(
+        'matchingModelVariants',
+        (v): Result.Result<LlmModelVariant[], never> =>
+          Result.succeed(
+            v.model.variants.filter(variant => variant.variant === v.variant)
+          )
+      ),
+      Result.andThrough(v => {
+        let isVariantAvailable: boolean =
+          isDefined(v.matchingModelVariants[0]) &&
+          (v.isBuilder === true
+            ? v.matchingModelVariants[0].isBuilder
+            : v.matchingModelVariants[0].isExplorer);
+
+        return isVariantAvailable
+          ? Result.succeed()
+          : Result.fail({ code: 'BACKEND_LLM_MODEL_VARIANT_NOT_AVAILABLE' });
+      }),
+      Result.map(
+        (v): GetModelSelectionOutput => ({
+          provider: v.provider,
+          model: v.model
+        })
+      )
     );
-
-    let isVariantAvailable: boolean =
-      isDefined(matchingModelVariants[0]) &&
-      (item.isBuilder === true
-        ? matchingModelVariants[0].isBuilder
-        : matchingModelVariants[0].isExplorer);
-
-    if (isVariantAvailable === false) {
-      throw new ServerError({
-        message: 'BACKEND_LLM_MODEL_VARIANT_NOT_AVAILABLE'
-      });
-    }
-
-    return { provider: provider, model: model };
   }
 
   checkLlmModelDoesNotExistResult(item: {
@@ -457,22 +517,6 @@ export class ProvidersService {
     }
 
     return Result.succeed();
-  }
-
-  getModelCheckExists(item: {
-    provider: ProviderTab;
-    modelId: string;
-  }): LlmModel {
-    let result: Result.Result<LlmModel, GetLlmModelCheckExistsError> =
-      this.getLlmModelCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let model: LlmModel = result.value;
-
-    return model;
   }
 
   getLlmModelCheckExistsResult(item: {
