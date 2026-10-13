@@ -1088,6 +1088,7 @@ export class DashboardsService {
               y => y.queryId === mconfig.queryId
             );
 
+            // Previous and new query IDs differ because their parent dashboard IDs differ.
             let prevTile = v.fromDashboardX.tiles.find(
               y => y.title === mconfig.chart.title
             );

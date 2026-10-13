@@ -289,6 +289,7 @@ export class CreateDraftReportController {
 
           v.fromReport.rows.forEach(row => {
             if (row.rowType === 'metric' || row.rowType === 'formula') {
+              // Copy only the current RQ to the draft, not all RQs.
               let rq: Rq = row.rqs.find(
                 y =>
                   y.fractionBrick === v.timeRangeFractionBrick &&

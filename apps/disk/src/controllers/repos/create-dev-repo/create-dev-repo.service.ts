@@ -149,6 +149,7 @@ export class CreateDevRepoService {
             isCheckConflicts: true
           })
       ),
+      // The session branch does not exist remotely, so use NeedPush without fetching.
       Result.bind(
         'repoStatus',
         (v): Result.Result<RepoStatus, never> =>

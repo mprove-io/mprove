@@ -437,6 +437,7 @@ export class CreateDraftDashboardController {
             )
       ),
       Result.andThrough(v => {
+        // Access was already checked for fromDashboardX; verify parent IDs here.
         let cachedMconfigParentCheckResult: Result.Result<
           void[],
           BackendMconfigParentIdMismatchError

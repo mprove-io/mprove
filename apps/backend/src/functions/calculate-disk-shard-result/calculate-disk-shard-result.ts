@@ -21,6 +21,7 @@ export function calculateDiskShardResult(item: {
 
   let isSecondCharValid: boolean = SECOND_CHAR_ALPHABET.includes(shardKey[1]);
 
+  // Test shard keys may not match the expected pattern; fall back to shard-0.
   if (!isFirstCharValid || !isSecondCharValid || totalDiskShards === 1) {
     return Result.succeed('shard-0');
   }
