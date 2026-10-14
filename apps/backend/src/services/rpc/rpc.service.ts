@@ -91,30 +91,6 @@ export class RpcService implements OnModuleDestroy {
     return this.queues.get(namespace);
   }
 
-  async request<T = unknown>(item: {
-    namespace: string;
-    groupId: string;
-    message: any;
-    timeout: number;
-  }): Promise<T> {
-    let result: Result.Result<T, RequestError> =
-      await this.requestResult<T>(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        customData:
-          result.error.code === 'BACKEND_RPC_TIMEOUT'
-            ? result.error.customData
-            : undefined
-      });
-    }
-
-    let response: T = result.value;
-
-    return response;
-  }
-
   async requestResult<T = unknown>(item: {
     namespace: string;
     groupId: string;
@@ -175,45 +151,6 @@ export class RpcService implements OnModuleDestroy {
     );
 
     return execution;
-  }
-
-  async sendToBlockmlUnwrapOutput<TRequest extends ToBlockmlRequest>(item: {
-    request: TRequest;
-    orgId: string;
-    repoId: string;
-  }): Promise<BlockmlSuccessOutput<TRequest>> {
-    let result: Result.Result<
-      BlockmlSuccessOutput<TRequest>,
-      SendToBlockmlError
-    > = await this.sendToBlockmlResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          result.error.code === 'BACKEND_INVALID_REQUEST'
-            ? result.error.displayData
-            : undefined,
-        customData:
-          result.error.code === 'BACKEND_RPC_TIMEOUT'
-            ? result.error.customData
-            : undefined,
-        originalError:
-          result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML' &&
-          result.error.originalError
-            ? Object.assign(new Error(result.error.originalError.code), {
-                displayData:
-                  'displayData' in result.error.originalError
-                    ? result.error.originalError.displayData
-                    : undefined
-              })
-            : undefined
-      });
-    }
-
-    let output: BlockmlSuccessOutput<TRequest> = result.value;
-
-    return output;
   }
 
   async sendToBlockmlResult<TRequest extends ToBlockmlRequest>(item: {

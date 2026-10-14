@@ -29,7 +29,6 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -68,59 +67,6 @@ export class QueryInfoChartService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getChartData(item: {
-    traceId: string;
-    user: UserTab;
-    userMember: MemberTab;
-    project: ProjectTab;
-    projectId: string;
-    envId: string;
-    structId: string;
-    chartId: string;
-    timezone: string;
-    skipUi: boolean;
-  }): Promise<ToBackendGetChartOutput> {
-    let {
-      traceId,
-      user,
-      userMember,
-      project,
-      projectId,
-      envId,
-      structId,
-      chartId,
-      timezone,
-      skipUi
-    } = item;
-
-    let result: Result.Result<ToBackendGetChartOutput, GetChartDataError> =
-      await this.getChartDataResult({
-        traceId: traceId,
-        user: user,
-        userMember: userMember,
-        project: project,
-        projectId: projectId,
-        envId: envId,
-        structId: structId,
-        chartId: chartId,
-        timezone: timezone,
-        skipUi: skipUi
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: ToBackendGetChartOutput = result.value;
-
-    return output;
-  }
 
   async getChartDataResult(item: {
     traceId: string;

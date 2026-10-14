@@ -10,7 +10,6 @@ import {
 } from '#backend/drizzle/postgres/schema/branches';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckBranchDoesNotExistError } from '#common/types/backend/function-errors/check-branch-does-not-exist-error';
@@ -43,23 +42,6 @@ export class BranchesService {
       keyTag: undefined,
       serverTs: undefined
     };
-
-    return branch;
-  }
-
-  async getBranchCheckExists(item: {
-    projectId: string;
-    repoId: string;
-    branchId: string;
-  }): Promise<BranchTab> {
-    let result: Result.Result<BranchTab, GetBranchCheckExistsError> =
-      await this.getBranchCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let branch: BranchTab = result.value;
 
     return branch;
   }

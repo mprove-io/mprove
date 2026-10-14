@@ -63,6 +63,7 @@ import { ProduceExplorerChartService } from '#backend/services/explorer/tools/pr
 import { SearchCachedFieldValuesService } from '#backend/services/explorer/tools/search-model-fields/search-cached-field-values/search-cached-field-values.service';
 import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names/search-dwh-schema-field-names.service';
 import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
+import { SearchModelFieldsService } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { LlmModelService } from '#backend/services/llm-model/llm-model.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
@@ -189,6 +190,7 @@ export const appProviders = [
   SearchCachedFieldValuesService,
   SearchModelFieldLeafNamesService,
   SearchDwhSchemaFieldNamesService,
+  SearchModelFieldsService,
   SearchModelFieldsToolService,
   ProduceChartToolService,
   ExplorerToolsService,

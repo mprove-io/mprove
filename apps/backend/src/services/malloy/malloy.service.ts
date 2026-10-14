@@ -64,56 +64,6 @@ export class MalloyService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async editMalloyQuery(item: {
-    projectId: string;
-    envId: string;
-    structId: string;
-    mconfigParentType: MconfigParentType;
-    mconfigParentId: string;
-    user: UserTab;
-    model: Model;
-    mconfig: MconfigTab;
-    queryOperations: QueryOperation[];
-  }): Promise<EditMalloyQueryOutput> {
-    let {
-      projectId,
-      envId,
-      structId,
-      mconfigParentType,
-      mconfigParentId,
-      user,
-      model,
-      mconfig,
-      queryOperations
-    } = item;
-
-    let result: Result.Result<EditMalloyQueryOutput, EditMalloyQueryError> =
-      await this.editMalloyQueryResult({
-        projectId: projectId,
-        envId: envId,
-        structId: structId,
-        mconfigParentType: mconfigParentType,
-        mconfigParentId: mconfigParentId,
-        user: user,
-        model: model,
-        mconfig: mconfig,
-        queryOperations: queryOperations
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: EditMalloyQueryOutput = result.value;
-
-    return output;
-  }
-
   async editMalloyQueryResult(item: {
     projectId: string;
     envId: string;

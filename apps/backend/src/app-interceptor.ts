@@ -17,12 +17,14 @@ import { logResponseBackend } from '#backend/functions/top/log-response-backend/
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { makeBackendResultResponse } from '#backend/functions/top/make-backend-result-response/make-backend-result-response';
 import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
+import { validateIdempUserResult } from '#backend/functions/top/validate-idemp-user/validate-idemp-user';
 import { validateToBackendRequestResult } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ValidateIdempUserError } from '#common/types/backend/function-errors/validate-idemp-user-error';
 import type { ValidateToBackendRequestError } from '#common/types/backend/function-errors/validate-to-backend-request-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
@@ -97,9 +99,15 @@ export class AppInterceptor implements NestInterceptor {
           id: `backend-api:${req.operation}:${iKey}`
         });
 
-    if (isDefined(idemp) && !!idemp.stId && idemp.stId !== stId) {
+    let idempUserResult: Result.Result<void, ValidateIdempUserError> =
+      validateIdempUserResult({
+        storedUserId: idemp?.stId,
+        userId: stId
+      });
+
+    if (Result.isFailure(idempUserResult)) {
       throw new ServerError({
-        message: 'BACKEND_IDEMP_USER_MISMATCH'
+        message: idempUserResult.error.code
       });
     }
 

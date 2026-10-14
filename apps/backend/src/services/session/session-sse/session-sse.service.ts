@@ -115,7 +115,7 @@ export class SessionSseService {
       };
 
       // 1. Initial backfill from DB
-      (async () => {
+      void (async () => {
         try {
           await pollDb();
 
@@ -125,7 +125,7 @@ export class SessionSseService {
 
           // 2. Start polling timer after backfill
           pollTimer = setInterval(() => {
-            pollDb();
+            void pollDb();
           }, this.POLL_INTERVAL_MS);
         } catch (err) {
           observer.error(err);

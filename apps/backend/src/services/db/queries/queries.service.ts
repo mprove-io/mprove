@@ -207,27 +207,6 @@ export class QueriesService {
     );
   }
 
-  async getQueryCheckExists(item: {
-    queryId: string;
-    projectId: string;
-  }): Promise<QueryTab> {
-    let { queryId, projectId } = item;
-
-    let result: Result.Result<QueryTab, GetQueryCheckExistsError> =
-      await this.getQueryCheckExistsResult({
-        queryId: queryId,
-        projectId: projectId
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let query: QueryTab = result.value;
-
-    return query;
-  }
-
   async getQueryCheckExistsResult(item: {
     queryId: string;
     projectId: string;
@@ -246,33 +225,6 @@ export class QueriesService {
           ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
           : this.tabService.queryEntToTabResult({ queryEnt: x })
       );
-  }
-
-  async getQueriesCheckExistSkipSqlData(item: {
-    queryIds: string[];
-    projectId: string;
-  }): Promise<QueryTab[]> {
-    let { queryIds, projectId } = item;
-
-    let result: Result.Result<
-      QueryTab[],
-      GetQueriesCheckExistSkipSqlDataError
-    > = await this.getQueriesCheckExistSkipSqlDataResult({
-      queryIds: queryIds,
-      projectId: projectId
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined
-      });
-    }
-
-    let queries: QueryTab[] = result.value;
-
-    return queries;
   }
 
   async getQueriesCheckExistSkipSqlDataResult(item: {
@@ -341,31 +293,6 @@ export class QueriesService {
       }),
       Result.map((v): QueryTab[] => v.queries)
     );
-  }
-
-  async getQueriesCheckExist(item: {
-    queryIds: string[];
-    projectId: string;
-  }): Promise<QueryTab[]> {
-    let { queryIds, projectId } = item;
-
-    let result: Result.Result<QueryTab[], GetQueriesCheckExistError> =
-      await this.getQueriesCheckExistResult({
-        queryIds: queryIds,
-        projectId: projectId
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined
-      });
-    }
-
-    let queries: QueryTab[] = result.value;
-
-    return queries;
   }
 
   async getQueriesCheckExistResult(item: {

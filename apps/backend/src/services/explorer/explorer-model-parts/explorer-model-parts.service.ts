@@ -1,7 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  BridgeTab,
+  MemberTab,
+  ModelTab,
+  ProjectTab,
+  StructTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -11,10 +18,24 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
+import type {
+  ExplorerModel,
+  GetExplorerModelsOutput
+} from '#backend/services/explorer/types/get-explorer-models-output';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
+import type { GetExplorerModelsError } from '#common/types/backend/function-errors/get-explorer-models-error';
+import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
+import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { ModelX } from '#common/types/backend/parts/model/model-x';
+import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
-import type { ToDiskGetCatalogFilesRequest } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-request';
 
 @Injectable()
 export class ExplorerModelPartsService {
@@ -30,113 +51,201 @@ export class ExplorerModelPartsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getExplorerModelParts(item: {
+  async getExplorerModelPartsResult(item: {
     userId: string;
     projectId: string;
     repoId: string;
     branchId: string;
     envId: string;
     traceId: string;
-  }): Promise<ExplorerModelPart[]> {
-    let { userId, projectId, repoId, branchId, envId, traceId } = item;
+  }): Result.ResultAsync<ExplorerModelPart[], GetExplorerModelPartsError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThen(
+        (
+          v
+        ): Result.ResultAsync<
+          GetExplorerModelsOutput,
+          GetExplorerModelsError
+        > =>
+          this.getExplorerModelsResult({
+            userId: v.userId,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId,
+            envId: v.envId,
+            traceId: v.traceId
+          })
+      ),
+      Result.map((v): ExplorerModelPart[] =>
+        v.models.map(model => ({
+          modelId: model.modelId,
+          label: model.label,
+          type: model.type,
+          connectionId: model.connectionId,
+          connectionType: model.connectionType,
+          malloySource: model.malloySource
+        }))
+      )
+    );
+  }
 
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: projectId
-    });
+  async getExplorerModelsResult(item: {
+    userId: string;
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    traceId: string;
+    modelIds?: string[];
+  }): Result.ResultAsync<GetExplorerModelsOutput, GetExplorerModelsError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'project',
+        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+          this.projectsService.getProjectCheckExistsResult({
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'userMember',
+        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+          this.membersService.getMemberCheckExistsResult({
+            projectId: v.projectId,
+            memberId: v.userId
+          })
+      ),
+      Result.andThrough(v =>
+        this.envsService.getEnvCheckExistsAndAccessResult({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
+      ),
+      Result.bind(
+        'bridge',
+        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+          this.bridgesService.getBridgeCheckExistsResult({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.branchId,
+            envId: v.envId
+          })
+      ),
+      Result.bind(
+        'struct',
+        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
+          this.structsService.getStructCheckExistsResult({
+            structId: v.bridge.structId,
+            projectId: v.projectId
+          })
+      ),
+      Result.bind(
+        'models',
+        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+          this.db.drizzle.query.modelsTable
+            .findMany({
+              where: eq(modelsTable.structId, v.struct.structId)
+            })
+            .then(xs =>
+              Result.sequence(xs, x =>
+                this.tabService.modelEntToTabResult({ modelEnt: x })
+              )
+            )
+      ),
+      Result.bind(
+        'requestedModelIdSet',
+        (v): Result.Result<Set<string>, never> =>
+          Result.succeed(
+            isUndefined(v.modelIds) ? undefined : new Set(v.modelIds)
+          )
+      ),
+      Result.bind(
+        'apiModels',
+        (v): Result.Result<ModelX[], never> =>
+          Result.succeed(
+            v.models
+              .map(model =>
+                this.modelsService.tabToApi({
+                  model: model,
+                  hasAccess: checkModelAccess({
+                    member: v.userMember,
+                    modelAccessRoles: model.accessRolesCombined
+                  })
+                })
+              )
+              .filter(model => model.hasAccess === true)
+              .filter(model =>
+                isUndefined(v.requestedModelIdSet)
+                  ? true
+                  : v.requestedModelIdSet.has(model.modelId)
+              )
+          )
+      ),
+      Result.bind(
+        'diskGetCatalogFilesOutput',
+        (v): Result.ResultAsync<ToDiskGetCatalogFilesOutput, SendToDiskError> =>
+          this.rpcService.sendToDiskResult({
+            request: {
+              operation: 'getCatalogFiles',
+              traceId: v.traceId,
+              input: {
+                baseProject: this.tabService.projectTabToBaseProject({
+                  project: v.project
+                }),
+                repoId: v.repoId,
+                branch: v.branchId
+              }
+            }
+          })
+      ),
+      Result.bind(
+        'catalogFiles',
+        (v): Result.Result<DiskCatalogFile[], never> =>
+          Result.succeed(
+            v.diskGetCatalogFilesOutput.files.filter(file =>
+              file.pathString.endsWith('.malloy')
+            )
+          )
+      ),
+      Result.map(
+        (v): GetExplorerModelsOutput => ({
+          structId: v.struct.structId,
+          models: v.apiModels.map((model): ExplorerModel => {
+            let catalogFile: DiskCatalogFile = v.catalogFiles.find(file => {
+              let left: string = model.filePath;
 
-    let userMember = await this.membersService.getMemberCheckExists({
-      projectId: projectId,
-      memberId: userId
-    });
+              let right: string = file.pathString;
 
-    await this.envsService.getEnvCheckExistsAndAccess({
-      projectId: projectId,
-      envId: envId,
-      member: userMember
-    });
+              return (
+                left === right ||
+                left.endsWith(`/${right}`) ||
+                right.endsWith(`/${left}`)
+              );
+            });
 
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId
-    });
+            let malloySource: ExplorerModelPart['malloySource'] =
+              model.type === 'Malloy'
+                ? {
+                    source: model.source,
+                    filePath: catalogFile?.pathString ?? model.filePath,
+                    fileText: catalogFile?.content ?? model.fileText
+                  }
+                : undefined;
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let modelTabs = await this.db.drizzle.query.modelsTable
-      .findMany({
-        where: eq(modelsTable.structId, struct.structId)
-      })
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
-
-    let models = modelTabs
-      .map(model =>
-        this.modelsService.tabToApi({
-          model: model,
-          hasAccess: checkModelAccess({
-            member: userMember,
-            modelAccessRoles: model.accessRolesCombined
+            return {
+              modelId: model.modelId,
+              label: model.label,
+              type: model.type,
+              connectionId: model.connectionId,
+              connectionType: model.connectionType,
+              malloySource: malloySource,
+              fields: model.fields
+            };
           })
         })
       )
-      .filter(model => model.hasAccess === true);
-
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
-
-    let request: ToDiskGetCatalogFilesRequest = {
-      operation: 'getCatalogFiles',
-      traceId: traceId,
-      input: {
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId
-      }
-    };
-
-    let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput =
-      await this.rpcService.sendToDiskUnwrapOutput({
-        request: request
-      });
-
-    let catalogFiles = diskGetCatalogFilesOutput.files.filter(file =>
-      file.pathString.endsWith('.malloy')
     );
-
-    return models.map(model => {
-      let catalogFile = catalogFiles.find(file => {
-        let left = model.filePath;
-        let right = file.pathString;
-
-        return (
-          left === right ||
-          left.endsWith(`/${right}`) ||
-          right.endsWith(`/${left}`)
-        );
-      });
-
-      let malloySource =
-        model.type === 'Malloy'
-          ? {
-              source: model.source,
-              filePath: catalogFile?.pathString ?? model.filePath,
-              fileText: catalogFile?.content ?? model.fileText
-            }
-          : undefined;
-
-      return {
-        modelId: model.modelId,
-        label: model.label,
-        type: model.type,
-        connectionId: model.connectionId,
-        connectionType: model.connectionType,
-        malloySource: malloySource
-      };
-    });
   }
 }

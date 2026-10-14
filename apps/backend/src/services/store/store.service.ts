@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import axios from 'axios';
 import { and, eq } from 'drizzle-orm';
@@ -18,12 +19,14 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { UrlService } from '#backend/services/url/url.service';
 import { UserCodeService } from '#backend/services/user-code/user-code.service';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
+import type { CheckApiUrlError } from '#common/types/backend/function-errors/check-api-url-error';
 import type { FileParameter } from '#common/types/blockml/parts/file/file-parameter';
 import type { Filter } from '#common/types/blockml/parts/filter/filter';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
@@ -429,7 +432,21 @@ ${inputSub}
 
       let url = queryStart.apiUrl;
 
-      await this.urlService.checkApiUrl({ urlStr: url });
+      let apiUrlResult: Result.Result<void, CheckApiUrlError> =
+        await this.urlService.checkApiUrlResult({ urlStr: url });
+
+      if (Result.isFailure(apiUrlResult)) {
+        // This worker's terminal boundary rejects into its existing error-status
+        // handling. Keep the domain code/details without classifying exceptions.
+        throw new ServerError({
+          message: apiUrlResult.error.code,
+          displayData: apiUrlResult.error.displayData,
+          customData:
+            'customData' in apiUrlResult.error
+              ? apiUrlResult.error.customData
+              : undefined
+        });
+      }
 
       let headers: any = {};
 

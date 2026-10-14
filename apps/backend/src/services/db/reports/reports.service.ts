@@ -65,35 +65,6 @@ export class ReportsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getReportsCatalog(item: {
-    projectId: string;
-    structId: string;
-    user: UserTab;
-    userMember: MemberTab;
-    apiUserMember: Member;
-    spaces: Space[];
-  }): Promise<ReportsCatalog> {
-    let { projectId, structId, user, userMember, apiUserMember, spaces } = item;
-
-    let result: Result.Result<ReportsCatalog, GetReportsCatalogError> =
-      await this.getReportsCatalogResult({
-        projectId: projectId,
-        structId: structId,
-        user: user,
-        userMember: userMember,
-        apiUserMember: apiUserMember,
-        spaces: spaces
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let catalog: ReportsCatalog = result.value;
-
-    return catalog;
-  }
-
   async getReportsCatalogResult(item: {
     projectId: string;
     structId: string;
@@ -455,29 +426,6 @@ export class ReportsService {
         message: 'BACKEND_REPORT_DOES_NOT_EXIST'
       });
     }
-
-    return report;
-  }
-
-  async getReportCheckExistsAndAccess(item: {
-    projectId: string;
-    reportId: string;
-    structId: string;
-    user: UserTab;
-    userMember: MemberTab | Member;
-  }): Promise<ReportTab> {
-    let result: Result.Result<ReportTab, GetReportCheckExistsAndAccessError> =
-      await this.getReportCheckExistsAndAccessResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined
-      });
-    }
-
-    let report: ReportTab = result.value;
 
     return report;
   }

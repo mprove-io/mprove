@@ -8,14 +8,13 @@ import { logStruct } from '#blockml/controllers/rebuild-struct/rebuild-struct-st
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { ServerError } from '#common/classes/server-error/server-error';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
 import type { ExtraSchemaColumn } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema-column';
 import type { ExtraSchemaRelationship } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema-relationship';
 import type { ExtraSchemaTable } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema-table';
-import { MproveConfig } from '#common/types/backend/parts/mprove-config';
+import type { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
@@ -61,7 +60,7 @@ export async function finalizeRebuildStruct(item: {
     item.cs
   );
 
-  logStruct(
+  void logStruct(
     {
       errors: item.errors,
       stores: item.stores,
@@ -82,18 +81,19 @@ export async function finalizeRebuildStruct(item: {
 
   Result.unwrap(removeResult);
 
-  item.malloyConnections.forEach(connection =>
-    connection.close().catch(error => {
-      logToConsoleBlockml({
-        log: new ServerError({
-          message: 'BLOCKML_MALLOY_CONNECTION_CLOSE_ERROR',
-          originalError: error
-        }),
-        logLevel: 'Error',
-        logger: item.logger,
-        cs: item.cs
-      });
-    })
+  item.malloyConnections.forEach(
+    connection =>
+      void connection.close().catch(error => {
+        logToConsoleBlockml({
+          log: new ServerError({
+            message: 'BLOCKML_MALLOY_CONNECTION_CLOSE_ERROR',
+            originalError: error
+          }),
+          logLevel: 'Error',
+          logger: item.logger,
+          cs: item.cs
+        });
+      })
   );
 
   let presets: Preset[] = item.presets.map(

@@ -131,19 +131,6 @@ export class ProjectsService {
       );
   }
 
-  async checkProjectIsNotRestricted(item: {
-    projectId: string;
-    userMember: MemberTab;
-    repoId: string;
-  }) {
-    let result: Result.Result<void, CheckProjectIsNotRestrictedError> =
-      this.checkProjectIsNotRestrictedResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-  }
-
   checkProjectIsNotRestrictedResult(item: {
     projectId: string;
     userMember: MemberTab;

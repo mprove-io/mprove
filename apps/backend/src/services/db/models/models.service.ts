@@ -14,7 +14,6 @@ import {
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
@@ -132,22 +131,6 @@ export class ModelsService {
     return model;
   }
 
-  async getModelCheckExists(item: {
-    modelId: string;
-    structId: string;
-  }): Promise<ModelTab> {
-    let result: Result.Result<ModelTab, GetModelCheckExistsError> =
-      await this.getModelCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let model: ModelTab = result.value;
-
-    return model;
-  }
-
   async getModelCheckExistsResult(item: {
     modelId: string;
     structId: string;
@@ -166,29 +149,6 @@ export class ModelsService {
           ? Result.fail({ code: 'BACKEND_MODEL_DOES_NOT_EXIST' })
           : this.tabService.modelEntToTabResult({ modelEnt: x })
       );
-  }
-
-  async getModelCheckExistsAndAccess(item: {
-    modelId: string;
-    structId: string;
-    userMember: MemberTab;
-  }): Promise<ModelTab> {
-    let { modelId, structId, userMember } = item;
-
-    let result: Result.Result<ModelTab, GetModelCheckExistsAndAccessError> =
-      await this.getModelCheckExistsAndAccessResult({
-        modelId: modelId,
-        structId: structId,
-        userMember: userMember
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let model: ModelTab = result.value;
-
-    return model;
   }
 
   async getModelCheckExistsAndAccessResult(item: {
@@ -221,23 +181,6 @@ export class ModelsService {
       ),
       Result.map((v): ModelTab => v.model)
     );
-  }
-
-  async getModelPartXs(item: {
-    structId: string;
-    // user: UserTab;
-    apiUserMember: Member;
-  }): Promise<ModelPartX[]> {
-    let result: Result.Result<ModelPartX[], GetModelPartXsError> =
-      await this.getModelPartXsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let modelPartXs: ModelPartX[] = result.value;
-
-    return modelPartXs;
   }
 
   async getModelPartXsResult(item: {

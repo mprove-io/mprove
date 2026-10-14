@@ -20,7 +20,6 @@ import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
@@ -48,67 +47,6 @@ export class QueryInfoReportService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getReportData(item: {
-    traceId: string;
-    user: UserTab;
-    userMember: MemberTab;
-    project: ProjectTab;
-    bridge: BridgeTab;
-    projectId: string;
-    envId: string;
-    reportId: string;
-    timezone: string;
-    timeSpec: TimeSpec;
-    timeRangeFractionBrick: string;
-    skipUi: boolean;
-  }): Promise<ToBackendGetReportOutput> {
-    let {
-      traceId,
-      user,
-      userMember,
-      project,
-      bridge,
-      projectId,
-      envId,
-      reportId,
-      timezone,
-      timeSpec,
-      timeRangeFractionBrick,
-      skipUi
-    } = item;
-
-    let result: Result.Result<
-      ToBackendGetReportOutput,
-      QueryInfoReportGetReportDataError
-    > = await this.getReportDataResult({
-      traceId: traceId,
-      user: user,
-      userMember: userMember,
-      project: project,
-      bridge: bridge,
-      projectId: projectId,
-      envId: envId,
-      reportId: reportId,
-      timezone: timezone,
-      timeSpec: timeSpec,
-      timeRangeFractionBrick: timeRangeFractionBrick,
-      skipUi: skipUi
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: ToBackendGetReportOutput = result.value;
-
-    return output;
-  }
 
   async getReportDataResult(item: {
     traceId: string;

@@ -453,8 +453,10 @@ export class SessionDrainService {
         }
       });
     } catch (e) {
-      let eventIds = eventTabs.map(t => t.eventId);
-      let queueLength = queue.length;
+      let eventIds: string[] = eventTabs.map(t => t.eventId);
+
+      let queueLength: number = queue.length;
+
       logToConsoleBackend({
         log: new ServerError({
           message: 'BACKEND_DRAIN_QUEUE_FAILED',

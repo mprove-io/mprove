@@ -52,44 +52,6 @@ export class ProvidersService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  makeProvider(
-    item: {
-      projectId: string;
-      providerId: string;
-      isEnabled: boolean;
-      models: LlmModel[];
-    } & (
-      | {
-          type: 'OpenAI';
-          options: ProviderOptionsOpenAI;
-        }
-      | {
-          type: 'Anthropic';
-          options: ProviderOptionsAnthropic;
-        }
-      | {
-          type: 'OpenAICompatible';
-          name: string;
-          options: ProviderOptionsOpenAICompatible;
-        }
-      | {
-          type: 'OpenAICodex';
-          options: ProviderOptionsCodex;
-        }
-    )
-  ): ProviderTab {
-    let result: Result.Result<ProviderTab, MakeProviderError> =
-      this.makeProviderResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let provider: ProviderTab = result.value;
-
-    return provider;
-  }
-
   makeProviderResult(
     item: {
       projectId: string;
@@ -264,18 +226,6 @@ export class ProvidersService {
     };
   }
 
-  async checkProviderDoesNotExist(item: {
-    projectId: string;
-    providerId: string;
-  }): Promise<void> {
-    let result: Result.Result<void, CheckProviderDoesNotExistError> =
-      await this.checkProviderDoesNotExistResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-  }
-
   async checkProviderDoesNotExistResult(item: {
     projectId: string;
     providerId: string;
@@ -293,22 +243,6 @@ export class ProvidersService {
     return isDefined(providerEnt)
       ? Result.fail({ code: 'BACKEND_PROVIDER_ALREADY_EXISTS' })
       : Result.succeed();
-  }
-
-  async getProviderCheckExists(item: {
-    projectId: string;
-    providerId: string;
-  }): Promise<ProviderTab> {
-    let result: Result.Result<ProviderTab, GetProviderCheckExistsError> =
-      await this.getProviderCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let provider: ProviderTab = result.value;
-
-    return provider;
   }
 
   async getProviderCheckExistsResult(item: {

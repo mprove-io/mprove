@@ -58,19 +58,6 @@ export class OrgsService {
     return apiOrgsItem;
   }
 
-  async getOrgCheckExists(item: { orgId: string }): Promise<OrgTab> {
-    let result: Result.Result<OrgTab, GetOrgCheckExistsError> =
-      await this.getOrgCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let org: OrgTab = result.value;
-
-    return org;
-  }
-
   async getOrgCheckExistsResult(item: {
     orgId: string;
   }): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> {
@@ -85,18 +72,6 @@ export class OrgsService {
           ? Result.fail({ code: 'BACKEND_ORG_DOES_NOT_EXIST' })
           : this.tabService.orgEntToTabResult({ orgEnt: x })
       );
-  }
-
-  async checkUserIsOrgOwner(item: {
-    userId: string;
-    org: OrgTab;
-  }): Promise<void> {
-    let result: Result.Result<void, CheckUserIsOrgOwnerError> =
-      this.checkUserIsOrgOwnerResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
   }
 
   checkUserIsOrgOwnerResult(item: {

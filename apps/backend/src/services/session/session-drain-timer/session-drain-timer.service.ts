@@ -45,7 +45,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
           });
         }
 
-        this.editorStreamService.checkStreamStalls().catch(e => {
+        void this.editorStreamService.checkStreamStalls().catch(e => {
           logToConsoleBackend({
             log: new ServerError({
               message: 'BACKEND_STREAM_STALL_CHECK_FAILED',
@@ -62,7 +62,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
     }, 1000);
 
     this.lockTimer = setInterval(() => {
-      this.explorerStreamService.refreshActiveLocks().catch(e => {
+      void this.explorerStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: 'BACKEND_REFRESH_STREAM_LOCKS_FAILED',
@@ -74,7 +74,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
         });
       });
 
-      this.editorStreamService.refreshActiveLocks().catch(e => {
+      void this.editorStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: 'BACKEND_REFRESH_STREAM_LOCKS_FAILED',

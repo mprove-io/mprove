@@ -1,4 +1,4 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
+import type { NodeSDK } from '@opentelemetry/sdk-node';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LogLevel } from '#common/types/node-common/logging/log-level';
@@ -13,7 +13,7 @@ export function listenProcessEvents(item: {
   unhandledRejectionReason: Er;
   unhandledRejection: Er;
   logToConsoleFn: (x: any) => void;
-}) {
+}): void {
   let {
     tracerNodeSdk,
     appTerminated,
@@ -28,6 +28,7 @@ export function listenProcessEvents(item: {
   signalsNames.forEach(signalName =>
     process.on(signalName, async signal => {
       shuttingDown = true;
+
       logToConsoleFn({
         log: new ServerError({
           message: appTerminated,
@@ -55,6 +56,7 @@ export function listenProcessEvents(item: {
       process.exit(0);
     })
   );
+
   process.on('uncaughtException', e => {
     logToConsoleFn({
       log: new ServerError({
@@ -65,8 +67,10 @@ export function listenProcessEvents(item: {
       logger: undefined,
       cs: undefined
     });
+
     process.exit(1);
   });
+
   process.on('unhandledRejection', (reason, promise) => {
     logToConsoleFn({
       log: new ServerError({
@@ -79,8 +83,9 @@ export function listenProcessEvents(item: {
       logger: undefined,
       cs: undefined
     });
+
     if (!shuttingDown) {
-      promise.catch(e => {
+      void promise.catch(e => {
         logToConsoleFn({
           log: new ServerError({
             message: unhandledRejection,
@@ -93,9 +98,11 @@ export function listenProcessEvents(item: {
           logger: undefined,
           cs: undefined
         });
+
         process.exit(1);
       });
     }
   });
+
   return;
 }

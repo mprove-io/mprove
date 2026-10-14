@@ -139,22 +139,6 @@ export class MembersService {
     return apiMember;
   }
 
-  async getMemberCheckIsAdmin(item: {
-    memberId: string;
-    projectId: string;
-  }): Promise<MemberTab> {
-    let result: Result.Result<MemberTab, GetMemberCheckIsAdminError> =
-      await this.getMemberCheckIsAdminResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let member: MemberTab = result.value;
-
-    return member;
-  }
-
   async getMemberCheckIsAdminResult(item: {
     memberId: string;
     projectId: string;
@@ -189,22 +173,6 @@ export class MembersService {
     );
   }
 
-  async getMemberCheckIsEditorOrAdmin(item: {
-    memberId: string;
-    projectId: string;
-  }): Promise<MemberTab> {
-    let result: Result.Result<MemberTab, GetMemberCheckIsEditorOrAdminError> =
-      await this.getMemberCheckIsEditorOrAdminResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let member: MemberTab = result.value;
-
-    return member;
-  }
-
   async getMemberCheckIsEditorOrAdminResult(item: {
     memberId: string;
     projectId: string;
@@ -226,22 +194,6 @@ export class MembersService {
       ),
       Result.map((v): MemberTab => v.member)
     );
-  }
-
-  async getMemberCheckIsEditor(item: {
-    memberId: string;
-    projectId: string;
-  }): Promise<MemberTab> {
-    let result: Result.Result<MemberTab, GetMemberCheckIsEditorError> =
-      await this.getMemberCheckIsEditorResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let member: MemberTab = result.value;
-
-    return member;
   }
 
   async getMemberCheckIsEditorResult(item: {

@@ -18,6 +18,7 @@ import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
+import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { CodexService } from '#backend/services/codex/codex.service';
@@ -33,6 +34,7 @@ import { ExplorerModelsService } from '#backend/services/explorer/explorer-model
 import { ExplorerPromptsService } from '#backend/services/explorer/explorer-prompts/explorer-prompts.service';
 import { ExplorerTitleService } from '#backend/services/explorer/explorer-title/explorer-title.service';
 import { ExplorerToolsService } from '#backend/services/explorer/explorer-tools/explorer-tools.service';
+import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
 import { SessionDrainService } from '#backend/services/session/session-drain/session-drain.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { InteractCommandReply } from '#backend/types/interact-command-reply';
@@ -45,6 +47,7 @@ import {
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
 import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { AiStreamCommand } from '#common/types/backend/parts/session/ai-stream-command';
@@ -646,15 +649,24 @@ export class ExplorerStreamService implements OnModuleDestroy {
       projectId: session.projectId
     });
 
-    let explorerModelParts =
-      await this.explorerModelPartsService.getExplorerModelParts({
-        userId: user.userId,
-        projectId: session.projectId,
-        repoId: session.repoId,
-        branchId: session.branchId,
-        envId: session.envId,
-        traceId: traceId
-      });
+    let explorerModelPartsResult: Result.Result<
+      ExplorerModelPart[],
+      GetExplorerModelPartsError
+    > = await this.explorerModelPartsService.getExplorerModelPartsResult({
+      userId: user.userId,
+      projectId: session.projectId,
+      repoId: session.repoId,
+      branchId: session.branchId,
+      envId: session.envId,
+      traceId: traceId
+    });
+
+    if (Result.isFailure(explorerModelPartsResult)) {
+      throw makeExplorerToolError({ error: explorerModelPartsResult.error });
+    }
+
+    let explorerModelParts: ExplorerModelPart[] =
+      explorerModelPartsResult.value;
 
     let explorerSystemPrompt =
       this.explorerPromptsService.getExplorerSessionSystemPrompt({

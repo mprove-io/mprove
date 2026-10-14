@@ -142,31 +142,6 @@ export class StructsService {
       );
   }
 
-  async getStructCheckExistsAndNotChanged(item: {
-    bridgeStructId: string;
-    projectId: string;
-    structId: string;
-  }): Promise<StructTab> {
-    let { bridgeStructId, projectId, structId } = item;
-
-    let result: Result.Result<
-      StructTab,
-      GetStructCheckExistsAndNotChangedError
-    > = await this.getStructCheckExistsAndNotChangedResult({
-      bridgeStructId: bridgeStructId,
-      projectId: projectId,
-      structId: structId
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let struct: StructTab = result.value;
-
-    return struct;
-  }
-
   async getStructCheckExistsAndNotChangedResult(item: {
     bridgeStructId: string;
     projectId: string;

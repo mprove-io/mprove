@@ -737,23 +737,6 @@ export class TabService {
     return uconfig;
   }
 
-  givenEntToTab(givenEnt: GivenEnt): GivenTab {
-    if (isUndefined(givenEnt)) {
-      return;
-    }
-
-    let result: Result.Result<GivenTab, GivenEntToTabError> =
-      this.givenEntToTabResult({ givenEnt: givenEnt });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let given: GivenTab = result.value;
-
-    return given;
-  }
-
   givenEntToTabResult(item: {
     givenEnt: GivenEnt;
   }): Result.Result<GivenTab, GivenEntToTabError> {
@@ -766,23 +749,6 @@ export class TabService {
       ),
       Result.map((v): GivenTab => ({ ...v.givenEnt, ...v.tabProps.props }))
     );
-  }
-
-  roleEntToTab(roleEnt: RoleEnt): RoleTab {
-    if (isUndefined(roleEnt)) {
-      return;
-    }
-
-    let result: Result.Result<RoleTab, RoleEntToTabError> =
-      this.roleEntToTabResult({ roleEnt: roleEnt });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let role: RoleTab = result.value;
-
-    return role;
   }
 
   roleEntToTabResult(item: {

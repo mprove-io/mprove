@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { checkApiHostname } from '#backend/services/url/check-api-hostname/check-api-hostname';
-import { ServerError } from '#common/classes/server-error/server-error';
-
+import { checkApiHostnameResult } from '#backend/services/url/check-api-hostname/check-api-hostname';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { BackendApiInvalidUrlError } from '#common/types/backend/errors/backend-api-invalid-url-error';
 import type { CheckApiUrlError } from '#common/types/backend/function-errors/check-api-url-error';
 import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
@@ -16,7 +15,7 @@ export class UrlService {
   private allowHostsLowerCase: string[] = [];
 
   constructor(private cs: ConfigService<BackendConfig>) {
-    let blockHosts =
+    let blockHosts: BackendConfig['apiBlockHosts'] =
       this.cs.get<BackendConfig['apiBlockHosts']>('apiBlockHosts');
 
     if (isDefinedAndNotEmpty(blockHosts)) {
@@ -26,7 +25,7 @@ export class UrlService {
         .map(x => x.toLowerCase());
     }
 
-    let allowHosts =
+    let allowHosts: BackendConfig['apiAllowHosts'] =
       this.cs.get<BackendConfig['apiAllowHosts']>('apiAllowHosts');
 
     if (isDefinedAndNotEmpty(allowHosts)) {
@@ -37,86 +36,59 @@ export class UrlService {
     }
   }
 
-  async checkApiUrl(item: { urlStr: string }) {
-    let { urlStr } = item;
-
-    let protocol: string;
-    let hostnameLowerCase: string;
-
-    try {
-      let parsedUrl = new URL(urlStr);
-      protocol = parsedUrl.protocol;
-      hostnameLowerCase = parsedUrl.hostname.toLowerCase();
-    } catch (e) {
-      throw new ServerError({
-        message: 'BACKEND_API_INVALID_URL',
-        displayData: { url: urlStr },
-        originalError: e
-      });
-    }
-
-    if (protocol !== 'https:' && protocol !== 'http:') {
-      throw new ServerError({
-        message: 'BACKEND_API_PROTOCOL_MUST_BE_HTTPS_OR_HTTP',
-        displayData: { url: urlStr }
-      });
-    }
-
-    if (
-      this.blockHostsLowerCase.some(
-        x =>
-          hostnameLowerCase === x ||
-          hostnameLowerCase.endsWith('.' + x) === true
-      )
-    ) {
-      throw new ServerError({
-        message: 'BACKEND_API_HOST_IS_BLOCKED_BY_LIST',
-        displayData: { url: urlStr }
-      });
-    }
-
-    if (this.allowHostsLowerCase.indexOf(hostnameLowerCase) < 0) {
-      await checkApiHostname({ hostname: hostnameLowerCase });
-    }
-  }
-
   async checkApiUrlResult(item: {
     urlStr: string;
   }): Result.ResultAsync<void, CheckApiUrlError> {
-    try {
-      await this.checkApiUrl(item);
-
-      return Result.succeed();
-    } catch (error) {
-      if (error instanceof ServerError) {
-        switch (error.message) {
-          case 'BACKEND_API_INVALID_URL':
-          case 'BACKEND_API_HOST_DNS_LOOKUP_FAILED':
-            return Result.fail({
-              code: error.message,
-              displayData: error.displayData,
-              customData: isDefined(error.originalError)
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'parsedUrl',
+        (v): Result.Result<URL, BackendApiInvalidUrlError> =>
+          Result.try({
+            try: () => new URL(v.urlStr),
+            catch: error => ({
+              code: 'BACKEND_API_INVALID_URL',
+              displayData: { url: v.urlStr },
+              customData: isDefined(error)
                 ? {
                     originalError:
-                      error.originalError instanceof Error
-                        ? wrapError(error.originalError)
-                        : error.originalError
+                      error instanceof Error ? wrapError(error) : error
                   }
                 : undefined
-            });
-          case 'BACKEND_API_PROTOCOL_MUST_BE_HTTPS_OR_HTTP':
-          case 'BACKEND_API_HOST_IS_BLOCKED_BY_LIST':
-          case 'BACKEND_API_HOST_IS_BLOCKED_BY_SPEC':
-          case 'BACKEND_API_HOST_IS_BLOCKED_BY_SUFFIX':
-          case 'BACKEND_API_HOST_IS_BLOCKED_BY_IP':
-            return Result.fail({
-              code: error.message,
-              displayData: error.displayData
-            });
-        }
-      }
-
-      throw error;
-    }
+            })
+          })
+      ),
+      Result.andThrough(v =>
+        v.parsedUrl.protocol !== 'https:' && v.parsedUrl.protocol !== 'http:'
+          ? Result.fail({
+              code: 'BACKEND_API_PROTOCOL_MUST_BE_HTTPS_OR_HTTP',
+              displayData: { url: v.urlStr }
+            })
+          : Result.succeed()
+      ),
+      Result.bind(
+        'hostnameLowerCase',
+        (v): Result.Result<string, never> =>
+          Result.succeed(v.parsedUrl.hostname.toLowerCase())
+      ),
+      Result.andThrough(v =>
+        this.blockHostsLowerCase.some(
+          hostname =>
+            v.hostnameLowerCase === hostname ||
+            v.hostnameLowerCase.endsWith('.' + hostname) === true
+        )
+          ? Result.fail({
+              code: 'BACKEND_API_HOST_IS_BLOCKED_BY_LIST',
+              displayData: { url: v.urlStr }
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        this.allowHostsLowerCase.includes(v.hostnameLowerCase)
+          ? Result.succeed()
+          : checkApiHostnameResult({ hostname: v.hostnameLowerCase })
+      ),
+      Result.map((v): void => undefined)
+    );
   }
 }

@@ -148,17 +148,6 @@ export class EnvsService {
     return apiEnv;
   }
 
-  async checkEnvDoesNotExist(item: { projectId: string; envId: string }) {
-    let { projectId, envId } = item;
-
-    let result: Result.Result<void, CheckEnvDoesNotExistError> =
-      await this.checkEnvDoesNotExistResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-  }
-
   async checkEnvDoesNotExistResult(item: {
     projectId: string;
     envId: string;
@@ -365,34 +354,6 @@ export class EnvsService {
       );
 
     return Result.succeed(apiEnvs);
-  }
-
-  async getApiEnvConnectionsWithFallback(item: {
-    projectId: string;
-    envId: string;
-  }): Promise<GetApiEnvConnectionsWithFallbackOutput> {
-    let { projectId, envId } = item;
-
-    let result: Result.Result<
-      GetApiEnvConnectionsWithFallbackOutput,
-      GetApiEnvConnectionsWithFallbackError
-    > = await this.getApiEnvConnectionsWithFallbackResult({
-      projectId: projectId,
-      envId: envId
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: GetApiEnvConnectionsWithFallbackOutput = result.value;
-
-    return output;
   }
 
   async getApiEnvConnectionsWithFallbackResult(item: {

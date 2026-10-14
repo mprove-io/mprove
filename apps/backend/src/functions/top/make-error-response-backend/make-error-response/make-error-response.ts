@@ -1,5 +1,6 @@
 import type { Logger } from '@nestjs/common';
 import { getToBackendOperation } from '#backend/functions/top/get-to-backend-operation/get-to-backend-operation';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
@@ -49,16 +50,12 @@ export function makeErrorResponse(item: {
 
   if (isDefined(unauthorizedError)) {
     // This diagnostic carrier is never thrown or used to classify a domain failure.
-    let unauthorizedExtraError: Error = Object.assign(
-      new Error(unauthorizedError.code),
-      { originalError: e }
-    );
+    let unauthorizedExtraError: ServerError = new ServerError({
+      message: unauthorizedError.code,
+      originalError: e
+    });
 
     wrappedError = wrapError(unauthorizedExtraError);
-
-    wrappedError.story = 'DefinedError';
-
-    wrappedError.e = null;
   } else {
     wrappedError = wrapError(e);
   }

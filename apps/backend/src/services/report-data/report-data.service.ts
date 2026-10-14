@@ -35,7 +35,6 @@ import { MalloyService } from '#backend/services/malloy/malloy.service';
 import type { GetTimeColumnsOutput } from '#backend/services/report-time-columns/report-time-columns.service';
 import { ReportTimeColumnsService } from '#backend/services/report-time-columns/report-time-columns.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
@@ -121,68 +120,6 @@ export class ReportDataService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getReportData(item: {
-    traceId: string;
-    timezone: string;
-    timeSpec: TimeSpec;
-    timeRangeFractionBrick: string;
-    struct: StructTab;
-    metrics: ModelMetric[];
-    report: ReportTab;
-    project: ProjectTab;
-    envId: string;
-    apiUserMember: Member;
-    userMember: MemberTab;
-    user: UserTab;
-    isSaveToDb?: boolean;
-  }): Promise<ReportX> {
-    let {
-      traceId,
-      timezone,
-      timeSpec,
-      timeRangeFractionBrick,
-      struct,
-      metrics,
-      report,
-      project,
-      envId,
-      apiUserMember,
-      userMember,
-      user,
-      isSaveToDb
-    } = item;
-
-    let result: Result.Result<ReportX, GetReportDataError> =
-      await this.getReportDataResult({
-        traceId: traceId,
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFractionBrick: timeRangeFractionBrick,
-        struct: struct,
-        metrics: metrics,
-        report: report,
-        project: project,
-        envId: envId,
-        apiUserMember: apiUserMember,
-        userMember: userMember,
-        user: user,
-        isSaveToDb: isSaveToDb
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: ReportX = result.value;
-
-    return output;
-  }
 
   async getReportDataResult(item: {
     traceId: string;

@@ -28,7 +28,6 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER
@@ -96,52 +95,6 @@ export class ExplorerChartRebuildService {
     private queriesService: QueriesService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async rebuildFromYaml(item: {
-    traceId: string;
-    session: SessionTab;
-    chartId: string;
-    modelId: string;
-    chartYaml: string;
-  }): Promise<ExplorerRebuildResult> {
-    let { traceId, session, chartId, modelId, chartYaml } = item;
-
-    let result: Result.Result<ExplorerRebuildResult, RebuildFromYamlError> =
-      await this.rebuildFromYamlResult({
-        traceId: traceId,
-        session: session,
-        chartId: chartId,
-        modelId: modelId,
-        chartYaml: chartYaml
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData:
-          'customData' in result.error
-            ? result.error.customData
-            : 'info' in result.error
-              ? result.error.info
-              : undefined,
-        originalError:
-          'originalError' in result.error && result.error.originalError
-            ? Object.assign(new Error(result.error.originalError.code), {
-                displayData:
-                  'displayData' in result.error.originalError
-                    ? result.error.originalError.displayData
-                    : undefined
-              })
-            : undefined
-      });
-    }
-
-    let output: ExplorerRebuildResult = result.value;
-
-    return output;
-  }
 
   async rebuildFromYamlResult(item: {
     traceId: string;

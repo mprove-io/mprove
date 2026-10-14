@@ -19,7 +19,6 @@ import { UNK_ST_ID } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
-import type { Er } from '#common/types/shared/errors/er';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
 import type { Idemp } from './interfaces/idemp';
 
@@ -137,11 +136,10 @@ export class AppFilter implements ExceptionFilter {
           });
         } catch (er) {
           logToConsoleBackend({
-            log: {
-              message: 'BACKEND_APP_FILTER_SAVE_IDEMP_ERROR' satisfies Er,
-              originalError: er,
-              originalErrorStack: (er as Error)?.stack?.split('\n')
-            },
+            log: new ServerError({
+              message: 'BACKEND_APP_FILTER_SAVE_IDEMP_ERROR',
+              originalError: er
+            }),
             logLevel: 'Error',
             logger: this.logger,
             cs: this.cs
@@ -160,11 +158,10 @@ export class AppFilter implements ExceptionFilter {
       response.status(HttpStatus.CREATED).json(resp);
     } catch (err) {
       logToConsoleBackend({
-        log: {
-          message: 'BACKEND_APP_FILTER_ERROR' satisfies Er,
-          originalError: err,
-          originalErrorStack: (err as Error)?.stack?.split('\n')
-        },
+        log: new ServerError({
+          message: 'BACKEND_APP_FILTER_ERROR',
+          originalError: err
+        }),
         logLevel: 'Error',
         logger: this.logger,
         cs: this.cs

@@ -19,7 +19,6 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { UnitsService } from '#backend/services/units/units.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   MPROVE_USERS_FOLDER,
   MY_CHARTS_SPACE_TITLE
@@ -64,35 +63,6 @@ export class ChartsService {
     private unitsService: UnitsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getChartsCatalog(item: {
-    projectId: string;
-    structId: string;
-    user: UserTab;
-    apiUserMember: Member;
-    models: ModelTab[];
-    spaces: Space[];
-  }): Promise<ChartsCatalog> {
-    let { projectId, structId, user, apiUserMember, models, spaces } = item;
-
-    let result: Result.Result<ChartsCatalog, GetChartsCatalogError> =
-      await this.getChartsCatalogResult({
-        projectId: projectId,
-        structId: structId,
-        user: user,
-        apiUserMember: apiUserMember,
-        models: models,
-        spaces: spaces
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let catalog: ChartsCatalog = result.value;
-
-    return catalog;
-  }
 
   async getChartsCatalogResult(item: {
     projectId: string;
@@ -421,31 +391,6 @@ export class ChartsService {
     return chart;
   }
 
-  async getChartCheckExists(item: {
-    chartId: string;
-    structId: string;
-    userMember: MemberTab;
-    user: UserTab;
-  }): Promise<ChartTab> {
-    let { chartId, structId, userMember, user } = item;
-
-    let result: Result.Result<ChartTab, GetChartCheckExistsError> =
-      await this.getChartCheckExistsResult({
-        chartId: chartId,
-        structId: structId,
-        userMember: userMember,
-        user: user
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let chart: ChartTab = result.value;
-
-    return chart;
-  }
-
   async getChartCheckExistsResult(item: {
     chartId: string;
     structId: string;
@@ -484,31 +429,6 @@ export class ChartsService {
     );
   }
 
-  checkChartOrModelAccess(item: {
-    chart: ChartTab;
-    model: ModelTab;
-    userMember: MemberTab | Member;
-  }): ChartOrModelAccess {
-    let { chart, model, userMember } = item;
-
-    let result: Result.Result<
-      ChartOrModelAccess,
-      CheckChartOrModelAccessError
-    > = this.checkChartOrModelAccessResult({
-      chart: chart,
-      model: model,
-      userMember: userMember
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let access: ChartOrModelAccess = result.value;
-
-    return access;
-  }
-
   checkChartOrModelAccessResult(item: {
     chart: ChartTab;
     model: ModelTab;
@@ -535,17 +455,6 @@ export class ChartsService {
       hasChartAccess: hasChartAccess,
       hasModelAccess: hasModelAccess
     });
-  }
-
-  checkChartPath(item: { filePath: string; userAlias: string }) {
-    let { filePath, userAlias } = item;
-
-    let result: Result.Result<void, CheckChartPathError> =
-      this.checkChartPathResult({ filePath: filePath, userAlias: userAlias });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
   }
 
   checkChartPathResult(item: {

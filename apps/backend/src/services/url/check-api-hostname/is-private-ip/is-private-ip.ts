@@ -1,7 +1,10 @@
+import { Result } from '@praha/byethrow';
 import ipaddr from 'ipaddr.js';
 import * as neoip from 'neoip';
 import type { ApiHostnameCheckPhase } from '#backend/types/api-hostname-check-phase';
-import { ServerError } from '#common/classes/server-error/server-error';
+import type { IsPrivateIpError } from '#common/types/backend/function-errors/is-private-ip-error';
+
+type IpRange = ReturnType<ipaddr.IPv4['range'] | ipaddr.IPv6['range']>;
 
 // Non-public IPv4 CIDRs (IANA special-purpose)
 let NON_PUBLIC_IPV4_CIDRS: readonly string[] = [
@@ -22,6 +25,7 @@ let NON_PUBLIC_IPV4_CIDRS: readonly string[] = [
   '240.0.0.0/4',
   '255.255.255.255/32'
 ];
+
 // Non-global IPv6 prefixes
 let NON_GLOBAL_IPV6_PREFIXES: readonly string[] = [
   '::1/128', // Loopback
@@ -29,29 +33,37 @@ let NON_GLOBAL_IPV6_PREFIXES: readonly string[] = [
   'fc00::/7', // Unique Local Address (ULA)
   'fe80::/10' // Link-local
 ];
-export function isPrivateIp(item: {
+
+export function isPrivateIpResult(item: {
   hostname: string;
-  parsedIp: any;
-  resolvedRecordAddress: any;
+  parsedIp: ipaddr.IPv4 | ipaddr.IPv6;
+  resolvedRecordAddress?: string;
   tag: ApiHostnameCheckPhase;
-}) {
+}): Result.Result<void, IsPrivateIpError> {
   let { hostname, parsedIp, resolvedRecordAddress, tag } = item;
-  let kind = parsedIp.kind();
-  let range = parsedIp.range();
+
+  let kind: ReturnType<ipaddr.IPv4['kind'] | ipaddr.IPv6['kind']> =
+    parsedIp.kind();
+
+  let range: IpRange = parsedIp.range();
+
   let ipString: string = tag === 'resolved' ? resolvedRecordAddress : hostname;
+
   if (
-    [
-      'loopback',
-      'linkLocal',
-      'uniqueLocal',
-      'private',
-      'reserved',
-      'multicast',
-      'carrierGradeNat'
-    ].includes(range)
+    (
+      [
+        'loopback',
+        'linkLocal',
+        'uniqueLocal',
+        'private',
+        'reserved',
+        'multicast',
+        'carrierGradeNat'
+      ] satisfies IpRange[]
+    ).some(blockedRange => blockedRange === range)
   ) {
-    throw new ServerError({
-      message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
+    return Result.fail({
+      code: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
       displayData: {
         hostname: hostname,
         ipString: ipString,
@@ -61,9 +73,10 @@ export function isPrivateIp(item: {
       }
     });
   }
+
   if (neoip.isPrivate(ipString)) {
-    throw new ServerError({
-      message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
+    return Result.fail({
+      code: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
       displayData: {
         hostname: hostname,
         ipString: ipString,
@@ -73,15 +86,19 @@ export function isPrivateIp(item: {
       }
     });
   }
+
   if (kind === 'ipv4') {
     if (
       NON_PUBLIC_IPV4_CIDRS.some((cidr: string) => {
-        let [addr, prefix] = cidr.split('/');
-        return parsedIp.match(ipaddr.parse(addr), Number(prefix));
+        let [addr, prefix]: string[] = cidr.split('/');
+
+        let network: ipaddr.IPv4 | ipaddr.IPv6 = ipaddr.parse(addr);
+
+        return parsedIp.match(network, Number(prefix));
       })
     ) {
-      throw new ServerError({
-        message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
+      return Result.fail({
+        code: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
         displayData: {
           hostname: hostname,
           ipString: ipString,
@@ -94,12 +111,15 @@ export function isPrivateIp(item: {
   } else if (kind === 'ipv6') {
     if (
       NON_GLOBAL_IPV6_PREFIXES.some((prefix: string) => {
-        let [addr, prefixLen] = prefix.split('/');
-        return parsedIp.match(ipaddr.parse(addr), Number(prefixLen));
+        let [addr, prefixLen]: string[] = prefix.split('/');
+
+        let network: ipaddr.IPv4 | ipaddr.IPv6 = ipaddr.parse(addr);
+
+        return parsedIp.match(network, Number(prefixLen));
       })
     ) {
-      throw new ServerError({
-        message: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
+      return Result.fail({
+        code: 'BACKEND_API_HOST_IS_BLOCKED_BY_IP',
         displayData: {
           hostname: hostname,
           ipString: ipString,
@@ -110,4 +130,6 @@ export function isPrivateIp(item: {
       });
     }
   }
+
+  return Result.succeed();
 }

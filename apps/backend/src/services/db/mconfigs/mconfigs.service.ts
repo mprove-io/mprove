@@ -23,7 +23,6 @@ import { HashService } from '#backend/services/hash/hash.service';
 import type { StoreUserCodeReturn } from '#backend/services/store/store.service';
 import { StoreService } from '#backend/services/store/store.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -146,27 +145,6 @@ export class MconfigsService {
     return mconfig;
   }
 
-  async getMconfigCheckExists(item: {
-    mconfigId: string;
-    structId: string;
-  }): Promise<MconfigTab> {
-    let { mconfigId, structId } = item;
-
-    let result: Result.Result<MconfigTab, GetMconfigCheckExistsError> =
-      await this.getMconfigCheckExistsResult({
-        mconfigId: mconfigId,
-        structId: structId
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let mconfig: MconfigTab = result.value;
-
-    return mconfig;
-  }
-
   async getMconfigCheckExistsResult(item: {
     mconfigId: string;
     structId: string;
@@ -187,58 +165,6 @@ export class MconfigsService {
             ? Result.succeed(undefined)
             : this.tabService.mconfigEntToTabResult({ mconfigEnt: x })
       );
-  }
-
-  async prepStoreMconfigQuery(item: {
-    struct: StructTab;
-    project: ProjectTab;
-    envId: string;
-    mconfigParentType: MconfigParentType;
-    mconfigParentId: string;
-    model: ModelTab;
-    mconfig: MconfigTab;
-    metricsStartDateYYYYMMDD: string;
-    metricsEndDateYYYYMMDD: string;
-  }): Promise<PrepStoreMconfigQueryOutput> {
-    let {
-      struct,
-      project,
-      envId,
-      mconfigParentType,
-      mconfigParentId,
-      model,
-      mconfig,
-      metricsStartDateYYYYMMDD,
-      metricsEndDateYYYYMMDD
-    } = item;
-
-    let result: Result.Result<
-      PrepStoreMconfigQueryOutput,
-      PrepStoreMconfigQueryError
-    > = await this.prepStoreMconfigQueryResult({
-      struct: struct,
-      project: project,
-      envId: envId,
-      mconfigParentType: mconfigParentType,
-      mconfigParentId: mconfigParentId,
-      model: model,
-      mconfig: mconfig,
-      metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
-      metricsEndDateYYYYMMDD: metricsEndDateYYYYMMDD
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: PrepStoreMconfigQueryOutput = result.value;
-
-    return output;
   }
 
   async prepStoreMconfigQueryResult(item: {

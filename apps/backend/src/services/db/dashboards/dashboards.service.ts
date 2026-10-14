@@ -33,7 +33,6 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { UnitsService } from '#backend/services/units/units.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_QUERY_ID,
   MPROVE_USERS_FOLDER,
@@ -117,33 +116,6 @@ export class DashboardsService {
     private unitsService: UnitsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getDashboardsCatalog(item: {
-    projectId: string;
-    structId: string;
-    user: UserTab;
-    apiUserMember: Member;
-    spaces: Space[];
-  }): Promise<DashboardsCatalog> {
-    let { projectId, structId, user, apiUserMember, spaces } = item;
-
-    let result: Result.Result<DashboardsCatalog, GetDashboardsCatalogError> =
-      await this.getDashboardsCatalogResult({
-        projectId: projectId,
-        structId: structId,
-        user: user,
-        apiUserMember: apiUserMember,
-        spaces: spaces
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let catalog: DashboardsCatalog = result.value;
-
-    return catalog;
-  }
 
   async getDashboardsCatalogResult(item: {
     projectId: string;
@@ -415,28 +387,6 @@ export class DashboardsService {
     return dashboard;
   }
 
-  async getDashboardCheckExistsAndAccess(item: {
-    dashboardId: string;
-    structId: string;
-    userMember: MemberTab | Member;
-    user: UserTab;
-  }): Promise<DashboardTab> {
-    let { dashboardId, structId, userMember, user } = item;
-
-    let result: Result.Result<
-      DashboardTab,
-      GetDashboardCheckExistsAndAccessError
-    > = await this.getDashboardCheckExistsAndAccessResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let dashboard: DashboardTab = result.value;
-
-    return dashboard;
-  }
-
   async getDashboardCheckExistsAndAccessResult(item: {
     dashboardId: string;
     structId: string;
@@ -489,40 +439,6 @@ export class DashboardsService {
     );
   }
 
-  async getDashboardXCheckExistsAndAccess(item: {
-    dashboardId: string;
-    structId: string;
-    projectId: string;
-    user: UserTab;
-    apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
-  }): Promise<DashboardX> {
-    let { dashboardId, structId, projectId, user, apiUserMember } = item;
-
-    let result: Result.Result<
-      DashboardX,
-      GetDashboardXCheckExistsAndAccessError
-    > = await this.getDashboardXCheckExistsAndAccessResult({
-      dashboardId: dashboardId,
-      structId: structId,
-      projectId: projectId,
-      user: user,
-      apiUserMember: apiUserMember
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: DashboardX = result.value;
-
-    return output;
-  }
-
   async getDashboardXCheckExistsAndAccessResult(item: {
     dashboardId: string;
     structId: string;
@@ -564,36 +480,6 @@ export class DashboardsService {
       ),
       Result.map((v): DashboardX => v.dashboardX)
     );
-  }
-
-  async getDashboardXUsingDashboardTab(item: {
-    dashboard: DashboardTab;
-    structId: string;
-    projectId: string;
-    apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
-  }): Promise<DashboardX> {
-    let { dashboard, structId, projectId, apiUserMember } = item;
-
-    let result: Result.Result<DashboardX, GetDashboardXUsingDashboardTabError> =
-      await this.getDashboardXUsingDashboardTabResult({
-        dashboard: dashboard,
-        structId: structId,
-        projectId: projectId,
-        apiUserMember: apiUserMember
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: DashboardX = result.value;
-
-    return output;
   }
 
   async getDashboardXUsingDashboardTabResult(item: {
@@ -764,29 +650,6 @@ export class DashboardsService {
     return newDashboardParts.length > 0 ? newDashboardParts[0] : undefined;
   }
 
-  async getDashboardParts(item: {
-    structId: string;
-    user: UserTab;
-    apiUserMember: Member;
-  }): Promise<DashboardPart[]> {
-    let { structId, user, apiUserMember } = item;
-
-    let result: Result.Result<DashboardPart[], GetDashboardPartsError> =
-      await this.getDashboardPartsResult({
-        structId: structId,
-        user: user,
-        apiUserMember: apiUserMember
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let dashboardParts: DashboardPart[] = result.value;
-
-    return dashboardParts;
-  }
-
   async getDashboardPartsResult(item: {
     structId: string;
     user: UserTab;
@@ -850,65 +713,6 @@ export class DashboardsService {
         )
       )
     );
-  }
-
-  async processDashboard(item: {
-    newApiDashboard: Dashboard;
-    apiMconfigs: Mconfig[];
-    apiQueries: Query[];
-    apiModels: Model[];
-    fromDashboardX: DashboardX;
-    isQueryCache: boolean;
-    cachedMconfigs: MconfigTab[];
-    cachedQueries: QueryTab[];
-    envId: string;
-    newDashboardId: string;
-    tempStruct: StructTab;
-    project: ProjectTab;
-  }): Promise<ProcessDashboardOutput> {
-    let {
-      newApiDashboard,
-      apiMconfigs,
-      apiQueries,
-      apiModels,
-      fromDashboardX,
-      isQueryCache,
-      cachedMconfigs,
-      cachedQueries,
-      envId,
-      newDashboardId,
-      tempStruct,
-      project
-    } = item;
-
-    let result: Result.Result<ProcessDashboardOutput, ProcessDashboardError> =
-      await this.processDashboardResult({
-        newApiDashboard: newApiDashboard,
-        apiMconfigs: apiMconfigs,
-        apiQueries: apiQueries,
-        apiModels: apiModels,
-        fromDashboardX: fromDashboardX,
-        isQueryCache: isQueryCache,
-        cachedMconfigs: cachedMconfigs,
-        cachedQueries: cachedQueries,
-        envId: envId,
-        newDashboardId: newDashboardId,
-        tempStruct: tempStruct,
-        project: project
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData: 'info' in result.error ? result.error.info : undefined
-      });
-    }
-
-    let output: ProcessDashboardOutput = result.value;
-
-    return output;
   }
 
   async processDashboardResult(item: {

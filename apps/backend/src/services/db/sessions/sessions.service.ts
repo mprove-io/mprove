@@ -221,24 +221,6 @@ export class SessionsService {
     };
   }
 
-  async checkRepoId(item: {
-    repoId: string;
-    userId: string;
-    projectId: string;
-    allowProdRepo: boolean;
-  }): Promise<RepoType> {
-    let result: Result.Result<RepoType, CheckRepoIdError> =
-      await this.checkRepoIdResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let repoType: RepoType = result.value;
-
-    return repoType;
-  }
-
   async checkRepoIdResult(item: {
     repoId: string;
     userId: string;

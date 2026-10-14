@@ -17,7 +17,6 @@ import { DashboardsService } from '#backend/services/db/dashboards/dashboards.se
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
 import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
@@ -37,57 +36,6 @@ export class ParentService {
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async checkParentAccess(item: {
-    user: UserTab;
-    userMember: MemberTab;
-    structId: string;
-    projectId: string;
-    parentType: MconfigParentType;
-    parentId: string;
-    modelId?: string;
-    isCheckSuggest?: boolean;
-    suggestFieldId?: string;
-    suggestRowId?: string;
-    suggestModel?: ModelTab;
-  }): Promise<void> {
-    let {
-      user,
-      userMember,
-      structId,
-      projectId,
-      parentType,
-      parentId,
-      modelId,
-      isCheckSuggest,
-      suggestFieldId,
-      suggestRowId,
-      suggestModel
-    } = item;
-
-    let result: Result.Result<void, CheckParentAccessError> =
-      await this.checkParentAccessResult({
-        user: user,
-        userMember: userMember,
-        structId: structId,
-        projectId: projectId,
-        parentType: parentType,
-        parentId: parentId,
-        modelId: modelId,
-        isCheckSuggest: isCheckSuggest,
-        suggestFieldId: suggestFieldId,
-        suggestRowId: suggestRowId,
-        suggestModel: suggestModel
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined
-      });
-    }
-  }
 
   async checkParentAccessResult(item: {
     user: UserTab;

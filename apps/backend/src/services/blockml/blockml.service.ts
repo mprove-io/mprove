@@ -28,7 +28,6 @@ import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
@@ -81,55 +80,6 @@ export class BlockmlService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async rebuildStruct(item: {
-    traceId: string;
-    orgId: string;
-    projectId: string;
-    structId: string;
-    repoId: string;
-    envId: string;
-    diskFiles: DiskCatalogFile[];
-    mproveDir: string;
-    skipDb?: boolean;
-    connections?: ConnectionTab[];
-    evs?: Ev[];
-    selectedGivens: SelectedGiven[];
-    overrideTimezone: string;
-    isUseCache?: boolean;
-    cachedMproveConfig?: MproveConfig;
-    cachedModels?: Model[];
-    cachedMetrics?: ModelMetric[];
-  }): Promise<RebuildStructOutput> {
-    let result: Result.Result<RebuildStructOutput, RebuildStructError> =
-      await this.rebuildStructResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        customData:
-          'customData' in result.error ? result.error.customData : undefined,
-        displayData:
-          result.error.code === 'BACKEND_INVALID_REQUEST'
-            ? result.error.displayData
-            : undefined,
-        originalError:
-          result.error.code === 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML' &&
-          result.error.originalError
-            ? Object.assign(new Error(result.error.originalError.code), {
-                displayData:
-                  'displayData' in result.error.originalError
-                    ? result.error.originalError.displayData
-                    : undefined
-              })
-            : undefined
-      });
-    }
-
-    let value: RebuildStructOutput = result.value;
-
-    return value;
-  }
 
   async rebuildStructResult(item: {
     traceId: string;

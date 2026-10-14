@@ -28,7 +28,6 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -86,78 +85,6 @@ export class QueryInfoDashboardService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async getDashboardData(item: {
-    traceId: string;
-    user: UserTab;
-    userMember: MemberTab;
-    project: ProjectTab;
-    bridge: BridgeTab;
-    projectId: string;
-    repoId: string;
-    envId: string;
-    dashboardId: string;
-    timezone: string;
-    skipUi: boolean;
-  }): Promise<ToBackendGetDashboardOutput> {
-    let {
-      traceId,
-      user,
-      userMember,
-      project,
-      bridge,
-      projectId,
-      repoId,
-      envId,
-      dashboardId,
-      timezone,
-      skipUi
-    } = item;
-
-    let result: Result.Result<
-      ToBackendGetDashboardOutput,
-      GetDashboardDataError
-    > = await this.getDashboardDataResult({
-      traceId: traceId,
-      user: user,
-      userMember: userMember,
-      project: project,
-      bridge: bridge,
-      projectId: projectId,
-      repoId: repoId,
-      envId: envId,
-      dashboardId: dashboardId,
-      timezone: timezone,
-      skipUi: skipUi
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData:
-          'displayData' in result.error ? result.error.displayData : undefined,
-        customData:
-          'customData' in result.error
-            ? result.error.customData
-            : 'info' in result.error
-              ? result.error.info
-              : undefined,
-        originalError:
-          'originalError' in result.error && result.error.originalError
-            ? Object.assign(new Error(result.error.originalError.code), {
-                displayData:
-                  'displayData' in result.error.originalError
-                    ? result.error.originalError.displayData
-                    : undefined
-              })
-            : undefined
-      });
-    }
-
-    let output: ToBackendGetDashboardOutput = result.value;
-
-    return output;
-  }
 
   async getDashboardDataResult(item: {
     traceId: string;

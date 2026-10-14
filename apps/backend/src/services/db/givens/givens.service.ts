@@ -10,7 +10,6 @@ import {
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -76,22 +75,6 @@ export class GivensService {
     return apiGiven;
   }
 
-  validateGivenValues(item: {
-    type: GivenType;
-    isMultiple: boolean;
-    values: string[];
-  }): void {
-    let result: Result.Result<void, ValidateGivenValuesError> =
-      this.validateGivenValuesResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        displayData: result.error.displayData
-      });
-    }
-  }
-
   validateGivenValuesResult(item: {
     type: GivenType;
     isMultiple: boolean;
@@ -135,22 +118,6 @@ export class GivensService {
       : Result.succeed();
   }
 
-  async getGivenCheckExists(item: {
-    projectId: string;
-    givenId: string;
-  }): Promise<GivenTab> {
-    let result: Result.Result<GivenTab, GetGivenCheckExistsError> =
-      await this.getGivenCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let given: GivenTab = result.value;
-
-    return given;
-  }
-
   async getGivenCheckExistsResult(item: {
     projectId: string;
     givenId: string;
@@ -169,19 +136,6 @@ export class GivensService {
           ? Result.fail({ code: 'BACKEND_GIVEN_DOES_NOT_EXIST' })
           : this.tabService.givenEntToTabResult({ givenEnt: x })
       );
-  }
-
-  async getApiGivens(item: { projectId: string }): Promise<Given[]> {
-    let result: Result.Result<Given[], GetApiGivensError> =
-      await this.getApiGivensResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let apiGivens: Given[] = result.value;
-
-    return apiGivens;
   }
 
   async getApiGivensResult(item: {
@@ -208,22 +162,6 @@ export class GivensService {
           )
       )
     );
-  }
-
-  async getMemberGivensForSelection(item: {
-    projectId: string;
-    roles: string[];
-  }): Promise<MemberGiven[]> {
-    let result: Result.Result<MemberGiven[], GetMemberGivensForSelectionError> =
-      await this.getMemberGivensForSelectionResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let memberGivens: MemberGiven[] = result.value;
-
-    return memberGivens;
   }
 
   async getMemberGivensForSelectionResult(item: {

@@ -10,7 +10,6 @@ import {
 } from '#backend/drizzle/postgres/schema/roles';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckRoleDoesNotExistError } from '#common/types/backend/function-errors/check-role-does-not-exist-error';
@@ -183,19 +182,6 @@ export class RolesService {
           this.tabService.roleEntToTabResult({ roleEnt: x })
         )
       );
-  }
-
-  async getApiRoles(item: { projectId: string }): Promise<Role[]> {
-    let result: Result.Result<Role[], GetApiRolesError> =
-      await this.getApiRolesResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let apiRoles: Role[] = result.value;
-
-    return apiRoles;
   }
 
   async getApiRolesResult(item: {

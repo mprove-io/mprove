@@ -153,24 +153,6 @@ export class UsersService {
     return apiUser;
   }
 
-  async getSelectedGivens(item: {
-    user: UserTab;
-    projectId: string;
-  }): Promise<SelectedGiven[]> {
-    let { user, projectId } = item;
-
-    let result: Result.Result<SelectedGiven[], GetSelectedGivensError> =
-      await this.getSelectedGivensResult({ user: user, projectId: projectId });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let selectedGivens: SelectedGiven[] = result.value;
-
-    return selectedGivens;
-  }
-
   async getSelectedGivensResult(item: {
     user: UserTab;
     projectId: string;
@@ -190,29 +172,6 @@ export class UsersService {
           )?.givens ?? []
       )
     );
-  }
-
-  async selectUnselectedGivens(item: {
-    user: UserTab;
-    projectId: string;
-  }): Promise<ProjectSelectedGivenLink[]> {
-    let { user, projectId } = item;
-
-    let result: Result.Result<
-      ProjectSelectedGivenLink[],
-      SelectUnselectedGivensError
-    > = await this.selectUnselectedGivensResult({
-      user: user,
-      projectId: projectId
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let projectSelectedGivenLinks: ProjectSelectedGivenLink[] = result.value;
-
-    return projectSelectedGivenLinks;
   }
 
   async selectUnselectedGivensResult(item: {
@@ -369,15 +328,6 @@ export class UsersService {
           ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
           : this.tabService.userEntToTabResult({ userEnt: x })
       );
-  }
-
-  checkUserIsNotRestricted(item: { user: UserTab }) {
-    let result: Result.Result<void, CheckUserIsNotRestrictedError> =
-      this.checkUserIsNotRestrictedResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
   }
 
   checkUserIsNotRestrictedResult(item: {

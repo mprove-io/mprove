@@ -12,7 +12,6 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
 import type { ArchiveSessionError } from '#common/types/backend/function-errors/archive-session-error';
@@ -33,23 +32,6 @@ export class SessionArchiveService {
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
-
-  async archiveSession(item: {
-    session: SessionTab;
-    archiveReason: ArchiveReason;
-    e2bApiKey: string;
-  }): Promise<SessionApi> {
-    let result: Result.Result<SessionApi, ArchiveSessionError> =
-      await this.archiveSessionResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let sessionApi: SessionApi = result.value;
-
-    return sessionApi;
-  }
 
   async archiveSessionResult(item: {
     session: SessionTab;

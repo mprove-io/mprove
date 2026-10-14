@@ -507,25 +507,6 @@ export class CodexService {
     return Result.succeed(tokens);
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 131-145
-  private async refreshAccessToken(item: {
-    refreshToken: string;
-  }): Promise<CodexTokenResponse> {
-    let { refreshToken } = item;
-
-    let result: Result.Result<CodexTokenResponse, RefreshAccessTokenError> =
-      await this.refreshAccessTokenResult({ refreshToken: refreshToken });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        customData: result.error.customData
-      });
-    }
-
-    let tokens: CodexTokenResponse = result.value;
-
-    return tokens;
-  }
 
   private async refreshAccessTokenResult(item: {
     refreshToken: string;

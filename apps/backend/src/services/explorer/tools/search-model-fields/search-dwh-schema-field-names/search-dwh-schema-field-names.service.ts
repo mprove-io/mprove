@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -6,8 +7,12 @@ import {
   type ModelFieldLeafEnt,
   modelFieldLeafsTable
 } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
+import type { GetConnectionSchemasError } from '#common/types/backend/function-errors/get-connection-schemas-error';
+import type { SearchDwhSchemaFieldNamesError } from '#common/types/backend/function-errors/search-dwh-schema-field-names-error';
 import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 
 type DwhFieldNameMatch = {
   searchFieldName: string;
@@ -46,44 +51,96 @@ export class SearchDwhSchemaFieldNamesService {
       modelIds
     } = item;
 
-    // console.log('SearchDwhSchemaFieldNamesService item:');
-    // console.log(item);
+    let result: Result.Result<
+      SearchFieldMatch[],
+      SearchDwhSchemaFieldNamesError
+    > = await this.searchResult({
+      userId: userId,
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId,
+      envId: envId,
+      structId: structId,
+      searchFieldNames: searchFieldNames,
+      modelIds: modelIds
+    });
+
+    if (Result.isFailure(result)) {
+      throw makeExplorerToolError({ error: result.error });
+    }
+
+    let matches: SearchFieldMatch[] = result.value;
+
+    return matches;
+  }
+
+  async searchResult(item: {
+    userId: string;
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    structId: string;
+    searchFieldNames: string[];
+    modelIds: string[];
+  }): Result.ResultAsync<SearchFieldMatch[], SearchDwhSchemaFieldNamesError> {
+    let { searchFieldNames, modelIds } = item;
 
     if (searchFieldNames.length === 0 || modelIds.length === 0) {
-      return [];
+      return Result.succeed([]);
     }
 
-    let schemaResult =
-      await this.getConnectionSchemasService.getConnectionSchemas({
-        userId: userId,
-        projectId: projectId,
-        envId: envId,
-        repoId: repoId,
-        branchId: branchId,
-        isRefreshExistingCache: false
-      });
-
-    let dwhMatches = this.findDwhMatches({
-      combinedSchemaItems: schemaResult.combinedSchemaItems,
-      searchFieldNames: searchFieldNames
-    });
-
-    if (dwhMatches.length === 0) {
-      return [];
-    }
-
-    let leafs = await this.db.drizzle.query.modelFieldLeafsTable.findMany({
-      where: and(
-        eq(modelFieldLeafsTable.structId, structId),
-        eq(modelFieldLeafsTable.modelType, 'Malloy'),
-        inArray(modelFieldLeafsTable.modelId, modelIds)
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'schemaOutput',
+        (
+          v
+        ): Result.ResultAsync<
+          ToBackendGetConnectionSchemasOutput,
+          GetConnectionSchemasError
+        > =>
+          this.getConnectionSchemasService.getConnectionSchemasResult({
+            userId: v.userId,
+            projectId: v.projectId,
+            envId: v.envId,
+            repoId: v.repoId,
+            branchId: v.branchId,
+            isRefreshExistingCache: false
+          })
+      ),
+      Result.bind(
+        'dwhMatches',
+        (v): Result.Result<DwhFieldNameMatch[], never> =>
+          Result.succeed(
+            this.findDwhMatches({
+              combinedSchemaItems: v.schemaOutput.combinedSchemaItems,
+              searchFieldNames: v.searchFieldNames
+            })
+          )
+      ),
+      Result.bind(
+        'leafEnts',
+        async (v): Result.ResultAsync<ModelFieldLeafEnt[], never> =>
+          v.dwhMatches.length === 0
+            ? Result.succeed([])
+            : this.db.drizzle.query.modelFieldLeafsTable
+                .findMany({
+                  where: and(
+                    eq(modelFieldLeafsTable.structId, v.structId),
+                    eq(modelFieldLeafsTable.modelType, 'Malloy'),
+                    inArray(modelFieldLeafsTable.modelId, v.modelIds)
+                  )
+                })
+                .then(xs => Result.succeed(xs))
+      ),
+      Result.map((v): SearchFieldMatch[] =>
+        this.mapDwhMatchesToLeafs({
+          dwhMatches: v.dwhMatches,
+          leafEnts: v.leafEnts
+        })
       )
-    });
-
-    return this.mapDwhMatchesToLeafs({
-      dwhMatches: dwhMatches,
-      leafs: leafs
-    });
+    );
   }
 
   private findDwhMatches(item: {
@@ -143,40 +200,40 @@ export class SearchDwhSchemaFieldNamesService {
 
   private mapDwhMatchesToLeafs(item: {
     dwhMatches: DwhFieldNameMatch[];
-    leafs: ModelFieldLeafEnt[];
+    leafEnts: ModelFieldLeafEnt[];
   }): SearchFieldMatch[] {
-    let { dwhMatches, leafs } = item;
+    let { dwhMatches, leafEnts } = item;
 
     let matches: SearchFieldMatch[] = [];
 
     dwhMatches.forEach(dwhMatch => {
-      let matchingLeafs = leafs.filter(leaf => {
+      let matchingLeafEnts: ModelFieldLeafEnt[] = leafEnts.filter(leafEnt => {
         let isConnectionMatch =
-          (leaf.connectionId ?? '') === dwhMatch.connectionId;
+          (leafEnt.connectionId ?? '') === dwhMatch.connectionId;
 
         let isSchemaMatch =
-          (leaf.schemaNameLc ?? '') === dwhMatch.schemaName.toLowerCase();
+          (leafEnt.schemaNameLc ?? '') === dwhMatch.schemaName.toLowerCase();
 
         let isTableMatch =
-          (leaf.tableNameLc ?? '') === dwhMatch.tableName.toLowerCase();
+          (leafEnt.tableNameLc ?? '') === dwhMatch.tableName.toLowerCase();
 
         let isColumnMatch =
-          (leaf.columnNameLc ?? '') === dwhMatch.columnName.toLowerCase();
+          (leafEnt.columnNameLc ?? '') === dwhMatch.columnName.toLowerCase();
 
         return (
           isConnectionMatch && isSchemaMatch && isTableMatch && isColumnMatch
         );
       });
 
-      matchingLeafs.forEach(leaf => {
+      matchingLeafEnts.forEach(leafEnt => {
         let match = matches.find(
-          x => x.modelId === leaf.modelId && x.fieldId === leaf.fieldId
+          x => x.modelId === leafEnt.modelId && x.fieldId === leafEnt.fieldId
         );
 
         if (!match) {
           match = {
-            modelId: leaf.modelId,
-            fieldId: leaf.fieldId,
+            modelId: leafEnt.modelId,
+            fieldId: leafEnt.fieldId,
             matchedByValues: [],
             matchedByNames: []
           };
