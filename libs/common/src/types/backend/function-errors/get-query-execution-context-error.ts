@@ -1,0 +1,36 @@
+import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type GetApiEnvsError,
+  zGetApiEnvsError
+} from '#common/types/backend/function-errors/get-api-envs-error';
+import {
+  type GetConnectionCheckExistsError,
+  zGetConnectionCheckExistsError
+} from '#common/types/backend/function-errors/get-connection-check-exists-error';
+import {
+  type GetMemberCheckExistsError,
+  zGetMemberCheckExistsError
+} from '#common/types/backend/function-errors/get-member-check-exists-error';
+import {
+  type GetQueryCheckExistsSkipDataError,
+  zGetQueryCheckExistsSkipDataError
+} from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
+
+export type GetQueryExecutionContextError =
+  | GetQueryCheckExistsSkipDataError
+  | GetMemberCheckExistsError
+  | GetApiEnvsError
+  | GetConnectionCheckExistsError;
+
+export const zGetQueryExecutionContextError = z.union([
+  zGetQueryCheckExistsSkipDataError,
+  zGetMemberCheckExistsError,
+  zGetApiEnvsError,
+  zGetConnectionCheckExistsError
+]);
+
+assertTypesEqual<
+  GetQueryExecutionContextError,
+  z.infer<typeof zGetQueryExecutionContextError>
+>({ value: true });

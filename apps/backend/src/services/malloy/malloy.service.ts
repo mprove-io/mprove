@@ -28,11 +28,12 @@ import type { ProjectConnection } from '#common/types/backend/parts/project-conn
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import type { Model } from '#common/types/blockml/parts/model/model';
+import type { MakeMalloyQueryError } from '#common/types/node-common/function-errors/make-malloy-query-error';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { makeMalloyConnections } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import type { MalloyQueryResult } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
-import { makeMalloyQuery } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
+import { makeMalloyQueryResult } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
 
 type ResolveQueryConnectionsPayload = {
   connection: ConnectionTab;
@@ -132,27 +133,24 @@ export class MalloyService {
       ),
       Result.bind(
         'makeMalloyQueryOutput',
-        async (v): Result.ResultAsync<MalloyQueryResult, never> => {
-          return Result.succeed(
-            await addTraceSpan({
-              spanName: 'backend.makeMalloyQuery',
-              fn: () =>
-                makeMalloyQuery({
-                  projectId: v.projectId,
-                  envId: v.envId,
-                  structId: v.structId,
-                  mconfigParentType: v.mconfigParentType,
-                  mconfigParentId: v.mconfigParentId,
-                  model: v.model,
-                  mconfig: v.mconfig,
-                  queryOperations: v.queryOperations,
-                  malloyConnections:
-                    v.resolveQueryConnectionsPayload.malloyConnections,
-                  selectedGivens: v.selectedGivens
-                })
-            })
-          );
-        }
+        (v): Result.ResultAsync<MalloyQueryResult, MakeMalloyQueryError> =>
+          addTraceSpan({
+            spanName: 'backend.makeMalloyQuery',
+            fn: () =>
+              makeMalloyQueryResult({
+                projectId: v.projectId,
+                envId: v.envId,
+                structId: v.structId,
+                mconfigParentType: v.mconfigParentType,
+                mconfigParentId: v.mconfigParentId,
+                model: v.model,
+                mconfig: v.mconfig,
+                queryOperations: v.queryOperations,
+                malloyConnections:
+                  v.resolveQueryConnectionsPayload.malloyConnections,
+                selectedGivens: v.selectedGivens
+              })
+          })
       ),
       Result.bind(
         'prepareQueryPayload',

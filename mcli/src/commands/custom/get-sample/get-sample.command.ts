@@ -1,14 +1,16 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import type { ToBackendGetConnectionSampleRequest } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-request';
+import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { GetSampleCommandError } from '#mcli/types/function-errors/get-sample-command-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 
 export class GetSampleCommand extends CustomCommand {
   static paths = [['get-sample']];
@@ -68,19 +70,11 @@ export class GetSampleCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, GetSampleCommandError> {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let apiKey = this.context.config.mproveCliApiKey;
@@ -95,12 +89,22 @@ export class GetSampleCommand extends CustomCommand {
       offset: this.offset
     };
 
-    let getSampleOutput: ToBackendGetConnectionSampleOutput = await mreq({
+    let getSampleOutputResult: Result.Result<
+      ToBackendGetConnectionSampleOutput,
+      MreqError<ToBackendGetConnectionSampleResponse>
+    > = await mreqResult({
       apiKey: apiKey,
       route: 'api/ToBackendGetConnectionSample',
       payload: getSampleReqPayload,
       host: this.context.config.mproveCliHost
     });
+
+    if (Result.isFailure(getSampleOutputResult)) {
+      return getSampleOutputResult;
+    }
+
+    let getSampleOutput: ToBackendGetConnectionSampleOutput =
+      getSampleOutputResult.value;
 
     logToConsoleMcli({
       log: getSampleOutput,
@@ -108,5 +112,7 @@ export class GetSampleCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

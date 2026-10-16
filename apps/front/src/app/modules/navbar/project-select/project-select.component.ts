@@ -21,10 +21,8 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
 import type { ToBackendGetProjectsListRequest } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-request';
-import type { ToBackendGetProjectsListResponse } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
@@ -107,15 +105,12 @@ export class ProjectSelectComponent {
     };
 
     this.apiService
-      .req({
+      .reqOutput({
         route: 'api/ToBackendGetProjectsList',
         payload: payload
       })
       .pipe(
-        map(
-          (resp: ToBackendGetProjectsListResponse) =>
-            unwrapBackendResponseOutput({ response: resp }).projectsList
-        ),
+        map(output => output.projectsList),
         tap(x => {
           this.projectsList = x;
           this.projectsListLoading = false;

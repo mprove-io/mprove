@@ -19,12 +19,16 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { GetEditorSessionsToPauseError } from '#common/types/backend/function-errors/get-editor-sessions-to-pause-error';
 import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { PauseSandboxError } from '#common/types/backend/function-errors/pause-sandbox-error';
 import type { PauseSessionByIdError } from '#common/types/backend/function-errors/pause-session-by-id-error';
 import type { ResumeSandboxError } from '#common/types/backend/function-errors/resume-sandbox-error';
+import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
 import type { StopSandboxError } from '#common/types/backend/function-errors/stop-sandbox-error';
+import type { SyncAllEditorSessionsStatusError } from '#common/types/backend/function-errors/sync-all-editor-sessions-status-error';
 import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
@@ -146,7 +150,10 @@ export class EditorSandboxService {
     }
   }
 
-  async getEditorSessionsToPause(): Promise<string[]> {
+  async getEditorSessionsToPauseResult(): Result.ResultAsync<
+    string[],
+    GetEditorSessionsToPauseError
+  > {
     let sessionLastActivityToPauseMinutes = this.cs.get<
       BackendConfig['sessionLastActivityToPauseMinutes']
     >('sessionLastActivityToPauseMinutes');
@@ -154,15 +161,26 @@ export class EditorSandboxService {
     let pauseThresholdTs =
       Date.now() - sessionLastActivityToPauseMinutes * 60 * 1000;
 
-    let sessionsToPause = await this.db.drizzle.query.sessionsTable
-      .findMany({
-        where: and(
-          eq(sessionsTable.type, 'Editor'),
-          eq(sessionsTable.status, 'Active'),
-          lt(sessionsTable.lastActivityTs, pauseThresholdTs)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+    let sessionCollection: Result.Result<SessionTab[], SessionEntToTabError> =
+      await this.db.drizzle.query.sessionsTable
+        .findMany({
+          where: and(
+            eq(sessionsTable.type, 'Editor'),
+            eq(sessionsTable.status, 'Active'),
+            lt(sessionsTable.lastActivityTs, pauseThresholdTs)
+          )
+        })
+        .then(xs =>
+          Result.sequence(xs, x =>
+            this.tabService.sessionEntToTabResult({ sessionEnt: x })
+          )
+        );
+
+    if (Result.isFailure(sessionCollection)) {
+      return sessionCollection;
+    }
+
+    let sessionsToPause: SessionTab[] = sessionCollection.value;
 
     let sessionIdsToPause = sessionsToPause
       .filter(
@@ -171,24 +189,7 @@ export class EditorSandboxService {
       )
       .map(s => s.sessionId);
 
-    return sessionIdsToPause;
-  }
-
-  async pauseSessionById(item: {
-    sessionId: string;
-    pauseReason: PauseReason;
-  }): Promise<void> {
-    let { sessionId, pauseReason } = item;
-
-    let result: Result.Result<void, PauseSessionByIdError> =
-      await this.pauseSessionByIdResult({
-        sessionId: sessionId,
-        pauseReason: pauseReason
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
+    return Result.succeed(sessionIdsToPause);
   }
 
   async pauseSessionByIdResult(item: {
@@ -251,15 +252,29 @@ export class EditorSandboxService {
     );
   }
 
-  async syncAllEditorSessionsStatus(): Promise<string[]> {
-    let sessions = await this.db.drizzle.query.sessionsTable
-      .findMany({
-        where: and(
-          eq(sessionsTable.type, 'Editor'),
-          inArray(sessionsTable.status, activeOrPausedStatuses)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+  async syncAllEditorSessionsStatusResult(): Result.ResultAsync<
+    string[],
+    SyncAllEditorSessionsStatusError
+  > {
+    let sessionCollection: Result.Result<SessionTab[], SessionEntToTabError> =
+      await this.db.drizzle.query.sessionsTable
+        .findMany({
+          where: and(
+            eq(sessionsTable.type, 'Editor'),
+            inArray(sessionsTable.status, activeOrPausedStatuses)
+          )
+        })
+        .then(xs =>
+          Result.sequence(xs, x =>
+            this.tabService.sessionEntToTabResult({ sessionEnt: x })
+          )
+        );
+
+    if (Result.isFailure(sessionCollection)) {
+      return sessionCollection;
+    }
+
+    let sessions: SessionTab[] = sessionCollection.value;
 
     let uniqueProjectIds = [
       ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
@@ -269,9 +284,18 @@ export class EditorSandboxService {
 
     await forEachSeries(uniqueProjectIds, async projectId => {
       try {
-        let project = await this.projectsService.getProjectCheckExists({
+        let projectResult: Result.Result<
+          ProjectTab,
+          GetProjectCheckExistsError
+        > = await this.projectsService.getProjectCheckExistsResult({
           projectId: projectId
         });
+
+        if (Result.isFailure(projectResult)) {
+          throw new ServerError({ message: projectResult.error.code });
+        }
+
+        let project: ProjectTab = projectResult.value;
 
         if (!project.e2bApiKey) {
           return;
@@ -298,7 +322,7 @@ export class EditorSandboxService {
       }
     });
 
-    return allPausedSessionIds;
+    return Result.succeed(allPausedSessionIds);
   }
 
   async syncEditorSessionsStatus(item: {
@@ -328,16 +352,30 @@ export class EditorSandboxService {
           return;
         }
 
-        let sessionLockToken: string =
-          await this.editorSessionLockService.acquireSessionLock({
+        let sessionLockResult: Result.Result<string, AcquireSessionLockError> =
+          await this.editorSessionLockService.acquireSessionLockResult({
             sessionId: session.sessionId
           });
 
+        if (Result.isFailure(sessionLockResult)) {
+          throw new ServerError({ message: sessionLockResult.error.code });
+        }
+
+        let sessionLockToken: string = sessionLockResult.value;
+
         try {
-          let freshSession =
-            await this.sessionsService.getSessionByIdCheckExists({
-              sessionId: session.sessionId
-            });
+          let freshSessionResult: Result.Result<
+            SessionTab,
+            GetSessionByIdCheckExistsError
+          > = await this.sessionsService.getSessionByIdCheckExistsResult({
+            sessionId: session.sessionId
+          });
+
+          if (Result.isFailure(freshSessionResult)) {
+            throw new ServerError({ message: freshSessionResult.error.code });
+          }
+
+          let freshSession: SessionTab = freshSessionResult.value;
 
           let isActiveOrPaused = activeOrPausedStatuses.includes(
             freshSession.status

@@ -23,6 +23,7 @@ import {
   ASTSegmentViewDefinition,
   ASTViewOperation
 } from '@malloydata/malloy-query-builder';
+import { Result } from '@praha/byethrow';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -43,6 +44,7 @@ import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mcon
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { Sorting } from '#common/types/blockml/parts/query/sorting';
+import type { MakeMalloyQueryError } from '#common/types/node-common/function-errors/make-malloy-query-error';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 import { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { getBlankMconfigAndQuery } from '#node-common/functions/malloy/make-malloy-query/get-blank-mconfig-and-query/get-blank-mconfig-and-query';
@@ -56,7 +58,7 @@ export interface MalloyQueryResult {
   apiNewQuery: Query;
 }
 
-export async function makeMalloyQuery(item: {
+export async function makeMalloyQueryResult(item: {
   projectId: string;
   envId: string;
   structId: string;
@@ -67,7 +69,7 @@ export async function makeMalloyQuery(item: {
   queryOperations: QueryOperation[];
   malloyConnections: MalloyConnection[];
   selectedGivens: SelectedGiven[];
-}) {
+}): Result.ResultAsync<MalloyQueryResult, MakeMalloyQueryError> {
   let {
     projectId,
     envId,
@@ -108,7 +110,7 @@ export async function makeMalloyQuery(item: {
       apiNewQuery: blankQuery
     };
 
-    return result;
+    return Result.succeed(result);
   }
 
   let malloyModelInfo: MalloyModelInfo = modelDefToModelInfo(
@@ -122,8 +124,8 @@ export async function makeMalloyQuery(item: {
   let malloyToQueryLogs: LogMessage[] = malloyToQueryResult?.logs;
 
   if (malloyToQueryLogs?.filter(x => x.severity === 'error').length > 0) {
-    throw new ServerError({
-      message: 'MALLOY_TO_QUERY_FAILED',
+    return Result.fail({
+      code: 'MALLOY_TO_QUERY_FAILED',
       customData: { malloyToQueryLogs: malloyToQueryLogs }
     });
   }
@@ -808,5 +810,5 @@ export async function makeMalloyQuery(item: {
     apiNewQuery: newQuery
   };
 
-  return result;
+  return Result.succeed(result);
 }

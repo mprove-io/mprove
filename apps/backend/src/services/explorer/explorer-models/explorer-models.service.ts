@@ -3,6 +3,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import type Anthropic from '@anthropic-ai/sdk';
 import { Injectable } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
 import type { LanguageModel } from 'ai';
 import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
@@ -14,28 +15,31 @@ import { getOpenAiVariantOptions } from '#backend/functions/llm-providers/openai
 import { isOpenAiGpt5Chat } from '#backend/services/explorer/explorer-models/is-open-ai-gpt5-chat/is-open-ai-gpt5-chat';
 import { isOpenAiGpt5Family } from '#backend/services/explorer/explorer-models/is-open-ai-gpt5-family/is-open-ai-gpt5-family';
 import { isOpenAiGpt5Pro } from '#backend/services/explorer/explorer-models/is-open-ai-gpt5-pro/is-open-ai-gpt5-pro';
-import { ServerError } from '#common/classes/server-error/server-error';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { GetExplorerModelError } from '#common/types/backend/function-errors/get-explorer-model-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 
 @Injectable()
 export class ExplorerModelsService {
-  getModel(item: {
+  getExplorerModelResult(item: {
     provider: ProviderTab;
     modelId: string;
     codexFetch?: typeof fetch;
-  }): LanguageModel {
+  }): Result.Result<LanguageModel, GetExplorerModelError> {
     let { provider, modelId, codexFetch } = item;
 
     if (provider.type === 'OpenAI') {
       let openai = createOpenAI({ apiKey: provider.options.apiKey });
-      return openai(modelId);
+      let model: LanguageModel = openai(modelId);
+
+      return Result.succeed(model);
     }
 
     if (provider.type === 'Anthropic') {
       let anthropic = createAnthropic({ apiKey: provider.options.apiKey });
-      return anthropic(modelId);
+      let model: LanguageModel = anthropic(modelId);
+
+      return Result.succeed(model);
     }
 
     if (provider.type === 'OpenAICompatible') {
@@ -55,7 +59,9 @@ export class ExplorerModelsService {
         queryParams: queryParams
       });
 
-      return compatible.chatModel(modelId);
+      let model: LanguageModel = compatible.chatModel(modelId);
+
+      return Result.succeed(model);
     }
 
     let isCodexFetchSet = isDefined(codexFetch);
@@ -65,11 +71,13 @@ export class ExplorerModelsService {
         apiKey: 'oauth-dummy-key',
         fetch: codexFetch
       });
-      return openai(modelId);
+      let model: LanguageModel = openai(modelId);
+
+      return Result.succeed(model);
     }
 
-    throw new ServerError({
-      message: 'BACKEND_GET_PROVIDER_MODEL_FAILED'
+    return Result.fail({
+      code: 'BACKEND_GET_PROVIDER_MODEL_FAILED'
     });
   }
 

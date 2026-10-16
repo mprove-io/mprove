@@ -5,6 +5,20 @@ method call. Before returning a value, assign it to an explicitly typed variable
 and return that variable. Do not rely on return-type inference at invocation or
 return sites.
 
+Explicitly annotate item parameters in asynchronous iteration callbacks, such as
+callbacks passed to `asyncPool` or `forEachSeries`, even when the input
+collection provides contextual typing. Reuse the collection's element type.
+
+```ts
+await asyncPool(
+  poolSize,
+  tiles,
+  async (tile: FilePartTileExtra): Promise<void> => {
+    await processTile({ tile: tile });
+  }
+);
+```
+
 Exception: Byethrow Result flows follow the exceptions under "Result type
 inference".
 

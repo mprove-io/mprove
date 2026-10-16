@@ -1,12 +1,14 @@
 import path from 'node:path';
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import fse from 'fs-extra';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { SkillItem } from '#common/types/backend/parts/skill-item';
 import type { ToBackendGetSkillsOutput } from '#common/types/backend/routes/skills/get-skills/get-skills-output';
+import type { ToBackendGetSkillsResponse } from '#common/types/backend/routes/skills/get-skills/get-skills-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import type { GetSkillsCommandError } from '#mcli/types/function-errors/get-skills-command-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 
 export class GetSkillsCommand extends CustomCommand {
   static paths = [['get-skills']];
@@ -27,19 +29,24 @@ export class GetSkillsCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, GetSkillsCommandError> {
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let getSkillsOutput: ToBackendGetSkillsOutput = await mreq({
+    let getSkillsOutputResult: Result.Result<
+      ToBackendGetSkillsOutput,
+      MreqError<ToBackendGetSkillsResponse>
+    > = await mreqResult({
       apiKey: apiKey,
       route: 'api/ToBackendGetSkills',
       payload: {},
       host: this.context.config.mproveCliHost
     });
+
+    if (Result.isFailure(getSkillsOutputResult)) {
+      return getSkillsOutputResult;
+    }
+
+    let getSkillsOutput: ToBackendGetSkillsOutput = getSkillsOutputResult.value;
 
     let outputDir = path.resolve(this.output);
 
@@ -52,5 +59,7 @@ export class GetSkillsCommand extends CustomCommand {
       let skillFilePath = path.join(skillDir, 'SKILL.md');
       fse.writeFileSync(skillFilePath, skill.content);
     });
+
+    return Result.succeed();
   }
 }

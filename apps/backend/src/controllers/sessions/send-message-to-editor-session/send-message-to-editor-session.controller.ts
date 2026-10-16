@@ -30,7 +30,7 @@ import type {
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { retryResult } from '#backend/functions/temp/retry-result/retry-result';
+import { retryResult } from '#backend/functions/retry-result/retry-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex/codex.service';

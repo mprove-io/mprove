@@ -1,19 +1,22 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/branches/create-branch/create-branch-output';
 import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchResponse } from '#common/types/backend/routes/branches/create-branch/create-branch-response';
 import {
   type RepoType,
   repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { CreateBranchCommandError } from '#mcli/types/function-errors/create-branch-command-error';
+import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 
 export class CreateBranchCommand extends CustomCommand {
   static paths = [['create-branch']];
@@ -60,29 +63,25 @@ export class CreateBranchCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, CreateBranchCommandError> {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId =
+    let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
       this.repoType === 'production'
-        ? PROD_REPO_ID
-        : apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
-          ? apiKey.split('-')[2].toLowerCase()
-          : apiKey.split('-')[2];
+        ? Result.succeed(PROD_REPO_ID)
+        : getApiKeyRepoIdResult({ apiKey: apiKey });
+
+    if (Result.isFailure(repoIdResult)) {
+      return repoIdResult;
+    }
+
+    let repoId: string = repoIdResult.value;
 
     let createBranchReqPayload: ToBackendCreateBranchRequest['input'] = {
       projectId: this.projectId,
@@ -91,12 +90,22 @@ export class CreateBranchCommand extends CustomCommand {
       fromBranchId: this.fromBranch
     };
 
-    let createBranchOutput: ToBackendCreateBranchOutput = await mreq({
+    let createBranchOutputResult: Result.Result<
+      ToBackendCreateBranchOutput,
+      MreqError<ToBackendCreateBranchResponse>
+    > = await mreqResult({
       apiKey: apiKey,
       route: 'api/ToBackendCreateBranch',
       payload: createBranchReqPayload,
       host: this.context.config.mproveCliHost
     });
+
+    if (Result.isFailure(createBranchOutputResult)) {
+      return createBranchOutputResult;
+    }
+
+    let createBranchOutput: ToBackendCreateBranchOutput =
+      createBranchOutputResult.value;
 
     let log: any = {
       message: `Created branch "${this.newBranch}"`
@@ -108,5 +117,7 @@ export class CreateBranchCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

@@ -7,7 +7,10 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ConnectionTab,
+  QueryTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import {
   type QueryEnt,
@@ -23,11 +26,15 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { CheckBigqueryRunningQueriesError } from '#common/types/backend/function-errors/check-bigquery-running-queries-error';
+import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetQueriesCheckExistError } from '#common/types/backend/function-errors/get-queries-check-exist-error';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
 import type { GetQueryCheckExistsError } from '#common/types/backend/function-errors/get-query-check-exists-error';
 import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
 import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import type { Env } from '#common/types/backend/parts/env';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
 
@@ -122,27 +129,6 @@ export class QueriesService {
       keyTag: undefined,
       serverTs: apiQuery.serverTs
     };
-
-    return query;
-  }
-
-  async getQueryCheckExistsSkipData(item: {
-    queryId: string;
-    projectId: string;
-  }): Promise<QueryTab> {
-    let { queryId, projectId } = item;
-
-    let result: Result.Result<QueryTab, GetQueryCheckExistsSkipDataError> =
-      await this.getQueryCheckExistsSkipDataResult({
-        queryId: queryId,
-        projectId: projectId
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let query: QueryTab = result.value;
 
     return query;
   }
@@ -353,38 +339,70 @@ WHERE q.report_id is NULL
     }
   }
 
-  async checkBigqueryRunningQueries() {
-    let queries = await this.db.drizzle.query.queriesTable
-      .findMany({
-        where: and(
-          eq(queriesTable.status, 'Running'),
-          eq(queriesTable.connectionType, 'BigQuery')
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
+  async checkBigqueryRunningQueriesResult(): Result.ResultAsync<
+    void,
+    CheckBigqueryRunningQueriesError
+  > {
+    let queryCollection: Result.Result<QueryTab[], QueryEntToTabError> =
+      await this.db.drizzle.query.queriesTable
+        .findMany({
+          where: and(
+            eq(queriesTable.status, 'Running'),
+            eq(queriesTable.connectionType, 'BigQuery')
+          )
+        })
+        .then(xs =>
+          Result.sequence(xs, x =>
+            this.tabService.queryEntToTabResult({ queryEnt: x })
+          )
+        );
+
+    if (Result.isFailure(queryCollection)) {
+      return queryCollection;
+    }
+
+    let queries: QueryTab[] = queryCollection.value;
 
     await asyncPool(8, queries, async (query: QueryTab) => {
       try {
-        let apiEnvs = await this.envsService.getApiEnvs({
-          projectId: query.projectId
-        });
+        let apiEnvsResult: Result.Result<Env[], GetApiEnvsError> =
+          await this.envsService.getApiEnvsResult({
+            projectId: query.projectId
+          });
 
-        let apiEnv = apiEnvs.find(x => x.envId === query.envId);
+        if (Result.isFailure(apiEnvsResult)) {
+          throw new ServerError({ message: apiEnvsResult.error.code });
+        }
 
-        let connection = await this.db.drizzle.query.connectionsTable
+        let apiEnvs: Env[] = apiEnvsResult.value;
+
+        let apiEnv: Env = apiEnvs.find(x => x.envId === query.envId);
+
+        let connectionResult: Result.Result<
+          ConnectionTab,
+          ConnectionEntToTabError
+        > = await this.db.drizzle.query.connectionsTable
           .findFirst({
             where: and(
               eq(connectionsTable.projectId, query.projectId),
               eq(
                 connectionsTable.envId,
-                apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+                apiEnv.fallbackConnectionIds.includes(query.connectionId)
                   ? PROJECT_ENV_PROD
                   : query.envId
               ),
               eq(connectionsTable.connectionId, query.connectionId)
             )
           })
-          .then(x => this.tabService.connectionEntToTab(x));
+          .then(x =>
+            this.tabService.connectionEntToTabResult({ connectionEnt: x })
+          );
+
+        if (Result.isFailure(connectionResult)) {
+          throw new ServerError({ message: connectionResult.error.code });
+        }
+
+        let connection: ConnectionTab = connectionResult.value;
 
         if (isUndefined(connection)) {
           query.status = 'Error';
@@ -561,5 +579,7 @@ WHERE q.report_id is NULL
         });
       }
     });
+
+    return Result.succeed();
   }
 }

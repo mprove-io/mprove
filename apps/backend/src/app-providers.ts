@@ -34,6 +34,7 @@ import { RolesService } from '#backend/services/db/roles/roles.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import { DbWriteService } from '#backend/services/db-write/db-write.service';
 import { DocService } from '#backend/services/doc/doc.service';
 import { DocsService } from '#backend/services/docs/docs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
@@ -154,6 +155,7 @@ export const appProviders = [
   BlockmlService,
   AscendingIdService,
   CodexService,
+  DbWriteService,
   TabCheckerService,
   DocService,
   EmailService,

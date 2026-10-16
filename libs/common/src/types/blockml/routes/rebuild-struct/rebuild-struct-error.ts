@@ -1,9 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MakeMalloyQueryError,
+  zMakeMalloyQueryError
+} from '#common/types/node-common/function-errors/make-malloy-query-error';
 
-export type ToBlockmlRebuildStructError = never;
+export type ToBlockmlRebuildStructError = MakeMalloyQueryError;
 
-export let zToBlockmlRebuildStructError = z.never();
+export let zToBlockmlRebuildStructError = zMakeMalloyQueryError;
 
 assertTypesEqual<
   ToBlockmlRebuildStructError,

@@ -1,27 +1,28 @@
-import { ServerError } from '#common/classes/server-error/server-error';
+import { BackendResponseError } from '#common/classes/backend-response-error/backend-response-error';
 import type { BackendError } from '#common/types/backend/errors/backend-error';
+import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseBase } from '#common/types/backend/response/to-backend-response-base';
+
+export function unwrapBackendResponseOutput<
+  TResponse extends ToBackendResponse
+>(item: {
+  response: TResponse;
+}): Extract<TResponse, { type: 'Success' }>['output'];
 
 export function unwrapBackendResponseOutput<TOutput>(item: {
   response: ToBackendResponseBase<string, TOutput, BackendError>;
-}): TOutput {
+}): TOutput;
+
+export function unwrapBackendResponseOutput(item: {
+  response: ToBackendResponseBase<string, unknown, BackendError>;
+}): unknown {
   let { response } = item;
 
   if (response.type === 'Failure') {
-    throw new ServerError({
-      message: response.error.code,
-      displayData:
-        'displayData' in response.error
-          ? response.error.displayData
-          : undefined,
-      originalError:
-        'originalError' in response.error
-          ? response.error.originalError
-          : undefined
-    });
+    throw new BackendResponseError({ response: response });
   }
 
-  let output: TOutput = response.output;
+  let output: unknown = response.output;
 
   return output;
 }

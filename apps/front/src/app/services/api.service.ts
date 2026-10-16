@@ -7,8 +7,15 @@ import {
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
+import {
+  combineLatest,
+  Observable,
+  TimeoutError,
+  throwError,
+  timer
+} from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
+import { BackendResponseError } from '#common/classes/backend-response-error/backend-response-error';
 import {
   PATH_BRANCH,
   PATH_BUILDER,
@@ -23,16 +30,17 @@ import {
 import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_TOKEN,
-  MIN_TIME_TO_SPIN,
-  SPECIAL_ERROR
+  MIN_TIME_TO_SPIN
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeToBackendRequest } from '#common/functions/make-to-backend-request/make-to-backend-request';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendInputForRoute } from '#common/types/backend/request/to-backend-input-for-route';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
+import type { ToBackendOutputForRoute } from '#common/types/backend/response/to-backend-output-for-route';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseForRoute } from '#common/types/backend/response/to-backend-response-for-route';
 import type { ToBackendGetReportsOutput } from '#common/types/backend/routes/reports/get-reports/get-reports-output';
@@ -41,6 +49,7 @@ import type { ToBackendGetReportsResponse } from '#common/types/backend/routes/r
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import type { ErrorData } from '#common/types/front/ui/error-data';
 import type { Er } from '#common/types/shared/errors/er';
+import { ApiRequestError } from '#front/app/classes/api-request-error/api-request-error';
 import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
@@ -71,12 +80,32 @@ export class ApiService {
     private memberQuery: MemberQuery
   ) {}
 
+  /** Legacy envelope API; prefer reqOutput for output-or-error requests. */
   req<TRoute extends ToBackendRoute>(item: {
     route: TRoute;
     payload: ToBackendInputForRoute<NoInfer<TRoute>>;
     showSpinner?: boolean;
   }): Observable<ToBackendResponseForRoute<TRoute>> {
     let { route, payload, showSpinner } = item;
+
+    // Legacy envelope callers retain their existing presentation policy.
+    let response: Observable<ToBackendResponseForRoute<TRoute>> = this.request({
+      route: route,
+      payload: payload,
+      showSpinner: showSpinner,
+      isRawResponse: true
+    });
+
+    return response;
+  }
+
+  private request<TRoute extends ToBackendRoute>(item: {
+    route: TRoute;
+    payload: ToBackendInputForRoute<NoInfer<TRoute>>;
+    showSpinner?: boolean;
+    isRawResponse: boolean;
+  }): Observable<ToBackendResponseForRoute<TRoute>> {
+    let { route, payload, showSpinner, isRawResponse } = item;
 
     let bypassAuth: ToBackendRoute[] = ['api/ToBackendLoginUser'];
 
@@ -118,6 +147,7 @@ export class ApiService {
       map(x =>
         this.mapRes({
           res: x[1],
+          isRawResponse: isRawResponse,
           req: {
             url: url,
             headers: headers,
@@ -136,21 +166,37 @@ export class ApiService {
     return response;
   }
 
+  reqOutput<TRoute extends ToBackendRoute>(item: {
+    route: TRoute;
+    payload: ToBackendInputForRoute<NoInfer<TRoute>>;
+    showSpinner?: boolean;
+  }): Observable<ToBackendOutputForRoute<TRoute>> {
+    let { route, payload, showSpinner } = item;
+
+    let output: Observable<ToBackendOutputForRoute<TRoute>> = this.request({
+      route: route,
+      payload: payload,
+      showSpinner: showSpinner,
+      isRawResponse: false
+    }).pipe(
+      map(response => unwrapBackendResponseOutput({ response: response }))
+    );
+
+    return output;
+  }
+
   private mapRes<TResponse extends ToBackendResponse>(item: {
     res: HttpResponse<TResponse>;
+    isRawResponse: boolean;
     req: {
       url: string;
       headers: HttpHeaders;
       body: ToBackendRequest;
     };
   }): TResponse {
-    let { res, req } = item;
+    let { res, req, isRawResponse } = item;
 
     let requestInput: unknown = req.body.input;
-
-    let nav = this.navQuery.getValue();
-
-    let orgProjectPath = `/${PATH_ORG}/${nav.orgId}/${PATH_PROJECT}/${nav.projectId}/${PATH_REPO}/${nav.repoId}`;
 
     let errorData: ErrorData = {
       reqUrl: req.url,
@@ -177,11 +223,43 @@ export class ApiService {
         : undefined
     };
 
-    if (isUndefined(res.body)) {
-      this.myDialogService.showError({ errorData: errorData, isThrow: true });
+    if (isDefined(errorData.message)) {
+      if (res.body?.type === 'Failure') {
+        errorData.originalError = new BackendResponseError({
+          response: res.body
+        });
 
-      throw new Error(SPECIAL_ERROR);
+        if (isRawResponse) {
+          this.presentError({ errorData: errorData });
+
+          let response: TResponse = res.body;
+
+          return response;
+        }
+      }
+
+      throw new ApiRequestError({ errorData: errorData });
     }
+
+    let response: TResponse = res.body;
+
+    return response;
+  }
+
+  presentError(item: { errorData: ErrorData }): void {
+    let { errorData } = item;
+
+    if (errorData.response?.body?.type !== 'Failure') {
+      this.myDialogService.showError({ errorData: errorData, isThrow: false });
+
+      return;
+    }
+
+    let res: { body: ToBackendResponse } = errorData.response;
+
+    let nav: NavState = this.navQuery.getValue();
+
+    let orgProjectPath = `/${PATH_ORG}/${nav.orgId}/${PATH_PROJECT}/${nav.projectId}/${PATH_REPO}/${nav.repoId}`;
 
     let infoErrorMessage: string =
       res.body?.type === 'Failure' ? res.body.error.code : undefined;
@@ -473,23 +551,13 @@ export class ApiService {
       } else {
         this.myDialogService.showError({ errorData, isThrow: false });
       }
-
-      let response: TResponse = res.body;
-
-      return response;
     } else if (
       isDefined(errorData.message) &&
       errorData.message !==
         ('FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK' satisfies Er)
     ) {
-      this.myDialogService.showError({ errorData, isThrow: true });
-
-      throw new Error(SPECIAL_ERROR);
+      this.myDialogService.showError({ errorData: errorData, isThrow: false });
     }
-
-    let response: TResponse = res.body;
-
-    return response;
   }
 
   private navigateToLastModelChart(nav: NavState) {
@@ -512,9 +580,11 @@ export class ApiService {
     }
   }
 
-  private catchErr(e: any) {
-    if (e.message === SPECIAL_ERROR) {
-      return EMPTY;
+  private catchErr(e: unknown): Observable<never> {
+    if (e instanceof ApiRequestError) {
+      let response: Observable<never> = throwError(() => e);
+
+      return response;
     }
 
     let errorData: ErrorData = {
@@ -527,9 +597,11 @@ export class ApiService {
             : ('FRONT_API_UNKNOWN_ERROR' satisfies Er)
     };
 
-    this.myDialogService.showError({ errorData, isThrow: false });
+    let response: Observable<never> = throwError(
+      () => new ApiRequestError({ errorData: errorData })
+    );
 
-    return EMPTY;
+    return response;
   }
 
   resolveReportsRoute(item: { showSpinner: boolean }): Observable<boolean> {

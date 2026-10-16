@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { Redis } from 'ioredis';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { KEY_EDITOR_SESSION_LOCK } from '#common/constants/top-backend';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
 
@@ -32,19 +31,6 @@ export class EditorSessionLockService implements OnModuleDestroy {
     });
   }
 
-  async acquireSessionLock(item: { sessionId: string }): Promise<string> {
-    let result: Result.Result<string, AcquireSessionLockError> =
-      await this.acquireSessionLockResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let token: string = result.value;
-
-    return token;
-  }
-
   async acquireSessionLockResult(item: {
     sessionId: string;
   }): Result.ResultAsync<string, AcquireSessionLockError> {
@@ -66,7 +52,7 @@ export class EditorSessionLockService implements OnModuleDestroy {
       if (result === 'OK') {
         let interval: NodeJS.Timeout = setInterval(
           () => {
-            this.redisClient
+            void this.redisClient
               .eval(
                 `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.LOCK_TTL_SECONDS}) else return 0 end`,
                 1,

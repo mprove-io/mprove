@@ -100,21 +100,6 @@ export class ProjectsService {
     return apiProject;
   }
 
-  async getProjectCheckExists(item: {
-    projectId: string;
-  }): Promise<ProjectTab> {
-    let result: Result.Result<ProjectTab, GetProjectCheckExistsError> =
-      await this.getProjectCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let project: ProjectTab = result.value;
-
-    return project;
-  }
-
   async getProjectCheckExistsResult(item: {
     projectId: string;
   }): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> {

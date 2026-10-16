@@ -8,7 +8,6 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -366,23 +365,6 @@ export class ConnectionsService {
           ? Result.fail({ code: 'BACKEND_CONNECTION_ALREADY_EXISTS' })
           : Result.succeed()
       );
-  }
-
-  async getConnectionCheckExists(item: {
-    connectionId: string;
-    envId: string;
-    projectId: string;
-  }): Promise<ConnectionTab> {
-    let result: Result.Result<ConnectionTab, GetConnectionCheckExistsError> =
-      await this.getConnectionCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let connection: ConnectionTab = result.value;
-
-    return connection;
   }
 
   async getConnectionCheckExistsResult(item: {

@@ -1,14 +1,18 @@
+import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { Observable } from 'rxjs';
 import { filter, map, materialize } from 'rxjs/operators';
+import type { ZodSafeParseResult, ZodType } from 'zod';
 import type { BackendConfig } from '#backend/config/backend-config';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { omitErrorCustomDataRecursive } from '#backend/functions/top/make-backend-result-response/omit-error-custom-data-recursive/omit-error-custom-data-recursive';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendInternalError } from '#common/types/backend/errors/backend-internal-error';
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
+import { zToBackendOperationRegistry } from '#common/types/backend/request/to-backend-operation-registry';
 import type { ToBackendResponseBase } from '#common/types/backend/response/to-backend-response-base';
 import type { ToBackendResponseForOperation } from '#common/types/backend/response/to-backend-response-for-operation';
 import type { ToBackendResponseMetadata } from '#common/types/backend/response/to-backend-response-metadata';
@@ -46,9 +50,10 @@ export function makeBackendResultResponse<
   traceId?: string;
   method: string;
   cs: ConfigService<BackendConfig>;
+  logger: Logger;
   startTs: number;
 }): Observable<MakeBackendResultResponseOutput<TOperation>> {
-  let { operation, execution, traceId, method, cs, startTs } = item;
+  let { operation, execution, traceId, method, cs, logger, startTs } = item;
 
   let responseExecution: Observable<
     MakeBackendResultResponseOutput<TOperation>
@@ -102,19 +107,60 @@ export function makeBackendResultResponse<
           );
         }
 
-        let publicError: typeof result.error = omitErrorCustomDataRecursive({
+        // Preserve the registry's operation correlation at this generic boundary.
+        let responseSchema: ZodType<ToBackendResponseForOperation<TOperation>> =
+          zToBackendOperationRegistry[operation].response as ZodType<
+            ToBackendResponseForOperation<TOperation>
+          >;
+
+        let validation: ZodSafeParseResult<
+          ToBackendResponseForOperation<TOperation>
+        > = responseSchema.safeParse({
+          type: 'Failure',
+          ...metadata,
           error: result.error
         });
 
-        let response: BackendResultResponse<TOperation> = {
-          type: 'Failure',
-          ...metadata,
-          error: publicError
-        };
+        if (validation.success === false) {
+          logToConsoleBackend({
+            log: {
+              event: 'backend-failure-response-validation',
+              operation: operation,
+              traceId: metadata.traceId,
+              issues: validation.error.issues
+            },
+            logLevel: 'Error',
+            logger: logger,
+            cs: cs
+          });
+
+          let fallbackResponse: BackendResultResponse<TOperation> = {
+            type: 'Failure',
+            ...metadata,
+            error: { code: 'BACKEND_INTERNAL' }
+          };
+
+          let fallbackOutput: MakeBackendResultResponseOutput<TOperation> = {
+            response:
+              fallbackResponse as ToBackendResponseForOperation<TOperation>,
+            wrappedError: wrappedError
+          };
+
+          return fallbackOutput;
+        }
+
+        let response: ToBackendResponseForOperation<TOperation> =
+          validation.data;
+
+        if (response.type === 'Failure') {
+          // Strip diagnostics after validation, including schema-declared fields.
+          response.error = omitErrorCustomDataRecursive({
+            error: response.error
+          });
+        }
 
         let responseOutput: MakeBackendResultResponseOutput<TOperation> = {
-          // The envelope is checked above; preserve the registry's operation correlation.
-          response: response as ToBackendResponseForOperation<TOperation>,
+          response: response,
           wrappedError: wrappedError
         };
 

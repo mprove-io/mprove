@@ -1,15 +1,18 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repos/merge-repo/merge-repo-output';
 import type { ToBackendMergeRepoRequest } from '#common/types/backend/routes/repos/merge-repo/merge-repo-request';
+import type { ToBackendMergeRepoResponse } from '#common/types/backend/routes/repos/merge-repo/merge-repo-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
+import type { MergeCommandError } from '#mcli/types/function-errors/merge-command-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 
 export class MergeCommand extends CustomCommand {
   static paths = [['merge']];
@@ -63,26 +66,23 @@ export class MergeCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, MergeCommandError> {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId = apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
-      ? apiKey.split('-')[2].toLowerCase()
-      : apiKey.split('-')[2];
+    let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
+      getApiKeyRepoIdResult({ apiKey: apiKey });
+
+    if (Result.isFailure(repoIdResult)) {
+      return repoIdResult;
+    }
+
+    let repoId: string = repoIdResult.value;
 
     let mergeRepoReqPayload: ToBackendMergeRepoRequest['input'] = {
       projectId: this.projectId,
@@ -93,12 +93,21 @@ export class MergeCommand extends CustomCommand {
       isTheirBranchRemote: this.theirBranchRemote
     };
 
-    let mergeRepoOutput: ToBackendMergeRepoOutput = await mreq({
+    let mergeRepoOutputResult: Result.Result<
+      ToBackendMergeRepoOutput,
+      MreqError<ToBackendMergeRepoResponse>
+    > = await mreqResult({
       apiKey: this.context.config.mproveCliApiKey,
       route: 'api/ToBackendMergeRepo',
       payload: mergeRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
+
+    if (Result.isFailure(mergeRepoOutputResult)) {
+      return mergeRepoOutputResult;
+    }
+
+    let mergeRepoOutput: ToBackendMergeRepoOutput = mergeRepoOutputResult.value;
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
@@ -138,5 +147,7 @@ export class MergeCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

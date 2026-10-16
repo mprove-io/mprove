@@ -17,14 +17,12 @@ import {
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
-import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { Env } from '#common/types/backend/parts/env';
 import type { EnvUser } from '#common/types/backend/parts/env-user';
 import type { ToBackendCreateEnvUserOutput } from '#common/types/backend/routes/envs/create-env-user/create-env-user-output';
 import type { ToBackendCreateEnvUserRequest } from '#common/types/backend/routes/envs/create-env-user/create-env-user-request';
 import type { ToBackendCreateEnvUserResponse } from '#common/types/backend/routes/envs/create-env-user/create-env-user-response';
 import type { ToBackendGetMembersListRequest } from '#common/types/backend/routes/members/get-members-list/get-members-list-request';
-import type { ToBackendGetMembersListResponse } from '#common/types/backend/routes/members/get-members-list/get-members-list-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -97,15 +95,12 @@ export class AddEnvUserDialogComponent implements OnInit {
     };
 
     apiService
-      .req({
+      .reqOutput({
         route: 'api/ToBackendGetMembersList',
         payload: payload
       })
       .pipe(
-        map(
-          (resp: ToBackendGetMembersListResponse) =>
-            unwrapBackendResponseOutput({ response: resp }).membersList
-        ),
+        map(output => output.membersList),
         tap(x => {
           this.membersList = x;
           this.membersListLoading = false;

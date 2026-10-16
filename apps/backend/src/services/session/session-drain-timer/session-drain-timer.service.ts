@@ -1,11 +1,13 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import { SessionDrainService } from '#backend/services/session/session-drain/session-drain.service';
 import { ServerError } from '#common/classes/server-error/server-error';
+import type { DrainAllQueuesError } from '#common/types/backend/function-errors/drain-all-queues-error';
 
 @Injectable()
 export class SessionDrainTimerService implements OnModuleDestroy {
@@ -27,8 +29,14 @@ export class SessionDrainTimerService implements OnModuleDestroy {
         this.isRunningDrain = true;
 
         try {
-          let safePauseSessionIds =
-            await this.sessionDrainService.drainAllQueues();
+          let drainQueues: Result.Result<string[], DrainAllQueuesError> =
+            await this.sessionDrainService.drainAllQueuesResult();
+
+          if (Result.isFailure(drainQueues)) {
+            throw new ServerError({ message: drainQueues.error.code });
+          }
+
+          let safePauseSessionIds: string[] = drainQueues.value;
 
           await this.editorStreamService.processSafePause({
             sessionIds: safePauseSessionIds

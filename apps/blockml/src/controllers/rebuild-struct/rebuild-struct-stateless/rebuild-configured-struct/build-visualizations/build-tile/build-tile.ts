@@ -6,6 +6,8 @@ import type { SelectedGiven } from '#common/types/backend/parts/given/selected-g
 import type { ProjectWeekStart } from '#common/types/backend/parts/project/project-week-start';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
+import type { BuildTileError } from '#common/types/blockml/function-errors/build-tile-error';
+import type { FetchSqlError } from '#common/types/blockml/function-errors/fetch-sql-error';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
@@ -37,7 +39,7 @@ export async function buildTile<T extends dcType>(item: {
   structId: string;
   caller: Caller;
   cs: ConfigService<BlockmlConfig>;
-}): Result.ResultAsync<T[], never> {
+}): Result.ResultAsync<T[], BuildTileError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind(
@@ -126,7 +128,7 @@ export async function buildTile<T extends dcType>(item: {
         })
     ),
     Result.andThen(
-      (v): Result.ResultAsync<T[], never> =>
+      (v): Result.ResultAsync<T[], FetchSqlError> =>
         fetchSql({
           entities: v.parametersCheckedEntities,
           mconfigParentType: v.mconfigParentType,

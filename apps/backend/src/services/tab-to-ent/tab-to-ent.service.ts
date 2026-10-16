@@ -35,44 +35,49 @@ import type {
   UconfigTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
-import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
-import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
-import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
-import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
-import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
-import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
-import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
-import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
-import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
-import { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
-import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
-import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
-import { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
-import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
-import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
-import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
-import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
-import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
-import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
+import type { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
+import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import type { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
+import type { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
+import type { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
+import type { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
+import type { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
+import type { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
+import type { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import type { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
+import type { KitEnt } from '#backend/drizzle/postgres/schema/kits';
+import type { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
+import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import type { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import type { ModelEnt } from '#backend/drizzle/postgres/schema/models';
+import type { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import type { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
+import type { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
+import type { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
+import type { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
+import type { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
-import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
-import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
-import { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
-import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
-import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
-import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
-import { UserEnt } from '#backend/drizzle/postgres/schema/users';
-import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
-import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
+import type { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
+import type { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
+import type { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
+import type { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
+import type { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import type { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
+import type { UserEnt } from '#backend/drizzle/postgres/schema/users';
+import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
+import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { HashService } from '#backend/services/hash/hash.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
+import type { MemberTabToEntError } from '#common/types/backend/function-errors/member-tab-to-ent-error';
+import type { OrgTabToEntError } from '#common/types/backend/function-errors/org-tab-to-ent-error';
 import type { ProjectTabToEntError } from '#common/types/backend/function-errors/project-tab-to-ent-error';
+import type { QueryTabToEntError } from '#common/types/backend/function-errors/query-tab-to-ent-error';
+import type { TabsPackToEntsPackError } from '#common/types/backend/function-errors/tabs-pack-to-ents-pack-error';
+import type { UserTabToEntError } from '#common/types/backend/function-errors/user-tab-to-ent-error';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
 import type { AvatarSt } from '#common/types/shared/st-lt/avatars/avatar-st';
 import type { BranchLt } from '#common/types/shared/st-lt/branches/branch-lt';
@@ -157,173 +162,305 @@ export class TabToEntService {
       this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata');
   }
 
-  tabsPackToEntsPack(item: { tabsPack: DbTabsPack; hashSecret: string }) {
+  tabsPackToEntsPack(item: {
+    tabsPack: DbTabsPack;
+    hashSecret: string;
+  }): DbEntsPack {
     let { tabsPack, hashSecret } = item;
 
-    let entsPack: DbEntsPack = {
-      avatars:
-        tabsPack.avatars
-          ?.filter(x => isDefined(x))
-          .map(x => this.avatarTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      branches:
-        tabsPack.branches
-          ?.filter(x => isDefined(x))
-          .map(x => this.branchTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      bridges:
-        tabsPack.bridges
-          ?.filter(x => isDefined(x))
-          .map(x => this.bridgeTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      cachedColumns:
-        tabsPack.cachedColumns
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.cachedColumnTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      cachedParts:
-        tabsPack.cachedParts
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.cachedPartTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      charts:
-        tabsPack.charts
-          ?.filter(x => isDefined(x))
-          .map(x => this.chartTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      connections:
-        tabsPack.connections
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.connectionTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      dashboards:
-        tabsPack.dashboards
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.dashboardTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      dconfigs:
-        tabsPack.dconfigs
-          ?.filter(x => isDefined(x))
-          .map(x => this.dconfigTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      envs:
-        tabsPack.envs
-          ?.filter(x => isDefined(x))
-          .map(x => this.envTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
-      givens:
-        tabsPack.givens
-          ?.filter(x => isDefined(x))
-          .map(x => this.givenTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      roles:
-        tabsPack.roles
-          ?.filter(x => isDefined(x))
-          .map(x => this.roleTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      kits:
-        tabsPack.kits
-          ?.filter(x => isDefined(x))
-          .map(x => this.kitTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
-      mconfigs:
-        tabsPack.mconfigs
-          ?.filter(x => isDefined(x))
-          .map(x => this.mconfigTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      members:
-        tabsPack.members
-          ?.filter(x => isDefined(x))
-          .map(x => this.memberTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      ocMessages:
-        tabsPack.ocMessages
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.ocMessageTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      modelFieldLeafs:
-        tabsPack.modelFieldLeafs
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.modelFieldLeafTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      models:
-        tabsPack.models
-          ?.filter(x => isDefined(x))
-          .map(x => this.modelTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      notes:
-        tabsPack.notes
-          ?.filter(x => isDefined(x))
-          .map(x => this.noteTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      ocSessions:
-        tabsPack.ocSessions
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.ocSessionTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      orgs:
-        tabsPack.orgs
-          ?.filter(x => isDefined(x))
-          .map(x => this.orgTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
-      ocParts:
-        tabsPack.ocParts
-          ?.filter(x => isDefined(x))
-          .map(x => this.ocPartTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      projects:
-        tabsPack.projects
-          ?.filter(x => isDefined(x))
-          .map(x => this.projectTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      providers:
-        tabsPack.providers
-          ?.filter(x => isDefined(x))
-          .map(x =>
-            this.providerTabToEnt({ tab: x, hashSecret: hashSecret })
-          ) ?? [],
-      queries:
-        tabsPack.queries
-          ?.filter(x => isDefined(x))
-          .map(x => this.queryTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      reports:
-        tabsPack.reports
-          ?.filter(x => isDefined(x))
-          .map(x => this.reportTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      structs:
-        tabsPack.structs
-          ?.filter(x => isDefined(x))
-          .map(x => this.structTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      users:
-        tabsPack.users
-          ?.filter(x => isDefined(x))
-          .map(x => this.userTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      ocEvents:
-        tabsPack.ocEvents
-          ?.filter(x => isDefined(x))
-          .map(x => this.ocEventTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      sessions:
-        tabsPack.sessions
-          ?.filter(x => isDefined(x))
-          .map(x => this.sessionTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
-      uconfigs:
-        tabsPack.uconfigs
-          ?.filter(x => isDefined(x))
-          .map(x => this.uconfigTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        []
-    };
+    let result: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
+      this.tabsPackToEntsPackResult({
+        tabsPack: tabsPack,
+        hashSecret: hashSecret
+      });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let entsPack: DbEntsPack = result.value;
 
     return entsPack;
+  }
+
+  tabsPackToEntsPackResult(item: {
+    tabsPack: DbTabsPack;
+    hashSecret?: string;
+  }): Result.Result<DbEntsPack, TabsPackToEntsPackError> {
+    let entsPack: DbEntsPack = {};
+
+    return Result.pipe(
+      Result.succeed({ ...item, entsPack: entsPack }),
+      Result.map(v => {
+        let entsPack: DbEntsPack = {
+          avatars:
+            v.tabsPack.avatars
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.avatarTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          branches:
+            v.tabsPack.branches
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.branchTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          bridges:
+            v.tabsPack.bridges
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.bridgeTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          cachedColumns:
+            v.tabsPack.cachedColumns
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.cachedColumnTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          cachedParts:
+            v.tabsPack.cachedParts
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.cachedPartTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          charts:
+            v.tabsPack.charts
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.chartTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          connections:
+            v.tabsPack.connections
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.connectionTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          dashboards:
+            v.tabsPack.dashboards
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.dashboardTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          dconfigs:
+            v.tabsPack.dconfigs
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.dconfigTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          envs:
+            v.tabsPack.envs
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.envTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          givens:
+            v.tabsPack.givens
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.givenTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          roles:
+            v.tabsPack.roles
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.roleTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          kits:
+            v.tabsPack.kits
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.kitTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          mconfigs:
+            v.tabsPack.mconfigs
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.mconfigTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? []
+        };
+
+        Object.assign(v.entsPack, entsPack);
+
+        return v;
+      }),
+      Result.bind(
+        'memberEnts',
+        (v): Result.Result<MemberEnt[], MemberTabToEntError> =>
+          Result.sequence(
+            v.tabsPack.members?.filter(x => isDefined(x)) ?? [],
+            member =>
+              this.memberTabToEntResult({
+                tab: member,
+                hashSecret: v.hashSecret
+              })
+          )
+      ),
+      Result.map(v => {
+        let entsPack: DbEntsPack = {
+          ...v.entsPack,
+          members: v.memberEnts,
+          ocMessages:
+            v.tabsPack.ocMessages
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.ocMessageTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          modelFieldLeafs:
+            v.tabsPack.modelFieldLeafs
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.modelFieldLeafTabToEnt({
+                  tab: x,
+                  hashSecret: v.hashSecret
+                })
+              ) ?? [],
+          models:
+            v.tabsPack.models
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.modelTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          notes:
+            v.tabsPack.notes
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.noteTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          ocSessions:
+            v.tabsPack.ocSessions
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.ocSessionTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? []
+        };
+
+        Object.assign(v.entsPack, entsPack);
+
+        return v;
+      }),
+      Result.bind(
+        'orgEnts',
+        (v): Result.Result<OrgEnt[], OrgTabToEntError> =>
+          Result.sequence(
+            v.tabsPack.orgs?.filter(x => isDefined(x)) ?? [],
+            org =>
+              this.orgTabToEntResult({ tab: org, hashSecret: v.hashSecret })
+          )
+      ),
+      Result.map(v => {
+        let entsPack: DbEntsPack = {
+          ...v.entsPack,
+          orgs: v.orgEnts,
+          ocParts:
+            v.tabsPack.ocParts
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.ocPartTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? []
+        };
+
+        Object.assign(v.entsPack, entsPack);
+
+        return v;
+      }),
+      Result.bind(
+        'projectEnts',
+        (v): Result.Result<ProjectEnt[], ProjectTabToEntError> =>
+          Result.sequence(
+            v.tabsPack.projects?.filter(x => isDefined(x)) ?? [],
+            project =>
+              this.projectTabToEntResult({
+                tab: project,
+                hashSecret: v.hashSecret
+              })
+          )
+      ),
+      Result.map(v => {
+        let entsPack: DbEntsPack = {
+          ...v.entsPack,
+          projects: v.projectEnts,
+          providers:
+            v.tabsPack.providers
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.providerTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? []
+        };
+
+        Object.assign(v.entsPack, entsPack);
+
+        return v;
+      }),
+      Result.bind(
+        'queryEnts',
+        (v): Result.Result<QueryEnt[], QueryTabToEntError> =>
+          Result.sequence(
+            v.tabsPack.queries?.filter(x => isDefined(x)) ?? [],
+            query =>
+              this.queryTabToEntResult({ tab: query, hashSecret: v.hashSecret })
+          )
+      ),
+      Result.map(v => {
+        let entsPack: DbEntsPack = {
+          ...v.entsPack,
+          queries: v.queryEnts,
+          reports:
+            v.tabsPack.reports
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.reportTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          structs:
+            v.tabsPack.structs
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.structTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? []
+        };
+
+        Object.assign(v.entsPack, entsPack);
+
+        return v;
+      }),
+      Result.bind(
+        'userEnts',
+        (v): Result.Result<UserEnt[], UserTabToEntError> =>
+          Result.sequence(
+            v.tabsPack.users?.filter(x => isDefined(x)) ?? [],
+            user =>
+              this.userTabToEntResult({ tab: user, hashSecret: v.hashSecret })
+          )
+      ),
+      Result.map(v => {
+        let entsPack: DbEntsPack = {
+          ...v.entsPack,
+          users: v.userEnts,
+          ocEvents:
+            v.tabsPack.ocEvents
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.ocEventTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          sessions:
+            v.tabsPack.sessions
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.sessionTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? [],
+          uconfigs:
+            v.tabsPack.uconfigs
+              ?.filter(x => isDefined(x))
+              .map(x =>
+                this.uconfigTabToEnt({ tab: x, hashSecret: v.hashSecret })
+              ) ?? []
+        };
+
+        Object.assign(v.entsPack, entsPack);
+
+        return v;
+      }),
+      Result.map((v): DbEntsPack => v.entsPack)
+    );
   }
 
   getEntProps<DataSt, DataLt>(item: {
@@ -830,6 +967,24 @@ export class TabToEntService {
   memberTabToEnt(item: { tab: MemberTab; hashSecret: string }): MemberEnt {
     let { tab, hashSecret } = item;
 
+    let result: Result.Result<MemberEnt, MemberTabToEntError> =
+      this.memberTabToEntResult({ tab: tab, hashSecret: hashSecret });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let memberEnt: MemberEnt = result.value;
+
+    return memberEnt;
+  }
+
+  memberTabToEntResult(item: {
+    tab: MemberTab;
+    hashSecret?: string;
+  }): Result.Result<MemberEnt, MemberTabToEntError> {
+    let { tab } = item;
+
     let memberSt: MemberSt = {
       email: tab.email,
       alias: tab.alias,
@@ -840,33 +995,50 @@ export class TabToEntService {
 
     let memberLt: MemberLt = {};
 
-    let memberEnt: MemberEnt = {
-      memberFullId: this.hashService.makeMemberFullId({
-        projectId: tab.projectId,
-        memberId: tab.memberId
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        memberFullId: this.hashService.makeMemberFullId({
+          projectId: tab.projectId,
+          memberId: tab.memberId
+        }),
+        entProps: this.getEntProps({
+          dataSt: memberSt,
+          dataLt: memberLt,
+          isMetadata: false
+        })
       }),
-      projectId: tab.projectId,
-      memberId: tab.memberId,
-      isAdmin: tab.isAdmin,
-      isEditor: tab.isEditor,
-      isExplorer: tab.isExplorer,
-      ...this.getEntProps({
-        dataSt: memberSt,
-        dataLt: memberLt,
-        isMetadata: false
-      }),
-      emailHash: this.hashService.makeHash({
-        input: tab.email,
-        hashSecret: hashSecret
-      }),
-      aliasHash: this.hashService.makeHash({
-        input: tab.alias,
-        hashSecret: hashSecret
-      }),
-      serverTs: tab.serverTs
-    };
-
-    return memberEnt;
+      Result.bind(
+        'emailHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.email,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.bind(
+        'aliasHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.alias,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.map(
+        (v): MemberEnt => ({
+          memberFullId: v.memberFullId,
+          projectId: v.tab.projectId,
+          memberId: v.tab.memberId,
+          isAdmin: v.tab.isAdmin,
+          isEditor: v.tab.isEditor,
+          isExplorer: v.tab.isExplorer,
+          ...v.entProps,
+          emailHash: v.emailHash,
+          aliasHash: v.aliasHash,
+          serverTs: v.tab.serverTs
+        })
+      )
+    );
   }
 
   modelTabToEnt(item: { tab: ModelTab; hashSecret: string }): ModelEnt {
@@ -987,6 +1159,24 @@ export class TabToEntService {
   orgTabToEnt(item: { tab: OrgTab; hashSecret: string }): OrgEnt {
     let { tab, hashSecret } = item;
 
+    let result: Result.Result<OrgEnt, OrgTabToEntError> =
+      this.orgTabToEntResult({ tab: tab, hashSecret: hashSecret });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let orgEnt: OrgEnt = result.value;
+
+    return orgEnt;
+  }
+
+  orgTabToEntResult(item: {
+    tab: OrgTab;
+    hashSecret?: string;
+  }): Result.Result<OrgEnt, OrgTabToEntError> {
+    let { tab } = item;
+
     let orgSt: OrgSt = {
       name: tab.name,
       ownerEmail: tab.ownerEmail
@@ -994,31 +1184,49 @@ export class TabToEntService {
 
     let orgLt: OrgLt = {};
 
-    let orgEnt: OrgEnt = {
-      orgId: tab.orgId,
-      ownerId: tab.ownerId,
-      ...this.getEntProps({
-        dataSt: orgSt,
-        dataLt: orgLt,
-        isMetadata: false
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        entProps: this.getEntProps({
+          dataSt: orgSt,
+          dataLt: orgLt,
+          isMetadata: false
+        })
       }),
-      nameHash: this.hashService.makeHash({
-        input: tab.name,
-        hashSecret: hashSecret
-      }),
-      ownerEmailHash: this.hashService.makeHash({
-        input: tab.ownerEmail,
-        hashSecret: hashSecret
-      }),
-      serverTs: tab.serverTs
-    };
-
-    return orgEnt;
+      Result.bind(
+        'nameHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.name,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.bind(
+        'ownerEmailHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.ownerEmail,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.map(
+        (v): OrgEnt => ({
+          orgId: v.tab.orgId,
+          ownerId: v.tab.ownerId,
+          ...v.entProps,
+          nameHash: v.nameHash,
+          ownerEmailHash: v.ownerEmailHash,
+          serverTs: v.tab.serverTs
+        })
+      )
+    );
   }
 
   projectTabToEnt(item: { tab: ProjectTab; hashSecret: string }): ProjectEnt {
+    let { tab, hashSecret } = item;
+
     let result: Result.Result<ProjectEnt, ProjectTabToEntError> =
-      this.projectTabToEntResult(item);
+      this.projectTabToEntResult({ tab: tab, hashSecret: hashSecret });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1052,8 +1260,7 @@ export class TabToEntService {
 
     return Result.pipe(
       Result.succeed({
-        tab: item.tab,
-        hashSecret: item.hashSecret,
+        ...item,
         entProps: this.getEntProps({
           dataSt: projectSt,
           dataLt: projectLt,
@@ -1129,6 +1336,24 @@ export class TabToEntService {
   queryTabToEnt(item: { tab: QueryTab; hashSecret: string }): QueryEnt {
     let { tab, hashSecret } = item;
 
+    let result: Result.Result<QueryEnt, QueryTabToEntError> =
+      this.queryTabToEntResult({ tab: tab, hashSecret: hashSecret });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let queryEnt: QueryEnt = result.value;
+
+    return queryEnt;
+  }
+
+  queryTabToEntResult(item: {
+    tab: QueryTab;
+    hashSecret?: string;
+  }): Result.Result<QueryEnt, QueryTabToEntError> {
+    let { tab } = item;
+
     let querySt: QuerySt = {
       sql: tab.sql,
       apiMethod: tab.apiMethod,
@@ -1141,40 +1366,52 @@ export class TabToEntService {
       data: tab.data
     };
 
-    let queryEnt: QueryEnt = {
-      projectId: tab.projectId,
-      envId: tab.envId,
-      connectionId: tab.connectionId,
-      connectionType: tab.connectionType,
-      queryId: tab.queryId,
-      reportId: tab.reportId,
-      reportStructId: tab.reportStructId,
-      status: tab.status,
-      lastRunBy: tab.lastRunBy,
-      lastRunTs: tab.lastRunTs,
-      lastCancelTs: tab.lastCancelTs,
-      lastCompleteTs: tab.lastCompleteTs,
-      lastCompleteDuration: tab.lastCompleteDuration,
-      lastErrorTs: tab.lastErrorTs,
-      queryJobId: tab.queryJobId,
-      bigqueryQueryJobId: tab.bigqueryQueryJobId,
-      bigqueryConsecutiveErrorsGetJob: tab.bigqueryConsecutiveErrorsGetJob,
-      bigqueryConsecutiveErrorsGetResults:
-        tab.bigqueryConsecutiveErrorsGetResults,
-      ...this.getEntProps({
-        dataSt: querySt,
-        dataLt: queryLt,
-        isMetadata: false
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        entProps: this.getEntProps({
+          dataSt: querySt,
+          dataLt: queryLt,
+          isMetadata: false
+        })
       }),
-      apiUrlHash: this.hashService.makeHash({
-        input: tab.apiUrl,
-        hashSecret: hashSecret
-      }),
-      sessionId: tab.sessionId,
-      serverTs: tab.serverTs
-    };
-
-    return queryEnt;
+      Result.bind(
+        'apiUrlHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.apiUrl,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.map(
+        (v): QueryEnt => ({
+          projectId: v.tab.projectId,
+          envId: v.tab.envId,
+          connectionId: v.tab.connectionId,
+          connectionType: v.tab.connectionType,
+          queryId: v.tab.queryId,
+          reportId: v.tab.reportId,
+          reportStructId: v.tab.reportStructId,
+          status: v.tab.status,
+          lastRunBy: v.tab.lastRunBy,
+          lastRunTs: v.tab.lastRunTs,
+          lastCancelTs: v.tab.lastCancelTs,
+          lastCompleteTs: v.tab.lastCompleteTs,
+          lastCompleteDuration: v.tab.lastCompleteDuration,
+          lastErrorTs: v.tab.lastErrorTs,
+          queryJobId: v.tab.queryJobId,
+          bigqueryQueryJobId: v.tab.bigqueryQueryJobId,
+          bigqueryConsecutiveErrorsGetJob:
+            v.tab.bigqueryConsecutiveErrorsGetJob,
+          bigqueryConsecutiveErrorsGetResults:
+            v.tab.bigqueryConsecutiveErrorsGetResults,
+          ...v.entProps,
+          apiUrlHash: v.apiUrlHash,
+          sessionId: v.tab.sessionId,
+          serverTs: v.tab.serverTs
+        })
+      )
+    );
   }
 
   reportTabToEnt(item: { tab: ReportTab; hashSecret: string }): ReportEnt {
@@ -1250,6 +1487,24 @@ export class TabToEntService {
   userTabToEnt(item: { tab: UserTab; hashSecret: string }): UserEnt {
     let { tab, hashSecret } = item;
 
+    let result: Result.Result<UserEnt, UserTabToEntError> =
+      this.userTabToEntResult({ tab: tab, hashSecret: hashSecret });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let userEnt: UserEnt = result.value;
+
+    return userEnt;
+  }
+
+  userTabToEntResult(item: {
+    tab: UserTab;
+    hashSecret?: string;
+  }): Result.Result<UserEnt, UserTabToEntError> {
+    let { tab } = item;
+
     let userSt: UserSt = {};
 
     let userLt: UserLt = {
@@ -1268,40 +1523,65 @@ export class TabToEntService {
       codexAuth: tab.codexAuth
     };
 
-    let userEnt: UserEnt = {
-      userId: tab.userId,
-      isEmailVerified: tab.isEmailVerified,
-      jwtMinIat: tab.jwtMinIat,
-      apiKeyPrefix: tab.apiKeyPrefix,
-      codexAuthUpdateTs: tab.codexAuthUpdateTs,
-      codexAuthExpiresTs: tab.codexAuthExpiresTs,
-      ...this.getEntProps({
-        dataSt: userSt,
-        dataLt: userLt,
-        isMetadata: false
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        entProps: this.getEntProps({
+          dataSt: userSt,
+          dataLt: userLt,
+          isMetadata: false
+        })
       }),
-      emailHash: this.hashService.makeHash({
-        input: tab.email,
-        hashSecret: hashSecret
-      }),
-      aliasHash: this.hashService.makeHash({
-        input: tab.alias,
-        hashSecret: hashSecret
-      }),
-      emailVerificationTokenHash: this.hashService.makeHash({
-        input: tab.emailVerificationToken,
-        hashSecret: hashSecret
-      }),
-      passwordResetTokenHash: this.hashService.makeHash({
-        input: tab.passwordResetToken,
-        hashSecret: hashSecret
-      }),
-
-      serverTs: tab.serverTs,
-      createdTs: tab.createdTs
-    };
-
-    return userEnt;
+      Result.bind(
+        'emailHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.email,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.bind(
+        'aliasHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.alias,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.bind(
+        'emailVerificationTokenHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.emailVerificationToken,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.bind(
+        'passwordResetTokenHash',
+        (v): Result.Result<string, MakeHashError> =>
+          this.hashService.makeHashResult({
+            input: v.tab.passwordResetToken,
+            hashSecret: v.hashSecret
+          })
+      ),
+      Result.map(
+        (v): UserEnt => ({
+          userId: v.tab.userId,
+          isEmailVerified: v.tab.isEmailVerified,
+          jwtMinIat: v.tab.jwtMinIat,
+          apiKeyPrefix: v.tab.apiKeyPrefix,
+          codexAuthUpdateTs: v.tab.codexAuthUpdateTs,
+          codexAuthExpiresTs: v.tab.codexAuthExpiresTs,
+          ...v.entProps,
+          emailHash: v.emailHash,
+          aliasHash: v.aliasHash,
+          emailVerificationTokenHash: v.emailVerificationTokenHash,
+          passwordResetTokenHash: v.passwordResetTokenHash,
+          serverTs: v.tab.serverTs,
+          createdTs: v.tab.createdTs
+        })
+      )
+    );
   }
 
   ocEventTabToEnt(item: { tab: OcEventTab; hashSecret: string }): OcEventEnt {

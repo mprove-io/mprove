@@ -51,7 +51,6 @@ import {
   type UserEnt,
   usersTable
 } from '#backend/drizzle/postgres/schema/users';
-import { asyncPoolResult } from '#backend/functions/async-pool-result/async-pool-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
@@ -64,6 +63,7 @@ import type { GetDconfigHashSecretError } from '#common/types/backend/function-e
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRecordsOutput } from '#common/types/backend/routes/test-routes/delete-records/delete-records-output';
+import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()

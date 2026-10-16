@@ -210,6 +210,7 @@ export class AppInterceptor implements NestInterceptor {
         traceId: req.traceId,
         method: request.method,
         cs: this.cs,
+        logger: this.logger,
         startTs: request.start_ts
       });
     }

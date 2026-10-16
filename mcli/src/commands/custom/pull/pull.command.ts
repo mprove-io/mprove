@@ -1,21 +1,24 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendPullRepoOutput } from '#common/types/backend/routes/repos/pull-repo/pull-repo-output';
 import type { ToBackendPullRepoRequest } from '#common/types/backend/routes/repos/pull-repo/pull-repo-request';
+import type { ToBackendPullRepoResponse } from '#common/types/backend/routes/repos/pull-repo/pull-repo-response';
 import {
   type RepoType,
   repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
+import type { PullCommandError } from '#mcli/types/function-errors/pull-command-error';
 
 export class PullCommand extends CustomCommand {
   static paths = [['pull']];
@@ -70,29 +73,25 @@ export class PullCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, PullCommandError> {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId =
+    let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
       this.repoType === 'production'
-        ? PROD_REPO_ID
-        : apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
-          ? apiKey.split('-')[2].toLowerCase()
-          : apiKey.split('-')[2];
+        ? Result.succeed(PROD_REPO_ID)
+        : getApiKeyRepoIdResult({ apiKey: apiKey });
+
+    if (Result.isFailure(repoIdResult)) {
+      return repoIdResult;
+    }
+
+    let repoId: string = repoIdResult.value;
 
     let pullRepoReqPayload: ToBackendPullRepoRequest['input'] = {
       projectId: this.projectId,
@@ -101,12 +100,21 @@ export class PullCommand extends CustomCommand {
       envId: this.env
     };
 
-    let pullRepoOutput: ToBackendPullRepoOutput = await mreq({
+    let pullRepoOutputResult: Result.Result<
+      ToBackendPullRepoOutput,
+      MreqError<ToBackendPullRepoResponse>
+    > = await mreqResult({
       apiKey: apiKey,
       route: 'api/ToBackendPullRepo',
       payload: pullRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
+
+    if (Result.isFailure(pullRepoOutputResult)) {
+      return pullRepoOutputResult;
+    }
+
+    let pullRepoOutput: ToBackendPullRepoOutput = pullRepoOutputResult.value;
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
@@ -146,5 +154,7 @@ export class PullCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

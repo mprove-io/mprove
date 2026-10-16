@@ -18,6 +18,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendUserProfileCodexAuthNotSetError } from '#common/types/backend/errors/backend-user-profile-codex-auth-not-set-error';
+import type { BuildCodexFetchError } from '#common/types/backend/function-errors/build-codex-fetch-error';
 import type { ExchangeDeviceAuthCodeError } from '#common/types/backend/function-errors/exchange-device-auth-code-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { LoadAuthError } from '#common/types/backend/function-errors/load-auth-error';
@@ -93,21 +94,6 @@ export class CodexService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-  async prewarmCodexAuth(item: { userId: string }): Promise<void> {
-    let { userId } = item;
-
-    let result: Result.Result<void, PrewarmCodexAuthError> =
-      await this.prewarmCodexAuthResult({ userId: userId });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({
-        message: result.error.code,
-        customData:
-          'customData' in result.error ? result.error.customData : undefined
-      });
-    }
-  }
-
   async prewarmCodexAuthResult(item: {
     userId: string;
   }): Result.ResultAsync<void, PrewarmCodexAuthError> {
@@ -160,21 +146,29 @@ export class CodexService {
       Result.map((v): void => undefined)
     );
   }
-  async buildCodexFetch(item: {
+  async buildCodexFetchResult(item: {
     userId: string;
     sessionId: string;
-  }): Promise<typeof fetch> {
+  }): Result.ResultAsync<typeof fetch, BuildCodexFetchError> {
     let { userId, sessionId } = item;
-    let auth = await this.loadAuth({ userId: userId });
+
+    let authResult: Result.Result<CodexAuthOpenai, LoadAuthError> =
+      await this.loadAuthResult({ userId: userId });
+
+    if (Result.isFailure(authResult)) {
+      return authResult;
+    }
+
+    let auth: CodexAuthOpenai = authResult.value;
     let accessToken = auth.access;
     let accountId = auth.accountId;
     // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 589-594
     let userAgent = `mprove/${CODEX_USER_AGENT_VERSION} (${os.platform()} ${os.release()}; ${os.arch()})`;
     // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 389-466
-    return async function codexFetch(
+    let codexFetch: typeof fetch = async (
       requestInput: RequestInfo | URL,
       init?: RequestInit
-    ): Promise<Response> {
+    ): Promise<Response> => {
       // Strip dummy authorization header
       if (init?.headers) {
         if (init.headers instanceof Headers) {
@@ -231,12 +225,33 @@ export class CodexService {
         headers: headers
       });
     };
+
+    return Result.succeed(codexFetch);
   }
   async getModels(item: { userId: string }): Promise<CodexModelsResult> {
     let { userId } = item;
     try {
-      await this.prewarmCodexAuth({ userId: userId });
-      let auth: CodexAuthOpenai = await this.loadAuth({ userId: userId });
+      let prewarmAuth: Result.Result<void, PrewarmCodexAuthError> =
+        await this.prewarmCodexAuthResult({ userId: userId });
+
+      if (Result.isFailure(prewarmAuth)) {
+        throw new ServerError({
+          message: prewarmAuth.error.code,
+          customData:
+            'customData' in prewarmAuth.error
+              ? prewarmAuth.error.customData
+              : undefined
+        });
+      }
+
+      let authResult: Result.Result<CodexAuthOpenai, LoadAuthError> =
+        await this.loadAuthResult({ userId: userId });
+
+      if (Result.isFailure(authResult)) {
+        throw new ServerError({ message: authResult.error.code });
+      }
+
+      let auth: CodexAuthOpenai = authResult.value;
       if (!isDefinedAndNotEmpty(auth.access)) {
         throw new Error('Codex access token is missing');
       }
@@ -319,21 +334,6 @@ export class CodexService {
 
     return Result.succeed(expiresIn);
   }
-  private async loadAuth(item: { userId: string }): Promise<CodexAuthOpenai> {
-    let { userId } = item;
-
-    let result: Result.Result<CodexAuthOpenai, LoadAuthError> =
-      await this.loadAuthResult({ userId: userId });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let auth: CodexAuthOpenai = result.value;
-
-    return auth;
-  }
-
   private async loadAuthResult(item: {
     userId: string;
   }): Result.ResultAsync<CodexAuthOpenai, LoadAuthError> {

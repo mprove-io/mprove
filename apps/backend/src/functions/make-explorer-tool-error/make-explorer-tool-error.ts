@@ -1,6 +1,7 @@
 import { ServerError } from '#common/classes/server-error/server-error';
 import type { GetExplorerModelsError } from '#common/types/backend/function-errors/get-explorer-models-error';
 import type { ProduceExplorerChartError } from '#common/types/backend/function-errors/produce-explorer-chart-error';
+import type { RunProducerError } from '#common/types/backend/function-errors/run-producer-error';
 import type { SearchModelFieldsError } from '#common/types/backend/function-errors/search-model-fields-error';
 
 // AI tool callbacks and the producer still reject to trigger their existing
@@ -9,7 +10,8 @@ export function makeExplorerToolError(item: {
   error:
     | GetExplorerModelsError
     | SearchModelFieldsError
-    | ProduceExplorerChartError;
+    | ProduceExplorerChartError
+    | RunProducerError;
 }): ServerError {
   let { error } = item;
 

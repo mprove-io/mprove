@@ -299,21 +299,6 @@ export class UsersService {
       : Result.succeed();
   }
 
-  async getUserCheckExists(item: { userId: string }): Promise<UserTab> {
-    let { userId } = item;
-
-    let result: Result.Result<UserTab, GetUserCheckExistsError> =
-      await this.getUserCheckExistsResult({ userId: userId });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let user: UserTab = result.value;
-
-    return user;
-  }
-
   async getUserCheckExistsResult(item: {
     userId: string;
   }): Result.ResultAsync<UserTab, GetUserCheckExistsError> {

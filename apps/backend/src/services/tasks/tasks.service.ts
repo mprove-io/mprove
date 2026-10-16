@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Result } from '@praha/byethrow';
 import pIteration from 'p-iteration';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { NotesService } from '#backend/services/db/notes/notes.service';
@@ -10,6 +11,10 @@ import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/ed
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ServerError } from '#common/classes/server-error/server-error';
+import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { GetEditorSessionsToPauseError } from '#common/types/backend/function-errors/get-editor-sessions-to-pause-error';
+import type { PauseSessionByIdError } from '#common/types/backend/function-errors/pause-session-by-id-error';
+import type { SyncAllEditorSessionsStatusError } from '#common/types/backend/function-errors/sync-all-editor-sessions-status-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 
 const { forEachSeries } = pIteration;
@@ -40,17 +45,24 @@ export class TasksService {
     if (this.isRunningCheckQueries === false) {
       this.isRunningCheckQueries = true;
 
-      await this.queriesService.checkBigqueryRunningQueries().catch(e => {
-        logToConsoleBackend({
-          log: new ServerError({
-            message: 'BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES',
-            originalError: e
-          }),
-          logLevel: 'Error',
-          logger: this.logger,
-          cs: this.cs
+      await this.queriesService
+        .checkBigqueryRunningQueriesResult()
+        .then(result => {
+          if (Result.isFailure(result)) {
+            throw new ServerError({ message: result.error.code });
+          }
+        })
+        .catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
+          });
         });
-      });
 
       this.isRunningCheckQueries = false;
     }
@@ -129,19 +141,46 @@ export class TasksService {
       this.isRunningPauseIdleEditorSessions = true;
 
       try {
-        let sessionIdsToPause =
-          await this.editorSandboxService.getEditorSessionsToPause();
+        let sessionsToPause: Result.Result<
+          string[],
+          GetEditorSessionsToPauseError
+        > = await this.editorSandboxService.getEditorSessionsToPauseResult();
+
+        if (Result.isFailure(sessionsToPause)) {
+          throw new ServerError({ message: sessionsToPause.error.code });
+        }
+
+        let sessionIdsToPause: string[] = sessionsToPause.value;
 
         await forEachSeries(sessionIdsToPause, async sessionId => {
           try {
-            let sessionLockToken: string =
-              await this.editorSessionLockService.acquireSessionLock({
-                sessionId: sessionId
-              });
+            let sessionLockResult: Result.Result<
+              string,
+              AcquireSessionLockError
+            > = await this.editorSessionLockService.acquireSessionLockResult({
+              sessionId: sessionId
+            });
+
+            if (Result.isFailure(sessionLockResult)) {
+              throw new ServerError({ message: sessionLockResult.error.code });
+            }
+
+            let sessionLockToken: string = sessionLockResult.value;
 
             try {
-              let freshSessionIdsToPause: string[] =
-                await this.editorSandboxService.getEditorSessionsToPause();
+              let freshSessionsToPause: Result.Result<
+                string[],
+                GetEditorSessionsToPauseError
+              > =
+                await this.editorSandboxService.getEditorSessionsToPauseResult();
+
+              if (Result.isFailure(freshSessionsToPause)) {
+                throw new ServerError({
+                  message: freshSessionsToPause.error.code
+                });
+              }
+
+              let freshSessionIdsToPause: string[] = freshSessionsToPause.value;
 
               let shouldPause = freshSessionIdsToPause.includes(sessionId);
 
@@ -153,10 +192,15 @@ export class TasksService {
                 sessionId: sessionId
               });
 
-              await this.editorSandboxService.pauseSessionById({
-                sessionId: sessionId,
-                pauseReason: 'Idle'
-              });
+              let pauseSession: Result.Result<void, PauseSessionByIdError> =
+                await this.editorSandboxService.pauseSessionByIdResult({
+                  sessionId: sessionId,
+                  pauseReason: 'Idle'
+                });
+
+              if (Result.isFailure(pauseSession)) {
+                throw new ServerError({ message: pauseSession.error.code });
+              }
 
               await this.editorStreamService.setSessionRequestedReloadTs({
                 sessionId: sessionId
@@ -202,8 +246,16 @@ export class TasksService {
       this.isRunningSyncEditorSessionsStatus = true;
 
       try {
-        let pausedSessionIds =
-          await this.editorSandboxService.syncAllEditorSessionsStatus();
+        let syncedSessions: Result.Result<
+          string[],
+          SyncAllEditorSessionsStatusError
+        > = await this.editorSandboxService.syncAllEditorSessionsStatusResult();
+
+        if (Result.isFailure(syncedSessions)) {
+          throw new ServerError({ message: syncedSessions.error.code });
+        }
+
+        let pausedSessionIds: string[] = syncedSessions.value;
 
         await forEachSeries(pausedSessionIds, async sessionId => {
           await this.editorStreamService.setSessionRequestedReloadTs({

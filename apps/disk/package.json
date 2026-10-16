@@ -73,6 +73,7 @@
     "reflect-metadata": "catalog:",
     "rxjs": "catalog:",
     "simple-git": "catalog:",
+    "tiny-async-pool": "catalog:",
     "trino-client": "catalog:",
     "ts-pattern": "catalog:",
     "tslib": "catalog:",

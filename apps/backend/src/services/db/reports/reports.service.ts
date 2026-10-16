@@ -18,7 +18,6 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { UnitsService } from '#backend/services/units/units.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import {
   EMPTY_REPORT_ID,
@@ -405,27 +404,6 @@ export class ReportsService {
       keyTag: undefined,
       serverTs: apiReport.serverTs
     };
-
-    return report;
-  }
-
-  async getReportCheckExists(item: { reportId: string; structId: string }) {
-    let { reportId, structId } = item;
-
-    let report = await this.db.drizzle.query.reportsTable
-      .findFirst({
-        where: and(
-          eq(reportsTable.structId, structId),
-          eq(reportsTable.reportId, reportId)
-        )
-      })
-      .then(x => this.tabService.reportEntToTab(x));
-
-    if (isUndefined(report)) {
-      throw new ServerError({
-        message: 'BACKEND_REPORT_DOES_NOT_EXIST'
-      });
-    }
 
     return report;
   }

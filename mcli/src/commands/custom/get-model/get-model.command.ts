@@ -1,19 +1,22 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
 import {
   type RepoType,
   repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
+import type { GetModelCommandError } from '#mcli/types/function-errors/get-model-command-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 export class GetModelCommand extends CustomCommand {
@@ -69,29 +72,25 @@ export class GetModelCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, GetModelCommandError> {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId =
+    let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
       this.repoType === 'production'
-        ? PROD_REPO_ID
-        : apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
-          ? apiKey.split('-')[2].toLowerCase()
-          : apiKey.split('-')[2];
+        ? Result.succeed(PROD_REPO_ID)
+        : getApiKeyRepoIdResult({ apiKey: apiKey });
+
+    if (Result.isFailure(repoIdResult)) {
+      return repoIdResult;
+    }
+
+    let repoId: string = repoIdResult.value;
 
     let getModelReqPayload: ToBackendGetModelRequest['input'] = {
       projectId: this.projectId,
@@ -102,12 +101,21 @@ export class GetModelCommand extends CustomCommand {
       getMalloy: this.getMalloy
     };
 
-    let getModelOutput: ToBackendGetModelOutput = await mreq({
+    let getModelOutputResult: Result.Result<
+      ToBackendGetModelOutput,
+      MreqError<ToBackendGetModelResponse>
+    > = await mreqResult({
       apiKey: apiKey,
       route: 'api/ToBackendGetModel',
       payload: getModelReqPayload,
       host: this.context.config.mproveCliHost
     });
+
+    if (Result.isFailure(getModelOutputResult)) {
+      return getModelOutputResult;
+    }
+
+    let getModelOutput: ToBackendGetModelOutput = getModelOutputResult.value;
 
     let log = processGetModelPayload({
       payload: getModelOutput
@@ -119,5 +127,7 @@ export class GetModelCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

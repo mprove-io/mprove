@@ -599,57 +599,6 @@ export class DashboardsService {
     );
   }
 
-  async getDashboardPart(item: {
-    structId: string;
-    user: UserTab;
-    apiUserMember: Member;
-    newDashboard: DashboardTab;
-  }): Promise<DashboardPart> {
-    let { structId, user, apiUserMember, newDashboard } = item;
-
-    let dashboardParts = await this.db.drizzle
-      .select({
-        keyTag: dashboardsTable.keyTag,
-        dashboardId: dashboardsTable.dashboardId,
-        draft: dashboardsTable.draft,
-        creatorId: dashboardsTable.creatorId,
-        st: dashboardsTable.st
-        // lt: {},
-      })
-      .from(dashboardsTable)
-      .where(
-        and(
-          eq(dashboardsTable.dashboardId, newDashboard.dashboardId),
-          eq(dashboardsTable.structId, structId),
-          newDashboard.draft === true
-            ? eq(dashboardsTable.creatorId, user.userId)
-            : eq(dashboardsTable.draft, false)
-        )
-      )
-      .then(xs =>
-        xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
-      );
-
-    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
-      x.draft === true
-        ? true
-        : checkAccess({
-            member: apiUserMember,
-            accessRoles: x.accessRolesCombined,
-            filePath: x.filePath
-          })
-    );
-
-    let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
-      this.tabToDashboardPart({
-        dashboard: x,
-        member: apiUserMember
-      })
-    );
-
-    return newDashboardParts.length > 0 ? newDashboardParts[0] : undefined;
-  }
-
   async getDashboardPartsResult(item: {
     structId: string;
     user: UserTab;

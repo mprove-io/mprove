@@ -17,7 +17,6 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -167,25 +166,6 @@ export class EnvsService {
     return Result.succeed();
   }
 
-  async getEnvCheckExistsAndAccess(item: {
-    projectId: string;
-    envId: string;
-    member: MemberTab;
-  }): Promise<EnvTab> {
-    let { projectId, envId, member } = item;
-
-    let result: Result.Result<EnvTab, GetEnvCheckExistsAndAccessError> =
-      await this.getEnvCheckExistsAndAccessResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let env: EnvTab = result.value;
-
-    return env;
-  }
-
   async getEnvCheckExistsAndAccessResult(item: {
     projectId: string;
     envId: string;
@@ -222,21 +202,6 @@ export class EnvsService {
     }
 
     return Result.succeed(env);
-  }
-
-  async getApiEnvs(item: { projectId: string }): Promise<Env[]> {
-    let { projectId } = item;
-
-    let result: Result.Result<Env[], GetApiEnvsError> =
-      await this.getApiEnvsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let envs: Env[] = result.value;
-
-    return envs;
   }
 
   async getApiEnvsResult(item: {

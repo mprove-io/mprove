@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import type { CachedColumnTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
@@ -12,24 +11,6 @@ import type { Env } from '#common/types/backend/parts/env';
 @Injectable()
 export class CachedColumnService {
   constructor(private envsService: EnvsService) {}
-
-  async getCacheEnvId(item: {
-    projectId: string;
-    envId: string;
-  }): Promise<string> {
-    let { projectId, envId } = item;
-
-    let result: Result.Result<string, GetCacheEnvIdError> =
-      await this.getCacheEnvIdResult({ projectId: projectId, envId: envId });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let cacheEnvId: string = result.value;
-
-    return cacheEnvId;
-  }
 
   async getCacheEnvIdResult(item: {
     projectId: string;

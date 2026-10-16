@@ -2,10 +2,8 @@ import { Injectable } from '@angular/core';
 import { interval, type Observable, type Subscription } from 'rxjs';
 import { exhaustMap, tap } from 'rxjs/operators';
 
-import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetExplorerChartTabOutput } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';
 import type { ToBackendGetExplorerChartTabRequest } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
-import type { ToBackendGetExplorerChartTabResponse } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-response';
 import type { ToBackendCloseExplorerSessionTabRequest } from '#common/types/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-request';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -33,12 +31,12 @@ export class ExplorerTabService {
 
     this.fetchTab({ sessionId: sessionId, chartId: chartId })
       .pipe(
-        tap((resp: ToBackendGetExplorerChartTabResponse) => {
+        tap((output: ToBackendGetExplorerChartTabOutput) => {
           this.setTabPayload({
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: unwrapBackendResponseOutput({ response: resp })
+            respPayload: output
           });
         })
       )
@@ -104,13 +102,13 @@ export class ExplorerTabService {
   private fetchTab(item: {
     sessionId: string;
     chartId: string;
-  }): Observable<ToBackendGetExplorerChartTabResponse> {
+  }): Observable<ToBackendGetExplorerChartTabOutput> {
     let payload: ToBackendGetExplorerChartTabRequest['input'] = {
       sessionId: item.sessionId,
       chartId: item.chartId
     };
 
-    return this.apiService.req({
+    return this.apiService.reqOutput({
       route: 'api/ToBackendGetExplorerChartTab',
       payload: payload
     });
@@ -170,12 +168,12 @@ export class ExplorerTabService {
         exhaustMap(() =>
           this.fetchTab({ sessionId: sessionId, chartId: chartId })
         ),
-        tap((resp: ToBackendGetExplorerChartTabResponse) => {
+        tap((output: ToBackendGetExplorerChartTabOutput) => {
           this.setTabPayload({
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: unwrapBackendResponseOutput({ response: resp })
+            respPayload: output
           });
         })
       )

@@ -10,7 +10,6 @@ import {
 } from '#backend/drizzle/postgres/schema/providers';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   ANTHROPIC_PROVIDER_ID,
   CODEX_PROVIDER_ID,
@@ -305,42 +304,6 @@ export class ProvidersService {
       ),
       Result.map((v): ProviderTab => v.provider)
     );
-  }
-
-  async getModelSelection(item: {
-    projectId: string;
-    providerId: string;
-    modelId: string;
-    variant?: string;
-    isUserCodexAuthSet: boolean;
-    isBuilder: boolean;
-  }): Promise<GetModelSelectionOutput> {
-    let {
-      projectId,
-      providerId,
-      modelId,
-      variant,
-      isUserCodexAuthSet,
-      isBuilder
-    } = item;
-
-    let result: Result.Result<GetModelSelectionOutput, GetModelSelectionError> =
-      await this.getModelSelectionResult({
-        projectId: projectId,
-        providerId: providerId,
-        modelId: modelId,
-        variant: variant,
-        isUserCodexAuthSet: isUserCodexAuthSet,
-        isBuilder: isBuilder
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let modelSelection: GetModelSelectionOutput = result.value;
-
-    return modelSelection;
   }
 
   async getModelSelectionResult(item: {

@@ -1,10 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { and, asc, eq, gt } from 'drizzle-orm';
 import { Observable } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { OcEventTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
@@ -12,6 +14,7 @@ import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { OcEventEntToTabError } from '#common/types/backend/function-errors/oc-event-ent-to-tab-error';
 import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 
 @Injectable()
@@ -60,17 +63,33 @@ export class SessionSseService {
             return;
           }
 
-          eventEnts.forEach(ent => {
-            let tab = this.tabService.ocEventEntToTab(ent);
-            let event: SessionEventApi = {
-              eventId: tab.eventId,
-              eventIndex: tab.eventIndex,
-              eventType: tab.type,
-              ocEvent: tab.ocEvent
-            };
-            observer.next(event);
-            lastEmittedIndex = tab.eventIndex;
-          });
+          let backfill: Result.Result<void[], OcEventEntToTabError> =
+            Result.sequence(eventEnts, x => {
+              let ocEventResult: Result.Result<
+                OcEventTab,
+                OcEventEntToTabError
+              > = this.tabService.ocEventEntToTabResult({ eventEnt: x });
+
+              if (Result.isFailure(ocEventResult)) {
+                return ocEventResult;
+              }
+
+              let tab: OcEventTab = ocEventResult.value;
+              let event: SessionEventApi = {
+                eventId: tab.eventId,
+                eventIndex: tab.eventIndex,
+                eventType: tab.type,
+                ocEvent: tab.ocEvent
+              };
+              observer.next(event);
+              lastEmittedIndex = tab.eventIndex;
+
+              return Result.succeed();
+            });
+
+          if (Result.isFailure(backfill)) {
+            throw new ServerError({ message: backfill.error.code });
+          }
 
           // Check reload flag on session
           let sessionRows = await this.db.drizzle

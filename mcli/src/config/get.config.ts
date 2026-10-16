@@ -1,72 +1,22 @@
-import { parse } from 'dotenv';
-import fse from 'fs-extra';
+import { Result } from '@praha/byethrow';
+import { ServerError } from '#common/classes/server-error/server-error';
+import { getConfigResult } from '#mcli/config/get-config-result';
+import type { McliConfig } from '#mcli/config/mcli-config';
+import type { GetConfigError } from '#mcli/types/function-errors/get-config-error';
 
-import { isDefined } from '#common/functions/is-defined/is-defined';
-import { zodParseOrThrowMcli } from '#mcli/functions/zod-parse-or-throw-mcli/zod-parse-or-throw-mcli';
-import { McliConfig, zMcliConfig } from './mcli-config';
-
-export function getConfig(envPath?: string) {
-  let envFilePath = isDefined(envPath) ? envPath : '.env';
-
-  let envFile: any = {};
-
-  if (isDefined(envFilePath)) {
-    let isPathExist = fse.pathExistsSync(envFilePath);
-    if (isPathExist === true) {
-      let stat = fse.statSync(envFilePath);
-      if (stat.isFile() === true) {
-        envFile = parse(fse.readFileSync(envFilePath));
-      }
-    }
-  }
-
-  let config: McliConfig = {
-    mproveCliHost: process.env.MPROVE_CLI_HOST || envFile.MPROVE_CLI_HOST,
-
-    mproveCliApiKey:
-      process.env.MPROVE_CLI_API_KEY || envFile.MPROVE_CLI_API_KEY,
-
-    mproveCliProjectId:
-      process.env.MPROVE_CLI_PROJECT_ID || envFile.MPROVE_CLI_PROJECT_ID,
-
-    mproveCliTestReposPath:
-      process.env.MPROVE_CLI_TEST_REPOS_PATH ||
-      envFile.MPROVE_CLI_TEST_REPOS_PATH,
-
-    mproveCliTestLocalSourceGitUrl:
-      process.env.MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL ||
-      envFile.MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL,
-
-    mproveCliTestDevSourceGitUrl:
-      process.env.MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL ||
-      envFile.MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL,
-
-    mproveCliTestPublicKeyPath:
-      process.env.MPROVE_CLI_TEST_PUBLIC_KEY_PATH ||
-      envFile.MPROVE_CLI_TEST_PUBLIC_KEY_PATH,
-
-    mproveCliTestPrivateKeyEncryptedPath:
-      process.env.MPROVE_CLI_TEST_PRIVATE_KEY_ENCRYPTED_PATH ||
-      envFile.MPROVE_CLI_TEST_PRIVATE_KEY_ENCRYPTED_PATH,
-
-    mproveCliTestPassPhrase:
-      process.env.MPROVE_CLI_TEST_PASS_PHRASE ||
-      envFile.MPROVE_CLI_TEST_PASS_PHRASE,
-
-    mproveCliTestDwhPostgresUser:
-      process.env.MPROVE_CLI_TEST_DWH_POSTGRES_USER ||
-      envFile.MPROVE_CLI_TEST_DWH_POSTGRES_USER,
-
-    mproveCliTestDwhPostgresPassword:
-      process.env.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD ||
-      envFile.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD
-  };
-
-  let validatedConfig = zodParseOrThrowMcli({
-    schema: zMcliConfig,
-    object: config,
-    errorMessage: 'MCLI_WRONG_ENV_VALUES'
+export function getConfig(envPath?: string): McliConfig {
+  let result: Result.Result<McliConfig, GetConfigError> = getConfigResult({
+    envPath: envPath
   });
 
-  return validatedConfig;
+  if (Result.isFailure(result)) {
+    throw new ServerError({
+      message: result.error.code,
+      displayData: result.error.displayData
+    });
+  }
+
+  let config: McliConfig = result.value;
+
+  return config;
 }

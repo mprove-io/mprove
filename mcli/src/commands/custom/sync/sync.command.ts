@@ -1,14 +1,13 @@
 import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import deepEqual from 'fast-deep-equal';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendSyncRepoOutput } from '#common/types/backend/routes/repos/sync-repo/sync-repo-output';
 import type { ToBackendSyncRepoRequest } from '#common/types/backend/routes/repos/sync-repo/sync-repo-request';
+import type { ToBackendSyncRepoResponse } from '#common/types/backend/routes/repos/sync-repo/sync-repo-response';
 import type { DiskFileChange } from '#common/types/disk/parts/file/disk-file-change';
 import type { ApplySyncPayloadError } from '#common/types/node-common/function-errors/apply-sync-payload-error';
 import type { GetChangesToCommitError } from '#common/types/node-common/function-errors/get-changes-to-commit-error';
@@ -16,9 +15,13 @@ import type { GetSyncAppliedChangesError } from '#common/types/node-common/funct
 import type { GetSyncFilesPayloadError } from '#common/types/node-common/function-errors/get-sync-files-payload-error';
 import type { ResetWorkingTreeToHeadError } from '#common/types/node-common/function-errors/reset-working-tree-to-head-error';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { McliSyncChangesMismatchError } from '#mcli/types/errors/mcli-sync-changes-mismatch-error';
+import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
+import type { SyncCommandError } from '#mcli/types/function-errors/sync-command-error';
 import { applySyncPayload } from '#node-common/functions/apply-sync-payload/apply-sync-payload';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit/get-changes-to-commit';
@@ -85,19 +88,11 @@ export class SyncCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, SyncCommandError> {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let repoDir = isDefined(this.localPath) ? this.localPath : process.cwd();
@@ -114,39 +109,36 @@ export class SyncCommand extends CustomCommand {
 
     let statusResult = await git.status();
 
-    let localPayload =
+    let localPayloadResult: Result.Result<
+      SyncFilesPayload,
+      GetSyncFilesPayloadError
+    > =
       this.fromServer === true
-        ? { changedFiles: [], deletedFiles: [] }
-        : await Result.unwrap(
-            Result.pipe(
-              Result.succeed({
-                repoDir: repoDir,
-                statusResult: statusResult
-              }),
-              Result.andThen(
-                (
-                  v
-                ): Result.ResultAsync<
-                  SyncFilesPayload,
-                  GetSyncFilesPayloadError
-                > =>
-                  getSyncFilesPayload({
-                    repoDir: v.repoDir,
-                    statusResult: v.statusResult
-                  })
-              ),
-              Result.mapError(v => new ServerError({ message: v.code }))
-            )
-          );
+        ? Result.succeed({ changedFiles: [], deletedFiles: [] })
+        : await getSyncFilesPayload({
+            repoDir: repoDir,
+            statusResult: statusResult
+          });
+
+    if (Result.isFailure(localPayloadResult)) {
+      return localPayloadResult;
+    }
+
+    let localPayload: SyncFilesPayload = localPayloadResult.value;
 
     let changedFiles = localPayload.changedFiles;
     let deletedFiles = localPayload.deletedFiles;
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId = apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
-      ? apiKey.split('-')[2].toLowerCase()
-      : apiKey.split('-')[2];
+    let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
+      getApiKeyRepoIdResult({ apiKey: apiKey });
+
+    if (Result.isFailure(repoIdResult)) {
+      return repoIdResult;
+    }
+
+    let repoId: string = repoIdResult.value;
 
     let syncRepoReqPayload: ToBackendSyncRepoRequest['input'];
     if (this.fromServer === true) {
@@ -179,134 +171,92 @@ export class SyncCommand extends CustomCommand {
       };
     }
 
-    let syncRepoOutput: ToBackendSyncRepoOutput = await mreq({
+    let syncRepoOutputResult: Result.Result<
+      ToBackendSyncRepoOutput,
+      MreqError<ToBackendSyncRepoResponse>
+    > = await mreqResult({
       apiKey: this.context.config.mproveCliApiKey,
       route: 'api/ToBackendSyncRepo',
       payload: syncRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
+    if (Result.isFailure(syncRepoOutputResult)) {
+      return syncRepoOutputResult;
+    }
+
+    let syncRepoOutput: ToBackendSyncRepoOutput = syncRepoOutputResult.value;
+
     let appliedChangesOnLocal: string[] = [];
     let appliedChangesOnServer: string[] = [];
 
     if (syncRepoOutput.direction === 'from-server') {
-      appliedChangesOnLocal = await Result.unwrap(
-        Result.pipe(
-          Result.succeed({
-            repoDir: repoDir,
-            changedFiles: syncRepoOutput.changedFiles,
-            deletedFiles: syncRepoOutput.deletedFiles,
-            statusResult: statusResult
-          }),
-          Result.andThen(
-            (v): Result.ResultAsync<string[], GetSyncAppliedChangesError> =>
-              getSyncAppliedChanges({
-                repoDir: v.repoDir,
-                changedFiles: v.changedFiles,
-                deletedFiles: v.deletedFiles,
-                statusResult: v.statusResult
-              })
-          ),
-          Result.mapError(
-            v =>
-              new ServerError({
-                message: v.code,
-                displayData: 'displayData' in v ? v.displayData : undefined
-              })
-          )
-        )
-      );
+      let appliedChanges: Result.Result<string[], GetSyncAppliedChangesError> =
+        await getSyncAppliedChanges({
+          repoDir: repoDir,
+          changedFiles: syncRepoOutput.changedFiles,
+          deletedFiles: syncRepoOutput.deletedFiles,
+          statusResult: statusResult
+        });
 
-      await Result.unwrap(
-        Result.pipe(
-          Result.succeed({
-            repoDir: repoDir,
-            statusResult: statusResult
-          }),
-          Result.andThen(
-            (v): Result.ResultAsync<void, ResetWorkingTreeToHeadError> =>
-              resetWorkingTreeToHead({
-                repoDir: v.repoDir,
-                statusResult: v.statusResult
-              })
-          ),
-          Result.mapError(
-            v =>
-              new ServerError({
-                message: v.code,
-                displayData: v.displayData
-              })
-          )
-        )
-      );
+      if (Result.isFailure(appliedChanges)) {
+        return appliedChanges;
+      }
 
-      await Result.unwrap(
-        Result.pipe(
-          Result.succeed({
-            repoDir: repoDir,
-            changedFiles: syncRepoOutput.changedFiles,
-            deletedFiles: syncRepoOutput.deletedFiles
-          }),
-          Result.andThen(
-            (v): Result.ResultAsync<void, ApplySyncPayloadError> =>
-              applySyncPayload({
-                repoDir: v.repoDir,
-                changedFiles: v.changedFiles,
-                deletedFiles: v.deletedFiles
-              })
-          ),
-          Result.mapError(
-            v =>
-              new ServerError({
-                message: v.code,
-                displayData: 'displayData' in v ? v.displayData : undefined
-              })
-          )
-        )
-      );
+      appliedChangesOnLocal = appliedChanges.value;
+
+      let resetWorkingTree: Result.Result<void, ResetWorkingTreeToHeadError> =
+        await resetWorkingTreeToHead({
+          repoDir: repoDir,
+          statusResult: statusResult
+        });
+
+      if (Result.isFailure(resetWorkingTree)) {
+        return resetWorkingTree;
+      }
+
+      let applySync: Result.Result<void, ApplySyncPayloadError> =
+        await applySyncPayload({
+          repoDir: repoDir,
+          changedFiles: syncRepoOutput.changedFiles,
+          deletedFiles: syncRepoOutput.deletedFiles
+        });
+
+      if (Result.isFailure(applySync)) {
+        return applySync;
+      }
     } else {
       appliedChangesOnServer = syncRepoOutput.appliedChangesOnServer;
     }
 
     //
 
-    let localChangesToCommit = await Result.unwrap(
-      Result.pipe(
-        Result.succeed({
-          repoDir: repoDir,
-          addContent: true,
-          expandRenamed: true
-        }),
-        Result.andThen(
-          (v): Result.ResultAsync<DiskFileChange[], GetChangesToCommitError> =>
-            getChangesToCommit({
-              repoDir: v.repoDir,
-              addContent: v.addContent,
-              expandRenamed: v.expandRenamed
-            })
-        ),
-        Result.mapError(v => new ServerError({ message: v.code }))
-      )
-    );
+    let changesToCommit: Result.Result<
+      DiskFileChange[],
+      GetChangesToCommitError
+    > = await getChangesToCommit({
+      repoDir: repoDir,
+      addContent: true,
+      expandRenamed: true
+    });
+
+    if (Result.isFailure(changesToCommit)) {
+      return changesToCommit;
+    }
+
+    let localChangesToCommit: DiskFileChange[] = changesToCommit.value;
 
     let devChangesToCommit = syncRepoOutput.devChangesToCommit;
     let syncSuccess = deepEqual(localChangesToCommit, devChangesToCommit);
 
     if (syncSuccess === false) {
-      logToConsoleMcli({
-        log: {
+      return Result.fail<McliSyncChangesMismatchError>({
+        code: 'MCLI_SYNC_CHANGES_MISMATCH',
+        displayData: {
           localChangesToCommit: localChangesToCommit,
           devChangesToCommit: devChangesToCommit
-        },
-        logLevel: 'Info',
-        context: this.context,
-        isJson: this.json
+        }
       });
-
-      let serverError = new ServerError({
-        message: 'MCLI_SYNC_FAILED'
-      });
-      throw serverError;
     }
 
     let builderUrl = getBuilderUrl({
@@ -363,5 +313,7 @@ export class SyncCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

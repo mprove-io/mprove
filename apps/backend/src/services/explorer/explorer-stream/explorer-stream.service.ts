@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import type { EventMessagePartUpdated, ToolPart } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
 import {
+  type LanguageModel,
   type LanguageModelUsage,
   type ModelMessage,
   type ProviderMetadata,
@@ -15,6 +16,14 @@ import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  OcMessageTab,
+  OcPartTab,
+  ProjectTab,
+  SessionTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
@@ -23,6 +32,7 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { CodexService } from '#backend/services/codex/codex.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -47,8 +57,19 @@ import {
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BuildCodexFetchError } from '#common/types/backend/function-errors/build-codex-fetch-error';
+import type { GetExplorerModelError } from '#common/types/backend/function-errors/get-explorer-model-error';
 import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
+import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
+import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
+import type { LoadMessageHistoryError } from '#common/types/backend/function-errors/load-message-history-error';
+import type { OcMessageEntToTabError } from '#common/types/backend/function-errors/oc-message-ent-to-tab-error';
+import type { OcPartEntToTabError } from '#common/types/backend/function-errors/oc-part-ent-to-tab-error';
 import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
+import type { RunProducerError } from '#common/types/backend/function-errors/run-producer-error';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
 import type { AiStreamCommand } from '#common/types/backend/parts/session/ai-stream-command';
 
@@ -496,16 +517,21 @@ export class ExplorerStreamService implements OnModuleDestroy {
           sessionId: sessionId
         });
 
-        await this.runProducer({
-          sessionId: sessionId,
-          provider: currentParams.provider,
-          modelId: currentParams.modelId,
-          variant: currentParams.variant,
-          userMessage: currentParams.userMessage,
-          abortController: abortController,
-          messageId: currentParams.messageId,
-          partId: currentParams.partId
-        });
+        let runProducerOutput: Result.Result<void, RunProducerError> =
+          await this.runProducerResult({
+            sessionId: sessionId,
+            provider: currentParams.provider,
+            modelId: currentParams.modelId,
+            variant: currentParams.variant,
+            userMessage: currentParams.userMessage,
+            abortController: abortController,
+            messageId: currentParams.messageId,
+            partId: currentParams.partId
+          });
+
+        if (Result.isFailure(runProducerOutput)) {
+          throw makeExplorerToolError({ error: runProducerOutput.error });
+        }
       } catch (e: any) {
         logToConsoleBackend({
           log: new ServerError({
@@ -585,7 +611,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
   // --- Producer ---
 
-  private async runProducer(item: {
+  private async runProducerResult(item: {
     sessionId: string;
     provider: string;
     modelId: string;
@@ -594,7 +620,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     abortController: AbortController;
     messageId: string;
     partId: string;
-  }): Promise<void> {
+  }): Result.ResultAsync<void, RunProducerError> {
     let {
       sessionId,
       provider,
@@ -606,19 +632,45 @@ export class ExplorerStreamService implements OnModuleDestroy {
       partId
     } = item;
 
-    let history = await this.loadMessageHistory({
+    let historyResult: Result.Result<ModelMessage[], LoadMessageHistoryError> =
+      await this.loadMessageHistoryResult({
+        sessionId: sessionId
+      });
+
+    if (Result.isFailure(historyResult)) {
+      return historyResult;
+    }
+
+    let history: ModelMessage[] = historyResult.value;
+
+    let sessionResult: Result.Result<
+      SessionTab,
+      GetSessionByIdCheckExistsError
+    > = await this.sessionsService.getSessionByIdCheckExistsResult({
       sessionId: sessionId
     });
 
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
-    });
+    if (Result.isFailure(sessionResult)) {
+      return sessionResult;
+    }
 
-    let user = await this.usersService.getUserCheckExists({
-      userId: session.userId
-    });
+    let session: SessionTab = sessionResult.value;
 
-    let modelSelection = await this.providersService.getModelSelection({
+    let userResult: Result.Result<UserTab, GetUserCheckExistsError> =
+      await this.usersService.getUserCheckExistsResult({
+        userId: session.userId
+      });
+
+    if (Result.isFailure(userResult)) {
+      return userResult;
+    }
+
+    let user: UserTab = userResult.value;
+
+    let modelSelectionResult: Result.Result<
+      GetModelSelectionOutput,
+      GetModelSelectionError
+    > = await this.providersService.getModelSelectionResult({
       projectId: session.projectId,
       providerId: provider,
       modelId: modelId,
@@ -627,11 +679,24 @@ export class ExplorerStreamService implements OnModuleDestroy {
       isBuilder: false
     });
 
+    if (Result.isFailure(modelSelectionResult)) {
+      return modelSelectionResult;
+    }
+
+    let modelSelection: GetModelSelectionOutput = modelSelectionResult.value;
+
     let isCodex = modelSelection.provider.type === 'OpenAICodex';
 
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: session.projectId
-    });
+    let projectResult: Result.Result<ProjectTab, GetProjectCheckExistsError> =
+      await this.projectsService.getProjectCheckExistsResult({
+        projectId: session.projectId
+      });
+
+    if (Result.isFailure(projectResult)) {
+      return projectResult;
+    }
+
+    let project: ProjectTab = projectResult.value;
 
     let bridge = await this.db.drizzle.query.bridgesTable.findFirst({
       where: and(
@@ -644,10 +709,17 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let traceId = makeId();
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: session.projectId
-    });
+    let structResult: Result.Result<StructTab, GetStructCheckExistsError> =
+      await this.structsService.getStructCheckExistsResult({
+        structId: bridge.structId,
+        projectId: session.projectId
+      });
+
+    if (Result.isFailure(structResult)) {
+      return structResult;
+    }
+
+    let struct: StructTab = structResult.value;
 
     let explorerModelPartsResult: Result.Result<
       ExplorerModelPart[],
@@ -662,7 +734,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     });
 
     if (Result.isFailure(explorerModelPartsResult)) {
-      throw makeExplorerToolError({ error: explorerModelPartsResult.error });
+      return explorerModelPartsResult;
     }
 
     let explorerModelParts: ExplorerModelPart[] =
@@ -753,18 +825,32 @@ export class ExplorerStreamService implements OnModuleDestroy {
     });
 
     // Build codex fetch if needed (reads fresh auth from DB)
-    let codexFetch = isCodex
-      ? await this.codexService.buildCodexFetch({
-          userId: user.userId,
-          sessionId: sessionId
-        })
-      : undefined;
+    let codexFetchResult: Result.Result<typeof fetch, BuildCodexFetchError> =
+      isCodex
+        ? await this.codexService.buildCodexFetchResult({
+            userId: user.userId,
+            sessionId: sessionId
+          })
+        : Result.succeed(undefined);
 
-    let model = this.explorerModelsService.getModel({
-      provider: modelSelection.provider,
-      modelId: modelId,
-      codexFetch: codexFetch
-    });
+    if (Result.isFailure(codexFetchResult)) {
+      return codexFetchResult;
+    }
+
+    let codexFetch: typeof fetch = codexFetchResult.value;
+
+    let modelResult: Result.Result<LanguageModel, GetExplorerModelError> =
+      this.explorerModelsService.getExplorerModelResult({
+        provider: modelSelection.provider,
+        modelId: modelId,
+        codexFetch: codexFetch
+      });
+
+    if (Result.isFailure(modelResult)) {
+      return modelResult;
+    }
+
+    let model: LanguageModel = modelResult.value;
 
     let isOpenAI = modelSelection.provider.type === 'OpenAI' || isCodex;
 
@@ -1193,6 +1279,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
         }
       }
     }
+
+    return Result.succeed();
   }
 
   aiUsageToOpenCodeTokens(item: {
@@ -1251,9 +1339,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     };
   }
 
-  async loadMessageHistory(item: {
+  async loadMessageHistoryResult(item: {
     sessionId: string;
-  }): Promise<ModelMessage[]> {
+  }): Result.ResultAsync<ModelMessage[], LoadMessageHistoryError> {
     let { sessionId } = item;
 
     let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
@@ -1261,32 +1349,48 @@ export class ExplorerStreamService implements OnModuleDestroy {
       orderBy: [asc(ocMessagesTable.createdTs)]
     });
 
-    let messageTabs = messageEnts.map(x =>
-      this.tabService.ocMessageEntToTab(x)
-    );
+    let messagesResult: Result.Result<OcMessageTab[], OcMessageEntToTabError> =
+      Result.sequence(messageEnts, x =>
+        this.tabService.ocMessageEntToTabResult({ messageEnt: x })
+      );
+
+    if (Result.isFailure(messagesResult)) {
+      return messagesResult;
+    }
+
+    let messages: OcMessageTab[] = messagesResult.value;
 
     let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
       where: eq(ocPartsTable.sessionId, sessionId),
       orderBy: [asc(ocPartsTable.createdTs)]
     });
 
-    let partTabs = partEnts.map(x => this.tabService.ocPartEntToTab(x));
+    let partsResult: Result.Result<OcPartTab[], OcPartEntToTabError> =
+      Result.sequence(partEnts, x =>
+        this.tabService.ocPartEntToTabResult({ partEnt: x })
+      );
 
-    let partsByMessageId = new Map<string, typeof partTabs>();
+    if (Result.isFailure(partsResult)) {
+      return partsResult;
+    }
 
-    partTabs.forEach(part => {
-      let existing = partsByMessageId.get(part.messageId);
+    let parts: OcPartTab[] = partsResult.value;
+
+    let messagePartMap: Map<string, OcPartTab[]> = new Map();
+
+    parts.forEach(part => {
+      let existing: OcPartTab[] = messagePartMap.get(part.messageId);
       if (existing) {
         existing.push(part);
       } else {
-        partsByMessageId.set(part.messageId, [part]);
+        messagePartMap.set(part.messageId, [part]);
       }
     });
 
     let coreMessages: ModelMessage[] = [];
 
-    messageTabs.forEach(msg => {
-      let msgParts = partsByMessageId.get(msg.messageId) || [];
+    messages.forEach(msg => {
+      let msgParts: OcPartTab[] = messagePartMap.get(msg.messageId) || [];
       let contentParts: string[] = [];
 
       msgParts.forEach(part => {
@@ -1345,7 +1449,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       }
     });
 
-    return coreMessages;
+    return Result.succeed(coreMessages);
   }
 
   private stringifyToolHistoryValue(item: { value: unknown }): string {

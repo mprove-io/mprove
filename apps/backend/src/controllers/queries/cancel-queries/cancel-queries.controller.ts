@@ -31,7 +31,6 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { asyncPoolResult } from '#backend/functions/async-pool-result/async-pool-result';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
@@ -64,6 +63,7 @@ import type { MconfigEntToTabError } from '#common/types/backend/function-errors
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
+import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)

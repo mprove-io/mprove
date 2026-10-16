@@ -24,6 +24,7 @@ import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcMessageTab,
   OcPartTab,
+  OcSessionTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
@@ -52,8 +53,12 @@ import {
   KEY_OPENCODE_STREAM_OWNER
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
 import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
+import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { PauseSessionByIdError } from '#common/types/backend/function-errors/pause-session-by-id-error';
 import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
 import type { RejectQuestionError } from '#common/types/backend/function-errors/reject-question-error';
 import type { RespondToPermissionError } from '#common/types/backend/function-errors/respond-to-permission-error';
@@ -154,7 +159,7 @@ export class EditorStreamService implements OnModuleDestroy {
           //   `[oc-stream] received interact for sessionId=${sessionId}`
           // );
 
-          this.executeInteraction({
+          void this.executeInteractionResult({
             sessionId: sessionId,
             opencodeSessionId: payload.opencodeSessionId,
             interactionType: payload.interactionType,
@@ -172,12 +177,16 @@ export class EditorStreamService implements OnModuleDestroy {
             system: payload.system
           })
             .then(result => {
-              this.redisClient
-                .publish(replyTo, JSON.stringify(result))
+              let reply: InteractCommandReply = Result.isFailure(result)
+                ? { success: false, error: result.error.code }
+                : result.value;
+
+              void this.redisClient
+                .publish(replyTo, JSON.stringify(reply))
                 .catch(() => {});
             })
             .catch(e => {
-              this.redisClient
+              void this.redisClient
                 .publish(
                   replyTo,
                   JSON.stringify({
@@ -280,21 +289,43 @@ export class EditorStreamService implements OnModuleDestroy {
 
     await forEachSeries(sessionIds, async (sessionId: string) => {
       try {
-        let sessionLockToken: string =
-          await this.editorSessionLockService.acquireSessionLock({
+        let sessionLockResult: Result.Result<string, AcquireSessionLockError> =
+          await this.editorSessionLockService.acquireSessionLockResult({
             sessionId: sessionId
           });
 
-        try {
-          let session: SessionTab =
-            await this.sessionsService.getSessionByIdCheckExists({
-              sessionId: sessionId
-            });
+        if (Result.isFailure(sessionLockResult)) {
+          throw new ServerError({ message: sessionLockResult.error.code });
+        }
 
-          let client: OpencodeClient =
-            await this.editorOpencodeService.getOpenCodeClient({
-              sessionId: sessionId
-            });
+        let sessionLockToken: string = sessionLockResult.value;
+
+        try {
+          let sessionResult: Result.Result<
+            SessionTab,
+            GetSessionByIdCheckExistsError
+          > = await this.sessionsService.getSessionByIdCheckExistsResult({
+            sessionId: sessionId
+          });
+
+          if (Result.isFailure(sessionResult)) {
+            throw new ServerError({ message: sessionResult.error.code });
+          }
+
+          let session: SessionTab = sessionResult.value;
+
+          let clientResult: Result.Result<
+            OpencodeClient,
+            GetOpenCodeClientError
+          > = await this.editorOpencodeService.getOpenCodeClientResult({
+            sessionId: sessionId
+          });
+
+          if (Result.isFailure(clientResult)) {
+            throw new ServerError({ message: clientResult.error.code });
+          }
+
+          let client: OpencodeClient = clientResult.value;
 
           let statusResp: Awaited<
             ReturnType<OpencodeClient['session']['status']>
@@ -310,10 +341,15 @@ export class EditorStreamService implements OnModuleDestroy {
 
           await this.stopEventStream({ sessionId: sessionId });
 
-          await this.editorSandboxService.pauseSessionById({
-            sessionId: sessionId,
-            pauseReason: 'Safe'
-          });
+          let pauseSession: Result.Result<void, PauseSessionByIdError> =
+            await this.editorSandboxService.pauseSessionByIdResult({
+              sessionId: sessionId,
+              pauseReason: 'Safe'
+            });
+
+          if (Result.isFailure(pauseSession)) {
+            throw new ServerError({ message: pauseSession.error.code });
+          }
 
           await this.setSessionRequestedReloadTs({
             sessionId: sessionId
@@ -395,29 +431,6 @@ export class EditorStreamService implements OnModuleDestroy {
   }
 
   // stream
-
-  async startEventStream(item: {
-    sessionId: string;
-    opencodeSessionId: string;
-    isSetReload: boolean;
-  }): Promise<boolean> {
-    let { sessionId, opencodeSessionId, isSetReload } = item;
-
-    let result: Result.Result<boolean, StartEventStreamError> =
-      await this.startEventStreamResult({
-        sessionId: sessionId,
-        opencodeSessionId: opencodeSessionId,
-        isSetReload: isSetReload
-      });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let isStarted: boolean = result.value;
-
-    return isStarted;
-  }
 
   async startEventStreamResult(item: {
     sessionId: string;
@@ -718,9 +731,16 @@ export class EditorStreamService implements OnModuleDestroy {
         ? maxEventIndexRow[0].maxIndex
         : -1;
 
-      let client = await this.editorOpencodeService.getOpenCodeClient({
-        sessionId: item.sessionId
-      });
+      let clientResult: Result.Result<OpencodeClient, GetOpenCodeClientError> =
+        await this.editorOpencodeService.getOpenCodeClientResult({
+          sessionId: item.sessionId
+        });
+
+      if (Result.isFailure(clientResult)) {
+        throw new ServerError({ message: clientResult.error.code });
+      }
+
+      let client: OpencodeClient = clientResult.value;
 
       let [
         messagesResp,
@@ -785,9 +805,18 @@ export class EditorStreamService implements OnModuleDestroy {
         )
       );
 
-      let ocSessionTab = await this.sessionsService.getOcSessionBySessionId({
+      let ocSessionResult: Result.Result<
+        OcSessionTab,
+        GetOcSessionBySessionIdError
+      > = await this.sessionsService.getOcSessionBySessionIdResult({
         sessionId: item.sessionId
       });
+
+      if (Result.isFailure(ocSessionResult)) {
+        throw new ServerError({ message: ocSessionResult.error.code });
+      }
+
+      let ocSessionTab: OcSessionTab = ocSessionResult.value;
 
       if (!ocSessionTab) {
         ocSessionTab = this.sessionsService.makeOcSession({
@@ -869,71 +898,6 @@ export class EditorStreamService implements OnModuleDestroy {
         cs: this.cs
       });
     }
-  }
-
-  async executeInteraction(item: {
-    sessionId: string;
-    opencodeSessionId: string;
-    interactionType: InteractionType;
-    message?: string;
-    agent?: string;
-    providerId?: string;
-    modelId?: string;
-    variant?: string;
-    permissionId?: string;
-    reply?: string;
-    questionId?: string;
-    answers?: string[][];
-    messageId?: string;
-    partId?: string;
-    system?: string;
-  }): Promise<{ success: boolean }> {
-    let {
-      sessionId,
-      opencodeSessionId,
-      interactionType,
-      message,
-      agent,
-      providerId,
-      modelId,
-      variant,
-      permissionId,
-      reply,
-      questionId,
-      answers,
-      messageId,
-      partId,
-      system
-    } = item;
-
-    let result: Result.Result<
-      ExecuteInteractionOutput,
-      ExecuteInteractionError
-    > = await this.executeInteractionResult({
-      sessionId: sessionId,
-      opencodeSessionId: opencodeSessionId,
-      interactionType: interactionType,
-      message: message,
-      agent: agent,
-      providerId: providerId,
-      modelId: modelId,
-      variant: variant,
-      permissionId: permissionId,
-      reply: reply,
-      questionId: questionId,
-      answers: answers,
-      messageId: messageId,
-      partId: partId,
-      system: system
-    });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let interaction: ExecuteInteractionOutput = result.value;
-
-    return interaction;
   }
 
   async executeInteractionResult(item: {

@@ -23,7 +23,6 @@ import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { DatabricksAuthType } from '#common/types/backend/parts/connection-parts/databricks-auth-type';
@@ -34,7 +33,6 @@ import type { ToBackendCreateConnectionResponse } from '#common/types/backend/ro
 import type { ToBackendTestConnectionRequest } from '#common/types/backend/routes/connections/test-connection/test-connection-request';
 import type { ToBackendTestConnectionResponse } from '#common/types/backend/routes/connections/test-connection/test-connection-response';
 import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
-import type { ToBackendGetEnvsListResponse } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -549,15 +547,12 @@ export class AddConnectionDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .req({
+      .reqOutput({
         route: 'api/ToBackendGetEnvsList',
         payload: payload
       })
       .pipe(
-        map(
-          (resp: ToBackendGetEnvsListResponse) =>
-            unwrapBackendResponseOutput({ response: resp }).envsList
-        ),
+        map(output => output.envsList),
         tap(x => {
           this.envsList = x;
           this.envsListLoading = false;

@@ -1,18 +1,8 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSetOrgOwnerRequestDto,
   ToBackendSetOrgOwnerResponseDto
@@ -24,11 +14,10 @@ import {
   type UserEnt,
   usersTable
 } from '#backend/drizzle/postgres/schema/users';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
+import { DbWriteService } from '#backend/services/db-write/db-write.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -39,6 +28,7 @@ import type { BackendNewOwnerNotFoundError } from '#common/types/backend/errors/
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
+import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetOrgOwnerOutput } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-output';
 
@@ -52,8 +42,7 @@ export class SetOrgOwnerController {
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
+    private dbWriteService: DbWriteService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -101,7 +90,12 @@ export class SetOrgOwnerController {
       ),
       Result.bind(
         'newOwner',
-        (v): Result.ResultAsync<UserTab, BackendNewOwnerNotFoundError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          UserTab,
+          BackendNewOwnerNotFoundError | UserEntToTabError
+        > =>
           this.db.drizzle.query.usersTable
             .findFirst({
               where: and(
@@ -112,31 +106,18 @@ export class SetOrgOwnerController {
             .then((x: UserEnt) =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' })
-                : Result.succeed(this.tabService.userEntToTab(x))
+                : this.tabService.userEntToTabResult({ userEnt: x })
             )
       ),
       Result.map(v => {
         v.org.ownerId = v.newOwner.userId;
-
         v.org.ownerEmail = v.newOwner.email;
 
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.write({
-                      tx: tx,
-                      insertOrUpdate: { orgs: [v.org] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
+        this.dbWriteService.writeResult({
+          insertOrUpdate: { orgs: [v.org] }
         })
       ),
       Result.map(

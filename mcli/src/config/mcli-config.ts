@@ -1,4 +1,19 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type McliConfig = {
+  mproveCliHost: string;
+  mproveCliApiKey?: string;
+  mproveCliProjectId?: string;
+  mproveCliTestReposPath?: string;
+  mproveCliTestLocalSourceGitUrl?: string;
+  mproveCliTestDevSourceGitUrl?: string;
+  mproveCliTestPublicKeyPath?: string;
+  mproveCliTestPrivateKeyEncryptedPath?: string;
+  mproveCliTestPassPhrase?: string;
+  mproveCliTestDwhPostgresUser?: string;
+  mproveCliTestDwhPostgresPassword?: string;
+};
 
 export let zMcliConfig = z.object({
   mproveCliHost: z.string(),
@@ -14,4 +29,4 @@ export let zMcliConfig = z.object({
   mproveCliTestDwhPostgresPassword: z.string().optional()
 });
 
-export type McliConfig = z.infer<typeof zMcliConfig>;
+assertTypesEqual<McliConfig, z.infer<typeof zMcliConfig>>({ value: true });

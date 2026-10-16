@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import type { OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
@@ -57,6 +58,7 @@ import { EditorCodexService } from '#backend/services/editor/editor-codex/editor
 import { EditorConnectionsService } from '#backend/services/editor/editor-connections/editor-connections.service';
 import type { ProviderConfigResult } from '#backend/services/editor/editor-opencode/editor-opencode.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
+import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -68,13 +70,17 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { CreateSessionRepoError } from '#common/types/backend/function-errors/create-session-repo-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
 import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
+import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
 import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import type { StartEventStreamError } from '#common/types/backend/function-errors/start-event-stream-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
@@ -507,11 +513,22 @@ export class CreateEditorSessionController {
 
       // console.log('opencode server started');
 
-      let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
+      let opencodeClientResult: Result.Result<
+        OpencodeClient,
+        GetOpenCodeClientError
+      > = await this.editorOpencodeService.getOpenCodeClientResult({
         sessionId: sessionId,
         sandboxBaseUrl: sandboxBaseUrl,
         opencodePassword: opencodePassword
       });
+
+      if (Result.isFailure(opencodeClientResult)) {
+        throw new ServerError({
+          message: opencodeClientResult.error.code
+        });
+      }
+
+      let opencodeClient: OpencodeClient = opencodeClientResult.value;
 
       let { data: opencodeSession } = await opencodeClient.session
         .create({}, { throwOnError: true })
@@ -532,9 +549,20 @@ export class CreateEditorSessionController {
       let start = Date.now();
 
       while (true) {
-        currentSession = await this.sessionsService.getSessionByIdCheckExists({
-          sessionId
+        let currentSessionResult: Result.Result<
+          SessionTab,
+          GetSessionByIdCheckExistsError
+        > = await this.sessionsService.getSessionByIdCheckExistsResult({
+          sessionId: sessionId
         });
+
+        if (Result.isFailure(currentSessionResult)) {
+          throw new ServerError({
+            message: currentSessionResult.error.code
+          });
+        }
+
+        currentSession = currentSessionResult.value;
         if (currentSession.initialCommit) break;
         if (Date.now() - start >= retryMs) {
           await this.db.drizzle.execute(
@@ -588,19 +616,30 @@ export class CreateEditorSessionController {
         getRetryOption(this.cs, this.logger)
       );
 
-      let isStreamStartedFresh =
-        await this.editorStreamService.startEventStream({
+      let startEventStream: Result.Result<boolean, StartEventStreamError> =
+        await this.editorStreamService.startEventStreamResult({
           sessionId: sessionId,
           opencodeSessionId: opencodeSessionId,
           isSetReload: false
         });
+
+      if (Result.isFailure(startEventStream)) {
+        throw new ServerError({
+          message: startEventStream.error.code
+        });
+      }
+
+      let isStreamStartedFresh: boolean = startEventStream.value;
 
       if (firstMessage) {
         // system prompt now handled via opencode instructions mechanism
         // (see mprove-instructions.md and mprove-session.json)
 
         try {
-          await this.editorStreamService.executeInteraction({
+          let executeInteractionOutput: Result.Result<
+            ExecuteInteractionOutput,
+            ExecuteInteractionError
+          > = await this.editorStreamService.executeInteractionResult({
             sessionId: sessionId,
             opencodeSessionId: opencodeSessionId,
             interactionType: 'Message',
@@ -612,6 +651,12 @@ export class CreateEditorSessionController {
             messageId: messageId,
             partId: partId
           });
+
+          if (Result.isFailure(executeInteractionOutput)) {
+            throw new ServerError({
+              message: executeInteractionOutput.error.code
+            });
+          }
         } catch (e) {
           if (isStreamStartedFresh) {
             await this.editorStreamService.stopEventStream({

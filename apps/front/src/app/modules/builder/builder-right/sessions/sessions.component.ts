@@ -4,15 +4,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
-import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendArchiveSessionRequest } from '#common/types/backend/routes/sessions/archive-session/archive-session-request';
-import type { ToBackendArchiveSessionResponse } from '#common/types/backend/routes/sessions/archive-session/archive-session-response';
 import type { ToBackendGetSessionsListOutput } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
 import type { ToBackendGetSessionsListRequest } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
 import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 import type { ToBackendPauseEditorSessionRequest } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
-import type { ToBackendPauseEditorSessionResponse } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
 import type { SessionApiX } from '#common/types/front/session/session-api-x';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -197,16 +194,14 @@ export class SessionsComponent implements OnInit {
     };
 
     this.apiService
-      .req({
+      .reqOutput({
         route: 'api/ToBackendPauseEditorSession',
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        map((resp: ToBackendPauseEditorSessionResponse) => {
-          let respSession = unwrapBackendResponseOutput({
-            response: resp
-          }).session;
+        map(output => {
+          let respSession: SessionApi = output.session;
 
           if (respSession.status === 'Archived') {
             this.updatedArchivedSessions({
@@ -254,16 +249,14 @@ export class SessionsComponent implements OnInit {
     };
 
     this.apiService
-      .req({
+      .reqOutput({
         route: 'api/ToBackendArchiveSession',
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        map((resp: ToBackendArchiveSessionResponse) => {
-          let respSession = unwrapBackendResponseOutput({
-            response: resp
-          }).session;
+        map(output => {
+          let respSession: SessionApi = output.session;
 
           this.updatedArchivedSessions({
             session: session,

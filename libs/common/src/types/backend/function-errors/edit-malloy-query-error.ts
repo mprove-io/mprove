@@ -8,14 +8,20 @@ import {
   type GetSelectedGivensError,
   zGetSelectedGivensError
 } from '#common/types/backend/function-errors/get-selected-givens-error';
+import {
+  type MakeMalloyQueryError,
+  zMakeMalloyQueryError
+} from '#common/types/node-common/function-errors/make-malloy-query-error';
 
 export type EditMalloyQueryError =
   | GetApiEnvConnectionsWithFallbackError
-  | GetSelectedGivensError;
+  | GetSelectedGivensError
+  | MakeMalloyQueryError;
 
 export const zEditMalloyQueryError = z.union([
   zGetApiEnvConnectionsWithFallbackError,
-  zGetSelectedGivensError
+  zGetSelectedGivensError,
+  zMakeMalloyQueryError
 ]);
 
 assertTypesEqual<EditMalloyQueryError, z.infer<typeof zEditMalloyQueryError>>({

@@ -1,3 +1,4 @@
+import { Result } from '@praha/byethrow';
 import {
   type ExtractTablesWithRelations,
   eq,
@@ -7,18 +8,21 @@ import {
 import type { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
-import { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
+import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { DconfigEntToTabError } from '#common/types/backend/function-errors/dconfig-ent-to-tab-error';
+import type { TabsPackToEntsPackError } from '#common/types/backend/function-errors/tabs-pack-to-ents-pack-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
+import type { DconfigTab } from './schema/_tabs';
 import { avatarsTable } from './schema/avatars';
 import { branchesTable } from './schema/branches';
 import { bridgesTable } from './schema/bridges';
@@ -27,7 +31,7 @@ import { cachedPartsTable } from './schema/cached-parts';
 import { chartsTable } from './schema/charts';
 import { connectionsTable } from './schema/connections';
 import { dashboardsTable } from './schema/dashboards';
-import { dconfigsTable } from './schema/dconfigs';
+import { type DconfigEnt, dconfigsTable } from './schema/dconfigs';
 import { envsTable } from './schema/envs';
 import { givensTable } from './schema/givens';
 import { kitsTable } from './schema/kits';
@@ -50,6 +54,8 @@ import { sessionsTable } from './schema/sessions';
 import { structsTable } from './schema/structs';
 import { uconfigsTable } from './schema/uconfigs';
 import { usersTable } from './schema/users';
+
+const { forEachSeries } = pIteration;
 
 export interface PackerInput {
   tx: PgTransaction<
@@ -102,45 +108,122 @@ export class DrizzlePacker {
       serverTs
     } = item;
 
-    let dconfig = await tx.query.dconfigsTable
-      .findFirst({
-        where: isNotNull(dconfigsTable.dconfigId)
-      })
-      .then(x => this.tabService.dconfigEntToTab(x));
+    let result: Result.Result<PackerOutput, WriteError> =
+      await this.writeResult({
+        tx: tx,
+        insert: insert,
+        update: update,
+        insertOrUpdate: insertOrUpdate,
+        insertOrDoNothing: insertOrDoNothing,
+        rawQueries: rawQueries,
+        serverTs: serverTs
+      });
 
-    let insertEnts =
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let output: PackerOutput = result.value;
+
+    return output;
+  }
+
+  async writeResult(item: {
+    tx: PackerInput['tx'];
+    insert?: DbTabsPack;
+    update?: DbTabsPack;
+    insertOrUpdate?: DbTabsPack;
+    insertOrDoNothing?: DbTabsPack;
+    rawQueries?: SQLWrapper[];
+    serverTs?: number;
+  }): Result.ResultAsync<PackerOutput, WriteError> {
+    let {
+      tx,
+      insert,
+      update,
+      insertOrUpdate,
+      insertOrDoNothing,
+      rawQueries,
+      serverTs
+    } = item;
+
+    let dconfigResult: Result.Result<DconfigTab, DconfigEntToTabError> =
+      await tx.query.dconfigsTable
+        .findFirst({
+          where: isNotNull(dconfigsTable.dconfigId)
+        })
+        .then((x: DconfigEnt) =>
+          isUndefined(x)
+            ? Result.succeed(undefined)
+            : this.tabService.dconfigEntToTabResult({ dconfigEnt: x })
+        );
+
+    if (Result.isFailure(dconfigResult)) {
+      return dconfigResult;
+    }
+
+    let dconfig: DconfigTab = dconfigResult.value;
+
+    let insertEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(insert) && Object.keys(insert).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? this.tabToEntService.tabsPackToEntsPackResult({
             tabsPack: insert,
             hashSecret: dconfig?.hashSecret
           })
-        : undefined;
+        : Result.succeed(undefined);
 
-    let updateEnts =
+    if (Result.isFailure(insertEntsResult)) {
+      return insertEntsResult;
+    }
+
+    let insertEnts: DbEntsPack = insertEntsResult.value;
+
+    let updateEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(update) && Object.keys(update).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? this.tabToEntService.tabsPackToEntsPackResult({
             tabsPack: update,
             hashSecret: dconfig?.hashSecret
           })
-        : undefined;
+        : Result.succeed(undefined);
 
-    let insOrUpdEnts =
+    if (Result.isFailure(updateEntsResult)) {
+      return updateEntsResult;
+    }
+
+    let updateEnts: DbEntsPack = updateEntsResult.value;
+
+    let insOrUpdEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(insertOrUpdate) && Object.keys(insertOrUpdate).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? this.tabToEntService.tabsPackToEntsPackResult({
             tabsPack: insertOrUpdate,
             hashSecret: dconfig?.hashSecret
           })
-        : undefined;
+        : Result.succeed(undefined);
 
-    let insOrDoNothingEnts =
+    if (Result.isFailure(insOrUpdEntsResult)) {
+      return insOrUpdEntsResult;
+    }
+
+    let insOrUpdEnts: DbEntsPack = insOrUpdEntsResult.value;
+
+    let insOrDoNothingEntsResult: Result.Result<
+      DbEntsPack,
+      TabsPackToEntsPackError
+    > =
       isDefined(insertOrDoNothing) && Object.keys(insertOrDoNothing).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? this.tabToEntService.tabsPackToEntsPackResult({
             tabsPack: insertOrDoNothing,
             hashSecret: dconfig?.hashSecret
           })
-        : undefined;
+        : Result.succeed(undefined);
 
-    let newServerTs = isDefined(serverTs) ? serverTs : makeTsNumber();
+    if (Result.isFailure(insOrDoNothingEntsResult)) {
+      return insOrDoNothingEntsResult;
+    }
+
+    let insOrDoNothingEnts: DbEntsPack = insOrDoNothingEntsResult.value;
+
+    let newServerTs: number = isDefined(serverTs) ? serverTs : makeTsNumber();
 
     if (isDefined(insertEnts)) {
       Object.keys(insertEnts).forEach(key => {
@@ -1479,6 +1562,6 @@ export class DrizzlePacker {
       insertOrDoNothing: item.insertOrDoNothing
     };
 
-    return pack;
+    return Result.succeed(pack);
   }
 }

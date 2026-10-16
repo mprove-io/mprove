@@ -20,10 +20,8 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 
-import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
 import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
-import type { ToBackendGetEnvsListResponse } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-response';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -108,15 +106,12 @@ export class EnvSelectComponent {
     };
 
     this.apiService
-      .req({
+      .reqOutput({
         route: 'api/ToBackendGetEnvsList',
         payload: payload
       })
       .pipe(
-        map(
-          (resp: ToBackendGetEnvsListResponse) =>
-            unwrapBackendResponseOutput({ response: resp }).envsList
-        ),
+        map(output => output.envsList),
         tap(x => {
           this.envsList = x;
           this.envsListLoading = false;

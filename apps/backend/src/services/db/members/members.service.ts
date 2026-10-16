@@ -40,7 +40,6 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -217,22 +216,6 @@ export class MembersService {
       ),
       Result.map((v): MemberTab => v.member)
     );
-  }
-
-  async getMemberCheckExists(item: {
-    memberId: string;
-    projectId: string;
-  }): Promise<MemberTab> {
-    let result: Result.Result<MemberTab, GetMemberCheckExistsError> =
-      await this.getMemberCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let member: MemberTab = result.value;
-
-    return member;
   }
 
   async getMemberCheckExistsResult(item: {

@@ -4,12 +4,13 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
-
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Ev } from '#common/types/backend/parts/ev';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { RebuildConfiguredStructError } from '#common/types/blockml/function-errors/rebuild-configured-struct-error';
+import type { RebuildStructStatelessError } from '#common/types/blockml/function-errors/rebuild-struct-stateless-error';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
@@ -40,7 +41,7 @@ export async function rebuildStructStateless(item: {
   presets: Preset[];
   cs: ConfigService<BlockmlConfig>;
   logger: Logger;
-}): Result.ResultAsync<RebuildStructPrep, never> {
+}): Result.ResultAsync<RebuildStructPrep, RebuildStructStatelessError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind(
@@ -92,7 +93,9 @@ export async function rebuildStructStateless(item: {
         })
     ),
     Result.andThen(
-      async (v): Result.ResultAsync<RebuildStructPrep, never> =>
+      async (
+        v
+      ): Result.ResultAsync<RebuildStructPrep, RebuildConfiguredStructError> =>
         isUndefined(v.projectConfig)
           ? makeEmptyRebuildStructPrep({ errors: v.errors })
           : rebuildConfiguredStruct({

@@ -158,23 +158,6 @@ export class SessionsService {
       );
   }
 
-  async getOcSessionBySessionId(item: {
-    sessionId: string;
-  }): Promise<OcSessionTab> {
-    let { sessionId } = item;
-
-    let result: Result.Result<OcSessionTab, GetOcSessionBySessionIdError> =
-      await this.getOcSessionBySessionIdResult({ sessionId: sessionId });
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let ocSession: OcSessionTab = result.value;
-
-    return ocSession;
-  }
-
   async getOcSessionBySessionIdResult(item: {
     sessionId: string;
   }): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> {

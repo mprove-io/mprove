@@ -618,6 +618,20 @@ method call. Before returning a value, assign it to an explicitly typed variable
 and return that variable. Do not rely on return-type inference at invocation or
 return sites.
 
+Explicitly annotate item parameters in asynchronous iteration callbacks, such as
+callbacks passed to `asyncPool` or `forEachSeries`, even when the input
+collection provides contextual typing. Reuse the collection's element type.
+
+```ts
+await asyncPool(
+  poolSize,
+  tiles,
+  async (tile: FilePartTileExtra): Promise<void> => {
+    await processTile({ tile: tile });
+  }
+);
+```
+
 Exception: Byethrow Result flows follow the exceptions under "Result type
 inference".
 
@@ -825,6 +839,19 @@ single multiline statement.
 This includes top-level declarations and statements, such as types, constants,
 classes, functions, and schema equality assertions. Consecutive imports do not
 require empty lines; separate the import group from other top-level statements.
+
+Exception: keep consecutive, similar operations that form one logical update
+together without empty lines, such as assigning related properties on the same
+object. Separate the group from surrounding statements with empty lines.
+
+```ts
+tile.compiledQuery = newMconfig.compiledQuery;
+tile.sql = newMconfig.compiledQuery.sql.split('\n');
+tile.malloyQueryStable = newMconfig.malloyQueryStable;
+tile.malloyQueryExtra = newMconfig.malloyQueryExtra;
+tile.appliedGivens = newMconfig.appliedGivens;
+tile.filtersFractions = filtersFractions;
+```
 
 Exception: in callbacks passed to byethrow `Result` combinators, an empty line
 before `return` may be omitted when the callback body contains exactly one

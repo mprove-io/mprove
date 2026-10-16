@@ -20,7 +20,6 @@ import {
 } from '#backend/drizzle/postgres/schema/structs';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_STRUCT_ID,
   PROJECT_CONFIG_CURRENCY_PREFIX,
@@ -69,23 +68,6 @@ export class StructsService {
     };
 
     return apiStruct;
-  }
-
-  async getStructCheckExists(item: {
-    structId: string;
-    projectId: string;
-    isGetEmptyStructOnError?: boolean;
-  }): Promise<StructTab> {
-    let result: Result.Result<StructTab, GetStructCheckExistsError> =
-      await this.getStructCheckExistsResult(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let struct: StructTab = result.value;
-
-    return struct;
   }
 
   async getStructCheckExistsResult(item: {

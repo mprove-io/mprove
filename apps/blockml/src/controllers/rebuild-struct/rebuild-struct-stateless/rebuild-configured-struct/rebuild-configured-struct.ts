@@ -4,10 +4,11 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { BuildVisualizationsError } from '#common/types/blockml/function-errors/build-visualizations-error';
+import type { RebuildConfiguredStructError } from '#common/types/blockml/function-errors/rebuild-configured-struct-error';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
@@ -53,7 +54,7 @@ export async function rebuildConfiguredStruct(item: {
   spaces: FilePartSpace[];
   projectConfig: FileProjectConf;
   overrideTimezone: string;
-}): Result.ResultAsync<RebuildStructPrep, never> {
+}): Result.ResultAsync<RebuildStructPrep, RebuildConfiguredStructError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind(
@@ -108,7 +109,12 @@ export async function rebuildConfiguredStruct(item: {
     ),
     Result.bind(
       'visualizations',
-      (v): Result.ResultAsync<BuildVisualizationsOutput, never> =>
+      (
+        v
+      ): Result.ResultAsync<
+        BuildVisualizationsOutput,
+        BuildVisualizationsError
+      > =>
         buildVisualizations({
           projectConfig: v.projectConfig,
           dashboards: v.dashboards,

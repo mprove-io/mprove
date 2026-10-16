@@ -8,13 +8,16 @@ import {
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
+import { Result } from '@praha/byethrow';
 import type { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
+import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { SessionSseService } from '#backend/services/session/session-sse/session-sse.service';
 import { ServerError } from '#common/classes/server-error/server-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 
 export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';
 
@@ -49,20 +52,22 @@ export class GetSessionEventsSseController {
       throw new UnauthorizedException();
     }
 
-    try {
-      await this.sessionsService.getSessionByIdCheckExists({
-        sessionId: sessionId
-      });
-    } catch (error) {
-      if (
-        error instanceof ServerError &&
-        error.message === 'BACKEND_SESSION_NOT_FOUND'
-      ) {
+    let sessionResult: Result.Result<
+      SessionTab,
+      GetSessionByIdCheckExistsError
+    > = await this.sessionsService.getSessionByIdCheckExistsResult({
+      sessionId: sessionId
+    });
+
+    if (Result.isFailure(sessionResult)) {
+      if (sessionResult.error.code === 'BACKEND_SESSION_NOT_FOUND') {
         throw new NotFoundException();
       }
 
       // Preserve internal diagnostics; the SSE filter logs and sanitizes them.
-      throw error;
+      throw new ServerError({
+        message: sessionResult.error.code
+      });
     }
 
     let lastEventIndex: number =

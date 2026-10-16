@@ -40,7 +40,6 @@ import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -50,7 +49,9 @@ import type { BackendWrongColumnNameError } from '#common/types/backend/errors/b
 import type { BackendWrongSchemaNameError } from '#common/types/backend/errors/backend-wrong-schema-name-error';
 import type { BackendWrongTableNameError } from '#common/types/backend/errors/backend-wrong-table-name-error';
 import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
+import type { CompleteRefreshCachedColumnError } from '#common/types/backend/function-errors/complete-refresh-cached-column-error';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { FetchCachedPartsError } from '#common/types/backend/function-errors/fetch-cached-parts-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
@@ -383,7 +384,7 @@ export class RefreshCachedColumnController {
     sampleSize?: number;
     cacheLimit: number;
     startedTs: number;
-  }) {
+  }): Promise<void> {
     let {
       projectId,
       cacheEnvId,
@@ -397,122 +398,38 @@ export class RefreshCachedColumnController {
       startedTs
     } = item;
 
+    let refreshErrorMessage: string;
+
     try {
-      let uniqueValuesResult = await this.fetchCachedParts({
+      let completeRefreshCachedColumnOutput: Result.Result<
+        void,
+        CompleteRefreshCachedColumnError
+      > = await this.completeRefreshCachedColumnResult({
+        projectId: projectId,
+        cacheEnvId: cacheEnvId,
+        connectionId: connectionId,
         connection: connection,
         schemaName: schemaName,
         tableName: tableName,
         columnName: columnName,
         sampleSize: sampleSize,
-        cacheLimit: cacheLimit
+        cacheLimit: cacheLimit,
+        startedTs: startedTs
       });
 
-      await this.db.drizzle.transaction(async tx => {
-        let currentCachedColumn = await this.db.drizzle.query.cachedColumnsTable
-          .findFirst({
-            where: eq(
-              cachedColumnsTable.cachedColumnFullId,
-              this.hashService.makeCachedColumnFullId({
-                projectId: projectId,
-                connectionId: connectionId,
-                envId: cacheEnvId,
-                schemaName: schemaName,
-                tableName: tableName,
-                columnName: columnName
-              })
-            )
-          })
-          .then(x => this.tabService.cachedColumnEntToTab(x));
+      if (Result.isSuccess(completeRefreshCachedColumnOutput)) {
+        return;
+      }
 
-        if (
-          isUndefined(currentCachedColumn) ||
-          currentCachedColumn?.startedTs !== startedTs
-        ) {
-          return;
-        }
-
-        let schemaNameLc = schemaName.toLowerCase();
-        let tableNameLc = tableName.toLowerCase();
-        let columnNameLc = columnName.toLowerCase();
-
-        await tx
-          .delete(cachedPartsTable)
-          .where(
-            and(
-              eq(cachedPartsTable.projectId, projectId),
-              eq(cachedPartsTable.connectionId, connectionId),
-              eq(cachedPartsTable.envId, cacheEnvId),
-              eq(cachedPartsTable.schemaNameLc, schemaNameLc),
-              eq(cachedPartsTable.tableNameLc, tableNameLc),
-              eq(cachedPartsTable.columnNameLc, columnNameLc)
-            )
-          );
-
-        let uniqueValues = uniqueValuesResult.values;
-
-        if (uniqueValues.length > 0) {
-          let cachedParts: CachedPartTab[] = uniqueValues.map(row => ({
-            cachedPartFullId: this.hashService.makeCachedPartFullId({
-              projectId: projectId,
-              connectionId: connectionId,
-              envId: cacheEnvId,
-              schemaName: schemaName,
-              tableName: tableName,
-              columnName: columnName,
-              columnValue: row.columnValue ?? ''
-            }),
-            projectId: projectId,
-            connectionId: connectionId,
-            envId: cacheEnvId,
-            schemaNameLc: schemaNameLc,
-            tableNameLc: tableNameLc,
-            columnNameLc: columnNameLc,
-            columnValue: row.columnValue,
-            columnValueLc: row.columnValue?.toLowerCase(),
-            count: row.count,
-            keyTag: undefined as string,
-            serverTs: undefined as number
-          }));
-
-          for (
-            let i = 0;
-            i < cachedParts.length;
-            i += CACHED_PARTS_INSERT_CHUNK_SIZE
-          ) {
-            let cachedPartsChunk = cachedParts.slice(
-              i,
-              i + CACHED_PARTS_INSERT_CHUNK_SIZE
-            );
-
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                cachedParts: cachedPartsChunk
-              }
-            });
-          }
-        }
-
-        let completedTs = makeTsNumber();
-
-        currentCachedColumn.status = 'completed';
-        currentCachedColumn.errorMessage = undefined;
-        currentCachedColumn.completedTs = completedTs;
-        currentCachedColumn.completedDurationMs = completedTs - startedTs;
-        currentCachedColumn.isLimitReached = uniqueValues.length >= cacheLimit;
-        currentCachedColumn.uniqueValuesCount = uniqueValues.length;
-        currentCachedColumn.sampleSize = sampleSize;
-
-        await this.db.packer.write({
-          tx: tx,
-          update: {
-            cachedColumns: [currentCachedColumn]
-          }
-        });
-      });
+      refreshErrorMessage = completeRefreshCachedColumnOutput.error.code;
     } catch (e) {
-      await this.db.drizzle.transaction(async tx => {
-        let currentCachedColumn = await this.db.drizzle.query.cachedColumnsTable
+      refreshErrorMessage =
+        e instanceof Error ? e.message : 'Failed to refresh cache';
+    }
+
+    await this.db.drizzle.transaction(async tx => {
+      let currentCachedColumn: CachedColumnTab =
+        await this.db.drizzle.query.cachedColumnsTable
           .findFirst({
             where: eq(
               cachedColumnsTable.cachedColumnFullId,
@@ -528,35 +445,185 @@ export class RefreshCachedColumnController {
           })
           .then(x => this.tabService.cachedColumnEntToTab(x));
 
-        if (
-          isUndefined(currentCachedColumn) ||
-          currentCachedColumn?.startedTs !== startedTs
-        ) {
-          return;
+      if (
+        isUndefined(currentCachedColumn) ||
+        currentCachedColumn?.startedTs !== startedTs
+      ) {
+        return;
+      }
+
+      currentCachedColumn.status = 'error';
+
+      currentCachedColumn.errorMessage = refreshErrorMessage;
+
+      await this.db.packer.write({
+        tx: tx,
+        update: {
+          cachedColumns: [currentCachedColumn]
         }
-
-        currentCachedColumn.status = 'error';
-        currentCachedColumn.errorMessage =
-          e instanceof Error ? e.message : 'Failed to refresh cache';
-
-        await this.db.packer.write({
-          tx: tx,
-          update: {
-            cachedColumns: [currentCachedColumn]
-          }
-        });
       });
-    }
+    });
   }
 
-  private async fetchCachedParts(item: {
+  private async completeRefreshCachedColumnResult(item: {
+    projectId: string;
+    cacheEnvId: string;
+    connectionId: string;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    connection: ConnectionTab;
+    sampleSize?: number;
+    cacheLimit: number;
+    startedTs: number;
+  }): Result.ResultAsync<void, CompleteRefreshCachedColumnError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'cachedPartOutput',
+        (v): Result.ResultAsync<CachedPartsResult, FetchCachedPartsError> =>
+          this.fetchCachedPartsResult({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            sampleSize: v.sampleSize,
+            cacheLimit: v.cacheLimit
+          })
+      ),
+      Result.andThrough(v =>
+        dbErrorToResult({
+          action: async () => {
+            await this.db.drizzle.transaction(async tx => {
+              // Reject conversion/write failures so the complete transaction rolls back.
+              let currentCachedColumn: CachedColumnTab =
+                await this.db.drizzle.query.cachedColumnsTable
+                  .findFirst({
+                    where: eq(
+                      cachedColumnsTable.cachedColumnFullId,
+                      this.hashService.makeCachedColumnFullId({
+                        projectId: v.projectId,
+                        connectionId: v.connectionId,
+                        envId: v.cacheEnvId,
+                        schemaName: v.schemaName,
+                        tableName: v.tableName,
+                        columnName: v.columnName
+                      })
+                    )
+                  })
+                  .then(x => this.tabService.cachedColumnEntToTab(x));
+
+              if (
+                isUndefined(currentCachedColumn) ||
+                currentCachedColumn?.startedTs !== v.startedTs
+              ) {
+                return;
+              }
+
+              let schemaNameLc: string = v.schemaName.toLowerCase();
+
+              let tableNameLc: string = v.tableName.toLowerCase();
+
+              let columnNameLc: string = v.columnName.toLowerCase();
+
+              await tx
+                .delete(cachedPartsTable)
+                .where(
+                  and(
+                    eq(cachedPartsTable.projectId, v.projectId),
+                    eq(cachedPartsTable.connectionId, v.connectionId),
+                    eq(cachedPartsTable.envId, v.cacheEnvId),
+                    eq(cachedPartsTable.schemaNameLc, schemaNameLc),
+                    eq(cachedPartsTable.tableNameLc, tableNameLc),
+                    eq(cachedPartsTable.columnNameLc, columnNameLc)
+                  )
+                );
+
+              let uniqueValues = v.cachedPartOutput.values;
+
+              if (uniqueValues.length > 0) {
+                let cachedParts: CachedPartTab[] = uniqueValues.map(row => ({
+                  cachedPartFullId: this.hashService.makeCachedPartFullId({
+                    projectId: v.projectId,
+                    connectionId: v.connectionId,
+                    envId: v.cacheEnvId,
+                    schemaName: v.schemaName,
+                    tableName: v.tableName,
+                    columnName: v.columnName,
+                    columnValue: row.columnValue ?? ''
+                  }),
+                  projectId: v.projectId,
+                  connectionId: v.connectionId,
+                  envId: v.cacheEnvId,
+                  schemaNameLc: schemaNameLc,
+                  tableNameLc: tableNameLc,
+                  columnNameLc: columnNameLc,
+                  columnValue: row.columnValue,
+                  columnValueLc: row.columnValue?.toLowerCase(),
+                  count: row.count,
+                  keyTag: undefined as string,
+                  serverTs: undefined as number
+                }));
+
+                for (
+                  let i = 0;
+                  i < cachedParts.length;
+                  i += CACHED_PARTS_INSERT_CHUNK_SIZE
+                ) {
+                  let cachedPartsChunk: CachedPartTab[] = cachedParts.slice(
+                    i,
+                    i + CACHED_PARTS_INSERT_CHUNK_SIZE
+                  );
+
+                  await this.db.packer.write({
+                    tx: tx,
+                    insert: {
+                      cachedParts: cachedPartsChunk
+                    }
+                  });
+                }
+              }
+
+              let completedTs: number = makeTsNumber();
+
+              currentCachedColumn.status = 'completed';
+
+              currentCachedColumn.errorMessage = undefined;
+
+              currentCachedColumn.completedTs = completedTs;
+
+              currentCachedColumn.completedDurationMs =
+                completedTs - v.startedTs;
+
+              currentCachedColumn.isLimitReached =
+                uniqueValues.length >= v.cacheLimit;
+
+              currentCachedColumn.uniqueValuesCount = uniqueValues.length;
+
+              currentCachedColumn.sampleSize = v.sampleSize;
+
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  cachedColumns: [currentCachedColumn]
+                }
+              });
+            });
+          }
+        })
+      ),
+      Result.map((v): void => undefined)
+    );
+  }
+
+  private async fetchCachedPartsResult(item: {
     connection: ConnectionTab;
     schemaName: string;
     tableName: string;
     columnName: string;
     sampleSize?: number;
     cacheLimit: number;
-  }): Promise<CachedPartsResult> {
+  }): Result.ResultAsync<CachedPartsResult, FetchCachedPartsError> {
     let {
       connection,
       schemaName,
@@ -567,81 +634,97 @@ export class RefreshCachedColumnController {
     } = item;
 
     if (connection.type === 'PostgreSQL') {
-      return await this.pgService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.pgService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     } else if (connection.type === 'MySQL') {
-      return await this.mysqlService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.mysqlService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     } else if (connection.type === 'SnowFlake') {
-      return await this.snowFlakeService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.snowFlakeService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     } else if (connection.type === 'Databricks') {
-      return await this.databricksService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.databricksService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     } else if (connection.type === 'BigQuery') {
-      return await this.bigQueryService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.bigQueryService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     } else if (connection.type === 'MotherDuck') {
-      return await this.duckDbService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.duckDbService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     } else if (connection.type === 'Presto') {
-      return await this.prestoService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.prestoService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     } else if (connection.type === 'Trino') {
-      return await this.trinoService.fetchCachedParts({
-        connection: connection,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
-        sampleSize: sampleSize,
-        cacheLimit: cacheLimit
-      });
+      return this.trinoService
+        .fetchCachedParts({
+          connection: connection,
+          schemaName: schemaName,
+          tableName: tableName,
+          columnName: columnName,
+          sampleSize: sampleSize,
+          cacheLimit: cacheLimit
+        })
+        .then(output => Result.succeed(output));
     }
 
-    throw new ServerError({
-      message: 'BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE'
+    return Result.fail({
+      code: 'BACKEND_CONNECTION_TYPE_IS_NOT_SUPPORTED_FOR_SAMPLE'
     });
   }
 }

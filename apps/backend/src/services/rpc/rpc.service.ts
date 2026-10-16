@@ -9,6 +9,14 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { calculateDiskShardResult } from '#backend/functions/calculate-disk-shard-result/calculate-disk-shard-result';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
+import {
+  type BackendErrorResponseFromBlockmlError,
+  zBackendErrorResponseFromBlockmlError
+} from '#common/types/backend/errors/backend-error-response-from-blockml-error';
+import {
+  type BackendErrorResponseFromDiskError,
+  zBackendErrorResponseFromDiskError
+} from '#common/types/backend/errors/backend-error-response-from-disk-error';
 import type { CalculateDiskShardError } from '#common/types/backend/function-errors/calculate-disk-shard-error';
 import type { RequestError } from '#common/types/backend/function-errors/request-error';
 import type { SendToBlockmlError } from '#common/types/backend/function-errors/send-to-blockml-error';
@@ -195,16 +203,18 @@ export class RpcService implements OnModuleDestroy {
       result.value;
 
     if (response.type === 'Failure') {
-      return Result.fail({
-        code: 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML',
-        originalError:
-          response.error.code === 'BLOCKML_INVALID_REQUEST'
-            ? {
-                code: response.error.code,
-                displayData: response.error.displayData
-              }
-            : { code: response.error.code }
-      });
+      // Public schemas validate code-specific details and strip private fields.
+      let errorValidation: ZodSafeParseResult<BackendErrorResponseFromBlockmlError> =
+        zBackendErrorResponseFromBlockmlError.safeParse({
+          code: 'BACKEND_ERROR_RESPONSE_FROM_BLOCKML',
+          originalError: response.error
+        });
+
+      if (errorValidation.success === false) {
+        return Result.fail({ code: 'BACKEND_RPC_INVALID_RESPONSE_FORMAT' });
+      }
+
+      return Result.fail(errorValidation.data);
     }
 
     return Result.succeed(response.output);
@@ -385,47 +395,18 @@ export class RpcService implements OnModuleDestroy {
       result.value;
 
     if (response.type === 'Failure') {
-      // Match the legacy boundary: forward only public code/displayData fields,
-      // never arbitrary worker response properties or diagnostic payloads.
-      switch (response.error.code) {
-        case 'DISK_INVALID_REQUEST':
-          return Result.fail({
-            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
-            originalError: {
-              code: response.error.code,
-              displayData: response.error.displayData
-            }
-          });
-        case 'DISK_PATH_TRAVERSAL':
-          return Result.fail({
-            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
-            originalError: {
-              code: response.error.code,
-              displayData: response.error.displayData
-            }
-          });
-        case 'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH':
-          return Result.fail({
-            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
-            originalError: {
-              code: response.error.code,
-              displayData: response.error.displayData
-            }
-          });
-        case 'DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT':
-          return Result.fail({
-            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
-            originalError: {
-              code: response.error.code,
-              displayData: response.error.displayData
-            }
-          });
-        default:
-          return Result.fail({
-            code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
-            originalError: { code: response.error.code }
-          });
+      // Public schemas validate code-specific details and strip private fields.
+      let errorValidation: ZodSafeParseResult<BackendErrorResponseFromDiskError> =
+        zBackendErrorResponseFromDiskError.safeParse({
+          code: 'BACKEND_ERROR_RESPONSE_FROM_DISK',
+          originalError: response.error
+        });
+
+      if (errorValidation.success === false) {
+        return Result.fail({ code: 'BACKEND_RPC_INVALID_RESPONSE_FORMAT' });
       }
+
+      return Result.fail(errorValidation.data);
     }
 
     return Result.succeed(response.output);

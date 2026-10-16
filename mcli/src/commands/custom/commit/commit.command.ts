@@ -1,20 +1,23 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/repos/commit-repo/commit-repo-output';
 import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoResponse } from '#common/types/backend/routes/repos/commit-repo/commit-repo-response';
 import {
   type RepoType,
   repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { CommitCommandError } from '#mcli/types/function-errors/commit-command-error';
+import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 
 export class CommitCommand extends CustomCommand {
   static paths = [['commit']];
@@ -61,29 +64,25 @@ export class CommitCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<void, CommitCommandError> {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId =
+    let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
       this.repoType === 'production'
-        ? PROD_REPO_ID
-        : apiKey.startsWith(`${'SK' satisfies ApiKeyType}-`)
-          ? apiKey.split('-')[2].toLowerCase()
-          : apiKey.split('-')[2];
+        ? Result.succeed(PROD_REPO_ID)
+        : getApiKeyRepoIdResult({ apiKey: apiKey });
+
+    if (Result.isFailure(repoIdResult)) {
+      return repoIdResult;
+    }
+
+    let repoId: string = repoIdResult.value;
 
     let commitRepoReqPayload: ToBackendCommitRepoRequest['input'] = {
       projectId: this.projectId,
@@ -92,12 +91,22 @@ export class CommitCommand extends CustomCommand {
       commitMessage: this.commitMessage
     };
 
-    let commitRepoOutput: ToBackendCommitRepoOutput = await mreq({
+    let commitRepoOutputResult: Result.Result<
+      ToBackendCommitRepoOutput,
+      MreqError<ToBackendCommitRepoResponse>
+    > = await mreqResult({
       apiKey: apiKey,
       route: 'api/ToBackendCommitRepo',
       payload: commitRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
+
+    if (Result.isFailure(commitRepoOutputResult)) {
+      return commitRepoOutputResult;
+    }
+
+    let commitRepoOutput: ToBackendCommitRepoOutput =
+      commitRepoOutputResult.value;
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
@@ -130,5 +139,7 @@ export class CommitCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

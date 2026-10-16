@@ -30,10 +30,8 @@ import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendSuggestDimensionValuesOutput } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
 import type { ToBackendSuggestDimensionValuesRequest } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
-import type { ToBackendSuggestDimensionValuesResponse } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
@@ -154,19 +152,14 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                 cellMetricsEndDateMs: undefined
               };
 
-              let q1Resp: ToBackendSuggestDimensionValuesResponse =
+              let output: ToBackendSuggestDimensionValuesOutput =
                 await this.apiService
-                  .req({
+                  .reqOutput({
                     route: 'api/ToBackendSuggestDimensionValues',
                     payload: payload
                   })
                   .pipe(take(1))
                   .toPromise();
-
-              let output: ToBackendSuggestDimensionValuesOutput =
-                unwrapBackendResponseOutput({
-                  response: q1Resp
-                });
 
               if (isDefined(output.errorMessage)) {
                 this.items = isDefinedAndNotEmpty(this.searchValue)
@@ -240,13 +233,11 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                   }
                 }
               }
-            } catch (error: any) {
+            } catch (error: unknown) {
               this.loading = false;
               this.cd.detectChanges();
 
-              throw new Error(
-                `Failed to get filter suggestions: ${error.message}`
-              );
+              throw error;
             }
 
             this.loading = false;

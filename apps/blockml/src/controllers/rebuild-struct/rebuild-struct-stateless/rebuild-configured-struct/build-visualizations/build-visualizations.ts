@@ -3,10 +3,11 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildField } from '#blockml/functions/build-field/build-field';
-
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { BuildTileError } from '#common/types/blockml/function-errors/build-tile-error';
+import type { BuildVisualizationsError } from '#common/types/blockml/function-errors/build-visualizations-error';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
@@ -46,7 +47,7 @@ export async function buildVisualizations(item: {
   projectConnections: ProjectConnection[];
   selectedGivens: SelectedGiven[];
   metrics: ModelMetric[];
-}): Result.ResultAsync<BuildVisualizationsOutput, never> {
+}): Result.ResultAsync<BuildVisualizationsOutput, BuildVisualizationsError> {
   let { projectConfig } = item;
 
   let caseSensitiveStringFilters: boolean = toBooleanFromLowercaseString(
@@ -97,7 +98,7 @@ export async function buildVisualizations(item: {
     ),
     Result.bind(
       'tileBuiltDashboards',
-      (v): Result.ResultAsync<FileDashboard[], never> =>
+      (v): Result.ResultAsync<FileDashboard[], BuildTileError> =>
         buildTile({
           projectId: v.projectId,
           envId: v.envId,
@@ -119,7 +120,7 @@ export async function buildVisualizations(item: {
     ),
     Result.bind(
       'tileBuiltCharts',
-      (v): Result.ResultAsync<FileChart[], never> =>
+      (v): Result.ResultAsync<FileChart[], BuildTileError> =>
         buildTile({
           projectId: v.projectId,
           envId: v.envId,

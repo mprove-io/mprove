@@ -1,13 +1,15 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
-import { ServerError } from '#common/classes/server-error/server-error';
 
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
 import type { ToBackendGetConnectionsListRequest } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-request';
+import type { ToBackendGetConnectionsListResponse } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import type { GetConnectionsListCommandError } from '#mcli/types/function-errors/get-connections-list-command-error';
+import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 
 export class GetConnectionsListCommand extends CustomCommand {
   static paths = [['get-connections-list']];
@@ -42,19 +44,14 @@ export class GetConnectionsListCommand extends CustomCommand {
     description: '(optional) Path to ".env" file'
   });
 
-  async execute() {
-    if (isUndefined(this.context.config)) {
-      this.context.config = getConfig(this.envFilePath);
-    }
-
+  override async act(): Result.ResultAsync<
+    void,
+    GetConnectionsListCommandError
+  > {
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
     if (isUndefined(this.projectId)) {
-      let serverError = new ServerError({
-        message: 'MCLI_PROJECT_ID_IS_NOT_DEFINED',
-        originalError: null
-      });
-      throw serverError;
+      return Result.fail({ code: 'MCLI_PROJECT_ID_IS_NOT_DEFINED' });
     }
 
     let apiKey = this.context.config.mproveCliApiKey;
@@ -65,13 +62,22 @@ export class GetConnectionsListCommand extends CustomCommand {
         envId: this.env
       };
 
+    let getConnectionsListOutputResult: Result.Result<
+      ToBackendGetConnectionsListOutput,
+      MreqError<ToBackendGetConnectionsListResponse>
+    > = await mreqResult({
+      apiKey: apiKey,
+      route: 'api/ToBackendGetConnectionsList',
+      payload: getConnectionsListReqPayload,
+      host: this.context.config.mproveCliHost
+    });
+
+    if (Result.isFailure(getConnectionsListOutputResult)) {
+      return getConnectionsListOutputResult;
+    }
+
     let getConnectionsListOutput: ToBackendGetConnectionsListOutput =
-      await mreq({
-        apiKey: apiKey,
-        route: 'api/ToBackendGetConnectionsList',
-        payload: getConnectionsListReqPayload,
-        host: this.context.config.mproveCliHost
-      });
+      getConnectionsListOutputResult.value;
 
     logToConsoleMcli({
       log: getConnectionsListOutput,
@@ -79,5 +85,7 @@ export class GetConnectionsListCommand extends CustomCommand {
       context: this.context,
       isJson: this.json
     });
+
+    return Result.succeed();
   }
 }

@@ -16,17 +16,19 @@ import type {
   QuestionRequest,
   Session
 } from '@opencode-ai/sdk/v2';
+import { Result } from '@praha/byethrow';
 import { eq, max, sql } from 'drizzle-orm';
-import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcMessageTab,
   OcPartTab,
-  OcSessionTab
+  OcSessionTab,
+  SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
+import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
 import { OcMessagesService } from '#backend/services/db/oc-messages/oc-messages.service';
@@ -35,12 +37,17 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { ServerError } from '#common/classes/server-error/server-error';
 import { SESSION_TITLE_UPDATED_EVENT_TYPE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { DrainAllQueuesError } from '#common/types/backend/function-errors/drain-all-queues-error';
+import type { DrainQueueError } from '#common/types/backend/function-errors/drain-queue-error';
+import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
+import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type {
   MproveSessionTitleUpdatedEvent,
   SessionStreamEvent
 } from '#common/types/backend/parts/session/session-stream-event';
 
-const { forEachSeries } = pIteration;
+export type DrainQueueOutput = { needsSafePause: boolean };
 
 @Injectable()
 export class SessionDrainService {
@@ -113,39 +120,56 @@ export class SessionDrainService {
     this.eventCounters.set(item.sessionId, eventIndex + 1);
   }
 
-  async drainAllQueues(): Promise<string[]> {
+  async drainAllQueuesResult(): Result.ResultAsync<
+    string[],
+    DrainAllQueuesError
+  > {
     let safePauseSessionIds: string[] = [];
 
     let pendingSessionIds = [...this.pendingEvents.keys()];
 
-    await forEachSeries(pendingSessionIds, async sessionId => {
-      let result = await this.drainQueue({ sessionId: sessionId });
+    let drainQueues: Result.Result<void[], DrainQueueError> =
+      await Result.sequence(pendingSessionIds, async sessionId => {
+        let drainQueueOutput: Result.Result<DrainQueueOutput, DrainQueueError> =
+          await this.drainQueueResult({ sessionId: sessionId });
 
-      let doneCb = this.doneCallbacks.get(sessionId);
-      if (doneCb) {
-        let queue = this.pendingEvents.get(sessionId);
-        if (!queue || queue.length === 0) {
-          this.doneCallbacks.delete(sessionId);
-          this.cleanup({ sessionId: sessionId });
-          doneCb();
+        if (Result.isFailure(drainQueueOutput)) {
+          return drainQueueOutput;
         }
-      }
 
-      if (result.needsSafePause) {
-        safePauseSessionIds.push(sessionId);
-      }
-    });
+        let result: DrainQueueOutput = drainQueueOutput.value;
 
-    return safePauseSessionIds;
+        let doneCb = this.doneCallbacks.get(sessionId);
+        if (doneCb) {
+          let queue = this.pendingEvents.get(sessionId);
+          if (!queue || queue.length === 0) {
+            this.doneCallbacks.delete(sessionId);
+            this.cleanup({ sessionId: sessionId });
+            doneCb();
+          }
+        }
+
+        if (result.needsSafePause) {
+          safePauseSessionIds.push(sessionId);
+        }
+
+        return Result.succeed();
+      });
+
+    if (Result.isFailure(drainQueues)) {
+      return drainQueues;
+    }
+
+    return Result.succeed(safePauseSessionIds);
   }
 
-  async drainQueue(item: {
+  async drainQueueResult(item: {
     sessionId: string;
-  }): Promise<{ needsSafePause: boolean }> {
+  }): Result.ResultAsync<DrainQueueOutput, DrainQueueError> {
     let { sessionId } = item;
     let queue = this.pendingEvents.get(sessionId);
     if (!queue || queue.length === 0) {
-      return { needsSafePause: false };
+      return Result.succeed({ needsSafePause: false });
     }
 
     let itemCount = queue.length;
@@ -237,9 +261,18 @@ export class SessionDrainService {
       sessionStatusItems.length > 0 ||
       sessionErrorItems.length > 0
     ) {
-      let ocSessionTab = await this.sessionsService.getOcSessionBySessionId({
+      let ocSessionResult: Result.Result<
+        OcSessionTab,
+        GetOcSessionBySessionIdError
+      > = await this.sessionsService.getOcSessionBySessionIdResult({
         sessionId: sessionId
       });
+
+      if (Result.isFailure(ocSessionResult)) {
+        return ocSessionResult;
+      }
+
+      let ocSessionTab: OcSessionTab = ocSessionResult.value;
 
       if (!ocSessionTab) {
         ocSessionTab = this.sessionsService.makeOcSession({ sessionId });
@@ -430,50 +463,59 @@ export class SessionDrainService {
       questionAskedItems.length > 0 ||
       permissionAskedItems.length > 0;
 
-    try {
-      await this.db.drizzle.transaction(async tx => {
-        await this.db.packer.write({
-          tx: tx,
-          insert: {
-            ocEvents: eventTabs
-          },
-          insertOrUpdate: {
-            ocMessages: messageTabs,
-            ocParts: partTabs,
-            ocSessions: ocSessionTabs
+    let persistence: Result.Result<void, DbErrorToError> =
+      await dbErrorToResult({
+        action: async () => {
+          try {
+            await this.db.drizzle.transaction(async tx => {
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  ocEvents: eventTabs
+                },
+                insertOrUpdate: {
+                  ocMessages: messageTabs,
+                  ocParts: partTabs,
+                  ocSessions: ocSessionTabs
+                }
+              });
+
+              if (hasActivityEvents) {
+                let now: number = Date.now();
+
+                await tx.execute(
+                  sql`UPDATE sessions SET last_activity_ts = ${now} WHERE session_id = ${sessionId}`
+                );
+              }
+            });
+          } catch (e) {
+            let eventIds: string[] = eventTabs.map(t => t.eventId);
+
+            let queueLength: number = queue.length;
+
+            logToConsoleBackend({
+              log: new ServerError({
+                message: 'BACKEND_DRAIN_QUEUE_FAILED',
+                customData: {
+                  sessionId: sessionId,
+                  eventCount: eventIds.length,
+                  eventIds: eventIds,
+                  queueLengthAfterFail: queueLength
+                },
+                originalError: e
+              }),
+              logLevel: 'Error',
+              logger: this.logger,
+              cs: this.cs
+            });
+
+            throw e;
           }
-        });
-
-        if (hasActivityEvents) {
-          let now = Date.now();
-
-          await tx.execute(
-            sql`UPDATE sessions SET last_activity_ts = ${now} WHERE session_id = ${sessionId}`
-          );
         }
       });
-    } catch (e) {
-      let eventIds: string[] = eventTabs.map(t => t.eventId);
 
-      let queueLength: number = queue.length;
-
-      logToConsoleBackend({
-        log: new ServerError({
-          message: 'BACKEND_DRAIN_QUEUE_FAILED',
-          customData: {
-            sessionId: sessionId,
-            eventCount: eventIds.length,
-            eventIds: eventIds,
-            queueLengthAfterFail: queueLength
-          },
-          originalError: e
-        }),
-        logLevel: 'Error',
-        logger: this.logger,
-        cs: this.cs
-      });
-
-      throw e;
+    if (Result.isFailure(persistence)) {
+      return persistence;
     }
 
     queue.splice(0, itemCount);
@@ -490,9 +532,18 @@ export class SessionDrainService {
         >('sessionPauseOnUserTurnMinutes');
 
         if (sessionPauseOnUserTurnMinutes) {
-          let session = await this.sessionsService.getSessionByIdCheckExists({
-            sessionId
+          let sessionResult: Result.Result<
+            SessionTab,
+            GetSessionByIdCheckExistsError
+          > = await this.sessionsService.getSessionByIdCheckExistsResult({
+            sessionId: sessionId
           });
+
+          if (Result.isFailure(sessionResult)) {
+            return sessionResult;
+          }
+
+          let session: SessionTab = sessionResult.value;
 
           if (
             session.sandboxStartTs &&
@@ -505,6 +556,6 @@ export class SessionDrainService {
       }
     }
 
-    return { needsSafePause };
+    return Result.succeed({ needsSafePause: needsSafePause });
   }
 }

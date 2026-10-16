@@ -13,21 +13,25 @@ export async function asyncPoolResult<Input, Output, Error>(item: {
   let failures: Result.Failure<Error>[] = [];
 
   try {
-    let outputs: Output[] = await asyncPool(poolSize, inputs, async input => {
-      let result: Result.Result<Output, Error> = await callback(input);
+    let outputs: Output[] = await asyncPool(
+      poolSize,
+      inputs,
+      async (input: Input) => {
+        let result: Result.Result<Output, Error> = await callback(input);
 
-      if (Result.isFailure(result)) {
-        failures.push(result);
+        if (Result.isFailure(result)) {
+          failures.push(result);
 
-        // Preserve asyncPool's first-rejection scheduling without classifying
-        // unexpected exceptions as anticipated callback failures.
-        throw result;
+          // Preserve asyncPool's first-rejection scheduling without classifying
+          // unexpected exceptions as anticipated callback failures.
+          throw result;
+        }
+
+        let output: Output = result.value;
+
+        return output;
       }
-
-      let output: Output = result.value;
-
-      return output;
-    });
+    );
 
     return Result.succeed(outputs);
   } catch (error) {
