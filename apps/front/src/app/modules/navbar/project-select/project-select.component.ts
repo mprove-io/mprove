@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import {
   DEMO_ORG_NAME,
   PATH_BRANCH,
@@ -110,14 +110,15 @@ export class ProjectSelectComponent {
         payload: payload
       })
       .pipe(
-        map(output => output.projectsList),
-        tap(x => {
-          this.projectsList = x;
-          this.projectsListLoading = false;
-          this.projectsListLength = x.length;
-          this.cd.detectChanges();
+        tap(output => {
+          this.projectsList = output.projectsList;
+          this.projectsListLength = output.projectsList.length;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.projectsListLoading = false;
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

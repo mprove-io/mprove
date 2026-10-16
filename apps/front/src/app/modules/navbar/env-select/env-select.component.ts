@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
   PATH_BUILDER,
@@ -111,14 +111,15 @@ export class EnvSelectComponent {
         payload: payload
       })
       .pipe(
-        map(output => output.envsList),
-        tap(x => {
-          this.envsList = x;
-          this.envsListLoading = false;
-          this.envsListLength = x.length;
-          this.cd.detectChanges();
+        tap(output => {
+          this.envsList = output.envsList;
+          this.envsListLength = output.envsList.length;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.envsListLoading = false;
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

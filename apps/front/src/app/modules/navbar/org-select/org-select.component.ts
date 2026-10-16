@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import {
   PATH_ACCOUNT,
   PATH_ORG,
@@ -80,14 +80,17 @@ export class OrgSelectComponent {
         payload: {}
       })
       .pipe(
-        map(output => output.orgsList),
-        tap(x => {
+        tap(output => {
+          let x: OrgsItem[] = output.orgsList;
+
           this.orgsList = x;
-          this.orgsListLoading = false;
           this.orgsListLength = x.length;
-          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.orgsListLoading = false;
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

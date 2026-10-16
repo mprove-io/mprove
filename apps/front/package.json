@@ -56,6 +56,7 @@
     "@opentelemetry/sdk-trace-base": "catalog:",
     "@opentelemetry/sdk-trace-web": "catalog:",
     "@opentelemetry/semantic-conventions": "catalog:",
+    "@praha/byethrow": "catalog:",
     "@replit/codemirror-indentation-markers": "catalog:",
     "@toolbox-web/grid": "catalog:",
     "@toolbox-web/grid-angular": "catalog:",

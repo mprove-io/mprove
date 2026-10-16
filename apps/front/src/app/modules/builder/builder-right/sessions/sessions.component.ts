@@ -200,7 +200,7 @@ export class SessionsComponent implements OnInit {
         showSpinner: true
       })
       .pipe(
-        map(output => {
+        tap(output => {
           let respSession: SessionApi = output.session;
 
           if (respSession.status === 'Archived') {
@@ -255,7 +255,7 @@ export class SessionsComponent implements OnInit {
         showSpinner: true
       })
       .pipe(
-        map(output => {
+        tap(output => {
           let respSession: SessionApi = output.session;
 
           this.updatedArchivedSessions({

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { interval, type Observable, type Subscription } from 'rxjs';
-import { exhaustMap, tap } from 'rxjs/operators';
+import { Result } from '@praha/byethrow';
+import { interval, type Subscription } from 'rxjs';
+import { exhaustMap, finalize, tap } from 'rxjs/operators';
 
 import type { ToBackendGetExplorerChartTabOutput } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';
-import type { ToBackendGetExplorerChartTabRequest } from '#common/types/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
 import type { ToBackendCloseExplorerSessionTabRequest } from '#common/types/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-request';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -12,6 +12,8 @@ import { ApiService } from '#front/app/services/api.service';
 @Injectable({ providedIn: 'root' })
 export class ExplorerTabService {
   private pollingByTabId = new Map<string, Subscription>();
+
+  private initialFetchByTabId = new Map<string, Subscription>();
 
   constructor(
     private apiService: ApiService,
@@ -24,23 +26,49 @@ export class ExplorerTabService {
 
     this.stopPolling({ tabId: tabId });
 
+    this.initialFetchByTabId.get(tabId)?.unsubscribe();
+
     this.explorerTabsQuery.setContent({
       tabId: tabId,
       content: { status: 'loading' }
     });
 
-    this.fetchTab({ sessionId: sessionId, chartId: chartId })
+    let sub: Subscription = this.apiService
+      .reqResult({
+        route: 'api/ToBackendGetExplorerChartTab',
+        payload: {
+          sessionId: sessionId,
+          chartId: chartId
+        }
+      })
       .pipe(
-        tap((output: ToBackendGetExplorerChartTabOutput) => {
+        tap(result => {
+          if (Result.isFailure(result)) return;
+
           this.setTabPayload({
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: output
+            respPayload: result.value
           });
+        }),
+        finalize(() => {
+          this.initialFetchByTabId.delete(tabId);
+
+          if (
+            this.explorerTabsQuery.getValue().contents[tabId]?.status ===
+            'loading'
+          ) {
+            this.explorerTabsQuery.setContent({
+              tabId: tabId,
+              content: { status: 'idle' }
+            });
+          }
         })
       )
       .subscribe();
+
+    this.initialFetchByTabId.set(tabId, sub);
   }
 
   openTabFromMessages(item: { sessionId: string; tabId: string }) {
@@ -56,6 +84,8 @@ export class ExplorerTabService {
 
   closeTab(item: { sessionId: string; tabId: string }) {
     this.stopPolling({ tabId: item.tabId });
+
+    this.initialFetchByTabId.get(item.tabId)?.unsubscribe();
 
     let closedExplorerTabIds = this.explorerTabsQuery.closeTab({
       tabId: item.tabId
@@ -92,26 +122,17 @@ export class ExplorerTabService {
   }
 
   stopAllPolling() {
+    this.initialFetchByTabId.forEach(sub => {
+      sub.unsubscribe();
+    });
+
+    this.initialFetchByTabId.clear();
+
     this.pollingByTabId.forEach(sub => {
       sub.unsubscribe();
     });
 
     this.pollingByTabId.clear();
-  }
-
-  private fetchTab(item: {
-    sessionId: string;
-    chartId: string;
-  }): Observable<ToBackendGetExplorerChartTabOutput> {
-    let payload: ToBackendGetExplorerChartTabRequest['input'] = {
-      sessionId: item.sessionId,
-      chartId: item.chartId
-    };
-
-    return this.apiService.reqOutput({
-      route: 'api/ToBackendGetExplorerChartTab',
-      payload: payload
-    });
   }
 
   private setTabPayload(item: {
@@ -163,17 +184,29 @@ export class ExplorerTabService {
 
     if (this.pollingByTabId.has(tabId)) return;
 
-    let sub = interval(2500)
+    let sub: Subscription = interval(2500)
       .pipe(
         exhaustMap(() =>
-          this.fetchTab({ sessionId: sessionId, chartId: chartId })
+          this.apiService.reqResult({
+            route: 'api/ToBackendGetExplorerChartTab',
+            payload: {
+              sessionId: sessionId,
+              chartId: chartId
+            }
+          })
         ),
-        tap((output: ToBackendGetExplorerChartTabOutput) => {
+        tap(result => {
+          if (Result.isFailure(result)) {
+            this.stopPolling({ tabId: tabId });
+
+            return;
+          }
+
           this.setTabPayload({
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: output
+            respPayload: result.value
           });
         })
       )
@@ -183,12 +216,14 @@ export class ExplorerTabService {
   }
 
   private stopPolling(item: { tabId: string }) {
-    let sub = this.pollingByTabId.get(item.tabId);
+    let { tabId } = item;
+
+    let sub: Subscription = this.pollingByTabId.get(tabId);
 
     if (!sub) return;
 
     sub.unsubscribe();
 
-    this.pollingByTabId.delete(item.tabId);
+    this.pollingByTabId.delete(tabId);
   }
 }

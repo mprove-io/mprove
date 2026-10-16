@@ -19,7 +19,7 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -552,14 +552,15 @@ export class AddConnectionDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        map(output => output.envsList),
-        tap(x => {
-          this.envsList = x;
-          this.envsListLoading = false;
-          this.envsListLength = x.length;
-          this.cd.detectChanges();
+        tap(output => {
+          this.envsList = output.envsList;
+          this.envsListLength = output.envsList.length;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.envsListLoading = false;
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

@@ -21,10 +21,12 @@ import {
   BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
+  type Observable,
   Subscription,
   switchMap,
   take
 } from 'rxjs';
+import { finalize, tap } from 'rxjs/operators';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -35,7 +37,7 @@ import type { ToBackendSuggestDimensionValuesRequest } from '#common/types/backe
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
-import { NavQuery } from '#front/app/queries/nav.query';
+import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 
 @Component({
@@ -128,122 +130,107 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
         .pipe(
           debounceTime(300), // Wait 300 ms after user stops typing
           distinctUntilChanged(), // Only trigger if the input has changed
-          switchMap(async term => {
-            try {
-              this.loading = true;
-              this.cd.detectChanges();
-
-              let nav = this.navQuery.getValue();
-
-              let payload: ToBackendSuggestDimensionValuesRequest['input'] = {
-                projectId: nav.projectId,
-                repoId: nav.repoId,
-                branchId: nav.branchId,
-                envId: nav.envId,
-                structId: this.structId,
-                modelId: modelId,
-                fieldId: fieldId,
-                chartId: this.chartId,
-                dashboardId: this.dashboardId,
-                reportId: this.reportId,
-                rowId: this.rowId,
-                term: term,
-                cellMetricsStartDateMs: undefined,
-                cellMetricsEndDateMs: undefined
-              };
-
-              let output: ToBackendSuggestDimensionValuesOutput =
-                await this.apiService
-                  .reqOutput({
-                    route: 'api/ToBackendSuggestDimensionValues',
-                    payload: payload
-                  })
-                  .pipe(take(1))
-                  .toPromise();
-
-              if (isDefined(output.errorMessage)) {
-                this.items = isDefinedAndNotEmpty(this.searchValue)
-                  ? [
-                      {
-                        id: 0,
-                        name: this.searchValue
-                      },
-                      {
-                        id: 1,
-                        name: 'Error: Suggest Values Failed',
-                        errorMessage: output.errorMessage,
-                        disabled: true
-                      }
-                    ]
-                  : [
-                      {
-                        id: 0,
-                        name: 'Error: Suggest Values Failed',
-                        errorMessage: output.errorMessage,
-                        disabled: true
-                      }
-                    ];
-              } else if (isDefined(output.matchedValuesMessage)) {
-                this.items = isDefinedAndNotEmpty(this.searchValue)
-                  ? [
-                      {
-                        id: 0,
-                        name: this.searchValue
-                      },
-                      {
-                        id: 1,
-                        name: output.matchedValuesMessage,
-                        disabled: true
-                      }
-                    ]
-                  : [
-                      {
-                        id: 0,
-                        name: output.matchedValuesMessage,
-                        disabled: true
-                      }
-                    ];
-              } else {
-                this.items = (output.matchedValues ?? []).map((x, i) => ({
-                  id: i,
-                  name: x.value
-                }));
-
-                if (isDefinedAndNotEmpty(this.searchValue)) {
-                  let searchValueLc = this.searchValue.toLowerCase();
-
-                  let hasSearchValue = this.items.some(
-                    item => item.name?.toLowerCase() === searchValueLc
-                  );
-
-                  if (hasSearchValue === false) {
-                    this.items = [
-                      {
-                        id: 0,
-                        name: this.searchValue
-                      },
-                      ...this.items.map(item => {
-                        let newItem = Object.assign(item, {
-                          id: item.id + 1
-                        });
-
-                        return newItem;
-                      })
-                    ];
-                  }
-                }
-              }
-            } catch (error: unknown) {
-              this.loading = false;
-              this.cd.detectChanges();
-
-              throw error;
-            }
-
-            this.loading = false;
+          switchMap(term => {
+            this.loading = true;
             this.cd.detectChanges();
 
-            return;
+            let nav: NavState = this.navQuery.getValue();
+
+            let payload: ToBackendSuggestDimensionValuesRequest['input'] = {
+              projectId: nav.projectId,
+              repoId: nav.repoId,
+              branchId: nav.branchId,
+              envId: nav.envId,
+              structId: this.structId,
+              modelId: modelId,
+              fieldId: fieldId,
+              chartId: this.chartId,
+              dashboardId: this.dashboardId,
+              reportId: this.reportId,
+              rowId: this.rowId,
+              term: term,
+              cellMetricsStartDateMs: undefined,
+              cellMetricsEndDateMs: undefined
+            };
+
+            let suggestion: Observable<ToBackendSuggestDimensionValuesOutput> =
+              this.apiService
+                .reqOutput({
+                  route: 'api/ToBackendSuggestDimensionValues',
+                  payload: payload
+                })
+                .pipe(
+                  tap(output => {
+                    if (isDefined(output.errorMessage)) {
+                      this.items = isDefinedAndNotEmpty(this.searchValue)
+                        ? [
+                            { id: 0, name: this.searchValue },
+                            {
+                              id: 1,
+                              name: 'Error: Suggest Values Failed',
+                              errorMessage: output.errorMessage,
+                              disabled: true
+                            }
+                          ]
+                        : [
+                            {
+                              id: 0,
+                              name: 'Error: Suggest Values Failed',
+                              errorMessage: output.errorMessage,
+                              disabled: true
+                            }
+                          ];
+                    } else if (isDefined(output.matchedValuesMessage)) {
+                      this.items = isDefinedAndNotEmpty(this.searchValue)
+                        ? [
+                            { id: 0, name: this.searchValue },
+                            {
+                              id: 1,
+                              name: output.matchedValuesMessage,
+                              disabled: true
+                            }
+                          ]
+                        : [
+                            {
+                              id: 0,
+                              name: output.matchedValuesMessage,
+                              disabled: true
+                            }
+                          ];
+                    } else {
+                      this.items = (output.matchedValues ?? []).map((x, i) => ({
+                        id: i,
+                        name: x.value
+                      }));
+
+                      if (isDefinedAndNotEmpty(this.searchValue)) {
+                        let searchValueLc: string =
+                          this.searchValue.toLowerCase();
+
+                        if (
+                          this.items.findIndex(
+                            item => item.name?.toLowerCase() === searchValueLc
+                          ) < 0
+                        ) {
+                          this.items = [
+                            { id: 0, name: this.searchValue },
+                            ...this.items.map(item => ({
+                              ...item,
+                              id: item.id + 1
+                            }))
+                          ];
+                        }
+                      }
+                    }
+                  }),
+                  take(1),
+                  finalize(() => {
+                    this.loading = false;
+                    this.cd.detectChanges();
+                  })
+                );
+
+            return suggestion;
           })
         )
         .subscribe();

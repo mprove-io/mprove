@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import type { Env } from '#common/types/backend/parts/env';
 import type { EnvUser } from '#common/types/backend/parts/env-user';
 import type { ToBackendCreateEnvUserOutput } from '#common/types/backend/routes/envs/create-env-user/create-env-user-output';
@@ -100,14 +100,15 @@ export class AddEnvUserDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        map(output => output.membersList),
-        tap(x => {
-          this.membersList = x;
-          this.membersListLoading = false;
-          this.membersListLength = x.length - 1;
-          this.cd.detectChanges();
+        tap(output => {
+          this.membersList = output.membersList;
+          this.membersListLength = output.membersList.length - 1;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.membersListLoading = false;
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }
