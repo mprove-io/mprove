@@ -87,13 +87,13 @@ import { RepChartData, UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { StructReportResolver } from '#front/app/resolvers/struct-report.resolver';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { DataService } from '#front/app/services/data.service';
 import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { ReportService } from '#front/app/services/report.service';
 import { SpaceUiService } from '#front/app/services/space-ui.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 import { UnitsUiService } from '#front/app/services/units-ui.service';
 
@@ -724,7 +724,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private reportsQuery: ReportsQuery,
@@ -1026,7 +1026,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           this.location.go(url);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

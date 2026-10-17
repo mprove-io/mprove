@@ -10,7 +10,7 @@ import { take, tap } from 'rxjs/operators';
 import type { ToBackendDeleteProviderRequest } from '#common/types/backend/routes/providers/delete-provider/delete-provider-request';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteProviderDialogData {
   apiService: ApiService;
@@ -32,7 +32,7 @@ export class DeleteProviderDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteProviderDialogData>,
     private providersQuery: ProvidersQuery
   ) {}
@@ -74,7 +74,7 @@ export class DeleteProviderDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

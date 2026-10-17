@@ -15,8 +15,8 @@ import { ChartsQuery } from '../queries/charts.query';
 import { ModelQuery } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
-import { AppSpinnerService } from './app-spinner.service';
 import { NavigateService } from './navigate.service';
+import { SpinnerService } from './spinner.service';
 
 @Injectable({ providedIn: 'root' })
 export class ChartService {
@@ -28,7 +28,7 @@ export class ChartService {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private apiService: ApiService,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
@@ -130,7 +130,7 @@ export class ChartService {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -177,7 +177,7 @@ export class ChartService {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -229,7 +229,7 @@ export class ChartService {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

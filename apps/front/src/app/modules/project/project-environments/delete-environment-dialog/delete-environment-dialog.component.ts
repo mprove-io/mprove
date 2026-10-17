@@ -14,7 +14,7 @@ import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteEnvironmentDialogData {
   apiService: ApiService;
@@ -38,7 +38,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
   dataItem: DeleteEnvironmentDialogData = this.ref.data;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteEnvironmentDialogData>,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
@@ -90,7 +90,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

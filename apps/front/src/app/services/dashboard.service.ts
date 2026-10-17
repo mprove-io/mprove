@@ -16,8 +16,8 @@ import { DashboardQuery } from '../queries/dashboard.query';
 import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
-import { AppSpinnerService } from './app-spinner.service';
 import { NavigateService } from './navigate.service';
+import { SpinnerService } from './spinner.service';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -29,7 +29,7 @@ export class DashboardService {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
@@ -173,7 +173,7 @@ export class DashboardService {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -237,7 +237,7 @@ export class DashboardService {
           this.dashboardQuery.update(output.dashboard);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -279,7 +279,7 @@ export class DashboardService {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

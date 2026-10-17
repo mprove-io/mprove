@@ -20,8 +20,8 @@ import { ReportsQuery } from '../queries/reports.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
-import { AppSpinnerService } from './app-spinner.service';
 import { NavigateService } from './navigate.service';
+import { SpinnerService } from './spinner.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
@@ -33,7 +33,7 @@ export class ReportService {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private apiService: ApiService,
     private uiQuery: UiQuery,
     private navigateService: NavigateService,
@@ -153,7 +153,7 @@ export class ReportService {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -214,7 +214,7 @@ export class ReportService {
           return true;
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -256,7 +256,7 @@ export class ReportService {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

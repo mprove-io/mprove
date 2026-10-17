@@ -21,7 +21,7 @@ import type { ToBackendSetProjectSandboxProviderRequest } from '#common/types/ba
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface EditSandboxProviderDialogData {
   apiService: ApiService;
@@ -47,7 +47,7 @@ export class EditSandboxProviderDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditSandboxProviderDialogData>,
     private fb: FormBuilder,
     private projectQuery: ProjectQuery
@@ -88,7 +88,7 @@ export class EditSandboxProviderDialogComponent implements OnInit {
           this.projectQuery.update(output.project);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

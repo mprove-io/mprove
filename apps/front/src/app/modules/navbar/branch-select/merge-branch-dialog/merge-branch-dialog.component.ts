@@ -26,9 +26,9 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface MergeBranchDialogData {
   apiService: ApiService;
@@ -69,7 +69,7 @@ export class MergeBranchDialogComponent implements OnInit {
   selectedBranchItem: BranchItem = undefined;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<MergeBranchDialogData>,
     private fb: FormBuilder,
     private repoQuery: RepoQuery,
@@ -141,7 +141,7 @@ export class MergeBranchDialogComponent implements OnInit {
           this.navigateService.navigateToBuilder();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

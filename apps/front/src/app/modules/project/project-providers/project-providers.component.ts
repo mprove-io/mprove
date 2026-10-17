@@ -11,8 +11,8 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -48,7 +48,7 @@ export class ProjectProvidersComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private providersQuery: ProvidersQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
@@ -169,7 +169,7 @@ export class ProjectProvidersComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

@@ -38,11 +38,11 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { HighLightService } from '#front/app/services/highlight.service';
 import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -163,7 +163,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
   workerTaskCompletedSubscription: Subscription;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
     private structQuery: StructQuery,
@@ -285,7 +285,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
               });
             }
           }),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     } else if (dotExt === ('.report' satisfies FileExtension)) {
@@ -329,7 +329,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
             }
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     }

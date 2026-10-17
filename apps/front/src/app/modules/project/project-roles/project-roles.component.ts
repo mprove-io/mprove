@@ -12,8 +12,8 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -60,7 +60,7 @@ export class ProjectRolesComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private cd: ChangeDetectorRef,
     private rolesQuery: RolesQuery,
     private givensQuery: GivensQuery,
@@ -130,7 +130,7 @@ export class ProjectRolesComponent implements OnInit {
           this.rolesQuery.update({ roles: output.roles });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

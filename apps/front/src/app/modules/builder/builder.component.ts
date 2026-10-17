@@ -31,10 +31,10 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { CHAT_SCOPE } from '../chat/chat-scope.token';
 
 @Component({
@@ -179,7 +179,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private repoQuery: RepoQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
@@ -369,7 +369,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -415,7 +415,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -462,7 +462,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

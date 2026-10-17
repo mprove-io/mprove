@@ -35,8 +35,8 @@ import { LlmModelVariantsComponent } from '#front/app/modules/project/project-pr
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface EditLlmModelDialogData {
@@ -86,7 +86,7 @@ export class EditLlmModelDialogComponent implements OnInit {
   variantsErrorMessage?: string;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditLlmModelDialogData>,
     private fb: FormBuilder,
     private providersQuery: ProvidersQuery,
@@ -484,7 +484,7 @@ export class EditLlmModelDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

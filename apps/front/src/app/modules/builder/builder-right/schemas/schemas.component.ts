@@ -30,9 +30,9 @@ import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/rout
 import type { SchemaNodeType } from '#front/app/modules/builder/builder-right/schemas/schema-node-type';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SampleDialogData } from './sample-dialog/sample-dialog.component';
 import { SchemaGraphDialogData } from './schema-graph-dialog/schema-graph-dialog.component';
 import { ViewCachedUniqueValuesDialogData } from './view-cached-unique-values-dialog/view-cached-unique-values-dialog.component';
@@ -128,7 +128,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
@@ -751,7 +751,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
           this.cd.detectChanges();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -874,7 +874,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
           this.cd.detectChanges();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

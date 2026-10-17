@@ -14,8 +14,8 @@ import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteDashboardDialogData {
@@ -42,7 +42,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteDashboardDialogData>,
     private dashboardUnitsQuery: DashboardUnitsQuery,
     private dashboardQuery: DashboardQuery,
@@ -98,7 +98,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

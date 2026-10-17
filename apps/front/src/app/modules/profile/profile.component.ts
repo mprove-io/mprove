@@ -14,8 +14,8 @@ import type { ToBackendResetUserPasswordRequest } from '#common/types/backend/ro
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -86,7 +86,7 @@ export class ProfileComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private userQuery: UserQuery,
     private navQuery: NavQuery,
     private apiService: ApiService,
@@ -123,7 +123,7 @@ export class ProfileComponent implements OnInit {
           this.router.navigate([PATH_PASSWORD_RESET_SENT_AUTH]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -171,7 +171,7 @@ export class ProfileComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -195,7 +195,7 @@ export class ProfileComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -231,7 +231,7 @@ export class ProfileComponent implements OnInit {
           this.userQuery.update(output.user);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

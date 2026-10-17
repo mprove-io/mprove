@@ -21,9 +21,9 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -75,7 +75,7 @@ export class RepoOptionsComponent {
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private fileService: FileService,
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private apiService: ApiService
@@ -124,7 +124,7 @@ export class RepoOptionsComponent {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -172,7 +172,7 @@ export class RepoOptionsComponent {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -221,7 +221,7 @@ export class RepoOptionsComponent {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -269,7 +269,7 @@ export class RepoOptionsComponent {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -317,7 +317,7 @@ export class RepoOptionsComponent {
           this.uiQuery.updatePart({ secondFileNodeId: undefined });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

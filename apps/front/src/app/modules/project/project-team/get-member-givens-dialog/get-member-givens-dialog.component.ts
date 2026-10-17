@@ -13,7 +13,7 @@ import type { MemberGiven } from '#common/types/backend/parts/members/member-giv
 import type { ToBackendGetMemberGivensOutput } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-output';
 import type { ToBackendGetMemberGivensRequest } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-request';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface GetMemberGivensDialogData {
   apiService: ApiService;
@@ -38,7 +38,7 @@ export class GetMemberGivensDialogComponent implements OnInit {
   memberGivens: MemberGiven[] = [];
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<GetMemberGivensDialogData>,
     private cd: ChangeDetectorRef
   ) {}
@@ -66,7 +66,7 @@ export class GetMemberGivensDialogComponent implements OnInit {
           this.cd.detectChanges();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
 

@@ -14,8 +14,8 @@ import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteSessionDialogData {
@@ -38,7 +38,7 @@ export class DeleteSessionDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteSessionDialogData>,
     private sessionQuery: SessionQuery,
     private sessionsQuery: SessionsQuery,
@@ -105,7 +105,7 @@ export class DeleteSessionDialogComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

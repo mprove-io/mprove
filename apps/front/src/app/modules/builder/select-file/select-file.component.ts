@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -7,5 +7,5 @@ import { AppSpinnerService } from '#front/app/services/app-spinner.service';
   templateUrl: './select-file.component.html'
 })
 export class SelectFileComponent {
-  constructor(public appSpinnerService: AppSpinnerService) {}
+  constructor(public spinnerService: SpinnerService) {}
 }

@@ -12,8 +12,8 @@ import { SET_NEW_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_NEW_PASSWORD_WAS_SET } from '#common/constants/top';
 import type { ToBackendUpdateUserPasswordRequest } from '#common/types/backend/routes/users/update-user-password/update-user-password-request';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 @Component({
@@ -44,7 +44,7 @@ export class UpdatePasswordComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fb: FormBuilder,
     private apiService: ApiService,
     private authService: AuthService,
@@ -87,7 +87,7 @@ export class UpdatePasswordComponent implements OnInit {
           this.router.navigate([PATH_NEW_PASSWORD_WAS_SET]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

@@ -19,8 +19,8 @@ import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/u
 import type { ToBackendRegisterUserRequest } from '#common/types/backend/routes/users/register-user/register-user-request';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -65,7 +65,7 @@ export class RegisterComponent implements OnInit {
   checkLoaded = false;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fb: FormBuilder,
     private apiService: ApiService,
     private localSpinnerService: LocalSpinnerService,
@@ -145,7 +145,7 @@ export class RegisterComponent implements OnInit {
           this.router.navigate([PATH_VERIFY_EMAIL]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

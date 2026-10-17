@@ -13,7 +13,7 @@ import type { ToBackendDeleteRoleRequest } from '#common/types/backend/routes/ro
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteProjectRoleDialogData {
   apiService: ApiService;
@@ -36,7 +36,7 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
   dataItem: DeleteProjectRoleDialogData = this.ref.data;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteProjectRoleDialogData>,
     private memberQuery: MemberQuery,
     private rolesQuery: RolesQuery
@@ -75,7 +75,7 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
           this.rolesQuery.update({ roles: output.roles });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

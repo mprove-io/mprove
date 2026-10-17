@@ -21,7 +21,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface EditSessionTitleDialogData {
   apiService: ApiService;
@@ -49,7 +49,7 @@ export class EditSessionTitleDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditSessionTitleDialogData>,
     private fb: FormBuilder,
     private sessionQuery: SessionQuery,
@@ -116,7 +116,7 @@ export class EditSessionTitleDialogComponent implements OnInit {
           this.sessionsQuery.updatePart({ sessions: updated });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

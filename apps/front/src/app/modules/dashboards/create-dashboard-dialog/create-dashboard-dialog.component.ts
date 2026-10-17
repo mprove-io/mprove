@@ -40,8 +40,8 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CreateDashboardDialogData {
@@ -136,7 +136,7 @@ export class CreateDashboardDialogComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<CreateDashboardDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
@@ -308,7 +308,7 @@ export class CreateDashboardDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

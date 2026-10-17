@@ -19,7 +19,7 @@ import type { ToBackendSetUserNameOutput } from '#common/types/backend/routes/us
 import type { ToBackendSetUserNameRequest } from '#common/types/backend/routes/users/set-user-name/set-user-name-request';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface EditNameDialogData {
@@ -45,7 +45,7 @@ export class EditNameDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditNameDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery
@@ -115,7 +115,7 @@ export class EditNameDialogComponent implements OnInit {
           this.userQuery.update(user);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

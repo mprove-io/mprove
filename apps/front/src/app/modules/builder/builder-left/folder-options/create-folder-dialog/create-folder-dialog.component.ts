@@ -23,7 +23,7 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface CreateFolderDialogData {
@@ -55,7 +55,7 @@ export class CreateFolderDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<CreateFolderDialogData>,
     private fb: FormBuilder,
     private structQuery: StructQuery,
@@ -121,7 +121,7 @@ export class CreateFolderDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

@@ -13,9 +13,9 @@ import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/rout
 import type { ToBackendConfirmUserEmailRequest } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-request';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -28,7 +28,7 @@ export class ConfirmEmailComponent implements OnInit {
   emailVerificationToken: string;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private route: ActivatedRoute,
     private apiService: ApiService,
     private userQuery: UserQuery,
@@ -78,7 +78,7 @@ export class ConfirmEmailComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

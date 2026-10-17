@@ -23,8 +23,8 @@ import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { environment } from '#front/environments/environment';
 
 @Component({
@@ -92,7 +92,7 @@ export class NavbarComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private router: Router,
     private navQuery: NavQuery,
     private repoQuery: RepoQuery,
@@ -220,7 +220,7 @@ export class NavbarComponent implements OnInit {
             this.navigateService.navigateToModels();
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     } else {
@@ -274,7 +274,7 @@ export class NavbarComponent implements OnInit {
             this.navigateService.navigateToDashboardsList();
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     } else {
@@ -334,7 +334,7 @@ export class NavbarComponent implements OnInit {
             this.navigateService.navigateToReportsList();
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     } else {

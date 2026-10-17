@@ -23,7 +23,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface EditEvDialogData {
   apiService: ApiService;
@@ -51,7 +51,7 @@ export class EditEvDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditEvDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -108,7 +108,7 @@ export class EditEvDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

@@ -33,7 +33,7 @@ import type { ToBackendTestConnectionRequest } from '#common/types/backend/route
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 import type { ScopeFormControls } from '#front/app/types/forms/scope-form-controls';
@@ -166,7 +166,7 @@ export class EditConnectionDialogComponent implements OnInit {
   testInternalHostResult: TestConnectionResult;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditConnectionDialogData>,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -925,7 +925,7 @@ export class EditConnectionDialogComponent implements OnInit {
           this.cd.detectChanges();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -967,7 +967,7 @@ export class EditConnectionDialogComponent implements OnInit {
           this.cd.detectChanges();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -1028,7 +1028,7 @@ export class EditConnectionDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

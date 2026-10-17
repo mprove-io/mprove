@@ -22,7 +22,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface EditProjectNameDialogData {
   apiService: ApiService;
@@ -52,7 +52,7 @@ export class EditProjectNameDialogComponent implements OnInit {
   projectId: string;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditProjectNameDialogData>,
     private fb: FormBuilder,
     private projectQuery: ProjectQuery,
@@ -108,7 +108,7 @@ export class EditProjectNameDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

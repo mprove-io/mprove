@@ -23,8 +23,8 @@ import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/user
 import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private apiService: ApiService,
@@ -137,7 +137,7 @@ export class LoginComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

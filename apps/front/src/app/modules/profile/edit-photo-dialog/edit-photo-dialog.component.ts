@@ -13,7 +13,7 @@ import type { ToBackendSetAvatarOutput } from '#common/types/backend/routes/avat
 import type { ToBackendSetAvatarRequest } from '#common/types/backend/routes/avatars/set-avatar/set-avatar-request';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface EditPhotoDialogData {
   apiService: ApiService;
@@ -38,7 +38,7 @@ export class EditPhotoDialogComponent implements OnInit {
   showCropper = false;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<EditPhotoDialogData>,
     private navQuery: NavQuery,
     private imageCompressService: NgxImageCompressService
@@ -113,7 +113,7 @@ export class EditPhotoDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

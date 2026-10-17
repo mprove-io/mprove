@@ -10,7 +10,7 @@ import { take, tap } from 'rxjs/operators';
 import type { ToBackendDeleteMemberRequest } from '#common/types/backend/routes/members/delete-member/delete-member-request';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface RemoveMemberDialogData {
   apiService: ApiService;
@@ -33,7 +33,7 @@ export class RemoveMemberDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<RemoveMemberDialogData>,
     private teamQuery: TeamQuery
   ) {}
@@ -77,7 +77,7 @@ export class RemoveMemberDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

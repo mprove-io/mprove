@@ -56,11 +56,11 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { StructDashboardResolver } from '#front/app/resolvers/struct-dashboard.resolver';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpaceUiService } from '#front/app/services/space-ui.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 import { UnitsUiService } from '#front/app/services/units-ui.service';
 
@@ -333,7 +333,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   private timer: any;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
@@ -710,7 +710,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
             this.location.go(url);
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     }

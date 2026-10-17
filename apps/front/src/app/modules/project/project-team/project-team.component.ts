@@ -17,8 +17,8 @@ import { RolesQuery } from '#front/app/queries/roles.query';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -88,7 +88,7 @@ export class ProjectTeamComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private teamQuery: TeamQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
@@ -231,7 +231,7 @@ export class ProjectTeamComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -288,7 +288,7 @@ export class ProjectTeamComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

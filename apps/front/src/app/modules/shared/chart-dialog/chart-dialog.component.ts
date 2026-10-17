@@ -56,10 +56,10 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ChartService } from '#front/app/services/chart.service';
 import { DataService, QDataRow } from '#front/app/services/data.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../shared.module';
 
 export interface ChartDialogData {
@@ -139,7 +139,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   runButtonTimerSubscription: Subscription;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<ChartDialogData>,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -222,7 +222,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
             this.cd.detectChanges();
           }),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     } else {

@@ -8,8 +8,8 @@ import type { ToBackendSetProjectSandboxProviderRequest } from '#common/types/ba
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -36,7 +36,7 @@ export class ProjectSandboxProviderComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private projectQuery: ProjectQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
@@ -78,7 +78,7 @@ export class ProjectSandboxProviderComponent implements OnInit {
           this.projectQuery.update(output.project);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

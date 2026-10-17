@@ -34,8 +34,8 @@ import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/types/back
 import type { ToBackendGenerateProjectRemoteKeyRequest } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface CreateProjectDialogData {
@@ -74,7 +74,7 @@ export class CreateProjectDialogComponent implements OnInit {
   spinnerName = 'createProjectDialogSpinner';
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<CreateProjectDialogData>,
     private fb: FormBuilder,
     private router: Router,
@@ -188,7 +188,7 @@ export class CreateProjectDialogComponent implements OnInit {
           ]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

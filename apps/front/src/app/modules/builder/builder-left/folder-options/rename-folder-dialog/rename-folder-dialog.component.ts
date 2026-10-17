@@ -30,8 +30,8 @@ import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface RenameFolderDialogData {
@@ -64,7 +64,7 @@ export class RenameFolderDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<RenameFolderDialogData>,
     private fb: FormBuilder,
     private navigateService: NavigateService,
@@ -201,7 +201,7 @@ export class RenameFolderDialogComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

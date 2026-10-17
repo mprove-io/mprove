@@ -13,7 +13,7 @@ import type { ToBackendDeleteLlmModelOutput } from '#common/types/backend/routes
 import type { ToBackendDeleteLlmModelRequest } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteLlmModelDialogData {
   apiService: ApiService;
@@ -35,7 +35,7 @@ export class DeleteLlmModelDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteLlmModelDialogData>,
     private providersQuery: ProvidersQuery
   ) {}
@@ -83,7 +83,7 @@ export class DeleteLlmModelDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

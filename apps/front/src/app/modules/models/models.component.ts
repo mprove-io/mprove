@@ -96,13 +96,13 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { StructChartResolver } from '#front/app/resolvers/struct-chart.resolver';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ChartService } from '#front/app/services/chart.service';
 import { DataService, QDataRow } from '#front/app/services/data.service';
 import { DataSizeService } from '#front/app/services/data-size.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpaceUiService } from '#front/app/services/space-ui.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { StructService } from '#front/app/services/struct.service';
 import { TimeService } from '#front/app/services/time.service';
 import { UiService } from '#front/app/services/ui.service';
@@ -726,7 +726,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   @ViewChild('chartsTree') chartsTree: TreeComponent;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -1225,7 +1225,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
             this.location.go(url);
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     }
@@ -1336,7 +1336,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

@@ -14,7 +14,7 @@ import type { ToBackendDeleteEnvVarRequest } from '#common/types/backend/routes/
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteEvDialogData {
   apiService: ApiService;
@@ -38,7 +38,7 @@ export class DeleteEvDialogComponent implements OnInit {
   dataItem: DeleteEvDialogData = this.ref.data;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteEvDialogData>,
     private memberQuery: MemberQuery,
     private environmentsQuery: EnvironmentsQuery
@@ -81,7 +81,7 @@ export class DeleteEvDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

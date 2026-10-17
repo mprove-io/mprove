@@ -43,7 +43,7 @@ import {
 } from '#common/constants/top-front';
 
 @Injectable({ providedIn: 'root' })
-export class AppSpinnerService implements OnDestroy {
+export class SpinnerService implements OnDestroy {
   private visible: WritableSignal<boolean> = signal(false);
 
   readonly isVisible: Signal<boolean> = this.visible.asReadonly();
@@ -62,7 +62,7 @@ export class AppSpinnerService implements OnDestroy {
 
   constructor(
     private router: Router,
-    private spinner: NgxSpinnerService
+    private ngxSpinner: NgxSpinnerService
   ) {
     this.navigationSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -89,8 +89,7 @@ export class AppSpinnerService implements OnDestroy {
     });
   }
 
-  /** Each subscription owns only its work, never another request or navigation. */
-  track<T>(): MonoTypeOperatorFunction<T> {
+  appTrack<T>(): MonoTypeOperatorFunction<T> {
     let operator: MonoTypeOperatorFunction<T> = source =>
       defer(() => {
         this.operationCount++;
@@ -127,7 +126,7 @@ export class AppSpinnerService implements OnDestroy {
 
           this.visible.set(true);
 
-          void this.spinner.show(APP_SPINNER_NAME);
+          void this.ngxSpinner.show(APP_SPINNER_NAME);
         }, 0);
       }
 
@@ -149,7 +148,7 @@ export class AppSpinnerService implements OnDestroy {
       if (this.operationCount === 0 && this.navigationIds.size === 0) {
         this.visible.set(false);
 
-        void this.spinner.hide(APP_SPINNER_NAME);
+        void this.ngxSpinner.hide(APP_SPINNER_NAME);
       }
     }, remainingMs);
   }
@@ -211,7 +210,7 @@ export class AppSpinnerService implements OnDestroy {
     if (this.visible()) {
       this.visible.set(false);
 
-      void this.spinner.hide(APP_SPINNER_NAME);
+      void this.ngxSpinner.hide(APP_SPINNER_NAME);
     }
   }
 }

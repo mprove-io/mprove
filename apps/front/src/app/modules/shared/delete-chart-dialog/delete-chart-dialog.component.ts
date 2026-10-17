@@ -15,8 +15,8 @@ import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteChartDialogData {
@@ -43,7 +43,7 @@ export class DeleteChartDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteChartDialogData>,
     private navigateService: NavigateService,
     private chartsQuery: ChartsQuery,
@@ -103,7 +103,7 @@ export class DeleteChartDialogComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

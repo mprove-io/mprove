@@ -37,7 +37,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddLlmModelDialogData {
@@ -94,7 +94,7 @@ export class AddLlmModelDialogComponent implements OnInit {
   variantsErrorMessage?: string;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<AddLlmModelDialogData>,
     private fb: FormBuilder,
     private providersQuery: ProvidersQuery,
@@ -501,7 +501,7 @@ export class AddLlmModelDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

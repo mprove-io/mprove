@@ -35,7 +35,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface CreateBranchDialogData {
   apiService: ApiService;
@@ -99,7 +99,7 @@ export class CreateBranchDialogComponent implements OnInit {
   targetRepoType: RepoType;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<CreateBranchDialogData>,
     private fb: FormBuilder,
     private router: Router,
@@ -201,7 +201,7 @@ export class CreateBranchDialogComponent implements OnInit {
           ]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

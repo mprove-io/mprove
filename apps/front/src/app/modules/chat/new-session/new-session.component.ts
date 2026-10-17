@@ -21,9 +21,9 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SessionService } from '#front/app/services/session.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { UiService } from '#front/app/services/ui.service';
 import type { ApiResponseForRoute } from '#front/app/types/api-response-for-route';
 import { CHAT_SCOPE, ChatScope } from '../chat-scope.token';
@@ -52,7 +52,7 @@ export class NewSessionComponent implements OnInit {
   isSubmitting = false;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
     private apiService: ApiService,
@@ -270,7 +270,7 @@ export class NewSessionComponent implements OnInit {
             });
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     } else {
@@ -306,7 +306,7 @@ export class NewSessionComponent implements OnInit {
             });
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     }

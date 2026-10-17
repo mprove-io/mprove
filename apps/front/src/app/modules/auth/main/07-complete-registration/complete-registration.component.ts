@@ -16,9 +16,9 @@ import type { ToBackendCompleteUserRegistrationOutput } from '#common/types/back
 import type { ToBackendCompleteUserRegistrationRequest } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-request';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -43,7 +43,7 @@ export class CompleteRegistrationComponent implements OnInit {
   });
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fb: FormBuilder,
     private apiService: ApiService,
     private authService: AuthService,
@@ -104,7 +104,7 @@ export class CompleteRegistrationComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

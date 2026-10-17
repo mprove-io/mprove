@@ -10,7 +10,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PATH_USER_DELETED } from '#common/constants/top';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteUserDialogData {
   apiService: ApiService;
@@ -30,7 +30,7 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteUserDialogData>,
     private router: Router
   ) {}
@@ -62,7 +62,7 @@ export class DeleteUserDialogComponent implements OnInit {
           this.router.navigate([PATH_USER_DELETED]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

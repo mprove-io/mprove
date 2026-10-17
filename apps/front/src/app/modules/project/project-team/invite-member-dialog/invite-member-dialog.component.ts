@@ -21,7 +21,7 @@ import type { ToBackendCreateMemberRequest } from '#common/types/backend/routes/
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface InviteMemberDialogData {
   apiService: ApiService;
@@ -48,7 +48,7 @@ export class InviteMemberDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<InviteMemberDialogData>,
     private fb: FormBuilder,
     private teamQuery: TeamQuery
@@ -106,7 +106,7 @@ export class InviteMemberDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

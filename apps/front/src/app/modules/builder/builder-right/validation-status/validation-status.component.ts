@@ -8,7 +8,7 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -60,7 +60,7 @@ export class ValidationStatusComponent {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
     private repoQuery: RepoQuery,
@@ -98,7 +98,7 @@ export class ValidationStatusComponent {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

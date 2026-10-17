@@ -20,7 +20,7 @@ import {
 import type { ToBackendDeleteBranchRequest } from '#common/types/backend/routes/branches/delete-branch/delete-branch-request';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteBranchDialogData {
   apiService: ApiService;
@@ -55,7 +55,7 @@ export class DeleteBranchDialogComponent implements OnInit {
         : 'unknown';
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteBranchDialogData>,
     private router: Router
   ) {}
@@ -103,7 +103,7 @@ export class DeleteBranchDialogComponent implements OnInit {
           ]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

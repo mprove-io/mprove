@@ -22,7 +22,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddProjectRoleDialogData {
@@ -52,7 +52,7 @@ export class AddProjectRoleDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<AddProjectRoleDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -106,7 +106,7 @@ export class AddProjectRoleDialogComponent implements OnInit {
           this.rolesQuery.update({ roles: output.roles });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

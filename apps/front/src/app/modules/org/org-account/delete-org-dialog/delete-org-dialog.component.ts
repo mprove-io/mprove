@@ -14,7 +14,7 @@ import type { ToBackendDeleteOrgRequest } from '#common/types/backend/routes/org
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteOrgDialogData {
   apiService: ApiService;
@@ -36,7 +36,7 @@ export class DeleteOrgDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteOrgDialogData>,
     private router: Router,
     private orgQuery: OrgQuery,
@@ -78,7 +78,7 @@ export class DeleteOrgDialogComponent implements OnInit {
           this.orgQuery.reset();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

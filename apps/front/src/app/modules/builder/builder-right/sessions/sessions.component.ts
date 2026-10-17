@@ -20,10 +20,10 @@ import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
@@ -84,7 +84,7 @@ export class SessionsComponent implements OnInit {
   );
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
@@ -245,7 +245,7 @@ export class SessionsComponent implements OnInit {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -280,7 +280,7 @@ export class SessionsComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

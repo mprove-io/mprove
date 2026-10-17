@@ -65,12 +65,12 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ConfirmService } from '#front/app/services/confirm.service';
 import { FileService } from '#front/app/services/file.service';
 import { HighLightService } from '#front/app/services/highlight.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 interface HistoryEntry {
   fullDocContent: string;
@@ -590,7 +590,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   workerTaskCompletedSubscription: Subscription;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fileQuery: FileQuery,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
@@ -1142,7 +1142,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.cd.detectChanges();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
@@ -1259,7 +1259,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
               });
             }
           }),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     } else if (dotExt === ('.report' satisfies FileExtension)) {
@@ -1303,7 +1303,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           }),
           take(1),
-          this.appSpinnerService.track()
+          this.spinnerService.appTrack()
         )
         .subscribe();
     }

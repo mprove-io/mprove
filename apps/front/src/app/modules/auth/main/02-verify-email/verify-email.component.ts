@@ -11,8 +11,8 @@ import type { ToBackendResendUserEmailOutput } from '#common/types/backend/route
 import type { ToBackendResendUserEmailRequest } from '#common/types/backend/routes/users/resend-user-email/resend-user-email-request';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -42,7 +42,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   timerSubscription: Subscription;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private userQuery: UserQuery,
     private authService: AuthService,
     private apiService: ApiService,
@@ -83,7 +83,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
           }
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

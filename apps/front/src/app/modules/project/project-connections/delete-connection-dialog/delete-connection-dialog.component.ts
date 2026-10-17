@@ -10,7 +10,7 @@ import { take, tap } from 'rxjs/operators';
 import type { ToBackendDeleteConnectionRequest } from '#common/types/backend/routes/connections/delete-connection/delete-connection-request';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteConnectionDialogData {
   apiService: ApiService;
@@ -35,7 +35,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
   dataItem: DeleteConnectionDialogData = this.ref.data;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteConnectionDialogData>,
     private connectionsQuery: ConnectionsQuery
   ) {}
@@ -79,7 +79,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

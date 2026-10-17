@@ -14,7 +14,7 @@ import type { ToBackendDeleteProjectRequest } from '#common/types/backend/routes
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteProjectDialogData {
   apiService: ApiService;
@@ -36,7 +36,7 @@ export class DeleteProjectDialogComponent implements OnInit {
   }
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteProjectDialogData>,
     private router: Router,
     private projectQuery: ProjectQuery,
@@ -78,7 +78,7 @@ export class DeleteProjectDialogComponent implements OnInit {
           this.projectQuery.reset();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

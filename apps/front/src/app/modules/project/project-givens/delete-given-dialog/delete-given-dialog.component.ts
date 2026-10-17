@@ -13,7 +13,7 @@ import type { ToBackendDeleteGivenRequest } from '#common/types/backend/routes/g
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DeleteGivenDialogData {
   apiService: ApiService;
@@ -36,7 +36,7 @@ export class DeleteGivenDialogComponent implements OnInit {
   dataItem: DeleteGivenDialogData = this.ref.data;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<DeleteGivenDialogData>,
     private memberQuery: MemberQuery,
     private givensQuery: GivensQuery
@@ -75,7 +75,7 @@ export class DeleteGivenDialogComponent implements OnInit {
           this.givensQuery.update({ givens: output.givens });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

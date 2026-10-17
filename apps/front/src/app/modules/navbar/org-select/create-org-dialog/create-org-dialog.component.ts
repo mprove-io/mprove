@@ -29,7 +29,7 @@ import type { ToBackendCreateOrgRequest } from '#common/types/backend/routes/org
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface CreateOrgDialogData {
   apiService: ApiService;
@@ -55,7 +55,7 @@ export class CreateOrgDialogComponent implements OnInit {
   }>;
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<CreateOrgDialogData>,
     private fb: FormBuilder,
     private navQuery: NavQuery,
@@ -121,7 +121,7 @@ export class CreateOrgDialogComponent implements OnInit {
           localStorage.removeItem(LOCAL_STORAGE_PROJECT_ID);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

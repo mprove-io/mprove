@@ -12,7 +12,7 @@ import { FORGOT_YOUR_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_LOGIN, PATH_PASSWORD_RESET_SENT } from '#common/constants/top';
 import type { ToBackendResetUserPasswordRequest } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-request';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -33,7 +33,7 @@ export class ForgotPasswordComponent implements OnInit {
   });
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fb: FormBuilder,
     private router: Router,
     private apiService: ApiService,
@@ -72,7 +72,7 @@ export class ForgotPasswordComponent implements OnInit {
           this.router.navigate([PATH_PASSWORD_RESET_SENT]);
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

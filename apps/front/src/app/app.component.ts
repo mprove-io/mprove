@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { AppSpinnerService } from './services/app-spinner.service';
 import { AuthService } from './services/auth.service';
+import { SpinnerService } from './services/spinner.service';
 
 @Component({
   selector: 'm-root',
@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService,
     // Eagerly initialize global spinner navigation tracking.
-    private appSpinnerService: AppSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit() {

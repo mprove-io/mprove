@@ -23,7 +23,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface AddRoleDialogData {
   apiService: ApiService;
@@ -52,7 +52,7 @@ export class AddRoleDialogComponent implements OnInit {
   availableRoles: Role[] = [];
 
   constructor(
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     public ref: DialogRef<AddRoleDialogData>,
     private fb: FormBuilder,
     private teamQuery: TeamQuery,
@@ -119,7 +119,7 @@ export class AddRoleDialogComponent implements OnInit {
           });
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }

@@ -26,8 +26,8 @@ import { RepoQuery } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
-import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CommitDialogDialogData {
@@ -64,7 +64,7 @@ export class CommitDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<CommitDialogDialogData>,
     private fb: FormBuilder,
-    private appSpinnerService: AppSpinnerService,
+    private spinnerService: SpinnerService,
     private fileService: FileService,
     private repoQuery: RepoQuery,
     private sessionQuery: SessionQuery,
@@ -158,7 +158,7 @@ export class CommitDialogComponent implements OnInit {
           this.fileService.refreshSecondFile();
         }),
         take(1),
-        this.appSpinnerService.track()
+        this.spinnerService.appTrack()
       )
       .subscribe();
   }
