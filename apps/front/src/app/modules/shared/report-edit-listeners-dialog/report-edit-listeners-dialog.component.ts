@@ -29,8 +29,8 @@ import type { RowX2 } from '#common/types/front/report/row/row-x-2';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { ReportService } from '#front/app/services/report.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface ReportEditListenersDialogData {
   reportService: ReportService;
@@ -54,7 +54,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
     });
   }
 
-  spinnerName = 'reportEditListen';
+  spinnerNameReportEditListeners: string = 'ReportEditListeners';
 
   models: Model[];
 
@@ -77,7 +77,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
     public ref: DialogRef<ReportEditListenersDialogData>,
     private fb: FormBuilder,
     private navQuery: NavQuery,
-    private localSpinnerService: LocalSpinnerService,
+    private spinnerService: SpinnerService,
     private uiQuery: UiQuery,
     private cd: ChangeDetectorRef
   ) {}
@@ -201,7 +201,9 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.spinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameReportEditListeners
+        })
       )
       .subscribe();
 

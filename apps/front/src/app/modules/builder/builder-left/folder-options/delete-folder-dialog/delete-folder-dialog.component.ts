@@ -6,7 +6,6 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -52,7 +51,6 @@ export class DeleteFolderDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
-    private spinner: NgxSpinnerService,
     private structQuery: StructQuery
   ) {}
 

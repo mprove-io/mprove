@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { LOGIN_SUCCESS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
@@ -29,15 +28,14 @@ import { NavigateService } from '#front/app/services/navigate.service';
 export class LoginSuccessComponent implements OnInit {
   pageTitle = LOGIN_SUCCESS_PAGE_TITLE;
 
-  spinnerName = 'loginSuccessSpinner';
+  spinnerNameLoginSuccess: string = 'LoginSuccess';
 
   constructor(
     private title: Title,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private authService: AuthService,
-    private navigateService: NavigateService,
-    private spinner: NgxSpinnerService
+    private navigateService: NavigateService
   ) {}
 
   ngOnInit() {

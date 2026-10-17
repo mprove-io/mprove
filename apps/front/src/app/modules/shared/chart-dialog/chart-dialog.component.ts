@@ -18,7 +18,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { from, interval, of, Subscription } from 'rxjs';
 import {
@@ -107,7 +106,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   fieldsListLoading = false;
   model: Model;
 
-  chartDialogRunButtonSpinnerName = 'chartDialogRunButtonSpinnerName';
+  spinnerNameChartDialogRun: string = 'ChartDialogRun';
 
   isShowInit = true;
   isRunButtonPressed = false;
@@ -146,7 +145,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private chartService: ChartService,
     private memberQuery: MemberQuery,
-    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private navigateService: NavigateService,
     private structQuery: StructQuery
@@ -414,7 +412,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
   startRunButtonTimer() {
     this.isRunButtonPressed = true;
-    this.spinner.show(this.chartDialogRunButtonSpinnerName);
+    this.spinnerService.localShow({ name: this.spinnerNameChartDialogRun });
     this.cd.detectChanges();
 
     this.runButtonTimerSubscription = from([0])
@@ -423,7 +421,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         startWith(1),
         tap(x => {
           if (x === 0) {
-            this.spinner.hide(this.chartDialogRunButtonSpinnerName);
+            this.spinnerService.localHide({
+              name: this.spinnerNameChartDialogRun
+            });
             this.isRunButtonPressed = false;
             this.cd.detectChanges();
           }

@@ -53,7 +53,7 @@ import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface DashboardAddFilterDialogData {
@@ -101,9 +101,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
-  storeModelsSpinnerName = 'dashboardAddStoreModelsSpinnerName';
-  storeFiltersSpinnerName = 'dashboardAddStoreFiltersSpinnerName';
-  suggestFieldsSpinnerName = 'dashboardAddSuggestFieldsSpinnerName';
+  spinnerNameDashboardFilterStoreModels: string = 'DashboardFilterStoreModels';
+
+  spinnerNameDashboardFilterStoreFilters: string =
+    'DashboardFilterStoreFilters';
+
+  spinnerNameDashboardFilterSuggestFields: string =
+    'DashboardFilterSuggestFields';
 
   malloyResultsList = RESULTS_LIST;
   storeResultsList: string[] = [];
@@ -210,7 +214,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
     private fb: FormBuilder,
-    private localSpinnerService: LocalSpinnerService,
+    private spinnerService: SpinnerService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
@@ -406,7 +410,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.storeModelsSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameDashboardFilterStoreModels
+        })
       )
       .subscribe();
   }
@@ -474,7 +480,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.storeFiltersSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameDashboardFilterStoreFilters
+        })
       )
       .subscribe();
   }
@@ -529,7 +537,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.suggestFieldsSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameDashboardFilterSuggestFields
+        })
       )
       .subscribe();
   }

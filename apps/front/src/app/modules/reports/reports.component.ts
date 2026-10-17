@@ -88,7 +88,6 @@ import { UserQuery } from '#front/app/queries/user.query';
 import { StructReportResolver } from '#front/app/resolvers/struct-report.resolver';
 import { ApiService } from '#front/app/services/api.service';
 import { DataService } from '#front/app/services/data.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { ReportService } from '#front/app/services/report.service';
@@ -698,7 +697,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   isRunButtonPressed = false;
 
-  metricsRunButtonSpinnerName = 'metricsRunButtonSpinnerName';
+  spinnerNameReportMetricsRun: string = 'ReportMetricsRun';
 
   runButtonTimerSubscription: Subscription;
 
@@ -738,7 +737,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private router: Router,
     private navQuery: NavQuery,
     private route: ActivatedRoute,
-    private localSpinnerService: LocalSpinnerService,
     private uiService: UiService,
     private reportService: ReportService,
     private dataService: DataService,
@@ -905,8 +903,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({
-          name: this.metricsRunButtonSpinnerName
+        this.spinnerService.localTrack({
+          name: this.spinnerNameReportMetricsRun
         })
       )
       .subscribe();

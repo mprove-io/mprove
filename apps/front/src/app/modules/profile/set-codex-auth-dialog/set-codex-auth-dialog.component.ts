@@ -17,7 +17,7 @@ import type { ToBackendStartUserCodexAuthOutput } from '#common/types/backend/ro
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface SetCodexAuthDialogData {
   apiService: ApiService;
@@ -46,14 +46,14 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
   copiedCode = false;
   errorMessage: string;
 
-  spinnerName = 'setCodexAuthDialogSpinner';
+  spinnerNameCodexAuthSet: string = 'CodexAuthSet';
 
   private pollSub: Subscription;
 
   constructor(
     public ref: DialogRef<SetCodexAuthDialogData>,
     private userQuery: UserQuery,
-    private localSpinnerService: LocalSpinnerService,
+    private spinnerService: SpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -99,7 +99,7 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
           }
         }),
         take(1),
-        this.localSpinnerService.track({ name: this.spinnerName })
+        this.spinnerService.localTrack({ name: this.spinnerNameCodexAuthSet })
       )
       .subscribe();
   }

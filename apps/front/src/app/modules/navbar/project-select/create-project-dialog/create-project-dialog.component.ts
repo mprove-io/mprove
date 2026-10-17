@@ -34,7 +34,6 @@ import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/types/back
 import type { ToBackendGenerateProjectRemoteKeyRequest } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
@@ -71,15 +70,14 @@ export class CreateProjectDialogComponent implements OnInit {
   isDeployKeyAdded = false;
   copied = false;
 
-  spinnerName = 'createProjectDialogSpinner';
+  spinnerNameProjectCreate: string = 'ProjectCreate';
 
   constructor(
     private spinnerService: SpinnerService,
     public ref: DialogRef<CreateProjectDialogData>,
     private fb: FormBuilder,
     private router: Router,
-    private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -125,7 +123,7 @@ export class CreateProjectDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.spinnerName })
+        this.spinnerService.localTrack({ name: this.spinnerNameProjectCreate })
       )
       .subscribe();
 

@@ -51,7 +51,7 @@ export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
 
   theme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE_READ;
 
-  spinnerName = 'queryInfoGetFile';
+  spinnerNameQueryInfoLoadFile: string = 'QueryInfoLoadFile';
   isShowSpinner = false;
 
   content: string;

@@ -39,7 +39,6 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { HighLightService } from '#front/app/services/highlight.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
@@ -149,7 +148,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
     })
   );
 
-  spinnerName = 'filesRightGetFile';
+  spinnerNameSecondFileLoad: string = 'SecondFileLoad';
   isShowSpinner = false;
 
   showGoTo = false;
@@ -171,7 +170,6 @@ export class SecondFileComponent implements OnInit, OnDestroy {
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
-    private localSpinnerService: LocalSpinnerService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
@@ -439,7 +437,9 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
               this.cd.detectChanges();
             }),
-            this.localSpinnerService.track({ name: this.spinnerName })
+            this.spinnerService.localTrack({
+              name: this.spinnerNameSecondFileLoad
+            })
           )
           .subscribe();
       }

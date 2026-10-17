@@ -13,7 +13,7 @@ import { delay, finalize, take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
 export interface SampleDialogData {
@@ -48,13 +48,13 @@ export class SampleDialogComponent implements OnInit {
   hasMore = true;
   offset = 100;
 
-  sampleNextSpinnerName = 'sampleNext';
+  spinnerNameSchemaSampleNext: string = 'SchemaSampleNext';
 
   constructor(
     public ref: DialogRef<SampleDialogData>,
     private apiService: ApiService,
     private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -116,7 +116,9 @@ export class SampleDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.sampleNextSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameSchemaSampleNext
+        })
       )
       .subscribe();
   }

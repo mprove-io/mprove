@@ -60,7 +60,6 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
@@ -102,11 +101,11 @@ export class ChartSaveAsDialogComponent implements OnInit, OnDestroy {
 
   emptySpaceName = EMPTY_SPACE_NAME;
 
-  selectedDashboardSpinnerName = 'chartSaveAsDashboardSpinnerName';
+  spinnerNameChartSaveAsDashboard: string = 'ChartSaveAsDashboard';
 
   selectedDashboardLoaded = false;
 
-  spinnerName = 'chartSaveAs';
+  spinnerNameChartSaveAs: string = 'ChartSaveAs';
 
   chart: ChartX;
 
@@ -158,7 +157,6 @@ export class ChartSaveAsDialogComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private chartsQuery: ChartsQuery,
     private structQuery: StructQuery,
-    private localSpinnerService: LocalSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -289,7 +287,7 @@ export class ChartSaveAsDialogComponent implements OnInit, OnDestroy {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.spinnerName })
+        this.spinnerService.localTrack({ name: this.spinnerNameChartSaveAs })
       )
       .subscribe();
 
@@ -468,8 +466,8 @@ export class ChartSaveAsDialogComponent implements OnInit, OnDestroy {
             this.cd.detectChanges();
           }
         }),
-        this.localSpinnerService.track({
-          name: this.selectedDashboardSpinnerName
+        this.spinnerService.localTrack({
+          name: this.spinnerNameChartSaveAsDashboard
         })
       )
       .subscribe();

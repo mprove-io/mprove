@@ -30,14 +30,11 @@ import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/rout
 import type { SchemaNodeType } from '#front/app/modules/builder/builder-right/schemas/schema-node-type';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { SampleDialogData } from './sample-dialog/sample-dialog.component';
 import { SchemaGraphDialogData } from './schema-graph-dialog/schema-graph-dialog.component';
 import { ViewCachedUniqueValuesDialogData } from './view-cached-unique-values-dialog/view-cached-unique-values-dialog.component';
-
-let SCHEMAS_SPINNER_NAME = 'schemasRefresh';
 
 interface SchemaTreeNode {
   id: string;
@@ -73,7 +70,7 @@ interface SchemaTreeNode {
 export class SchemasComponent implements OnInit, OnDestroy {
   schemasLoaded = false;
   isRefreshing = false;
-  spinnerName = SCHEMAS_SPINNER_NAME;
+  spinnerNameSchemasRefresh: string = 'SchemasRefresh';
   sampleSpinnerNodeId: string;
   sampleRequestId = 0;
   cachedColumnSpinnerNodeIds = new Set<string>();
@@ -132,8 +129,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -192,7 +188,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: SCHEMAS_SPINNER_NAME })
+        this.spinnerService.localTrack({ name: this.spinnerNameSchemasRefresh })
       )
       .subscribe();
   }

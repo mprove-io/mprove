@@ -16,8 +16,8 @@ import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard'
 import type { Model } from '#common/types/blockml/parts/model/model';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 export interface DashboardAddTileDialogData {
   apiService: ApiService;
@@ -37,7 +37,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  spinnerName = 'dashboardAddTile';
+  spinnerNameDashboardAddTile: string = 'DashboardAddTile';
 
   models: Model[];
 
@@ -46,7 +46,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   async ngOnInit() {
@@ -87,7 +87,9 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.spinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameDashboardAddTile
+        })
       )
       .subscribe();
 

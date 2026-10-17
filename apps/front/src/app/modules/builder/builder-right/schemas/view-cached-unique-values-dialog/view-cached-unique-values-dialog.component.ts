@@ -14,7 +14,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
 export interface ViewCachedUniqueValuesDialogData {
@@ -50,13 +50,13 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
   hasMore = true;
   offset = 100;
 
-  cachedUniqueValuesNextSpinnerName = 'cachedUniqueValuesNext';
+  spinnerNameCachedUniqueValuesNext: string = 'CachedUniqueValuesNext';
 
   constructor(
     public ref: DialogRef<ViewCachedUniqueValuesDialogData>,
     private apiService: ApiService,
     private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -123,8 +123,8 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({
-          name: this.cachedUniqueValuesNextSpinnerName
+        this.spinnerService.localTrack({
+          name: this.spinnerNameCachedUniqueValuesNext
         })
       )
       .subscribe();

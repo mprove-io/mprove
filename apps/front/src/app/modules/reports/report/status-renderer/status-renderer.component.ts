@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { SOME_ROWS_HAVE_FORMULA_ERRORS } from '#common/constants/top';
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -10,6 +9,7 @@ import type { DataRow } from '#common/types/front/report/row/data-row';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { StructQuery } from '#front/app/queries/struct.query';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -19,7 +19,7 @@ import { StructQuery } from '#front/app/queries/struct.query';
 export class StatusRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
-  spinnerName = makeId();
+  spinnerNameReportStatusRenderer: string = makeId();
 
   timeColumnsLimit: number;
   isLimitReached = false;
@@ -69,16 +69,20 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
 
   updateSpinner() {
     if (this.isRunning === true) {
-      this.spinner.show(this.spinnerName);
+      this.spinnerService.localShow({
+        name: this.spinnerNameReportStatusRenderer
+      });
     } else {
-      this.spinner.hide(this.spinnerName);
+      this.spinnerService.localHide({
+        name: this.spinnerNameReportStatusRenderer
+      });
     }
     this.cd.detectChanges();
   }
 
   constructor(
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService,
+    private spinnerService: SpinnerService,
     private reportQuery: ReportQuery,
     private structQuery: StructQuery
   ) {}

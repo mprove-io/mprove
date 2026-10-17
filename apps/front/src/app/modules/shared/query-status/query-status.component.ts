@@ -5,7 +5,6 @@ import {
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
 
@@ -14,6 +13,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { TimeService } from '#front/app/services/time.service';
 
 @Component({
@@ -22,7 +22,7 @@ import { TimeService } from '#front/app/services/time.service';
   templateUrl: './query-status.component.html'
 })
 export class QueryStatusComponent implements OnChanges {
-  spinnerName = makeId();
+  spinnerNameQueryStatus: string = makeId();
 
   @Input()
   query: Query;
@@ -61,7 +61,7 @@ export class QueryStatusComponent implements OnChanges {
     private navQuery: NavQuery,
     private cd: ChangeDetectorRef,
     private timeService: TimeService,
-    private spinner: NgxSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -71,9 +71,9 @@ export class QueryStatusComponent implements OnChanges {
       this.calculateTimes();
 
       if (this.query.status === 'Running') {
-        this.spinner.show(this.spinnerName);
+        this.spinnerService.localShow({ name: this.spinnerNameQueryStatus });
       } else {
-        this.spinner.hide(this.spinnerName);
+        this.spinnerService.localHide({ name: this.spinnerNameQueryStatus });
       }
 
       this.cd.detectChanges();

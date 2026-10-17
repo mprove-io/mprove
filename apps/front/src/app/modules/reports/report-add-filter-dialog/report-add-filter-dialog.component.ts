@@ -50,8 +50,8 @@ import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-fo
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { ReportService } from '#front/app/services/report.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface ReportAddFilterDialogData {
@@ -99,9 +99,11 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
-  storeModelsSpinnerName = 'reportAddStoreModelsSpinnerName';
-  storeFiltersSpinnerName = 'reportAddStoreFiltersSpinnerName';
-  suggestFieldsSpinnerName = 'reportAddSuggestFieldsSpinnerName';
+  spinnerNameReportFilterStoreModels: string = 'ReportFilterStoreModels';
+
+  spinnerNameReportFilterStoreFilters: string = 'ReportFilterStoreFilters';
+
+  spinnerNameReportFilterSuggestFields: string = 'ReportFilterSuggestFields';
 
   malloyResultsList = RESULTS_LIST;
   storeResultsList: string[] = [];
@@ -208,7 +210,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<ReportAddFilterDialogData>,
     private fb: FormBuilder,
-    private localSpinnerService: LocalSpinnerService,
+    private spinnerService: SpinnerService,
     private navQuery: NavQuery,
     private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
@@ -405,7 +407,9 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.storeModelsSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameReportFilterStoreModels
+        })
       )
       .subscribe();
   }
@@ -473,7 +477,9 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.storeFiltersSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameReportFilterStoreFilters
+        })
       )
       .subscribe();
   }
@@ -528,7 +534,9 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.suggestFieldsSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameReportFilterSuggestFields
+        })
       )
       .subscribe();
   }

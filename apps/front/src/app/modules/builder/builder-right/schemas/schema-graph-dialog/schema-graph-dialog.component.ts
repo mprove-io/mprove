@@ -17,7 +17,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import {
   buildAllTablesGraph,
@@ -104,7 +104,7 @@ export class SchemaGraphDialogComponent implements OnInit {
   sampleErrorMessage: string;
   sampleIsLoading = false;
 
-  sampleSpinnerName = 'mapSample';
+  spinnerNameSchemaGraphSample: string = 'SchemaGraphSample';
 
   schemaNodes: SchemaGraphSchemaNode[] = [];
 
@@ -112,7 +112,7 @@ export class SchemaGraphDialogComponent implements OnInit {
     public ref: DialogRef<SchemaGraphDialogData>,
     private apiService: ApiService,
     private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -694,7 +694,9 @@ export class SchemaGraphDialogComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: this.sampleSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameSchemaGraphSample
+        })
       )
       .subscribe();
   }

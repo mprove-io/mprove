@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { SPINNER_NAME_APP } from '#common/constants/top-front';
 import { AuthService } from './services/auth.service';
 import { SpinnerService } from './services/spinner.service';
 
@@ -13,7 +13,7 @@ import { SpinnerService } from './services/spinner.service';
   standalone: true
 })
 export class AppComponent implements OnInit {
-  appSpinnerName = APP_SPINNER_NAME;
+  spinnerNameApp: string = SPINNER_NAME_APP;
 
   constructor(
     private authService: AuthService,

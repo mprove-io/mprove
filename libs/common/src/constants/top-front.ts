@@ -56,7 +56,7 @@ export const RESULTS_LIST: FieldResult[] = [
   // 'quarter_of_year',
 ];
 
-export const APP_SPINNER_NAME = 'app';
+export const SPINNER_NAME_APP = 'App';
 
 export const EXPLORER_ENABLED = true;
 export const SHOW_PROMPT_ENABLED = true;

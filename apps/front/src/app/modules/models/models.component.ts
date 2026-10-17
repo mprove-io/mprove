@@ -23,7 +23,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { from, interval, of, Subscription } from 'rxjs';
 import {
   concatMap,
@@ -170,8 +169,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
-  modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
-  modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
+  spinnerNameModelRun: string = 'ModelRun';
+
+  spinnerNameModelCancel: string = 'ModelCancel';
 
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
@@ -746,7 +746,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private structService: StructService,
-    private spinner: NgxSpinnerService,
     private timeService: TimeService,
     private chartService: ChartService,
     private dataSizeService: DataSizeService,
@@ -1530,7 +1529,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   startRunButtonTimer() {
     this.isRunButtonPressed = true;
-    this.spinner.show(this.modelRunButtonSpinnerName);
+    this.spinnerService.localShow({ name: this.spinnerNameModelRun });
     this.cd.detectChanges();
 
     this.runButtonTimerSubscription = from([0])
@@ -1539,7 +1538,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         startWith(1),
         tap(x => {
           if (x === 0) {
-            this.spinner.hide(this.modelRunButtonSpinnerName);
+            this.spinnerService.localHide({ name: this.spinnerNameModelRun });
             this.isRunButtonPressed = false;
             this.cd.detectChanges();
           }
@@ -1550,7 +1549,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   startCancelButtonTimer() {
     this.isCancelButtonPressed = true;
-    this.spinner.show(this.modelCancelButtonSpinnerName);
+    this.spinnerService.localShow({ name: this.spinnerNameModelCancel });
     this.cd.detectChanges();
 
     this.runButtonTimerSubscription = from([0])
@@ -1559,7 +1558,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
         startWith(1),
         tap(x => {
           if (x === 0) {
-            this.spinner.hide(this.modelCancelButtonSpinnerName);
+            this.spinnerService.localHide({
+              name: this.spinnerNameModelCancel
+            });
             this.isCancelButtonPressed = false;
             this.cd.detectChanges();
           }

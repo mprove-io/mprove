@@ -76,7 +76,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   emptySpaceName = EMPTY_SPACE_NAME;
 
-  spinnerName = 'dashboardSaveAs';
+  spinnerNameDashboardSaveAs: string = 'DashboardSaveAs';
 
   dashboard: DashboardX;
 

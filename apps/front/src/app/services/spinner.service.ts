@@ -38,8 +38,8 @@ import {
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
 import {
-  APP_SPINNER_NAME,
-  MIN_TIME_TO_SPIN
+  MIN_TIME_TO_SPIN,
+  SPINNER_NAME_APP
 } from '#common/constants/top-front';
 
 @Injectable({ providedIn: 'root' })
@@ -49,6 +49,8 @@ export class SpinnerService implements OnDestroy {
   readonly isVisible: Signal<boolean> = this.visible.asReadonly();
 
   private operationCount = 0;
+
+  private localCountByName: Map<string, number> = new Map<string, number>();
 
   private navigationIds: Set<number> = new Set<number>();
 
@@ -62,7 +64,7 @@ export class SpinnerService implements OnDestroy {
 
   constructor(
     private router: Router,
-    private ngxSpinner: NgxSpinnerService
+    private ngxSpinnerService: NgxSpinnerService
   ) {
     this.navigationSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -110,6 +112,51 @@ export class SpinnerService implements OnDestroy {
     return operator;
   }
 
+  localTrack<T>(item: { name: string }): MonoTypeOperatorFunction<T> {
+    let { name } = item;
+
+    let operator: MonoTypeOperatorFunction<T> = source =>
+      defer(() => {
+        let operationCount: number = this.localCountByName.get(name) ?? 0;
+
+        this.localCountByName.set(name, operationCount + 1);
+
+        if (operationCount === 0) {
+          void this.ngxSpinnerService.show(name);
+        }
+
+        let response: Observable<T> = source.pipe(
+          finalize(() => {
+            let remainingCount: number = this.localCountByName.get(name) - 1;
+
+            if (remainingCount === 0) {
+              this.localCountByName.delete(name);
+
+              void this.ngxSpinnerService.hide(name);
+            } else {
+              this.localCountByName.set(name, remainingCount);
+            }
+          })
+        );
+
+        return response;
+      });
+
+    return operator;
+  }
+
+  localShow(item: { name: string }): void {
+    let { name } = item;
+
+    void this.ngxSpinnerService.show(name);
+  }
+
+  localHide(item: { name: string }): void {
+    let { name } = item;
+
+    void this.ngxSpinnerService.hide(name);
+  }
+
   private updateVisibility(): void {
     if (this.isDestroyed) {
       return;
@@ -126,7 +173,7 @@ export class SpinnerService implements OnDestroy {
 
           this.visible.set(true);
 
-          void this.ngxSpinner.show(APP_SPINNER_NAME);
+          void this.ngxSpinnerService.show(SPINNER_NAME_APP);
         }, 0);
       }
 
@@ -148,7 +195,7 @@ export class SpinnerService implements OnDestroy {
       if (this.operationCount === 0 && this.navigationIds.size === 0) {
         this.visible.set(false);
 
-        void this.ngxSpinner.hide(APP_SPINNER_NAME);
+        void this.ngxSpinnerService.hide(SPINNER_NAME_APP);
       }
     }, remainingMs);
   }
@@ -210,7 +257,7 @@ export class SpinnerService implements OnDestroy {
     if (this.visible()) {
       this.visible.set(false);
 
-      void this.ngxSpinner.hide(APP_SPINNER_NAME);
+      void this.ngxSpinnerService.hide(SPINNER_NAME_APP);
     }
   }
 }

@@ -76,7 +76,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   emptySpaceName = EMPTY_SPACE_NAME;
 
-  spinnerName = 'reportSaveAs';
+  spinnerNameReportSaveAs: string = 'ReportSaveAs';
 
   report: ReportX;
 

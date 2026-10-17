@@ -10,7 +10,6 @@ import type {
   PermissionRequest,
   QuestionRequest
 } from '@opencode-ai/sdk/v2';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -37,6 +36,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SessionService } from '#front/app/services/session.service';
 import { SessionMessagesService } from '#front/app/services/session-messages.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import type { ApiResponseForRoute } from '#front/app/types/api-response-for-route';
 import { ChatMessage, ChatTurn } from './session-chat.interfaces';
 import { SessionInputComponent } from './session-input/session-input.component';
@@ -83,7 +83,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   pauseReason: PauseReason;
   retryMessage: string;
   lastSessionError: Record<string, unknown>;
-  workingSpinnerName = 'sessionInProgress';
+  spinnerNameSessionWorking: string = 'SessionWorking';
   workingSpinnerColor = '#0084d1';
   permissionsAutoAcceptSessionIds: string[] = [];
   permissionsAutoAcceptSessionIds$ =
@@ -170,7 +170,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     private sessionModelsQuery: SessionModelsQuery,
     private sessionService: SessionService,
     private sessionMessagesService: SessionMessagesService,
-    private spinner: NgxSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit() {}
@@ -182,9 +182,9 @@ export class SessionComponent implements OnInit, OnDestroy {
   updateWorkingSpinner() {
     if (this.isWorking) {
       this.workingSpinnerColor = this.retryMessage ? '#fbbf24' : '#0084d1';
-      this.spinner.show(this.workingSpinnerName);
+      this.spinnerService.localShow({ name: this.spinnerNameSessionWorking });
     } else {
-      this.spinner.hide(this.workingSpinnerName);
+      this.spinnerService.localHide({ name: this.spinnerNameSessionWorking });
     }
   }
 

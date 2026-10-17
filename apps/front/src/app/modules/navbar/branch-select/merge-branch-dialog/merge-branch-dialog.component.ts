@@ -16,7 +16,6 @@ import {
 } from '@angular/forms';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repos/merge-repo/merge-repo-output';
 import type { ToBackendMergeRepoRequest } from '#common/types/backend/routes/repos/merge-repo/merge-repo-request';
@@ -75,7 +74,6 @@ export class MergeBranchDialogComponent implements OnInit {
     private repoQuery: RepoQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
-    private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}

@@ -12,7 +12,6 @@ import { FormBuilder, type FormControl, type FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, filter, startWith, take, tap } from 'rxjs/operators';
 import { DASHBOARDS_PAGE_TITLE } from '#common/constants/page-titles';
@@ -83,7 +82,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   pageTitle = DASHBOARDS_PAGE_TITLE;
 
-  dashboardsRunButtonSpinnerName = 'dashboardsRunButtonSpinnerName';
+  spinnerNameDashboardsRun: string = 'DashboardsRun';
 
   pathDashboardsList = PATH_DASHBOARDS_LIST;
   pathDashboards = PATH_DASHBOARDS;
@@ -344,7 +343,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private structDashboardResolver: StructDashboardResolver,
     private structQuery: StructQuery,
     private apiService: ApiService,
-    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private dashboardUnitsQuery: DashboardUnitsQuery,
@@ -1025,7 +1023,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   startRunButtonTimer() {
     this.isRunButtonPressed = true;
-    this.spinner.show(this.dashboardsRunButtonSpinnerName);
+    this.spinnerService.localShow({ name: this.spinnerNameDashboardsRun });
     this.cd.detectChanges();
 
     this.runButtonTimerSubscription = from([0])
@@ -1034,7 +1032,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         startWith(1),
         tap(x => {
           if (x === 0) {
-            this.spinner.hide(this.dashboardsRunButtonSpinnerName);
+            this.spinnerService.localHide({
+              name: this.spinnerNameDashboardsRun
+            });
             this.isRunButtonPressed = false;
             this.cd.detectChanges();
           }

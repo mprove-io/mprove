@@ -19,7 +19,6 @@ import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/u
 import type { ToBackendRegisterUserRequest } from '#common/types/backend/routes/users/register-user/register-user-request';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
@@ -61,14 +60,13 @@ export class RegisterComponent implements OnInit {
     })
   );
 
-  registerCheckSpinnerName = 'registerCheckSpinnerName';
+  spinnerNameRegisterCheck: string = 'RegisterCheck';
   checkLoaded = false;
 
   constructor(
     private spinnerService: SpinnerService,
     private fb: FormBuilder,
     private apiService: ApiService,
-    private localSpinnerService: LocalSpinnerService,
     private router: Router,
     private userQuery: UserQuery,
     private cd: ChangeDetectorRef,
@@ -100,7 +98,7 @@ export class RegisterComponent implements OnInit {
           this.cd.detectChanges();
         }),
         take(1),
-        this.localSpinnerService.track({ name: this.registerCheckSpinnerName })
+        this.spinnerService.localTrack({ name: this.spinnerNameRegisterCheck })
       )
       .subscribe();
   }

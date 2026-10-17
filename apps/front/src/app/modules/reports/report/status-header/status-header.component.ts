@@ -1,11 +1,11 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams } from 'ag-grid-community';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DataRow } from '#common/types/front/report/row/data-row';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 @Component({
   standalone: false,
@@ -15,7 +15,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 export class StatusHeaderComponent implements IHeaderAngularComp {
   params: IHeaderParams<DataRow>;
 
-  spinnerName = makeId();
+  spinnerNameReportStatusHeader: string = makeId();
 
   isRunning = false;
 
@@ -44,9 +44,13 @@ export class StatusHeaderComponent implements IHeaderAngularComp {
 
   updateSpinner() {
     if (this.isRunning === true) {
-      this.spinner.show(this.spinnerName);
+      this.spinnerService.localShow({
+        name: this.spinnerNameReportStatusHeader
+      });
     } else {
-      this.spinner.hide(this.spinnerName);
+      this.spinnerService.localHide({
+        name: this.spinnerNameReportStatusHeader
+      });
     }
     this.cd.detectChanges();
   }
@@ -54,7 +58,7 @@ export class StatusHeaderComponent implements IHeaderAngularComp {
   constructor(
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
-    private spinner: NgxSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   toggleShowMiniCharts() {

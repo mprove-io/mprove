@@ -20,12 +20,9 @@ import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
-
-let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
 @Component({
   standalone: false,
@@ -41,7 +38,7 @@ export class SessionsComponent implements OnInit {
   currentSession: SessionApi;
   isRefreshing = false;
 
-  spinnerName = SESSIONS_SPINNER_NAME;
+  spinnerNameSessionsRefresh: string = 'SessionsRefresh';
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
       this.sessions = x
@@ -94,7 +91,6 @@ export class SessionsComponent implements OnInit {
     private navigateService: NavigateService,
     private router: Router,
     private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService,
     private myDialogService: MyDialogService,
     private sessionBundleQuery: SessionBundleQuery,
     private repoQuery: RepoQuery
@@ -162,7 +158,9 @@ export class SessionsComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: SESSIONS_SPINNER_NAME })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameSessionsRefresh
+        })
       )
       .subscribe();
   }

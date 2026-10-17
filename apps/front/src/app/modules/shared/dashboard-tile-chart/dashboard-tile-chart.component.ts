@@ -8,9 +8,9 @@ import {
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
@@ -24,6 +24,7 @@ import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { DataService, QDataRow } from '#front/app/services/data.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
@@ -58,6 +59,8 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
   @Input()
   showTileParameters: boolean;
 
+  spinnerNameDashboardTileChart: string = makeId();
+
   qData: QDataRow[];
 
   nav: NavState;
@@ -77,7 +80,7 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
     private dataService: DataService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
-    private spinner: NgxSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   async ngOnInit() {
@@ -108,12 +111,16 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
         changes.query.previousValue.status !==
           ('Running' satisfies QueryStatus))
     ) {
-      this.spinner.show(this.tile.title);
+      this.spinnerService.localShow({
+        name: this.spinnerNameDashboardTileChart
+      });
     } else if (
       !!changes.query?.currentValue?.status &&
       changes.query?.currentValue?.status !== ('Running' satisfies QueryStatus)
     ) {
-      this.spinner.hide(this.tile.title);
+      this.spinnerService.localHide({
+        name: this.spinnerNameDashboardTileChart
+      });
     }
   }
 

@@ -27,16 +27,14 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpinnerService } from '#front/app/services/spinner.service';
 
 type HistorySessionGroup = {
   title: string;
   sessions: SessionApiX[];
 };
-
-let EXPLORER_HISTORY_SPINNER_NAME = 'explorerHistoryRefresh';
 
 @Component({
   standalone: false,
@@ -52,7 +50,7 @@ export class ExplorerHistoryComponent implements OnInit {
   sessionsLoaded = false;
   isRefreshing = false;
   currentSession: SessionApi;
-  spinnerName = EXPLORER_HISTORY_SPINNER_NAME;
+  spinnerNameExplorerHistoryRefresh: string = 'ExplorerHistoryRefresh';
 
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
@@ -87,7 +85,7 @@ export class ExplorerHistoryComponent implements OnInit {
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit() {
@@ -220,7 +218,9 @@ export class ExplorerHistoryComponent implements OnInit {
 
           this.cd.detectChanges();
         }),
-        this.localSpinnerService.track({ name: EXPLORER_HISTORY_SPINNER_NAME })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameExplorerHistoryRefresh
+        })
       )
       .subscribe();
   }

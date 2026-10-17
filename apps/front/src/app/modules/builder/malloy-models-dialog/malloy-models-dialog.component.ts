@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { tap } from 'rxjs';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
@@ -36,7 +36,7 @@ export class MalloyModelsDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  spinnerName = 'dashboardAddTile';
+  spinnerNameMalloyModels: string = 'MalloyModels';
 
   models: ModelX[];
 
@@ -53,8 +53,7 @@ export class MalloyModelsDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private memberQuery: MemberQuery,
     private navigateService: NavigateService,
-    private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private cd: ChangeDetectorRef
   ) {}
 
   async ngOnInit() {

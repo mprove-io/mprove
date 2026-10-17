@@ -35,7 +35,6 @@ import { LlmModelVariantsComponent } from '#front/app/modules/project/project-pr
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
-import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { SpinnerService } from '#front/app/services/spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
@@ -80,7 +79,7 @@ export class EditLlmModelDialogComponent implements OnInit {
   destinationAnimationTimer?: ReturnType<typeof setTimeout>;
   variants: LlmModelVariant[] = [];
   isRefreshing = false;
-  refreshSpinnerName = 'editLlmModelRefreshSpinner';
+  spinnerNameLlmModelRefresh: string = 'LlmModelRefresh';
   variantsDiscoveryErrorMessage?: string;
   showVariantsValidation = false;
   variantsErrorMessage?: string;
@@ -90,8 +89,7 @@ export class EditLlmModelDialogComponent implements OnInit {
     public ref: DialogRef<EditLlmModelDialogData>,
     private fb: FormBuilder,
     private providersQuery: ProvidersQuery,
-    private changeDetectorRef: ChangeDetectorRef,
-    private localSpinnerService: LocalSpinnerService
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -244,7 +242,9 @@ export class EditLlmModelDialogComponent implements OnInit {
           this.changeDetectorRef.detectChanges();
         }),
         take(1),
-        this.localSpinnerService.track({ name: this.refreshSpinnerName })
+        this.spinnerService.localTrack({
+          name: this.spinnerNameLlmModelRefresh
+        })
       )
       .subscribe();
   }
