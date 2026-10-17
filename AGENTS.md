@@ -635,6 +635,11 @@ await asyncPool(
 Exception: Byethrow Result flows follow the exceptions under "Result type
 inference".
 
+Exception: functions, methods, and callbacks with an explicit `Observable<T>`
+return type may return observable expressions directly without intermediate
+variables. This includes observable factories such as callbacks passed to
+`defer`; keep their explicit observable return type.
+
 Exception: when a function, method, or callback with an explicit return type
 returns a promise chain, its `.then(...)` callbacks may return expressions
 directly without intermediate variables or their own return annotations. The

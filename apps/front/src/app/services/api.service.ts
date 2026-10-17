@@ -1,8 +1,7 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders,
-  type HttpResponse
+  HttpHeaders
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -46,27 +45,13 @@ export class ApiService {
     private authService: AuthService
   ) {}
 
-  private headers(item: { route: ToBackendRoute }): HttpHeaders {
-    let { route } = item;
-
-    let headers: HttpHeaders = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization:
-        route === 'api/ToBackendLoginUser'
-          ? ''
-          : `Bearer ${localStorage.getItem(LOCAL_STORAGE_TOKEN)}`
-    });
-
-    return headers;
-  }
-
   req<TRoute extends ToBackendRoute>(item: {
     route: TRoute;
     payload: ToBackendInputForRoute<NoInfer<TRoute>>;
   }): Observable<ApiResponseForRoute<TRoute>> {
     let { route, payload } = item;
 
-    let response: Observable<ApiResponseForRoute<TRoute>> = defer(() => {
+    return defer((): Observable<ApiResponseForRoute<TRoute>> => {
       let url: string = `${environment.httpUrl}/${route}`;
 
       let body: ToBackendRequest = makeToBackendRequest({
@@ -76,8 +61,6 @@ export class ApiService {
         input: payload
       });
 
-      let headers: HttpHeaders = this.headers({ route: route });
-
       let context: ApiRequestContext = {
         url: url,
         operation: body.operation,
@@ -86,13 +69,15 @@ export class ApiService {
 
       // HTTP response types are trusted backend contracts, not runtime validation.
       // Catch only HTTP execution errors, before response mapping or consumer code.
-      let httpExecution: Observable<
-        | HttpResponse<ApiResponse<ToBackendResponseForRoute<TRoute>>>
-        | HttpErrorResponse
-        | TimeoutError
-      > = this.authHttpClient
+      return this.authHttpClient
         .request<ApiResponse<ToBackendResponseForRoute<TRoute>>>('post', url, {
-          headers: headers,
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            Authorization:
+              route === 'api/ToBackendLoginUser'
+                ? ''
+                : `Bearer ${localStorage.getItem(LOCAL_STORAGE_TOKEN)}`
+          }),
           body: body,
           observe: 'response'
         })
@@ -101,11 +86,7 @@ export class ApiService {
             error instanceof HttpErrorResponse || error instanceof TimeoutError
               ? of(error)
               : throwError(() => error)
-          )
-        );
-
-      let execution: Observable<ApiResponseForRoute<TRoute>> =
-        httpExecution.pipe(
+          ),
           map((httpResponse): ApiResponseForRoute<TRoute> => {
             context.status =
               httpResponse instanceof TimeoutError
@@ -178,39 +159,33 @@ export class ApiService {
             };
 
             return failure;
+          }),
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              let failure: ApiRequestFailure<
+                ToBackendResponseForRoute<TRoute>
+              > = resp;
+
+              if (
+                failure.error.code === 'BACKEND_UNAUTHORIZED' ||
+                failure.error.code === 'BACKEND_NOT_AUTHORIZED' ||
+                failure.error.code === 'BACKEND_USER_DOES_NOT_EXIST'
+              ) {
+                this.authService.logout();
+              }
+
+              presentApiError<ToBackendResponse>({
+                failure: failure,
+                context: context,
+                router: this.router,
+                navQuery: this.navQuery,
+                uiQuery: this.uiQuery,
+                myDialogService: this.myDialogService,
+                navigateService: this.navigateService
+              });
+            }
           })
         );
-
-      let response: Observable<ApiResponseForRoute<TRoute>> = execution.pipe(
-        tap(resp => {
-          if (resp.type !== 'Success') {
-            let failure: ApiRequestFailure<ToBackendResponseForRoute<TRoute>> =
-              resp;
-
-            if (
-              failure.error.code === 'BACKEND_UNAUTHORIZED' ||
-              failure.error.code === 'BACKEND_NOT_AUTHORIZED' ||
-              failure.error.code === 'BACKEND_USER_DOES_NOT_EXIST'
-            ) {
-              this.authService.logout();
-            }
-
-            presentApiError<ToBackendResponse>({
-              failure: failure,
-              context: context,
-              router: this.router,
-              navQuery: this.navQuery,
-              uiQuery: this.uiQuery,
-              myDialogService: this.myDialogService,
-              navigateService: this.navigateService
-            });
-          }
-        })
-      );
-
-      return response;
     });
-
-    return response;
   }
 }
