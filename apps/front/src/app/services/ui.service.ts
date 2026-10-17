@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { take, tap } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ProjectChartLink } from '#common/types/backend/parts/project-chart-link';
@@ -11,7 +11,6 @@ import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/proje
 import type { ModelTreeLevel } from '#common/types/backend/parts/ui/model-tree-level';
 import type { Ui } from '#common/types/backend/parts/ui/ui';
 import type { ToBackendSetUserUiRequest } from '#common/types/backend/routes/users/set-user-ui/set-user-ui-request';
-import type { ToBackendSetUserUiResponse } from '#common/types/backend/routes/users/set-user-ui/set-user-ui-response';
 import { NavQuery } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
@@ -122,13 +121,7 @@ export class UiService {
         route: 'api/ToBackendSetUserUi',
         payload: payload
       })
-      .pipe(
-        tap((resp: ToBackendSetUserUiResponse) => {
-          if (resp.type === 'Success') {
-          }
-        }),
-        take(1)
-      )
+      .pipe(take(1))
       .subscribe();
   }
 

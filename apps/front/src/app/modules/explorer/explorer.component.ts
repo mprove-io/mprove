@@ -1,12 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { EXPLORER_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_NEW_SESSION, PATH_SESSION } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -108,7 +106,6 @@ export class ExplorerComponent implements OnInit {
         this.explorerTabsQuery.resetTabs();
       }
 
-      this.spinner.hide(APP_SPINNER_NAME);
       this.uiQuery.updatePart({
         showContent: true,
         showSessionInput: true
@@ -121,7 +118,6 @@ export class ExplorerComponent implements OnInit {
     private title: Title,
     private cd: ChangeDetectorRef,
     private router: Router,
-    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private sessionQuery: SessionQuery,
     private sessionBundleQuery: SessionBundleQuery,

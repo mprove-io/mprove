@@ -13,8 +13,8 @@ import {
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendGetNavOutput } from '#common/types/backend/routes/nav/get-nav/get-nav-output';
 import type { ToBackendGetNavRequest } from '#common/types/backend/routes/nav/get-nav/get-nav-request';
-import type { ToBackendGetNavResponse } from '#common/types/backend/routes/nav/get-nav/get-nav-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -88,70 +88,77 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetNavResponse) => {
-          if (resp.type === 'Success') {
-            let {
-              avatarSmall,
-              avatarBig,
-              orgId,
-              orgOwnerId,
-              orgName,
-              projectId,
-              projectName,
-              projectDefaultBranch,
-              repoId,
-              repoType,
-              branchId,
-              envId,
-              needValidate,
-              user,
-              serverNowTs,
-              isMproveAdmin,
-              userMember,
-              struct,
-              repo
-            } = resp.output;
+        map(resp => {
+          if (resp.type !== 'Success') {
+            return false;
+          }
 
-            let nav: NavState = {
-              avatarSmall: avatarSmall,
-              avatarBig: avatarBig,
-              orgId: orgId,
-              orgOwnerId: orgOwnerId,
-              orgName: orgName,
-              projectId: projectId,
-              projectName: projectName,
-              projectDefaultBranch: projectDefaultBranch,
-              repoId: repoId,
-              repoType: repoType,
-              branchId: branchId,
-              envId: envId,
-              needValidate: needValidate,
-              mproveVersion: resp.mproveVersion,
-              serverTimeDiff: Date.now() - serverNowTs,
-              isMproveAdmin: isMproveAdmin
-            };
+          let output: ToBackendGetNavOutput = resp.output;
 
-            this.navQuery.update(nav);
-            this.userQuery.update(user);
-            this.uiQuery.updatePart({ ...resp.output.user.ui });
+          let {
+            avatarSmall,
+            avatarBig,
+            orgId,
+            orgOwnerId,
+            orgName,
+            projectId,
+            projectName,
+            projectDefaultBranch,
+            repoId,
+            repoType,
+            branchId,
+            envId,
+            needValidate,
+            user,
+            serverNowTs,
+            isMproveAdmin,
+            userMember,
+            struct,
+            repo
+          } = output;
 
-            if (isDefined(userMember)) {
-              this.memberQuery.update(resp.output.userMember);
-            }
-            if (isDefined(struct)) {
-              this.structQuery.update(resp.output.struct);
-            }
-            if (isDefined(repo)) {
-              this.repoQuery.update(resp.output.repo);
-            }
+          let nav: NavState = {
+            avatarSmall: avatarSmall,
+            avatarBig: avatarBig,
+            orgId: orgId,
+            orgOwnerId: orgOwnerId,
+            orgName: orgName,
+            projectId: projectId,
+            projectName: projectName,
+            projectDefaultBranch: projectDefaultBranch,
+            repoId: repoId,
+            repoType: repoType,
+            branchId: branchId,
+            envId: envId,
+            needValidate: needValidate,
+            mproveVersion: resp.mproveVersion,
+            serverTimeDiff: Date.now() - serverNowTs,
+            isMproveAdmin: isMproveAdmin
+          };
 
-            if (user.isEmailVerified === true) {
-              return true;
-            } else {
-              this.router.navigate([PATH_VERIFY_EMAIL]);
-              return false;
-            }
+          this.navQuery.update(nav);
+
+          this.userQuery.update(user);
+
+          this.uiQuery.updatePart({ ...user.ui });
+
+          if (isDefined(userMember)) {
+            this.memberQuery.update(userMember);
+          }
+
+          if (isDefined(struct)) {
+            this.structQuery.update(struct);
+          }
+
+          if (isDefined(repo)) {
+            this.repoQuery.update(repo);
+          }
+
+          if (user.isEmailVerified === true) {
+            return true;
           } else {
+            void this.router.navigate([PATH_VERIFY_EMAIL]);
+
             return false;
           }
         })

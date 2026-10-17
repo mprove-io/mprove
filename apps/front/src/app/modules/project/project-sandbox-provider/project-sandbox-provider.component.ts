@@ -3,11 +3,12 @@ import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_SANDBOX_PROVIDER_PAGE_TITLE } from '#common/constants/page-titles';
 import type { Project } from '#common/types/backend/parts/project/project';
+import type { ToBackendSetProjectSandboxProviderOutput } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-output';
 import type { ToBackendSetProjectSandboxProviderRequest } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
-import type { ToBackendSetProjectSandboxProviderResponse } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
@@ -35,6 +36,7 @@ export class ProjectSandboxProviderComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private projectQuery: ProjectQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
@@ -63,16 +65,20 @@ export class ProjectSandboxProviderComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendSetProjectSandboxProvider',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetProjectSandboxProviderResponse) => {
-          if (resp.type === 'Success') {
-            this.projectQuery.update(resp.output.project);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSetProjectSandboxProviderOutput = resp.output;
+
+          this.projectQuery.update(output.project);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

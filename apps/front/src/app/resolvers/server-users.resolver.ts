@@ -7,8 +7,8 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
+import type { ToBackendGetServerUsersOutput } from '#common/types/backend/routes/users/get-server-users/get-server-users-output';
 import type { ToBackendGetServerUsersRequest } from '#common/types/backend/routes/users/get-server-users/get-server-users-request';
-import type { ToBackendGetServerUsersResponse } from '#common/types/backend/routes/users/get-server-users/get-server-users-response';
 import { ServerUsersQuery } from '../queries/server-users.query';
 import { ApiService } from '../services/api.service';
 
@@ -34,11 +34,13 @@ export class ServerUsersResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetServerUsersResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
+            let output: ToBackendGetServerUsersOutput = resp.output;
+
             this.serverUsersQuery.update({
-              serverUsers: resp.output.serverUsersList,
-              total: resp.output.total
+              serverUsers: output.serverUsersList,
+              total: output.total
             });
             return true;
           } else {

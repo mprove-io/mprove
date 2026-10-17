@@ -8,9 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
-
+import type { ToBackendGetDashboardsOutput } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-output';
 import type { ToBackendGetDashboardsRequest } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-request';
-import type { ToBackendGetDashboardsResponse } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
 import { MemberQuery } from '../queries/member.query';
@@ -75,19 +74,21 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetDashboardsResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetDashboardsOutput = resp.output;
 
-            this.structQuery.update(resp.output.struct);
+            this.memberQuery.update(output.userMember);
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
-            this.modelsQuery.update({ models: resp.output.models });
+            this.modelsQuery.update({ models: output.models });
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
+              dashboardUnitDrafts: output.dashboardUnitDrafts,
+              dashboardSpaceNodes: output.dashboardSpaceNodes
             });
 
             return true;

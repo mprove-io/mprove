@@ -5,10 +5,10 @@ import { PROJECT_TEAM_PAGE_TITLE } from '#common/constants/page-titles';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
 import type { Member } from '#common/types/backend/parts/member';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendEditMemberOutput } from '#common/types/backend/routes/members/edit-member/edit-member-output';
 import type { ToBackendEditMemberRequest } from '#common/types/backend/routes/members/edit-member/edit-member-request';
-import type { ToBackendEditMemberResponse } from '#common/types/backend/routes/members/edit-member/edit-member-response';
+import type { ToBackendGetMembersOutput } from '#common/types/backend/routes/members/get-members/get-members-output';
 import type { ToBackendGetMembersRequest } from '#common/types/backend/routes/members/get-members/get-members-request';
-import type { ToBackendGetMembersResponse } from '#common/types/backend/routes/members/get-members/get-members-response';
 import type { MemberExtended } from '#common/types/front/member/member-extended';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -17,6 +17,7 @@ import { RolesQuery } from '#front/app/queries/roles.query';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
@@ -87,6 +88,7 @@ export class ProjectTeamComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private teamQuery: TeamQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
@@ -115,14 +117,18 @@ export class ProjectTeamComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetMembersResponse) => {
-          if (resp.type === 'Success') {
-            this.teamQuery.update(resp.output);
-            this.rolesQuery.update({
-              roles: resp.output.roles
-            });
-            this.currentPage = pageNum;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetMembersOutput = resp.output;
+
+          this.teamQuery.update(output);
+          this.rolesQuery.update({
+            roles: output.roles
+          });
+          this.currentPage = pageNum;
         }),
         take(1)
       )
@@ -203,25 +209,29 @@ export class ProjectTeamComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendEditMember',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.type === 'Success') {
-            let teamState = this.teamQuery.getValue();
-            teamState.members[i] = resp.output.member;
-            this.teamQuery.update({
-              members: [...teamState.members],
-              total: teamState.total
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            if (resp.output.member.memberId === this.userId) {
-              this.memberQuery.update(resp.output.member);
-            }
+          let output: ToBackendEditMemberOutput = resp.output;
+
+          let teamState = this.teamQuery.getValue();
+          teamState.members[i] = output.member;
+          this.teamQuery.update({
+            members: [...teamState.members],
+            total: teamState.total
+          });
+
+          if (output.member.memberId === this.userId) {
+            this.memberQuery.update(output.member);
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -259,22 +269,26 @@ export class ProjectTeamComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendEditMember',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.type === 'Success') {
-            let teamState = this.teamQuery.getValue();
-            teamState.members[i] = resp.output.member;
-
-            this.teamQuery.update({
-              members: [...teamState.members],
-              total: teamState.total
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditMemberOutput = resp.output;
+
+          let teamState = this.teamQuery.getValue();
+          teamState.members[i] = output.member;
+
+          this.teamQuery.update({
+            members: [...teamState.members],
+            total: teamState.total
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

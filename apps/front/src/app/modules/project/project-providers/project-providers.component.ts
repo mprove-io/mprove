@@ -5,12 +5,13 @@ import { PROJECT_PROVIDERS_PAGE_TITLE } from '#common/constants/page-titles';
 
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ToBackendToggleProviderOutput } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-output';
 import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
-import type { ToBackendToggleProviderResponse } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
@@ -47,6 +48,7 @@ export class ProjectProvidersComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private providersQuery: ProvidersQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
@@ -144,16 +146,17 @@ export class ProjectProvidersComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendToggleProvider',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendToggleProviderResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.output.provider;
+          let output: ToBackendToggleProviderOutput = resp.output;
+
+          let provider: Provider = output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()
@@ -165,7 +168,8 @@ export class ProjectProvidersComponent implements OnInit {
             providers: providers
           });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

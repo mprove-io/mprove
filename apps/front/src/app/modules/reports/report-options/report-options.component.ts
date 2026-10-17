@@ -5,7 +5,6 @@ import type { ReportUnit } from '#common/types/backend/parts/report/report-unit'
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import { spaceUnitToReportUnit } from '#front/app/functions/space/space-unit-to-report-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
-import { ReportQuery } from '#front/app/queries/report.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
@@ -37,7 +36,6 @@ export class ReportOptionsComponent {
   constructor(
     private navigateService: NavigateService,
     private apiService: ApiService,
-    private reportQuery: ReportQuery,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private myDialogService: MyDialogService
@@ -96,9 +94,7 @@ export class ReportOptionsComponent {
       branchId: nav.branchId,
       envId: nav.envId,
       repoId: nav.repoId,
-      repoType: nav.repoType,
-      isStartSpinnerUntilNavEnd:
-        this.reportQuery.getValue().reportId === this.currentReportUnit.reportId
+      repoType: nav.repoType
     });
   }
 }

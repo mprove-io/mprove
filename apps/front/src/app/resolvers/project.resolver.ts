@@ -13,9 +13,8 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
-
+import type { ToBackendGetProjectOutput } from '#common/types/backend/routes/projects/get-project/get-project-output';
 import type { ToBackendGetProjectRequest } from '#common/types/backend/routes/projects/get-project/get-project-request';
-import type { ToBackendGetProjectResponse } from '#common/types/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -63,9 +62,11 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetProjectResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            let project = resp.output.project;
+            let output: ToBackendGetProjectOutput = resp.output;
+
+            let project = output.project;
 
             this.navQuery.updatePart({
               projectId: project.projectId,
@@ -79,7 +80,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
 
             localStorage.setItem(LOCAL_STORAGE_PROJECT_ID, project.projectId);
 
-            this.memberQuery.update(resp.output.userMember);
+            this.memberQuery.update(output.userMember);
 
             this.projectQuery.update(project);
             return true;

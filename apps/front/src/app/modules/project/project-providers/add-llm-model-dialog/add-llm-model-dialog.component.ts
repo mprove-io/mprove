@@ -18,7 +18,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
-import { delay, take, tap } from 'rxjs/operators';
+import { delay, finalize, take, tap } from 'rxjs/operators';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -26,10 +26,10 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ToBackendCreateLlmModelOutput } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-output';
 import type { ToBackendCreateLlmModelRequest } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-request';
-import type { ToBackendCreateLlmModelResponse } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-response';
+import type { ToBackendGetLlmModelPartsOutput } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
 import type { ToBackendGetLlmModelPartsRequest } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
-import type { ToBackendGetLlmModelPartsResponse } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
 import type { Extend } from '#common/types/extend';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
 import { LlmModelVariantsComponent } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants.component';
@@ -37,6 +37,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddLlmModelDialogData {
@@ -93,6 +94,7 @@ export class AddLlmModelDialogComponent implements OnInit {
   variantsErrorMessage?: string;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddLlmModelDialogData>,
     private fb: FormBuilder,
     private providersQuery: ProvidersQuery,
@@ -353,25 +355,32 @@ export class AddLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         delay(0),
-        tap((resp: ToBackendGetLlmModelPartsResponse) => {
+        tap(resp => {
           let configuredModelIds: string[] = provider.models.map(
             model => model.modelId
           );
 
-          let modelParts: SelectableLlmModelPart[] =
-            resp.type === 'Success'
-              ? resp.output.modelParts.map(modelPart => {
-                  let isAlreadySelected: boolean = configuredModelIds.includes(
-                    modelPart.modelId
-                  );
+          let modelParts: SelectableLlmModelPart[] = [];
 
-                  return {
-                    ...modelPart,
-                    disabled: isAlreadySelected,
-                    isAlreadySelected: isAlreadySelected
-                  };
-                })
-              : [];
+          let errorMessage: string;
+
+          if (resp.type === 'Success') {
+            let output: ToBackendGetLlmModelPartsOutput = resp.output;
+
+            modelParts = output.modelParts.map(modelPart => {
+              let isAlreadySelected: boolean = configuredModelIds.includes(
+                modelPart.modelId
+              );
+
+              return {
+                ...modelPart,
+                disabled: isAlreadySelected,
+                isAlreadySelected: isAlreadySelected
+              };
+            });
+
+            errorMessage = output.errorMessage;
+          }
 
           modelParts.sort((a, b) => {
             let nameComparison: number = a.catalogName.localeCompare(
@@ -387,14 +396,14 @@ export class AddLlmModelDialogComponent implements OnInit {
 
           this.modelParts = modelParts;
 
-          this.modelsErrorMessage =
-            resp.type === 'Success' ? resp.output.errorMessage : undefined;
-
+          this.modelsErrorMessage = errorMessage;
+        }),
+        take(1),
+        finalize(() => {
           this.modelsLoading = false;
 
           this.changeDetectorRef.detectChanges();
-        }),
-        take(1)
+        })
       )
       .subscribe();
   }
@@ -469,26 +478,30 @@ export class AddLlmModelDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendCreateLlmModel',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateLlmModelResponse) => {
-          if (resp.type === 'Success') {
-            let provider: Provider = resp.output.provider;
-
-            let providers: Provider[] = this.providersQuery
-              .getValue()
-              .providers.map(x =>
-                x.providerId === provider.providerId ? provider : x
-              );
-
-            this.providersQuery.updatePart({
-              providers: providers
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateLlmModelOutput = resp.output;
+
+          let provider: Provider = output.provider;
+
+          let providers: Provider[] = this.providersQuery
+            .getValue()
+            .providers.map(x =>
+              x.providerId === provider.providerId ? provider : x
+            );
+
+          this.providersQuery.updatePart({
+            providers: providers
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

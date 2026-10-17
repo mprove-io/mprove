@@ -15,12 +15,13 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Given } from '#common/types/backend/parts/given/given';
+import type { ToBackendEditGivenOutput } from '#common/types/backend/routes/givens/edit-given/edit-given-output';
 import type { ToBackendEditGivenRequest } from '#common/types/backend/routes/givens/edit-given/edit-given-request';
-import type { ToBackendEditGivenResponse } from '#common/types/backend/routes/givens/edit-given/edit-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface EditGivenDialogData {
@@ -48,6 +49,7 @@ export class EditGivenDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditGivenDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -92,17 +94,21 @@ export class EditGivenDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendEditGiven',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditGivenResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.givensQuery.update({ givens: resp.output.givens });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditGivenOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+          this.givensQuery.update({ givens: output.givens });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

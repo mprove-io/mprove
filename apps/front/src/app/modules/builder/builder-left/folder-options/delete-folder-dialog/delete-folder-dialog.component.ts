@@ -10,14 +10,15 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendDeleteFolderOutput } from '#common/types/backend/routes/folders/delete-folder/delete-folder-output';
 import type { ToBackendDeleteFolderRequest } from '#common/types/backend/routes/folders/delete-folder/delete-folder-request';
-import type { ToBackendDeleteFolderResponse } from '#common/types/backend/routes/folders/delete-folder/delete-folder-response';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface DeleteFolderDialogData {
@@ -44,6 +45,7 @@ export class DeleteFolderDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteFolderDialogData>,
     private repoQuery: RepoQuery,
     private navigateService: NavigateService,
@@ -98,28 +100,32 @@ export class DeleteFolderDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteFolder',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteFolderResponse) => {
-          if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            if (isRemoveSecondFile === true) {
-              this.uiQuery.updatePart({ secondFileNodeId: undefined });
-            }
+          let output: ToBackendDeleteFolderOutput = resp.output;
 
-            if (isNavigateNewFile === true) {
-              this.navigateService.navigateToBuilder();
-            }
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          if (isRemoveSecondFile === true) {
+            this.uiQuery.updatePart({ secondFileNodeId: undefined });
+          }
+
+          if (isNavigateNewFile === true) {
+            this.navigateService.navigateToBuilder();
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

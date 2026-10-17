@@ -7,18 +7,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { PATH_PROJECT_DELETED } from '#common/constants/top';
-import {
-  APP_SPINNER_NAME,
-  LOCAL_STORAGE_DELETED_PROJECT_NAME
-} from '#common/constants/top-front';
+import { LOCAL_STORAGE_DELETED_PROJECT_NAME } from '#common/constants/top-front';
 import type { ToBackendDeleteProjectRequest } from '#common/types/backend/routes/projects/delete-project/delete-project-request';
-import type { ToBackendDeleteProjectResponse } from '#common/types/backend/routes/projects/delete-project/delete-project-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteProjectDialogData {
   apiService: ApiService;
@@ -40,10 +36,10 @@ export class DeleteProjectDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteProjectDialogData>,
     private router: Router,
     private projectQuery: ProjectQuery,
-    private spinner: NgxSpinnerService,
     private navQuery: NavQuery
   ) {}
 
@@ -54,8 +50,6 @@ export class DeleteProjectDialogComponent implements OnInit {
   }
 
   delete() {
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.ref.close();
 
     let payload: ToBackendDeleteProjectRequest['input'] = {
@@ -70,18 +64,21 @@ export class DeleteProjectDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteProjectResponse) => {
-          if (resp.type === 'Success') {
-            localStorage.setItem(
-              LOCAL_STORAGE_DELETED_PROJECT_NAME,
-              this.ref.data.projectName
-            );
-            this.router.navigate([PATH_PROJECT_DELETED]);
-            this.navQuery.clearProjectAndDeps();
-            this.projectQuery.reset();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          localStorage.setItem(
+            LOCAL_STORAGE_DELETED_PROJECT_NAME,
+            this.ref.data.projectName
+          );
+          this.router.navigate([PATH_PROJECT_DELETED]);
+          this.navQuery.clearProjectAndDeps();
+          this.projectQuery.reset();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

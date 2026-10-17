@@ -1,14 +1,14 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
-
+import type { ToBackendValidateFilesOutput } from '#common/types/backend/routes/files/validate-files/validate-files-output';
 import type { ToBackendValidateFilesRequest } from '#common/types/backend/routes/files/validate-files/validate-files-request';
-import type { ToBackendValidateFilesResponse } from '#common/types/backend/routes/files/validate-files/validate-files-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 @Component({
   standalone: false,
@@ -60,6 +60,7 @@ export class ValidationStatusComponent {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
     private repoQuery: RepoQuery,
@@ -80,20 +81,24 @@ export class ValidationStatusComponent {
     this.apiService
       .req({
         route: 'api/ToBackendValidateFiles',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendValidateFilesResponse) => {
-          if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendValidateFilesOutput = resp.output;
+
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

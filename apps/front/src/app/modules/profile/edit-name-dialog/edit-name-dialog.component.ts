@@ -15,10 +15,11 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { User } from '#common/types/backend/parts/user';
+import type { ToBackendSetUserNameOutput } from '#common/types/backend/routes/users/set-user-name/set-user-name-output';
 import type { ToBackendSetUserNameRequest } from '#common/types/backend/routes/users/set-user-name/set-user-name-request';
-import type { ToBackendSetUserNameResponse } from '#common/types/backend/routes/users/set-user-name/set-user-name-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface EditNameDialogData {
@@ -44,6 +45,7 @@ export class EditNameDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditNameDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery
@@ -99,17 +101,21 @@ export class EditNameDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendSetUserName',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetUserNameResponse) => {
-          if (resp.type === 'Success') {
-            let user = resp.output.user as User;
-            this.userQuery.update(user);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSetUserNameOutput = resp.output;
+
+          let user = output.user as User;
+          this.userQuery.update(user);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

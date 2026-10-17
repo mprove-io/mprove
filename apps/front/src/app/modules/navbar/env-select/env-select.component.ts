@@ -21,6 +21,7 @@ import {
 } from '#common/constants/top';
 
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
+import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-output';
 import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { FileQuery } from '#front/app/queries/file.query';
@@ -106,12 +107,18 @@ export class EnvSelectComponent {
     };
 
     this.apiService
-      .reqOutput({
+      .req({
         route: 'api/ToBackendGetEnvsList',
         payload: payload
       })
       .pipe(
-        tap(output => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendGetEnvsListOutput = resp.output;
+
           this.envsList = output.envsList;
           this.envsListLength = output.envsList.length;
         }),

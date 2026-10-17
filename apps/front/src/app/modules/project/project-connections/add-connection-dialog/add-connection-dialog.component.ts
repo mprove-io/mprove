@@ -28,14 +28,16 @@ import type { ConnectionType } from '#common/types/backend/parts/connection-part
 import type { DatabricksAuthType } from '#common/types/backend/parts/connection-parts/databricks-auth-type';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
+import type { ToBackendCreateConnectionOutput } from '#common/types/backend/routes/connections/create-connection/create-connection-output';
 import type { ToBackendCreateConnectionRequest } from '#common/types/backend/routes/connections/create-connection/create-connection-request';
-import type { ToBackendCreateConnectionResponse } from '#common/types/backend/routes/connections/create-connection/create-connection-response';
+import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes/connections/test-connection/test-connection-output';
 import type { ToBackendTestConnectionRequest } from '#common/types/backend/routes/connections/test-connection/test-connection-request';
-import type { ToBackendTestConnectionResponse } from '#common/types/backend/routes/connections/test-connection/test-connection-response';
+import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-output';
 import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 import type { ScopeFormControls } from '#front/app/types/forms/scope-form-controls';
@@ -207,6 +209,7 @@ export class AddConnectionDialogComponent implements OnInit {
   testInternalHostResult: TestConnectionResult;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddConnectionDialogData>,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -547,18 +550,25 @@ export class AddConnectionDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
-      .reqOutput({
+      .req({
         route: 'api/ToBackendGetEnvsList',
         payload: payload
       })
       .pipe(
-        tap(output => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendGetEnvsListOutput = resp.output;
+
           this.envsList = output.envsList;
           this.envsListLength = output.envsList.length;
         }),
         take(1),
         finalize(() => {
           this.envsListLoading = false;
+
           this.cd.detectChanges();
         })
       )
@@ -1040,18 +1050,22 @@ export class AddConnectionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendTestConnection',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.type === 'Success') {
-            this.testConnectionResult = resp.output.testConnectionResult;
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendTestConnectionOutput = resp.output;
+
+          this.testConnectionResult = output.testConnectionResult;
+
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -1079,18 +1093,22 @@ export class AddConnectionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendTestConnection',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.type === 'Success') {
-            this.testInternalHostResult = resp.output.testConnectionResult;
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendTestConnectionOutput = resp.output;
+
+          this.testInternalHostResult = output.testConnectionResult;
+
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -1117,33 +1135,37 @@ export class AddConnectionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateConnection',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateConnectionResponse) => {
-          if (resp.type === 'Success') {
-            let connection = resp.output.connection;
-
-            let connections = this.connectionsQuery.getValue();
-
-            let newSortedConnections = [
-              ...connections.connections,
-              connection
-            ].sort((a, b) =>
-              a.connectionId > b.connectionId
-                ? 1
-                : b.connectionId > a.connectionId
-                  ? -1
-                  : 0
-            );
-
-            this.connectionsQuery.update({
-              connections: newSortedConnections
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateConnectionOutput = resp.output;
+
+          let connection = output.connection;
+
+          let connections = this.connectionsQuery.getValue();
+
+          let newSortedConnections = [
+            ...connections.connections,
+            connection
+          ].sort((a, b) =>
+            a.connectionId > b.connectionId
+              ? 1
+              : b.connectionId > a.connectionId
+                ? -1
+                : 0
+          );
+
+          this.connectionsQuery.update({
+            connections: newSortedConnections
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

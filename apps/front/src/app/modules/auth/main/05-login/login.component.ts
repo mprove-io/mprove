@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, take, tap } from 'rxjs/operators';
 import { LOG_IN_PAGE_TITLE } from '#common/constants/page-titles';
 import {
@@ -18,15 +17,13 @@ import {
   PATH_VERIFY_EMAIL,
   RESTRICTED_USER_EMAIL
 } from '#common/constants/top';
-import {
-  APP_SPINNER_NAME,
-  LOCAL_STORAGE_TOKEN
-} from '#common/constants/top-front';
+import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/users/login-user/login-user-output';
 import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
-import type { ToBackendLoginUserResponse } from '#common/types/backend/routes/users/login-user/login-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
@@ -67,12 +64,12 @@ export class LoginComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private apiService: ApiService,
     private router: Router,
     private userQuery: UserQuery,
-    private spinner: NgxSpinnerService,
     private authService: AuthService,
     private title: Title
   ) {}
@@ -109,8 +106,6 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     let payload: ToBackendLoginUserRequest['input'] = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
@@ -122,22 +117,27 @@ export class LoginComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendLoginUserResponse) => {
-          if (resp.type === 'Success') {
-            let user = resp.output.user;
-            let token = resp.output.token;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            this.userQuery.update(user);
+          let output: ToBackendLoginUserOutput = resp.output;
 
-            if (user.isEmailVerified === true) {
-              localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
-              this.router.navigate([PATH_LOGIN_SUCCESS]);
-            } else {
-              this.router.navigate([PATH_VERIFY_EMAIL]);
-            }
+          let user = output.user;
+          let token = output.token;
+
+          this.userQuery.update(user);
+
+          if (user.isEmailVerified === true) {
+            localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
+            this.router.navigate([PATH_LOGIN_SUCCESS]);
+          } else {
+            this.router.navigate([PATH_VERIFY_EMAIL]);
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

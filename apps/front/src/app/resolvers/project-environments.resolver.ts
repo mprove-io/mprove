@@ -8,8 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
+import type { ToBackendGetEnvsOutput } from '#common/types/backend/routes/envs/get-envs/get-envs-output';
 import type { ToBackendGetEnvsRequest } from '#common/types/backend/routes/envs/get-envs/get-envs-request';
-import type { ToBackendGetEnvsResponse } from '#common/types/backend/routes/envs/get-envs/get-envs-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { EnvironmentsQuery } from '../queries/environments.query';
 import { MemberQuery } from '../queries/member.query';
@@ -65,11 +65,13 @@ export class ProjectEnvironmentsResolver
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetEnvsResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetEnvsOutput = resp.output;
 
-            let newSortedEnvironments = resp.output.envs.sort((a, b) =>
+            this.memberQuery.update(output.userMember);
+
+            let newSortedEnvironments = output.envs.sort((a, b) =>
               a.envId !== PROJECT_ENV_PROD && b.envId === PROJECT_ENV_PROD
                 ? 1
                 : a.envId === PROJECT_ENV_PROD && b.envId !== PROJECT_ENV_PROD

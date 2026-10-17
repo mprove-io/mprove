@@ -5,11 +5,10 @@ import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
 import type { SessionPartApi } from '#common/types/backend/parts/session/session-part-api';
+import type { ToBackendCreateSessionSseTicketOutput } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-output';
 import type { ToBackendCreateSessionSseTicketRequest } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-request';
-import type { ToBackendCreateSessionSseTicketResponse } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-response';
 import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/sessions/get-session/get-session-output';
 import type { ToBackendGetSessionRequest } from '#common/types/backend/routes/sessions/get-session/get-session-request';
-import type { ToBackendGetSessionResponse } from '#common/types/backend/routes/sessions/get-session/get-session-response';
 import type { ErrorData } from '#common/types/front/ui/error-data';
 import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
@@ -338,25 +337,27 @@ export class SessionService {
             payload: payload
           })
         ),
-        tap((resp: ToBackendGetSessionResponse) => {
-          if (resp.type === 'Success') {
-            let output: ToBackendGetSessionOutput = resp.output;
-
-            this.applySessionResponse({
-              payload: output,
-              withOptimisticMerge: true
-            });
-
-            this.lastProcessedEventIndex = output.lastEventIndex;
-
-            let sessions = this.sessionsQuery.getValue().sessions;
-
-            let updated = sessions.map(s =>
-              s.sessionId === sessionId ? output.session : s
-            );
-
-            this.sessionsQuery.updatePart({ sessions: updated });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetSessionOutput = resp.output;
+
+          this.applySessionResponse({
+            payload: output,
+            withOptimisticMerge: true
+          });
+
+          this.lastProcessedEventIndex = output.lastEventIndex;
+
+          let sessions = this.sessionsQuery.getValue().sessions;
+
+          let updated = sessions.map(s =>
+            s.sessionId === sessionId ? output.session : s
+          );
+
+          this.sessionsQuery.updatePart({ sessions: updated });
         })
       )
       .subscribe();
@@ -383,7 +384,7 @@ export class SessionService {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateSessionSseTicketResponse) => {
+        tap(resp => {
           if (this.initId !== initId) {
             return;
           }
@@ -393,9 +394,11 @@ export class SessionService {
           if (resp.type === 'Success') {
             console.log('connectSse - get ticket - ok');
 
+            let output: ToBackendCreateSessionSseTicketOutput = resp.output;
+
             this.connectSseWithTicket({
               sessionId: sessionId,
-              sseTicket: resp.output.sseTicket,
+              sseTicket: output.sseTicket,
               initId: initId
             });
           } else {
@@ -537,7 +540,7 @@ export class SessionService {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetSessionResponse) => {
+        tap(resp => {
           if (this.initId !== initId) {
             return;
           }

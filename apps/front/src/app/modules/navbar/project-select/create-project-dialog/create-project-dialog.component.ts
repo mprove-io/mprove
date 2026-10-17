@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
@@ -27,15 +27,15 @@ import {
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
-
+import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/projects/create-project/create-project-output';
 import type { ToBackendCreateProjectRequest } from '#common/types/backend/routes/projects/create-project/create-project-request';
-import type { ToBackendCreateProjectResponse } from '#common/types/backend/routes/projects/create-project/create-project-response';
+import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-output';
 import type { ToBackendGenerateProjectRemoteKeyRequest } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
-import type { ToBackendGenerateProjectRemoteKeyResponse } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface CreateProjectDialogData {
@@ -74,18 +74,17 @@ export class CreateProjectDialogComponent implements OnInit {
   spinnerName = 'createProjectDialogSpinner';
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<CreateProjectDialogData>,
     private fb: FormBuilder,
     private router: Router,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   ngOnInit() {
     let projectName: string;
     let projectGitUrl: string;
-
-    this.spinner.show(this.spinnerName);
 
     this.createProjectForm = this.fb.group({
       projectName: this.fb.control<string>(projectName, [
@@ -111,21 +110,24 @@ export class CreateProjectDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGenerateProjectRemoteKeyResponse) => {
-          if (resp.type === 'Success') {
-            this.noteId = resp.output.noteId;
-            this.publicKey = resp.output.publicKey;
-            this.maskedPublicKey =
-              this.publicKey.substring(0, 40) +
-              '•'.repeat(this.publicKey.length - 40);
-
-            this.spinner.hide(this.spinnerName);
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-        })
+
+          let output: ToBackendGenerateProjectRemoteKeyOutput = resp.output;
+
+          this.noteId = output.noteId;
+          this.publicKey = output.publicKey;
+          this.maskedPublicKey =
+            this.publicKey.substring(0, 40) +
+            '•'.repeat(this.publicKey.length - 40);
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.spinnerName })
       )
-      .toPromise();
+      .subscribe();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
@@ -146,8 +148,6 @@ export class CreateProjectDialogComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.ref.close();
 
     let payload: ToBackendCreateProjectRequest['input'] = {
@@ -166,24 +166,29 @@ export class CreateProjectDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateProjectResponse) => {
-          if (resp.type === 'Success') {
-            this.router.navigate([
-              PATH_ORG,
-              resp.output.project.orgId,
-              PATH_PROJECT,
-              resp.output.project.projectId,
-              PATH_REPO,
-              PROD_REPO_ID,
-              PATH_BRANCH,
-              resp.output.project.defaultBranch,
-              PATH_ENV,
-              PROJECT_ENV_PROD,
-              PATH_BUILDER
-            ]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateProjectOutput = resp.output;
+
+          this.router.navigate([
+            PATH_ORG,
+            output.project.orgId,
+            PATH_PROJECT,
+            output.project.projectId,
+            PATH_REPO,
+            PROD_REPO_ID,
+            PATH_BRANCH,
+            output.project.defaultBranch,
+            PATH_ENV,
+            PROJECT_ENV_PROD,
+            PATH_BUILDER
+          ]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

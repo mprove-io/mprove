@@ -9,7 +9,6 @@ import { FormBuilder, FormControl, type FormGroup } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
 
@@ -18,8 +17,8 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelField } from '#common/types/blockml/parts/model/model-field';
 import type { Report } from '#common/types/blockml/parts/report/report';
@@ -30,6 +29,7 @@ import type { RowX2 } from '#common/types/front/report/row/row-x-2';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { ReportService } from '#front/app/services/report.service';
 
 export interface ReportEditListenersDialogData {
@@ -77,7 +77,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
     public ref: DialogRef<ReportEditListenersDialogData>,
     private fb: FormBuilder,
     private navQuery: NavQuery,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private uiQuery: UiQuery,
     private cd: ChangeDetectorRef
   ) {}
@@ -99,8 +99,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
       )
       .subscribe();
 
-    this.spinner.show(this.spinnerName);
-
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: ToBackendGetModelsRequest['input'] = {
@@ -117,94 +115,95 @@ export class ReportEditListenersDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.type === 'Success') {
-            this.spinner.hide(this.spinnerName);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            this.models = resp.output.models;
+          let output: ToBackendGetModelsOutput = resp.output;
 
-            this.reportRows.forEach((x, rowIndex) => {
-              let model = this.models.find(
-                m => m.modelId === x.mconfig?.modelId
-              );
+          this.models = output.models;
 
-              let swap: { [a: string]: string[] } = {};
+          this.reportRows.forEach((x, rowIndex) => {
+            let model = this.models.find(m => m.modelId === x.mconfig?.modelId);
 
-              x.parameters
-                .filter(p => isDefined(p.listen))
-                .forEach(p => {
-                  let reportFieldId = p.listen;
+            let swap: { [a: string]: string[] } = {};
 
-                  if (isUndefined(swap[reportFieldId])) {
-                    swap[reportFieldId] = [p.apply_to];
-                  } else {
-                    swap[reportFieldId].push(p.apply_to);
-                  }
-                });
+            x.parameters
+              .filter(p => isDefined(p.listen))
+              .forEach(p => {
+                let reportFieldId = p.listen;
 
-              let modelFields: { [a: string]: ModelField[] } = {};
-
-              let emptyField = <ModelField>{
-                id: undefined,
-                topLabel: EMPTY_MCONFIG_FIELD.topLabel
-              };
-
-              (this.report as ReportX2).fields.forEach(reportField => {
-                modelFields[reportField.id] =
-                  isDefined(reportField.storeResult) &&
-                  reportField.storeModel === model.modelId
-                    ? [
-                        emptyField,
-                        ...model.fields.filter(
-                          y =>
-                            y.result === reportField.storeResult &&
-                            model.modelId === reportField.storeModel
-                        )
-                      ]
-                    : isDefined(reportField.storeFilter) &&
-                        reportField.storeModel === model.modelId
-                      ? [
-                          emptyField,
-                          ...model.fields.filter(y =>
-                            y.fieldClass === 'filter'
-                              ? y.id === reportField.storeFilter
-                              : false
-                          )
-                        ]
-                      : model.type !== 'Store' &&
-                          isUndefined(reportField.storeModel)
-                        ? [
-                            emptyField,
-                            ...model.fields.filter(
-                              y => y.result === reportField.result
-                            )
-                          ]
-                        : [emptyField];
-
-                if (isUndefined(swap[reportField.id])) {
-                  swap[reportField.id] = [undefined];
+                if (isUndefined(swap[reportFieldId])) {
+                  swap[reportFieldId] = [p.apply_to];
+                } else {
+                  swap[reportFieldId].push(p.apply_to);
                 }
               });
 
-              (x as RowX2).modelFields = modelFields;
+            let modelFields: { [a: string]: ModelField[] } = {};
 
-              (x as RowX2).mconfigListenSwap = swap;
+            let emptyField = <ModelField>{
+              id: undefined,
+              topLabel: EMPTY_MCONFIG_FIELD.topLabel
+            };
 
-              Object.keys(swap).forEach(dFieldId => {
-                swap[dFieldId].forEach((id, ind) => {
-                  this.listenForm.addControl(
-                    `${rowIndex}-----${dFieldId}-----${ind}`,
-                    new FormControl<string>(id)
-                  );
-                });
-              });
+            (this.report as ReportX2).fields.forEach(reportField => {
+              modelFields[reportField.id] =
+                isDefined(reportField.storeResult) &&
+                reportField.storeModel === model.modelId
+                  ? [
+                      emptyField,
+                      ...model.fields.filter(
+                        y =>
+                          y.result === reportField.storeResult &&
+                          model.modelId === reportField.storeModel
+                      )
+                    ]
+                  : isDefined(reportField.storeFilter) &&
+                      reportField.storeModel === model.modelId
+                    ? [
+                        emptyField,
+                        ...model.fields.filter(y =>
+                          y.fieldClass === 'filter'
+                            ? y.id === reportField.storeFilter
+                            : false
+                        )
+                      ]
+                    : model.type !== 'Store' &&
+                        isUndefined(reportField.storeModel)
+                      ? [
+                          emptyField,
+                          ...model.fields.filter(
+                            y => y.result === reportField.result
+                          )
+                        ]
+                      : [emptyField];
+
+              if (isUndefined(swap[reportField.id])) {
+                swap[reportField.id] = [undefined];
+              }
             });
 
-            this.cd.detectChanges();
-          }
-        })
+            (x as RowX2).modelFields = modelFields;
+
+            (x as RowX2).mconfigListenSwap = swap;
+
+            Object.keys(swap).forEach(dFieldId => {
+              swap[dFieldId].forEach((id, ind) => {
+                this.listenForm.addControl(
+                  `${rowIndex}-----${dFieldId}-----${ind}`,
+                  new FormControl<string>(id)
+                );
+              });
+            });
+          });
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.spinnerName })
       )
-      .toPromise();
+      .subscribe();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();

@@ -16,12 +16,13 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import type { ToBackendSetProjectInfoOutput } from '#common/types/backend/routes/projects/set-project-info/set-project-info-output';
 import type { ToBackendSetProjectInfoRequest } from '#common/types/backend/routes/projects/set-project-info/set-project-info-request';
-import type { ToBackendSetProjectInfoResponse } from '#common/types/backend/routes/projects/set-project-info/set-project-info-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface EditProjectNameDialogData {
   apiService: ApiService;
@@ -51,6 +52,7 @@ export class EditProjectNameDialogComponent implements OnInit {
   projectId: string;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditProjectNameDialogData>,
     private fb: FormBuilder,
     private projectQuery: ProjectQuery,
@@ -88,21 +90,25 @@ export class EditProjectNameDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendSetProjectInfo',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetProjectInfoResponse) => {
-          if (resp.type === 'Success') {
-            let project = resp.output.project;
-            this.projectQuery.update(project);
-            this.navQuery.updatePart({
-              projectId: project.projectId,
-              projectName: project.name
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSetProjectInfoOutput = resp.output;
+
+          let project = output.project;
+          this.projectQuery.update(project);
+          this.navQuery.updatePart({
+            projectId: project.projectId,
+            projectName: project.name
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

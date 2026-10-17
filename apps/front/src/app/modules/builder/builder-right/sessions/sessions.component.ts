@@ -1,14 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, map, take, tap } from 'rxjs/operators';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { ToBackendArchiveSessionOutput } from '#common/types/backend/routes/sessions/archive-session/archive-session-output';
 import type { ToBackendArchiveSessionRequest } from '#common/types/backend/routes/sessions/archive-session/archive-session-request';
 import type { ToBackendGetSessionsListOutput } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
 import type { ToBackendGetSessionsListRequest } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
-import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
+import type { ToBackendPauseEditorSessionOutput } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-output';
 import type { ToBackendPauseEditorSessionRequest } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
 import type { SessionApiX } from '#common/types/front/session/session-api-x';
 import { makeTitle } from '#front/app/functions/make-title';
@@ -20,6 +20,8 @@ import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -82,6 +84,7 @@ export class SessionsComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
@@ -91,7 +94,7 @@ export class SessionsComponent implements OnInit {
     private navigateService: NavigateService,
     private router: Router,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private myDialogService: MyDialogService,
     private sessionBundleQuery: SessionBundleQuery,
     private repoQuery: RepoQuery
@@ -118,7 +121,6 @@ export class SessionsComponent implements OnInit {
     };
 
     this.isRefreshing = true;
-    this.spinner.show(SESSIONS_SPINNER_NAME);
     this.cd.detectChanges();
 
     this.apiService
@@ -127,7 +129,7 @@ export class SessionsComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetSessionsListResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
             let output: ToBackendGetSessionsListOutput = resp.output;
 
@@ -151,13 +153,16 @@ export class SessionsComponent implements OnInit {
             });
           }
 
-          this.isRefreshing = false;
-          this.spinner.hide(SESSIONS_SPINNER_NAME);
           this.sessionsLoaded = true;
           this.archivedLastCreatedTs = undefined;
+        }),
+        take(1),
+        finalize(() => {
+          this.isRefreshing = false;
+
           this.cd.detectChanges();
         }),
-        take(1)
+        this.localSpinnerService.track({ name: SESSIONS_SPINNER_NAME })
       )
       .subscribe();
   }
@@ -194,13 +199,18 @@ export class SessionsComponent implements OnInit {
     };
 
     this.apiService
-      .reqOutput({
+      .req({
         route: 'api/ToBackendPauseEditorSession',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap(output => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendPauseEditorSessionOutput = resp.output;
+
           let respSession: SessionApi = output.session;
 
           if (respSession.status === 'Archived') {
@@ -234,7 +244,8 @@ export class SessionsComponent implements OnInit {
             }
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -249,13 +260,18 @@ export class SessionsComponent implements OnInit {
     };
 
     this.apiService
-      .reqOutput({
+      .req({
         route: 'api/ToBackendArchiveSession',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap(output => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendArchiveSessionOutput = resp.output;
+
           let respSession: SessionApi = output.session;
 
           this.updatedArchivedSessions({
@@ -263,7 +279,8 @@ export class SessionsComponent implements OnInit {
             respSession: respSession
           });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -348,44 +365,49 @@ export class SessionsComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp.type === 'Success') {
-            let output: ToBackendGetSessionsListOutput = resp.output;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            let sessions = output.sessions;
+          let output: ToBackendGetSessionsListOutput = resp.output;
 
-            if (this.currentSession?.sessionId) {
-              let freshCurrentSession = sessions.find(
-                s => s.sessionId === this.currentSession?.sessionId
-              );
-              if (freshCurrentSession) {
-                this.sessionQuery.update(freshCurrentSession);
-              }
-            }
+          let sessions = output.sessions;
 
-            let hasMoreArchived = output.hasMoreArchived ?? false;
-
-            this.sessionsQuery.updatePart({
-              sessions: sessions,
-              hasMoreArchived: hasMoreArchived
-            });
-
-            let archivedSessions: SessionApi[] = sessions.filter(
-              s =>
-                s.status === 'Archived' &&
-                s.sessionId !== this.currentSession?.sessionId
+          if (this.currentSession?.sessionId) {
+            let freshCurrentSession = sessions.find(
+              s => s.sessionId === this.currentSession?.sessionId
             );
 
-            if (archivedSessions.length > 0) {
-              this.archivedLastCreatedTs =
-                archivedSessions[archivedSessions.length - 1].createdTs;
+            if (freshCurrentSession) {
+              this.sessionQuery.update(freshCurrentSession);
             }
           }
 
-          this.isLoadingArchived = false;
-          this.cd.detectChanges();
+          let hasMoreArchived = output.hasMoreArchived ?? false;
+
+          this.sessionsQuery.updatePart({
+            sessions: sessions,
+            hasMoreArchived: hasMoreArchived
+          });
+
+          let archivedSessions: SessionApi[] = sessions.filter(
+            s =>
+              s.status === 'Archived' &&
+              s.sessionId !== this.currentSession?.sessionId
+          );
+
+          if (archivedSessions.length > 0) {
+            this.archivedLastCreatedTs =
+              archivedSessions[archivedSessions.length - 1].createdTs;
+          }
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.isLoadingArchived = false;
+
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

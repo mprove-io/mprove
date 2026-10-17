@@ -15,19 +15,18 @@ import {
   Validators
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/repos/commit-repo/commit-repo-output';
 import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
-import type { ToBackendCommitRepoResponse } from '#common/types/backend/routes/repos/commit-repo/commit-repo-response';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
 import { SharedModule } from '../../shared/shared.module';
 
@@ -65,7 +64,7 @@ export class CommitDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<CommitDialogDialogData>,
     private fb: FormBuilder,
-    private spinner: NgxSpinnerService,
+    private appSpinnerService: AppSpinnerService,
     private fileService: FileService,
     private repoQuery: RepoQuery,
     private sessionQuery: SessionQuery,
@@ -107,19 +106,19 @@ export class CommitDialogComponent implements OnInit {
       commitMessage: this.commitForm.value.message
     };
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     apiService
       .req({
         route: 'api/ToBackendCommitRepo',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendCommitRepoResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
+            let output: ToBackendCommitRepoOutput = resp.output;
 
-            let respSession = resp.output.session;
+            this.repoQuery.update(output.repo);
+
+            let respSession = output.session;
 
             if (isDefined(respSession)) {
               this.sessionQuery.updatePart({
@@ -156,10 +155,10 @@ export class CommitDialogComponent implements OnInit {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

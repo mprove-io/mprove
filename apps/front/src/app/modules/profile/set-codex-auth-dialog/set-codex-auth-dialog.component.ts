@@ -8,16 +8,16 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
-
+import type { ToBackendPollUserCodexAuthOutput } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-output';
 import type { ToBackendPollUserCodexAuthRequest } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-request';
-import type { ToBackendPollUserCodexAuthResponse } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-response';
-import type { ToBackendStartUserCodexAuthResponse } from '#common/types/backend/routes/users/start-user-codex-auth/start-user-codex-auth-response';
+import type { ToBackendStartUserCodexAuthOutput } from '#common/types/backend/routes/users/start-user-codex-auth/start-user-codex-auth-output';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 
 export interface SetCodexAuthDialogData {
   apiService: ApiService;
@@ -53,7 +53,7 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
   constructor(
     public ref: DialogRef<SetCodexAuthDialogData>,
     private userQuery: UserQuery,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -71,7 +71,6 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
 
   start() {
     this.errorMessage = undefined;
-    this.spinner.show(this.spinnerName);
     this.cd.detectChanges();
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -79,26 +78,28 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
     apiService
       .req({
         route: 'api/ToBackendStartUserCodexAuth',
-        payload: {},
-        showSpinner: false
+        payload: {}
       })
       .pipe(
-        tap((resp: ToBackendStartUserCodexAuthResponse) => {
+        tap(resp => {
           if (resp.type === 'Success') {
-            this.userCode = resp.output.userCode;
-            this.verificationUrl = resp.output.verificationUrl;
-            this.deviceAuthId = resp.output.deviceAuthId;
-            this.intervalSec = resp.output.intervalSec;
-            this.spinner.hide(this.spinnerName);
+            let output: ToBackendStartUserCodexAuthOutput = resp.output;
+
+            this.userCode = output.userCode;
+            this.verificationUrl = output.verificationUrl;
+            this.deviceAuthId = output.deviceAuthId;
+            this.intervalSec = output.intervalSec;
+
             this.cd.detectChanges();
             this.startPolling();
           } else {
             this.errorMessage = 'Failed to start authorization. Try again.';
-            this.spinner.hide(this.spinnerName);
+
             this.cd.detectChanges();
           }
         }),
-        take(1)
+        take(1),
+        this.localSpinnerService.track({ name: this.spinnerName })
       )
       .subscribe();
   }
@@ -123,21 +124,22 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
 
           return apiService.req({
             route: 'api/ToBackendPollUserCodexAuth',
-            payload: payload,
-            showSpinner: false
+            payload: payload
           });
         }),
-        tap((resp: ToBackendPollUserCodexAuthResponse) => {
+        tap(resp => {
           if (!resp || resp.type !== 'Success') {
             return;
           }
 
-          let status = resp.output.status;
+          let output: ToBackendPollUserCodexAuthOutput = resp.output;
+
+          let status = output.status;
 
           if (status === 'Authorized') {
             this.pollSub?.unsubscribe();
-            if (resp.output.user) {
-              this.userQuery.update(resp.output.user);
+            if (output.user) {
+              this.userQuery.update(output.user);
             }
             this.ref.close();
           } else if (status === 'Failed') {

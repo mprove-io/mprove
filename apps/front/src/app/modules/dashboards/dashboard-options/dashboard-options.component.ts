@@ -4,7 +4,6 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
-import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -37,7 +36,6 @@ export class DashboardOptionsComponent {
   constructor(
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
-    private dashboardQuery: DashboardQuery,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private apiService: ApiService,
@@ -96,10 +94,7 @@ export class DashboardOptionsComponent {
       branchId: nav.branchId,
       envId: nav.envId,
       repoId: nav.repoId,
-      repoType: nav.repoType,
-      isStartSpinnerUntilNavEnd:
-        this.dashboardQuery.getValue().dashboardId ===
-        this.currentDashboardUnit.dashboardId
+      repoType: nav.repoType
     });
   }
 }

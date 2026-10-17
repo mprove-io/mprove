@@ -16,11 +16,12 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/members/create-member/create-member-output';
 import type { ToBackendCreateMemberRequest } from '#common/types/backend/routes/members/create-member/create-member-request';
-import type { ToBackendCreateMemberResponse } from '#common/types/backend/routes/members/create-member/create-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface InviteMemberDialogData {
   apiService: ApiService;
@@ -47,6 +48,7 @@ export class InviteMemberDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<InviteMemberDialogData>,
     private fb: FormBuilder,
     private teamQuery: TeamQuery
@@ -85,22 +87,26 @@ export class InviteMemberDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateMember',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateMemberResponse) => {
-          if (resp.type === 'Success') {
-            let member = resp.output.member;
-            let teamState = this.teamQuery.getValue();
-
-            this.teamQuery.update({
-              members: [...teamState.members, member],
-              total: teamState.total
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateMemberOutput = resp.output;
+
+          let member = output.member;
+          let teamState = this.teamQuery.getValue();
+
+          this.teamQuery.update({
+            members: [...teamState.members, member],
+            total: teamState.total
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

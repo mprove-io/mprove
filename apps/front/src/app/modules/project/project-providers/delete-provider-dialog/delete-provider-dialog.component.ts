@@ -8,9 +8,9 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { ToBackendDeleteProviderRequest } from '#common/types/backend/routes/providers/delete-provider/delete-provider-request';
-import type { ToBackendDeleteProviderResponse } from '#common/types/backend/routes/providers/delete-provider/delete-provider-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteProviderDialogData {
   apiService: ApiService;
@@ -32,6 +32,7 @@ export class DeleteProviderDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteProviderDialogData>,
     private providersQuery: ProvidersQuery
   ) {}
@@ -53,11 +54,10 @@ export class DeleteProviderDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendDeleteProvider',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteProviderResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
@@ -73,7 +73,8 @@ export class DeleteProviderDialogComponent implements OnInit {
             providers: providers
           });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

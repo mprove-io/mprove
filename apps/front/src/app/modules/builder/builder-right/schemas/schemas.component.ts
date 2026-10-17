@@ -11,7 +11,6 @@ import {
   ViewChild
 } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, type Subscription } from 'rxjs';
 import { exhaustMap, finalize, map, take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -22,20 +21,17 @@ import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-
 import type { RawSchemaForeignKey } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-foreign-key';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { CachedColumnRefreshType } from '#common/types/backend/parts/connections/cached-column-refresh-type';
-import type { ToBackendClearCachedColumnResponse } from '#common/types/backend/routes/connections/clear-cached-column/clear-cached-column-response';
 import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';
-import type { ToBackendGetCachedColumnsResponse } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-response';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
-import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 import type { ToBackendGetConnectionSchemasRequest } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
-import type { ToBackendGetConnectionSchemasResponse } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
 import type { ToBackendRefreshCachedColumnOutput } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
-import type { ToBackendRefreshCachedColumnResponse } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
-import type { ToBackendViewCachedColumnResponse } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-response';
 import type { SchemaNodeType } from '#front/app/modules/builder/builder-right/schemas/schema-node-type';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { SampleDialogData } from './sample-dialog/sample-dialog.component';
 import { SchemaGraphDialogData } from './schema-graph-dialog/schema-graph-dialog.component';
@@ -132,11 +128,12 @@ export class SchemasComponent implements OnInit, OnDestroy {
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private navQuery: NavQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   ngOnInit() {
@@ -165,7 +162,6 @@ export class SchemasComponent implements OnInit, OnDestroy {
     };
 
     this.isRefreshing = true;
-    this.spinner.show(SCHEMAS_SPINNER_NAME);
     this.cd.detectChanges();
 
     this.apiService
@@ -174,9 +170,11 @@ export class SchemasComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetConnectionSchemasResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.combinedSchemaItems = resp.output.combinedSchemaItems;
+            let output: ToBackendGetConnectionSchemasOutput = resp.output;
+
+            this.combinedSchemaItems = output.combinedSchemaItems;
 
             this.treeNodes = this.buildTreeNodes({
               combinedSchemaItems: this.combinedSchemaItems
@@ -186,12 +184,15 @@ export class SchemasComponent implements OnInit, OnDestroy {
             this.startCachedColumnsPolling();
           }
 
-          this.isRefreshing = false;
-          this.spinner.hide(SCHEMAS_SPINNER_NAME);
           this.schemasLoaded = true;
+        }),
+        take(1),
+        finalize(() => {
+          this.isRefreshing = false;
+
           this.cd.detectChanges();
         }),
-        take(1)
+        this.localSpinnerService.track({ name: SCHEMAS_SPINNER_NAME })
       )
       .subscribe();
   }
@@ -588,7 +589,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
         }
       })
       .pipe(
-        map((resp: ToBackendGetCachedColumnsResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
             let output: ToBackendGetCachedColumnsOutput = resp.output;
 
@@ -704,11 +705,10 @@ export class SchemasComponent implements OnInit, OnDestroy {
           tableName: data.tableName,
           columnName: data.columnName,
           offset: 0
-        },
-        showSpinner: true
+        }
       })
       .pipe(
-        map((resp: ToBackendViewCachedColumnResponse) => {
+        map(resp => {
           let dialogData: ViewCachedUniqueValuesDialogData = {
             title: `${data.connectionId} - ${data.schemaDisplayName}`,
             subtitle: data.tableName,
@@ -750,7 +750,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
           this.myDialogService.showViewCachedUniqueValues(dialogData);
           this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -785,22 +786,24 @@ export class SchemasComponent implements OnInit, OnDestroy {
         }
       })
       .pipe(
-        map((resp: ToBackendRefreshCachedColumnResponse) => {
-          if (resp.type === 'Success') {
-            let output: ToBackendRefreshCachedColumnOutput = resp.output;
+        map(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            this.updateCachedColumn({
-              nodeId: data.id,
-              cachedColumn: output.cachedColumn
-            });
+          let output: ToBackendRefreshCachedColumnOutput = resp.output;
 
-            this.applyFilter();
+          this.updateCachedColumn({
+            nodeId: data.id,
+            cachedColumn: output.cachedColumn
+          });
 
-            if (output.cachedColumn?.status === 'running') {
-              this.startCachedColumnsPolling();
-            } else {
-              this.removeCachedColumnSpinner({ nodeId: data.id });
-            }
+          this.applyFilter();
+
+          if (output.cachedColumn?.status === 'running') {
+            this.startCachedColumnsPolling();
+          } else {
+            this.removeCachedColumnSpinner({ nodeId: data.id });
           }
         }),
         finalize(() => {
@@ -854,22 +857,24 @@ export class SchemasComponent implements OnInit, OnDestroy {
           schemaName: data.schemaDisplayName,
           tableName: data.tableName,
           columnName: data.columnName
-        },
-        showSpinner: true
+        }
       })
       .pipe(
-        map((resp: ToBackendClearCachedColumnResponse) => {
-          if (resp.type === 'Success') {
-            this.updateCachedColumn({
-              nodeId: data.id,
-              cachedColumn: undefined
-            });
-            this.removeCachedColumnSpinner({ nodeId: data.id });
-            this.applyFilter();
-            this.cd.detectChanges();
+        map(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          this.updateCachedColumn({
+            nodeId: data.id,
+            cachedColumn: undefined
+          });
+          this.removeCachedColumnSpinner({ nodeId: data.id });
+          this.applyFilter();
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -905,7 +910,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
         }
       })
       .pipe(
-        map((resp: ToBackendGetConnectionSampleResponse) => {
+        map(resp => {
           if (currentSampleRequestId !== this.sampleRequestId) {
             return;
           }

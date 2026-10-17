@@ -16,11 +16,12 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import type { ToBackendSetProjectSandboxProviderOutput } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-output';
 import type { ToBackendSetProjectSandboxProviderRequest } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
-import type { ToBackendSetProjectSandboxProviderResponse } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface EditSandboxProviderDialogData {
   apiService: ApiService;
@@ -46,6 +47,7 @@ export class EditSandboxProviderDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditSandboxProviderDialogData>,
     private fb: FormBuilder,
     private projectQuery: ProjectQuery
@@ -73,16 +75,20 @@ export class EditSandboxProviderDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendSetProjectSandboxProvider',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetProjectSandboxProviderResponse) => {
-          if (resp.type === 'Success') {
-            this.projectQuery.update(resp.output.project);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSetProjectSandboxProviderOutput = resp.output;
+
+          this.projectQuery.update(output.project);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

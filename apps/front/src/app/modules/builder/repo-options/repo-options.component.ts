@@ -1,20 +1,18 @@
 import { TreeNode } from '@ali-hm/angular-tree-component';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendValidateFilesOutput } from '#common/types/backend/routes/files/validate-files/validate-files-output';
 import type { ToBackendValidateFilesRequest } from '#common/types/backend/routes/files/validate-files/validate-files-request';
-import type { ToBackendValidateFilesResponse } from '#common/types/backend/routes/files/validate-files/validate-files-response';
+import type { ToBackendGetRepoOutput } from '#common/types/backend/routes/repos/get-repo/get-repo-output';
 import type { ToBackendGetRepoRequest } from '#common/types/backend/routes/repos/get-repo/get-repo-request';
-import type { ToBackendGetRepoResponse } from '#common/types/backend/routes/repos/get-repo/get-repo-response';
+import type { ToBackendPullRepoOutput } from '#common/types/backend/routes/repos/pull-repo/pull-repo-output';
 import type { ToBackendPullRepoRequest } from '#common/types/backend/routes/repos/pull-repo/pull-repo-request';
-import type { ToBackendPullRepoResponse } from '#common/types/backend/routes/repos/pull-repo/pull-repo-response';
+import type { ToBackendRevertRepoToLastCommitOutput } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-output';
 import type { ToBackendRevertRepoToLastCommitRequest } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
-import type { ToBackendRevertRepoToLastCommitResponse } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
+import type { ToBackendRevertRepoToRemoteOutput } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
 import type { ToBackendRevertRepoToRemoteRequest } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
-import type { ToBackendRevertRepoToRemoteResponse } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
@@ -23,6 +21,7 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -76,7 +75,7 @@ export class RepoOptionsComponent {
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private fileService: FileService,
-    private spinner: NgxSpinnerService,
+    private appSpinnerService: AppSpinnerService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private apiService: ApiService
@@ -92,20 +91,20 @@ export class RepoOptionsComponent {
       envId: this.nav.envId
     };
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.apiService
       .req({
         route: 'api/ToBackendRevertRepoToLastCommit',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendRevertRepoToLastCommitResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendRevertRepoToLastCommitOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -122,10 +121,10 @@ export class RepoOptionsComponent {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -140,20 +139,20 @@ export class RepoOptionsComponent {
       envId: this.nav.envId
     };
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.apiService
       .req({
         route: 'api/ToBackendRevertRepoToRemote',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendRevertRepoToRemoteResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendRevertRepoToRemoteOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -170,10 +169,10 @@ export class RepoOptionsComponent {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -189,20 +188,20 @@ export class RepoOptionsComponent {
       isFetch: true
     };
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.apiService
       .req({
         route: 'api/ToBackendGetRepo',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetRepoResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendGetRepoOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -219,18 +218,16 @@ export class RepoOptionsComponent {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
 
   pullFromRemote(event?: MouseEvent) {
     event.stopPropagation();
-
-    this.spinner.show(APP_SPINNER_NAME);
 
     let payload: ToBackendPullRepoRequest['input'] = {
       projectId: this.nav.projectId,
@@ -245,12 +242,14 @@ export class RepoOptionsComponent {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendPullRepoResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendPullRepoOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -267,18 +266,16 @@ export class RepoOptionsComponent {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
 
   validate(event?: MouseEvent) {
     event.stopPropagation();
-
-    this.spinner.show(APP_SPINNER_NAME);
 
     let payload: ToBackendValidateFilesRequest['input'] = {
       projectId: this.nav.projectId,
@@ -293,12 +290,14 @@ export class RepoOptionsComponent {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendValidateFilesResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendValidateFilesOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -315,10 +314,10 @@ export class RepoOptionsComponent {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.uiQuery.updatePart({ secondFileNodeId: undefined });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

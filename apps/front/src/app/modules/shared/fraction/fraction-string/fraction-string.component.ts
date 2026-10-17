@@ -21,10 +21,12 @@ import {
   BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
+  filter,
   type Observable,
   Subscription,
   switchMap,
-  take
+  take,
+  takeUntil
 } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
@@ -38,6 +40,7 @@ import type { FractionOperator } from '#common/types/blockml/parts/fraction/frac
 import type { EventFractionUpdate } from '#common/types/front/fraction/event-fraction-update';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
+import type { ApiResponseForRoute } from '#front/app/types/api-response-for-route';
 import { FractionTypeItem } from '../fraction.component';
 
 @Component({
@@ -194,6 +197,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
   }
 
   onOpenSelect() {
+    this.searchSubscription?.unsubscribe();
+
     if (
       isDefined(this.suggestModelDimension) &&
       (this.fraction.type === 'StringIsEqualTo' ||
@@ -208,8 +213,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
       this.searchSubscription = this.searchInput$
         .pipe(
-          debounceTime(300), // Wait 300 ms after user stops typing
           distinctUntilChanged(), // Only trigger if the input has changed
+          debounceTime(300), // Wait 300 ms after user stops typing
           switchMap(term => {
             this.loading = true;
             this.cd.detectChanges();
@@ -233,82 +238,93 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               cellMetricsEndDateMs: undefined
             };
 
-            let suggestion: Observable<ToBackendSuggestDimensionValuesOutput> =
-              this.apiService
-                .reqOutput({
-                  route: 'api/ToBackendSuggestDimensionValues',
-                  payload: payload
-                })
-                .pipe(
-                  tap(output => {
-                    if (isDefined(output.errorMessage)) {
-                      this.items = isDefinedAndNotEmpty(this.searchValue)
-                        ? [
-                            { id: 0, name: this.searchValue },
-                            {
-                              id: 1,
-                              name: 'Error: Suggest Values Failed',
-                              errorMessage: output.errorMessage,
-                              disabled: true
-                            }
-                          ]
-                        : [
-                            {
-                              id: 0,
-                              name: 'Error: Suggest Values Failed',
-                              errorMessage: output.errorMessage,
-                              disabled: true
-                            }
-                          ];
-                    } else if (isDefined(output.matchedValuesMessage)) {
-                      this.items = isDefinedAndNotEmpty(this.searchValue)
-                        ? [
-                            { id: 0, name: this.searchValue },
-                            {
-                              id: 1,
-                              name: output.matchedValuesMessage,
-                              disabled: true
-                            }
-                          ]
-                        : [
-                            {
-                              id: 0,
-                              name: output.matchedValuesMessage,
-                              disabled: true
-                            }
-                          ];
-                    } else {
-                      this.items = (output.matchedValues ?? []).map((x, i) => ({
-                        id: i,
-                        name: x.value
-                      }));
+            let suggestion: Observable<
+              ApiResponseForRoute<'api/ToBackendSuggestDimensionValues'>
+            > = this.apiService
+              .req({
+                route: 'api/ToBackendSuggestDimensionValues',
+                payload: payload
+              })
+              .pipe(
+                takeUntil(
+                  this.searchInput$.pipe(filter(nextTerm => nextTerm !== term))
+                ),
+                tap(resp => {
+                  if (resp.type !== 'Success') {
+                    return;
+                  }
 
-                      if (isDefinedAndNotEmpty(this.searchValue)) {
-                        let searchValueLc: string =
-                          this.searchValue.toLowerCase();
+                  let output: ToBackendSuggestDimensionValuesOutput =
+                    resp.output;
 
-                        if (
-                          this.items.findIndex(
-                            item => item.name?.toLowerCase() === searchValueLc
-                          ) < 0
-                        ) {
-                          this.items = [
-                            { id: 0, name: this.searchValue },
-                            ...this.items.map(item => ({
-                              ...item,
-                              id: item.id + 1
-                            }))
-                          ];
-                        }
+                  if (isDefined(output.errorMessage)) {
+                    this.items = isDefinedAndNotEmpty(this.searchValue)
+                      ? [
+                          { id: 0, name: this.searchValue },
+                          {
+                            id: 1,
+                            name: 'Error: Suggest Values Failed',
+                            errorMessage: output.errorMessage,
+                            disabled: true
+                          }
+                        ]
+                      : [
+                          {
+                            id: 0,
+                            name: 'Error: Suggest Values Failed',
+                            errorMessage: output.errorMessage,
+                            disabled: true
+                          }
+                        ];
+                  } else if (isDefined(output.matchedValuesMessage)) {
+                    this.items = isDefinedAndNotEmpty(this.searchValue)
+                      ? [
+                          { id: 0, name: this.searchValue },
+                          {
+                            id: 1,
+                            name: output.matchedValuesMessage,
+                            disabled: true
+                          }
+                        ]
+                      : [
+                          {
+                            id: 0,
+                            name: output.matchedValuesMessage,
+                            disabled: true
+                          }
+                        ];
+                  } else {
+                    this.items = (output.matchedValues ?? []).map((x, i) => ({
+                      id: i,
+                      name: x.value
+                    }));
+
+                    if (isDefinedAndNotEmpty(this.searchValue)) {
+                      let searchValueLc: string =
+                        this.searchValue.toLowerCase();
+
+                      if (
+                        this.items.findIndex(
+                          item => item.name?.toLowerCase() === searchValueLc
+                        ) < 0
+                      ) {
+                        this.items = [
+                          { id: 0, name: this.searchValue },
+                          ...this.items.map(item => ({
+                            ...item,
+                            id: item.id + 1
+                          }))
+                        ];
                       }
                     }
-                  }),
-                  take(1),
-                  finalize(() => {
-                    this.loading = false;
-                    this.cd.detectChanges();
-                  })
-                );
+                  }
+                }),
+                take(1),
+                finalize(() => {
+                  this.loading = false;
+                  this.cd.detectChanges();
+                })
+              );
 
             return suggestion;
           })

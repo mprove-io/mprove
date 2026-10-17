@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import type { ToBackendGetGivensOutput } from '#common/types/backend/routes/givens/get-givens/get-givens-output';
 import type { ToBackendGetGivensRequest } from '#common/types/backend/routes/givens/get-givens/get-givens-request';
-import type { ToBackendGetGivensResponse } from '#common/types/backend/routes/givens/get-givens/get-givens-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { GivensQuery } from '../queries/givens.query';
 import { MemberQuery } from '../queries/member.query';
@@ -62,11 +62,13 @@ export class ProjectGivensResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetGivensResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetGivensOutput = resp.output;
 
-            let newSortedGivens = resp.output.givens.sort((a, b) =>
+            this.memberQuery.update(output.userMember);
+
+            let newSortedGivens = output.givens.sort((a, b) =>
               a.givenId > b.givenId ? 1 : b.givenId > a.givenId ? -1 : 0
             );
 

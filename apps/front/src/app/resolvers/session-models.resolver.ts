@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-
+import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
 import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
-import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { NavQuery } from '../queries/nav.query';
 import { SessionModelsQuery } from '../queries/session-models.query';
 import { ApiService } from '../services/api.service';
@@ -40,11 +39,13 @@ export class SessionModelsResolver {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetLlmModelsWithProviderResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
+            let output: ToBackendGetLlmModelsWithProviderOutput = resp.output;
+
             this.sessionModelsQuery.update({
-              modelsOpencode: resp.output.modelsOpencode,
-              modelsAi: resp.output.modelsAi
+              modelsOpencode: output.modelsOpencode,
+              modelsAi: output.modelsAi
             });
 
             return true;

@@ -9,12 +9,13 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
+import type { ToBackendDeleteChartOutput } from '#common/types/backend/routes/charts/delete-chart/delete-chart-output';
 import type { ToBackendDeleteChartRequest } from '#common/types/backend/routes/charts/delete-chart/delete-chart-request';
-import type { ToBackendDeleteChartResponse } from '#common/types/backend/routes/charts/delete-chart/delete-chart-response';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
 
@@ -42,6 +43,7 @@ export class DeleteChartDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteChartDialogData>,
     private navigateService: NavigateService,
     private chartsQuery: ChartsQuery,
@@ -74,30 +76,34 @@ export class DeleteChartDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteChart',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteChartResponse) => {
-          if (resp.type === 'Success') {
-            this.chartsQuery.update({
-              chartUnitDrafts: resp.output.chartUnitDrafts,
-              chartSpaceNodes: resp.output.chartSpaceNodes
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendDeleteChartOutput = resp.output;
+
+          this.chartsQuery.update({
+            chartUnitDrafts: output.chartUnitDrafts,
+            chartSpaceNodes: output.chartSpaceNodes
+          });
+
+          let currentChart = this.chartQuery.getValue();
+
+          if (currentChart.chartId === chart.chartId) {
+            this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
+
+            this.navigateService.navigateToChart({
+              modelId: chart.modelId,
+              chartId: EMPTY_CHART_ID
             });
-
-            let currentChart = this.chartQuery.getValue();
-
-            if (currentChart.chartId === chart.chartId) {
-              this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
-
-              this.navigateService.navigateToChart({
-                modelId: chart.modelId,
-                chartId: EMPTY_CHART_ID
-              });
-            }
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

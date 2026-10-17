@@ -6,8 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ErrorData } from '#common/types/front/ui/error-data';
 import type { Er } from '#common/types/shared/errors/er';
@@ -37,13 +36,10 @@ export class ErrorDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<ErrorData>,
-    private spinner: NgxSpinnerService,
     private uiService: UiService
   ) {}
 
   ngOnInit() {
-    this.spinner.hide(APP_SPINNER_NAME);
-
     if (this.ref.data?.skipLogToConsole !== true) {
       console.log(this.ref.data);
 

@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { finalize, take, tap } from 'rxjs/operators';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
@@ -26,16 +26,17 @@ import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model'
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ToBackendEditLlmModelOutput } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
 import type { ToBackendEditLlmModelRequest } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
-import type { ToBackendEditLlmModelResponse } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-response';
 import type { ToBackendGetLlmModelPartsOutput } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
 import type { ToBackendGetLlmModelPartsRequest } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
-import type { ToBackendGetLlmModelPartsResponse } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
 import { LlmModelVariantsComponent } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants.component';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface EditLlmModelDialogData {
@@ -85,11 +86,12 @@ export class EditLlmModelDialogComponent implements OnInit {
   variantsErrorMessage?: string;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditLlmModelDialogData>,
     private fb: FormBuilder,
     private providersQuery: ProvidersQuery,
     private changeDetectorRef: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   ngOnInit() {
@@ -161,15 +163,13 @@ export class EditLlmModelDialogComponent implements OnInit {
 
     this.changeDetectorRef.detectChanges();
 
-    this.spinner.show(this.refreshSpinnerName);
-
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendGetLlmModelParts',
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetLlmModelPartsResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
@@ -241,11 +241,10 @@ export class EditLlmModelDialogComponent implements OnInit {
         finalize(() => {
           this.isRefreshing = false;
 
-          this.spinner.hide(this.refreshSpinnerName);
-
           this.changeDetectorRef.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.localSpinnerService.track({ name: this.refreshSpinnerName })
       )
       .subscribe();
   }
@@ -462,16 +461,17 @@ export class EditLlmModelDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendEditLlmModel',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditLlmModelResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.output.provider;
+          let output: ToBackendEditLlmModelOutput = resp.output;
+
+          let provider: Provider = output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()
@@ -483,7 +483,8 @@ export class EditLlmModelDialogComponent implements OnInit {
             providers: providers
           });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

@@ -7,15 +7,16 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface DashboardAddTileDialogData {
@@ -45,7 +46,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   async ngOnInit() {
@@ -59,8 +60,6 @@ export class DashboardAddTileDialogComponent implements OnInit {
         take(1)
       )
       .subscribe();
-
-    this.spinner.show(this.spinnerName);
 
     let apiService: ApiService = this.ref.data.apiService;
 
@@ -77,17 +76,20 @@ export class DashboardAddTileDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.type === 'Success') {
-            this.models = resp.output.models.filter(y => y.hasAccess === true);
-
-            this.spinner.hide(this.spinnerName);
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-        })
+
+          let output: ToBackendGetModelsOutput = resp.output;
+
+          this.models = output.models.filter(y => y.hasAccess === true);
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.spinnerName })
       )
-      .toPromise();
+      .subscribe();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();

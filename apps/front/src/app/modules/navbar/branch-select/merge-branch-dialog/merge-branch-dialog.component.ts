@@ -18,15 +18,15 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-
+import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repos/merge-repo/merge-repo-output';
 import type { ToBackendMergeRepoRequest } from '#common/types/backend/routes/repos/merge-repo/merge-repo-request';
-import type { ToBackendMergeRepoResponse } from '#common/types/backend/routes/repos/merge-repo/merge-repo-response';
 import type { BranchItem } from '#common/types/front/repo/branch-item';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -69,6 +69,7 @@ export class MergeBranchDialogComponent implements OnInit {
   selectedBranchItem: BranchItem = undefined;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<MergeBranchDialogData>,
     private fb: FormBuilder,
     private repoQuery: RepoQuery,
@@ -121,22 +122,26 @@ export class MergeBranchDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendMergeRepo',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendMergeRepoResponse) => {
-          if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
-
-            this.navigateService.navigateToBuilder();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendMergeRepoOutput = resp.output;
+
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          this.navigateService.navigateToBuilder();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

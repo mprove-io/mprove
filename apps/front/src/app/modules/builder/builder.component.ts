@@ -2,7 +2,6 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { BUILDER_PAGE_TITLE } from '#common/constants/page-titles';
@@ -11,14 +10,13 @@ import {
   PATH_SELECT_FILE,
   PATH_SESSION
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendGetRepoOutput } from '#common/types/backend/routes/repos/get-repo/get-repo-output';
 import type { ToBackendGetRepoRequest } from '#common/types/backend/routes/repos/get-repo/get-repo-request';
-import type { ToBackendGetRepoResponse } from '#common/types/backend/routes/repos/get-repo/get-repo-response';
+import type { ToBackendPullRepoOutput } from '#common/types/backend/routes/repos/pull-repo/pull-repo-output';
 import type { ToBackendPullRepoRequest } from '#common/types/backend/routes/repos/pull-repo/pull-repo-request';
-import type { ToBackendPullRepoResponse } from '#common/types/backend/routes/repos/pull-repo/pull-repo-response';
+import type { ToBackendPushRepoOutput } from '#common/types/backend/routes/repos/push-repo/push-repo-output';
 import type { ToBackendPushRepoRequest } from '#common/types/backend/routes/repos/push-repo/push-repo-request';
-import type { ToBackendPushRepoResponse } from '#common/types/backend/routes/repos/push-repo/push-repo-response';
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import type { BuilderRight } from '#common/types/front/builder/builder-right';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
@@ -33,6 +31,7 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { FileService } from '#front/app/services/file.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
@@ -101,7 +100,6 @@ export class BuilderComponent implements OnInit, OnDestroy {
         this.sessionEventsQuery.reset();
       }
 
-      this.spinner.hide(APP_SPINNER_NAME);
       this.uiQuery.updatePart({
         showContent: true,
         showSessionInput: true
@@ -181,7 +179,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
-    private spinner: NgxSpinnerService,
+    private appSpinnerService: AppSpinnerService,
     private repoQuery: RepoQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
@@ -338,20 +336,20 @@ export class BuilderComponent implements OnInit, OnDestroy {
       envId: this.nav.envId
     };
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.apiService
       .req({
         route: 'api/ToBackendPushRepo',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendPushRepoResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendPushRepoOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -368,10 +366,10 @@ export class BuilderComponent implements OnInit, OnDestroy {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -384,20 +382,20 @@ export class BuilderComponent implements OnInit, OnDestroy {
       envId: this.nav.envId
     };
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.apiService
       .req({
         route: 'api/ToBackendPullRepo',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendPullRepoResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendPullRepoOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -414,10 +412,10 @@ export class BuilderComponent implements OnInit, OnDestroy {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -431,20 +429,20 @@ export class BuilderComponent implements OnInit, OnDestroy {
       isFetch: true
     };
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.apiService
       .req({
         route: 'api/ToBackendGetRepo',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetRepoResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
+            let output: ToBackendGetRepoOutput = resp.output;
+
+            this.repoQuery.update(output.repo);
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
             return true;
@@ -461,10 +459,10 @@ export class BuilderComponent implements OnInit, OnDestroy {
             : of([])
         ),
         tap(x => {
-          this.spinner.hide(APP_SPINNER_NAME);
           this.fileService.refreshSecondFile();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

@@ -3,8 +3,8 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { ORGANIZATION_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
+import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-output';
 import type { ToBackendGetOrgUsersRequest } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-request';
-import type { ToBackendGetOrgUsersResponse } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-response';
 import type { OrgUserItemExtended } from '#common/types/front/org-user/org-user-item-extended';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -83,16 +83,20 @@ export class OrgUsersComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetOrgUsersResponse) => {
-          if (resp.type === 'Success') {
-            this.usersQuery.update({
-              users: resp.output.orgUsersList,
-              total: resp.output.total
-            });
-            this.currentPage = pageNum;
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetOrgUsersOutput = resp.output;
+
+          this.usersQuery.update({
+            users: output.orgUsersList,
+            total: output.total
+          });
+          this.currentPage = pageNum;
+
+          this.cd.detectChanges();
         })
       )
       .subscribe();

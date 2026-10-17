@@ -22,9 +22,8 @@ import {
   TransactionSpec
 } from '@codemirror/state';
 import { EditorView, KeyBinding, keymap } from '@codemirror/view';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import {
   LIGHT_PLUS_THEME_EXTRA_DIFF,
   LIGHT_PLUS_THEME_EXTRA_DIFF_READ,
@@ -41,7 +40,6 @@ import {
   MPROVE_CONFIG_FILENAME
 } from '#common/constants/top';
 import {
-  APP_SPINNER_NAME,
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
@@ -52,12 +50,12 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
+import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
-import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
+import type { ToBackendSaveFileOutput } from '#common/types/backend/routes/files/save-file/save-file-output';
 import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/files/save-file/save-file-request';
-import type { ToBackendSaveFileResponse } from '#common/types/backend/routes/files/save-file/save-file-response';
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
@@ -67,6 +65,7 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ConfirmService } from '#front/app/services/confirm.service';
 import { FileService } from '#front/app/services/file.service';
 import { HighLightService } from '#front/app/services/highlight.service';
@@ -591,6 +590,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   workerTaskCompletedSubscription: Subscription;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private fileQuery: FileQuery,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
@@ -598,7 +598,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private fileService: FileService,
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
-    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private highLightService: HighLightService,
@@ -1087,59 +1086,63 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.apiService
       .req({
         route: 'api/ToBackendSaveFile',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSaveFileResponse) => {
-          if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
-
-            this.startText = this.content;
-
-            this.diffContent = {
-              original: this.content,
-              modified: this.content
-            };
-
-            // this.cd.detectChanges();
-
-            this.undoStack = [];
-            this.redoStack = [];
-
-            this.uiQuery.updatePart({
-              needSave: false,
-              builderLeft: 'Tree'
-            });
-
-            this.navigateService.navigateToFileLine({
-              builderLeft: 'Tree',
-              encodedFileId: this.file.fileId
-            });
-
-            let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
-
-            if (isDefined(secondFileNodeId)) {
-              let secondFilePathAr = secondFileNodeId.split('/');
-              secondFilePathAr.shift();
-
-              let secondFileEncodedFileId = encodeFilePath({
-                filePath: secondFilePathAr.join('/')
-              });
-
-              if (this.file.fileId === secondFileEncodedFileId) {
-                this.fileService.refreshSecondFile();
-              }
-            }
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSaveFileOutput = resp.output;
+
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          this.startText = this.content;
+
+          this.diffContent = {
+            original: this.content,
+            modified: this.content
+          };
+
+          // this.cd.detectChanges();
+
+          this.undoStack = [];
+          this.redoStack = [];
+
+          this.uiQuery.updatePart({
+            needSave: false,
+            builderLeft: 'Tree'
+          });
+
+          this.navigateService.navigateToFileLine({
+            builderLeft: 'Tree',
+            encodedFileId: this.file.fileId
+          });
+
+          let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
+
+          if (isDefined(secondFileNodeId)) {
+            let secondFilePathAr = secondFileNodeId.split('/');
+            secondFilePathAr.shift();
+
+            let secondFileEncodedFileId = encodeFilePath({
+              filePath: secondFilePathAr.join('/')
+            });
+
+            if (this.file.fileId === secondFileEncodedFileId) {
+              this.fileService.refreshSecondFile();
+            }
+          }
+
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -1213,8 +1216,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         chartId: EMPTY_CHART_ID
       });
     } else if (dotExt === ('.malloy' satisfies FileExtension)) {
-      this.spinner.show(APP_SPINNER_NAME);
-
       let models: ModelX[] = [];
 
       let nav = this.navQuery.getValue();
@@ -1232,34 +1233,35 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           payload: payload
         })
         .pipe(
-          tap((resp: ToBackendGetModelsResponse) => {
-            if (resp.type === 'Success') {
-              models = resp.output.models.filter(
-                y => y.filePath === this.file.fileNodeId
-              );
-
-              if (
-                models.length === 1 &&
-                models.filter(x => x.hasAccess === true).length === 1
-              ) {
-                this.navigateService.navigateToChart({
-                  modelId: models[0].modelId,
-                  chartId: EMPTY_CHART_ID
-                });
-              } else {
-                this.spinner.hide(APP_SPINNER_NAME);
-
-                this.myDialogService.showMalloyModels({
-                  apiService: this.apiService,
-                  models: models
-                });
-              }
-            } else {
-              this.spinner.hide(APP_SPINNER_NAME);
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              return;
             }
-          })
+
+            let output: ToBackendGetModelsOutput = resp.output;
+
+            models = output.models.filter(
+              y => y.filePath === this.file.fileNodeId
+            );
+
+            if (
+              models.length === 1 &&
+              models.filter(x => x.hasAccess === true).length === 1
+            ) {
+              this.navigateService.navigateToChart({
+                modelId: models[0].modelId,
+                chartId: EMPTY_CHART_ID
+              });
+            } else {
+              this.myDialogService.showMalloyModels({
+                apiService: this.apiService,
+                models: models
+              });
+            }
+          }),
+          this.appSpinnerService.track()
         )
-        .toPromise();
+        .subscribe();
     } else if (dotExt === ('.report' satisfies FileExtension)) {
       this.navigateService.navigateToReport({ reportId: id });
     } else if (dotExt === ('.dashboard' satisfies FileExtension)) {
@@ -1278,31 +1280,30 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         timezone: uiState.timezone
       };
 
-      this.spinner.show(APP_SPINNER_NAME);
-
       this.apiService
         .req({
           route: 'api/ToBackendGetChart',
           payload: payload
         })
         .pipe(
-          map((resp: ToBackendGetChartResponse) => {
-            if (resp.type === 'Success') {
-              this.memberQuery.update(resp.output.userMember);
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              return;
+            }
 
-              if (isDefined(resp.output.chart)) {
-                this.navigateService.navigateToChart({
-                  modelId: resp.output.chart.modelId,
-                  chartId: id
-                });
-              } else {
-                this.spinner.hide(APP_SPINNER_NAME);
-              }
-            } else {
-              this.spinner.hide(APP_SPINNER_NAME);
+            let output: ToBackendGetChartOutput = resp.output;
+
+            this.memberQuery.update(output.userMember);
+
+            if (isDefined(output.chart)) {
+              this.navigateService.navigateToChart({
+                modelId: output.chart.modelId,
+                chartId: id
+              });
             }
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     }

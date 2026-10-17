@@ -19,13 +19,14 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import type { ToBackendCreateFileOutput } from '#common/types/backend/routes/files/create-file/create-file-output';
 import type { ToBackendCreateFileRequest } from '#common/types/backend/routes/files/create-file/create-file-request';
-import type { ToBackendCreateFileResponse } from '#common/types/backend/routes/files/create-file/create-file-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
@@ -58,6 +59,7 @@ export class CreateFileDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<CreateFileDialogData>,
     private fb: FormBuilder,
     private repoQuery: RepoQuery,
@@ -110,33 +112,37 @@ export class CreateFileDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateFile',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateFileResponse) => {
-          if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
-
-            let fId = this.ref.data.parentNodeId + '/' + fileName;
-            let fIdAr = fId.split('/');
-            fIdAr.shift();
-
-            let filePath = fIdAr.join('/');
-
-            let fileId = encodeFilePath({ filePath: filePath });
-
-            this.navigateService.navigateToFileLine({
-              builderLeft: 'Tree',
-              encodedFileId: fileId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateFileOutput = resp.output;
+
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          let fId = this.ref.data.parentNodeId + '/' + fileName;
+          let fIdAr = fId.split('/');
+          fIdAr.shift();
+
+          let filePath = fIdAr.join('/');
+
+          let fileId = encodeFilePath({ filePath: filePath });
+
+          this.navigateService.navigateToFileLine({
+            builderLeft: 'Tree',
+            encodedFileId: fileId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

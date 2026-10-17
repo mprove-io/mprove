@@ -9,11 +9,12 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Env } from '#common/types/backend/parts/env';
 import type { Ev } from '#common/types/backend/parts/ev';
+import type { ToBackendDeleteEnvVarOutput } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-output';
 import type { ToBackendDeleteEnvVarRequest } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-request';
-import type { ToBackendDeleteEnvVarResponse } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteEvDialogData {
   apiService: ApiService;
@@ -37,6 +38,7 @@ export class DeleteEvDialogComponent implements OnInit {
   dataItem: DeleteEvDialogData = this.ref.data;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteEvDialogData>,
     private memberQuery: MemberQuery,
     private environmentsQuery: EnvironmentsQuery
@@ -62,19 +64,24 @@ export class DeleteEvDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteEnvVar',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteEnvVarResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendDeleteEnvVarOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

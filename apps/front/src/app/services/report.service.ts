@@ -1,15 +1,13 @@
 import { Injectable } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
+import type { ToBackendCreateDraftReportOutput } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-output';
 import type { ToBackendCreateDraftReportRequest } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-request';
-import type { ToBackendCreateDraftReportResponse } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-response';
+import type { ToBackendDeleteDraftReportsOutput } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-output';
 import type { ToBackendDeleteDraftReportsRequest } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-request';
-import type { ToBackendDeleteDraftReportsResponse } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-response';
+import type { ToBackendEditDraftReportOutput } from '#common/types/backend/routes/reports/edit-draft-report/edit-draft-report-output';
 import type { ToBackendEditDraftReportRequest } from '#common/types/backend/routes/reports/edit-draft-report/edit-draft-report-request';
-import type { ToBackendEditDraftReportResponse } from '#common/types/backend/routes/reports/edit-draft-report/edit-draft-report-response';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { ReportField } from '#common/types/blockml/parts/report/report-field';
 import type { ChangeType } from '#common/types/blockml/parts/report/row/change-type';
@@ -22,6 +20,7 @@ import { ReportsQuery } from '../queries/reports.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
+import { AppSpinnerService } from './app-spinner.service';
 import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
@@ -34,9 +33,9 @@ export class ReportService {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private apiService: ApiService,
     private uiQuery: UiQuery,
-    private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private memberQuery: MemberQuery,
@@ -100,8 +99,6 @@ export class ReportService {
     listeners: Listener[];
     chart: MconfigChart;
   }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let {
       rowChange,
       rowIds,
@@ -137,21 +134,26 @@ export class ReportService {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateDraftReportResponse) => {
-          if (resp.type === 'Success') {
-            let report = resp.output.report;
-
-            this.reportsQuery.update({
-              reportUnitDrafts: resp.output.reportUnitDrafts,
-              reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
-            });
-
-            this.navigateService.navigateToReport({
-              reportId: report.reportId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateDraftReportOutput = resp.output;
+
+          let report = output.report;
+
+          this.reportsQuery.update({
+            reportUnitDrafts: output.reportUnitDrafts,
+            reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
+          });
+
+          this.navigateService.navigateToReport({
+            reportId: report.reportId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -190,25 +192,29 @@ export class ReportService {
     this.apiService
       .req({
         route: 'api/ToBackendEditDraftReport',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditDraftReportResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
-
-            this.reportQuery.update(resp.output.report);
-
-            return true;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditDraftReportOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          this.reportQuery.update(output.report);
+
+          return true;
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -229,24 +235,28 @@ export class ReportService {
     this.apiService
       .req({
         route: 'api/ToBackendDeleteDraftReports',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteDraftReportsResponse) => {
-          if (resp.type === 'Success') {
-            this.reportsQuery.update({
-              reportUnitDrafts: resp.output.reportUnitDrafts,
-              reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            if (reportIds.indexOf(report.reportId) > -1) {
-              this.reportQuery.reset();
-              this.navigateService.navigateToReports();
-            }
+          let output: ToBackendDeleteDraftReportsOutput = resp.output;
+
+          this.reportsQuery.update({
+            reportUnitDrafts: output.reportUnitDrafts,
+            reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
+          });
+
+          if (reportIds.indexOf(report.reportId) > -1) {
+            this.reportQuery.reset();
+            this.navigateService.navigateToReports();
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

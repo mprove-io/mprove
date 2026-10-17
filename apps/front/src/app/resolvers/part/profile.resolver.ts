@@ -6,7 +6,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import type { ToBackendGetUserProfileResponse } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-response';
+import type { ToBackendGetUserProfileOutput } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-output';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '../../services/api.service';
 
@@ -27,9 +27,11 @@ export class ProfileResolver implements Resolve<Observable<boolean>> {
         payload: {}
       })
       .pipe(
-        map((resp: ToBackendGetUserProfileResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            let user = resp.output.user;
+            let output: ToBackendGetUserProfileOutput = resp.output;
+
+            let user = output.user;
             this.userQuery.update(user);
             return true;
           } else {

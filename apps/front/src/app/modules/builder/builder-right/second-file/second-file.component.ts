@@ -4,9 +4,8 @@ import { LanguageDescription } from '@codemirror/language';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
-import { finalize, map, take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import {
   LIGHT_PLUS_THEME_EXTRA_SINGLE_READ,
   VS_LIGHT_THEME_EXTRA_SINGLE_READ
@@ -17,7 +16,6 @@ import {
   MPROVE_CONFIG_FILENAME
 } from '#common/constants/top';
 import {
-  APP_SPINNER_NAME,
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
@@ -25,12 +23,12 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
+import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
-import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
+import type { ToBackendGetFileOutput } from '#common/types/backend/routes/files/get-file/get-file-output';
 import type { ToBackendGetFileRequest } from '#common/types/backend/routes/files/get-file/get-file-request';
-import type { ToBackendGetFileResponse } from '#common/types/backend/routes/files/get-file/get-file-response';
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery } from '#front/app/queries/file.query';
@@ -40,7 +38,9 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { HighLightService } from '#front/app/services/highlight.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -163,6 +163,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
   workerTaskCompletedSubscription: Subscription;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
     private structQuery: StructQuery,
@@ -170,7 +171,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
@@ -241,8 +242,6 @@ export class SecondFileComponent implements OnInit, OnDestroy {
         chartId: EMPTY_CHART_ID
       });
     } else if (dotExt === ('.malloy' satisfies FileExtension)) {
-      this.spinner.show(APP_SPINNER_NAME);
-
       let models: ModelX[] = [];
 
       let nav = this.navQuery.getValue();
@@ -260,34 +259,35 @@ export class SecondFileComponent implements OnInit, OnDestroy {
           payload: payload
         })
         .pipe(
-          tap((resp: ToBackendGetModelsResponse) => {
-            if (resp.type === 'Success') {
-              models = resp.output.models.filter(
-                y => y.filePath === this.secondFileNodeId
-              );
-
-              if (
-                models.length === 1 &&
-                models.filter(x => x.hasAccess === true).length === 1
-              ) {
-                this.navigateService.navigateToChart({
-                  modelId: models[0].modelId,
-                  chartId: EMPTY_CHART_ID
-                });
-              } else {
-                this.spinner.hide(APP_SPINNER_NAME);
-
-                this.myDialogService.showMalloyModels({
-                  apiService: this.apiService,
-                  models: models
-                });
-              }
-            } else {
-              this.spinner.hide(APP_SPINNER_NAME);
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              return;
             }
-          })
+
+            let output: ToBackendGetModelsOutput = resp.output;
+
+            models = output.models.filter(
+              y => y.filePath === this.secondFileNodeId
+            );
+
+            if (
+              models.length === 1 &&
+              models.filter(x => x.hasAccess === true).length === 1
+            ) {
+              this.navigateService.navigateToChart({
+                modelId: models[0].modelId,
+                chartId: EMPTY_CHART_ID
+              });
+            } else {
+              this.myDialogService.showMalloyModels({
+                apiService: this.apiService,
+                models: models
+              });
+            }
+          }),
+          this.appSpinnerService.track()
         )
-        .toPromise();
+        .subscribe();
     } else if (dotExt === ('.report' satisfies FileExtension)) {
       this.navigateService.navigateToReport({ reportId: id });
     } else if (dotExt === ('.dashboard' satisfies FileExtension)) {
@@ -306,31 +306,30 @@ export class SecondFileComponent implements OnInit, OnDestroy {
         timezone: uiState.timezone
       };
 
-      this.spinner.show(APP_SPINNER_NAME);
-
       this.apiService
         .req({
           route: 'api/ToBackendGetChart',
           payload: payload
         })
         .pipe(
-          map((resp: ToBackendGetChartResponse) => {
-            if (resp.type === 'Success') {
-              this.memberQuery.update(resp.output.userMember);
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              return;
+            }
 
-              if (isDefined(resp.output.chart)) {
-                this.navigateService.navigateToChart({
-                  modelId: resp.output.chart.modelId,
-                  chartId: id
-                });
-              } else {
-                this.spinner.hide(APP_SPINNER_NAME);
-              }
-            } else {
-              this.spinner.hide(APP_SPINNER_NAME);
+            let output: ToBackendGetChartOutput = resp.output;
+
+            this.memberQuery.update(output.userMember);
+
+            if (isDefined(output.chart)) {
+              this.navigateService.navigateToChart({
+                modelId: output.chart.modelId,
+                chartId: id
+              });
             }
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     }
@@ -392,53 +391,55 @@ export class SecondFileComponent implements OnInit, OnDestroy {
         };
 
         this.isShowSpinner = true;
-        this.spinner.show(this.spinnerName);
 
         this.cd.detectChanges();
 
         this.apiService
           .req({
             route: 'api/ToBackendGetFile',
-            payload: getFilePayload,
-            showSpinner: false
+            payload: getFilePayload
           })
           .pipe(
-            tap(async (resp: ToBackendGetFileResponse) => {
-              if (resp.type === 'Success') {
-                let repoState = this.repoQuery.getValue();
-                // biome-ignore format: theme breaks
-                let newRepoState: RepoState = Object.assign(resp.output.repo, <RepoState>{
-                  conflicts: repoState.conflicts, // getFile does not check for conflicts
-                  repoStatus: repoState.repoStatus // getFile does not use git fetch
-                });
-                this.repoQuery.update(newRepoState);
-                this.structQuery.update(resp.output.struct);
-                this.navQuery.updatePart({
-                  needValidate: resp.output.needValidate
-                });
-
-                this.secondFileContent = resp.output.content;
-
-                this.setLanguage();
-
-                this.highLightService.updateDocText({
-                  placeName: 'Right',
-                  docText: this.secondFileContent,
-                  shikiLanguage: this.lang?.toLowerCase(),
-                  shikiTheme: 'light-plus-extended',
-                  isThrottle: false
-                });
-
-                this.cd.detectChanges();
+            tap(async resp => {
+              if (resp.type !== 'Success') {
+                return;
               }
+
+              let output: ToBackendGetFileOutput = resp.output;
+
+              let repoState = this.repoQuery.getValue();
+              // biome-ignore format: theme breaks
+              let newRepoState: RepoState = Object.assign(output.repo, <RepoState>{
+                conflicts: repoState.conflicts, // getFile does not check for conflicts
+                repoStatus: repoState.repoStatus // getFile does not use git fetch
+              });
+              this.repoQuery.update(newRepoState);
+              this.structQuery.update(output.struct);
+              this.navQuery.updatePart({
+                needValidate: output.needValidate
+              });
+
+              this.secondFileContent = output.content;
+
+              this.setLanguage();
+
+              this.highLightService.updateDocText({
+                placeName: 'Right',
+                docText: this.secondFileContent,
+                shikiLanguage: this.lang?.toLowerCase(),
+                shikiTheme: 'light-plus-extended',
+                isThrottle: false
+              });
+
+              this.cd.detectChanges();
             }),
             take(1),
             finalize(() => {
-              this.spinner.hide(this.spinnerName);
               this.isShowSpinner = false;
 
               this.cd.detectChanges();
-            })
+            }),
+            this.localSpinnerService.track({ name: this.spinnerName })
           )
           .subscribe();
       }

@@ -28,11 +28,12 @@ import {
 } from '#common/constants/providers';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
+import type { ToBackendCreateProviderOutput } from '#common/types/backend/routes/providers/create-provider/create-provider-output';
 import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
-import type { ToBackendCreateProviderResponse } from '#common/types/backend/routes/providers/create-provider/create-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddProviderDialogData {
@@ -94,6 +95,7 @@ export class AddProviderDialogComponent implements OnInit {
   providerTypes: SelectableProviderType[] = [];
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddProviderDialogData>,
     private fb: FormBuilder,
     private providersQuery: ProvidersQuery
@@ -292,21 +294,24 @@ export class AddProviderDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendCreateProvider',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateProviderResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
+
+          let output: ToBackendCreateProviderOutput = resp.output;
+
           let providers = this.providersQuery.getValue().providers;
-          let newProviders = [...providers, resp.output.provider].sort((a, b) =>
+          let newProviders = [...providers, output.provider].sort((a, b) =>
             a.name.localeCompare(b.name)
           );
           this.providersQuery.updatePart({ providers: newProviders });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

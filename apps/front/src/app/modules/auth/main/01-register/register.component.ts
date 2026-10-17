@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, take, tap } from 'rxjs/operators';
 import { SIGN_UP_PAGE_TITLE } from '#common/constants/page-titles';
 import {
@@ -15,12 +14,13 @@ import {
   PATH_REGISTER,
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import type { ToBackendCheckSignUpResponse } from '#common/types/backend/routes/check/check-sign-up/check-sign-up-response';
+import type { ToBackendCheckSignUpOutput } from '#common/types/backend/routes/check/check-sign-up/check-sign-up-output';
+import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/users/register-user/register-user-output';
 import type { ToBackendRegisterUserRequest } from '#common/types/backend/routes/users/register-user/register-user-request';
-import type { ToBackendRegisterUserResponse } from '#common/types/backend/routes/users/register-user/register-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 
 @Component({
   standalone: false,
@@ -65,9 +65,10 @@ export class RegisterComponent implements OnInit {
   checkLoaded = false;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private fb: FormBuilder,
     private apiService: ApiService,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private router: Router,
     private userQuery: UserQuery,
     private cd: ChangeDetectorRef,
@@ -79,26 +80,27 @@ export class RegisterComponent implements OnInit {
 
     this.title.setTitle(this.pageTitle);
 
-    this.spinner.show(this.registerCheckSpinnerName);
-
     this.apiService
       .req({
         route: 'api/ToBackendCheckSignUp',
         payload: {}
       })
       .pipe(
-        tap((resp: ToBackendCheckSignUpResponse) => {
-          if (resp.type === 'Success') {
-            this.isRegisterOnlyInvitedUsers =
-              resp.output.isRegisterOnlyInvitedUsers;
-
-            this.checkLoaded = true;
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
 
-          this.spinner.hide(this.registerCheckSpinnerName);
+          let output: ToBackendCheckSignUpOutput = resp.output;
+
+          this.isRegisterOnlyInvitedUsers = output.isRegisterOnlyInvitedUsers;
+
+          this.checkLoaded = true;
+
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.localSpinnerService.track({ name: this.registerCheckSpinnerName })
       )
       .subscribe();
   }
@@ -118,8 +120,6 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     let payload: ToBackendRegisterUserRequest['input'] = {
       email: this.registerForm.value.email,
       password: this.registerForm.value.password
@@ -131,16 +131,21 @@ export class RegisterComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRegisterUserResponse) => {
-          if (resp.type === 'Success') {
-            let user = resp.output.user;
-
-            this.userQuery.update(user);
-
-            this.router.navigate([PATH_VERIFY_EMAIL]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendRegisterUserOutput = resp.output;
+
+          let user = output.user;
+
+          this.userQuery.update(user);
+
+          this.router.navigate([PATH_VERIFY_EMAIL]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

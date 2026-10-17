@@ -20,10 +20,10 @@ import type { PauseReason } from '#common/types/backend/parts/session/pause-reas
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { SessionEventApi } from '#common/types/backend/parts/session/session-event-api';
 import type { SessionMessageApi } from '#common/types/backend/parts/session/session-message-api';
+import type { ToBackendSendMessageToEditorSessionOutput } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-output';
 import type { ToBackendSendMessageToEditorSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
-import type { ToBackendSendMessageToEditorSessionResponse } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
+import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-output';
 import type { ToBackendSendMessageToExplorerSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-request';
-import type { ToBackendSendMessageToExplorerSessionResponse } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-response';
 import { splitModelExtraId } from '#front/app/functions/split-model-extra-id';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
@@ -37,6 +37,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SessionService } from '#front/app/services/session.service';
 import { SessionMessagesService } from '#front/app/services/session-messages.service';
+import type { ApiResponseForRoute } from '#front/app/types/api-response-for-route';
 import { ChatMessage, ChatTurn } from './session-chat.interfaces';
 import { SessionInputComponent } from './session-input/session-input.component';
 import { SessionMessagesComponent } from './session-messages/session-messages.component';
@@ -625,10 +626,15 @@ export class SessionComponent implements OnInit, OnDestroy {
           payload: explorerPayload
         })
         .pipe(
-          tap((resp: ToBackendSendMessageToExplorerSessionResponse) => {
+          tap(resp => {
             this.processSendInteractionResponse({ resp: resp });
           }),
-          take(1)
+          take(1),
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              this.handleSendInteractionError({ messageId: item.messageId });
+            }
+          })
         )
         .subscribe({
           error: () => {
@@ -658,10 +664,15 @@ export class SessionComponent implements OnInit, OnDestroy {
           payload: editorPayload
         })
         .pipe(
-          tap((resp: ToBackendSendMessageToEditorSessionResponse) => {
+          tap(resp => {
             this.processSendInteractionResponse({ resp: resp });
           }),
-          take(1)
+          take(1),
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              this.handleSendInteractionError({ messageId: item.messageId });
+            }
+          })
         )
         .subscribe({
           error: () => {
@@ -673,8 +684,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   processSendInteractionResponse(item: {
     resp:
-      | ToBackendSendMessageToExplorerSessionResponse
-      | ToBackendSendMessageToEditorSessionResponse;
+      | ApiResponseForRoute<'api/ToBackendSendMessageToExplorerSession'>
+      | ApiResponseForRoute<'api/ToBackendSendMessageToEditorSession'>;
   }) {
     let { resp } = item;
 
@@ -682,7 +693,11 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let session = resp?.output?.session;
+    let output:
+      | ToBackendSendMessageToExplorerSessionOutput
+      | ToBackendSendMessageToEditorSessionOutput = resp.output;
+
+    let session = output.session;
 
     if (session.sessionId === this.session?.sessionId) {
       this.sessionQuery.update(session);

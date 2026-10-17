@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
@@ -18,11 +17,10 @@ import {
   PATH_REPO,
   PROD_REPO_ID
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { ToBackendDeleteBranchRequest } from '#common/types/backend/routes/branches/delete-branch/delete-branch-request';
-import type { ToBackendDeleteBranchResponse } from '#common/types/backend/routes/branches/delete-branch/delete-branch-response';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteBranchDialogData {
   apiService: ApiService;
@@ -57,8 +55,8 @@ export class DeleteBranchDialogComponent implements OnInit {
         : 'unknown';
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteBranchDialogData>,
-    private spinner: NgxSpinnerService,
     private router: Router
   ) {}
 
@@ -70,8 +68,6 @@ export class DeleteBranchDialogComponent implements OnInit {
 
   delete() {
     this.ref.close();
-
-    this.spinner.show(APP_SPINNER_NAME);
 
     let payload: ToBackendDeleteBranchRequest['input'] = {
       projectId: this.ref.data.projectId,
@@ -87,24 +83,27 @@ export class DeleteBranchDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteBranchResponse) => {
-          if (resp.type === 'Success') {
-            this.router.navigate([
-              PATH_ORG,
-              this.ref.data.orgId,
-              PATH_PROJECT,
-              this.ref.data.projectId,
-              PATH_REPO,
-              PROD_REPO_ID,
-              PATH_BRANCH,
-              this.ref.data.defaultBranch,
-              PATH_ENV,
-              this.ref.data.envId,
-              PATH_BUILDER
-            ]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          this.router.navigate([
+            PATH_ORG,
+            this.ref.data.orgId,
+            PATH_PROJECT,
+            this.ref.data.projectId,
+            PATH_REPO,
+            PROD_REPO_ID,
+            PATH_BRANCH,
+            this.ref.data.defaultBranch,
+            PATH_ENV,
+            this.ref.data.envId,
+            PATH_BUILDER
+          ]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

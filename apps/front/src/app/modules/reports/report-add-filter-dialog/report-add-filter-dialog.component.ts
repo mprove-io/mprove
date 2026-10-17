@@ -20,8 +20,8 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { finalize, take, tap } from 'rxjs/operators';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
 import { EMPTY_MCONFIG_FIELD, RESULTS_LIST } from '#common/constants/top-front';
@@ -30,12 +30,12 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { SuggestField } from '#common/types/backend/parts/suggest-field';
+import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
-import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
+import type { ToBackendGetSuggestFieldsOutput } from '#common/types/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-output';
 import type { ToBackendGetSuggestFieldsRequest } from '#common/types/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-request';
-import type { ToBackendGetSuggestFieldsResponse } from '#common/types/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-response';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
@@ -50,6 +50,7 @@ import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-fo
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { ReportService } from '#front/app/services/report.service';
 import { SharedModule } from '../../shared/shared.module';
 
@@ -207,7 +208,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<ReportAddFilterDialogData>,
     private fb: FormBuilder,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private navQuery: NavQuery,
     private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
@@ -364,8 +365,6 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(this.storeModelsSpinnerName);
-
     let payload: ToBackendGetModelsRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
@@ -379,31 +378,36 @@ export class ReportAddFilterDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.type === 'Success') {
-            this.storeModels = resp.output.models.filter(
-              model => model.type === 'Store'
-            );
-
-            this.storeModelsList = this.storeModels.map(model => {
-              let storeModelItem: StoreModelItem = {
-                value: model.modelId,
-                label: model.label || model.modelId
-              };
-
-              return storeModelItem;
-            });
-
-            this.storeModelsLoading = false;
-            this.storeModelsLoaded = true;
-
-            this.spinner.hide(this.storeModelsSpinnerName);
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-        })
+
+          let output: ToBackendGetModelsOutput = resp.output;
+
+          this.storeModels = output.models.filter(
+            model => model.type === 'Store'
+          );
+
+          this.storeModelsList = this.storeModels.map(model => {
+            let storeModelItem: StoreModelItem = {
+              value: model.modelId,
+              label: model.label || model.modelId
+            };
+
+            return storeModelItem;
+          });
+
+          this.storeModelsLoaded = true;
+        }),
+        finalize(() => {
+          this.storeModelsLoading = false;
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.storeModelsSpinnerName })
       )
-      .toPromise();
+      .subscribe();
   }
 
   loadSelectedModel() {
@@ -422,8 +426,6 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(this.storeFiltersSpinnerName);
-
     let payload: ToBackendGetModelRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
@@ -439,33 +441,39 @@ export class ReportAddFilterDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetModelResponse) => {
-          if (resp.type === 'Success') {
-            this.storeModel = resp.output.model;
-
-            this.storeFiltersList = resp.output.model.fields
-              .filter(x => x.fieldClass === 'filter')
-              .map(field => {
-                let storeFiltersItem: StoreFiltersItem = {
-                  value: field.id,
-                  label: field.label || field.id
-                };
-
-                return storeFiltersItem;
-              });
-
-            this.storeResultsList =
-              resp.output.model.storeContent.results?.map(
-                result => result.result
-              ) || [];
-
-            this.selectedModelLoading = false;
-            this.selectedModelLoaded = true;
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetModelOutput = resp.output;
+
+          this.storeModel = output.model;
+
+          this.storeFiltersList = output.model.fields
+            .filter(x => x.fieldClass === 'filter')
+            .map(field => {
+              let storeFiltersItem: StoreFiltersItem = {
+                value: field.id,
+                label: field.label || field.id
+              };
+
+              return storeFiltersItem;
+            });
+
+          this.storeResultsList =
+            output.model.storeContent.results?.map(result => result.result) ||
+            [];
+
+          this.selectedModelLoaded = true;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.selectedModelLoading = false;
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.storeFiltersSpinnerName })
       )
       .subscribe();
   }
@@ -495,31 +503,34 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(this.suggestFieldsSpinnerName);
-
     apiService
       .req({
         route: 'api/ToBackendGetSuggestFields',
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetSuggestFieldsResponse) => {
-          if (resp.type === 'Success') {
-            this.suggestFields = [
-              this.emptySuggestField,
-              ...resp.output.suggestFields
-            ];
-
-            this.suggestFieldsLoading = false;
-            this.suggestFieldsLoaded = true;
-
-            this.spinner.hide(this.suggestFieldsSpinnerName);
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-        })
+
+          let output: ToBackendGetSuggestFieldsOutput = resp.output;
+
+          this.suggestFields = [
+            this.emptySuggestField,
+            ...output.suggestFields
+          ];
+
+          this.suggestFieldsLoaded = true;
+        }),
+        finalize(() => {
+          this.suggestFieldsLoading = false;
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.suggestFieldsSpinnerName })
       )
-      .toPromise();
+      .subscribe();
   }
 
   save() {

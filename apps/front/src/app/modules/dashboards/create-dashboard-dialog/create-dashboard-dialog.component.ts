@@ -19,23 +19,18 @@ import {
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import {
-  APP_SPINNER_NAME,
-  EMPTY_SPACE,
-  EMPTY_SPACE_NAME
-} from '#common/constants/top-front';
+import { EMPTY_SPACE, EMPTY_SPACE_NAME } from '#common/constants/top-front';
 
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendSaveCreateDashboardOutput } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-output';
 import type { ToBackendSaveCreateDashboardRequest } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-request';
-import type { ToBackendSaveCreateDashboardResponse } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
+import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
@@ -45,6 +40,7 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SharedModule } from '../../shared/shared.module';
 
@@ -140,13 +136,13 @@ export class CreateDashboardDialogComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<CreateDashboardDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private dashboardUnitsQuery: DashboardUnitsQuery,
-    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -266,8 +262,6 @@ export class CreateDashboardDialogComponent implements OnInit {
   }
 
   createDashboard(item: { newTitle: string; roles: string[] }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let { newTitle, roles } = item;
 
     let payload: ToBackendSaveCreateDashboardRequest['input'] = {
@@ -293,24 +287,28 @@ export class CreateDashboardDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSaveCreateDashboardResponse) => {
-          if (resp.type === 'Success') {
-            if (isUndefined(resp.output.dashboardSpaceNodes)) {
-              this.spinner.hide(APP_SPINNER_NAME);
-              return;
-            }
-
-            this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
-            });
-
-            this.navigateService.navigateToDashboard({
-              dashboardId: this.newDashboardId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSaveCreateDashboardOutput = resp.output;
+
+          if (isUndefined(output.dashboardSpaceNodes)) {
+            return;
+          }
+
+          this.dashboardUnitsQuery.update({
+            dashboardUnitDrafts: output.dashboardUnitDrafts,
+            dashboardSpaceNodes: output.dashboardSpaceNodes
+          });
+
+          this.navigateService.navigateToDashboard({
+            dashboardId: this.newDashboardId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -328,13 +326,17 @@ export class CreateDashboardDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.type === 'Success') {
-            this.roles = resp.output.roles.sort((a, b) =>
-              a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
-            );
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetRolesOutput = resp.output;
+
+          this.roles = output.roles.sort((a, b) =>
+            a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+          );
+          this.cd.detectChanges();
         }),
         take(1)
       )

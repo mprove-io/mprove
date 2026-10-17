@@ -3,8 +3,8 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PARAMETER_SESSION_ID } from '#common/constants/top';
+import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/sessions/get-session/get-session-output';
 import type { ToBackendGetSessionRequest } from '#common/types/backend/routes/sessions/get-session/get-session-request';
-import type { ToBackendGetSessionResponse } from '#common/types/backend/routes/sessions/get-session/get-session-response';
 import { SessionsQuery } from '../queries/sessions.query';
 import { ApiService } from '../services/api.service';
 import { SessionService } from '../services/session.service';
@@ -36,14 +36,16 @@ export class SessionResolver {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetSessionResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
             this.sessionEventsService.resetAll();
 
-            if (resp.output.sessions.length > 0) {
+            let output: ToBackendGetSessionOutput = resp.output;
+
+            if (output.sessions.length > 0) {
               let existing = this.sessionsQuery.getValue().sessions;
               let merged = [...existing];
-              resp.output.sessions.map(incoming => {
+              output.sessions.map(incoming => {
                 let idx = merged.findIndex(
                   s => s.sessionId === incoming.sessionId
                 );
@@ -60,7 +62,7 @@ export class SessionResolver {
             }
 
             this.sessionService.applySessionResponse({
-              payload: resp.output,
+              payload: output,
               withOptimisticMerge: false
             });
 

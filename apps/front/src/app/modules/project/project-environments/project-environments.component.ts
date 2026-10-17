@@ -12,15 +12,16 @@ import {
 import type { Env } from '#common/types/backend/parts/env';
 import type { EnvUser } from '#common/types/backend/parts/env-user';
 import type { Ev } from '#common/types/backend/parts/ev';
+import type { ToBackendDeleteEnvUserOutput } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-output';
 import type { ToBackendDeleteEnvUserRequest } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-request';
-import type { ToBackendDeleteEnvUserResponse } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-response';
+import type { ToBackendEditEnvFallbacksOutput } from '#common/types/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-output';
 import type { ToBackendEditEnvFallbacksRequest } from '#common/types/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-request';
-import type { ToBackendEditEnvFallbacksResponse } from '#common/types/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
-import { NavQuery, NavState } from '#front/app/queries/nav.query';
-import { UserQuery } from '#front/app/queries/user.query';
+import { NavQuery, type NavState } from '#front/app/queries/nav.query';
+import { UserQuery, type UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
@@ -79,6 +80,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private cd: ChangeDetectorRef,
     private environmentsQuery: EnvironmentsQuery,
     private myDialogService: MyDialogService,
@@ -133,29 +135,35 @@ export class ProjectEnvironmentsComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendDeleteEnvUser',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteEnvUserResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendDeleteEnvUserOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
+
+          let nav: NavState = this.navQuery.getValue();
+
+          let user: UserState = this.userQuery.getValue();
+
+          if (nav.envId === env.envId && user.userId === envUser.userId) {
+            this.navQuery.updatePart({
+              envId: PROJECT_ENV_PROD,
+              needValidate: false
             });
-
-            let nav = this.navQuery.getValue();
-            let user = this.userQuery.getValue();
-
-            if (nav.envId === env.envId && user.userId === envUser.userId) {
-              this.navQuery.updatePart({
-                envId: PROJECT_ENV_PROD,
-                needValidate: false
-              });
-            }
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -172,19 +180,24 @@ export class ProjectEnvironmentsComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendEditEnvFallbacks',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditEnvFallbacksOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -201,19 +214,24 @@ export class ProjectEnvironmentsComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendEditEnvFallbacks',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditEnvFallbacksOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -230,19 +248,24 @@ export class ProjectEnvironmentsComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendEditEnvFallbacks',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditEnvFallbacksOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

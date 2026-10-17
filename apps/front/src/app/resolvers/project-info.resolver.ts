@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import type { ToBackendGetProjectOutput } from '#common/types/backend/routes/projects/get-project/get-project-output';
 import type { ToBackendGetProjectRequest } from '#common/types/backend/routes/projects/get-project/get-project-request';
-import type { ToBackendGetProjectResponse } from '#common/types/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -62,11 +62,13 @@ export class ProjectInfoResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetProjectResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetProjectOutput = resp.output;
 
-            this.projectQuery.update(resp.output.project);
+            this.memberQuery.update(output.userMember);
+
+            this.projectQuery.update(output.project);
             return true;
           } else {
             return false;

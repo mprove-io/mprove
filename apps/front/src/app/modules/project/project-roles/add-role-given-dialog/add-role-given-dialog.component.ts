@@ -19,12 +19,13 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendCreateRoleGivenOutput } from '#common/types/backend/routes/roles/create-role-given/create-role-given-output';
 import type { ToBackendCreateRoleGivenRequest } from '#common/types/backend/routes/roles/create-role-given/create-role-given-request';
-import type { ToBackendCreateRoleGivenResponse } from '#common/types/backend/routes/roles/create-role-given/create-role-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddRoleGivenDialogData {
@@ -59,6 +60,7 @@ export class AddRoleGivenDialogComponent implements OnInit {
   selectedGivenIsMultiple = false;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddRoleGivenDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -123,17 +125,21 @@ export class AddRoleGivenDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateRoleGiven',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateRoleGivenResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.rolesQuery.update({ roles: resp.output.roles });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateRoleGivenOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+          this.rolesQuery.update({ roles: output.roles });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

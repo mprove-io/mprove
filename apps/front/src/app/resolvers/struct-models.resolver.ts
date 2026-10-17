@@ -3,9 +3,8 @@ import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
-
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
@@ -65,15 +64,17 @@ export class StructModelsResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetModelsResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetModelsOutput = resp.output;
 
-            this.structQuery.update(resp.output.struct);
+            this.memberQuery.update(output.userMember);
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
-            this.modelsQuery.update({ models: resp.output.models });
+            this.modelsQuery.update({ models: output.models });
 
             return true;
           } else if (

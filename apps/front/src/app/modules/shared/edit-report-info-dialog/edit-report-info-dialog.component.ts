@@ -18,22 +18,17 @@ import {
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import {
-  APP_SPINNER_NAME,
-  EMPTY_SPACE,
-  EMPTY_SPACE_NAME
-} from '#common/constants/top-front';
+import { EMPTY_SPACE, EMPTY_SPACE_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendSaveModifyReportOutput } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-output';
 import type { ToBackendSaveModifyReportRequest } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-request';
-import type { ToBackendSaveModifyReportResponse } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-response';
+import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
@@ -46,6 +41,7 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditReportInfoDialogData {
@@ -110,13 +106,13 @@ export class EditReportInfoDialogComponent implements OnInit {
   struct: StructState;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditReportInfoDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private memberQuery: MemberQuery,
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
-    private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
     private cd: ChangeDetectorRef
@@ -227,8 +223,6 @@ export class EditReportInfoDialogComponent implements OnInit {
 
   save() {
     if (this.titleForm.controls['title'].valid) {
-      this.spinner.show(APP_SPINNER_NAME);
-
       this.ref.close();
 
       let uiState = this.uiQuery.getValue();
@@ -261,34 +255,37 @@ export class EditReportInfoDialogComponent implements OnInit {
       apiService
         .req({
           route: 'api/ToBackendSaveModifyReport',
-          payload: payload,
-          showSpinner: true
+          payload: payload
         })
         .pipe(
-          tap(async (resp: ToBackendSaveModifyReportResponse) => {
-            if (resp.type === 'Success') {
-              if (isUndefined(resp.output.reportSpaceNodes)) {
-                this.spinner.hide(APP_SPINNER_NAME);
-                return;
-              }
+          tap(async resp => {
+            if (resp.type !== 'Success') {
+              return;
+            }
 
-              let newReport = resp.output.report;
+            let output: ToBackendSaveModifyReportOutput = resp.output;
 
-              if (isDefined(newReport)) {
-                this.reportsQuery.update({
-                  reportUnitDrafts: resp.output.reportUnitDrafts,
-                  reportSpaceNodes: resp.output.reportSpaceNodes
-                });
+            if (isUndefined(output.reportSpaceNodes)) {
+              return;
+            }
 
-                let currentReport = this.reportQuery.getValue();
+            let newReport = output.report;
 
-                if (currentReport.reportId === newReport.reportId) {
-                  this.reportQuery.update(newReport);
-                }
+            if (isDefined(newReport)) {
+              this.reportsQuery.update({
+                reportUnitDrafts: output.reportUnitDrafts,
+                reportSpaceNodes: output.reportSpaceNodes
+              });
+
+              let currentReport = this.reportQuery.getValue();
+
+              if (currentReport.reportId === newReport.reportId) {
+                this.reportQuery.update(newReport);
               }
             }
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     }
@@ -307,13 +304,17 @@ export class EditReportInfoDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.type === 'Success') {
-            this.roles = resp.output.roles.sort((a, b) =>
-              a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
-            );
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetRolesOutput = resp.output;
+
+          this.roles = output.roles.sort((a, b) =>
+            a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+          );
+          this.cd.detectChanges();
         }),
         take(1)
       )

@@ -8,9 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
-
+import type { ToBackendGetChartsOutput } from '#common/types/backend/routes/charts/get-charts/get-charts-output';
 import type { ToBackendGetChartsRequest } from '#common/types/backend/routes/charts/get-charts/get-charts-request';
-import type { ToBackendGetChartsResponse } from '#common/types/backend/routes/charts/get-charts/get-charts-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartsQuery } from '../queries/charts.query';
 import { MemberQuery } from '../queries/member.query';
@@ -73,19 +72,21 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetChartsResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetChartsOutput = resp.output;
 
-            this.structQuery.update(resp.output.struct);
+            this.memberQuery.update(output.userMember);
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
-            this.modelsQuery.update({ models: resp.output.models });
+            this.modelsQuery.update({ models: output.models });
 
             this.chartsQuery.update({
-              chartUnitDrafts: resp.output.chartUnitDrafts,
-              chartSpaceNodes: resp.output.chartSpaceNodes
+              chartUnitDrafts: output.chartUnitDrafts,
+              chartSpaceNodes: output.chartSpaceNodes
             });
 
             return true;

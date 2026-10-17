@@ -8,12 +8,13 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
+import type { ToBackendDeleteEnvOutput } from '#common/types/backend/routes/envs/delete-env/delete-env-output';
 import type { ToBackendDeleteEnvRequest } from '#common/types/backend/routes/envs/delete-env/delete-env-request';
-import type { ToBackendDeleteEnvResponse } from '#common/types/backend/routes/envs/delete-env/delete-env-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
-import { NavQuery } from '#front/app/queries/nav.query';
+import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteEnvironmentDialogData {
   apiService: ApiService;
@@ -37,6 +38,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
   dataItem: DeleteEnvironmentDialogData = this.ref.data;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteEnvironmentDialogData>,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
@@ -62,28 +64,33 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteEnv',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteEnvResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendDeleteEnvOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
+
+          let nav: NavState = this.navQuery.getValue();
+
+          if (nav.envId === this.dataItem.envId) {
+            this.navQuery.updatePart({
+              envId: PROJECT_ENV_PROD,
+              needValidate: false
             });
-
-            let nav = this.navQuery.getValue();
-
-            if (nav.envId === this.dataItem.envId) {
-              this.navQuery.updatePart({
-                envId: PROJECT_ENV_PROD,
-                needValidate: false
-              });
-            }
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

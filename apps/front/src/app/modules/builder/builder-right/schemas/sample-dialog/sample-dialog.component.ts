@@ -8,11 +8,12 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { map, take } from 'rxjs/operators';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { delay, finalize, take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
 export interface SampleDialogData {
@@ -53,7 +54,7 @@ export class SampleDialogComponent implements OnInit {
     public ref: DialogRef<SampleDialogData>,
     private apiService: ApiService,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +73,6 @@ export class SampleDialogComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.spinner.show(this.sampleNextSpinnerName);
     this.cd.detectChanges();
 
     this.apiService
@@ -89,32 +89,34 @@ export class SampleDialogComponent implements OnInit {
         }
       })
       .pipe(
-        map((resp: ToBackendGetConnectionSampleResponse) => {
-          setTimeout(() => {
-            if (
-              resp.type === 'Success' &&
-              isDefined(resp.output.errorMessage)
-            ) {
-              this.dataItem.errorMessage = resp.output.errorMessage;
-            } else if (resp.type === 'Success') {
-              this.dataItem.columnNames = resp.output.columnNames;
-              this.dataItem.rows = resp.output.rows;
+        delay(0),
+        tap(resp => {
+          if (resp.type === 'Success') {
+            let output: ToBackendGetConnectionSampleOutput = resp.output;
+
+            if (isDefined(output.errorMessage)) {
+              this.dataItem.errorMessage = output.errorMessage;
+            } else {
+              this.dataItem.columnNames = output.columnNames;
+              this.dataItem.rows = output.rows;
               this.dataItem.errorMessage = undefined;
               this.offset += 100;
 
-              if (resp.output.rows.length < 100) {
+              if (output.rows.length < 100) {
                 this.hasMore = false;
               }
-            } else {
-              this.dataItem.errorMessage = 'Failed to fetch sample data';
             }
-
-            this.isLoading = false;
-            this.spinner.hide(this.sampleNextSpinnerName);
-            this.cd.detectChanges();
-          }, 0);
+          } else {
+            this.dataItem.errorMessage = 'Failed to fetch sample data';
+          }
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.isLoading = false;
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.sampleNextSpinnerName })
       )
       .subscribe();
   }

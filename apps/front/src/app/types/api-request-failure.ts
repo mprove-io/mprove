@@ -1,5 +1,4 @@
 import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
-import type { ToBackendErrorForResponse } from '#common/types/backend/response/to-backend-error-for-response';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 
 export type ApiRequestContext = {
@@ -18,21 +17,19 @@ export type ApiInvalidResponseError = {
   code: 'FRONT_INVALID_BACKEND_RESPONSE';
 };
 
+export type ApiTransportFailure = {
+  type: 'Failure';
+  error: ApiTransportError;
+  context: ApiRequestContext;
+};
+
+export type ApiInvalidResponse = {
+  type: 'Failure';
+  error: ApiInvalidResponseError;
+  context: ApiRequestContext;
+};
+
 export type ApiRequestFailure<TResponse extends ToBackendResponse> =
-  | {
-      type: 'backend';
-      response: Extract<TResponse, { type: 'Failure' }> & {
-        error: ToBackendErrorForResponse<TResponse>;
-      };
-      context: ApiRequestContext;
-    }
-  | {
-      type: 'transport';
-      error: ApiTransportError;
-      context: ApiRequestContext;
-    }
-  | {
-      type: 'invalid-response';
-      error: ApiInvalidResponseError;
-      context: ApiRequestContext;
-    };
+  | Extract<TResponse, { type: 'Failure' }>
+  | ApiTransportFailure
+  | ApiInvalidResponse;

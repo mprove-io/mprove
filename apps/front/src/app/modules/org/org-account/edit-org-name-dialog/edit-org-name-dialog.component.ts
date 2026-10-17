@@ -16,12 +16,13 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import type { ToBackendSetOrgInfoOutput } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-output';
 import type { ToBackendSetOrgInfoRequest } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-request';
-import type { ToBackendSetOrgInfoResponse } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface EditOrgNameDialogData {
   apiService: ApiService;
@@ -51,6 +52,7 @@ export class EditOrgNameDialogComponent implements OnInit {
   orgId: string;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditOrgNameDialogData>,
     private fb: FormBuilder,
     private orgQuery: OrgQuery,
@@ -88,22 +90,26 @@ export class EditOrgNameDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendSetOrgInfo',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetOrgInfoResponse) => {
-          if (resp.type === 'Success') {
-            let org = resp.output.org;
-            this.orgQuery.update(org);
-            this.navQuery.updatePart({
-              orgId: org.orgId,
-              orgName: org.name,
-              orgOwnerId: org.ownerId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSetOrgInfoOutput = resp.output;
+
+          let org = output.org;
+          this.orgQuery.update(org);
+          this.navQuery.updatePart({
+            orgId: org.orgId,
+            orgName: org.name,
+            orgOwnerId: org.ownerId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

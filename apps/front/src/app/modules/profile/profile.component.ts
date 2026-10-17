@@ -1,23 +1,20 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { PROFILE_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   PATH_PASSWORD_RESET_SENT_AUTH,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
-import type { ToBackendDeleteUserApiKeyResponse } from '#common/types/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
-import type { ToBackendDeleteUserCodexAuthResponse } from '#common/types/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
-import type { ToBackendGenerateUserApiKeyResponse } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
+import type { ToBackendDeleteUserCodexAuthOutput } from '#common/types/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-output';
+import type { ToBackendGenerateUserApiKeyOutput } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-output';
 import type { ToBackendResetUserPasswordRequest } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-request';
-import type { ToBackendResetUserPasswordResponse } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
@@ -89,10 +86,10 @@ export class ProfileComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private userQuery: UserQuery,
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private spinner: NgxSpinnerService,
     private router: Router,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
@@ -104,8 +101,6 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword() {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let email: string;
     this.userQuery.email$.pipe(take(1)).subscribe(x => (email = x));
 
@@ -119,13 +114,16 @@ export class ProfileComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendResetUserPasswordResponse) => {
-          if (resp.type === 'Success') {
-            localStorage.setItem('PASSWORD_RESET_EMAIL', email);
-            this.router.navigate([PATH_PASSWORD_RESET_SENT_AUTH]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          localStorage.setItem('PASSWORD_RESET_EMAIL', email);
+          this.router.navigate([PATH_PASSWORD_RESET_SENT_AUTH]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -155,21 +153,25 @@ export class ProfileComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendGenerateUserApiKey',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGenerateUserApiKeyResponse) => {
-          if (resp.type === 'Success') {
-            this.userQuery.updatePart({
-              apiKeyPrefix: resp.output.apiKeyPrefix
-            });
-            this.myDialogService.showGeneratedApiKey({
-              apiKey: resp.output.apiKey
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGenerateUserApiKeyOutput = resp.output;
+
+          this.userQuery.updatePart({
+            apiKeyPrefix: output.apiKeyPrefix
+          });
+          this.myDialogService.showGeneratedApiKey({
+            apiKey: output.apiKey
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -180,18 +182,20 @@ export class ProfileComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendDeleteUserApiKey',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteUserApiKeyResponse) => {
-          if (resp.type === 'Success') {
-            this.userQuery.updatePart({
-              apiKeyPrefix: undefined
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          this.userQuery.updatePart({
+            apiKeyPrefix: undefined
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -214,16 +218,20 @@ export class ProfileComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendDeleteUserCodexAuth',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteUserCodexAuthResponse) => {
-          if (resp.type === 'Success') {
-            this.userQuery.update(resp.output.user);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendDeleteUserCodexAuthOutput = resp.output;
+
+          this.userQuery.update(output.user);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

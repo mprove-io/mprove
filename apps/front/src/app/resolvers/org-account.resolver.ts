@@ -8,8 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PARAMETER_ORG_ID } from '#common/constants/top';
+import type { ToBackendGetOrgOutput } from '#common/types/backend/routes/orgs/get-org/get-org-output';
 import type { ToBackendGetOrgRequest } from '#common/types/backend/routes/orgs/get-org/get-org-request';
-import type { ToBackendGetOrgResponse } from '#common/types/backend/routes/orgs/get-org/get-org-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { OrgQuery } from '../queries/org.query';
@@ -55,9 +55,11 @@ export class OrgAccountResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetOrgResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            let org = resp.output.org;
+            let output: ToBackendGetOrgOutput = resp.output;
+
+            let org = output.org;
             this.orgQuery.update(org);
             return true;
           } else {

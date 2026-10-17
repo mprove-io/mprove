@@ -10,8 +10,8 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendGetReportOutput } from '#common/types/backend/routes/reports/get-report/get-report-output';
 import type { ToBackendGetReportRequest } from '#common/types/backend/routes/reports/get-report/get-report-request';
-import type { ToBackendGetReportResponse } from '#common/types/backend/routes/reports/get-report/get-report-response';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
@@ -52,7 +52,6 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
     return this.resolveRoute({
       route: route,
-      showSpinner: false,
       timezone: timezone,
       timeSpec: isDefined(timeSpecParam) ? timeSpecParam : uiState.timeSpec,
       timeRangeFractionBrick: isDefined(timeRangeParam)
@@ -63,20 +62,12 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
   resolveRoute(item: {
     route: ActivatedRouteSnapshot;
-    showSpinner: boolean;
     timeSpec: TimeSpec;
     timezone: string;
     timeRangeFractionBrick: string;
     skipCache?: boolean;
   }): Observable<boolean> {
-    let {
-      route,
-      showSpinner,
-      timezone,
-      timeSpec,
-      timeRangeFractionBrick,
-      skipCache
-    } = item;
+    let { route, timezone, timeSpec, timeRangeFractionBrick, skipCache } = item;
 
     let nav: NavState;
     this.navQuery
@@ -127,35 +118,33 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
     return this.apiService
       .req({
         route: 'api/ToBackendGetReport',
-        payload: payload,
-        showSpinner: showSpinner
+        payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetReportResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetReportOutput = resp.output;
 
-            this.structQuery.update(resp.output.struct);
+            this.memberQuery.update(output.userMember);
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
-            this.reportQuery.update(resp.output.report);
+            this.reportQuery.update(output.report);
 
             let uiState = this.uiQuery.getValue();
 
             if (
-              uiState.timezone !== resp.output.report.timezone ||
-              uiState.timeSpec !== resp.output.report.timeSpec ||
-              !equal(
-                uiState.timeRangeFraction,
-                resp.output.report.timeRangeFraction
-              )
+              uiState.timezone !== output.report.timezone ||
+              uiState.timeSpec !== output.report.timeSpec ||
+              !equal(uiState.timeRangeFraction, output.report.timeRangeFraction)
             ) {
               this.uiQuery.updatePart({
-                timezone: resp.output.report.timezone,
-                timeSpec: resp.output.report.timeSpec,
-                timeRangeFraction: resp.output.report.timeRangeFraction
+                timezone: output.report.timezone,
+                timeSpec: output.report.timeSpec,
+                timeRangeFraction: output.report.timeRangeFraction
               });
             }
 

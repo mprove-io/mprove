@@ -17,7 +17,6 @@ import {
 import { Router } from '@angular/router';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
@@ -28,16 +27,15 @@ import {
   PATH_REPO,
   PROD_REPO_ID
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
-import type { ToBackendCreateBranchResponse } from '#common/types/backend/routes/branches/create-branch/create-branch-response';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { BranchItem } from '#common/types/front/repo/branch-item';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface CreateBranchDialogData {
   apiService: ApiService;
@@ -101,11 +99,11 @@ export class CreateBranchDialogComponent implements OnInit {
   targetRepoType: RepoType;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<CreateBranchDialogData>,
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,
-    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery
   ) {}
@@ -156,8 +154,6 @@ export class CreateBranchDialogComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.ref.close();
 
     let userId;
@@ -185,24 +181,27 @@ export class CreateBranchDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateBranchResponse) => {
-          if (resp.type === 'Success') {
-            this.router.navigate([
-              PATH_ORG,
-              this.ref.data.orgId,
-              PATH_PROJECT,
-              this.ref.data.projectId,
-              PATH_REPO,
-              repoId,
-              PATH_BRANCH,
-              this.createBranchForm.value.branchId,
-              PATH_ENV,
-              this.nav.envId,
-              PATH_BUILDER
-            ]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          this.router.navigate([
+            PATH_ORG,
+            this.ref.data.orgId,
+            PATH_PROJECT,
+            this.ref.data.projectId,
+            PATH_REPO,
+            repoId,
+            PATH_BRANCH,
+            this.createBranchForm.value.branchId,
+            PATH_ENV,
+            this.nav.envId,
+            PATH_BUILDER
+          ]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

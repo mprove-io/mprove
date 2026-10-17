@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { filter, take, tap } from 'rxjs/operators';
+import { filter, finalize, take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
   PATH_BUILDER,
@@ -21,8 +21,8 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { ToBackendGetBranchesListOutput } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-output';
 import type { ToBackendGetBranchesListRequest } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-request';
-import type { ToBackendGetBranchesListResponse } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-response';
 import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { BranchItem } from '#common/types/front/repo/branch-item';
@@ -190,51 +190,57 @@ export class BranchSelectComponent {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetBranchesListResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.sessionsList = resp.output.sessionsList;
-
-            this.branchesList = resp.output.branchesList.map(y =>
-              this.makeBranchItem({
-                branchId: y.branchId,
-                repoId: y.repoId,
-                repoType: y.repoType,
-                alias: user.alias,
-                userId: user.userId
-              })
-            );
-
-            let sortDefaultFirst = (a: BranchItem, b: BranchItem) => {
-              if (a.branchId === this.defaultBranch) return -1;
-              if (b.branchId === this.defaultBranch) return 1;
-              return a.branchId.localeCompare(b.branchId);
-            };
-
-            let prodBranches = this.branchesList
-              .filter(y => y.repoType === 'production')
-              .sort(sortDefaultFirst);
-
-            let devBranches = this.branchesList
-              .filter(y => y.repoType === 'dev')
-              .sort(sortDefaultFirst);
-
-            let sessionBranches = this.branchesList
-              .filter(y => y.repoType === 'session')
-              .sort(sortDefaultFirst);
-
-            this.branchesList =
-              this.isEditor === true
-                ? [...prodBranches, ...devBranches, ...sessionBranches]
-                : [...prodBranches];
-
-            this.branchesListLength = this.branchesList.length;
-            this.branchesListLoading = false;
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetBranchesListOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+          this.sessionsList = output.sessionsList;
+
+          this.branchesList = output.branchesList.map(y =>
+            this.makeBranchItem({
+              branchId: y.branchId,
+              repoId: y.repoId,
+              repoType: y.repoType,
+              alias: user.alias,
+              userId: user.userId
+            })
+          );
+
+          let sortDefaultFirst = (a: BranchItem, b: BranchItem) => {
+            if (a.branchId === this.defaultBranch) return -1;
+            if (b.branchId === this.defaultBranch) return 1;
+            return a.branchId.localeCompare(b.branchId);
+          };
+
+          let prodBranches = this.branchesList
+            .filter(y => y.repoType === 'production')
+            .sort(sortDefaultFirst);
+
+          let devBranches = this.branchesList
+            .filter(y => y.repoType === 'dev')
+            .sort(sortDefaultFirst);
+
+          let sessionBranches = this.branchesList
+            .filter(y => y.repoType === 'session')
+            .sort(sortDefaultFirst);
+
+          this.branchesList =
+            this.isEditor === true
+              ? [...prodBranches, ...devBranches, ...sessionBranches]
+              : [...prodBranches];
+
+          this.branchesListLength = this.branchesList.length;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.branchesListLoading = false;
+
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

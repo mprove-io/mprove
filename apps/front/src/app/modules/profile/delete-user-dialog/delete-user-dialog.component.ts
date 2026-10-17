@@ -7,12 +7,10 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { PATH_USER_DELETED } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import type { ToBackendDeleteUserResponse } from '#common/types/backend/routes/users/delete-user/delete-user-response';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteUserDialogData {
   apiService: ApiService;
@@ -32,8 +30,8 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteUserDialogData>,
-    private spinner: NgxSpinnerService,
     private router: Router
   ) {}
 
@@ -44,8 +42,6 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   delete() {
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.ref.close();
 
     let payload = {};
@@ -58,12 +54,15 @@ export class DeleteUserDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteUserResponse) => {
-          if (resp.type === 'Success') {
-            this.router.navigate([PATH_USER_DELETED]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          this.router.navigate([PATH_USER_DELETED]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

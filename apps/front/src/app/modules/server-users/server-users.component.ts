@@ -4,8 +4,8 @@ import { tap } from 'rxjs/operators';
 import { SERVER_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';
+import type { ToBackendGetServerUsersOutput } from '#common/types/backend/routes/users/get-server-users/get-server-users-output';
 import type { ToBackendGetServerUsersRequest } from '#common/types/backend/routes/users/get-server-users/get-server-users-request';
-import type { ToBackendGetServerUsersResponse } from '#common/types/backend/routes/users/get-server-users/get-server-users-response';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { ServerUsersQuery } from '#front/app/queries/server-users.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -87,15 +87,19 @@ export class ServerUsersComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetServerUsersResponse) => {
-          if (resp.type === 'Success') {
-            this.serverUsersQuery.update({
-              serverUsers: resp.output.serverUsersList,
-              total: resp.output.total
-            });
-            this.currentPage = pageNum;
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetServerUsersOutput = resp.output;
+
+          this.serverUsersQuery.update({
+            serverUsers: output.serverUsersList,
+            total: output.total
+          });
+          this.currentPage = pageNum;
+          this.cd.detectChanges();
         })
       )
       .subscribe();

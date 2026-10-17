@@ -21,12 +21,13 @@ import type { Env } from '#common/types/backend/parts/env';
 import type { EnvUser } from '#common/types/backend/parts/env-user';
 import type { ToBackendCreateEnvUserOutput } from '#common/types/backend/routes/envs/create-env-user/create-env-user-output';
 import type { ToBackendCreateEnvUserRequest } from '#common/types/backend/routes/envs/create-env-user/create-env-user-request';
-import type { ToBackendCreateEnvUserResponse } from '#common/types/backend/routes/envs/create-env-user/create-env-user-response';
+import type { ToBackendGetMembersListOutput } from '#common/types/backend/routes/members/get-members-list/get-members-list-output';
 import type { ToBackendGetMembersListRequest } from '#common/types/backend/routes/members/get-members-list/get-members-list-request';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface AddEnvUserDialogData {
   apiService: ApiService;
@@ -62,6 +63,7 @@ export class AddEnvUserDialogComponent implements OnInit {
   projectId: string;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddEnvUserDialogData>,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -95,18 +97,25 @@ export class AddEnvUserDialogComponent implements OnInit {
     };
 
     apiService
-      .reqOutput({
+      .req({
         route: 'api/ToBackendGetMembersList',
         payload: payload
       })
       .pipe(
-        tap(output => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendGetMembersListOutput = resp.output;
+
           this.membersList = output.membersList;
           this.membersListLength = output.membersList.length - 1;
         }),
         take(1),
         finalize(() => {
           this.membersListLoading = false;
+
           this.cd.detectChanges();
         })
       )
@@ -135,22 +144,24 @@ export class AddEnvUserDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateEnvUser',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateEnvUserResponse) => {
-          if (resp.type === 'Success') {
-            let output: ToBackendCreateEnvUserOutput = resp.output;
-
-            this.memberQuery.update(output.userMember);
-
-            this.environmentsQuery.update({
-              environments: output.envs
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateEnvUserOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

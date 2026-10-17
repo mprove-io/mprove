@@ -9,17 +9,17 @@ import {
   type SimpleChanges,
   ViewChildren
 } from '@angular/core';
-import { interval, of, type Subscription } from 'rxjs';
-import { concatMap, tap } from 'rxjs/operators';
+import { EMPTY, interval, type Subscription } from 'rxjs';
+import { exhaustMap, tap } from 'rxjs/operators';
 
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
+import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
 import type { ToBackendGetQueryRequest } from '#common/types/backend/routes/queries/get-query/get-query-request';
-import type { ToBackendGetQueryResponse } from '#common/types/backend/routes/queries/get-query/get-query-response';
+import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
-import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
@@ -163,28 +163,34 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.type === 'Success') {
-            let runningQuery = resp.output.runningQueries[0];
-
-            this.query = Object.assign(runningQuery, {
-              sql: this.query.sql,
-              data: this.query.data
-            });
-
-            this.updateChartData();
-            this.startCheckRunning();
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendRunQueriesOutput = resp.output;
+
+          let runningQuery = output.runningQueries[0];
+
+          this.query = Object.assign(runningQuery, {
+            sql: this.query.sql,
+            data: this.query.data
+          });
+
+          this.updateChartData();
+          this.startCheckRunning();
+          this.cd.detectChanges();
         })
       )
       .subscribe();
   }
 
   startCheckRunning() {
+    this.stopCheckRunning();
+
     this.checkRunning$ = interval(3000)
       .pipe(
-        concatMap(() => {
+        exhaustMap(() => {
           if (this.query?.status === 'Running') {
             let nav = this.navQuery.getValue();
 
@@ -203,11 +209,19 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
             });
           }
 
-          return of(undefined);
+          return EMPTY;
         }),
-        tap((resp: ToBackendGetQueryResponse | undefined) => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            this.stopCheckRunning();
+
+            return;
+          }
+
           if (resp.type === 'Success') {
-            this.query = resp.output.query;
+            let output: ToBackendGetQueryOutput = resp.output;
+
+            this.query = output.query;
             this.updateChartData();
 
             if (this.query.status !== 'Running') {

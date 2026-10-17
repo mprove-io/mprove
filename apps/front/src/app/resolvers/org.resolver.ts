@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PARAMETER_ORG_ID } from '#common/constants/top';
 import { LOCAL_STORAGE_ORG_ID } from '#common/constants/top-front';
+import type { ToBackendGetOrgOutput } from '#common/types/backend/routes/orgs/get-org/get-org-output';
 import type { ToBackendGetOrgRequest } from '#common/types/backend/routes/orgs/get-org/get-org-request';
-import type { ToBackendGetOrgResponse } from '#common/types/backend/routes/orgs/get-org/get-org-response';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 
@@ -34,9 +34,11 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetOrgResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            let org = resp.output.org;
+            let output: ToBackendGetOrgOutput = resp.output;
+
+            let org = output.org;
 
             this.navQuery.updatePart({
               orgId: org.orgId,

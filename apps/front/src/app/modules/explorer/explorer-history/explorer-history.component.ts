@@ -6,16 +6,15 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, map, take, tap } from 'rxjs/operators';
 import {
   BRANCH_MAIN,
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
+import type { ToBackendGetSessionsListOutput } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
 import type { ToBackendGetSessionsListRequest } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
-import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { SessionApiX } from '#common/types/front/session/session-api-x';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
@@ -28,6 +27,7 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -87,7 +87,7 @@ export class ExplorerHistoryComponent implements OnInit {
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   ngOnInit() {
@@ -182,8 +182,6 @@ export class ExplorerHistoryComponent implements OnInit {
 
     this.isRefreshing = true;
 
-    this.spinner.show(EXPLORER_HISTORY_SPINNER_NAME);
-
     this.cd.detectChanges();
 
     this.apiService
@@ -192,9 +190,11 @@ export class ExplorerHistoryComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetSessionsListResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            let sessions = resp.output.sessions;
+            let output: ToBackendGetSessionsListOutput = resp.output;
+
+            let sessions = output.sessions;
 
             if (currentSessionId) {
               let freshCurrentSession = sessions.find(
@@ -208,19 +208,19 @@ export class ExplorerHistoryComponent implements OnInit {
             this.sessionsQuery.updatePart({
               sessions: sessions,
               isListLoaded: true,
-              hasMoreArchived: resp.output.hasMoreArchived ?? false
+              hasMoreArchived: output.hasMoreArchived ?? false
             });
           }
 
-          this.isRefreshing = false;
-
-          this.spinner.hide(EXPLORER_HISTORY_SPINNER_NAME);
-
           this.sessionsLoaded = true;
+        }),
+        take(1),
+        finalize(() => {
+          this.isRefreshing = false;
 
           this.cd.detectChanges();
         }),
-        take(1)
+        this.localSpinnerService.track({ name: EXPLORER_HISTORY_SPINNER_NAME })
       )
       .subscribe();
   }

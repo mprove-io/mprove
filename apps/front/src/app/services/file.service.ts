@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { type Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
+import type { ToBackendGetFileOutput } from '#common/types/backend/routes/files/get-file/get-file-output';
 import type { ToBackendGetFileRequest } from '#common/types/backend/routes/files/get-file/get-file-request';
-import type { ToBackendGetFileResponse } from '#common/types/backend/routes/files/get-file/get-file-response';
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
 import { getFileIds } from '#front/app/functions/get-file-ids';
+import type { ApiResponseForRoute } from '#front/app/types/api-response-for-route';
 import { FileQuery, FileState } from '../queries/file.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepoQuery, RepoState } from '../queries/repo.query';
@@ -55,7 +56,7 @@ export class FileService {
     fileId: string;
     builderLeft: BuilderLeft;
     skipCheck?: boolean;
-  }) {
+  }): Observable<ApiResponseForRoute<'api/ToBackendGetFile'> | void> {
     let { fileId, builderLeft, skipCheck } = item;
 
     if (skipCheck !== true) {
@@ -93,30 +94,36 @@ export class FileService {
         payload: getFilePayload
       })
       .pipe(
-        map((resp: ToBackendGetFileResponse) => {
-          if (resp.type === 'Success') {
-            let repoState = this.repoQuery.getValue();
-            let newRepoState: RepoState = Object.assign(resp.output.repo, <
-              RepoState
-            >{
-              conflicts: repoState.conflicts, // getFile does not check for conflicts
-              repoStatus: repoState.repoStatus // getFile does not use git fetch
-            });
-            this.repoQuery.update(newRepoState);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
-
-            this.fileQuery.update({
-              originalContent: resp.output.originalContent,
-              content: resp.output.content,
-              name: fileName,
-              fileId: fileId,
-              fileNodeId: fileNodeId,
-              isExist: resp.output.isExist
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetFileOutput = resp.output;
+
+          let repoState: RepoState = this.repoQuery.getValue();
+
+          let newRepoState: RepoState = Object.assign(output.repo, <RepoState>{
+            conflicts: repoState.conflicts, // getFile does not check for conflicts
+            repoStatus: repoState.repoStatus // getFile does not use git fetch
+          });
+
+          this.repoQuery.update(newRepoState);
+
+          this.structQuery.update(output.struct);
+
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          this.fileQuery.update({
+            originalContent: output.originalContent,
+            content: output.content,
+            name: fileName,
+            fileId: fileId,
+            fileNodeId: fileNodeId,
+            isExist: output.isExist
+          });
         })
       );
   }

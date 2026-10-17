@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Result } from '@praha/byethrow';
 import { interval, type Subscription } from 'rxjs';
 import { exhaustMap, finalize, tap } from 'rxjs/operators';
 
@@ -34,7 +33,7 @@ export class ExplorerTabService {
     });
 
     let sub: Subscription = this.apiService
-      .reqResult({
+      .req({
         route: 'api/ToBackendGetExplorerChartTab',
         payload: {
           sessionId: sessionId,
@@ -42,14 +41,18 @@ export class ExplorerTabService {
         }
       })
       .pipe(
-        tap(result => {
-          if (Result.isFailure(result)) return;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendGetExplorerChartTabOutput = resp.output;
 
           this.setTabPayload({
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: result.value
+            respPayload: output
           });
         }),
         finalize(() => {
@@ -187,7 +190,7 @@ export class ExplorerTabService {
     let sub: Subscription = interval(2500)
       .pipe(
         exhaustMap(() =>
-          this.apiService.reqResult({
+          this.apiService.req({
             route: 'api/ToBackendGetExplorerChartTab',
             payload: {
               sessionId: sessionId,
@@ -195,18 +198,20 @@ export class ExplorerTabService {
             }
           })
         ),
-        tap(result => {
-          if (Result.isFailure(result)) {
+        tap(resp => {
+          if (resp.type !== 'Success') {
             this.stopPolling({ tabId: tabId });
 
             return;
           }
 
+          let output: ToBackendGetExplorerChartTabOutput = resp.output;
+
           this.setTabPayload({
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: result.value
+            respPayload: output
           });
         })
       )

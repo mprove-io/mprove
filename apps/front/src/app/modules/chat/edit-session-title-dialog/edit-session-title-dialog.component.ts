@@ -21,6 +21,7 @@ import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface EditSessionTitleDialogData {
   apiService: ApiService;
@@ -48,6 +49,7 @@ export class EditSessionTitleDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditSessionTitleDialogData>,
     private fb: FormBuilder,
     private sessionQuery: SessionQuery,
@@ -92,11 +94,14 @@ export class EditSessionTitleDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendSetSessionTitle',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap(() => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
           let session = this.sessionQuery.getValue();
           if (session?.sessionId === this.ref.data.sessionId) {
             this.sessionQuery.update({ ...session, title: newTitle });
@@ -110,7 +115,8 @@ export class EditSessionTitleDialogComponent implements OnInit {
           );
           this.sessionsQuery.updatePart({ sessions: updated });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

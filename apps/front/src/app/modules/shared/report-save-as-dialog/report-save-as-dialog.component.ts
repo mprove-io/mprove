@@ -14,25 +14,20 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import {
-  APP_SPINNER_NAME,
-  EMPTY_SPACE,
-  EMPTY_SPACE_NAME
-} from '#common/constants/top-front';
+import { EMPTY_SPACE, EMPTY_SPACE_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendSaveCreateReportOutput } from '#common/types/backend/routes/reports/save-create-report/save-create-report-output';
 import type { ToBackendSaveCreateReportRequest } from '#common/types/backend/routes/reports/save-create-report/save-create-report-request';
-import type { ToBackendSaveCreateReportResponse } from '#common/types/backend/routes/reports/save-create-report/save-create-report-response';
+import type { ToBackendSaveModifyReportOutput } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-output';
 import type { ToBackendSaveModifyReportRequest } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-request';
-import type { ToBackendSaveModifyReportResponse } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-response';
+import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
@@ -46,6 +41,7 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface ReportSaveAsDialogData {
@@ -115,6 +111,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   struct: StructState;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<ReportSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
@@ -125,7 +122,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
-    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -321,44 +317,44 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     apiService
       .req({
         route: 'api/ToBackendSaveCreateReport',
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSaveCreateReportResponse) => {
-          if (resp.type === 'Success') {
-            if (isUndefined(resp.output.reportSpaceNodes)) {
-              this.spinner.hide(APP_SPINNER_NAME);
-              return;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendSaveCreateReportOutput = resp.output;
+
+          if (isUndefined(output.reportSpaceNodes)) {
+            return;
+          }
+
+          let newReport = output.report;
+
+          if (isDefined(newReport)) {
+            this.reportsQuery.update({
+              reportUnitDrafts: output.reportUnitDrafts,
+              reportSpaceNodes: output.reportSpaceNodes
+            });
+
+            let currentReport = this.reportQuery.getValue();
+
+            if (currentReport.reportId === newReport.reportId) {
+              this.reportQuery.update(newReport);
             }
 
-            let newReport = resp.output.report;
-
-            if (isDefined(newReport)) {
-              this.reportsQuery.update({
-                reportUnitDrafts: resp.output.reportUnitDrafts,
-                reportSpaceNodes: resp.output.reportSpaceNodes
-              });
-
-              let currentReport = this.reportQuery.getValue();
-
-              if (currentReport.reportId === newReport.reportId) {
-                this.reportQuery.update(newReport);
-              }
-
-              this.spinner.hide(APP_SPINNER_NAME); // route params do not change
-
-              this.navigateService.navigateToReport({
-                reportId: resp.output.report.reportId
-              });
-            }
+            this.navigateService.navigateToReport({
+              reportId: output.report.reportId
+            });
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -368,8 +364,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
     let uiState = this.uiQuery.getValue();
-
-    this.spinner.show(APP_SPINNER_NAME);
 
     let payload: ToBackendSaveModifyReportRequest['input'] = {
       projectId: nav.projectId,
@@ -399,34 +393,38 @@ export class ReportSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSaveModifyReportResponse) => {
-          if (resp.type === 'Success') {
-            if (isUndefined(resp.output.reportSpaceNodes)) {
-              this.spinner.hide(APP_SPINNER_NAME);
-              return;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendSaveModifyReportOutput = resp.output;
+
+          if (isUndefined(output.reportSpaceNodes)) {
+            return;
+          }
+
+          let newReport = output.report;
+
+          if (isDefined(newReport)) {
+            this.reportsQuery.update({
+              reportUnitDrafts: output.reportUnitDrafts,
+              reportSpaceNodes: output.reportSpaceNodes
+            });
+
+            let currentReport = this.reportQuery.getValue();
+
+            if (currentReport.reportId === newReport.reportId) {
+              this.reportQuery.update(newReport);
             }
 
-            let newReport = resp.output.report;
-
-            if (isDefined(newReport)) {
-              this.reportsQuery.update({
-                reportUnitDrafts: resp.output.reportUnitDrafts,
-                reportSpaceNodes: resp.output.reportSpaceNodes
-              });
-
-              let currentReport = this.reportQuery.getValue();
-
-              if (currentReport.reportId === newReport.reportId) {
-                this.reportQuery.update(newReport);
-              }
-
-              this.navigateService.navigateToReport({
-                reportId: resp.output.report.reportId
-              });
-            }
+            this.navigateService.navigateToReport({
+              reportId: output.report.reportId
+            });
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -460,15 +458,19 @@ export class ReportSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.type === 'Success') {
-            let newSortedRoles = resp.output.roles.sort((a, b) =>
-              a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
-            );
-
-            this.roles = newSortedRoles;
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetRolesOutput = resp.output;
+
+          let newSortedRoles = output.roles.sort((a, b) =>
+            a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+          );
+
+          this.roles = newSortedRoles;
+          this.cd.detectChanges();
         }),
         take(1)
       )

@@ -1,20 +1,18 @@
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { EnvsItem } from '#common/types/backend/parts/envs-item';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { SessionType } from '#common/types/backend/parts/session/session-type';
+import type { ToBackendGetBranchesListOutput } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-output';
 import type { ToBackendGetBranchesListRequest } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-request';
-import type { ToBackendGetBranchesListResponse } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-response';
+import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-output';
 import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
-import type { ToBackendGetEnvsListResponse } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-response';
+import type { ToBackendCreateEditorSessionOutput } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-output';
 import type { ToBackendCreateEditorSessionRequest } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-request';
-import type { ToBackendCreateEditorSessionResponse } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-response';
+import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
 import type { ToBackendCreateExplorerSessionRequest } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-request';
-import type { ToBackendCreateExplorerSessionResponse } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-response';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { splitModelExtraId } from '#front/app/functions/split-model-extra-id';
@@ -23,9 +21,11 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SessionService } from '#front/app/services/session.service';
 import { UiService } from '#front/app/services/ui.service';
+import type { ApiResponseForRoute } from '#front/app/types/api-response-for-route';
 import { CHAT_SCOPE, ChatScope } from '../chat-scope.token';
 
 @Component({
@@ -52,8 +52,8 @@ export class NewSessionComponent implements OnInit {
   isSubmitting = false;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
@@ -119,23 +119,30 @@ export class NewSessionComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetBranchesListResponse) => {
-          if (resp.type === 'Success') {
-            this.branches = resp.output.branchesList
-              .filter(b => b.repoType === 'production')
-              .map(b => ({
-                branchId: b.branchId,
-                extraName: makeBranchExtraName({
-                  repoType: b.repoType,
-                  branchId: b.branchId,
-                  alias: user.alias
-                })
-              }));
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-          this.branchesLoading = false;
-          this.cd.detectChanges();
+
+          let output: ToBackendGetBranchesListOutput = resp.output;
+
+          this.branches = output.branchesList
+            .filter(b => b.repoType === 'production')
+            .map(b => ({
+              branchId: b.branchId,
+              extraName: makeBranchExtraName({
+                repoType: b.repoType,
+                branchId: b.branchId,
+                alias: user.alias
+              })
+            }));
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.branchesLoading = false;
+
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }
@@ -156,14 +163,21 @@ export class NewSessionComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetEnvsListResponse) => {
-          if (resp.type === 'Success') {
-            this.envs = resp.output.envsList;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-          this.envsLoading = false;
-          this.cd.detectChanges();
+
+          let output: ToBackendGetEnvsListOutput = resp.output;
+
+          this.envs = output.envsList;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.envsLoading = false;
+
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }
@@ -212,7 +226,6 @@ export class NewSessionComponent implements OnInit {
 
     this.isSubmitting = true;
     this.uiQuery.updatePart({ showContent: false });
-    this.spinner.show(APP_SPINNER_NAME);
 
     let providerId = modelSelection.providerID;
 
@@ -245,7 +258,7 @@ export class NewSessionComponent implements OnInit {
           payload: explorerPayload
         })
         .pipe(
-          tap((resp: ToBackendCreateExplorerSessionResponse) => {
+          tap(resp => {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
@@ -256,7 +269,8 @@ export class NewSessionComponent implements OnInit {
               partId: partId
             });
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     } else {
@@ -280,7 +294,7 @@ export class NewSessionComponent implements OnInit {
           payload: editorPayload
         })
         .pipe(
-          tap((resp: ToBackendCreateEditorSessionResponse) => {
+          tap(resp => {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
@@ -291,7 +305,8 @@ export class NewSessionComponent implements OnInit {
               partId: partId
             });
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     }
@@ -299,8 +314,8 @@ export class NewSessionComponent implements OnInit {
 
   processCreateSessionResponse(item: {
     resp:
-      | ToBackendCreateExplorerSessionResponse
-      | ToBackendCreateEditorSessionResponse;
+      | ApiResponseForRoute<'api/ToBackendCreateExplorerSession'>
+      | ApiResponseForRoute<'api/ToBackendCreateEditorSession'>;
     isSessionExplorer: boolean;
     providerId: string;
     modelId: string;
@@ -319,7 +334,11 @@ export class NewSessionComponent implements OnInit {
     } = item;
 
     if (resp.type === 'Success') {
-      let { sessionId, repoId, branchId, envId } = resp.output;
+      let output:
+        | ToBackendCreateExplorerSessionOutput
+        | ToBackendCreateEditorSessionOutput = resp.output;
+
+      let { sessionId, repoId, branchId, envId } = output;
 
       if (!isSessionExplorer) {
         // Type Editor: add new session to the sessions list
@@ -391,7 +410,6 @@ export class NewSessionComponent implements OnInit {
     } else {
       this.isSubmitting = false;
       this.uiQuery.updatePart({ showContent: true });
-      this.spinner.hide(APP_SPINNER_NAME);
       this.cd.detectChanges();
     }
   }

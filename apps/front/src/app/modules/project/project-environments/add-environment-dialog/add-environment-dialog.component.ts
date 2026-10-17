@@ -16,12 +16,13 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import type { ToBackendCreateEnvOutput } from '#common/types/backend/routes/envs/create-env/create-env-output';
 import type { ToBackendCreateEnvRequest } from '#common/types/backend/routes/envs/create-env/create-env-request';
-import type { ToBackendCreateEnvResponse } from '#common/types/backend/routes/envs/create-env/create-env-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface AddEnvironmentDialogData {
   apiService: ApiService;
@@ -50,6 +51,7 @@ export class AddEnvironmentDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddEnvironmentDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -88,19 +90,24 @@ export class AddEnvironmentDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateEnv',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateEnvResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateEnvOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

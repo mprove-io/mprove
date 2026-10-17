@@ -1,23 +1,22 @@
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
+import type { ToBackendCreateDraftDashboardOutput } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-output';
 import type { ToBackendCreateDraftDashboardRequest } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
-import type { ToBackendCreateDraftDashboardResponse } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
+import type { ToBackendDeleteDraftDashboardsOutput } from '#common/types/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-output';
 import type { ToBackendDeleteDraftDashboardsRequest } from '#common/types/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-request';
-import type { ToBackendDeleteDraftDashboardsResponse } from '#common/types/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-response';
+import type { ToBackendEditDraftDashboardOutput } from '#common/types/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-output';
 import type { ToBackendEditDraftDashboardRequest } from '#common/types/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-request';
-import type { ToBackendEditDraftDashboardResponse } from '#common/types/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-response';
 import type { DashboardField } from '#common/types/blockml/parts/dashboard/dashboard-field';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
+import { AppSpinnerService } from './app-spinner.service';
 import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
@@ -30,11 +29,11 @@ export class DashboardService {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private dashboardUnitsQuery: DashboardUnitsQuery,
@@ -94,8 +93,6 @@ export class DashboardService {
     isQueryCache: boolean;
     cachedQueryMconfigIds: string[];
   }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let {
       tiles,
       oldDashboardId,
@@ -135,42 +132,48 @@ export class DashboardService {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateDraftDashboardResponse) => {
-          if (resp.type === 'Success') {
-            resp.output.dashboard.tiles.forEach(tile => {
-              tile.trackChangeId = makeTrackChangeId({
-                mconfig: tile.mconfig,
-                query: tile.query
-              });
-            });
-
-            this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
-              dashboardSpaceNodes:
-                this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
-            });
-            this.dashboardQuery.update(resp.output.dashboard);
-
-            let url = this.router
-              .createUrlTree([], { relativeTo: this.route })
-              .toString();
-
-            let urlArray = url.split('/');
-            urlArray.pop();
-            urlArray.push(resp.output.dashboard.dashboardId);
-
-            url = urlArray.join('/') + `?timezone=${timezone}`;
-
-            this.location.replaceState(url);
-
-            this.navigateService.navigateToDashboard({
-              dashboardId: newDashboardId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
 
-          this.spinner.hide(APP_SPINNER_NAME);
+          let output: ToBackendCreateDraftDashboardOutput = resp.output;
+
+          output.dashboard.tiles.forEach(tile => {
+            tile.trackChangeId = makeTrackChangeId({
+              mconfig: tile.mconfig,
+              query: tile.query
+            });
+          });
+
+          this.dashboardUnitsQuery.update({
+            dashboardUnitDrafts: output.dashboardUnitDrafts,
+            dashboardSpaceNodes:
+              this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
+          });
+
+          this.dashboardQuery.update(output.dashboard);
+
+          let url = this.router
+            .createUrlTree([], { relativeTo: this.route })
+            .toString();
+
+          let urlArray = url.split('/');
+
+          urlArray.pop();
+
+          urlArray.push(output.dashboard.dashboardId);
+
+          url = urlArray.join('/') + `?timezone=${timezone}`;
+
+          this.location.replaceState(url);
+
+          this.navigateService.navigateToDashboard({
+            dashboardId: newDashboardId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -182,8 +185,6 @@ export class DashboardService {
     newDashboardFields: DashboardField[];
     timezone: string;
   }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let {
       tiles,
       oldDashboardId,
@@ -219,21 +220,24 @@ export class DashboardService {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditDraftDashboardResponse) => {
-          if (resp.type === 'Success') {
-            resp.output.dashboard.tiles.forEach(tile => {
-              tile.trackChangeId = makeTrackChangeId({
-                mconfig: tile.mconfig,
-                query: tile.query
-              });
-            });
-
-            this.dashboardQuery.update(resp.output.dashboard);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
 
-          this.spinner.hide(APP_SPINNER_NAME);
+          let output: ToBackendEditDraftDashboardOutput = resp.output;
+
+          output.dashboard.tiles.forEach(tile => {
+            tile.trackChangeId = makeTrackChangeId({
+              mconfig: tile.mconfig,
+              query: tile.query
+            });
+          });
+
+          this.dashboardQuery.update(output.dashboard);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -252,26 +256,30 @@ export class DashboardService {
     this.apiService
       .req({
         route: 'api/ToBackendDeleteDraftDashboards',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteDraftDashboardsResponse) => {
-          if (resp.type === 'Success') {
-            this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
-              dashboardSpaceNodes:
-                this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            let dashboard = this.dashboardQuery.getValue();
+          let output: ToBackendDeleteDraftDashboardsOutput = resp.output;
 
-            if (dashboardIds.indexOf(dashboard.dashboardId) > -1) {
-              this.navigateService.navigateToDashboards();
-            }
+          this.dashboardUnitsQuery.update({
+            dashboardUnitDrafts: output.dashboardUnitDrafts,
+            dashboardSpaceNodes:
+              this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
+          });
+
+          let dashboard = this.dashboardQuery.getValue();
+
+          if (dashboardIds.indexOf(dashboard.dashboardId) > -1) {
+            this.navigateService.navigateToDashboards();
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

@@ -8,9 +8,9 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { ToBackendDeleteConnectionRequest } from '#common/types/backend/routes/connections/delete-connection/delete-connection-request';
-import type { ToBackendDeleteConnectionResponse } from '#common/types/backend/routes/connections/delete-connection/delete-connection-response';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteConnectionDialogData {
   apiService: ApiService;
@@ -35,6 +35,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
   dataItem: DeleteConnectionDialogData = this.ref.data;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteConnectionDialogData>,
     private connectionsQuery: ConnectionsQuery
   ) {}
@@ -59,24 +60,26 @@ export class DeleteConnectionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteConnection',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteConnectionResponse) => {
-          if (resp.type === 'Success') {
-            let connectionsState = this.connectionsQuery.getValue();
-            this.connectionsQuery.update({
-              connections: connectionsState.connections.filter(
-                x =>
-                  x.projectId !== this.dataItem.projectId ||
-                  x.envId !== this.dataItem.envId ||
-                  x.connectionId !== this.dataItem.connectionId
-              )
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let connectionsState = this.connectionsQuery.getValue();
+          this.connectionsQuery.update({
+            connections: connectionsState.connections.filter(
+              x =>
+                x.projectId !== this.dataItem.projectId ||
+                x.envId !== this.dataItem.envId ||
+                x.connectionId !== this.dataItem.connectionId
+            )
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

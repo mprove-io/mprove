@@ -7,19 +7,16 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { COMPLETE_REGISTRATION_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_LOGIN_SUCCESS } from '#common/constants/top';
-import {
-  APP_SPINNER_NAME,
-  LOCAL_STORAGE_TOKEN
-} from '#common/constants/top-front';
+import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendCompleteUserRegistrationOutput } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-output';
 import type { ToBackendCompleteUserRegistrationRequest } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-request';
-import type { ToBackendCompleteUserRegistrationResponse } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
@@ -46,12 +43,12 @@ export class CompleteRegistrationComponent implements OnInit {
   });
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private fb: FormBuilder,
     private apiService: ApiService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private spinner: NgxSpinnerService,
     private title: Title,
     private userQuery: UserQuery,
     private myDialogService: MyDialogService
@@ -77,8 +74,6 @@ export class CompleteRegistrationComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     let payload: ToBackendCompleteUserRegistrationRequest['input'] = {
       emailVerificationToken: this.emailVerificationToken,
       newPassword: this.setPasswordForm.value.newPassword
@@ -90,21 +85,26 @@ export class CompleteRegistrationComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCompleteUserRegistrationResponse) => {
-          if (resp.type === 'Success') {
-            let user = resp.output.user;
-            let token = resp.output.token;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            if (isDefined(user) && isDefined(token)) {
-              // first email verification
-              this.myDialogService.showEmailConfirmed();
-              this.userQuery.update(user);
-              localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
-              this.router.navigate([PATH_LOGIN_SUCCESS]);
-            }
+          let output: ToBackendCompleteUserRegistrationOutput = resp.output;
+
+          let user = output.user;
+          let token = output.token;
+
+          if (isDefined(user) && isDefined(token)) {
+            // first email verification
+            this.myDialogService.showEmailConfirmed();
+            this.userQuery.update(user);
+            localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
+            this.router.navigate([PATH_LOGIN_SUCCESS]);
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

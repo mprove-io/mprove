@@ -15,6 +15,7 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
 import type { OrgsItem } from '#common/types/backend/parts/orgs-item';
+import type { ToBackendGetOrgsListOutput } from '#common/types/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
@@ -75,12 +76,18 @@ export class OrgSelectComponent {
     this.orgsListLoading = true;
 
     this.apiService
-      .reqOutput({
+      .req({
         route: 'api/ToBackendGetOrgsList',
         payload: {}
       })
       .pipe(
-        tap(output => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendGetOrgsListOutput = resp.output;
+
           let x: OrgsItem[] = output.orgsList;
 
           this.orgsList = x;

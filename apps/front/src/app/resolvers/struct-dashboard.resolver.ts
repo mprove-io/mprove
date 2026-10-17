@@ -14,8 +14,8 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
-import type { ToBackendGetDashboardResponse } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
@@ -65,7 +65,6 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
 
     return this.resolveRoute({
       route: route,
-      showSpinner: false,
       timezone: timezone
     });
   }
@@ -73,11 +72,10 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
   resolveRoute(item: {
     dashboardId?: string;
     route: ActivatedRouteSnapshot;
-    showSpinner: boolean;
     timezone: string;
     skipCache?: boolean;
   }): Observable<boolean> {
-    let { dashboardId, route, showSpinner, timezone, skipCache } = item;
+    let { dashboardId, route, timezone, skipCache } = item;
 
     let nav: NavState;
     this.navQuery
@@ -128,27 +126,28 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     return this.apiService
       .req({
         route: 'api/ToBackendGetDashboard',
-        payload: payload,
-        showSpinner: showSpinner
+        payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetDashboardResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetDashboardOutput = resp.output;
 
-            this.structQuery.update(resp.output.struct);
+            this.memberQuery.update(output.userMember);
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
-            resp.output.dashboard.tiles.forEach(tile => {
+            output.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
                 mconfig: tile.mconfig,
                 query: tile.query
               });
             });
 
-            this.dashboardQuery.update(resp.output.dashboard);
+            this.dashboardQuery.update(output.dashboard);
 
             return true;
           } else if (

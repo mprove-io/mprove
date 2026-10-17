@@ -68,15 +68,14 @@ import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
 import type { ModelTreeLevel } from '#common/types/backend/parts/ui/model-tree-level';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
-import type { ToBackendSetFavoriteResponse } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-response';
+import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
 import type { ToBackendCancelQueriesRequest } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-request';
-import type { ToBackendCancelQueriesResponse } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-response';
+import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
 import type { ToBackendGetQueryRequest } from '#common/types/backend/routes/queries/get-query/get-query-request';
-import type { ToBackendGetQueryResponse } from '#common/types/backend/routes/queries/get-query/get-query-response';
+import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
-import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
+import type { ToBackendRunQueriesDryOutput } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-output';
 import type { ToBackendRunQueriesDryRequest } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-request';
-import type { ToBackendRunQueriesDryResponse } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-response';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { ModelField } from '#common/types/blockml/parts/model/model-field';
@@ -97,6 +96,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { StructChartResolver } from '#front/app/resolvers/struct-chart.resolver';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ChartService } from '#front/app/services/chart.service';
 import { DataService, QDataRow } from '#front/app/services/data.service';
 import { DataSizeService } from '#front/app/services/data-size.service';
@@ -726,6 +726,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   @ViewChild('chartsTree') chartsTree: TreeComponent;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -811,15 +812,20 @@ export class ModelsComponent implements OnInit, OnDestroy {
                 payload: payload
               })
               .pipe(
-                tap((resp: ToBackendGetQueryResponse) => {
+                tap(resp => {
+                  if (resp.type !== 'Success') {
+                    return;
+                  }
+
+                  let output: ToBackendGetQueryOutput = resp.output;
+
                   if (
-                    resp.type === 'Success' &&
                     this.isQueryIdTheSameAndStatusOrServerTsChanged(
-                      resp.output.query
+                      output.query
                     )
                   ) {
                     let newTile = Object.assign({}, this.chart.tiles[0], {
-                      query: resp.output.query
+                      query: output.query
                     });
 
                     let newChart = Object.assign({}, this.chart, {
@@ -1200,7 +1206,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
         .resolveRoute({
           chartId: this.chart.chartId,
           route: this.route.snapshot,
-          showSpinner: true,
           timezone: uiState.timezone,
           skipCache: true
         })
@@ -1219,7 +1224,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
             this.location.go(url);
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     }
@@ -1244,28 +1250,32 @@ export class ModelsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.type === 'Success') {
-            let { runningQueries } = resp.output;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            if (
-              this.isQueryIdTheSameAndStatusOrServerTsChanged(runningQueries[0])
-            ) {
-              let query = Object.assign(runningQueries[0], {
-                sql: this.query.sql,
-                data: this.query.data
-              });
+          let output: ToBackendRunQueriesOutput = resp.output;
 
-              let newTile = Object.assign({}, this.chart.tiles[0], {
-                query: query
-              });
+          let { runningQueries } = output;
 
-              let newChart = Object.assign({}, this.chart, {
-                tiles: [newTile]
-              });
+          if (
+            this.isQueryIdTheSameAndStatusOrServerTsChanged(runningQueries[0])
+          ) {
+            let query = Object.assign(runningQueries[0], {
+              sql: this.query.sql,
+              data: this.query.data
+            });
 
-              this.chartQuery.update(newChart);
-            }
+            let newTile = Object.assign({}, this.chart.tiles[0], {
+              query: query
+            });
+
+            let newChart = Object.assign({}, this.chart, {
+              tiles: [newTile]
+            });
+
+            this.chartQuery.update(newChart);
           }
         }),
         take(1)
@@ -1290,39 +1300,43 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.apiService
       .req({
         route: 'api/ToBackendRunQueriesDry',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRunQueriesDryResponse) => {
-          if (resp.type === 'Success') {
-            let { validQueryEstimates, errorQueries } = resp.output;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            if (errorQueries.length > 0) {
-              if (
-                this.isQueryIdTheSameAndStatusOrServerTsChanged(errorQueries[0])
-              ) {
-                let newTile = Object.assign({}, this.chart.tiles[0], {
-                  query: errorQueries[0]
-                });
+          let output: ToBackendRunQueriesDryOutput = resp.output;
 
-                let newChart = Object.assign({}, this.chart, {
-                  tiles: [newTile]
-                });
+          let { validQueryEstimates, errorQueries } = output;
 
-                this.chartQuery.update(newChart);
-              }
-            } else {
-              this.dryDataSize = this.dataSizeService.getSize(
-                validQueryEstimates[0].estimate
-              );
-              this.dryQueryEstimate = validQueryEstimates[0];
+          if (errorQueries.length > 0) {
+            if (
+              this.isQueryIdTheSameAndStatusOrServerTsChanged(errorQueries[0])
+            ) {
+              let newTile = Object.assign({}, this.chart.tiles[0], {
+                query: errorQueries[0]
+              });
 
-              this.cd.detectChanges();
+              let newChart = Object.assign({}, this.chart, {
+                tiles: [newTile]
+              });
+
+              this.chartQuery.update(newChart);
             }
+          } else {
+            this.dryDataSize = this.dataSizeService.getSize(
+              validQueryEstimates[0].estimate
+            );
+            this.dryQueryEstimate = validQueryEstimates[0];
+
+            this.cd.detectChanges();
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -1346,23 +1360,27 @@ export class ModelsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCancelQueriesResponse) => {
-          if (resp.type === 'Success') {
-            let { queries } = resp.output;
-            if (
-              queries.length > 0 &&
-              this.isQueryIdTheSameAndStatusOrServerTsChanged(queries[0])
-            ) {
-              let newTile = Object.assign({}, this.chart.tiles[0], {
-                query: queries[0]
-              });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-              let newChart = Object.assign({}, this.chart, {
-                tiles: [newTile]
-              });
+          let output: ToBackendCancelQueriesOutput = resp.output;
 
-              this.chartQuery.update(newChart);
-            }
+          let { queries } = output;
+          if (
+            queries.length > 0 &&
+            this.isQueryIdTheSameAndStatusOrServerTsChanged(queries[0])
+          ) {
+            let newTile = Object.assign({}, this.chart.tiles[0], {
+              query: queries[0]
+            });
+
+            let newChart = Object.assign({}, this.chart, {
+              tiles: [newTile]
+            });
+
+            this.chartQuery.update(newChart);
           }
         }),
         take(1)
@@ -1964,20 +1982,20 @@ export class ModelsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.type === 'Success';
-
-          if (isOk === false) {
-            this.chartsQuery.updatePart({
-              chartSpaceNodes: previousChartSpaceNodes
-            });
-
-            this.updateFiltered({
-              chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
-            });
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Failure') {
+            return;
           }
+
+          this.chartsQuery.updatePart({
+            chartSpaceNodes: previousChartSpaceNodes
+          });
+
+          this.updateFiltered({
+            chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+          });
+
+          this.cd.detectChanges();
         }),
         take(1)
       )

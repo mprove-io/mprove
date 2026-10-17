@@ -8,8 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
+import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-output';
 import type { ToBackendGetOrgUsersRequest } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-request';
-import type { ToBackendGetOrgUsersResponse } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UsersQuery } from '../queries/users.query';
@@ -63,11 +63,13 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetOrgUsersResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
+            let output: ToBackendGetOrgUsersOutput = resp.output;
+
             this.usersQuery.update({
-              users: resp.output.orgUsersList,
-              total: resp.output.total
+              users: output.orgUsersList,
+              total: output.total
             });
             return true;
           } else {

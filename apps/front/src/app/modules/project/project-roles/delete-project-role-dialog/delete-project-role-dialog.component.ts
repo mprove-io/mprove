@@ -8,11 +8,12 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendDeleteRoleOutput } from '#common/types/backend/routes/roles/delete-role/delete-role-output';
 import type { ToBackendDeleteRoleRequest } from '#common/types/backend/routes/roles/delete-role/delete-role-request';
-import type { ToBackendDeleteRoleResponse } from '#common/types/backend/routes/roles/delete-role/delete-role-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteProjectRoleDialogData {
   apiService: ApiService;
@@ -35,6 +36,7 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
   dataItem: DeleteProjectRoleDialogData = this.ref.data;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteProjectRoleDialogData>,
     private memberQuery: MemberQuery,
     private rolesQuery: RolesQuery
@@ -59,17 +61,21 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteRole',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteRoleResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.rolesQuery.update({ roles: resp.output.roles });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendDeleteRoleOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+          this.rolesQuery.update({ roles: output.roles });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

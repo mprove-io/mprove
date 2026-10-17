@@ -7,14 +7,12 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { FORGOT_YOUR_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_LOGIN, PATH_PASSWORD_RESET_SENT } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { ToBackendResetUserPasswordRequest } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-request';
-import type { ToBackendResetUserPasswordResponse } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-response';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 @Component({
   standalone: false,
@@ -35,9 +33,9 @@ export class ForgotPasswordComponent implements OnInit {
   });
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private fb: FormBuilder,
     private router: Router,
-    private spinner: NgxSpinnerService,
     private apiService: ApiService,
     private title: Title
   ) {}
@@ -53,8 +51,6 @@ export class ForgotPasswordComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     let email = this.resetPasswordForm.value.email;
 
     let payload: ToBackendResetUserPasswordRequest['input'] = {
@@ -67,13 +63,16 @@ export class ForgotPasswordComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendResetUserPasswordResponse) => {
-          if (resp.type === 'Success') {
-            localStorage.setItem('PASSWORD_RESET_EMAIL', email);
-            this.router.navigate([PATH_PASSWORD_RESET_SENT]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          localStorage.setItem('PASSWORD_RESET_EMAIL', email);
+          this.router.navigate([PATH_PASSWORD_RESET_SENT]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

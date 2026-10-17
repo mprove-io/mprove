@@ -20,12 +20,13 @@ import {
   LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
   LOCAL_STORAGE_NEW_ORG_OWNER
 } from '#common/constants/top-front';
+import type { ToBackendSetOrgOwnerOutput } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-output';
 import type { ToBackendSetOrgOwnerRequest } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-request';
-import type { ToBackendSetOrgOwnerResponse } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface EditOrgOwnerDialogData {
   apiService: ApiService;
@@ -53,6 +54,7 @@ export class EditOrgOwnerDialogComponent implements OnInit {
   orgId: string;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditOrgOwnerDialogData>,
     private fb: FormBuilder,
     private orgQuery: OrgQuery,
@@ -95,24 +97,25 @@ export class EditOrgOwnerDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendSetOrgOwner',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetOrgOwnerResponse) => {
-          if (resp.type === 'Success') {
-            let org = resp.output.org;
-            localStorage.setItem(
-              LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
-              org.name
-            );
-            localStorage.setItem(LOCAL_STORAGE_NEW_ORG_OWNER, newOwnerEmail);
-            this.router.navigate([PATH_ORG_OWNER_CHANGED]);
-            this.orgQuery.reset();
-            this.navQuery.clearOrgAndDeps();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSetOrgOwnerOutput = resp.output;
+
+          let org = output.org;
+          localStorage.setItem(LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME, org.name);
+          localStorage.setItem(LOCAL_STORAGE_NEW_ORG_OWNER, newOwnerEmail);
+          this.router.navigate([PATH_ORG_OWNER_CHANGED]);
+          this.orgQuery.reset();
+          this.navQuery.clearOrgAndDeps();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

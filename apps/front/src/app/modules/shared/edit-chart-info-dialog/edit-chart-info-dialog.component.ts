@@ -18,21 +18,16 @@ import {
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import {
-  APP_SPINNER_NAME,
-  EMPTY_SPACE,
-  EMPTY_SPACE_NAME
-} from '#common/constants/top-front';
+import { EMPTY_SPACE, EMPTY_SPACE_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendSaveModifyChartOutput } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-output';
 import type { ToBackendSaveModifyChartRequest } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-request';
-import type { ToBackendSaveModifyChartResponse } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-response';
+import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
@@ -45,6 +40,7 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditChartInfoDialogData {
@@ -108,6 +104,7 @@ export class EditChartInfoDialogComponent implements OnInit {
   struct: StructState;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditChartInfoDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
@@ -116,7 +113,6 @@ export class EditChartInfoDialogComponent implements OnInit {
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
-    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -225,8 +221,6 @@ export class EditChartInfoDialogComponent implements OnInit {
 
   save() {
     if (this.titleForm.controls['title'].valid) {
-      this.spinner.show(APP_SPINNER_NAME);
-
       this.ref.close();
 
       let newTitle: string = this.titleForm.controls['title'].value;
@@ -255,29 +249,33 @@ export class EditChartInfoDialogComponent implements OnInit {
       apiService
         .req({
           route: 'api/ToBackendSaveModifyChart',
-          payload: payload,
-          showSpinner: true
+          payload: payload
         })
         .pipe(
-          tap(async (resp: ToBackendSaveModifyChartResponse) => {
-            if (resp.type === 'Success') {
-              let newChart = resp.output.chart;
+          tap(async resp => {
+            if (resp.type !== 'Success') {
+              return;
+            }
 
-              if (isDefined(newChart)) {
-                this.chartsQuery.update({
-                  chartUnitDrafts: resp.output.chartUnitDrafts,
-                  chartSpaceNodes: resp.output.chartSpaceNodes
-                });
+            let output: ToBackendSaveModifyChartOutput = resp.output;
 
-                let currentChart = this.chartQuery.getValue();
+            let newChart = output.chart;
 
-                if (currentChart.chartId === newChart.chartId) {
-                  this.chartQuery.update(newChart);
-                }
+            if (isDefined(newChart)) {
+              this.chartsQuery.update({
+                chartUnitDrafts: output.chartUnitDrafts,
+                chartSpaceNodes: output.chartSpaceNodes
+              });
+
+              let currentChart = this.chartQuery.getValue();
+
+              if (currentChart.chartId === newChart.chartId) {
+                this.chartQuery.update(newChart);
               }
             }
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     }
@@ -296,13 +294,17 @@ export class EditChartInfoDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.type === 'Success') {
-            this.roles = resp.output.roles.sort((a, b) =>
-              a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
-            );
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetRolesOutput = resp.output;
+
+          this.roles = output.roles.sort((a, b) =>
+            a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+          );
+          this.cd.detectChanges();
         }),
         take(1)
       )

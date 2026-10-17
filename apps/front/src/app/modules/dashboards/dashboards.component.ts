@@ -37,11 +37,10 @@ import type { Member } from '#common/types/backend/parts/member';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
-import type { ToBackendSetFavoriteResponse } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-response';
+import type { ToBackendGetQueriesOutput } from '#common/types/backend/routes/queries/get-queries/get-queries-output';
 import type { ToBackendGetQueriesRequest } from '#common/types/backend/routes/queries/get-queries/get-queries-request';
-import type { ToBackendGetQueriesResponse } from '#common/types/backend/routes/queries/get-queries/get-queries-response';
+import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
-import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { RefreshItem } from '#common/types/front/ui/refresh-item';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
@@ -57,6 +56,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { StructDashboardResolver } from '#front/app/resolvers/struct-dashboard.resolver';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
@@ -333,6 +333,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   private timer: any;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
@@ -654,21 +655,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.type === 'Success';
-
-          if (isOk === false) {
-            this.dashboardUnitsQuery.updatePart({
-              dashboardSpaceNodes: previousDashboardSpaceNodes
-            });
-
-            this.updateFiltered({
-              dashboardSpaceNodes:
-                this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
-            });
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Failure') {
+            return;
           }
+
+          this.dashboardUnitsQuery.updatePart({
+            dashboardSpaceNodes: previousDashboardSpaceNodes
+          });
+
+          this.updateFiltered({
+            dashboardSpaceNodes:
+              this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
+          });
+
+          this.cd.detectChanges();
         }),
         take(1)
       )
@@ -690,7 +691,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         .resolveRoute({
           dashboardId: this.dashboard.dashboardId,
           route: this.route.snapshot,
-          showSpinner: true,
           timezone: uiState.timezone,
           skipCache: true
         })
@@ -709,7 +709,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
             this.location.go(url);
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     }
@@ -936,23 +937,27 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.type === 'Success') {
-            let { runningQueries } = resp.output;
-
-            let newDashboard = Object.assign({}, this.dashboard, {
-              tiles: this.dashboard.tiles.map(x => {
-                let newTile = Object.assign({}, x);
-                let query = runningQueries.find(q => q.queryId === x.queryId);
-                newTile.query = query;
-                return newTile;
-              })
-            });
-
-            this.dashboardQuery.update(newDashboard);
-            this.checkQueries();
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendRunQueriesOutput = resp.output;
+
+          let { runningQueries } = output;
+
+          let newDashboard = Object.assign({}, this.dashboard, {
+            tiles: this.dashboard.tiles.map(x => {
+              let newTile = Object.assign({}, x);
+              let query = runningQueries.find(q => q.queryId === x.queryId);
+              newTile.query = query;
+              return newTile;
+            })
+          });
+
+          this.dashboardQuery.update(newDashboard);
+          this.checkQueries();
+          this.cd.detectChanges();
         }),
         tap(() => this.startCheckRunning()),
         take(1)
@@ -986,9 +991,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetQueriesResponse) => {
+        tap(resp => {
           if (resp.type === 'Success') {
-            let { queries } = resp.output;
+            let output: ToBackendGetQueriesOutput = resp.output;
+
+            let { queries } = output;
 
             let newDashboard = Object.assign({}, this.dashboard, {
               tiles: this.dashboard.tiles.map(x => {

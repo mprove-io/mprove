@@ -8,7 +8,7 @@ import {
   type SimpleChanges
 } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
-import { take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import {
@@ -17,8 +17,8 @@ import {
 } from '#common/constants/top';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { SessionType } from '#common/types/backend/parts/session/session-type';
+import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
 import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
-import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -387,36 +387,41 @@ export class SessionInputComponent implements OnChanges {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetLlmModelsWithProviderResponse) => {
-          if (resp.type === 'Success') {
-            let state = this.sessionModelsQuery.getValue();
-
-            let updatedModelsOpencode =
-              this.sessionType === 'Editor'
-                ? resp.output.modelsOpencode
-                : state.modelsOpencode;
-
-            let updatedModelsAi =
-              this.sessionType === 'Explorer'
-                ? resp.output.modelsAi
-                : state.modelsAi;
-
-            this.sessionModelsQuery.update({
-              modelsOpencode: updatedModelsOpencode,
-              modelsAi: updatedModelsAi
-            });
-
-            let models =
-              this.sessionType === 'Explorer'
-                ? resp.output.modelsAi
-                : resp.output.modelsOpencode;
-
-            this.applyModels({ apiModels: models, selectRecommended: false });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-          this.modelsLoading = false;
-          this.cd.detectChanges();
+
+          let output: ToBackendGetLlmModelsWithProviderOutput = resp.output;
+
+          let state = this.sessionModelsQuery.getValue();
+
+          let updatedModelsOpencode =
+            this.sessionType === 'Editor'
+              ? output.modelsOpencode
+              : state.modelsOpencode;
+
+          let updatedModelsAi =
+            this.sessionType === 'Explorer' ? output.modelsAi : state.modelsAi;
+
+          this.sessionModelsQuery.update({
+            modelsOpencode: updatedModelsOpencode,
+            modelsAi: updatedModelsAi
+          });
+
+          let models =
+            this.sessionType === 'Explorer'
+              ? output.modelsAi
+              : output.modelsOpencode;
+
+          this.applyModels({ apiModels: models, selectRecommended: false });
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.modelsLoading = false;
+
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

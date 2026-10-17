@@ -14,13 +14,8 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import {
-  APP_SPINNER_NAME,
-  EMPTY_SPACE,
-  EMPTY_SPACE_NAME
-} from '#common/constants/top-front';
+import { EMPTY_SPACE, EMPTY_SPACE_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -28,12 +23,12 @@ import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendSaveCreateDashboardOutput } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-output';
 import type { ToBackendSaveCreateDashboardRequest } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-request';
-import type { ToBackendSaveCreateDashboardResponse } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
+import type { ToBackendSaveModifyDashboardOutput } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-output';
 import type { ToBackendSaveModifyDashboardRequest } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
-import type { ToBackendSaveModifyDashboardResponse } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
+import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
 import type { Space } from '#common/types/blockml/parts/space';
 import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
@@ -46,6 +41,7 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface DashboardSaveAsDialogData {
@@ -135,6 +131,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DashboardSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
@@ -144,7 +141,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private dashboardUnitsQuery: DashboardUnitsQuery,
-    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -331,8 +327,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   saveAsNewDashboard(item: { newTitle: string; roles: string[] }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let { newTitle, roles } = item;
 
     let payload: ToBackendSaveCreateDashboardRequest['input'] = {
@@ -365,31 +359,33 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSaveCreateDashboardResponse) => {
-          if (resp.type === 'Success') {
-            if (isUndefined(resp.output.dashboardSpaceNodes)) {
-              this.spinner.hide(APP_SPINNER_NAME);
-              return;
-            }
-
-            this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
-            });
-
-            this.navigateService.navigateToDashboard({
-              dashboardId: this.newDashboardId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSaveCreateDashboardOutput = resp.output;
+
+          if (isUndefined(output.dashboardSpaceNodes)) {
+            return;
+          }
+
+          this.dashboardUnitsQuery.update({
+            dashboardUnitDrafts: output.dashboardUnitDrafts,
+            dashboardSpaceNodes: output.dashboardSpaceNodes
+          });
+
+          this.navigateService.navigateToDashboard({
+            dashboardId: this.newDashboardId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
 
   saveAsExistingDashboard(item: { newTitle: string; roles: string[] }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let { newTitle, roles } = item;
 
     let payload: ToBackendSaveModifyDashboardRequest['input'] = {
@@ -422,24 +418,28 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSaveModifyDashboardResponse) => {
-          if (resp.type === 'Success') {
-            if (isUndefined(resp.output.dashboardSpaceNodes)) {
-              this.spinner.hide(APP_SPINNER_NAME);
-              return;
-            }
-
-            this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
-            });
-
-            this.navigateService.navigateToDashboard({
-              dashboardId: this.selectedDashboardId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendSaveModifyDashboardOutput = resp.output;
+
+          if (isUndefined(output.dashboardSpaceNodes)) {
+            return;
+          }
+
+          this.dashboardUnitsQuery.update({
+            dashboardUnitDrafts: output.dashboardUnitDrafts,
+            dashboardSpaceNodes: output.dashboardSpaceNodes
+          });
+
+          this.navigateService.navigateToDashboard({
+            dashboardId: this.selectedDashboardId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -527,13 +527,17 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.type === 'Success') {
-            this.roles = resp.output.roles.sort((a, b) =>
-              a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
-            );
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetRolesOutput = resp.output;
+
+          this.roles = output.roles.sort((a, b) =>
+            a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+          );
+          this.cd.detectChanges();
         }),
         take(1)
       )

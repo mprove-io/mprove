@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { GivensQuery } from '../queries/givens.query';
 import { MemberQuery } from '../queries/member.query';
@@ -64,15 +64,17 @@ export class ProjectRolesResolver implements Resolve<Observable<boolean>> {
         payload: getRolesPayload
       })
       .pipe(
-        map((resp: ToBackendGetRolesResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetRolesOutput = resp.output;
 
-            let newSortedRoles = resp.output.roles.sort((a, b) =>
+            this.memberQuery.update(output.userMember);
+
+            let newSortedRoles = output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
 
-            let newSortedGivens = resp.output.givens.sort((a, b) =>
+            let newSortedGivens = output.givens.sort((a, b) =>
               a.givenId > b.givenId ? 1 : b.givenId > a.givenId ? -1 : 0
             );
 

@@ -9,9 +9,8 @@ import {
   PATH_ORG,
   PATH_PROJECT
 } from '#common/constants/top';
-
+import type { ToBackendGetRepoOutput } from '#common/types/backend/routes/repos/get-repo/get-repo-output';
 import type { ToBackendGetRepoRequest } from '#common/types/backend/routes/repos/get-repo/get-repo-request';
-import type { ToBackendGetRepoResponse } from '#common/types/backend/routes/repos/get-repo/get-repo-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -64,19 +63,21 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetRepoResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetRepoOutput = resp.output;
 
-            this.uiQuery.updatePart({ ...resp.output.user.ui });
+            this.memberQuery.update(output.userMember);
 
-            this.structQuery.update(resp.output.struct);
+            this.uiQuery.updatePart({ ...output.user.ui });
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
               branchId: branchId,
               envId: envId,
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
-            this.repoQuery.update(resp.output.repo);
+            this.repoQuery.update(output.repo);
 
             return true;
           } else if (

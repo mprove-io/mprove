@@ -8,8 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
+import type { ToBackendGetMembersOutput } from '#common/types/backend/routes/members/get-members/get-members-output';
 import type { ToBackendGetMembersRequest } from '#common/types/backend/routes/members/get-members/get-members-request';
-import type { ToBackendGetMembersResponse } from '#common/types/backend/routes/members/get-members/get-members-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -67,14 +67,16 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetMembersResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetMembersOutput = resp.output;
 
-            this.teamQuery.update(resp.output);
+            this.memberQuery.update(output.userMember);
+
+            this.teamQuery.update(output);
 
             this.rolesQuery.update({
-              roles: resp.output.roles
+              roles: output.roles
             });
 
             return true;

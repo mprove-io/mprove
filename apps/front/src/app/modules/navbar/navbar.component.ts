@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, take, tap } from 'rxjs/operators';
 import {
   EMPTY_REPORT_ID,
@@ -10,11 +9,10 @@ import {
   PATH_MODELS,
   PATH_REPORTS
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/types/backend/parts/member';
+import type { ToBackendCheckLastNavOutput } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-output';
 import type { ToBackendCheckLastNavRequest } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-request';
-import type { ToBackendCheckLastNavResponse } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-response';
 import type { BuilderRight } from '#common/types/front/builder/builder-right';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -25,6 +23,7 @@ import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { environment } from '#front/environments/environment';
 
@@ -93,6 +92,7 @@ export class NavbarComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private router: Router,
     private navQuery: NavQuery,
     private repoQuery: RepoQuery,
@@ -104,7 +104,6 @@ export class NavbarComponent implements OnInit {
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private apiService: ApiService,
-    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -189,8 +188,6 @@ export class NavbarComponent implements OnInit {
     );
 
     if (isDefined(pModelLink) && isDefined(pChartLink)) {
-      this.spinner.show(APP_SPINNER_NAME);
-
       let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
@@ -203,25 +200,27 @@ export class NavbarComponent implements OnInit {
       this.apiService
         .req({
           route: 'api/ToBackendCheckLastNav',
-          payload: payload,
-          showSpinner: false
+          payload: payload
         })
         .pipe(
-          tap((resp: ToBackendCheckLastNavResponse) => {
-            if (
-              resp.type === 'Success' &&
-              resp.output.modelExists === true &&
-              resp.output.chartExists === true
-            ) {
-              this.navigateService.navigateToChart({
-                modelId: pModelLink.modelId,
-                chartId: pChartLink.chartId
-              });
-            } else {
-              this.navigateService.navigateToModels();
+          tap(resp => {
+            if (resp.type === 'Success') {
+              let output: ToBackendCheckLastNavOutput = resp.output;
+
+              if (output.modelExists === true && output.chartExists === true) {
+                this.navigateService.navigateToChart({
+                  modelId: pModelLink.modelId,
+                  chartId: pChartLink.chartId
+                });
+
+                return;
+              }
             }
+
+            this.navigateService.navigateToModels();
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     } else {
@@ -245,8 +244,6 @@ export class NavbarComponent implements OnInit {
     );
 
     if (isDefined(pLink?.dashboardId)) {
-      this.spinner.show(APP_SPINNER_NAME);
-
       let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
@@ -258,23 +255,26 @@ export class NavbarComponent implements OnInit {
       this.apiService
         .req({
           route: 'api/ToBackendCheckLastNav',
-          payload: payload,
-          showSpinner: false
+          payload: payload
         })
         .pipe(
-          tap((resp: ToBackendCheckLastNavResponse) => {
-            if (
-              resp.type === 'Success' &&
-              resp.output.dashboardExists === true
-            ) {
-              this.navigateService.navigateToDashboard({
-                dashboardId: pLink.dashboardId
-              });
-            } else {
-              this.navigateService.navigateToDashboardsList();
+          tap(resp => {
+            if (resp.type === 'Success') {
+              let output: ToBackendCheckLastNavOutput = resp.output;
+
+              if (output.dashboardExists === true) {
+                this.navigateService.navigateToDashboard({
+                  dashboardId: pLink.dashboardId
+                });
+
+                return;
+              }
             }
+
+            this.navigateService.navigateToDashboardsList();
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     } else {
@@ -304,8 +304,6 @@ export class NavbarComponent implements OnInit {
     }
 
     if (isDefined(pLink?.reportId)) {
-      this.spinner.show(APP_SPINNER_NAME);
-
       let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
@@ -317,20 +315,26 @@ export class NavbarComponent implements OnInit {
       this.apiService
         .req({
           route: 'api/ToBackendCheckLastNav',
-          payload: payload,
-          showSpinner: false
+          payload: payload
         })
         .pipe(
-          tap((resp: ToBackendCheckLastNavResponse) => {
-            if (resp.type === 'Success' && resp.output.reportExists === true) {
-              this.navigateService.navigateToReport({
-                reportId: pLink.reportId
-              });
-            } else {
-              this.navigateService.navigateToReportsList();
+          tap(resp => {
+            if (resp.type === 'Success') {
+              let output: ToBackendCheckLastNavOutput = resp.output;
+
+              if (output.reportExists === true) {
+                this.navigateService.navigateToReport({
+                  reportId: pLink.reportId
+                });
+
+                return;
+              }
             }
+
+            this.navigateService.navigateToReportsList();
           }),
-          take(1)
+          take(1),
+          this.appSpinnerService.track()
         )
         .subscribe();
     } else {

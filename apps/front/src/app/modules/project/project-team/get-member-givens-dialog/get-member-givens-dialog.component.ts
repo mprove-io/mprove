@@ -10,9 +10,10 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { take, tap } from 'rxjs/operators';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
+import type { ToBackendGetMemberGivensOutput } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-output';
 import type { ToBackendGetMemberGivensRequest } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-request';
-import type { ToBackendGetMemberGivensResponse } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-response';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface GetMemberGivensDialogData {
   apiService: ApiService;
@@ -37,6 +38,7 @@ export class GetMemberGivensDialogComponent implements OnInit {
   memberGivens: MemberGiven[] = [];
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<GetMemberGivensDialogData>,
     private cd: ChangeDetectorRef
   ) {}
@@ -50,17 +52,21 @@ export class GetMemberGivensDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendGetMemberGivens',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetMemberGivensResponse) => {
-          if (resp.type === 'Success') {
-            this.memberGivens = resp.output.memberGivens;
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetMemberGivensOutput = resp.output;
+
+          this.memberGivens = output.memberGivens;
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
 

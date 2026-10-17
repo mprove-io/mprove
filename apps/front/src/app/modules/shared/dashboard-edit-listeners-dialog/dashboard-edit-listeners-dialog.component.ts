@@ -9,7 +9,6 @@ import { FormBuilder, FormControl, type FormGroup } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
 
@@ -19,8 +18,8 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelField } from '#common/types/blockml/parts/model/model-field';
@@ -30,6 +29,7 @@ import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 
 export interface DashboardEditListenersDialogData {
   dashboardService: DashboardService;
@@ -75,7 +75,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     public ref: DialogRef<DashboardEditListenersDialogData>,
     private fb: FormBuilder,
     private navQuery: NavQuery,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private uiQuery: UiQuery,
     private cd: ChangeDetectorRef
   ) {}
@@ -93,8 +93,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
         take(1)
       )
       .subscribe();
-
-    this.spinner.show(this.spinnerName);
 
     let apiService: ApiService = this.ref.data.apiService;
 
@@ -114,90 +112,93 @@ export class DashboardEditListenersDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.type === 'Success') {
-            this.spinner.hide(this.spinnerName);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            this.models = resp.output.models;
+          let output: ToBackendGetModelsOutput = resp.output;
 
-            (this.dashboard as DashboardX2).tiles.forEach((x, tileIndex) => {
-              let model = this.models.find(m => m.modelId === x.modelId);
+          this.models = output.models;
 
-              let swap: { [a: string]: string[] } = {};
+          (this.dashboard as DashboardX2).tiles.forEach((x, tileIndex) => {
+            let model = this.models.find(m => m.modelId === x.modelId);
 
-              Object.keys(x.listen).forEach(modelFieldId => {
-                let dashboardFieldId = x.listen[modelFieldId];
+            let swap: { [a: string]: string[] } = {};
 
-                if (isUndefined(swap[dashboardFieldId])) {
-                  swap[dashboardFieldId] = [modelFieldId];
-                } else {
-                  swap[dashboardFieldId].push(modelFieldId);
-                }
-              });
+            Object.keys(x.listen).forEach(modelFieldId => {
+              let dashboardFieldId = x.listen[modelFieldId];
 
-              let modelFields: { [a: string]: ModelField[] } = {};
-
-              let emptyField = <ModelField>{
-                id: undefined,
-                topLabel: EMPTY_MCONFIG_FIELD.topLabel
-              };
-
-              (this.dashboard as DashboardX2).fields.forEach(dashField => {
-                modelFields[dashField.id] =
-                  isDefined(dashField.storeResult) &&
-                  dashField.storeModel === model.modelId
-                    ? [
-                        emptyField,
-                        ...model.fields.filter(
-                          y =>
-                            y.result === dashField.storeResult &&
-                            model.modelId === dashField.storeModel
-                        )
-                      ]
-                    : isDefined(dashField.storeFilter) &&
-                        dashField.storeModel === model.modelId
-                      ? [
-                          emptyField,
-                          ...model.fields.filter(y =>
-                            y.fieldClass === 'filter'
-                              ? y.id === dashField.storeFilter
-                              : false
-                          )
-                        ]
-                      : model.type !== 'Store' &&
-                          isUndefined(dashField.storeModel)
-                        ? [
-                            emptyField,
-                            ...model.fields.filter(
-                              y => y.result === dashField.result
-                            )
-                          ]
-                        : [emptyField];
-
-                if (isUndefined(swap[dashField.id])) {
-                  swap[dashField.id] = [undefined];
-                }
-              });
-
-              (x as TileX2).modelFields = modelFields;
-
-              (x as TileX2).mconfigListenSwap = swap;
-
-              Object.keys(swap).forEach(dFieldId => {
-                swap[dFieldId].forEach((id, ind) => {
-                  this.listenForm.addControl(
-                    `${tileIndex}-----${dFieldId}-----${ind}`,
-                    new FormControl<string>(id)
-                  );
-                });
-              });
+              if (isUndefined(swap[dashboardFieldId])) {
+                swap[dashboardFieldId] = [modelFieldId];
+              } else {
+                swap[dashboardFieldId].push(modelFieldId);
+              }
             });
 
-            this.cd.detectChanges();
-          }
-        })
+            let modelFields: { [a: string]: ModelField[] } = {};
+
+            let emptyField = <ModelField>{
+              id: undefined,
+              topLabel: EMPTY_MCONFIG_FIELD.topLabel
+            };
+
+            (this.dashboard as DashboardX2).fields.forEach(dashField => {
+              modelFields[dashField.id] =
+                isDefined(dashField.storeResult) &&
+                dashField.storeModel === model.modelId
+                  ? [
+                      emptyField,
+                      ...model.fields.filter(
+                        y =>
+                          y.result === dashField.storeResult &&
+                          model.modelId === dashField.storeModel
+                      )
+                    ]
+                  : isDefined(dashField.storeFilter) &&
+                      dashField.storeModel === model.modelId
+                    ? [
+                        emptyField,
+                        ...model.fields.filter(y =>
+                          y.fieldClass === 'filter'
+                            ? y.id === dashField.storeFilter
+                            : false
+                        )
+                      ]
+                    : model.type !== 'Store' &&
+                        isUndefined(dashField.storeModel)
+                      ? [
+                          emptyField,
+                          ...model.fields.filter(
+                            y => y.result === dashField.result
+                          )
+                        ]
+                      : [emptyField];
+
+              if (isUndefined(swap[dashField.id])) {
+                swap[dashField.id] = [undefined];
+              }
+            });
+
+            (x as TileX2).modelFields = modelFields;
+
+            (x as TileX2).mconfigListenSwap = swap;
+
+            Object.keys(swap).forEach(dFieldId => {
+              swap[dFieldId].forEach((id, ind) => {
+                this.listenForm.addControl(
+                  `${tileIndex}-----${dFieldId}-----${ind}`,
+                  new FormControl<string>(id)
+                );
+              });
+            });
+          });
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.spinnerName })
       )
-      .toPromise();
+      .subscribe();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();

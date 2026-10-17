@@ -8,13 +8,13 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { map, take } from 'rxjs/operators';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { delay, finalize, take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
-import type { ToBackendViewCachedColumnResponse } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-response';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
 export interface ViewCachedUniqueValuesDialogData {
@@ -56,7 +56,7 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
     public ref: DialogRef<ViewCachedUniqueValuesDialogData>,
     private apiService: ApiService,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +75,6 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.spinner.show(this.cachedUniqueValuesNextSpinnerName);
     this.cd.detectChanges();
 
     this.apiService
@@ -92,38 +91,41 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
         }
       })
       .pipe(
-        map((resp: ToBackendViewCachedColumnResponse) => {
-          setTimeout(() => {
-            if (resp.type === 'Success') {
-              let output: ToBackendViewCachedColumnOutput = resp.output;
+        delay(0),
+        tap(resp => {
+          if (resp.type === 'Success') {
+            let output: ToBackendViewCachedColumnOutput = resp.output;
 
-              if (isDefined(output.errorMessage)) {
-                this.dataItem.errorMessage = output.errorMessage;
-              } else {
-                this.dataItem.columnNames = output.columnNames;
-
-                this.dataItem.rows = output.rows;
-
-                this.dataItem.cachedColumn = output.cachedColumn;
-
-                this.dataItem.errorMessage = undefined;
-
-                this.offset += 100;
-
-                if (output.rows.length < 100) {
-                  this.hasMore = false;
-                }
-              }
+            if (isDefined(output.errorMessage)) {
+              this.dataItem.errorMessage = output.errorMessage;
             } else {
-              this.dataItem.errorMessage = 'Failed to fetch cached column';
-            }
+              this.dataItem.columnNames = output.columnNames;
 
-            this.isLoading = false;
-            this.spinner.hide(this.cachedUniqueValuesNextSpinnerName);
-            this.cd.detectChanges();
-          }, 0);
+              this.dataItem.rows = output.rows;
+
+              this.dataItem.cachedColumn = output.cachedColumn;
+
+              this.dataItem.errorMessage = undefined;
+
+              this.offset += 100;
+
+              if (output.rows.length < 100) {
+                this.hasMore = false;
+              }
+            }
+          } else {
+            this.dataItem.errorMessage = 'Failed to fetch cached column';
+          }
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.isLoading = false;
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({
+          name: this.cachedUniqueValuesNextSpinnerName
+        })
       )
       .subscribe();
   }

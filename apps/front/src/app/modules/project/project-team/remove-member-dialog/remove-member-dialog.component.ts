@@ -8,9 +8,9 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { ToBackendDeleteMemberRequest } from '#common/types/backend/routes/members/delete-member/delete-member-request';
-import type { ToBackendDeleteMemberResponse } from '#common/types/backend/routes/members/delete-member/delete-member-response';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface RemoveMemberDialogData {
   apiService: ApiService;
@@ -33,6 +33,7 @@ export class RemoveMemberDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<RemoveMemberDialogData>,
     private teamQuery: TeamQuery
   ) {}
@@ -56,25 +57,27 @@ export class RemoveMemberDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteMember',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteMemberResponse) => {
-          if (resp.type === 'Success') {
-            let teamState = this.teamQuery.getValue();
-
-            this.teamQuery.update({
-              members: teamState.members.filter(
-                x =>
-                  x.memberId !== this.ref.data.memberId ||
-                  x.projectId !== this.ref.data.projectId
-              ),
-              total: teamState.total
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let teamState = this.teamQuery.getValue();
+
+          this.teamQuery.update({
+            members: teamState.members.filter(
+              x =>
+                x.memberId !== this.ref.data.memberId ||
+                x.projectId !== this.ref.data.projectId
+            ),
+            total: teamState.total
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

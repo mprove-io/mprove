@@ -16,13 +16,14 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import type { ToBackendCreateFolderOutput } from '#common/types/backend/routes/folders/create-folder/create-folder-output';
 import type { ToBackendCreateFolderRequest } from '#common/types/backend/routes/folders/create-folder/create-folder-request';
-import type { ToBackendCreateFolderResponse } from '#common/types/backend/routes/folders/create-folder/create-folder-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface CreateFolderDialogData {
@@ -54,6 +55,7 @@ export class CreateFolderDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<CreateFolderDialogData>,
     private fb: FormBuilder,
     private structQuery: StructQuery,
@@ -102,20 +104,24 @@ export class CreateFolderDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateFolder',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateFolderResponse) => {
-          if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateFolderOutput = resp.output;
+
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

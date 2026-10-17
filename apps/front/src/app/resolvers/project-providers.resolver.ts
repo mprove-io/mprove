@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
 import type { ToBackendGetProvidersRequest } from '#common/types/backend/routes/providers/get-providers/get-providers-request';
-import type { ToBackendGetProvidersResponse } from '#common/types/backend/routes/providers/get-providers/get-providers-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, type NavState } from '../queries/nav.query';
@@ -62,15 +62,17 @@ export class ProjectProvidersResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetProvidersResponse) => {
+        map(resp => {
           if (resp.type !== 'Success') {
             return false;
           }
 
-          this.memberQuery.update(resp.output.userMember);
+          let output: ToBackendGetProvidersOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
 
           this.providersQuery.update({
-            providers: resp.output.providers
+            providers: output.providers
           });
 
           return true;

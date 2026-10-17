@@ -15,13 +15,14 @@ import {
   PATH_TEAM,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
+import type { ToBackendGetUserGivensOutput } from '#common/types/backend/routes/users/get-user-givens/get-user-givens-output';
 import type { ToBackendGetUserGivensRequest } from '#common/types/backend/routes/users/get-user-givens/get-user-givens-request';
-import type { ToBackendGetUserGivensResponse } from '#common/types/backend/routes/users/get-user-givens/get-user-givens-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
@@ -89,6 +90,7 @@ export class ProjectMenuComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private uiQuery: UiQuery,
     private userQuery: UserQuery,
     private memberQuery: MemberQuery,
@@ -191,16 +193,17 @@ export class ProjectMenuComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendGetUserGivens',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetUserGivensResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
 
-          let user = resp.output.user;
+          let output: ToBackendGetUserGivensOutput = resp.output;
+
+          let user = output.user;
 
           this.userQuery.update(user);
           this.uiQuery.updatePart({ ...user.ui });
@@ -208,10 +211,11 @@ export class ProjectMenuComponent implements OnInit {
           this.myDialogService.showSelectedGivens({
             projectId: this.nav.projectId,
             userId: user.userId,
-            memberGivens: resp.output.memberGivens
+            memberGivens: output.memberGivens
           });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

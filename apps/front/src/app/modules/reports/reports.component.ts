@@ -25,11 +25,11 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { IRowNode } from 'ag-grid-community';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
-import { NgxSpinnerService } from 'ngx-spinner';
 import {
   combineLatest,
   concatMap,
   filter,
+  finalize,
   interval,
   of,
   Subscription,
@@ -59,11 +59,10 @@ import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
 import type { ToBackendSetFavoriteRequest } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-request';
-import type { ToBackendSetFavoriteResponse } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-response';
+import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
-import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
+import type { ToBackendGetReportOutput } from '#common/types/backend/routes/reports/get-report/get-report-output';
 import type { ToBackendGetReportRequest } from '#common/types/backend/routes/reports/get-report/get-report-request';
-import type { ToBackendGetReportResponse } from '#common/types/backend/routes/reports/get-report/get-report-response';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionTsUnit } from '#common/types/blockml/parts/fraction/fraction-ts-unit';
 import type { FractionType } from '#common/types/blockml/parts/fraction/fraction-type';
@@ -88,7 +87,9 @@ import { RepChartData, UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { StructReportResolver } from '#front/app/resolvers/struct-report.resolver';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { DataService } from '#front/app/services/data.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { ReportService } from '#front/app/services/report.service';
@@ -723,6 +724,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private reportsQuery: ReportsQuery,
@@ -736,7 +738,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private router: Router,
     private navQuery: NavQuery,
     private route: ActivatedRoute,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private uiService: UiService,
     private reportService: ReportService,
     private dataService: DataService,
@@ -814,19 +816,22 @@ export class ReportsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetReportResponse) => {
-          if (
-            resp.type === 'Success' &&
-            this.report.reportId === resp.output.report.reportId
-          ) {
-            this.memberQuery.update(resp.output.userMember);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            this.structQuery.update(resp.output.struct);
+          let output: ToBackendGetReportOutput = resp.output;
+
+          if (this.report.reportId === output.report.reportId) {
+            this.memberQuery.update(output.userMember);
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
-            this.reportQuery.update(resp.output.report);
+            this.reportQuery.update(output.report);
           }
         })
       );
@@ -836,7 +841,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.stopCheckRunning();
 
     this.isRunButtonPressed = true;
-    this.spinner.show(this.metricsRunButtonSpinnerName);
     this.cd.detectChanges();
 
     let nav = this.navQuery.getValue();
@@ -857,9 +861,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRunQueriesResponse) => {
+        tap(resp => {
           if (resp.type === 'Success') {
-            let { runningQueries } = resp.output;
+            let output: ToBackendRunQueriesOutput = resp.output;
+
+            let { runningQueries } = output;
             if (
               runningQueries
                 .map(y => y.queryId)
@@ -889,12 +895,19 @@ export class ReportsComponent implements OnInit, OnDestroy {
               this.getRepObservable().pipe(take(1)).subscribe();
             }
           }
-          this.spinner.hide(this.metricsRunButtonSpinnerName);
-          this.isRunButtonPressed = false;
+
           this.cd.detectChanges();
         }),
         tap(() => this.startCheckRunning()),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.isRunButtonPressed = false;
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({
+          name: this.metricsRunButtonSpinnerName
+        })
       )
       .subscribe();
   }
@@ -990,7 +1003,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.structRepResolver
       .resolveRoute({
         route: this.route.children[0].snapshot,
-        showSpinner: true,
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
         timeRangeFractionBrick: uiState.timeRangeFraction.brick,
@@ -1013,7 +1025,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
           this.location.go(url);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -1220,20 +1233,20 @@ export class ReportsComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.type === 'Success';
-
-          if (isOk === false) {
-            this.reportsQuery.updatePart({
-              reportSpaceNodes: previousReportSpaceNodes
-            });
-
-            this.updateFiltered({
-              reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
-            });
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Failure') {
+            return;
           }
+
+          this.reportsQuery.updatePart({
+            reportSpaceNodes: previousReportSpaceNodes
+          });
+
+          this.updateFiltered({
+            reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
+          });
+
+          this.cd.detectChanges();
         }),
         take(1)
       )

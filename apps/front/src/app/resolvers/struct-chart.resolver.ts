@@ -15,8 +15,8 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
-import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
@@ -65,7 +65,6 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
 
     return this.resolveRoute({
       route: route,
-      showSpinner: false,
       timezone: timezone
     });
   }
@@ -73,11 +72,10 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
   resolveRoute(item: {
     chartId?: string;
     route: ActivatedRouteSnapshot;
-    showSpinner: boolean;
     timezone: string;
     skipCache?: boolean;
   }): Observable<boolean> {
-    let { chartId, route, showSpinner, timezone, skipCache } = item;
+    let { chartId, route, timezone, skipCache } = item;
 
     let nav: NavState;
     this.navQuery
@@ -133,14 +131,15 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     return this.apiService
       .req({
         route: 'api/ToBackendGetChart',
-        payload: payload,
-        showSpinner: showSpinner
+        payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetChartResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.chartQuery.update(resp.output.chart);
+            let output: ToBackendGetChartOutput = resp.output;
+
+            this.memberQuery.update(output.userMember);
+            this.chartQuery.update(output.chart);
 
             return true;
           } else if (

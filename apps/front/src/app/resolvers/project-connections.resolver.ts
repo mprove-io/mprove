@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import type { ToBackendGetConnectionsOutput } from '#common/types/backend/routes/connections/get-connections/get-connections-output';
 import type { ToBackendGetConnectionsRequest } from '#common/types/backend/routes/connections/get-connections/get-connections-request';
-import type { ToBackendGetConnectionsResponse } from '#common/types/backend/routes/connections/get-connections/get-connections-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { ConnectionsQuery } from '../queries/connections.query';
 import { MemberQuery } from '../queries/member.query';
@@ -64,12 +64,14 @@ export class ProjectConnectionsResolver
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetConnectionsResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetConnectionsOutput = resp.output;
+
+            this.memberQuery.update(output.userMember);
 
             this.connectionsQuery.update({
-              connections: resp.output.connections
+              connections: output.connections
             });
 
             return true;

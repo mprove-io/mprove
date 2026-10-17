@@ -14,9 +14,8 @@ import {
   PATH_ORG,
   PATH_PROJECT
 } from '#common/constants/top';
-
+import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
-import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelQuery } from '../queries/model.query';
@@ -103,18 +102,20 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetModelResponse) => {
+        map(resp => {
           if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
+            let output: ToBackendGetModelOutput = resp.output;
 
-            this.structQuery.update(resp.output.struct);
+            this.memberQuery.update(output.userMember);
+
+            this.structQuery.update(output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+              needValidate: output.needValidate
             });
 
-            this.modelQuery.update(resp.output.model);
+            this.modelQuery.update(output.model);
 
-            if (resp.output.model.hasAccess === true || isChartRoute === true) {
+            if (output.model.hasAccess === true || isChartRoute === true) {
               return true;
             } else {
               this.navigateService.navigateToModels();

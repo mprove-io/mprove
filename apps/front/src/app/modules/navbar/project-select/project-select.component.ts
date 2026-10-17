@@ -22,6 +22,7 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
+import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';
 import type { ToBackendGetProjectsListRequest } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-request';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -105,12 +106,18 @@ export class ProjectSelectComponent {
     };
 
     this.apiService
-      .reqOutput({
+      .req({
         route: 'api/ToBackendGetProjectsList',
         payload: payload
       })
       .pipe(
-        tap(output => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendGetProjectsListOutput = resp.output;
+
           this.projectsList = output.projectsList;
           this.projectsListLength = output.projectsList.length;
         }),

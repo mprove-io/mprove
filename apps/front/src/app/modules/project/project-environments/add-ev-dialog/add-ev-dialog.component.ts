@@ -15,12 +15,13 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendCreateEnvVarOutput } from '#common/types/backend/routes/envs/create-env-var/create-env-var-output';
 import type { ToBackendCreateEnvVarRequest } from '#common/types/backend/routes/envs/create-env-var/create-env-var-request';
-import type { ToBackendCreateEnvVarResponse } from '#common/types/backend/routes/envs/create-env-var/create-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddEvDialogData {
@@ -50,6 +51,7 @@ export class AddEvDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddEvDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -92,19 +94,24 @@ export class AddEvDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateEnvVar',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateEnvVarResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.environmentsQuery.update({
-              environments: resp.output.envs
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateEnvVarOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+
+          this.environmentsQuery.update({
+            environments: output.envs
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

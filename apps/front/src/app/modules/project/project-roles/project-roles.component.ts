@@ -5,13 +5,14 @@ import { PROJECT_ROLES_PAGE_TITLE } from '#common/constants/page-titles';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendDeleteRoleGivenOutput } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-output';
 import type { ToBackendDeleteRoleGivenRequest } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-request';
-import type { ToBackendDeleteRoleGivenResponse } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-response';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
@@ -59,6 +60,7 @@ export class ProjectRolesComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private cd: ChangeDetectorRef,
     private rolesQuery: RolesQuery,
     private givensQuery: GivensQuery,
@@ -114,17 +116,21 @@ export class ProjectRolesComponent implements OnInit {
     this.apiService
       .req({
         route: 'api/ToBackendDeleteRoleGiven',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteRoleGivenResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.rolesQuery.update({ roles: resp.output.roles });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendDeleteRoleGivenOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+          this.rolesQuery.update({ roles: output.roles });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

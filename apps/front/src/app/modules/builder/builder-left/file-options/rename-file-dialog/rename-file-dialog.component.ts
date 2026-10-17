@@ -16,15 +16,13 @@ import {
   Validators
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRenameCatalogNodeOutput } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-output';
 import type { ToBackendRenameCatalogNodeRequest } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
-import type { ToBackendRenameCatalogNodeResponse } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -32,6 +30,7 @@ import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
@@ -65,6 +64,7 @@ export class RenameFileDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<RenameFileDialogData>,
     private fb: FormBuilder,
     private repoQuery: RepoQuery,
@@ -73,7 +73,6 @@ export class RenameFileDialogComponent implements OnInit {
     private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private structQuery: StructQuery,
-    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -102,8 +101,6 @@ export class RenameFileDialogComponent implements OnInit {
     if (!this.renameFileForm.valid) {
       return;
     }
-
-    this.spinner.show(APP_SPINNER_NAME);
 
     this.ref.close();
 
@@ -145,46 +142,50 @@ export class RenameFileDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendRenameCatalogNode',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRenameCatalogNodeResponse) => {
-          if (resp.type === 'Success') {
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendRenameCatalogNodeOutput = resp.output;
+
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          if (isRenameSecondFile === true) {
+            let sfIdAr = this.ref.data.nodeId.split('/');
+            sfIdAr.pop();
+            sfIdAr.push(newName);
+            let newSecondFileNodeId = sfIdAr.join('/');
+            this.uiQuery.updatePart({
+              secondFileNodeId: newSecondFileNodeId
             });
+          }
 
-            if (isRenameSecondFile === true) {
-              let sfIdAr = this.ref.data.nodeId.split('/');
-              sfIdAr.pop();
-              sfIdAr.push(newName);
-              let newSecondFileNodeId = sfIdAr.join('/');
-              this.uiQuery.updatePart({
-                secondFileNodeId: newSecondFileNodeId
-              });
-            }
+          if (isNavigateNewFile === true) {
+            let fIdAr = this.ref.data.nodeId.split('/');
+            fIdAr.shift();
+            fIdAr.pop();
+            fIdAr.push(newName);
 
-            if (isNavigateNewFile === true) {
-              let fIdAr = this.ref.data.nodeId.split('/');
-              fIdAr.shift();
-              fIdAr.pop();
-              fIdAr.push(newName);
+            let filePath = fIdAr.join('/');
 
-              let filePath = fIdAr.join('/');
+            let fileId = encodeFilePath({ filePath: filePath });
 
-              let fileId = encodeFilePath({ filePath: filePath });
-
-              this.navigateService.navigateToFileLine({
-                builderLeft: 'Tree',
-                encodedFileId: fileId
-              });
-            }
+            this.navigateService.navigateToFileLine({
+              builderLeft: 'Tree',
+              encodedFileId: fileId
+            });
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

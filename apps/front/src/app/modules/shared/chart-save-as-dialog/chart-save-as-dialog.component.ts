@@ -2,7 +2,8 @@ import {
   ChangeDetectorRef,
   Component,
   HostListener,
-  OnInit,
+  type OnDestroy,
+  type OnInit,
   ViewChild
 } from '@angular/core';
 import {
@@ -15,7 +16,7 @@ import {
 } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
+import type { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import {
   TILE_DEFAULT_PLATE_HEIGHT,
@@ -23,11 +24,7 @@ import {
   TILE_DEFAULT_PLATE_X,
   TILE_DEFAULT_PLATE_Y
 } from '#common/constants/top';
-import {
-  APP_SPINNER_NAME,
-  EMPTY_SPACE,
-  EMPTY_SPACE_NAME
-} from '#common/constants/top-front';
+import { EMPTY_SPACE, EMPTY_SPACE_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -38,16 +35,15 @@ import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashbo
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Role } from '#common/types/backend/parts/role';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
+import type { ToBackendSaveCreateChartOutput } from '#common/types/backend/routes/charts/save-create-chart/save-create-chart-output';
 import type { ToBackendSaveCreateChartRequest } from '#common/types/backend/routes/charts/save-create-chart/save-create-chart-request';
-import type { ToBackendSaveCreateChartResponse } from '#common/types/backend/routes/charts/save-create-chart/save-create-chart-response';
+import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
-import type { ToBackendGetDashboardResponse } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-response';
+import type { ToBackendGetDashboardsOutput } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-output';
 import type { ToBackendGetDashboardsRequest } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-request';
-import type { ToBackendGetDashboardsResponse } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-response';
 import type { ToBackendSaveModifyDashboardRequest } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
-import type { ToBackendSaveModifyDashboardResponse } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
+import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Chart } from '#common/types/blockml/parts/chart/chart';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { Space } from '#common/types/blockml/parts/space';
@@ -64,6 +60,8 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface ChartSaveAsDialogData {
@@ -79,7 +77,9 @@ type SpaceOption = typeof EMPTY_SPACE;
   selector: 'm-chart-save-as-dialog',
   templateUrl: './chart-save-as-dialog.component.html'
 })
-export class ChartSaveAsDialogComponent implements OnInit {
+export class ChartSaveAsDialogComponent implements OnInit, OnDestroy {
+  private selectedDashboardSubscription: Subscription;
+
   @ViewChild('chartSaveAsDialogDashboardSelect', { static: false })
   chartSaveAsDialogDashboardSelectElement: NgSelectComponent;
 
@@ -148,6 +148,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   struct: StructState;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<ChartSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
@@ -157,7 +158,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private chartsQuery: ChartsQuery,
     private structQuery: StructQuery,
-    private spinner: NgxSpinnerService,
+    private localSpinnerService: LocalSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -259,41 +260,46 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(this.spinnerName);
-
     apiService
       .req({
         route: 'api/ToBackendGetDashboards',
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetDashboardsResponse) => {
-          if (resp.type === 'Success') {
-            this.dashboardUnits = [
-              ...resp.output.dashboardUnitDrafts,
-              ...makeSpaceUnits({
-                spaceNodes: resp.output.dashboardSpaceNodes
-              }).map(spaceUnit =>
-                spaceUnitToDashboardUnit({ spaceUnit: spaceUnit })
-              )
-            ].map(x => {
-              (x as any).disabled = !x.canEditOrDeleteDashboard;
-              return x;
-            });
-
-            this.makePath();
-
-            this.spinner.hide(this.spinnerName);
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
-        })
+
+          let output: ToBackendGetDashboardsOutput = resp.output;
+
+          this.dashboardUnits = [
+            ...output.dashboardUnitDrafts,
+            ...makeSpaceUnits({
+              spaceNodes: output.dashboardSpaceNodes
+            }).map(spaceUnit =>
+              spaceUnitToDashboardUnit({ spaceUnit: spaceUnit })
+            )
+          ].map(x => {
+            (x as any).disabled = !x.canEditOrDeleteDashboard;
+            return x;
+          });
+
+          this.makePath();
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.spinnerName })
       )
-      .toPromise();
+      .subscribe();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
     }, 0);
+  }
+
+  ngOnDestroy() {
+    this.selectedDashboardSubscription?.unsubscribe();
   }
 
   titleValidator(group: AbstractControl): ValidationErrors | null {
@@ -409,6 +415,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   setSelectedDashboard() {
+    this.selectedDashboardSubscription?.unsubscribe();
+
     if (
       isUndefined(this.selectedDashboardId) ||
       isUndefined(this.dashboardUnits)
@@ -423,8 +431,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(this.selectedDashboardSpinnerName);
-
     let selectedDashboardId = this.selectedDashboardId;
 
     let payload: ToBackendGetDashboardRequest['input'] = {
@@ -436,30 +442,37 @@ export class ChartSaveAsDialogComponent implements OnInit {
       timezone: 'UTC'
     };
 
-    apiService
+    this.selectedDashboardSubscription = apiService
       .req({
         route: 'api/ToBackendGetDashboard',
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetDashboardResponse) => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendGetDashboardOutput = resp.output;
+
           let isSelectedDashboard =
             selectedDashboardId === this.selectedDashboardId;
 
-          if (resp.type === 'Success' && isSelectedDashboard) {
-            this.selectedDashboard = resp.output.dashboard;
+          if (isSelectedDashboard) {
+            this.selectedDashboard = output.dashboard;
 
             this.selectedDashboardLoaded = true;
 
             this.titleForm.get('title').updateValueAndValidity();
 
-            this.spinner.hide(this.selectedDashboardSpinnerName);
-
             this.cd.detectChanges();
           }
+        }),
+        this.localSpinnerService.track({
+          name: this.selectedDashboardSpinnerName
         })
       )
-      .toPromise();
+      .subscribe();
   }
 
   makePath() {
@@ -484,8 +497,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   saveAsNewChart(item: { newTitle: string }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let { newTitle } = item;
     let nav = this.navQuery.getValue();
 
@@ -513,33 +524,34 @@ export class ChartSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendSaveCreateChartResponse) => {
-          if (resp.type === 'Success') {
-            let newChart = resp.output.chart;
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            if (isDefined(newChart)) {
-              this.chartsQuery.update({
-                chartUnitDrafts: resp.output.chartUnitDrafts,
-                chartSpaceNodes: resp.output.chartSpaceNodes
-              });
+          let output: ToBackendSaveCreateChartOutput = resp.output;
 
-              this.navigateService.navigateToChart({
-                modelId: newChart.modelId,
-                chartId: newChart.chartId
-              });
-            } else {
-              this.spinner.hide(this.spinnerName);
-            }
+          let newChart = output.chart;
+
+          if (isDefined(newChart)) {
+            this.chartsQuery.update({
+              chartUnitDrafts: output.chartUnitDrafts,
+              chartSpaceNodes: output.chartSpaceNodes
+            });
+
+            this.navigateService.navigateToChart({
+              modelId: newChart.modelId,
+              chartId: newChart.chartId
+            });
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
 
   async saveAsTile(item: { newTitle: string }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let { newTitle } = item;
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -582,14 +594,17 @@ export class ChartSaveAsDialogComponent implements OnInit {
         payload: payloadModifyDashboard
       })
       .pipe(
-        tap((resp: ToBackendSaveModifyDashboardResponse) => {
-          if (resp.type === 'Success') {
-            this.navigateService.navigateToDashboard({
-              dashboardId: this.selectedDashboardId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          this.navigateService.navigateToDashboard({
+            dashboardId: this.selectedDashboardId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -630,15 +645,19 @@ export class ChartSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.type === 'Success') {
-            let newSortedRoles = resp.output.roles.sort((a, b) =>
-              a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
-            );
-
-            this.roles = newSortedRoles;
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetRolesOutput = resp.output;
+
+          let newSortedRoles = output.roles.sort((a, b) =>
+            a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+          );
+
+          this.roles = newSortedRoles;
+          this.cd.detectChanges();
         }),
         take(1)
       )

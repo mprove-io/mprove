@@ -17,12 +17,13 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Member } from '#common/types/backend/parts/member';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendEditMemberOutput } from '#common/types/backend/routes/members/edit-member/edit-member-output';
 import type { ToBackendEditMemberRequest } from '#common/types/backend/routes/members/edit-member/edit-member-request';
-import type { ToBackendEditMemberResponse } from '#common/types/backend/routes/members/edit-member/edit-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface AddRoleDialogData {
   apiService: ApiService;
@@ -51,6 +52,7 @@ export class AddRoleDialogComponent implements OnInit {
   availableRoles: Role[] = [];
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddRoleDialogData>,
     private fb: FormBuilder,
     private teamQuery: TeamQuery,
@@ -97,23 +99,27 @@ export class AddRoleDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendEditMember',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.type === 'Success') {
-            let teamState = this.teamQuery.getValue();
-
-            teamState.members[this.ref.data.i] = resp.output.member;
-
-            this.teamQuery.update({
-              members: [...teamState.members],
-              total: teamState.total
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditMemberOutput = resp.output;
+
+          let teamState = this.teamQuery.getValue();
+
+          teamState.members[this.ref.data.i] = output.member;
+
+          this.teamQuery.update({
+            members: [...teamState.members],
+            total: teamState.total
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

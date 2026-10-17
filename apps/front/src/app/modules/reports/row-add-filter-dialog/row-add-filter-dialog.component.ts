@@ -18,13 +18,13 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { take, tap } from 'rxjs';
+import { finalize, take, tap } from 'rxjs';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
-import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { FractionControl } from '#common/types/blockml/parts/fraction/fraction-control';
 import type { FractionLogic } from '#common/types/blockml/parts/fraction/fraction-logic';
@@ -126,69 +126,73 @@ export class RowAddFilterDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetModelResponse) => {
-          if (resp.type === 'Success') {
-            let restrictedFilterFieldIds =
-              metric.modelType === 'Malloy'
-                ? [
-                    `${metric.timeFieldId}_year`,
-                    `${metric.timeFieldId}_quarter`,
-                    `${metric.timeFieldId}_month`,
-                    `${metric.timeFieldId}_week`,
-                    `${metric.timeFieldId}_day`,
-                    `${metric.timeFieldId}_hour`,
-                    `${metric.timeFieldId}_minute`,
-                    `${metric.timeFieldId}_second`,
-                    `${metric.timeFieldId}_ts`
-                  ]
-                : [
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'year' satisfies Timeframe}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'quarter' satisfies Timeframe}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'month' satisfies Timeframe}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'week' satisfies Timeframe}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'date' satisfies Timeframe}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'hour' satisfies Timeframe}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'minute' satisfies Timeframe}`,
-                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'time' satisfies Timeframe}`
-                  ];
-
-            this.sortedFieldsY = resp.output.model.fields
-              .filter(
-                (x: ModelField) =>
-                  x.hidden === false &&
-                  restrictedFilterFieldIds.indexOf(x.id) < 0
-              )
-              .map((x: ModelField) =>
-                Object.assign({}, x, {
-                  partLabel: isDefined(x.groupLabel)
-                    ? `${x.topLabel} ${x.groupLabel} ${x.label}`
-                    : `${x.topLabel} ${x.label}`
-                } as ModelFieldY)
-              )
-              .sort((a: ModelFieldY, b: ModelFieldY) =>
-                a.fieldClass !== 'dimension' && b.fieldClass === 'dimension'
-                  ? 1
-                  : a.fieldClass === 'dimension' && b.fieldClass !== 'dimension'
-                    ? -1
-                    : a.fieldClass !== 'filter' && b.fieldClass === 'filter'
-                      ? 1
-                      : a.fieldClass === 'filter' && b.fieldClass !== 'filter'
-                        ? -1
-                        : a.partLabel > b.partLabel
-                          ? 1
-                          : b.partLabel > a.partLabel
-                            ? -1
-                            : 0
-              );
-
-            this.model = resp.output.model;
-
-            this.modelLoading = false;
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetModelOutput = resp.output;
+
+          let restrictedFilterFieldIds =
+            metric.modelType === 'Malloy'
+              ? [
+                  `${metric.timeFieldId}_year`,
+                  `${metric.timeFieldId}_quarter`,
+                  `${metric.timeFieldId}_month`,
+                  `${metric.timeFieldId}_week`,
+                  `${metric.timeFieldId}_day`,
+                  `${metric.timeFieldId}_hour`,
+                  `${metric.timeFieldId}_minute`,
+                  `${metric.timeFieldId}_second`,
+                  `${metric.timeFieldId}_ts`
+                ]
+              : [
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'year' satisfies Timeframe}`,
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'quarter' satisfies Timeframe}`,
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'month' satisfies Timeframe}`,
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'week' satisfies Timeframe}`,
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'date' satisfies Timeframe}`,
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'hour' satisfies Timeframe}`,
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'minute' satisfies Timeframe}`,
+                  `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${'time' satisfies Timeframe}`
+                ];
+
+          this.sortedFieldsY = output.model.fields
+            .filter(
+              (x: ModelField) =>
+                x.hidden === false && restrictedFilterFieldIds.indexOf(x.id) < 0
+            )
+            .map((x: ModelField) =>
+              Object.assign({}, x, {
+                partLabel: isDefined(x.groupLabel)
+                  ? `${x.topLabel} ${x.groupLabel} ${x.label}`
+                  : `${x.topLabel} ${x.label}`
+              } as ModelFieldY)
+            )
+            .sort((a: ModelFieldY, b: ModelFieldY) =>
+              a.fieldClass !== 'dimension' && b.fieldClass === 'dimension'
+                ? 1
+                : a.fieldClass === 'dimension' && b.fieldClass !== 'dimension'
+                  ? -1
+                  : a.fieldClass !== 'filter' && b.fieldClass === 'filter'
+                    ? 1
+                    : a.fieldClass === 'filter' && b.fieldClass !== 'filter'
+                      ? -1
+                      : a.partLabel > b.partLabel
+                        ? 1
+                        : b.partLabel > a.partLabel
+                          ? -1
+                          : 0
+            );
+
+          this.model = output.model;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.modelLoading = false;
+
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }

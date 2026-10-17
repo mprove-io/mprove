@@ -9,10 +9,11 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-output';
 import type { ToBackendConfirmUserEmailRequest } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-request';
-import type { ToBackendConfirmUserEmailResponse } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 
@@ -27,6 +28,7 @@ export class ConfirmEmailComponent implements OnInit {
   emailVerificationToken: string;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private route: ActivatedRoute,
     private apiService: ApiService,
     private userQuery: UserQuery,
@@ -48,34 +50,36 @@ export class ConfirmEmailComponent implements OnInit {
       emailVerificationToken: this.emailVerificationToken
     };
 
-    setTimeout(() => {
-      this.apiService
-        .req({
-          route: 'api/ToBackendConfirmUserEmail',
-          payload: payload,
-          showSpinner: true
-        })
-        .pipe(
-          tap((resp: ToBackendConfirmUserEmailResponse) => {
-            if (resp.type === 'Success') {
-              let user = resp.output.user;
-              let token = resp.output.token;
+    this.apiService
+      .req({
+        route: 'api/ToBackendConfirmUserEmail',
+        payload: payload
+      })
+      .pipe(
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-              if (isDefined(user) && isDefined(token)) {
-                // first email verification
-                this.myDialogService.showEmailConfirmed();
-                this.userQuery.update(user);
-                localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
-                this.router.navigate([PATH_LOGIN_SUCCESS]);
-              } else {
-                // email was verified already
-                this.router.navigate([PATH_EMAIL_CONFIRMED]);
-              }
-            }
-          }),
-          take(1)
-        )
-        .subscribe();
-    }, 100); // timeout is to showSpinner after AppComponent previous NavigationEnd completed
+          let output: ToBackendConfirmUserEmailOutput = resp.output;
+
+          let user = output.user;
+          let token = output.token;
+
+          if (isDefined(user) && isDefined(token)) {
+            // first email verification
+            this.myDialogService.showEmailConfirmed();
+            this.userQuery.update(user);
+            localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
+            this.router.navigate([PATH_LOGIN_SUCCESS]);
+          } else {
+            // email was verified already
+            this.router.navigate([PATH_EMAIL_CONFIRMED]);
+          }
+        }),
+        take(1),
+        this.appSpinnerService.track()
+      )
+      .subscribe();
   }
 }

@@ -21,7 +21,14 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { from, interval, of, Subscription } from 'rxjs';
-import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
+import {
+  concatMap,
+  delay,
+  finalize,
+  startWith,
+  take,
+  tap
+} from 'rxjs/operators';
 import { EMPTY_CHART_ID, TRIPLE_UNDERSCORE } from '#common/constants/top';
 import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -30,16 +37,16 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
+import type { ToBackendDuplicateMconfigAndQueryOutput } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-output';
 import type { ToBackendDuplicateMconfigAndQueryRequest } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-request';
-import type { ToBackendDuplicateMconfigAndQueryResponse } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-response';
+import type { ToBackendGroupMetricByDimensionOutput } from '#common/types/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-output';
 import type { ToBackendGroupMetricByDimensionRequest } from '#common/types/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-request';
-import type { ToBackendGroupMetricByDimensionResponse } from '#common/types/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-response';
+import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
 import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
-import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
+import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
 import type { ToBackendGetQueryRequest } from '#common/types/backend/routes/queries/get-query/get-query-request';
-import type { ToBackendGetQueryResponse } from '#common/types/backend/routes/queries/get-query/get-query-response';
+import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
-import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelFieldY } from '#common/types/blockml/parts/model/model-field-y';
@@ -49,6 +56,7 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ChartService } from '#front/app/services/chart.service';
 import { DataService, QDataRow } from '#front/app/services/data.service';
 import { NavigateService } from '#front/app/services/navigate.service';
@@ -131,6 +139,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   runButtonTimerSubscription: Subscription;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<ChartDialogData>,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -181,33 +190,39 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       apiService
         .req({
           route: 'api/ToBackendDuplicateMconfigAndQuery',
-          payload: payload,
-          showSpinner: true
+          payload: payload
         })
         .pipe(
-          tap((resp: ToBackendDuplicateMconfigAndQueryResponse) => {
-            if (resp.type === 'Success') {
-              let { mconfig, query } = resp.output;
-
-              this.mconfig = mconfig;
-              this.emptyGroupMconfig = makeCopy(mconfig);
-              this.query = query;
-
-              this.qData =
-                this.mconfig.queryId === this.query.queryId
-                  ? this.dataService.makeQData({
-                      query: this.query,
-                      mconfig: this.mconfig
-                    })
-                  : [];
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              return;
             }
 
-            this.isShowInit = false;
-            this.cd.detectChanges();
+            let output: ToBackendDuplicateMconfigAndQueryOutput = resp.output;
+
+            let { mconfig, query } = output;
+
+            this.mconfig = mconfig;
+            this.emptyGroupMconfig = makeCopy(mconfig);
+            this.query = query;
+
+            this.qData =
+              this.mconfig.queryId === this.query.queryId
+                ? this.dataService.makeQData({
+                    query: this.query,
+                    mconfig: this.mconfig
+                  })
+                : [];
 
             this.startCheckRunning();
           }),
-          take(1)
+          take(1),
+          tap(() => {
+            this.isShowInit = false;
+
+            this.cd.detectChanges();
+          }),
+          this.appSpinnerService.track()
         )
         .subscribe();
     } else {
@@ -249,20 +264,24 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                 payload: payload
               })
               .pipe(
-                tap((resp: ToBackendGetQueryResponse) => {
-                  if (resp.type === 'Success') {
-                    this.query = resp.output.query;
-
-                    this.qData =
-                      this.mconfig.queryId === this.query.queryId
-                        ? this.dataService.makeQData({
-                            query: this.query,
-                            mconfig: this.mconfig
-                          })
-                        : [];
-
-                    this.cd.detectChanges();
+                tap(resp => {
+                  if (resp.type !== 'Success') {
+                    return;
                   }
+
+                  let output: ToBackendGetQueryOutput = resp.output;
+
+                  this.query = output.query;
+
+                  this.qData =
+                    this.mconfig.queryId === this.query.queryId
+                      ? this.dataService.makeQData({
+                          query: this.query,
+                          mconfig: this.mconfig
+                        })
+                      : [];
+
+                  this.cd.detectChanges();
                 })
               );
           } else {
@@ -359,17 +378,21 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.type === 'Success') {
-            let { runningQueries } = resp.output;
-
-            this.query = Object.assign(runningQueries[0], {
-              sql: this.query.sql,
-              data: this.query.data
-            });
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendRunQueriesOutput = resp.output;
+
+          let { runningQueries } = output;
+
+          this.query = Object.assign(runningQueries[0], {
+            sql: this.query.sql,
+            data: this.query.data
+          });
+
+          this.cd.detectChanges();
         }),
         take(1)
       )
@@ -463,41 +486,46 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetModelResponse) => {
-          if (resp.type === 'Success') {
-            this.dimensionsPlusEmpty = [
-              emptyField,
-              ...resp.output.model.fields
-                .filter(
-                  x =>
-                    x.result !== 'ts' &&
-                    x.fieldClass === 'dimension' &&
-                    restrictedFilterFieldIds.indexOf(x.id) < 0
-                )
-                .map(x =>
-                  Object.assign({}, x, {
-                    partLabel: isDefined(x.groupLabel)
-                      ? `${x.topLabel} ${x.groupLabel} ${x.label}`
-                      : `${x.topLabel} ${x.label}`
-                  } as ModelFieldY)
-                )
-                .sort((a, b) =>
-                  a.partLabel > b.partLabel
-                    ? 1
-                    : b.partLabel > a.partLabel
-                      ? -1
-                      : 0
-                )
-            ];
-
-            this.model = resp.output.model;
-
-            this.fieldsListLoading = false;
-
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendGetModelOutput = resp.output;
+
+          this.dimensionsPlusEmpty = [
+            emptyField,
+            ...output.model.fields
+              .filter(
+                x =>
+                  x.result !== 'ts' &&
+                  x.fieldClass === 'dimension' &&
+                  restrictedFilterFieldIds.indexOf(x.id) < 0
+              )
+              .map(x =>
+                Object.assign({}, x, {
+                  partLabel: isDefined(x.groupLabel)
+                    ? `${x.topLabel} ${x.groupLabel} ${x.label}`
+                    : `${x.topLabel} ${x.label}`
+                } as ModelFieldY)
+              )
+              .sort((a, b) =>
+                a.partLabel > b.partLabel
+                  ? 1
+                  : b.partLabel > a.partLabel
+                    ? -1
+                    : 0
+              )
+          ];
+
+          this.model = output.model;
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.fieldsListLoading = false;
+
+          this.cd.detectChanges();
+        })
       )
       .subscribe();
   }
@@ -530,29 +558,33 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
           payload: payload
         })
         .pipe(
-          tap((resp: ToBackendGroupMetricByDimensionResponse) => {
-            if (resp.type === 'Success') {
-              let { mconfig, query } = resp.output;
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              return;
+            }
 
-              this.mconfig = this.setGroupMetricChartType({
-                mconfig: mconfig,
-                newChartType: this.groupMetricChartType
-              });
-              this.query = query;
+            let output: ToBackendGroupMetricByDimensionOutput = resp.output;
 
-              this.qData =
-                this.mconfig.queryId === this.query.queryId
-                  ? this.dataService.makeQData({
-                      query: this.query,
-                      mconfig: this.mconfig
-                    })
-                  : [];
+            let { mconfig, query } = output;
 
-              this.cd.detectChanges();
+            this.mconfig = this.setGroupMetricChartType({
+              mconfig: mconfig,
+              newChartType: this.groupMetricChartType
+            });
+            this.query = query;
 
-              if (this.query.status !== 'Completed') {
-                this.run();
-              }
+            this.qData =
+              this.mconfig.queryId === this.query.queryId
+                ? this.dataService.makeQData({
+                    query: this.query,
+                    mconfig: this.mconfig
+                  })
+                : [];
+
+            this.cd.detectChanges();
+
+            if (this.query.status !== 'Completed') {
+              this.run();
             }
           }),
           take(1)
@@ -581,21 +613,25 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
           payload: payload
         })
         .pipe(
-          tap((resp: ToBackendGetQueryResponse) => {
-            if (resp.type === 'Success') {
-              this.mconfig = newMconfig;
-              this.query = resp.output.query;
-
-              this.qData =
-                this.mconfig.queryId === this.query.queryId
-                  ? this.dataService.makeQData({
-                      query: this.query,
-                      mconfig: this.mconfig
-                    })
-                  : [];
-
-              this.cd.detectChanges();
+          tap(resp => {
+            if (resp.type !== 'Success') {
+              return;
             }
+
+            let output: ToBackendGetQueryOutput = resp.output;
+
+            this.mconfig = newMconfig;
+            this.query = output.query;
+
+            this.qData =
+              this.mconfig.queryId === this.query.queryId
+                ? this.dataService.makeQData({
+                    query: this.query,
+                    mconfig: this.mconfig
+                  })
+                : [];
+
+            this.cd.detectChanges();
           }),
           take(1)
         )

@@ -18,11 +18,12 @@ import { take, tap } from 'rxjs/operators';
 import { PROVIDER_TYPE_NAME_BY_TYPE } from '#common/constants/providers';
 import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/parts/provider/options/provider-options-openai-compatible';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/providers/edit-provider/edit-provider-output';
 import type { ToBackendEditProviderRequest } from '#common/types/backend/routes/providers/edit-provider/edit-provider-request';
-import type { ToBackendEditProviderResponse } from '#common/types/backend/routes/providers/edit-provider/edit-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 
@@ -61,6 +62,7 @@ export class EditProviderDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditProviderDialogData>,
     private fb: FormBuilder,
     private providersQuery: ProvidersQuery
@@ -225,16 +227,17 @@ export class EditProviderDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendEditProvider',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditProviderResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.output.provider;
+          let output: ToBackendEditProviderOutput = resp.output;
+
+          let provider: Provider = output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()
@@ -246,7 +249,8 @@ export class EditProviderDialogComponent implements OnInit {
             providers: providers
           });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

@@ -18,12 +18,13 @@ import type { Given } from '#common/types/backend/parts/given/given';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
+import type { ToBackendEditRoleGivenOutput } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-output';
 import type { ToBackendEditRoleGivenRequest } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-request';
-import type { ToBackendEditRoleGivenResponse } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface EditRoleGivenDialogData {
@@ -56,6 +57,7 @@ export class EditRoleGivenDialogComponent implements OnInit {
   givenIsMultiple = false;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditRoleGivenDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -108,17 +110,21 @@ export class EditRoleGivenDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendEditRoleGiven',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditRoleGivenResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.rolesQuery.update({ roles: resp.output.roles });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditRoleGivenOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+          this.rolesQuery.update({ roles: output.roles });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

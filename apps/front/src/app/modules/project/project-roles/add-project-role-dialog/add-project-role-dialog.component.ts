@@ -16,12 +16,13 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import type { ToBackendCreateRoleOutput } from '#common/types/backend/routes/roles/create-role/create-role-output';
 import type { ToBackendCreateRoleRequest } from '#common/types/backend/routes/roles/create-role/create-role-request';
-import type { ToBackendCreateRoleResponse } from '#common/types/backend/routes/roles/create-role/create-role-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddProjectRoleDialogData {
@@ -51,6 +52,7 @@ export class AddProjectRoleDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<AddProjectRoleDialogData>,
     private fb: FormBuilder,
     private memberQuery: MemberQuery,
@@ -90,17 +92,21 @@ export class AddProjectRoleDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendCreateRole',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateRoleResponse) => {
-          if (resp.type === 'Success') {
-            this.memberQuery.update(resp.output.userMember);
-            this.rolesQuery.update({ roles: resp.output.roles });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateRoleOutput = resp.output;
+
+          this.memberQuery.update(output.userMember);
+          this.rolesQuery.update({ roles: output.roles });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

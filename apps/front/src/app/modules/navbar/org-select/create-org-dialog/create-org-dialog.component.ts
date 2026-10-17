@@ -16,7 +16,6 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
   PATH_ACCOUNT,
@@ -24,16 +23,13 @@ import {
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import {
-  APP_SPINNER_NAME,
-  LOCAL_STORAGE_PROJECT_ID
-} from '#common/constants/top-front';
-
+import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
+import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs/create-org/create-org-output';
 import type { ToBackendCreateOrgRequest } from '#common/types/backend/routes/orgs/create-org/create-org-request';
-import type { ToBackendCreateOrgResponse } from '#common/types/backend/routes/orgs/create-org/create-org-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface CreateOrgDialogData {
   apiService: ApiService;
@@ -59,9 +55,9 @@ export class CreateOrgDialogComponent implements OnInit {
   }>;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<CreateOrgDialogData>,
     private fb: FormBuilder,
-    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private router: Router
   ) {}
@@ -88,8 +84,6 @@ export class CreateOrgDialogComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     this.ref.close();
 
     let payload: ToBackendCreateOrgRequest['input'] = {
@@ -104,29 +98,30 @@ export class CreateOrgDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateOrgResponse) => {
-          if (resp.type === 'Success') {
-            this.router.navigate([
-              PATH_ORG,
-              resp.output.org.orgId,
-              PATH_ACCOUNT
-            ]);
-
-            this.navQuery.updatePart({
-              projectId: undefined,
-              projectName: undefined,
-              projectDefaultBranch: undefined,
-              repoId: PROD_REPO_ID,
-              repoType: 'production',
-              branchId: undefined,
-              envId: PROJECT_ENV_PROD,
-              needValidate: false
-            });
-
-            localStorage.removeItem(LOCAL_STORAGE_PROJECT_ID);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateOrgOutput = resp.output;
+
+          this.router.navigate([PATH_ORG, output.org.orgId, PATH_ACCOUNT]);
+
+          this.navQuery.updatePart({
+            projectId: undefined,
+            projectName: undefined,
+            projectDefaultBranch: undefined,
+            repoId: PROD_REPO_ID,
+            repoType: 'production',
+            branchId: undefined,
+            envId: PROJECT_ENV_PROD,
+            needValidate: false
+          });
+
+          localStorage.removeItem(LOCAL_STORAGE_PROJECT_ID);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

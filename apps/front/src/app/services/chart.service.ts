@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
+import type { ToBackendCreateDraftChartOutput } from '#common/types/backend/routes/charts/create-draft-chart/create-draft-chart-output';
 import type { ToBackendCreateDraftChartRequest } from '#common/types/backend/routes/charts/create-draft-chart/create-draft-chart-request';
-import type { ToBackendCreateDraftChartResponse } from '#common/types/backend/routes/charts/create-draft-chart/create-draft-chart-response';
+import type { ToBackendDeleteDraftChartsOutput } from '#common/types/backend/routes/charts/delete-draft-charts/delete-draft-charts-output';
 import type { ToBackendDeleteDraftChartsRequest } from '#common/types/backend/routes/charts/delete-draft-charts/delete-draft-charts-request';
-import type { ToBackendDeleteDraftChartsResponse } from '#common/types/backend/routes/charts/delete-draft-charts/delete-draft-charts-response';
+import type { ToBackendEditDraftChartOutput } from '#common/types/backend/routes/charts/edit-draft-chart/edit-draft-chart-output';
 import type { ToBackendEditDraftChartRequest } from '#common/types/backend/routes/charts/edit-draft-chart/edit-draft-chart-request';
-import type { ToBackendEditDraftChartResponse } from '#common/types/backend/routes/charts/edit-draft-chart/edit-draft-chart-response';
 import { ChartQuery } from '../queries/chart.query';
 import { ChartsQuery } from '../queries/charts.query';
 import { ModelQuery } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
+import { AppSpinnerService } from './app-spinner.service';
 import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
@@ -29,8 +28,8 @@ export class ChartService {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private apiService: ApiService,
-    private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private chartsQuery: ChartsQuery,
@@ -83,8 +82,6 @@ export class ChartService {
     cellMetricsEndDateMs: number;
     queryOperation: QueryOperation;
   }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let {
       mconfig,
       isKeepQueryId,
@@ -111,24 +108,29 @@ export class ChartService {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateDraftChartResponse) => {
-          if (resp.type === 'Success') {
-            let chart = resp.output.chart;
-
-            let chartsState = this.chartsQuery.getValue();
-
-            this.chartsQuery.update({
-              chartUnitDrafts: resp.output.chartUnitDrafts,
-              chartSpaceNodes: chartsState.chartSpaceNodes
-            });
-
-            this.navigateService.navigateToChart({
-              modelId: chart.modelId,
-              chartId: chart.chartId
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendCreateDraftChartOutput = resp.output;
+
+          let chart = output.chart;
+
+          let chartsState = this.chartsQuery.getValue();
+
+          this.chartsQuery.update({
+            chartUnitDrafts: output.chartUnitDrafts,
+            chartSpaceNodes: chartsState.chartSpaceNodes
+          });
+
+          this.navigateService.navigateToChart({
+            modelId: chart.modelId,
+            chartId: chart.chartId
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -138,8 +140,6 @@ export class ChartService {
     mconfig: MconfigX;
     queryOperation: QueryOperation;
   }) {
-    this.spinner.show(APP_SPINNER_NAME);
-
     let { chartId, mconfig, queryOperation } = item;
 
     let payload: ToBackendEditDraftChartRequest['input'] = {
@@ -158,23 +158,26 @@ export class ChartService {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditDraftChartResponse) => {
-          this.spinner.hide(APP_SPINNER_NAME);
-
-          if (resp.type === 'Success') {
-            let chart = resp.output.chart;
-
-            let chartsState = this.chartsQuery.getValue();
-
-            this.chartQuery.update(chart);
-
-            this.chartsQuery.update({
-              chartUnitDrafts: resp.output.chartUnitDrafts,
-              chartSpaceNodes: chartsState.chartSpaceNodes
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditDraftChartOutput = resp.output;
+
+          let chart = output.chart;
+
+          let chartsState = this.chartsQuery.getValue();
+
+          this.chartQuery.update(chart);
+
+          this.chartsQuery.update({
+            chartUnitDrafts: output.chartUnitDrafts,
+            chartSpaceNodes: chartsState.chartSpaceNodes
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -193,36 +196,40 @@ export class ChartService {
     this.apiService
       .req({
         route: 'api/ToBackendDeleteDraftCharts',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteDraftChartsResponse) => {
-          if (resp.type === 'Success') {
-            let chartsState = this.chartsQuery.getValue();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            this.chartsQuery.update({
-              chartUnitDrafts: resp.output.chartUnitDrafts,
-              chartSpaceNodes: chartsState.chartSpaceNodes
-            });
+          let output: ToBackendDeleteDraftChartsOutput = resp.output;
 
-            let chart = this.chartQuery.getValue();
+          let chartsState = this.chartsQuery.getValue();
 
-            if (chartIds.indexOf(chart.chartId) > -1) {
-              let model = this.modelQuery.getValue();
+          this.chartsQuery.update({
+            chartUnitDrafts: output.chartUnitDrafts,
+            chartSpaceNodes: chartsState.chartSpaceNodes
+          });
 
-              if (isDefined(model.modelId)) {
-                this.navigateService.navigateToChart({
-                  modelId: model.modelId,
-                  chartId: EMPTY_CHART_ID
-                });
-              } else {
-                this.navigateService.navigateToModels();
-              }
+          let chart = this.chartQuery.getValue();
+
+          if (chartIds.indexOf(chart.chartId) > -1) {
+            let model = this.modelQuery.getValue();
+
+            if (isDefined(model.modelId)) {
+              this.navigateService.navigateToChart({
+                modelId: model.modelId,
+                chartId: EMPTY_CHART_ID
+              });
+            } else {
+              this.navigateService.navigateToModels();
             }
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

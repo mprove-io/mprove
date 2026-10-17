@@ -26,13 +26,14 @@ import type { ConnectionType } from '#common/types/backend/parts/connection-part
 import type { DatabricksAuthType } from '#common/types/backend/parts/connection-parts/databricks-auth-type';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { ToBackendEditConnectionOutput } from '#common/types/backend/routes/connections/edit-connection/edit-connection-output';
 import type { ToBackendEditConnectionRequest } from '#common/types/backend/routes/connections/edit-connection/edit-connection-request';
-import type { ToBackendEditConnectionResponse } from '#common/types/backend/routes/connections/edit-connection/edit-connection-response';
+import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes/connections/test-connection/test-connection-output';
 import type { ToBackendTestConnectionRequest } from '#common/types/backend/routes/connections/test-connection/test-connection-request';
-import type { ToBackendTestConnectionResponse } from '#common/types/backend/routes/connections/test-connection/test-connection-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { ValidationService } from '#front/app/services/validation.service';
 import type { KeyValueFormControls } from '#front/app/types/forms/key-value-form-controls';
 import type { ScopeFormControls } from '#front/app/types/forms/scope-form-controls';
@@ -165,6 +166,7 @@ export class EditConnectionDialogComponent implements OnInit {
   testInternalHostResult: TestConnectionResult;
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<EditConnectionDialogData>,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -909,17 +911,21 @@ export class EditConnectionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendTestConnection',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.type === 'Success') {
-            this.testConnectionResult = resp.output.testConnectionResult;
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendTestConnectionOutput = resp.output;
+
+          this.testConnectionResult = output.testConnectionResult;
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -947,17 +953,21 @@ export class EditConnectionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendTestConnection',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.type === 'Success') {
-            this.testInternalHostResult = resp.output.testConnectionResult;
-            this.cd.detectChanges();
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendTestConnectionOutput = resp.output;
+
+          this.testInternalHostResult = output.testConnectionResult;
+          this.cd.detectChanges();
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
@@ -983,38 +993,42 @@ export class EditConnectionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendEditConnection',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendEditConnectionResponse) => {
-          if (resp.type === 'Success') {
-            let newConnection = resp.output.connection;
-
-            let connections = this.connectionsQuery.getValue().connections;
-
-            let newSortedConnections = [
-              newConnection,
-              ...connections.filter(
-                x =>
-                  x.projectId !== newConnection.projectId ||
-                  x.connectionId !== newConnection.connectionId ||
-                  x.envId !== newConnection.envId
-              )
-            ].sort((a, b) =>
-              a.connectionId > b.connectionId
-                ? 1
-                : b.connectionId > a.connectionId
-                  ? -1
-                  : 0
-            );
-
-            this.connectionsQuery.update({
-              connections: newSortedConnections
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          let output: ToBackendEditConnectionOutput = resp.output;
+
+          let newConnection = output.connection;
+
+          let connections = this.connectionsQuery.getValue().connections;
+
+          let newSortedConnections = [
+            newConnection,
+            ...connections.filter(
+              x =>
+                x.projectId !== newConnection.projectId ||
+                x.connectionId !== newConnection.connectionId ||
+                x.envId !== newConnection.envId
+            )
+          ].sort((a, b) =>
+            a.connectionId > b.connectionId
+              ? 1
+              : b.connectionId > a.connectionId
+                ? -1
+                : 0
+          );
+
+          this.connectionsQuery.update({
+            connections: newSortedConnections
+          });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

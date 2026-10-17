@@ -9,10 +9,11 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { Provider } from '#common/types/backend/parts/provider/provider';
+import type { ToBackendDeleteLlmModelOutput } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-output';
 import type { ToBackendDeleteLlmModelRequest } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
-import type { ToBackendDeleteLlmModelResponse } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 
 export interface DeleteLlmModelDialogData {
   apiService: ApiService;
@@ -34,6 +35,7 @@ export class DeleteLlmModelDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteLlmModelDialogData>,
     private providersQuery: ProvidersQuery
   ) {}
@@ -58,16 +60,17 @@ export class DeleteLlmModelDialogComponent implements OnInit {
     this.ref.data.apiService
       .req({
         route: 'api/ToBackendDeleteLlmModel',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteLlmModelResponse) => {
+        tap(resp => {
           if (resp.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.output.provider;
+          let output: ToBackendDeleteLlmModelOutput = resp.output;
+
+          let provider: Provider = output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()
@@ -79,7 +82,8 @@ export class DeleteLlmModelDialogComponent implements OnInit {
             providers: providers
           });
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

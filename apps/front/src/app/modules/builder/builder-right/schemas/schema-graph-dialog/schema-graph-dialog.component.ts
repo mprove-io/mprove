@@ -10,13 +10,14 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { Edge, Node, Vflow, VflowComponent } from 'ngx-vflow';
-import { map, take } from 'rxjs/operators';
+import { delay, finalize, take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
-import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import { ApiService } from '#front/app/services/api.service';
+import { LocalSpinnerService } from '#front/app/services/local-spinner.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import {
   buildAllTablesGraph,
@@ -111,7 +112,7 @@ export class SchemaGraphDialogComponent implements OnInit {
     public ref: DialogRef<SchemaGraphDialogData>,
     private apiService: ApiService,
     private cd: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private localSpinnerService: LocalSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -656,7 +657,6 @@ export class SchemaGraphDialogComponent implements OnInit {
     this.sampleColumnNames = [];
     this.sampleRows = [];
     this.sampleErrorMessage = undefined;
-    this.spinner.show(this.sampleSpinnerName);
     this.cd.detectChanges();
 
     this.apiService
@@ -672,27 +672,29 @@ export class SchemaGraphDialogComponent implements OnInit {
         }
       })
       .pipe(
-        map((resp: ToBackendGetConnectionSampleResponse) => {
-          setTimeout(() => {
-            if (
-              resp.type === 'Success' &&
-              isDefined(resp.output.errorMessage)
-            ) {
-              this.sampleErrorMessage = resp.output.errorMessage;
-            } else if (resp.type === 'Success') {
-              this.sampleColumnNames = resp.output.columnNames;
-              this.sampleRows = resp.output.rows;
-              this.sampleErrorMessage = undefined;
-            } else {
-              this.sampleErrorMessage = 'Failed to fetch sample data';
-            }
+        delay(0),
+        tap(resp => {
+          if (resp.type === 'Success') {
+            let output: ToBackendGetConnectionSampleOutput = resp.output;
 
-            this.sampleIsLoading = false;
-            this.spinner.hide(this.sampleSpinnerName);
-            this.cd.detectChanges();
-          }, 0);
+            if (isDefined(output.errorMessage)) {
+              this.sampleErrorMessage = output.errorMessage;
+            } else {
+              this.sampleColumnNames = output.columnNames;
+              this.sampleRows = output.rows;
+              this.sampleErrorMessage = undefined;
+            }
+          } else {
+            this.sampleErrorMessage = 'Failed to fetch sample data';
+          }
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.sampleIsLoading = false;
+
+          this.cd.detectChanges();
+        }),
+        this.localSpinnerService.track({ name: this.sampleSpinnerName })
       )
       .subscribe();
   }

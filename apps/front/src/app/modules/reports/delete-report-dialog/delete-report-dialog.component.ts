@@ -6,16 +6,15 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
+import type { ToBackendDeleteReportOutput } from '#common/types/backend/routes/reports/delete-report/delete-report-output';
 import type { ToBackendDeleteReportRequest } from '#common/types/backend/routes/reports/delete-report/delete-report-request';
-import type { ToBackendDeleteReportResponse } from '#common/types/backend/routes/reports/delete-report/delete-report-response';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
 
@@ -27,7 +26,6 @@ export interface DeleteReportDialogData {
   branchId: string;
   envId: string;
   repoType: RepoType;
-  isStartSpinnerUntilNavEnd: boolean;
 }
 
 @Component({
@@ -44,8 +42,8 @@ export class DeleteReportDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteReportDialogData>,
-    private spinner: NgxSpinnerService,
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private navigateService: NavigateService,
@@ -59,10 +57,6 @@ export class DeleteReportDialogComponent implements OnInit {
   }
 
   delete() {
-    if (this.ref.data.isStartSpinnerUntilNavEnd === true) {
-      this.spinner.show(APP_SPINNER_NAME);
-    }
-
     this.ref.close();
 
     let { projectId, branchId, repoId } = this.ref.data;
@@ -81,26 +75,30 @@ export class DeleteReportDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteReport',
-        payload: payload,
-        showSpinner: !this.ref.data.isStartSpinnerUntilNavEnd
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendDeleteReportResponse) => {
-          if (resp.type === 'Success') {
-            this.reportsQuery.update({
-              reportUnitDrafts: resp.output.reportUnitDrafts,
-              reportSpaceNodes: resp.output.reportSpaceNodes
-            });
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
 
-            let currentReport = this.reportQuery.getValue();
+          let output: ToBackendDeleteReportOutput = resp.output;
 
-            if (currentReport.reportId === report.reportId) {
-              this.uiService.clearProjectReportLink();
-              this.navigateService.navigateToReports();
-            }
+          this.reportsQuery.update({
+            reportUnitDrafts: output.reportUnitDrafts,
+            reportSpaceNodes: output.reportSpaceNodes
+          });
+
+          let currentReport = this.reportQuery.getValue();
+
+          if (currentReport.reportId === report.reportId) {
+            this.uiService.clearProjectReportLink();
+            this.navigateService.navigateToReports();
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

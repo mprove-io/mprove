@@ -7,14 +7,12 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { SET_NEW_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_NEW_PASSWORD_WAS_SET } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { ToBackendUpdateUserPasswordRequest } from '#common/types/backend/routes/users/update-user-password/update-user-password-request';
-import type { ToBackendUpdateUserPasswordResponse } from '#common/types/backend/routes/users/update-user-password/update-user-password-response';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { AuthService } from '#front/app/services/auth.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
@@ -46,10 +44,10 @@ export class UpdatePasswordComponent implements OnInit {
   );
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private fb: FormBuilder,
     private apiService: ApiService,
     private authService: AuthService,
-    private spinner: NgxSpinnerService,
     private router: Router,
     private route: ActivatedRoute,
     private title: Title
@@ -70,8 +68,6 @@ export class UpdatePasswordComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(APP_SPINNER_NAME);
-
     let payload: ToBackendUpdateUserPasswordRequest['input'] = {
       passwordResetToken: this.passwordResetToken,
       newPassword: this.setPasswordForm.value.newPassword
@@ -83,12 +79,15 @@ export class UpdatePasswordComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendUpdateUserPasswordResponse) => {
-          if (resp.type === 'Success') {
-            this.router.navigate([PATH_NEW_PASSWORD_WAS_SET]);
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
           }
+
+          this.router.navigate([PATH_NEW_PASSWORD_WAS_SET]);
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

@@ -14,6 +14,7 @@ import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
 
@@ -37,6 +38,7 @@ export class DeleteSessionDialogComponent implements OnInit {
   }
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     public ref: DialogRef<DeleteSessionDialogData>,
     private sessionQuery: SessionQuery,
     private sessionsQuery: SessionsQuery,
@@ -65,11 +67,14 @@ export class DeleteSessionDialogComponent implements OnInit {
     apiService
       .req({
         route: 'api/ToBackendDeleteSession',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap(() => {
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
           let sessions = this.sessionsQuery.getValue().sessions;
           let updated = sessions.filter(s => s.sessionId !== sessionId);
           this.sessionsQuery.updatePart({ sessions: updated });
@@ -99,7 +104,8 @@ export class DeleteSessionDialogComponent implements OnInit {
             }
           }
         }),
-        take(1)
+        take(1),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }

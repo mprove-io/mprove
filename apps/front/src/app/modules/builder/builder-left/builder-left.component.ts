@@ -1,7 +1,7 @@
 import {
-  IActionMapping,
+  type IActionMapping,
   TreeComponent,
-  TreeNode
+  type TreeNode
 } from '@ali-hm/angular-tree-component';
 import {
   ChangeDetectorRef,
@@ -31,8 +31,8 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendMoveCatalogNodeOutput } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-output';
 import type { ToBackendMoveCatalogNodeRequest } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-request';
-import type { ToBackendMoveCatalogNodeResponse } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
 import type { DiskCatalogNode } from '#common/types/disk/parts/catalog/disk-catalog-node';
 import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
 import type { BuilderLeft } from '#common/types/front/builder/builder-left';
@@ -46,6 +46,7 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { AppSpinnerService } from '#front/app/services/app-spinner.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
@@ -171,6 +172,7 @@ export class BuilderLeftComponent implements OnDestroy {
   filteredFileItems: FileItem[] = [];
 
   constructor(
+    private appSpinnerService: AppSpinnerService,
     private repoQuery: RepoQuery,
     private projectQuery: ProjectQuery,
     private cd: ChangeDetectorRef,
@@ -303,22 +305,28 @@ export class BuilderLeftComponent implements OnDestroy {
     }
   }
 
-  onMoveNode(event: any) {
+  onMoveNode(item: {
+    node: DiskCatalogNode;
+    to: { parent: DiskCatalogNode };
+  }): void {
+    let { node, to } = item;
+
     this.cd.detach();
 
-    let nameArray = event.to.parent.id.split('/');
+    let nameArray: string[] = to.parent.id.split('/');
+
     if (nameArray.length > 1) {
       nameArray.pop();
     }
 
-    let parentId = event.to.parent.isFolder
-      ? event.to.parent.id
+    let parentId: string = to.parent.isFolder
+      ? to.parent.id
       : nameArray.join('/');
 
     this.itemsTree.treeModel.getNodeById(parentId).expand();
 
-    let fromNodeId = event.node.id;
-    let toNodeId = parentId + '/' + event.node.name;
+    let fromNodeId: string = node.id;
+    let toNodeId: string = parentId + '/' + node.name;
 
     let payload: ToBackendMoveCatalogNodeRequest['input'] = {
       projectId: this.nav.projectId,
@@ -329,7 +337,6 @@ export class BuilderLeftComponent implements OnDestroy {
       toNodeId: toNodeId
     };
 
-    let isMoveSuccess = false;
     let newFileId: string;
 
     if (isDefined(this.fileId)) {
@@ -358,62 +365,67 @@ export class BuilderLeftComponent implements OnDestroy {
     this.apiService
       .req({
         route: 'api/ToBackendMoveCatalogNode',
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
-        tap((resp: ToBackendMoveCatalogNodeResponse) => {
-          if (resp.type === 'Success') {
-            isMoveSuccess = true;
+        tap(resp => {
+          if (resp.type !== 'Failure') {
+            return;
+          }
 
-            this.repoQuery.update(resp.output.repo);
-            this.structQuery.update(resp.output.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.output.needValidate
-            });
+          let arStart: string[] = [
+            PATH_ORG,
+            this.nav.orgId,
+            PATH_PROJECT,
+            this.nav.projectId,
+            PATH_REPO,
+            this.nav.repoId,
+            PATH_BRANCH,
+            this.nav.branchId,
+            PATH_ENV,
+            this.nav.envId,
+            PATH_BUILDER
+          ];
 
-            if (isDefined(newFileId)) {
-              this.navigateService.navigateToFileLine({
-                builderLeft: 'Tree',
-                encodedFileId: newFileId
+          let arStartStr: string = arStart.join('/');
+
+          let arNext: string[] = [...arStart, PATH_SELECT_FILE];
+
+          void this.router
+            .navigateByUrl(arStartStr, { skipLocationChange: true })
+            .then(() => {
+              void this.router.navigate(arNext, {
+                queryParams: {
+                  left: 'Tree' satisfies BuilderLeft
+                }
               });
-            }
+            });
+        }),
+        tap(resp => {
+          if (resp.type !== 'Success') {
+            return;
+          }
+
+          let output: ToBackendMoveCatalogNodeOutput = resp.output;
+
+          this.repoQuery.update(output.repo);
+          this.structQuery.update(output.struct);
+          this.navQuery.updatePart({
+            needValidate: output.needValidate
+          });
+
+          if (isDefined(newFileId)) {
+            void this.navigateService.navigateToFileLine({
+              builderLeft: 'Tree',
+              encodedFileId: newFileId
+            });
           }
         }),
         take(1),
         finalize(() => {
           this.cd.reattach();
-
-          if (isMoveSuccess === false) {
-            let arStart = [
-              PATH_ORG,
-              this.nav.orgId,
-              PATH_PROJECT,
-              this.nav.projectId,
-              PATH_REPO,
-              this.nav.repoId,
-              PATH_BRANCH,
-              this.nav.branchId,
-              PATH_ENV,
-              this.nav.envId,
-              PATH_BUILDER
-            ];
-
-            let arStartStr = arStart.join('/');
-
-            let arNext = [...arStart, PATH_SELECT_FILE];
-
-            this.router
-              .navigateByUrl(arStartStr, { skipLocationChange: true })
-              .then(() => {
-                this.router.navigate(arNext, {
-                  queryParams: {
-                    left: 'Tree' satisfies BuilderLeft
-                  }
-                });
-              });
-          }
-        })
+        }),
+        this.appSpinnerService.track()
       )
       .subscribe();
   }
