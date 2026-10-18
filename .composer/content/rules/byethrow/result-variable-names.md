@@ -3,10 +3,10 @@
 Use context-specific names:
 
 - **Named function in a pipe:** bind its success value by domain, optionally
-  prefixed: `getCarResult` returning `Result<Car, GetCarError>` may bind to
-  `car` or `originalCar`. Reuse the callee's success type.
-- **Throwing compatibility wrapper:** when `getCar` delegates to `getCarResult`,
-  name the local Result variable `result`.
+  prefixed: `getCar` returning `Result<Car, GetCarError>` may bind to `car` or
+  `originalCar`. Reuse the callee's success type.
+- **Throwing adapter:** when `getCarUnwrap` delegates to `getCar`, name the
+  local Result variable `result`. Adapter naming follows "Throwing adapters".
 - **Inline pipe computation:** match the binding and its named handwritten
   success type when introducing a step-specific contract: `prepareQueryPayload`
   / `PrepareQueryPayload`. When reusing an existing type, bind by domain

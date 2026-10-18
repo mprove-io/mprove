@@ -65,6 +65,7 @@
 - rules/byethrow.md
 - rules/byethrow/no-nested-pipes-in-a-single-function.md
 - rules/byethrow/result-type-inference.md
+- rules/byethrow/throwing-adapters.md
 - rules/byethrow/result-variable-names.md
 - rules/byethrow/result-callback-return-types.md
 - rules/byethrow/combine-lookup-and-conversion.md
