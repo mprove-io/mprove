@@ -35,7 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // Passport owns JWT verification and requires this callback to reject failures.
   async validate(payload: any): Promise<UserTab> {
     let result: Result.Result<UserTab, AuthenticateJwtError> =
-      await this.authenticateJwtResult({
+      await this.authenticateJwt({
         userId: payload.userId,
         iat: payload.iat
       });
@@ -51,7 +51,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return user;
   }
 
-  private async authenticateJwtResult(item: {
+  private async authenticateJwt(item: {
     userId: string;
     iat: number;
   }): Result.ResultAsync<UserTab, AuthenticateJwtError> {

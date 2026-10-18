@@ -97,7 +97,7 @@ export class GetConnectionSchemasTool {
           ToBackendGetConnectionSchemasOutput,
           GetConnectionSchemasError
         > =>
-          this.getConnectionSchemasService.getConnectionSchemasResult({
+          this.getConnectionSchemasService.getConnectionSchemas({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,

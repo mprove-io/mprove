@@ -101,7 +101,7 @@ export class ValidateFilesTool {
           ToBackendValidateFilesOutput,
           ValidateFilesError
         > =>
-          this.validateFilesService.validateFilesResult({
+          this.validateFilesService.validateFiles({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,

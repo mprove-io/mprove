@@ -114,7 +114,7 @@ export class RunQueriesService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  private async getQueryExecutionContextResult(item: {
+  private async getQueryExecutionContext(item: {
     projectId: string;
     queryId: string;
     userId: string;
@@ -174,7 +174,7 @@ export class RunQueriesService {
     );
   }
 
-  private async runPooledQueryResult(item: {
+  private async runPooledQuery(item: {
     projectId: string;
     queryId: string;
     userId: string;
@@ -186,7 +186,7 @@ export class RunQueriesService {
     let getQueryExecutionContextOutput: Result.Result<
       GetQueryExecutionContextOutput,
       GetQueryExecutionContextError
-    > = await this.getQueryExecutionContextResult({
+    > = await this.getQueryExecutionContext({
       projectId: projectId,
       queryId: queryId,
       userId: userId
@@ -309,7 +309,7 @@ export class RunQueriesService {
     return Result.succeed();
   }
 
-  private async launchPooledQueryResult(item: {
+  private async launchPooledQuery(item: {
     projectId: string;
     queryId: string;
     userId: string;
@@ -322,7 +322,7 @@ export class RunQueriesService {
     let getQueryExecutionContextOutput: Result.Result<
       GetQueryExecutionContextOutput,
       GetQueryExecutionContextError
-    > = await this.getQueryExecutionContextResult({
+    > = await this.getQueryExecutionContext({
       projectId: projectId,
       queryId: queryId,
       userId: userId
@@ -545,7 +545,7 @@ export class RunQueriesService {
     return Result.succeed();
   }
 
-  async runQueries(item: {
+  async runQueriesUnwrap(item: {
     user: UserTab;
     projectId: string;
     repoId: string;
@@ -558,7 +558,7 @@ export class RunQueriesService {
       item;
 
     let result: Result.Result<ToBackendRunQueriesOutput, RunQueriesError> =
-      await this.runQueriesResult({
+      await this.runQueries({
         user: user,
         projectId: projectId,
         repoId: repoId,
@@ -582,7 +582,7 @@ export class RunQueriesService {
     return output;
   }
 
-  async runQueriesResult(item: {
+  async runQueries(item: {
     user: UserTab;
     projectId: string;
     repoId: string;
@@ -869,7 +869,7 @@ export class RunQueriesService {
             callback: (
               queryId: string
             ): Result.ResultAsync<void, RunPooledQueryError> =>
-              this.runPooledQueryResult({
+              this.runPooledQuery({
                 projectId: v.projectId,
                 queryId: queryId,
                 userId: v.user.userId,
@@ -903,7 +903,7 @@ export class RunQueriesService {
             callback: (
               queryId: string
             ): Result.ResultAsync<void, LaunchPooledQueryError> =>
-              this.launchPooledQueryResult({
+              this.launchPooledQuery({
                 projectId: v.projectId,
                 queryId: queryId,
                 userId: v.user.userId,

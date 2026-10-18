@@ -99,7 +99,7 @@ export class RpcService implements OnModuleDestroy {
     return this.queues.get(namespace);
   }
 
-  async requestResult<T = unknown>(item: {
+  async request<T = unknown>(item: {
     namespace: string;
     groupId: string;
     message: any;
@@ -161,7 +161,7 @@ export class RpcService implements OnModuleDestroy {
     return execution;
   }
 
-  async sendToBlockmlResult<TRequest extends ToBlockmlRequest>(item: {
+  async sendToBlockml<TRequest extends ToBlockmlRequest>(item: {
     request: TRequest;
     orgId: string;
     repoId: string;
@@ -186,7 +186,7 @@ export class RpcService implements OnModuleDestroy {
     let result: Result.Result<
       ToBlockmlResponseForOperation<TRequest['operation']>,
       RequestError
-    > = await this.requestResult<
+    > = await this.request<
       ToBlockmlResponseForOperation<TRequest['operation']>
     >({
       namespace: 'rpc-blockml' satisfies RpcNamespace,
@@ -378,9 +378,7 @@ export class RpcService implements OnModuleDestroy {
     let result: Result.Result<
       ToDiskResponseForOperation<TRequest['operation']>,
       RequestError
-    > = await this.requestResult<
-      ToDiskResponseForOperation<TRequest['operation']>
-    >({
+    > = await this.request<ToDiskResponseForOperation<TRequest['operation']>>({
       namespace: `${'rpc-disk' satisfies RpcNamespace}-${diskShard.value}`,
       groupId: route.groupId,
       message: request,

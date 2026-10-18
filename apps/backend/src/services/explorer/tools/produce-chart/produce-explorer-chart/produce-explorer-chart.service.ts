@@ -137,7 +137,7 @@ export class ProduceExplorerChartService {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insert: {
                         charts: [rebuild.chart],
@@ -154,7 +154,7 @@ export class ProduceExplorerChartService {
       Result.andThrough(async v =>
         v.rebuild.ok === false
           ? Result.succeed()
-          : this.runQueriesService.runQueriesResult({
+          : this.runQueriesService.runQueries({
               user: v.user,
               projectId: v.session.projectId,
               repoId: v.session.repoId,

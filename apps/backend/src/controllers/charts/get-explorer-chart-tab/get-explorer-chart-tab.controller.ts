@@ -33,7 +33,7 @@ export class GetExplorerChartTabController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetExplorerChartTabRequestDto
   ): Promise<BackendResultForOperation<'getExplorerChartTab'>> {
-    return this.getExplorerChartTabService.getExplorerChartTabResult({
+    return this.getExplorerChartTabService.getExplorerChartTab({
       ...body.input,
       user: user,
       traceId: body.traceId

@@ -80,7 +80,7 @@ export class DbService {
       db: this.db,
       options: getRetryOption(this.cs, this.logger),
       action: ({ tx }) =>
-        this.db.packer.writeResult({
+        this.db.packer.write({
           tx: tx,
           insert: insert,
           update: update,

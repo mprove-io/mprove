@@ -197,7 +197,7 @@ export class BlockmlService {
     let rpcResult: Result.Result<
       ToBlockmlRebuildStructOutput,
       SendToBlockmlError
-    > = await this.rpcService.sendToBlockmlResult({
+    > = await this.rpcService.sendToBlockml({
       request: toBlockmlRebuildStructRequest,
       orgId: orgId,
       repoId: repoId
@@ -248,7 +248,7 @@ export class BlockmlService {
                 );
 
                 await this.db.drizzle.transaction(async tx => {
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insert: {
                       structs: [struct],

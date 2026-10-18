@@ -67,7 +67,7 @@ export class DeleteUserApiKeyController {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       update: {
                         users: [v.user]

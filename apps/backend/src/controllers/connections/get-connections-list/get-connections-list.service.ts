@@ -27,7 +27,7 @@ export class GetConnectionsListService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getConnectionsListResult(item: {
+  async getConnectionsList(item: {
     userId: string;
     projectId: string;
     envId: string;

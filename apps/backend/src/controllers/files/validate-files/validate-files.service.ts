@@ -61,7 +61,7 @@ export class ValidateFilesService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async validateFilesResult(item: {
+  async validateFiles(item: {
     traceId: string;
     userId: string;
     projectId: string;
@@ -189,7 +189,7 @@ export class ValidateFilesService {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insertOrUpdate: {
                         bridges: [...v.branchBridgeEnts]

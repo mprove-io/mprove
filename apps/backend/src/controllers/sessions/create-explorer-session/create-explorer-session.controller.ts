@@ -241,7 +241,7 @@ export class CreateExplorerSessionController {
 
                       await this.db.drizzle.transaction(
                         async tx =>
-                          await this.db.packer.write({
+                          await this.db.packer.writeUnwrap({
                             tx: tx,
                             insert: {
                               sessions: [session],
@@ -253,7 +253,7 @@ export class CreateExplorerSessionController {
                     } else {
                       await this.db.drizzle.transaction(
                         async tx =>
-                          await this.db.packer.write({
+                          await this.db.packer.writeUnwrap({
                             tx: tx,
                             insert: {
                               sessions: [session],

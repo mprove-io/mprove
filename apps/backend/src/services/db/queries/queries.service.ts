@@ -412,7 +412,7 @@ WHERE q.report_id is NULL
             async () =>
               await this.db.drizzle.transaction(
                 async tx =>
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: {
                       queries: [query]
@@ -449,7 +449,7 @@ WHERE q.report_id is NULL
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insertOrUpdate: {
                         queries: [query]
@@ -468,7 +468,7 @@ WHERE q.report_id is NULL
           async () =>
             await this.db.drizzle.transaction(
               async tx =>
-                await this.db.packer.write({
+                await this.db.packer.writeUnwrap({
                   tx: tx,
                   insertOrUpdate: {
                     queries: [query]
@@ -498,7 +498,7 @@ WHERE q.report_id is NULL
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insertOrUpdate: {
                         queries: [query]
@@ -525,7 +525,7 @@ WHERE q.report_id is NULL
                   async () =>
                     await this.db.drizzle.transaction(
                       async tx =>
-                        await this.db.packer.write({
+                        await this.db.packer.writeUnwrap({
                           tx: tx,
                           insertOrUpdate: {
                             queries: [query]
@@ -554,7 +554,7 @@ WHERE q.report_id is NULL
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insertOrUpdate: {
                         queries: [query]

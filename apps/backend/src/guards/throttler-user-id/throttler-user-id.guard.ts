@@ -54,7 +54,7 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
 
   protected async getTracker(req: Record<string, any>): Promise<string> {
     let result: Result.Result<string, GetUserIdTrackerError> =
-      this.getUserIdTrackerResult({ request: req });
+      this.getUserIdTracker({ request: req });
 
     // The framework tracker callback requires a string or rejection.
     if (Result.isFailure(result)) {
@@ -68,7 +68,7 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
     return tracker;
   }
 
-  private getUserIdTrackerResult(item: {
+  private getUserIdTracker(item: {
     request: Record<string, any>;
   }): Result.Result<string, GetUserIdTrackerError> {
     let { request } = item;

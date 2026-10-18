@@ -491,7 +491,7 @@ export class PgService {
             async () =>
               await this.db.drizzle.transaction(
                 async tx =>
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: {
                       queries: [q]
@@ -543,7 +543,7 @@ export class PgService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 insertOrUpdate: {
                   queries: [q]

@@ -32,7 +32,7 @@ export class RunQueriesController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRunQueriesRequestDto
   ): Promise<BackendResultForOperation<'runQueries'>> {
-    return this.runQueriesService.runQueriesResult({
+    return this.runQueriesService.runQueries({
       ...body.input,
       user: user
     });

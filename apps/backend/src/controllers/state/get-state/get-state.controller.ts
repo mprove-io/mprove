@@ -33,7 +33,7 @@ export class GetStateController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetStateRequestDto
   ): Promise<BackendResultForOperation<'getState'>> {
-    return this.getStateService.getStateResult({
+    return this.getStateService.getState({
       ...body.input,
       traceId: body.traceId,
       user: user

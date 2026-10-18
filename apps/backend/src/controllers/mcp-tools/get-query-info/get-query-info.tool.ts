@@ -110,7 +110,7 @@ export class GetQueryInfoTool {
         (
           v
         ): Result.ResultAsync<ToBackendGetQueryInfoOutput, GetQueryInfoError> =>
-          this.getQueryInfoService.getQueryInfoResult({
+          this.getQueryInfoService.getQueryInfo({
             traceId: makeId(),
             user: v.user,
             projectId: v.projectId,

@@ -133,7 +133,7 @@ export class SendMessageToExplorerSessionController {
         'updatedSession',
         async (v): Result.ResultAsync<SessionTab, SendExplorerMessageError> =>
           v.interactionType === 'Message'
-            ? this.sendExplorerMessageResult({
+            ? this.sendExplorerMessage({
                 session: v.session,
                 user: v.user,
                 providerId: v.providerId,
@@ -179,7 +179,7 @@ export class SendMessageToExplorerSessionController {
     );
   }
 
-  private async sendExplorerMessageResult(item: {
+  private async sendExplorerMessage(item: {
     session: SessionTab;
     user: UserTab;
     providerId?: string;
@@ -294,7 +294,7 @@ export class SendMessageToExplorerSessionController {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insertOrUpdate: { sessions: [v.updatedSession] }
                     })

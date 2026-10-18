@@ -106,7 +106,7 @@ export class ResetUserPasswordController {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insertOrUpdate: {
                         users: [v.user]

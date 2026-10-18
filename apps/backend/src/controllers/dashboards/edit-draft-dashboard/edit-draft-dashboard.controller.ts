@@ -435,7 +435,7 @@ export class EditDraftDashboardController {
                 async () =>
                   await this.db.drizzle.transaction(
                     async tx =>
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insert: {
                           mconfigs: v.processedDashboard.insertMconfigs

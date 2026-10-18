@@ -34,7 +34,7 @@ export class GetConnectionSchemasController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetConnectionSchemasRequestDto
   ): Promise<BackendResultForOperation<'getConnectionSchemas'>> {
-    return this.getConnectionSchemasService.getConnectionSchemasResult({
+    return this.getConnectionSchemasService.getConnectionSchemas({
       ...body.input,
       userId: user.userId
     });

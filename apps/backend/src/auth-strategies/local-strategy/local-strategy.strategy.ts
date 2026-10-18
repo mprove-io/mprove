@@ -24,7 +24,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   // Passport invokes this callback with positional credentials and requires rejection.
   async validate(email: string, password: string): Promise<UserTab> {
     let result: Result.Result<UserTab, AuthenticateLocalError> =
-      await this.authenticateLocalResult({ email: email, password: password });
+      await this.authenticateLocal({ email: email, password: password });
 
     if (Result.isFailure(result)) {
       throw new ServerError({
@@ -37,7 +37,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     return user;
   }
 
-  private async authenticateLocalResult(item: {
+  private async authenticateLocal(item: {
     email: string;
     password: string;
   }): Result.ResultAsync<UserTab, AuthenticateLocalError> {

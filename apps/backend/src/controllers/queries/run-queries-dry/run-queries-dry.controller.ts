@@ -203,7 +203,7 @@ export class RunQueriesDryController {
             poolSize: 8,
             inputs: v.queryIds,
             callback: queryId =>
-              this.runQueryDryResult({
+              this.runQueryDry({
                 projectId: v.projectId,
                 queryId: queryId
               })
@@ -233,7 +233,7 @@ export class RunQueriesDryController {
             await retry(
               async () =>
                 this.db.drizzle.transaction(async tx =>
-                  this.db.packer.write({
+                  this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: { queries: v.errorQueries }
                   })
@@ -255,7 +255,7 @@ export class RunQueriesDryController {
     );
   }
 
-  private async runQueryDryResult(item: {
+  private async runQueryDry(item: {
     projectId: string;
     queryId: string;
   }): Result.ResultAsync<RunQueryDryOutput, RunQueryDryError> {

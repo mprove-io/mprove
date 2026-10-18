@@ -343,7 +343,7 @@ export class SuggestDimensionValuesController {
                 await retry(
                   async () =>
                     this.db.drizzle.transaction(async tx =>
-                      this.db.packer.write({
+                      this.db.packer.writeUnwrap({
                         tx: tx,
                         insert: {
                           mconfigs: [v.prepStoreMconfigQueryOutput.newMconfig]
@@ -370,7 +370,7 @@ export class SuggestDimensionValuesController {
       Result.andThrough(v =>
         v.model.type === 'Store' &&
         v.prepStoreMconfigQueryOutput.isError === false
-          ? this.runQueriesService.runQueriesResult({
+          ? this.runQueriesService.runQueries({
               user: v.user,
               projectId: v.projectId,
               repoId: v.repoId,

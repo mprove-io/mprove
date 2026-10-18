@@ -32,7 +32,7 @@ export class ValidateFilesController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendValidateFilesRequestDto
   ): Promise<BackendResultForOperation<'validateFiles'>> {
-    return this.validateFilesService.validateFilesResult({
+    return this.validateFilesService.validateFiles({
       ...body.input,
       traceId: body.traceId,
       userId: user.userId

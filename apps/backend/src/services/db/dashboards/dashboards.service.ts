@@ -146,7 +146,7 @@ export class DashboardsService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.dashboardEntToTabResult({ dashboardEnt: x })
+                  : this.tabService.dashboardEntToTab({ dashboardEnt: x })
               )
             )
       ),
@@ -415,7 +415,7 @@ export class DashboardsService {
                 ? Result.fail({ code: 'BACKEND_DASHBOARD_DOES_NOT_EXIST' })
                 : isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.dashboardEntToTabResult({
+                  : this.tabService.dashboardEntToTab({
                       dashboardEnt: x
                     })
             )
@@ -632,7 +632,7 @@ export class DashboardsService {
               Result.sequence(xs, x =>
                 isUndefined(x as DashboardEnt)
                   ? Result.succeed(undefined)
-                  : this.tabService.dashboardEntToTabResult({
+                  : this.tabService.dashboardEntToTab({
                       dashboardEnt: x as DashboardEnt
                     })
               )

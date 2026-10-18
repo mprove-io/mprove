@@ -132,7 +132,7 @@ export class GetSessionsListController {
           ToBackendGetSessionsListOutput,
           GetSessionListError
         > =>
-          this.getSessionListResult({
+          this.getSessionList({
             projectId: v.projectId,
             userId: v.userId,
             currentSessionId: v.currentSessionId,
@@ -145,7 +145,7 @@ export class GetSessionsListController {
     );
   }
 
-  private async getSessionListResult(item: {
+  private async getSessionList(item: {
     projectId: string;
     userId: string;
     currentSessionId?: string;

@@ -101,7 +101,7 @@ export class GetModelTool {
       ),
       Result.andThen(
         (v): Result.ResultAsync<ToBackendGetModelOutput, GetModelError> =>
-          this.getModelService.getModelResult({
+          this.getModelService.getModel({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,

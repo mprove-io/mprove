@@ -107,7 +107,7 @@ export class GetStateTool {
       ),
       Result.andThen(
         (v): Result.ResultAsync<McpToolGetStateOutput, GetStateError> =>
-          this.getStateService.getStateResult({
+          this.getStateService.getState({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,

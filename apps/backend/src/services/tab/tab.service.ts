@@ -627,13 +627,13 @@ export class TabService {
     );
   }
 
-  dashboardEntToTab(dashboardEnt: DashboardEnt): DashboardTab {
+  dashboardEntToTabUnwrap(dashboardEnt: DashboardEnt): DashboardTab {
     if (isUndefined(dashboardEnt)) {
       return;
     }
 
     let result: Result.Result<DashboardTab, DashboardEntToTabError> =
-      this.dashboardEntToTabResult({ dashboardEnt: dashboardEnt });
+      this.dashboardEntToTab({ dashboardEnt: dashboardEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -644,7 +644,7 @@ export class TabService {
     return dashboard;
   }
 
-  dashboardEntToTabResult(item: {
+  dashboardEntToTab(item: {
     dashboardEnt: DashboardEnt;
   }): Result.Result<DashboardTab, DashboardEntToTabError> {
     return Result.pipe(
@@ -667,13 +667,13 @@ export class TabService {
     );
   }
 
-  dconfigEntToTab(dconfigEnt: DconfigEnt): DconfigTab {
+  dconfigEntToTabUnwrap(dconfigEnt: DconfigEnt): DconfigTab {
     if (isUndefined(dconfigEnt)) {
       return;
     }
 
     let result: Result.Result<DconfigTab, DconfigEntToTabError> =
-      this.dconfigEntToTabResult({ dconfigEnt: dconfigEnt });
+      this.dconfigEntToTab({ dconfigEnt: dconfigEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -684,7 +684,7 @@ export class TabService {
     return dconfig;
   }
 
-  dconfigEntToTabResult(item: {
+  dconfigEntToTab(item: {
     dconfigEnt: DconfigEnt;
   }): Result.Result<DconfigTab, DconfigEntToTabError> {
     return Result.pipe(

@@ -54,7 +54,7 @@ export class DconfigsService {
       Result.bind(
         'dconfig',
         (v): Result.Result<DconfigTab, DconfigEntToTabError> =>
-          this.tabService.dconfigEntToTabResult({
+          this.tabService.dconfigEntToTab({
             dconfigEnt: v.dconfigEnt
           })
       ),

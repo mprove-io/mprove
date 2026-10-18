@@ -156,7 +156,7 @@ export class SendMessageToEditorSessionController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.validateSessionStatusResult({ session: v.session })
+        this.validateSessionStatus({ session: v.session })
       ),
       Result.andThrough(v =>
         v.interactionType === 'Message' && isUndefined(v.providerId)
@@ -202,7 +202,7 @@ export class SendMessageToEditorSessionController {
           SessionTab,
           SendEditorInteractionWhileLockedError
         > =>
-          this.sendEditorInteractionWhileLockedResult({
+          this.sendEditorInteractionWhileLocked({
             session: v.session,
             project: v.project,
             sessionLockToken: v.sessionLockToken,
@@ -241,7 +241,7 @@ export class SendMessageToEditorSessionController {
     );
   }
 
-  private async sendEditorInteractionWhileLockedResult(item: {
+  private async sendEditorInteractionWhileLocked(item: {
     session: SessionTab;
     project: ProjectTab;
     sessionLockToken: string;
@@ -273,7 +273,7 @@ export class SendMessageToEditorSessionController {
             })
         ),
         Result.andThrough(v =>
-          this.validateSessionStatusResult({ session: v.lockedSession })
+          this.validateSessionStatus({ session: v.lockedSession })
         ),
         Result.bind(
           'isCodex',
@@ -303,7 +303,7 @@ export class SendMessageToEditorSessionController {
         Result.bind(
           'preparedSession',
           (v): Result.ResultAsync<SessionTab, PrepareEditorSandboxError> =>
-            this.prepareEditorSandboxResult({
+            this.prepareEditorSandbox({
               session: v.lockedSession,
               project: v.project,
               user: v.freshUser,
@@ -314,7 +314,7 @@ export class SendMessageToEditorSessionController {
         Result.bind(
           'updatedSession',
           (v): Result.ResultAsync<SessionTab, DispatchEditorInteractionError> =>
-            this.dispatchEditorInteractionResult({
+            this.dispatchEditorInteraction({
               session: v.preparedSession,
               interactionType: v.interactionType,
               message: v.message,
@@ -330,9 +330,7 @@ export class SendMessageToEditorSessionController {
               partId: v.partId
             })
         ),
-        Result.andThrough(v =>
-          this.saveSessionResult({ session: v.updatedSession })
-        ),
+        Result.andThrough(v => this.saveSession({ session: v.updatedSession })),
         Result.map((v): SessionTab => v.updatedSession)
       );
 
@@ -345,7 +343,7 @@ export class SendMessageToEditorSessionController {
     }
   }
 
-  private async prepareEditorSandboxResult(item: {
+  private async prepareEditorSandbox(item: {
     session: SessionTab;
     project: ProjectTab;
     user: UserTab;
@@ -514,7 +512,7 @@ export class SendMessageToEditorSessionController {
               };
 
               let saveResult: Result.Result<void, SaveSessionError> =
-                await this.saveSessionResult({ session: session });
+                await this.saveSession({ session: session });
 
               if (Result.isFailure(saveResult)) {
                 return saveResult;
@@ -566,7 +564,7 @@ export class SendMessageToEditorSessionController {
     return Result.succeed(session);
   }
 
-  private async dispatchEditorInteractionResult(item: {
+  private async dispatchEditorInteraction(item: {
     session: SessionTab;
     interactionType: InteractionType;
     message?: string;
@@ -630,8 +628,8 @@ export class SendMessageToEditorSessionController {
         >;
 
         try {
-          interactionResult =
-            await this.editorStreamService.executeInteractionResult({
+          interactionResult = await this.editorStreamService.executeInteraction(
+            {
               sessionId: session.sessionId,
               opencodeSessionId: session.opencodeSessionId,
               interactionType: interactionType,
@@ -646,7 +644,8 @@ export class SendMessageToEditorSessionController {
               answers: answers,
               messageId: messageId,
               partId: partId
-            });
+            }
+          );
         } catch (e) {
           await this.editorStreamService.stopEventStream({
             sessionId: session.sessionId
@@ -717,7 +716,7 @@ export class SendMessageToEditorSessionController {
     return Result.succeed(session);
   }
 
-  private async saveSessionResult(item: {
+  private async saveSession(item: {
     session: SessionTab;
   }): Result.ResultAsync<void, SaveSessionError> {
     let { session } = item;
@@ -728,7 +727,7 @@ export class SendMessageToEditorSessionController {
           async () =>
             await this.db.drizzle.transaction(
               async tx =>
-                await this.db.packer.write({
+                await this.db.packer.writeUnwrap({
                   tx: tx,
                   insertOrUpdate: {
                     sessions: [session]
@@ -775,7 +774,7 @@ export class SendMessageToEditorSessionController {
     return output;
   }
 
-  private validateSessionStatusResult(item: {
+  private validateSessionStatus(item: {
     session: SessionTab;
   }): Result.Result<void, ValidateSessionStatusError> {
     let { session } = item;

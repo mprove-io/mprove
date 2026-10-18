@@ -41,7 +41,7 @@ export class GetModelService {
     private structsService: StructsService
   ) {}
 
-  async getModelResult(item: {
+  async getModel(item: {
     userId: string;
     projectId: string;
     repoId: string;

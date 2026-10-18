@@ -151,7 +151,7 @@ export class CreateLlmModelController {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       update: { providers: [v.provider] }
                     })

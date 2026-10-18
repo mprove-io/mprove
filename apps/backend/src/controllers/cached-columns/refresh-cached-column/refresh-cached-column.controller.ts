@@ -331,7 +331,7 @@ export class RefreshCachedColumnController {
             if (isUndefined(v.currentCachedColumn)) {
               await this.db.drizzle.transaction(
                 async tx =>
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: { cachedColumns: [v.runningCachedColumn] }
                   })
@@ -339,7 +339,7 @@ export class RefreshCachedColumnController {
             } else {
               await this.db.drizzle.transaction(
                 async tx =>
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     update: { cachedColumns: [v.runningCachedColumn] }
                   })
@@ -349,7 +349,7 @@ export class RefreshCachedColumnController {
         })
       ),
       Result.andThrough(v => {
-        void this.finishRefreshCachedColumn({
+        void this.finishRefreshCachedColumnUnwrap({
           projectId: v.projectId,
           cacheEnvId: v.cacheEnvId,
           connectionId: v.connectionId,
@@ -373,7 +373,7 @@ export class RefreshCachedColumnController {
     );
   }
 
-  private async finishRefreshCachedColumn(item: {
+  private async finishRefreshCachedColumnUnwrap(item: {
     projectId: string;
     cacheEnvId: string;
     connectionId: string;
@@ -404,7 +404,7 @@ export class RefreshCachedColumnController {
       let completeRefreshCachedColumnOutput: Result.Result<
         void,
         CompleteRefreshCachedColumnError
-      > = await this.completeRefreshCachedColumnResult({
+      > = await this.completeRefreshCachedColumn({
         projectId: projectId,
         cacheEnvId: cacheEnvId,
         connectionId: connectionId,
@@ -456,7 +456,7 @@ export class RefreshCachedColumnController {
 
       currentCachedColumn.errorMessage = refreshErrorMessage;
 
-      await this.db.packer.write({
+      await this.db.packer.writeUnwrap({
         tx: tx,
         update: {
           cachedColumns: [currentCachedColumn]
@@ -465,7 +465,7 @@ export class RefreshCachedColumnController {
     });
   }
 
-  private async completeRefreshCachedColumnResult(item: {
+  private async completeRefreshCachedColumn(item: {
     projectId: string;
     cacheEnvId: string;
     connectionId: string;
@@ -482,7 +482,7 @@ export class RefreshCachedColumnController {
       Result.bind(
         'cachedPartOutput',
         (v): Result.ResultAsync<CachedPartsResult, FetchCachedPartsError> =>
-          this.fetchCachedPartsResult({
+          this.fetchCachedParts({
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -575,7 +575,7 @@ export class RefreshCachedColumnController {
                     i + CACHED_PARTS_INSERT_CHUNK_SIZE
                   );
 
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insert: {
                       cachedParts: cachedPartsChunk
@@ -602,7 +602,7 @@ export class RefreshCachedColumnController {
 
               currentCachedColumn.sampleSize = v.sampleSize;
 
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   cachedColumns: [currentCachedColumn]
@@ -616,7 +616,7 @@ export class RefreshCachedColumnController {
     );
   }
 
-  private async fetchCachedPartsResult(item: {
+  private async fetchCachedParts(item: {
     connection: ConnectionTab;
     schemaName: string;
     tableName: string;

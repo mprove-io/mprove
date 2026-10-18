@@ -228,7 +228,7 @@ export class QueryInfoChartService {
                 async () =>
                   await this.db.drizzle.transaction(
                     async tx =>
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insert: {
                           mconfigs: [v.prepareQueryPayload.newMconfig]
@@ -301,7 +301,7 @@ export class QueryInfoChartService {
                   async () =>
                     await this.db.drizzle.transaction(
                       async tx =>
-                        await this.db.packer.write({
+                        await this.db.packer.writeUnwrap({
                           tx: tx,
                           insertOrUpdate: {
                             users: [v.user]

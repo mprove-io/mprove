@@ -329,7 +329,7 @@ export class GroupMetricByDimensionController {
             await retry(
               async () =>
                 this.db.drizzle.transaction(async tx =>
-                  this.db.packer.write({
+                  this.db.packer.writeUnwrap({
                     tx: tx,
                     insert: { mconfigs: [v.mconfigQuery.newMconfig] },
                     insertOrUpdate: {

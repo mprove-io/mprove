@@ -403,7 +403,7 @@ export class CreateDraftChartController {
                 async () =>
                   await this.db.drizzle.transaction(
                     async tx =>
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insert: {
                           charts: [v.prepareDraftChartPayload.newChart],

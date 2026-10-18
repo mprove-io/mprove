@@ -238,7 +238,7 @@ export class CancelQueriesController {
           poolSize: 8,
           inputs: v.queries.filter(q => q.status === 'Running'),
           callback: query =>
-            this.cancelQueryResult({
+            this.cancelQuery({
               query: query,
               connectionsWithAnyEnvId: v.connectionsWithAnyEnvId
             })
@@ -257,7 +257,7 @@ export class CancelQueriesController {
                 await retry(
                   async () =>
                     this.db.drizzle.transaction(async tx =>
-                      this.db.packer.write({
+                      this.db.packer.writeUnwrap({
                         tx: tx,
                         insertOrUpdate: { queries: v.canceledQueries }
                       })
@@ -277,7 +277,7 @@ export class CancelQueriesController {
     );
   }
 
-  private async cancelQueryResult(item: {
+  private async cancelQuery(item: {
     query: QueryTab;
     connectionsWithAnyEnvId: ConnectionTab[];
   }): Result.ResultAsync<void, CancelQueryError> {

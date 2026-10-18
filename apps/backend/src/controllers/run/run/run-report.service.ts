@@ -48,7 +48,7 @@ export class RunReportService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async prepareRunReportResult(item: {
+  async prepareRunReport(item: {
     structId: string;
     user: UserTab;
     userMember: MemberTab;

@@ -77,7 +77,7 @@ export class RunService {
     private runReportService: RunReportService
   ) {}
 
-  async runResult(item: {
+  async run(item: {
     traceId: string;
     user: UserTab;
     projectId: string;
@@ -225,7 +225,7 @@ export class RunService {
           v
         ): Result.ResultAsync<PrepareRunChartOutput, PrepareRunChartError> =>
           v.noCharts === false
-            ? this.runChartService.prepareRunChartResult({
+            ? this.runChartService.prepareRunChart({
                 structId: v.bridge.structId,
                 userMember: v.userMember,
                 chartIds: v.chartIds,
@@ -248,7 +248,7 @@ export class RunService {
           PrepareRunDashboardError
         > =>
           v.noDashboards === false
-            ? this.runDashboardService.prepareRunDashboardResult({
+            ? this.runDashboardService.prepareRunDashboard({
                 structId: v.bridge.structId,
                 user: v.user,
                 userMember: v.userMember,
@@ -269,7 +269,7 @@ export class RunService {
           v
         ): Result.ResultAsync<PrepareRunReportOutput, PrepareRunReportError> =>
           v.noReports === false
-            ? this.runReportService.prepareRunReportResult({
+            ? this.runReportService.prepareRunReport({
                 structId: v.bridge.structId,
                 user: v.user,
                 userMember: v.userMember,
@@ -316,7 +316,7 @@ export class RunService {
       Result.bind(
         'runQueriesOutput',
         (v): Result.ResultAsync<ToBackendRunQueriesOutput, RunQueriesError> =>
-          this.runQueriesService.runQueriesResult({
+          this.runQueriesService.runQueries({
             user: v.user,
             projectId: v.projectId,
             repoId: v.repoId,

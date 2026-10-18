@@ -108,7 +108,7 @@ export class RunTool {
       ),
       Result.andThen(
         (v): Result.ResultAsync<ToBackendRunOutput, RunError> =>
-          this.runService.runResult({
+          this.runService.run({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,

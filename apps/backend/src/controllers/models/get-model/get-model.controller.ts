@@ -29,7 +29,7 @@ export class GetModelController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetModelRequestDto
   ): Promise<BackendResultForOperation<'getModel'>> {
-    return this.getModelService.getModelResult({
+    return this.getModelService.getModel({
       ...body.input,
       userId: user.userId
     });

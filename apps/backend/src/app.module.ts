@@ -251,7 +251,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           .findFirst({
             where: isNotNull(dconfigsTable.dconfigId)
           })
-          .then(x => this.tabService.dconfigEntToTab(x));
+          .then(x => this.tabService.dconfigEntToTabUnwrap(x));
 
         if (isUndefined(dconfig)) {
           let hashSecret = this.hashService.createHashSecret();
@@ -268,7 +268,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
             async () =>
               await this.db.drizzle.transaction(
                 async tx =>
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insert: {
                       dconfigs: [dconfigInit]
@@ -302,7 +302,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
             async () =>
               await this.db.drizzle.transaction(
                 async tx =>
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insert: {
                       uconfigs: [uconfigInit]
@@ -429,7 +429,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       .findFirst({
         where: isNotNull(dconfigsTable.dconfigId)
       })
-      .then(x => this.tabService.dconfigEntToTab(x));
+      .then(x => this.tabService.dconfigEntToTabUnwrap(x));
 
     if (isUndefined(dconfigA)) {
       throw new ServerError({
@@ -453,7 +453,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   dconfigs: [dconfigA] // tab-to-ent sets keyTag
@@ -472,7 +472,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       .findFirst({
         where: isNotNull(dconfigsTable.dconfigId)
       })
-      .then(x => this.tabService.dconfigEntToTab(x));
+      .then(x => this.tabService.dconfigEntToTabUnwrap(x));
 
     dconfigB.hashSecretCheck = dconfigB.hashSecret;
 
@@ -480,7 +480,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       async () =>
         await this.db.drizzle.transaction(
           async tx =>
-            await this.db.packer.write({
+            await this.db.packer.writeUnwrap({
               tx: tx,
               update: {
                 dconfigs: [dconfigB] // tab-to-ent sets keyTag
@@ -954,7 +954,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       async () =>
         await this.db.drizzle.transaction(
           async tx =>
-            await this.db.packer.write({
+            await this.db.packer.writeUnwrap({
               tx: tx,
               insert: {
                 connections: connections

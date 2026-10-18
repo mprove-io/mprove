@@ -170,7 +170,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   avatars: [avatar]
@@ -253,7 +253,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   branches: [branch]
@@ -336,7 +336,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   bridges: [bridge]
@@ -419,7 +419,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   cachedColumns: [cachedColumn]
@@ -502,7 +502,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   cachedParts: [cachedPart]
@@ -585,7 +585,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   connections: [connection]
@@ -636,7 +636,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(dconfigsTable.serverTs)
       })
-      .then(x => this.tabService.dconfigEntToTab(x));
+      .then(x => this.tabService.dconfigEntToTabUnwrap(x));
 
     if (isUndefined(dconfigLatest)) {
       return;
@@ -658,7 +658,7 @@ export class TabCheckerService {
     while (true) {
       let dconfig = await this.db.drizzle.query.dconfigsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.dconfigEntToTab(x));
+        .then(x => this.tabService.dconfigEntToTabUnwrap(x));
 
       if (isUndefined(dconfig)) {
         break;
@@ -668,7 +668,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   dconfigs: [dconfig]
@@ -751,7 +751,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   uconfigs: [uconfig]
@@ -831,7 +831,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   envs: [env]
@@ -911,7 +911,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   kits: [kit]
@@ -994,7 +994,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   members: [member]
@@ -1077,7 +1077,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   notes: [note]
@@ -1157,7 +1157,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   orgs: [org]
@@ -1240,7 +1240,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   projects: [project]
@@ -1323,7 +1323,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   providers: [provider]
@@ -1406,7 +1406,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   queries: [query]
@@ -1489,7 +1489,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   users: [user]
@@ -1572,7 +1572,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   ocEvents: [event]
@@ -1655,7 +1655,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   ocMessages: [message]
@@ -1738,7 +1738,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   ocParts: [part]
@@ -1821,7 +1821,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   sessions: [session]
@@ -1904,7 +1904,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   ocSessions: [ocSession]
@@ -2003,7 +2003,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   structs: [struct]
@@ -2098,7 +2098,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   models: [model]
@@ -2193,7 +2193,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   mconfigs: [mconfig]
@@ -2288,7 +2288,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   charts: [chart]
@@ -2383,7 +2383,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   reports: [report]
@@ -2435,7 +2435,7 @@ export class TabCheckerService {
         .findFirst({
           where: isNotNull(dashboardsTable.keyTag)
         })
-        .then(x => this.tabService.dashboardEntToTab(x));
+        .then(x => this.tabService.dashboardEntToTabUnwrap(x));
 
       if (isDefined(dashboardEncrypted)) {
         isAllRecords = true;
@@ -2446,7 +2446,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(dashboardsTable.serverTs)
       })
-      .then(x => this.tabService.dashboardEntToTab(x));
+      .then(x => this.tabService.dashboardEntToTabUnwrap(x));
 
     if (isUndefined(dashboardLatest)) {
       return;
@@ -2468,7 +2468,7 @@ export class TabCheckerService {
     while (true) {
       let dashboard = await this.db.drizzle.query.dashboardsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.dashboardEntToTab(x));
+        .then(x => this.tabService.dashboardEntToTabUnwrap(x));
 
       if (isUndefined(dashboard)) {
         break;
@@ -2478,7 +2478,7 @@ export class TabCheckerService {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 update: {
                   dashboards: [dashboard]

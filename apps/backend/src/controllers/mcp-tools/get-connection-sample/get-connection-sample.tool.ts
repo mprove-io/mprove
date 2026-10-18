@@ -71,7 +71,7 @@ export class GetConnectionSampleTool {
           ToBackendGetConnectionSampleOutput,
           GetConnectionSampleError
         > =>
-          this.getConnectionSampleService.getConnectionSampleResult({
+          this.getConnectionSampleService.getConnectionSample({
             projectId: v.projectId,
             envId: v.envId,
             connectionId: v.connectionId,

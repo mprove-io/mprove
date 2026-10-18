@@ -18,7 +18,7 @@ export class TestRoutesGuard implements CanActivate {
       this.cs.get<BackendConfig['allowTestRoutes']>('allowTestRoutes');
 
     let result: Result.Result<void, CheckTestRoutesAllowedError> =
-      this.checkTestRoutesAllowedResult({ allowTestRoutes: allowTestRoutes });
+      this.checkTestRoutesAllowed({ allowTestRoutes: allowTestRoutes });
 
     // Nest requires a boolean or rejection, not a domain Result.
     if (Result.isFailure(result)) {
@@ -30,7 +30,7 @@ export class TestRoutesGuard implements CanActivate {
     return true;
   }
 
-  private checkTestRoutesAllowedResult(item: {
+  private checkTestRoutesAllowed(item: {
     allowTestRoutes?: boolean;
   }): Result.Result<void, CheckTestRoutesAllowedError> {
     let { allowTestRoutes } = item;

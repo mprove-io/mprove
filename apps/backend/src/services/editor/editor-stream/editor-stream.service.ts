@@ -159,7 +159,7 @@ export class EditorStreamService implements OnModuleDestroy {
           //   `[oc-stream] received interact for sessionId=${sessionId}`
           // );
 
-          void this.executeInteractionResult({
+          void this.executeInteraction({
             sessionId: sessionId,
             opencodeSessionId: payload.opencodeSessionId,
             interactionType: payload.interactionType,
@@ -853,7 +853,7 @@ export class EditorStreamService implements OnModuleDestroy {
       }
 
       await this.db.drizzle.transaction(async tx => {
-        await this.db.packer.write({
+        await this.db.packer.writeUnwrap({
           tx: tx,
           insertOrUpdate: {
             ocMessages: messageTabs,
@@ -900,7 +900,7 @@ export class EditorStreamService implements OnModuleDestroy {
     }
   }
 
-  async executeInteractionResult(item: {
+  async executeInteraction(item: {
     sessionId: string;
     opencodeSessionId: string;
     interactionType: InteractionType;
@@ -1040,7 +1040,7 @@ export class EditorStreamService implements OnModuleDestroy {
           });
 
           await this.db.drizzle.transaction(async tx => {
-            await this.db.packer.write({
+            await this.db.packer.writeUnwrap({
               tx: tx,
               insertOrUpdate: {
                 ocMessages: [userOcMessage],

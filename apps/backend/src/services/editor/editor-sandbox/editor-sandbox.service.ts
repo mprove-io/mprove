@@ -240,7 +240,7 @@ export class EditorSandboxService {
 
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insertOrUpdate: { sessions: [updatedSession] }
                     })
@@ -399,7 +399,7 @@ export class EditorSandboxService {
             };
 
             await this.db.drizzle.transaction(async tx => {
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 insertOrUpdate: {
                   sessions: [updatedSession]
@@ -421,7 +421,7 @@ export class EditorSandboxService {
 
             await this.db.drizzle.transaction(
               async tx =>
-                await this.db.packer.write({
+                await this.db.packer.writeUnwrap({
                   tx: tx,
                   insertOrUpdate: {
                     sessions: [updatedSession]

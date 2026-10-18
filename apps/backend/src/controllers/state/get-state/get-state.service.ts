@@ -69,7 +69,7 @@ export class GetStateService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getStateResult(item: {
+  async getState(item: {
     traceId: string;
     user: UserTab;
     projectId: string;

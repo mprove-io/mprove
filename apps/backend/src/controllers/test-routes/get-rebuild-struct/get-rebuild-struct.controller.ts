@@ -127,7 +127,7 @@ export class GetRebuildStructController {
           ToBackendGetRebuildStructOutput,
           SendToBlockmlError
         > =>
-          this.rpcService.sendToBlockmlResult({
+          this.rpcService.sendToBlockml({
             request: {
               operation: 'rebuildStruct',
               traceId: v.traceId,

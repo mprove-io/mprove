@@ -402,7 +402,7 @@ export class UsersService {
       async () =>
         await this.db.drizzle.transaction(
           async tx =>
-            await this.db.packer.write({
+            await this.db.packer.writeUnwrap({
               tx: tx,
               insert: {
                 users: [user]
@@ -456,7 +456,7 @@ export class UsersService {
       async () =>
         await this.db.drizzle.transaction(
           async tx =>
-            await this.db.packer.write({
+            await this.db.packer.writeUnwrap({
               tx: tx,
               insert: {
                 users: [user]

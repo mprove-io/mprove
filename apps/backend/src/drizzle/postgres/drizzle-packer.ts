@@ -97,7 +97,7 @@ export class DrizzlePacker {
     });
   }
 
-  async write(item: PackerInput): Promise<PackerOutput> {
+  async writeUnwrap(item: PackerInput): Promise<PackerOutput> {
     let {
       tx,
       insert,
@@ -108,16 +108,15 @@ export class DrizzlePacker {
       serverTs
     } = item;
 
-    let result: Result.Result<PackerOutput, WriteError> =
-      await this.writeResult({
-        tx: tx,
-        insert: insert,
-        update: update,
-        insertOrUpdate: insertOrUpdate,
-        insertOrDoNothing: insertOrDoNothing,
-        rawQueries: rawQueries,
-        serverTs: serverTs
-      });
+    let result: Result.Result<PackerOutput, WriteError> = await this.write({
+      tx: tx,
+      insert: insert,
+      update: update,
+      insertOrUpdate: insertOrUpdate,
+      insertOrDoNothing: insertOrDoNothing,
+      rawQueries: rawQueries,
+      serverTs: serverTs
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -128,7 +127,7 @@ export class DrizzlePacker {
     return output;
   }
 
-  async writeResult(item: {
+  async write(item: {
     tx: PackerInput['tx'];
     insert?: DbTabsPack;
     update?: DbTabsPack;
@@ -155,7 +154,7 @@ export class DrizzlePacker {
         .then((x: DconfigEnt) =>
           isUndefined(x)
             ? Result.succeed(undefined)
-            : this.tabService.dconfigEntToTabResult({ dconfigEnt: x })
+            : this.tabService.dconfigEntToTab({ dconfigEnt: x })
         );
 
     if (Result.isFailure(dconfigResult)) {
@@ -166,7 +165,7 @@ export class DrizzlePacker {
 
     let insertEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(insert) && Object.keys(insert).length > 0
-        ? this.tabToEntService.tabsPackToEntsPackResult({
+        ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: insert,
             hashSecret: dconfig?.hashSecret
           })
@@ -180,7 +179,7 @@ export class DrizzlePacker {
 
     let updateEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(update) && Object.keys(update).length > 0
-        ? this.tabToEntService.tabsPackToEntsPackResult({
+        ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: update,
             hashSecret: dconfig?.hashSecret
           })
@@ -194,7 +193,7 @@ export class DrizzlePacker {
 
     let insOrUpdEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(insertOrUpdate) && Object.keys(insertOrUpdate).length > 0
-        ? this.tabToEntService.tabsPackToEntsPackResult({
+        ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: insertOrUpdate,
             hashSecret: dconfig?.hashSecret
           })
@@ -211,7 +210,7 @@ export class DrizzlePacker {
       TabsPackToEntsPackError
     > =
       isDefined(insertOrDoNothing) && Object.keys(insertOrDoNothing).length > 0
-        ? this.tabToEntService.tabsPackToEntsPackResult({
+        ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: insertOrDoNothing,
             hashSecret: dconfig?.hashSecret
           })

@@ -318,7 +318,7 @@ export class CreateEditorSessionController {
 
                     await this.db.drizzle.transaction(
                       async tx =>
-                        await this.db.packer.write({
+                        await this.db.packer.writeUnwrap({
                           tx: tx,
                           insert: {
                             sessions: [session],
@@ -437,7 +437,7 @@ export class CreateEditorSessionController {
           CreateSessionRepoOutput,
           CreateSessionRepoError
         > =>
-          this.createSessionRepoResult({
+          this.createSessionRepo({
             session: v.createEditorSessionRecordPayload.session,
             project: v.project,
             envId: v.envId,
@@ -605,7 +605,7 @@ export class CreateEditorSessionController {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 insertOrUpdate: {
                   sessions: [updatedSession],
@@ -639,7 +639,7 @@ export class CreateEditorSessionController {
           let executeInteractionOutput: Result.Result<
             ExecuteInteractionOutput,
             ExecuteInteractionError
-          > = await this.editorStreamService.executeInteractionResult({
+          > = await this.editorStreamService.executeInteraction({
             sessionId: sessionId,
             opencodeSessionId: opencodeSessionId,
             interactionType: 'Message',
@@ -689,7 +689,7 @@ export class CreateEditorSessionController {
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
-              await this.db.packer.write({
+              await this.db.packer.writeUnwrap({
                 tx: tx,
                 rawQueries: [
                   sql`UPDATE sessions SET status = ${'Error' satisfies SessionStatus} WHERE session_id = ${sessionId}`
@@ -710,7 +710,7 @@ export class CreateEditorSessionController {
     }
   }
 
-  private async createSessionRepoResult(item: {
+  private async createSessionRepo(item: {
     session: SessionTab;
     project: ProjectTab;
     envId: string;
@@ -847,7 +847,7 @@ export class CreateEditorSessionController {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insert: {
                         branches: [v.sessionBranch],

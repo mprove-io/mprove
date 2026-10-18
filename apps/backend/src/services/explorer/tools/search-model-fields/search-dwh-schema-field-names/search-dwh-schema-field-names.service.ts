@@ -100,7 +100,7 @@ export class SearchDwhSchemaFieldNamesService {
           ToBackendGetConnectionSchemasOutput,
           GetConnectionSchemasError
         > =>
-          this.getConnectionSchemasService.getConnectionSchemasResult({
+          this.getConnectionSchemasService.getConnectionSchemas({
             userId: v.userId,
             projectId: v.projectId,
             envId: v.envId,

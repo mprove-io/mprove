@@ -98,7 +98,7 @@ export class GetExplorerChartTabService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getExplorerChartTabResult(item: {
+  async getExplorerChartTab(item: {
     user: UserTab;
     traceId: string;
     sessionId: string;
@@ -347,7 +347,7 @@ export class GetExplorerChartTabService {
                     async () =>
                       await this.db.drizzle.transaction(
                         async tx =>
-                          await this.db.packer.write({
+                          await this.db.packer.writeUnwrap({
                             tx: tx,
                             insert: {
                               charts: [rebuiltChart],
@@ -370,7 +370,7 @@ export class GetExplorerChartTabService {
             let toBackendRunQueriesOutput: Result.Result<
               ToBackendRunQueriesOutput,
               RunQueriesError
-            > = await this.runQueriesService.runQueriesResult({
+            > = await this.runQueriesService.runQueries({
               user: v.user,
               projectId: v.session.projectId,
               repoId: v.session.repoId,

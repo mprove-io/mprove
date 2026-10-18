@@ -238,7 +238,7 @@ export class DeleteReportController {
                       )
                     );
 
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: { bridges: [...v.branchBridgeEnts] }
                   });

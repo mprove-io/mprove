@@ -1010,7 +1010,7 @@ export class ReportDataService {
                   async () =>
                     await this.db.drizzle.transaction(
                       async tx =>
-                        await this.db.packer.write({
+                        await this.db.packer.writeUnwrap({
                           tx: tx,
                           insert: {
                             mconfigs: v.prepareReportQueriesPayload.newMconfigs
@@ -1055,7 +1055,7 @@ export class ReportDataService {
                   async () =>
                     await this.db.drizzle.transaction(
                       async tx =>
-                        await this.db.packer.write({
+                        await this.db.packer.writeUnwrap({
                           tx: tx,
                           insertOrUpdate: {
                             reports: [v.report]

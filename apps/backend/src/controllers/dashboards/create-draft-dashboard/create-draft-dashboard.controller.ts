@@ -510,7 +510,7 @@ export class CreateDraftDashboardController {
                 async () =>
                   await this.db.drizzle.transaction(
                     async tx =>
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insert: {
                           dashboards: [v.processedDashboard.newDashboard],

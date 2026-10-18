@@ -44,7 +44,7 @@ export class RunChartService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async prepareRunChartResult(item: {
+  async prepareRunChart(item: {
     structId: string;
     userMember: MemberTab;
     chartIds?: string;

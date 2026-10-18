@@ -32,7 +32,7 @@ export class GetConnectionSampleController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetConnectionSampleRequestDto
   ): Promise<BackendResultForOperation<'getConnectionSample'>> {
-    return this.connectionSampleService.getConnectionSampleResult({
+    return this.connectionSampleService.getConnectionSample({
       ...body.input,
       userId: user.userId
     });

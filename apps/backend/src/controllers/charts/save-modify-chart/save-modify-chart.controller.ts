@@ -636,7 +636,7 @@ export class SaveModifyChartController {
                 await retry(
                   async () =>
                     await this.db.drizzle.transaction(async tx => {
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insertOrUpdate: {
                           structs: [v.currentStruct],
@@ -807,7 +807,7 @@ export class SaveModifyChartController {
                           )
                         );
 
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insert: {
                           mconfigs: [v.prepareQueryPayload.newMconfig]

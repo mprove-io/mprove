@@ -124,7 +124,7 @@ export class CreateGivenController {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insert: { givens: [v.given] }
                     })

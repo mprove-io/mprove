@@ -47,7 +47,7 @@ export class GetConnectionSampleService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getConnectionSampleResult(item: {
+  async getConnectionSample(item: {
     userId: string;
     projectId: string;
     envId: string;

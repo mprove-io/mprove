@@ -68,7 +68,7 @@ export class GetConnectionsListTool {
           ToBackendGetConnectionsListOutput,
           GetConnectionsListError
         > =>
-          this.getConnectionsListService.getConnectionsListResult({
+          this.getConnectionsListService.getConnectionsList({
             projectId: v.projectId,
             envId: v.envId,
             userId: v.user.userId

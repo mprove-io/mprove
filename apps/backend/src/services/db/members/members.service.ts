@@ -447,7 +447,7 @@ export class MembersService {
                   async () =>
                     await this.db.drizzle.transaction(
                       async tx =>
-                        await this.db.packer.write({
+                        await this.db.packer.writeUnwrap({
                           tx: tx,
                           insertOrUpdate: {
                             members: [v.newMember],
@@ -501,7 +501,7 @@ export class MembersService {
             async () =>
               await this.db.drizzle.transaction(
                 async tx =>
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: {
                       members: [newMember]

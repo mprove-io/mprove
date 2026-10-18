@@ -127,7 +127,7 @@ export class DeleteRoleController {
                       )
                     );
 
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: { members: v.membersToUpdate }
                   });

@@ -60,7 +60,7 @@ export class GetQueryInfoService {
     private queryInfoReportService: QueryInfoReportService
   ) {}
 
-  async getQueryInfoResult(item: {
+  async getQueryInfo(item: {
     traceId: string;
     user: UserTab;
     projectId: string;

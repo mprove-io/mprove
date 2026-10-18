@@ -32,7 +32,7 @@ export class GetQueryInfoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetQueryInfoRequestDto
   ): Promise<BackendResultForOperation<'getQueryInfo'>> {
-    return this.getQueryInfoService.getQueryInfoResult({
+    return this.getQueryInfoService.getQueryInfo({
       ...body.input,
       traceId: body.traceId,
       user: user

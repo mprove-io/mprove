@@ -528,7 +528,7 @@ export class SaveCreateReportController {
                 await retry(
                   async () =>
                     await this.db.drizzle.transaction(async tx => {
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insertOrUpdate: {
                           structs: [v.currentStruct],
@@ -610,7 +610,7 @@ export class SaveCreateReportController {
                           )
                         );
 
-                      await this.db.packer.write({
+                      await this.db.packer.writeUnwrap({
                         tx: tx,
                         insert: {
                           reports: [saveReportPayload.report]

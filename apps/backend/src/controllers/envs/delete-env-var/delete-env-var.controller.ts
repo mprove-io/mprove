@@ -137,7 +137,7 @@ export class DeleteEnvVarController {
             await retry(
               async () =>
                 await this.db.drizzle.transaction(async tx => {
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: {
                       bridges: [...v.branchBridgeEnts],

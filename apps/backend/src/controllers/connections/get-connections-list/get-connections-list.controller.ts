@@ -33,7 +33,7 @@ export class GetConnectionsListController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetConnectionsListRequestDto
   ): Promise<BackendResultForOperation<'getConnectionsList'>> {
-    return this.getConnectionsListService.getConnectionsListResult({
+    return this.getConnectionsListService.getConnectionsList({
       ...body.input,
       userId: user.userId
     });

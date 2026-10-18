@@ -84,7 +84,7 @@ export class GetConnectionSchemasService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getConnectionSchemas(item: {
+  async getConnectionSchemasUnwrap(item: {
     userId: string;
     projectId: string;
     envId: string;
@@ -95,7 +95,7 @@ export class GetConnectionSchemasService {
     let result: Result.Result<
       ToBackendGetConnectionSchemasOutput,
       GetConnectionSchemasError
-    > = await this.getConnectionSchemasResult(item);
+    > = await this.getConnectionSchemas(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -106,7 +106,7 @@ export class GetConnectionSchemasService {
     return output;
   }
 
-  async getConnectionSchemasResult(item: {
+  async getConnectionSchemas(item: {
     userId: string;
     projectId: string;
     envId: string;

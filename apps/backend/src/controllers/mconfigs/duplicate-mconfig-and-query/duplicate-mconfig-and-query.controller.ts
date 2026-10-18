@@ -268,7 +268,7 @@ export class DuplicateMconfigAndQueryController {
               async () =>
                 await this.db.drizzle.transaction(
                   async tx =>
-                    await this.db.packer.write({
+                    await this.db.packer.writeUnwrap({
                       tx: tx,
                       insert: {
                         mconfigs: [v.duplicateMconfigAndQueryPayload.newMconfig]

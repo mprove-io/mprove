@@ -44,7 +44,7 @@ export class RunDashboardService {
     private dashboardsService: DashboardsService
   ) {}
 
-  async prepareRunDashboardResult(item: {
+  async prepareRunDashboard(item: {
     structId: string;
     user: UserTab;
     userMember: MemberTab;

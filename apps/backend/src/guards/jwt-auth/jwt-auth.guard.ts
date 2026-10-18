@@ -92,7 +92,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         bearer.startsWith(`${'SK' satisfies ApiKeyType}-`)
       ) {
         // Nest requires rejection here; domain helpers propagate typed failures.
-        let isAuthenticated: Promise<boolean> = this.authenticateApiKeyResult({
+        let isAuthenticated: Promise<boolean> = this.authenticateApiKey({
           request: request,
           fullKey: bearer
         }).then(result => {
@@ -113,7 +113,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return isAuthenticated;
   }
 
-  private async authenticateApiKeyResult(item: {
+  private async authenticateApiKey(item: {
     request: ApiKeyAuthRequest;
     fullKey: string;
   }): Result.ResultAsync<boolean, AuthenticateApiKeyError> {
@@ -141,11 +141,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           AuthenticatePersonalApiKeyError | AuthenticateSessionApiKeyError
         > =>
           v.parsed.type === 'PK'
-            ? this.authenticatePersonalApiKeyResult({
+            ? this.authenticatePersonalApiKey({
                 request: v.request,
                 parsed: v.parsed
               })
-            : this.authenticateSessionApiKeyResult({
+            : this.authenticateSessionApiKey({
                 request: v.request,
                 parsed: v.parsed
               })
@@ -153,7 +153,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     );
   }
 
-  private async authenticatePersonalApiKeyResult(item: {
+  private async authenticatePersonalApiKey(item: {
     request: ApiKeyAuthRequest;
     parsed: ParseApiKeyOutput;
   }): Result.ResultAsync<boolean, AuthenticatePersonalApiKeyError> {
@@ -232,7 +232,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     );
   }
 
-  private async authenticateSessionApiKeyResult(item: {
+  private async authenticateSessionApiKey(item: {
     request: ApiKeyAuthRequest;
     parsed: ParseApiKeyOutput;
   }): Result.ResultAsync<boolean, AuthenticateSessionApiKeyError> {

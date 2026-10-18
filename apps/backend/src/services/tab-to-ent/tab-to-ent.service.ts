@@ -162,14 +162,14 @@ export class TabToEntService {
       this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata');
   }
 
-  tabsPackToEntsPack(item: {
+  tabsPackToEntsPackUnwrap(item: {
     tabsPack: DbTabsPack;
     hashSecret: string;
   }): DbEntsPack {
     let { tabsPack, hashSecret } = item;
 
     let result: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
-      this.tabsPackToEntsPackResult({
+      this.tabsPackToEntsPack({
         tabsPack: tabsPack,
         hashSecret: hashSecret
       });
@@ -183,7 +183,7 @@ export class TabToEntService {
     return entsPack;
   }
 
-  tabsPackToEntsPackResult(item: {
+  tabsPackToEntsPack(item: {
     tabsPack: DbTabsPack;
     hashSecret?: string;
   }): Result.Result<DbEntsPack, TabsPackToEntsPackError> {
@@ -289,7 +289,7 @@ export class TabToEntService {
           Result.sequence(
             v.tabsPack.members?.filter(x => isDefined(x)) ?? [],
             member =>
-              this.memberTabToEntResult({
+              this.memberTabToEnt({
                 tab: member,
                 hashSecret: v.hashSecret
               })
@@ -343,8 +343,7 @@ export class TabToEntService {
         (v): Result.Result<OrgEnt[], OrgTabToEntError> =>
           Result.sequence(
             v.tabsPack.orgs?.filter(x => isDefined(x)) ?? [],
-            org =>
-              this.orgTabToEntResult({ tab: org, hashSecret: v.hashSecret })
+            org => this.orgTabToEnt({ tab: org, hashSecret: v.hashSecret })
           )
       ),
       Result.map(v => {
@@ -369,7 +368,7 @@ export class TabToEntService {
           Result.sequence(
             v.tabsPack.projects?.filter(x => isDefined(x)) ?? [],
             project =>
-              this.projectTabToEntResult({
+              this.projectTabToEnt({
                 tab: project,
                 hashSecret: v.hashSecret
               })
@@ -397,7 +396,7 @@ export class TabToEntService {
           Result.sequence(
             v.tabsPack.queries?.filter(x => isDefined(x)) ?? [],
             query =>
-              this.queryTabToEntResult({ tab: query, hashSecret: v.hashSecret })
+              this.queryTabToEnt({ tab: query, hashSecret: v.hashSecret })
           )
       ),
       Result.map(v => {
@@ -427,8 +426,7 @@ export class TabToEntService {
         (v): Result.Result<UserEnt[], UserTabToEntError> =>
           Result.sequence(
             v.tabsPack.users?.filter(x => isDefined(x)) ?? [],
-            user =>
-              this.userTabToEntResult({ tab: user, hashSecret: v.hashSecret })
+            user => this.userTabToEnt({ tab: user, hashSecret: v.hashSecret })
           )
       ),
       Result.map(v => {
@@ -964,11 +962,14 @@ export class TabToEntService {
     return mconfigEnt;
   }
 
-  memberTabToEnt(item: { tab: MemberTab; hashSecret: string }): MemberEnt {
+  memberTabToEntUnwrap(item: {
+    tab: MemberTab;
+    hashSecret: string;
+  }): MemberEnt {
     let { tab, hashSecret } = item;
 
     let result: Result.Result<MemberEnt, MemberTabToEntError> =
-      this.memberTabToEntResult({ tab: tab, hashSecret: hashSecret });
+      this.memberTabToEnt({ tab: tab, hashSecret: hashSecret });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -979,7 +980,7 @@ export class TabToEntService {
     return memberEnt;
   }
 
-  memberTabToEntResult(item: {
+  memberTabToEnt(item: {
     tab: MemberTab;
     hashSecret?: string;
   }): Result.Result<MemberEnt, MemberTabToEntError> {
@@ -1156,11 +1157,13 @@ export class TabToEntService {
     return noteEnt;
   }
 
-  orgTabToEnt(item: { tab: OrgTab; hashSecret: string }): OrgEnt {
+  orgTabToEntUnwrap(item: { tab: OrgTab; hashSecret: string }): OrgEnt {
     let { tab, hashSecret } = item;
 
-    let result: Result.Result<OrgEnt, OrgTabToEntError> =
-      this.orgTabToEntResult({ tab: tab, hashSecret: hashSecret });
+    let result: Result.Result<OrgEnt, OrgTabToEntError> = this.orgTabToEnt({
+      tab: tab,
+      hashSecret: hashSecret
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1171,7 +1174,7 @@ export class TabToEntService {
     return orgEnt;
   }
 
-  orgTabToEntResult(item: {
+  orgTabToEnt(item: {
     tab: OrgTab;
     hashSecret?: string;
   }): Result.Result<OrgEnt, OrgTabToEntError> {
@@ -1222,11 +1225,14 @@ export class TabToEntService {
     );
   }
 
-  projectTabToEnt(item: { tab: ProjectTab; hashSecret: string }): ProjectEnt {
+  projectTabToEntUnwrap(item: {
+    tab: ProjectTab;
+    hashSecret: string;
+  }): ProjectEnt {
     let { tab, hashSecret } = item;
 
     let result: Result.Result<ProjectEnt, ProjectTabToEntError> =
-      this.projectTabToEntResult({ tab: tab, hashSecret: hashSecret });
+      this.projectTabToEnt({ tab: tab, hashSecret: hashSecret });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1237,7 +1243,7 @@ export class TabToEntService {
     return projectEnt;
   }
 
-  projectTabToEntResult(item: {
+  projectTabToEnt(item: {
     tab: ProjectTab;
     hashSecret?: string;
   }): Result.Result<ProjectEnt, ProjectTabToEntError> {
@@ -1333,11 +1339,11 @@ export class TabToEntService {
     return providerEnt;
   }
 
-  queryTabToEnt(item: { tab: QueryTab; hashSecret: string }): QueryEnt {
+  queryTabToEntUnwrap(item: { tab: QueryTab; hashSecret: string }): QueryEnt {
     let { tab, hashSecret } = item;
 
     let result: Result.Result<QueryEnt, QueryTabToEntError> =
-      this.queryTabToEntResult({ tab: tab, hashSecret: hashSecret });
+      this.queryTabToEnt({ tab: tab, hashSecret: hashSecret });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1348,7 +1354,7 @@ export class TabToEntService {
     return queryEnt;
   }
 
-  queryTabToEntResult(item: {
+  queryTabToEnt(item: {
     tab: QueryTab;
     hashSecret?: string;
   }): Result.Result<QueryEnt, QueryTabToEntError> {
@@ -1484,11 +1490,13 @@ export class TabToEntService {
     return structEnt;
   }
 
-  userTabToEnt(item: { tab: UserTab; hashSecret: string }): UserEnt {
+  userTabToEntUnwrap(item: { tab: UserTab; hashSecret: string }): UserEnt {
     let { tab, hashSecret } = item;
 
-    let result: Result.Result<UserEnt, UserTabToEntError> =
-      this.userTabToEntResult({ tab: tab, hashSecret: hashSecret });
+    let result: Result.Result<UserEnt, UserTabToEntError> = this.userTabToEnt({
+      tab: tab,
+      hashSecret: hashSecret
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1499,7 +1507,7 @@ export class TabToEntService {
     return userEnt;
   }
 
-  userTabToEntResult(item: {
+  userTabToEnt(item: {
     tab: UserTab;
     hashSecret?: string;
   }): Result.Result<UserEnt, UserTabToEntError> {

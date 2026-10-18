@@ -122,7 +122,7 @@ export class GetSessionController {
             return dbErrorToResult({
               action: async () => {
                 await this.db.drizzle.transaction(async tx => {
-                  await this.db.packer.write({
+                  await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: { sessions: [v.session] }
                   });

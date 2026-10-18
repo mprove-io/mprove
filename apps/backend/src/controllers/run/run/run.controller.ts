@@ -32,7 +32,7 @@ export class RunController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRunRequestDto
   ): Promise<BackendResultForOperation<'run'>> {
-    return this.runService.runResult({
+    return this.runService.run({
       ...body.input,
       traceId: body.traceId,
       user: user
