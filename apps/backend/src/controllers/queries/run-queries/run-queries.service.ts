@@ -26,12 +26,12 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import { DbWriteService } from '#backend/services/db-write/db-write.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -94,7 +94,7 @@ export class RunQueriesService {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private queriesService: QueriesService,
-    private dbWriteService: DbWriteService,
+    private dbService: DbService,
     private sessionsService: SessionsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
@@ -206,7 +206,7 @@ export class RunQueriesService {
       });
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbWriteService.writeResult({
+        await this.dbService.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -223,7 +223,7 @@ export class RunQueriesService {
       query.lastRunTs = makeTsNumber();
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbWriteService.writeResult({
+        await this.dbService.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -342,7 +342,7 @@ export class RunQueriesService {
       });
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbWriteService.writeResult({
+        await this.dbService.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -361,7 +361,7 @@ export class RunQueriesService {
       query.lastRunTs = makeTsNumber();
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbWriteService.writeResult({
+        await this.dbService.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -838,7 +838,7 @@ export class RunQueriesService {
                   tokens.expiry_date;
 
                 let persistenceResult: Result.Result<PackerOutput, WriteError> =
-                  await this.dbWriteService.writeResult({
+                  await this.dbService.write({
                     insertOrUpdate: { connections: [connection] }
                   });
 

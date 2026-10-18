@@ -15,9 +15,9 @@ import {
   usersTable
 } from '#backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
-import { DbWriteService } from '#backend/services/db-write/db-write.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -42,7 +42,7 @@ export class SetOrgOwnerController {
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,
-    private dbWriteService: DbWriteService,
+    private dbService: DbService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -116,7 +116,7 @@ export class SetOrgOwnerController {
         return v;
       }),
       Result.andThrough(v =>
-        this.dbWriteService.writeResult({
+        this.dbService.write({
           insertOrUpdate: { orgs: [v.org] }
         })
       ),

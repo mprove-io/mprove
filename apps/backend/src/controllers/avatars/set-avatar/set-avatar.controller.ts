@@ -1,36 +1,20 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSetAvatarRequestDto,
   ToBackendSetAvatarResponseDto
 } from '#backend/controllers/avatars/set-avatar/set-avatar.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   AvatarTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type AvatarEnt,
-  avatarsTable
-} from '#backend/drizzle/postgres/schema/avatars';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
@@ -42,11 +26,8 @@ import type { ToBackendSetAvatarOutput } from '#common/types/backend/routes/avat
 @Controller()
 export class SetAvatarController {
   constructor(
-    private tabService: TabService,
-    private usersService: UsersService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private dbService: DbService,
+    private usersService: UsersService
   ) {}
 
   @Post('api/ToBackendSetAvatar' satisfies ToBackendRoute)
@@ -73,12 +54,12 @@ export class SetAvatarController {
       Result.bind(
         'avatar',
         (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
-          this.db.drizzle.query.avatarsTable
+          this.dbService.avatars
             .findFirst({
               where: eq(avatarsTable.userId, v.user.userId)
             })
-            .then((x: AvatarEnt) =>
-              isUndefined(x)
+            .then(avatar =>
+              Result.isSuccess(avatar) && isUndefined(avatar.value)
                 ? Result.succeed({
                     userId: v.user.userId,
                     avatarSmall: v.avatarSmall,
@@ -86,7 +67,7 @@ export class SetAvatarController {
                     keyTag: undefined,
                     serverTs: undefined
                   })
-                : this.tabService.avatarEntToTabResult({ avatarEnt: x })
+                : avatar
             )
       ),
       Result.map(v => {
@@ -96,21 +77,9 @@ export class SetAvatarController {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.write({
-                      tx: tx,
-                      insertOrUpdate: {
-                        avatars: [v.avatar]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.dbService.write({
+          insertOrUpdate: {
+            avatars: [v.avatar]
           }
         })
       ),

@@ -13,6 +13,7 @@ import { CachedColumnService } from '#backend/services/db/cached-column/cached-c
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
@@ -34,7 +35,6 @@ import { RolesService } from '#backend/services/db/roles/roles.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
-import { DbWriteService } from '#backend/services/db-write/db-write.service';
 import { DocService } from '#backend/services/doc/doc.service';
 import { DocsService } from '#backend/services/docs/docs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
@@ -155,7 +155,7 @@ export const appProviders = [
   BlockmlService,
   AscendingIdService,
   CodexService,
-  DbWriteService,
+  DbService,
   TabCheckerService,
   DocService,
   EmailService,
