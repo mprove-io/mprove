@@ -11,10 +11,10 @@ import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/rep
 import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
+import { getConfigUnwrap } from '#mcli/config/get-config-unwrap';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqUnwrap } from '#mcli/functions/mreq-unwrap/mreq-unwrap';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
 import { PushCommand } from '../push.command';
@@ -51,7 +51,7 @@ test('1', async () => {
 
     let projectName = testId;
 
-    let config = getConfig();
+    let config = getConfigUnwrap();
 
     try {
       let { cli, mockContext } = await prepareTest({
@@ -126,7 +126,7 @@ test('1', async () => {
         content: '123'
       };
 
-      let saveFileOutput: ToBackendSaveFileOutput = await mreq({
+      let saveFileOutput: ToBackendSaveFileOutput = await mreqUnwrap({
         apiKey: loginToken,
         route: 'api/ToBackendSaveFile',
         payload: saveFileReqPayload,
@@ -140,7 +140,7 @@ test('1', async () => {
         commitMessage: 'm1'
       };
 
-      let commitRepoOutput: ToBackendCommitRepoOutput = await mreq({
+      let commitRepoOutput: ToBackendCommitRepoOutput = await mreqUnwrap({
         apiKey: context.config.mproveCliApiKey,
         route: 'api/ToBackendCommitRepo',
         payload: commitRepoReqPayload,

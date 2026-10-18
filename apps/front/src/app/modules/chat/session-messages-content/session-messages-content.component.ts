@@ -136,7 +136,7 @@ function extractReadContent(item: { text: string }): string {
   return text;
 }
 
-function extractTaskResult(item: { text: string }): string {
+function extractTask(item: { text: string }): string {
   let { text } = item;
   let match = text.match(/<task_result>([\s\S]*)<\/task_result>/);
   if (match) {
@@ -341,7 +341,7 @@ export class SessionMessagesContentComponent {
     } else if (toolPart.tool === 'read') {
       displayOutput = extractReadContent({ text: output });
     } else if (toolPart.tool === 'task') {
-      displayOutput = extractTaskResult({ text: output });
+      displayOutput = extractTask({ text: output });
     } else if (toolPart.tool === 'skill') {
       displayOutput = extractSkillContent({ text: output });
     } else if (

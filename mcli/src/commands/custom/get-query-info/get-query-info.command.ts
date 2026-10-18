@@ -12,8 +12,8 @@ import {
 } from '#common/types/disk/parts/repo/repo-type';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
-import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import { getApiKeyRepoId } from '#mcli/functions/get-api-key-repo-id/get-api-key-repo-id';
+import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
 import type { GetQueryInfoCommandError } from '#mcli/types/function-errors/get-query-info-command-error';
@@ -128,7 +128,7 @@ export class GetQueryInfoCommand extends CustomCommand {
     let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
       this.repoType === 'production'
         ? Result.succeed(PROD_REPO_ID)
-        : getApiKeyRepoIdResult({ apiKey: apiKey });
+        : getApiKeyRepoId({ apiKey: apiKey });
 
     if (Result.isFailure(repoIdResult)) {
       return repoIdResult;
@@ -158,7 +158,7 @@ export class GetQueryInfoCommand extends CustomCommand {
     let getQueryInfoOutputResult: Result.Result<
       ToBackendGetQueryInfoOutput,
       MreqError<ToBackendGetQueryInfoResponse>
-    > = await mreqResult({
+    > = await mreq({
       apiKey: apiKey,
       route: 'api/ToBackendGetQueryInfo',
       payload: getQueryInfoReqPayload,

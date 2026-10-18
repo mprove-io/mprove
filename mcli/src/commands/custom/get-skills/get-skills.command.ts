@@ -6,7 +6,7 @@ import type { SkillItem } from '#common/types/backend/parts/skill-item';
 import type { ToBackendGetSkillsOutput } from '#common/types/backend/routes/skills/get-skills/get-skills-output';
 import type { ToBackendGetSkillsResponse } from '#common/types/backend/routes/skills/get-skills/get-skills-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import { mreq } from '#mcli/functions/mreq/mreq';
 import type { GetSkillsCommandError } from '#mcli/types/function-errors/get-skills-command-error';
 import type { MreqError } from '#mcli/types/function-errors/mreq-error';
 
@@ -35,7 +35,7 @@ export class GetSkillsCommand extends CustomCommand {
     let getSkillsOutputResult: Result.Result<
       ToBackendGetSkillsOutput,
       MreqError<ToBackendGetSkillsResponse>
-    > = await mreqResult({
+    > = await mreq({
       apiKey: apiKey,
       route: 'api/ToBackendGetSkills',
       payload: {},

@@ -59,7 +59,7 @@ import type { Env } from '#common/types/backend/parts/env';
 import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRunQueriesDryOutput } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-output';
-import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
+import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 
 type RunQueryDryOutput = {
   validEstimate?: QueryEstimate;
@@ -199,7 +199,7 @@ export class RunQueriesDryController {
       Result.bind(
         'runQueryDryOutputs',
         (v): Result.ResultAsync<RunQueryDryOutput[], RunQueryDryError> =>
-          asyncPoolResult({
+          customAsyncPool({
             poolSize: 8,
             inputs: v.queryIds,
             callback: queryId =>

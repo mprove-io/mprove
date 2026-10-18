@@ -63,7 +63,7 @@ import type { GetDconfigHashSecretError } from '#common/types/backend/function-e
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRecordsOutput } from '#common/types/backend/routes/test-routes/delete-records/delete-records-output';
-import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
+import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()
@@ -167,7 +167,7 @@ export class DeleteRecordsController {
       Result.andThrough(v =>
         v.orgIds.length === 0
           ? Result.succeed()
-          : asyncPoolResult({
+          : customAsyncPool({
               poolSize: 1,
               inputs: v.orgIds,
               callback: orgId =>
@@ -185,7 +185,7 @@ export class DeleteRecordsController {
         async (v): Result.ResultAsync<string[], MakeHashError> =>
           v.emails.length === 0
             ? Result.succeed([])
-            : asyncPoolResult({
+            : customAsyncPool({
                 poolSize: 1,
                 inputs: v.emails,
                 callback: async email => {

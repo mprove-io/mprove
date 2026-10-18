@@ -69,7 +69,7 @@ import type { WriteError } from '#common/types/backend/function-errors/write-err
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
-import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
+import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 
 type PrepareQueryExecutionPayload = {
   runningQueries: QueryTab[];
@@ -863,7 +863,7 @@ export class RunQueriesService {
 
           let pSize: number = Number(v.poolSize);
 
-          void asyncPoolResult({
+          void customAsyncPool({
             poolSize: pSize,
             inputs: v.queryIds,
             callback: (
@@ -897,7 +897,7 @@ export class RunQueriesService {
           let queryLaunchResult: Result.Result<
             void[],
             RunQueriesSetupErrorToError
-          > = await asyncPoolResult({
+          > = await customAsyncPool({
             poolSize: 8,
             inputs: v.queryIds,
             callback: (

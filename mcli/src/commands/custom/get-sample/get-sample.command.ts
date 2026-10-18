@@ -7,7 +7,7 @@ import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/r
 import type { ToBackendGetConnectionSampleRequest } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-request';
 import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import type { GetSampleCommandError } from '#mcli/types/function-errors/get-sample-command-error';
 import type { MreqError } from '#mcli/types/function-errors/mreq-error';
@@ -92,7 +92,7 @@ export class GetSampleCommand extends CustomCommand {
     let getSampleOutputResult: Result.Result<
       ToBackendGetConnectionSampleOutput,
       MreqError<ToBackendGetConnectionSampleResponse>
-    > = await mreqResult({
+    > = await mreq({
       apiKey: apiKey,
       route: 'api/ToBackendGetConnectionSample',
       payload: getSampleReqPayload,

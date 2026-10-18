@@ -34,7 +34,7 @@ let NON_GLOBAL_IPV6_PREFIXES: readonly string[] = [
   'fe80::/10' // Link-local
 ];
 
-export function isPrivateIpResult(item: {
+export function isPrivateIp(item: {
   hostname: string;
   parsedIp: ipaddr.IPv4 | ipaddr.IPv6;
   resolvedRecordAddress?: string;

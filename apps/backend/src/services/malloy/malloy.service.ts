@@ -33,7 +33,7 @@ import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-sp
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { makeMalloyConnections } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import type { MalloyQueryResult } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
-import { makeMalloyQueryResult } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
+import { makeMalloyQuery } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
 
 type ResolveQueryConnectionsPayload = {
   connection: ConnectionTab;
@@ -137,7 +137,7 @@ export class MalloyService {
           addTraceSpan({
             spanName: 'backend.makeMalloyQuery',
             fn: () =>
-              makeMalloyQueryResult({
+              makeMalloyQuery({
                 projectId: v.projectId,
                 envId: v.envId,
                 structId: v.structId,

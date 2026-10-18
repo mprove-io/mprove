@@ -7,7 +7,7 @@ let SECOND_CHAR_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 let MAX_BUCKETS = FIRST_CHAR_ALPHABET.length * SECOND_CHAR_ALPHABET.length;
 
-export function calculateDiskShardResult(item: {
+export function calculateDiskShard(item: {
   shardKey: string;
   totalDiskShards: number;
 }): Result.Result<string, CalculateDiskShardError> {

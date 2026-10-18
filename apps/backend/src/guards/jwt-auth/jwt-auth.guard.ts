@@ -13,8 +13,8 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import {
   type ParseApiKeyOutput,
-  parseApiKeyResult
-} from '#backend/functions/api-key/parse-api-key-result/parse-api-key-result';
+  parseApiKey
+} from '#backend/functions/api-key/parse-api-key/parse-api-key';
 import { validateApiKeySecret } from '#backend/guards/jwt-auth/validate-api-key-secret/validate-api-key-secret';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -122,7 +122,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       Result.bind(
         'parsed',
         (v): Result.Result<ParseApiKeyOutput, ParseApiKeyError> =>
-          parseApiKeyResult({ fullKey: v.fullKey })
+          parseApiKey({ fullKey: v.fullKey })
       ),
       Result.andThrough(v =>
         v.parsed.type !== 'PK' && v.parsed.type !== 'SK'

@@ -7,7 +7,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetConfigError } from '#mcli/types/function-errors/get-config-error';
 import { type McliConfig, zMcliConfig } from './mcli-config';
 
-export function getConfigResult(item: {
+export function getConfig(item: {
   envPath?: string;
 }): Result.Result<McliConfig, GetConfigError> {
   let { envPath } = item;

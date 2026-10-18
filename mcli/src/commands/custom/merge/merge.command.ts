@@ -7,8 +7,8 @@ import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repo
 import type { ToBackendMergeRepoRequest } from '#common/types/backend/routes/repos/merge-repo/merge-repo-request';
 import type { ToBackendMergeRepoResponse } from '#common/types/backend/routes/repos/merge-repo/merge-repo-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
-import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import { getApiKeyRepoId } from '#mcli/functions/get-api-key-repo-id/get-api-key-repo-id';
+import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
 import type { MergeCommandError } from '#mcli/types/function-errors/merge-command-error';
@@ -76,7 +76,7 @@ export class MergeCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
-      getApiKeyRepoIdResult({ apiKey: apiKey });
+      getApiKeyRepoId({ apiKey: apiKey });
 
     if (Result.isFailure(repoIdResult)) {
       return repoIdResult;
@@ -96,7 +96,7 @@ export class MergeCommand extends CustomCommand {
     let mergeRepoOutputResult: Result.Result<
       ToBackendMergeRepoOutput,
       MreqError<ToBackendMergeRepoResponse>
-    > = await mreqResult({
+    > = await mreq({
       apiKey: this.context.config.mproveCliApiKey,
       route: 'api/ToBackendMergeRepo',
       payload: mergeRepoReqPayload,

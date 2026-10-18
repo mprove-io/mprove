@@ -1,6 +1,6 @@
 import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/users/login-user/login-user-output';
 import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqUnwrap } from '#mcli/functions/mreq-unwrap/mreq-unwrap';
 
 export async function getTestLoginToken(item: {
   email: string;
@@ -12,7 +12,7 @@ export async function getTestLoginToken(item: {
     password: item.password
   };
 
-  let loginUserOutput: ToBackendLoginUserOutput = await mreq({
+  let loginUserOutput: ToBackendLoginUserOutput = await mreqUnwrap({
     route: 'api/ToBackendLoginUser',
     payload: loginUserReqPayload,
     host: item.host

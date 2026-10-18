@@ -11,7 +11,7 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import type { UserEnt } from '#backend/drizzle/postgres/schema/users';
-import { retryTransactionResult } from '#backend/functions/retry-transaction-result/retry-transaction-result';
+import { retryTransaction } from '#backend/functions/retry-transaction/retry-transaction';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import {
@@ -76,7 +76,7 @@ export class DbService {
       serverTs
     } = item;
 
-    return retryTransactionResult({
+    return retryTransaction({
       db: this.db,
       options: getRetryOption(this.cs, this.logger),
       action: ({ tx }) =>

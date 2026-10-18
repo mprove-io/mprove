@@ -15,8 +15,8 @@ import type { GetSyncAppliedChangesError } from '#common/types/node-common/funct
 import type { GetSyncFilesPayloadError } from '#common/types/node-common/function-errors/get-sync-files-payload-error';
 import type { ResetWorkingTreeToHeadError } from '#common/types/node-common/function-errors/reset-working-tree-to-head-error';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
-import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import { getApiKeyRepoId } from '#mcli/functions/get-api-key-repo-id/get-api-key-repo-id';
+import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import type { McliSyncChangesMismatchError } from '#mcli/types/errors/mcli-sync-changes-mismatch-error';
 import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
@@ -132,7 +132,7 @@ export class SyncCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
-      getApiKeyRepoIdResult({ apiKey: apiKey });
+      getApiKeyRepoId({ apiKey: apiKey });
 
     if (Result.isFailure(repoIdResult)) {
       return repoIdResult;
@@ -174,7 +174,7 @@ export class SyncCommand extends CustomCommand {
     let syncRepoOutputResult: Result.Result<
       ToBackendSyncRepoOutput,
       MreqError<ToBackendSyncRepoResponse>
-    > = await mreqResult({
+    > = await mreq({
       apiKey: this.context.config.mproveCliApiKey,
       route: 'api/ToBackendSyncRepo',
       payload: syncRepoReqPayload,

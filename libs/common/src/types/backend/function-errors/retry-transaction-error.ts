@@ -1,3 +1,3 @@
-import type { RetryError } from '#common/types/backend/function-errors/retry-error';
+import type { CustomRetryError } from '#common/types/backend/function-errors/custom-retry-error';
 
-export type RetryTransactionError<Failure> = RetryError<Failure>;
+export type RetryTransactionError<Failure> = CustomRetryError<Failure>;

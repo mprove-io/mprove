@@ -58,7 +58,7 @@ export interface MalloyQueryResult {
   apiNewQuery: Query;
 }
 
-export async function makeMalloyQueryResult(item: {
+export async function makeMalloyQuery(item: {
   projectId: string;
   envId: string;
   structId: string;

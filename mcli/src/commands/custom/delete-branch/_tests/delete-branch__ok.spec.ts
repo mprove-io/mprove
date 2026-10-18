@@ -8,9 +8,9 @@ import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/b
 import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
 import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
+import { getConfigUnwrap } from '#mcli/config/get-config-unwrap';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqUnwrap } from '#mcli/functions/mreq-unwrap/mreq-unwrap';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
 import { DeleteBranchCommand } from '../delete-branch.command';
@@ -47,7 +47,7 @@ test('1', async () => {
 
     let projectName = testId;
 
-    let config = getConfig();
+    let config = getConfigUnwrap();
 
     try {
       let { cli, mockContext } = await prepareTest({
@@ -116,7 +116,7 @@ test('1', async () => {
         fromBranchId: defaultBranch
       };
 
-      let createBranchOutput: ToBackendCreateBranchOutput = await mreq({
+      let createBranchOutput: ToBackendCreateBranchOutput = await mreqUnwrap({
         apiKey: context.config.mproveCliApiKey,
         route: 'api/ToBackendCreateBranch',
         payload: createBranchReqPayload,

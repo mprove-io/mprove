@@ -9,7 +9,7 @@ import type { ToBackendOperation } from '#common/types/backend/request/to-backen
 import { zToBackendOperationRegistry } from '#common/types/backend/request/to-backend-operation-registry';
 import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 
-export function validateToBackendRequestResult(item: {
+export function validateToBackendRequest(item: {
   path: string;
   body: unknown;
 }): Result.Result<ToBackendRequest, ValidateToBackendRequestError> {

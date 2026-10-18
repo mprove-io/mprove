@@ -3,7 +3,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
 
-export function getApiKeyRepoIdResult(item: {
+export function getApiKeyRepoId(item: {
   apiKey?: string;
 }): Result.Result<string, GetApiKeyRepoIdError> {
   let { apiKey } = item;

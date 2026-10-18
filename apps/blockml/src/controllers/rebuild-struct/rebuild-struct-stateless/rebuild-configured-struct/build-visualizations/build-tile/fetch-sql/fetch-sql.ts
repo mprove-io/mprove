@@ -16,7 +16,7 @@ import type { FileChart } from '#common/types/blockml/parts/internal/file-chart'
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import type { Model } from '#common/types/blockml/parts/model/model';
-import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
+import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { fetchTileSql } from './fetch-tile-sql/fetch-tile-sql';
 
@@ -67,7 +67,7 @@ export async function fetchSql<T extends dcType>(item: {
     cs.get<BlockmlConfig['concurrencyLimit']>('concurrencyLimit');
 
   let fetchSqlOutput: Result.Result<void[], FetchSqlError> =
-    await asyncPoolResult({
+    await customAsyncPool({
       poolSize: concurrencyLimit,
       inputs: tiles,
       callback: (

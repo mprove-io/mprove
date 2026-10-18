@@ -11,8 +11,8 @@ import {
   repoTypeValues
 } from '#common/types/disk/parts/repo/repo-type';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { getApiKeyRepoIdResult } from '#mcli/functions/get-api-key-repo-id-result/get-api-key-repo-id-result';
-import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import { getApiKeyRepoId } from '#mcli/functions/get-api-key-repo-id/get-api-key-repo-id';
+import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import type { GetApiKeyRepoIdError } from '#mcli/types/function-errors/get-api-key-repo-id-error';
 import type { GetSchemasCommandError } from '#mcli/types/function-errors/get-schemas-command-error';
@@ -80,7 +80,7 @@ export class GetSchemasCommand extends CustomCommand {
     let repoIdResult: Result.Result<string, GetApiKeyRepoIdError> =
       this.repoType === 'production'
         ? Result.succeed(PROD_REPO_ID)
-        : getApiKeyRepoIdResult({ apiKey: apiKey });
+        : getApiKeyRepoId({ apiKey: apiKey });
 
     if (Result.isFailure(repoIdResult)) {
       return repoIdResult;
@@ -99,7 +99,7 @@ export class GetSchemasCommand extends CustomCommand {
     let getSchemasOutputResult: Result.Result<
       ToBackendGetConnectionSchemasOutput,
       MreqError<ToBackendGetConnectionSchemasResponse>
-    > = await mreqResult({
+    > = await mreq({
       apiKey: apiKey,
       route: 'api/ToBackendGetConnectionSchemas',
       payload: getSchemasReqPayload,

@@ -17,8 +17,8 @@ import { logResponseBackend } from '#backend/functions/top/log-response-backend/
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { makeBackendResultResponse } from '#backend/functions/top/make-backend-result-response/make-backend-result-response';
 import { makeErrorResponseBackend } from '#backend/functions/top/make-error-response-backend/make-error-response-backend';
-import { validateIdempUserResult } from '#backend/functions/top/validate-idemp-user/validate-idemp-user';
-import { validateToBackendRequestResult } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
+import { validateIdempUser } from '#backend/functions/top/validate-idemp-user/validate-idemp-user';
+import { validateToBackendRequest } from '#backend/functions/top/validate-to-backend-request/validate-to-backend-request';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
@@ -73,7 +73,7 @@ export class AppInterceptor implements NestInterceptor {
     let requestResult: Result.Result<
       ToBackendRequest,
       ValidateToBackendRequestError
-    > = validateToBackendRequestResult({
+    > = validateToBackendRequest({
       path: request.url,
       body: request.body
     });
@@ -100,7 +100,7 @@ export class AppInterceptor implements NestInterceptor {
         });
 
     let idempUserResult: Result.Result<void, ValidateIdempUserError> =
-      validateIdempUserResult({
+      validateIdempUser({
         storedUserId: idemp?.stId,
         userId: stId
       });

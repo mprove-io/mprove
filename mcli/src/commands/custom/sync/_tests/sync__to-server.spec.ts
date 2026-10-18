@@ -8,10 +8,10 @@ import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/files/save-file/save-file-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
+import { getConfigUnwrap } from '#mcli/config/get-config-unwrap';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqUnwrap } from '#mcli/functions/mreq-unwrap/mreq-unwrap';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
 import { SyncCommand } from '../sync.command';
@@ -26,11 +26,11 @@ test('1', async () => {
   let secondParsedOutput: any;
 
   await retry(async () => {
-    let config = getConfig();
+    let config = getConfigUnwrap();
     let repoPath = `${config.mproveCliTestReposPath}/${testId}`;
     let orgId = `t${testId}`;
 
-    await mreq({
+    await mreqUnwrap({
       route: 'api/ToBackendCloneTestRepo',
       payload: {
         testId: testId
@@ -147,7 +147,7 @@ test('1', async () => {
         content: 'server stale content'
       };
 
-      await mreq({
+      await mreqUnwrap({
         apiKey: loginToken,
         route: 'api/ToBackendSaveFile',
         payload: saveFileReqPayload,

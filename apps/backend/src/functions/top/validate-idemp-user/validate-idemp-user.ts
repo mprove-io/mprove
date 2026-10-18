@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { ValidateIdempUserError } from '#common/types/backend/function-errors/validate-idemp-user-error';
 
-export function validateIdempUserResult(item: {
+export function validateIdempUser(item: {
   storedUserId?: string;
   userId: string;
 }): Result.Result<void, ValidateIdempUserError> {

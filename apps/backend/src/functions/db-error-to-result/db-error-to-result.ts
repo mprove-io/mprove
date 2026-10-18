@@ -9,7 +9,7 @@ import {
 /**
  * Compatibility adapter for legacy throwing DB conversions. Validate the
  * original domain failure instead of reconstructing it from an error message.
- * Prefer retryTransactionResult with Result-returning operations for new code.
+ * Prefer retryTransaction with Result-returning operations for new code.
  */
 export async function dbErrorToResult<Output = void>(item: {
   action: () => Promise<Output>;

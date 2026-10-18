@@ -9,7 +9,7 @@ export type ParseApiKeyOutput = {
   secret: string;
 };
 
-export function parseApiKeyResult(item: {
+export function parseApiKey(item: {
   fullKey: string;
 }): Result.Result<ParseApiKeyOutput, ParseApiKeyError> {
   let { fullKey } = item;

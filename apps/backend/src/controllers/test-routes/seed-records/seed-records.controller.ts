@@ -44,8 +44,8 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   type ParseApiKeyOutput,
-  parseApiKeyResult
-} from '#backend/functions/api-key/parse-api-key-result/parse-api-key-result';
+  parseApiKey
+} from '#backend/functions/api-key/parse-api-key/parse-api-key';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
@@ -104,7 +104,7 @@ import type { ToBackendSeedRecordsInputUsersItem } from '#common/types/backend/p
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSeedRecordsOutput } from '#common/types/backend/routes/test-routes/seed-records/seed-records-output';
 import type { ToDiskSeedProjectOutput } from '#common/types/disk/routes/seed/seed-project/seed-project-output';
-import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
+import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 
 type SaltAndHash = {
   salt?: string;
@@ -218,7 +218,7 @@ export class SeedRecordsController {
       }),
       Result.andThrough(async v => {
         if (isDefined(v.payloadUsers)) {
-          return asyncPoolResult({
+          return customAsyncPool({
             poolSize: 1,
             inputs: v.payloadUsers,
             callback: async (
@@ -249,7 +249,7 @@ export class SeedRecordsController {
                 let parseApiKeyOutput: Result.Result<
                   ParseApiKeyOutput,
                   ParseApiKeyError
-                > = parseApiKeyResult({ fullKey: x.apiKey });
+                > = parseApiKey({ fullKey: x.apiKey });
 
                 if (Result.isFailure(parseApiKeyOutput)) {
                   return parseApiKeyOutput;
@@ -358,7 +358,7 @@ export class SeedRecordsController {
       }),
       Result.andThrough(async v => {
         if (isDefined(v.payloadOrgs)) {
-          return asyncPoolResult({
+          return customAsyncPool({
             poolSize: 1,
             inputs: v.payloadOrgs,
             callback: async (x: ToBackendSeedRecordsInputOrgsItem) => {
@@ -483,7 +483,7 @@ export class SeedRecordsController {
       }),
       Result.andThrough(async v => {
         if (isDefined(v.payloadProjects)) {
-          return asyncPoolResult({
+          return customAsyncPool({
             poolSize: 1,
             inputs: v.payloadProjects,
             callback: async (

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { checkApiHostnameResult } from '#backend/services/url/check-api-hostname/check-api-hostname';
+import { checkApiHostname } from '#backend/services/url/check-api-hostname/check-api-hostname';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { BackendApiInvalidUrlError } from '#common/types/backend/errors/backend-api-invalid-url-error';
@@ -86,7 +86,7 @@ export class UrlService {
       Result.andThrough(v =>
         this.allowHostsLowerCase.includes(v.hostnameLowerCase)
           ? Result.succeed()
-          : checkApiHostnameResult({ hostname: v.hostnameLowerCase })
+          : checkApiHostname({ hostname: v.hostnameLowerCase })
       ),
       Result.map((v): void => undefined)
     );

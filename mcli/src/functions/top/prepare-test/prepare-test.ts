@@ -5,7 +5,7 @@ import type { ToBackendDeleteRecordsRequest } from '#common/types/backend/routes
 import type { ToBackendSeedRecordsRequest } from '#common/types/backend/routes/test-routes/seed-records/seed-records-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { McliConfig } from '#mcli/config/mcli-config';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqUnwrap } from '#mcli/functions/mreq-unwrap/mreq-unwrap';
 
 const require = createRequire(import.meta.url);
 
@@ -31,7 +31,7 @@ export async function prepareTest(item: {
   }
 
   if (isDefined(deletePack)) {
-    await mreq({
+    await mreqUnwrap({
       route: 'api/ToBackendDeleteRecords',
       payload: deletePack,
       host: config.mproveCliHost
@@ -39,7 +39,7 @@ export async function prepareTest(item: {
   }
 
   if (isDefined(seedPack)) {
-    await mreq({
+    await mreqUnwrap({
       route: 'api/ToBackendSeedRecords',
       payload: seedPack,
       host: config.mproveCliHost

@@ -63,7 +63,7 @@ import type { MconfigEntToTabError } from '#common/types/backend/function-errors
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
-import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
+import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -234,7 +234,7 @@ export class CancelQueriesController {
             )
       ),
       Result.andThrough(v =>
-        asyncPoolResult({
+        customAsyncPool({
           poolSize: 8,
           inputs: v.queries.filter(q => q.status === 'Running'),
           callback: query =>

@@ -6,7 +6,7 @@ import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/ro
 import type { ToBackendGetConnectionsListRequest } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-request';
 import type { ToBackendGetConnectionsListResponse } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
-import { mreqResult } from '#mcli/functions/mreq-result/mreq-result';
+import { mreq } from '#mcli/functions/mreq/mreq';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import type { GetConnectionsListCommandError } from '#mcli/types/function-errors/get-connections-list-command-error';
 import type { MreqError } from '#mcli/types/function-errors/mreq-error';
@@ -65,7 +65,7 @@ export class GetConnectionsListCommand extends CustomCommand {
     let getConnectionsListOutputResult: Result.Result<
       ToBackendGetConnectionsListOutput,
       MreqError<ToBackendGetConnectionsListResponse>
-    > = await mreqResult({
+    > = await mreq({
       apiKey: apiKey,
       route: 'api/ToBackendGetConnectionsList',
       payload: getConnectionsListReqPayload,

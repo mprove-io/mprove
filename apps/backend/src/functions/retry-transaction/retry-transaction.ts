@@ -2,11 +2,11 @@ import { Result } from '@praha/byethrow';
 import type { Options } from 'async-retry';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import type { PackerInput } from '#backend/drizzle/postgres/drizzle-packer';
-import { retryResult } from '#backend/functions/retry-result/retry-result';
+import { customRetry } from '#backend/functions/custom-retry/custom-retry';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { RetryTransactionError } from '#common/types/backend/function-errors/retry-transaction-error';
 
-export async function retryTransactionResult<Success, Failure>(item: {
+export async function retryTransaction<Success, Failure>(item: {
   db: Db;
   options: Options;
   action: (item: {
@@ -15,7 +15,7 @@ export async function retryTransactionResult<Success, Failure>(item: {
 }): Result.ResultAsync<Success, RetryTransactionError<Failure>> {
   let { db, options, action } = item;
 
-  return retryResult({
+  return customRetry({
     options: options,
     action: async (): Result.ResultAsync<Success, Failure> => {
       let rollbackSignal: Error & { cause?: Failure } = new Error(

@@ -42,7 +42,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
-import { asyncPoolResult } from '#node-common/functions/async-pool-result/async-pool-result';
+import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -177,7 +177,7 @@ export class DeleteUserController {
                 )
       ),
       Result.andThrough(v =>
-        asyncPoolResult({
+        customAsyncPool({
           poolSize: 1,
           inputs: v.userMemberEnts,
           callback: async memberEnt => {

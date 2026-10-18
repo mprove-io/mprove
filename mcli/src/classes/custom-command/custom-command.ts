@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import { type BaseContext, Command } from 'clipanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import { getConfigResult } from '#mcli/config/get-config-result';
+import { getConfig } from '#mcli/config/get-config';
 import type { McliConfig } from '#mcli/config/mcli-config';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import type { ActError } from '#mcli/types/function-errors/act-error';
@@ -30,7 +30,7 @@ export abstract class CustomCommand extends Command<CustomContext> {
         Result.andThen(
           (v): Result.Result<McliConfig, GetConfigError> =>
             isUndefined(v.config)
-              ? getConfigResult({ envPath: v.envPath })
+              ? getConfig({ envPath: v.envPath })
               : Result.succeed(v.config)
         ),
         Result.andThen(async (v): Result.ResultAsync<void, ActError> => {

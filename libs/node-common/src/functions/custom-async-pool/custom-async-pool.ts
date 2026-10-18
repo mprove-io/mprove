@@ -1,19 +1,19 @@
 import { Result } from '@praha/byethrow';
-import asyncPool from 'tiny-async-pool';
+import tinyAsyncPool from 'tiny-async-pool';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { AsyncPoolError } from '#common/types/backend/function-errors/async-pool-error';
+import type { CustomAsyncPoolError } from '#common/types/backend/function-errors/custom-async-pool-error';
 
-export async function asyncPoolResult<Input, Output, Error>(item: {
+export async function customAsyncPool<Input, Output, Error>(item: {
   poolSize: number;
   inputs: Input[];
   callback: (input: Input) => Result.ResultAsync<Output, Error>;
-}): Result.ResultAsync<Output[], AsyncPoolError<Error>> {
+}): Result.ResultAsync<Output[], CustomAsyncPoolError<Error>> {
   let { poolSize, inputs, callback } = item;
 
   let failures: Result.Failure<Error>[] = [];
 
   try {
-    let outputs: Output[] = await asyncPool(
+    let outputs: Output[] = await tinyAsyncPool(
       poolSize,
       inputs,
       async (input: Input) => {

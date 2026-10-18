@@ -1,12 +1,12 @@
 import { Result } from '@praha/byethrow';
-import retry, { type Options } from 'async-retry';
+import asyncRetry, { type Options } from 'async-retry';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { RetryError } from '#common/types/backend/function-errors/retry-error';
+import type { CustomRetryError } from '#common/types/backend/function-errors/custom-retry-error';
 
-export async function retryResult<Success, Failure>(item: {
+export async function customRetry<Success, Failure>(item: {
   action: () => Result.ResultAsync<Success, Failure>;
   options: Options;
-}): Result.ResultAsync<Success, RetryError<Failure>> {
+}): Result.ResultAsync<Success, CustomRetryError<Failure>> {
   let { action, options } = item;
 
   let failureSignal: Error & { cause?: Failure } = new Error(
@@ -16,7 +16,7 @@ export async function retryResult<Success, Failure>(item: {
   let state: { failure?: Result.Failure<Failure> } = {};
 
   try {
-    let success: Result.Success<Success> = await retry(
+    let success: Result.Success<Success> = await asyncRetry(
       async (): Promise<Result.Success<Success>> => {
         state.failure = undefined;
 

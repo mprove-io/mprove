@@ -1,7 +1,7 @@
 import { promises as dnsPromises, type LookupAddress } from 'node:dns';
 import { Result } from '@praha/byethrow';
 import ipaddr from 'ipaddr.js';
-import { isPrivateIpResult } from '#backend/services/url/check-api-hostname/is-private-ip/is-private-ip';
+import { isPrivateIp } from '#backend/services/url/check-api-hostname/is-private-ip/is-private-ip';
 import type { ApiHostnameCheckPhase } from '#backend/types/api-hostname-check-phase';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BackendApiHostDnsLookupFailedError } from '#common/types/backend/errors/backend-api-host-dns-lookup-failed-error';
@@ -28,7 +28,7 @@ let INTERNAL_DOMAIN_SUFFIXES: readonly string[] = [
   '.localhost'
 ];
 
-export async function checkApiHostnameResult(item: {
+export async function checkApiHostname(item: {
   hostname: string;
 }): Result.ResultAsync<void, CheckApiHostnameError> {
   return Result.pipe(
@@ -74,7 +74,7 @@ export async function checkApiHostnameResult(item: {
     ),
     Result.andThrough(v =>
       isDefined(v.parseHostnamePayload.parsedIp)
-        ? isPrivateIpResult({
+        ? isPrivateIp({
             hostname: v.hostname,
             parsedIp: v.parseHostnamePayload.parsedIp,
             tag: 'instant',
@@ -117,7 +117,7 @@ export async function checkApiHostnameResult(item: {
           return Result.succeed();
         }
 
-        return isPrivateIpResult({
+        return isPrivateIp({
           hostname: v.hostname,
           parsedIp: parsedIp,
           tag: 'resolved',

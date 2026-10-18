@@ -17,7 +17,7 @@ import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/br
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import {
   type MalloyQueryResult,
-  makeMalloyQueryResult
+  makeMalloyQuery
 } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
 
 export async function fetchTileSql(item: {
@@ -106,7 +106,7 @@ export async function fetchTileSql(item: {
     > = await addTraceSpan({
       spanName: 'blockml.makeMalloyQuery',
       fn: () =>
-        makeMalloyQueryResult({
+        makeMalloyQuery({
           projectId: projectId,
           envId: envId,
           structId: structId,

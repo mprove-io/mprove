@@ -8,7 +8,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { McliQueriesStats } from '#common/types/mcli/mcli-queries-stats';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
+import { getConfigUnwrap } from '#mcli/config/get-config-unwrap';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
@@ -52,7 +52,7 @@ test('1', async () => {
 
     let projectName = testId;
 
-    let config = getConfig();
+    let config = getConfigUnwrap();
 
     try {
       let { cli, mockContext } = await prepareTest({

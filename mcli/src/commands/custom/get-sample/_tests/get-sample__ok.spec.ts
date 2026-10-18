@@ -8,9 +8,9 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendGetConnectionSchemasRequest } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
-import { getConfig } from '#mcli/config/get.config';
+import { getConfigUnwrap } from '#mcli/config/get-config-unwrap';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
-import { mreq } from '#mcli/functions/mreq/mreq';
+import { mreqUnwrap } from '#mcli/functions/mreq-unwrap/mreq-unwrap';
 import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
 import { GetSampleCommand } from '../get-sample.command';
@@ -45,7 +45,7 @@ test('1', async () => {
 
     let projectName = testId;
 
-    let config = getConfig();
+    let config = getConfigUnwrap();
 
     try {
       let { cli, mockContext } = await prepareTest({
@@ -124,7 +124,7 @@ test('1', async () => {
 
       let repoId = apiKey.split('-')[2];
 
-      await mreq({
+      await mreqUnwrap({
         apiKey: apiKey,
         route: 'api/ToBackendGetConnectionSchemas',
         payload: {
