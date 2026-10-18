@@ -25,7 +25,7 @@ async function run() {
     type: 'PostgreSQL'
   };
 
-  await structService.rebuildStructFromDir({
+  await structService.rebuildStructFromDirUnwrap({
     traceId: traceId,
     dir: dataDir,
     structId: structId,

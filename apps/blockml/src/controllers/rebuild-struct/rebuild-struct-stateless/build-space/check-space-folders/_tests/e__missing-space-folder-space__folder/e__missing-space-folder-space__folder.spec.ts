@@ -21,7 +21,7 @@ test('1', async t => {
       testsDir: import.meta.dirname
     });
 
-  await structService.rebuildStructFromDir({
+  await structService.rebuildStructFromDirUnwrap({
     traceId: traceId,
     dir: dataDir,
     structId: structId,

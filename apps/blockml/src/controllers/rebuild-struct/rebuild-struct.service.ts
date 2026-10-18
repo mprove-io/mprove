@@ -186,7 +186,7 @@ export class RebuildStructService {
     return Result.succeed(output);
   }
 
-  async rebuildStructFromDir(item: {
+  async rebuildStructFromDirUnwrap(item: {
     traceId: string;
     dir: string;
     structId: string;
@@ -208,7 +208,7 @@ export class RebuildStructService {
     } = item;
 
     let result: Result.Result<RebuildStructPrep, RebuildStructFromDirError> =
-      await this.rebuildStructFromDirResult({
+      await this.rebuildStructFromDir({
         traceId: traceId,
         dir: dir,
         structId: structId,
@@ -232,7 +232,7 @@ export class RebuildStructService {
     return prep;
   }
 
-  async rebuildStructFromDirResult(item: {
+  async rebuildStructFromDir(item: {
     traceId: string;
     dir: string;
     structId: string;

@@ -23,7 +23,7 @@ test('1', async t => {
     type: 'PostgreSQL'
   };
 
-  let prep = await structService.rebuildStructFromDir({
+  let prep = await structService.rebuildStructFromDirUnwrap({
     traceId: traceId,
     dir: dataDir,
     structId: structId,

@@ -47,7 +47,7 @@ test('1', async t => {
       type: 'GoogleApi'
     };
 
-    await structService.rebuildStructFromDir({
+    await structService.rebuildStructFromDirUnwrap({
       traceId: traceId,
       dir: dataDir,
       structId: structId,

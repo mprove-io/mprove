@@ -47,7 +47,7 @@ test('1', async t => {
       type: 'BigQuery'
     };
 
-    await structService.rebuildStructFromDir({
+    await structService.rebuildStructFromDirUnwrap({
       traceId: traceId,
       dir: dataDir,
       structId: structId,
