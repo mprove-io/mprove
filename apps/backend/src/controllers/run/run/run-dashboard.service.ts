@@ -67,7 +67,7 @@ export class RunDashboardService {
       Result.bind(
         'dashboards',
         (v): Result.ResultAsync<DashboardPart[], GetDashboardPartsError> =>
-          this.dashboardsService.getDashboardPartsResult({
+          this.dashboardsService.getDashboardParts({
             structId: v.structId,
             user: v.user,
             apiUserMember: v.apiUserMember

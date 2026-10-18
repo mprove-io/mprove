@@ -84,7 +84,7 @@ export class DeleteBranchController {
       Result.bind(
         'repoType',
         (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
-          this.sessionsService.checkRepoIdResult({
+          this.sessionsService.checkRepoId({
             repoId: v.repoId,
             userId: v.userId,
             projectId: v.projectId,
@@ -101,20 +101,20 @@ export class DeleteBranchController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditorResult({
+          this.membersService.getMemberCheckIsEditor({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestrictedResult({
+        this.projectsService.checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
           repoId: v.repoId
@@ -128,7 +128,7 @@ export class DeleteBranchController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.rpcService.sendToDiskResult({
+        this.rpcService.sendToDisk({
           request: {
             operation: 'deleteBranch',
             traceId: v.traceId,

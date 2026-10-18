@@ -172,7 +172,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.andThrough(v =>
@@ -253,7 +253,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
-                : this.tabService.sessionEntToTabResult({ sessionEnt: x })
+                : this.tabService.sessionEntToTab({ sessionEnt: x })
             )
       ),
       Result.andThrough(v =>
@@ -285,7 +285,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.map(v => {

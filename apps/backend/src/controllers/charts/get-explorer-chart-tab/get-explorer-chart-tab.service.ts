@@ -112,7 +112,7 @@ export class GetExplorerChartTabService {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
@@ -133,7 +133,7 @@ export class GetExplorerChartTabService {
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.session.projectId,
             memberId: v.user.userId
           })
@@ -153,7 +153,7 @@ export class GetExplorerChartTabService {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.bridgeEntToTabResult({
+                : this.tabService.bridgeEntToTab({
                     bridgeEnt: x
                   })
             )
@@ -178,7 +178,7 @@ export class GetExplorerChartTabService {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.chartEntToTabResult({
+                : this.tabService.chartEntToTab({
                     chartEnt: x
                   })
             )
@@ -229,7 +229,7 @@ export class GetExplorerChartTabService {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.chartEntToTabResult({
+                : this.tabService.chartEntToTab({
                     chartEnt: x
                   })
             )
@@ -251,7 +251,7 @@ export class GetExplorerChartTabService {
             MconfigEntToTabError
           > = isUndefined(mconfigEnt)
             ? Result.succeed(undefined)
-            : this.tabService.mconfigEntToTabResult({
+            : this.tabService.mconfigEntToTab({
                 mconfigEnt: mconfigEnt
               });
 
@@ -269,7 +269,7 @@ export class GetExplorerChartTabService {
           let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
             isUndefined(queryEnt)
               ? Result.succeed(undefined)
-              : this.tabService.queryEntToTabResult({
+              : this.tabService.queryEntToTab({
                   queryEnt: queryEnt
                 });
 
@@ -299,7 +299,7 @@ export class GetExplorerChartTabService {
           let explorerRebuildResult: Result.Result<
             ExplorerRebuildResult,
             RebuildFromYamlError
-          > = await this.explorerChartRebuildService.rebuildFromYamlResult({
+          > = await this.explorerChartRebuildService.rebuildFromYaml({
             traceId: v.traceId,
             session: v.session,
             chartId: v.chartId,
@@ -395,7 +395,7 @@ export class GetExplorerChartTabService {
             let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
               isUndefined(queryEnt)
                 ? Result.succeed(undefined)
-                : this.tabService.queryEntToTabResult({
+                : this.tabService.queryEntToTab({
                     queryEnt: queryEnt
                   });
 
@@ -451,7 +451,7 @@ export class GetExplorerChartTabService {
                 Result.sequence(xs, x =>
                   isUndefined(x)
                     ? Result.succeed(undefined)
-                    : this.tabService.modelEntToTabResult({
+                    : this.tabService.modelEntToTab({
                         modelEnt: x
                       })
                 )

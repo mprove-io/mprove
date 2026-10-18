@@ -290,7 +290,7 @@ export class EditorStreamService implements OnModuleDestroy {
     await forEachSeries(sessionIds, async (sessionId: string) => {
       try {
         let sessionLockResult: Result.Result<string, AcquireSessionLockError> =
-          await this.editorSessionLockService.acquireSessionLockResult({
+          await this.editorSessionLockService.acquireSessionLock({
             sessionId: sessionId
           });
 
@@ -304,7 +304,7 @@ export class EditorStreamService implements OnModuleDestroy {
           let sessionResult: Result.Result<
             SessionTab,
             GetSessionByIdCheckExistsError
-          > = await this.sessionsService.getSessionByIdCheckExistsResult({
+          > = await this.sessionsService.getSessionByIdCheckExists({
             sessionId: sessionId
           });
 
@@ -317,7 +317,7 @@ export class EditorStreamService implements OnModuleDestroy {
           let clientResult: Result.Result<
             OpencodeClient,
             GetOpenCodeClientError
-          > = await this.editorOpencodeService.getOpenCodeClientResult({
+          > = await this.editorOpencodeService.getOpenCodeClient({
             sessionId: sessionId
           });
 
@@ -342,7 +342,7 @@ export class EditorStreamService implements OnModuleDestroy {
           await this.stopEventStream({ sessionId: sessionId });
 
           let pauseSession: Result.Result<void, PauseSessionByIdError> =
-            await this.editorSandboxService.pauseSessionByIdResult({
+            await this.editorSandboxService.pauseSessionById({
               sessionId: sessionId,
               pauseReason: 'Safe'
             });
@@ -432,7 +432,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
   // stream
 
-  async startEventStreamResult(item: {
+  async startEventStream(item: {
     sessionId: string;
     opencodeSessionId: string;
     isSetReload: boolean;
@@ -462,7 +462,7 @@ export class EditorStreamService implements OnModuleDestroy {
     // );
 
     let clientResult: Result.Result<OpencodeClient, GetOpenCodeClientError> =
-      await this.editorOpencodeService.getOpenCodeClientResult({
+      await this.editorOpencodeService.getOpenCodeClient({
         sessionId: sessionId
       });
 
@@ -586,7 +586,7 @@ export class EditorStreamService implements OnModuleDestroy {
     // console.log('[oc-stream] stopEventStream completed');
   }
 
-  async respondToPermissionResult(item: {
+  async respondToPermission(item: {
     sessionId: string;
     permissionId: string;
     reply: EditorPermissionReply;
@@ -596,7 +596,7 @@ export class EditorStreamService implements OnModuleDestroy {
       Result.bind(
         'client',
         (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
-          this.editorOpencodeService.getOpenCodeClientResult({
+          this.editorOpencodeService.getOpenCodeClient({
             sessionId: v.sessionId
           })
       ),
@@ -611,7 +611,7 @@ export class EditorStreamService implements OnModuleDestroy {
     );
   }
 
-  async respondToQuestionResult(item: {
+  async respondToQuestion(item: {
     sessionId: string;
     opencodeSessionId: string;
     questionId: string;
@@ -622,7 +622,7 @@ export class EditorStreamService implements OnModuleDestroy {
       Result.bind(
         'client',
         (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
-          this.editorOpencodeService.getOpenCodeClientResult({
+          this.editorOpencodeService.getOpenCodeClient({
             sessionId: v.sessionId
           })
       ),
@@ -637,7 +637,7 @@ export class EditorStreamService implements OnModuleDestroy {
     );
   }
 
-  async rejectQuestionResult(item: {
+  async rejectQuestion(item: {
     sessionId: string;
     opencodeSessionId: string;
     questionId: string;
@@ -647,7 +647,7 @@ export class EditorStreamService implements OnModuleDestroy {
       Result.bind(
         'client',
         (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
-          this.editorOpencodeService.getOpenCodeClientResult({
+          this.editorOpencodeService.getOpenCodeClient({
             sessionId: v.sessionId
           })
       ),
@@ -732,7 +732,7 @@ export class EditorStreamService implements OnModuleDestroy {
         : -1;
 
       let clientResult: Result.Result<OpencodeClient, GetOpenCodeClientError> =
-        await this.editorOpencodeService.getOpenCodeClientResult({
+        await this.editorOpencodeService.getOpenCodeClient({
           sessionId: item.sessionId
         });
 
@@ -808,7 +808,7 @@ export class EditorStreamService implements OnModuleDestroy {
       let ocSessionResult: Result.Result<
         OcSessionTab,
         GetOcSessionBySessionIdError
-      > = await this.sessionsService.getOcSessionBySessionIdResult({
+      > = await this.sessionsService.getOcSessionBySessionId({
         sessionId: item.sessionId
       });
 
@@ -936,7 +936,7 @@ export class EditorStreamService implements OnModuleDestroy {
     } = item;
 
     let clientResult: Result.Result<OpencodeClient, GetOpenCodeClientError> =
-      await this.editorOpencodeService.getOpenCodeClientResult({
+      await this.editorOpencodeService.getOpenCodeClient({
         sessionId: sessionId
       });
 
@@ -1062,7 +1062,7 @@ export class EditorStreamService implements OnModuleDestroy {
       let permissionReply: EditorPermissionReply = reply;
 
       let permissionResult: Result.Result<void, RespondToPermissionError> =
-        await this.respondToPermissionResult({
+        await this.respondToPermission({
           sessionId: sessionId,
           permissionId: permissionId,
           reply: permissionReply
@@ -1074,7 +1074,7 @@ export class EditorStreamService implements OnModuleDestroy {
     } else if (interactionType === 'Question') {
       if (answers !== undefined) {
         let questionResult: Result.Result<void, RespondToQuestionError> =
-          await this.respondToQuestionResult({
+          await this.respondToQuestion({
             sessionId: sessionId,
             opencodeSessionId: opencodeSessionId,
             questionId: questionId,
@@ -1086,7 +1086,7 @@ export class EditorStreamService implements OnModuleDestroy {
         }
       } else {
         let questionResult: Result.Result<void, RejectQuestionError> =
-          await this.rejectQuestionResult({
+          await this.rejectQuestion({
             sessionId: sessionId,
             opencodeSessionId: opencodeSessionId,
             questionId: questionId
@@ -1108,7 +1108,7 @@ export class EditorStreamService implements OnModuleDestroy {
     return Result.succeed({ success: true });
   }
 
-  async publishInteractCommandResult(item: {
+  async publishInteractCommand(item: {
     sessionId: string;
     opencodeSessionId: string;
     interactionType: InteractionType;

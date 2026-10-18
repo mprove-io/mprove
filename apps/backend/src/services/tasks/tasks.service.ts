@@ -46,7 +46,7 @@ export class TasksService {
       this.isRunningCheckQueries = true;
 
       await this.queriesService
-        .checkBigqueryRunningQueriesResult()
+        .checkBigqueryRunningQueries()
         .then(result => {
           if (Result.isFailure(result)) {
             throw new ServerError({ message: result.error.code });
@@ -144,7 +144,7 @@ export class TasksService {
         let sessionsToPause: Result.Result<
           string[],
           GetEditorSessionsToPauseError
-        > = await this.editorSandboxService.getEditorSessionsToPauseResult();
+        > = await this.editorSandboxService.getEditorSessionsToPause();
 
         if (Result.isFailure(sessionsToPause)) {
           throw new ServerError({ message: sessionsToPause.error.code });
@@ -157,7 +157,7 @@ export class TasksService {
             let sessionLockResult: Result.Result<
               string,
               AcquireSessionLockError
-            > = await this.editorSessionLockService.acquireSessionLockResult({
+            > = await this.editorSessionLockService.acquireSessionLock({
               sessionId: sessionId
             });
 
@@ -171,8 +171,7 @@ export class TasksService {
               let freshSessionsToPause: Result.Result<
                 string[],
                 GetEditorSessionsToPauseError
-              > =
-                await this.editorSandboxService.getEditorSessionsToPauseResult();
+              > = await this.editorSandboxService.getEditorSessionsToPause();
 
               if (Result.isFailure(freshSessionsToPause)) {
                 throw new ServerError({
@@ -193,7 +192,7 @@ export class TasksService {
               });
 
               let pauseSession: Result.Result<void, PauseSessionByIdError> =
-                await this.editorSandboxService.pauseSessionByIdResult({
+                await this.editorSandboxService.pauseSessionById({
                   sessionId: sessionId,
                   pauseReason: 'Idle'
                 });
@@ -249,7 +248,7 @@ export class TasksService {
         let syncedSessions: Result.Result<
           string[],
           SyncAllEditorSessionsStatusError
-        > = await this.editorSandboxService.syncAllEditorSessionsStatusResult();
+        > = await this.editorSandboxService.syncAllEditorSessionsStatus();
 
         if (Result.isFailure(syncedSessions)) {
           throw new ServerError({ message: syncedSessions.error.code });

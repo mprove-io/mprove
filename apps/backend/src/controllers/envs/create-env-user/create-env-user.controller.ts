@@ -75,7 +75,7 @@ export class CreateEnvUserController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -84,13 +84,13 @@ export class CreateEnvUserController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestrictedResult({
+        this.projectsService.checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
           repoId: undefined
@@ -99,7 +99,7 @@ export class CreateEnvUserController {
       Result.bind(
         'env',
         (v): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessError> =>
-          this.envsService.getEnvCheckExistsAndAccessResult({
+          this.envsService.getEnvCheckExistsAndAccess({
             projectId: v.projectId,
             envId: v.envId,
             member: v.userMember
@@ -111,7 +111,7 @@ export class CreateEnvUserController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExists({
           memberId: v.envUserId,
           projectId: v.projectId
         })
@@ -140,7 +140,7 @@ export class CreateEnvUserController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateEnvUserOutput => ({

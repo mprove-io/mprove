@@ -79,18 +79,18 @@ export class DeleteProjectController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           projectId: v.projectId,
           memberId: v.userId
         })
       ),
       Result.andThrough(v =>
-        this.rpcService.sendToDiskResult({
+        this.rpcService.sendToDisk({
           request: {
             operation: 'deleteProject',
             traceId: v.traceId,

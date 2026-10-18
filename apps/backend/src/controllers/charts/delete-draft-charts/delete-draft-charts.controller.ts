@@ -99,10 +99,10 @@ export class DeleteDraftChartsController {
         user: user
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -110,14 +110,14 @@ export class DeleteDraftChartsController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -130,14 +130,14 @@ export class DeleteDraftChartsController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -146,7 +146,7 @@ export class DeleteDraftChartsController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -156,7 +156,7 @@ export class DeleteDraftChartsController {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -196,14 +196,14 @@ export class DeleteDraftChartsController {
             .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.modelEntToTabResult({ modelEnt: x })
+                this.tabService.modelEntToTab({ modelEnt: x })
               )
             )
       ),
       Result.bind(
         'chartsCatalog',
         (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
-          this.chartsService.getChartsCatalogResult({
+          this.chartsService.getChartsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

@@ -52,14 +52,14 @@ export class BridgesService {
     return bridge;
   }
 
-  async getBridgeCheckExists(item: {
+  async getBridgeCheckExistsUnwrap(item: {
     projectId: string;
     repoId: string;
     branchId: string;
     envId: string;
   }): Promise<BridgeTab> {
     let result: Result.Result<BridgeTab, GetBridgeCheckExistsError> =
-      await this.getBridgeCheckExistsResult(item);
+      await this.getBridgeCheckExists(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -70,7 +70,7 @@ export class BridgesService {
     return bridge;
   }
 
-  async getBridgeCheckExistsResult(item: {
+  async getBridgeCheckExists(item: {
     projectId: string;
     repoId: string;
     branchId: string;
@@ -90,7 +90,7 @@ export class BridgesService {
       .then((x: BridgeEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST' })
-          : this.tabService.bridgeEntToTabResult({ bridgeEnt: x })
+          : this.tabService.bridgeEntToTab({ bridgeEnt: x })
       );
   }
 }

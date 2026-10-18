@@ -69,7 +69,7 @@ export class ReportTimeColumnsService {
     private logger: Logger
   ) {}
 
-  async getTimeColumnsResult(item: {
+  async getTimeColumns(item: {
     traceId: string;
     timezone: string;
     timeSpec: TimeSpec;

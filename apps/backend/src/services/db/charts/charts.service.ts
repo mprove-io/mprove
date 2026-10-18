@@ -64,7 +64,7 @@ export class ChartsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getChartsCatalogResult(item: {
+  async getChartsCatalog(item: {
     projectId: string;
     structId: string;
     user: UserTab;
@@ -96,7 +96,7 @@ export class ChartsService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.chartEntToTabResult({ chartEnt: x })
+                this.tabService.chartEntToTab({ chartEnt: x })
               )
             )
       ),
@@ -391,7 +391,7 @@ export class ChartsService {
     return chart;
   }
 
-  async getChartCheckExistsResult(item: {
+  async getChartCheckExists(item: {
     chartId: string;
     structId: string;
     userMember: MemberTab;
@@ -412,7 +412,7 @@ export class ChartsService {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.chartEntToTabResult({ chartEnt: x })
+                : this.tabService.chartEntToTab({ chartEnt: x })
             )
       ),
       Result.andThrough(v =>
@@ -429,7 +429,7 @@ export class ChartsService {
     );
   }
 
-  checkChartOrModelAccessResult(item: {
+  checkChartOrModelAccess(item: {
     chart: ChartTab;
     model: ModelTab;
     userMember: MemberTab | Member;
@@ -457,7 +457,7 @@ export class ChartsService {
     });
   }
 
-  checkChartPathResult(item: {
+  checkChartPath(item: {
     filePath: string;
     userAlias: string;
   }): Result.Result<void, CheckChartPathError> {

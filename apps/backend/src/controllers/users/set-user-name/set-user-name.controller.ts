@@ -67,7 +67,7 @@ export class SetUserNameController {
         lastName: body.input.lastName
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.map(v => {
         v.user.firstName = v.firstName;
@@ -84,7 +84,7 @@ export class SetUserNameController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.memberEntToTabResult({ memberEnt: x })
+                this.tabService.memberEntToTab({ memberEnt: x })
               )
             )
       ),

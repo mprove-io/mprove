@@ -64,7 +64,7 @@ export class CreateOrgController {
         user: user
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.andThrough(v => {
         let allowUsersToCreateOrganizations: boolean = this.cs.get<
@@ -84,12 +84,12 @@ export class CreateOrgController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.name,
             hashSecret: v.hashSecret
           })
@@ -116,7 +116,7 @@ export class CreateOrgController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, AddOrgError> =>
-          this.orgsService.addOrgResult({
+          this.orgsService.addOrg({
             name: v.name,
             ownerId: v.user.userId,
             ownerEmail: v.user.email,

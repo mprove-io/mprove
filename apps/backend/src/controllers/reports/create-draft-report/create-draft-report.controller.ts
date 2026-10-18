@@ -167,7 +167,7 @@ export class CreateDraftReportController {
         chart: body.input.chart
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -177,14 +177,14 @@ export class CreateDraftReportController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -192,14 +192,14 @@ export class CreateDraftReportController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -208,7 +208,7 @@ export class CreateDraftReportController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -218,7 +218,7 @@ export class CreateDraftReportController {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -228,7 +228,7 @@ export class CreateDraftReportController {
         (
           v
         ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccessResult({
+          this.reportsService.getReportCheckExistsAndAccess({
             projectId: v.projectId,
             reportId: v.fromReportId,
             structId: v.bridge.structId,
@@ -250,7 +250,7 @@ export class CreateDraftReportController {
           let modelAccessResult: Result.Result<
             ModelTab,
             GetModelCheckExistsAndAccessError
-          > = await this.modelsService.getModelCheckExistsAndAccessResult({
+          > = await this.modelsService.getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
             modelId: metric.modelId,
             userMember: v.userMember
@@ -376,7 +376,7 @@ export class CreateDraftReportController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.queryEntToTabResult({
+                  : this.tabService.queryEntToTab({
                       queryEnt: x
                     })
               )
@@ -399,7 +399,7 @@ export class CreateDraftReportController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.mconfigEntToTabResult({
+                  : this.tabService.mconfigEntToTab({
                       mconfigEnt: x
                     })
               )
@@ -423,7 +423,7 @@ export class CreateDraftReportController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.kitEntToTabResult({ kitEnt: x })
+                  : this.tabService.kitEntToTab({ kitEnt: x })
               )
             )
       ),
@@ -546,7 +546,7 @@ export class CreateDraftReportController {
       Result.bind(
         'apiReport',
         (v): Result.ResultAsync<ReportX, GetReportDataError> =>
-          this.reportDataService.getReportDataResult({
+          this.reportDataService.getReportData({
             report: v.prepareDraftReportPayload.report,
             traceId: v.traceId,
             project: v.project,
@@ -565,7 +565,7 @@ export class CreateDraftReportController {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXs({
             structId: v.struct.structId,
             apiUserMember: v.prepareDraftReportPayload.apiUserMember
           })
@@ -573,7 +573,7 @@ export class CreateDraftReportController {
       Result.bind(
         'reportsCatalog',
         (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogError> =>
-          this.reportsService.getReportsCatalogResult({
+          this.reportsService.getReportsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

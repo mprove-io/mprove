@@ -125,7 +125,7 @@ export class SpecialRebuildStructsController {
                 .findMany({ where: inArray(membersTable.memberId, v.userIds) })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.memberEntToTabResult({
+                    this.tabService.memberEntToTab({
                       memberEnt: x
                     })
                   )
@@ -146,7 +146,7 @@ export class SpecialRebuildStructsController {
             : this.db.drizzle.select().from(projectsTable)
           ).then(xs =>
             Result.sequence(xs, x =>
-              this.tabService.projectEntToTabResult({ projectEnt: x })
+              this.tabService.projectEntToTab({ projectEnt: x })
             )
           )
       ),
@@ -201,7 +201,7 @@ export class SpecialRebuildStructsController {
               let diskResult: Result.Result<
                 ToDiskGetCatalogFilesOutput,
                 SendToDiskError
-              > = await this.rpcService.sendToDiskResult({
+              > = await this.rpcService.sendToDisk({
                 request: {
                   operation: 'getCatalogFiles',
                   traceId: v.traceId,
@@ -232,7 +232,7 @@ export class SpecialRebuildStructsController {
               let rebuildResult: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStructResult({
+              > = await this.blockmlService.rebuildStruct({
                 traceId: v.traceId,
                 orgId: project.orgId,
                 projectId: project.projectId,

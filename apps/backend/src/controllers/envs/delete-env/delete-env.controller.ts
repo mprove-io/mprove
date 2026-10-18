@@ -77,14 +77,14 @@ export class DeleteEnvController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -141,7 +141,7 @@ export class DeleteEnvController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteEnvOutput => ({

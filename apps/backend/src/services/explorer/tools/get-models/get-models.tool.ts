@@ -48,7 +48,7 @@ export class GetModelsToolService {
               GetExplorerModelsOutput,
               GetExplorerModelsError
             > =>
-              this.explorerModelPartsService.getExplorerModelsResult({
+              this.explorerModelPartsService.getExplorerModels({
                 userId: v.userId,
                 projectId: v.projectId,
                 repoId: v.repoId,

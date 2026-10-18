@@ -109,7 +109,7 @@ export class SyncRepoController {
         input: body.input
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -119,14 +119,14 @@ export class SyncRepoController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditorResult({
+          this.membersService.getMemberCheckIsEditor({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -134,21 +134,21 @@ export class SyncRepoController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
         })
       ),
       Result.andThrough(v =>
-        this.bridgesService.getBridgeCheckExistsResult({
+        this.bridgesService.getBridgeCheckExists({
           projectId: v.branch.projectId,
           repoId: v.branch.repoId,
           branchId: v.branch.branchId,
@@ -158,7 +158,7 @@ export class SyncRepoController {
       Result.bind(
         'diskSyncRepoOutput',
         (v): Result.ResultAsync<ToDiskSyncRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request:
               v.input.direction === 'to-server'
                 ? {
@@ -218,7 +218,7 @@ export class SyncRepoController {
               let result: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStructResult({
+              > = await this.blockmlService.rebuildStruct({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
                 projectId: v.projectId,
@@ -275,7 +275,7 @@ export class SyncRepoController {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.currentBridgeEnt.structId,
             projectId: v.projectId
           })

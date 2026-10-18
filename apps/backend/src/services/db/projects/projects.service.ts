@@ -100,7 +100,7 @@ export class ProjectsService {
     return apiProject;
   }
 
-  async getProjectCheckExistsResult(item: {
+  async getProjectCheckExists(item: {
     projectId: string;
   }): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> {
     let { projectId } = item;
@@ -112,11 +112,11 @@ export class ProjectsService {
       .then((x: ProjectEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_PROJECT_DOES_NOT_EXIST' })
-          : this.tabService.projectEntToTabResult({ projectEnt: x })
+          : this.tabService.projectEntToTab({ projectEnt: x })
       );
   }
 
-  checkProjectIsNotRestrictedResult(item: {
+  checkProjectIsNotRestricted(item: {
     projectId: string;
     userMember: MemberTab;
     repoId?: string;
@@ -139,7 +139,7 @@ export class ProjectsService {
     return Result.succeed();
   }
 
-  async addProject(item: {
+  async addProjectUnwrap(item: {
     projectId: string;
     orgId: string;
     remoteType: ProjectRemoteType;
@@ -158,7 +158,7 @@ export class ProjectsService {
     traceId: string;
   }): Promise<ProjectTab> {
     let result: Result.Result<ProjectTab, AddProjectError> =
-      await this.addProjectResult(item);
+      await this.addProject(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({
@@ -188,7 +188,7 @@ export class ProjectsService {
     return project;
   }
 
-  async addProjectResult(item: {
+  async addProject(item: {
     projectId: string;
     orgId: string;
     remoteType: ProjectRemoteType;
@@ -249,7 +249,7 @@ export class ProjectsService {
     });
 
     let diskResult: Result.Result<ToDiskCreateProjectOutput, SendToDiskError> =
-      await this.rpcService.sendToDiskResult({
+      await this.rpcService.sendToDisk({
         request: {
           operation: 'createProject',
           traceId: traceId,
@@ -321,7 +321,7 @@ export class ProjectsService {
     let prodStructResult: Result.Result<
       RebuildStructOutput,
       RebuildStructError
-    > = await this.blockmlService.rebuildStructResult({
+    > = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       orgId: newProject.orgId,
       projectId: newProject.projectId,
@@ -343,7 +343,7 @@ export class ProjectsService {
     let devStructResult: Result.Result<
       RebuildStructOutput,
       RebuildStructError
-    > = await this.blockmlService.rebuildStructResult({
+    > = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       orgId: newProject.orgId,
       projectId: newProject.projectId,

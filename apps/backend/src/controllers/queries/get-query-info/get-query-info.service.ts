@@ -116,7 +116,7 @@ export class GetQueryInfoService {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -126,14 +126,14 @@ export class GetQueryInfoService {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -141,14 +141,14 @@ export class GetQueryInfoService {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -157,7 +157,7 @@ export class GetQueryInfoService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -178,7 +178,7 @@ export class GetQueryInfoService {
         ): Result.ResultAsync<ToBackendGetChartOutput, GetChartDataError> =>
           isUndefined(v.chartId)
             ? Result.succeed(undefined)
-            : this.queryInfoChartService.getChartDataResult({
+            : this.queryInfoChartService.getChartData({
                 traceId: v.traceId,
                 user: v.user,
                 userMember: v.userMember,
@@ -237,7 +237,7 @@ export class GetQueryInfoService {
         > =>
           isUndefined(v.dashboardId)
             ? Result.succeed(undefined)
-            : this.queryInfoDashboardService.getDashboardDataResult({
+            : this.queryInfoDashboardService.getDashboardData({
                 traceId: v.traceId,
                 user: v.user,
                 userMember: v.userMember,
@@ -302,7 +302,7 @@ export class GetQueryInfoService {
         > =>
           isUndefined(v.reportId)
             ? Result.succeed(undefined)
-            : this.queryInfoReportService.getReportDataResult({
+            : this.queryInfoReportService.getReportData({
                 traceId: v.traceId,
                 user: v.user,
                 userMember: v.userMember,

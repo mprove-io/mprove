@@ -101,6 +101,7 @@ import type { ReportEntToTabError } from '#common/types/backend/function-errors/
 import type { RoleEntToTabError } from '#common/types/backend/function-errors/role-ent-to-tab-error';
 import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
 import type { StructEntToTabError } from '#common/types/backend/function-errors/struct-ent-to-tab-error';
+import type { UconfigEntToTabError } from '#common/types/backend/function-errors/uconfig-ent-to-tab-error';
 import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { AvatarLt } from '#common/types/shared/st-lt/avatars/avatar-lt';
@@ -159,6 +160,8 @@ import type { SessionLt } from '#common/types/shared/st-lt/sessions/session-lt';
 import type { SessionSt } from '#common/types/shared/st-lt/sessions/session-st';
 import type { StructLt } from '#common/types/shared/st-lt/structs/struct-lt';
 import type { StructSt } from '#common/types/shared/st-lt/structs/struct-st';
+import type { UconfigLt } from '#common/types/shared/st-lt/uconfigs/uconfig-lt';
+import type { UconfigSt } from '#common/types/shared/st-lt/uconfigs/uconfig-st';
 import type { UserLt } from '#common/types/shared/st-lt/users/user-lt';
 import type { UserSt } from '#common/types/shared/st-lt/users/user-st';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
@@ -190,35 +193,6 @@ export class TabService {
   }
 
   getTabProps<ST, LT>(item: {
-    ent: {
-      st: {
-        encrypted: string;
-        decrypted: ST;
-      };
-      lt: {
-        encrypted: string;
-        decrypted: LT;
-      };
-      keyTag: string;
-    };
-  }): ST & LT {
-    let { ent } = item;
-
-    let result: Result.Result<
-      TabProps<ST, LT>,
-      GetTabPropsError
-    > = this.getTabPropsResult<ST, LT>(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let props: ST & LT = result.value.props;
-
-    return props;
-  }
-
-  getTabPropsResult<ST, LT>(item: {
     ent: {
       st: {
         encrypted: string;
@@ -401,13 +375,13 @@ export class TabService {
     return apiBaseProject;
   }
 
-  avatarEntToTab(avatarEnt: AvatarEnt): AvatarTab {
+  avatarEntToTabUnwrap(avatarEnt: AvatarEnt): AvatarTab {
     if (isUndefined(avatarEnt)) {
       return;
     }
 
     let result: Result.Result<AvatarTab, AvatarEntToTabError> =
-      this.avatarEntToTabResult({ avatarEnt: avatarEnt });
+      this.avatarEntToTab({ avatarEnt: avatarEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -418,7 +392,7 @@ export class TabService {
     return avatar;
   }
 
-  avatarEntToTabResult(item: {
+  avatarEntToTab(item: {
     avatarEnt: AvatarEnt;
   }): Result.Result<AvatarTab, AvatarEntToTabError> {
     return Result.pipe(
@@ -426,7 +400,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<AvatarSt, AvatarLt>, GetTabPropsError> =>
-          this.getTabPropsResult<AvatarSt, AvatarLt>({
+          this.getTabProps<AvatarSt, AvatarLt>({
             ent: v.avatarEnt
           })
       ),
@@ -434,13 +408,13 @@ export class TabService {
     );
   }
 
-  branchEntToTab(branchEnt: BranchEnt): BranchTab {
+  branchEntToTabUnwrap(branchEnt: BranchEnt): BranchTab {
     if (isUndefined(branchEnt)) {
       return;
     }
 
     let result: Result.Result<BranchTab, BranchEntToTabError> =
-      this.branchEntToTabResult({ branchEnt: branchEnt });
+      this.branchEntToTab({ branchEnt: branchEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -451,7 +425,7 @@ export class TabService {
     return branch;
   }
 
-  branchEntToTabResult(item: {
+  branchEntToTab(item: {
     branchEnt: BranchEnt;
   }): Result.Result<BranchTab, BranchEntToTabError> {
     return Result.pipe(
@@ -459,7 +433,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<BranchSt, BranchLt>, GetTabPropsError> =>
-          this.getTabPropsResult<BranchSt, BranchLt>({
+          this.getTabProps<BranchSt, BranchLt>({
             ent: v.branchEnt
           })
       ),
@@ -467,13 +441,13 @@ export class TabService {
     );
   }
 
-  bridgeEntToTab(bridgeEnt: BridgeEnt): BridgeTab {
+  bridgeEntToTabUnwrap(bridgeEnt: BridgeEnt): BridgeTab {
     if (isUndefined(bridgeEnt)) {
       return;
     }
 
     let result: Result.Result<BridgeTab, BridgeEntToTabError> =
-      this.bridgeEntToTabResult({ bridgeEnt: bridgeEnt });
+      this.bridgeEntToTab({ bridgeEnt: bridgeEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -484,7 +458,7 @@ export class TabService {
     return bridge;
   }
 
-  bridgeEntToTabResult(item: {
+  bridgeEntToTab(item: {
     bridgeEnt: BridgeEnt;
   }): Result.Result<BridgeTab, BridgeEntToTabError> {
     return Result.pipe(
@@ -492,7 +466,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<BridgeSt, BridgeLt>, GetTabPropsError> =>
-          this.getTabPropsResult<BridgeSt, BridgeLt>({
+          this.getTabProps<BridgeSt, BridgeLt>({
             ent: v.bridgeEnt
           })
       ),
@@ -500,13 +474,15 @@ export class TabService {
     );
   }
 
-  cachedColumnEntToTab(cachedColumnEnt: CachedColumnsEnt): CachedColumnTab {
+  cachedColumnEntToTabUnwrap(
+    cachedColumnEnt: CachedColumnsEnt
+  ): CachedColumnTab {
     if (isUndefined(cachedColumnEnt)) {
       return;
     }
 
     let result: Result.Result<CachedColumnTab, CachedColumnEntToTabError> =
-      this.cachedColumnEntToTabResult({ cachedColumnEnt: cachedColumnEnt });
+      this.cachedColumnEntToTab({ cachedColumnEnt: cachedColumnEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -517,7 +493,7 @@ export class TabService {
     return cachedColumn;
   }
 
-  cachedColumnEntToTabResult(item: {
+  cachedColumnEntToTab(item: {
     cachedColumnEnt: CachedColumnsEnt;
   }): Result.Result<CachedColumnTab, CachedColumnEntToTabError> {
     return Result.pipe(
@@ -530,7 +506,7 @@ export class TabService {
           TabProps<CachedColumnSt, CachedColumnLt>,
           GetTabPropsError
         > =>
-          this.getTabPropsResult<CachedColumnSt, CachedColumnLt>({
+          this.getTabProps<CachedColumnSt, CachedColumnLt>({
             ent: v.cachedColumnEnt
           })
       ),
@@ -540,13 +516,13 @@ export class TabService {
     );
   }
 
-  cachedPartEntToTab(cachedPartEnt: CachedPartsEnt): CachedPartTab {
+  cachedPartEntToTabUnwrap(cachedPartEnt: CachedPartsEnt): CachedPartTab {
     if (isUndefined(cachedPartEnt)) {
       return;
     }
 
     let result: Result.Result<CachedPartTab, CachedPartEntToTabError> =
-      this.cachedPartEntToTabResult({ cachedPartEnt: cachedPartEnt });
+      this.cachedPartEntToTab({ cachedPartEnt: cachedPartEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -557,7 +533,7 @@ export class TabService {
     return cachedPart;
   }
 
-  cachedPartEntToTabResult(item: {
+  cachedPartEntToTab(item: {
     cachedPartEnt: CachedPartsEnt;
   }): Result.Result<CachedPartTab, CachedPartEntToTabError> {
     return Result.pipe(
@@ -570,7 +546,7 @@ export class TabService {
           TabProps<CachedPartSt, CachedPartLt>,
           GetTabPropsError
         > =>
-          this.getTabPropsResult<CachedPartSt, CachedPartLt>({
+          this.getTabProps<CachedPartSt, CachedPartLt>({
             ent: v.cachedPartEnt
           })
       ),
@@ -580,13 +556,13 @@ export class TabService {
     );
   }
 
-  chartEntToTab(chartEnt: ChartEnt): ChartTab {
+  chartEntToTabUnwrap(chartEnt: ChartEnt): ChartTab {
     if (isUndefined(chartEnt)) {
       return;
     }
 
     let result: Result.Result<ChartTab, ChartEntToTabError> =
-      this.chartEntToTabResult({ chartEnt: chartEnt });
+      this.chartEntToTab({ chartEnt: chartEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -597,7 +573,7 @@ export class TabService {
     return chart;
   }
 
-  chartEntToTabResult(item: {
+  chartEntToTab(item: {
     chartEnt: ChartEnt;
   }): Result.Result<ChartTab, ChartEntToTabError> {
     return Result.pipe(
@@ -605,19 +581,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<ChartSt, ChartLt>, GetTabPropsError> =>
-          this.getTabPropsResult<ChartSt, ChartLt>({ ent: v.chartEnt })
+          this.getTabProps<ChartSt, ChartLt>({ ent: v.chartEnt })
       ),
       Result.map((v): ChartTab => ({ ...v.chartEnt, ...v.tabProps.props }))
     );
   }
 
-  connectionEntToTab(connectionEnt: ConnectionEnt): ConnectionTab {
+  connectionEntToTabUnwrap(connectionEnt: ConnectionEnt): ConnectionTab {
     if (isUndefined(connectionEnt)) {
       return;
     }
 
     let result: Result.Result<ConnectionTab, ConnectionEntToTabError> =
-      this.connectionEntToTabResult({ connectionEnt: connectionEnt });
+      this.connectionEntToTab({ connectionEnt: connectionEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -628,7 +604,7 @@ export class TabService {
     return connection;
   }
 
-  connectionEntToTabResult(item: {
+  connectionEntToTab(item: {
     connectionEnt: ConnectionEnt;
   }): Result.Result<ConnectionTab, ConnectionEntToTabError> {
     return Result.pipe(
@@ -641,7 +617,7 @@ export class TabService {
           TabProps<ConnectionSt, ConnectionLt>,
           GetTabPropsError
         > =>
-          this.getTabPropsResult<ConnectionSt, ConnectionLt>({
+          this.getTabProps<ConnectionSt, ConnectionLt>({
             ent: v.connectionEnt
           })
       ),
@@ -681,7 +657,7 @@ export class TabService {
           TabProps<DashboardSt, DashboardLt>,
           GetTabPropsError
         > =>
-          this.getTabPropsResult<DashboardSt, DashboardLt>({
+          this.getTabProps<DashboardSt, DashboardLt>({
             ent: v.dashboardEnt
           })
       ),
@@ -716,7 +692,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<DconfigSt, DconfigLt>, GetTabPropsError> =>
-          this.getTabPropsResult<DconfigSt, DconfigLt>({
+          this.getTabProps<DconfigSt, DconfigLt>({
             ent: v.dconfigEnt
           })
       ),
@@ -724,20 +700,38 @@ export class TabService {
     );
   }
 
-  uconfigEntToTab(uconfigEnt: UconfigEnt): UconfigTab {
+  uconfigEntToTabUnwrap(uconfigEnt: UconfigEnt): UconfigTab {
     if (isUndefined(uconfigEnt)) {
       return;
     }
 
-    let uconfig: UconfigTab = {
-      ...uconfigEnt,
-      ...this.getTabProps({ ent: uconfigEnt })
-    };
+    let result: Result.Result<UconfigTab, UconfigEntToTabError> =
+      this.uconfigEntToTab({ uconfigEnt: uconfigEnt });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({ message: result.error.code });
+    }
+
+    let uconfig: UconfigTab = result.value;
 
     return uconfig;
   }
 
-  givenEntToTabResult(item: {
+  uconfigEntToTab(item: {
+    uconfigEnt: UconfigEnt;
+  }): Result.Result<UconfigTab, UconfigEntToTabError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'tabProps',
+        (v): Result.Result<TabProps<UconfigSt, UconfigLt>, GetTabPropsError> =>
+          this.getTabProps<UconfigSt, UconfigLt>({ ent: v.uconfigEnt })
+      ),
+      Result.map((v): UconfigTab => ({ ...v.uconfigEnt, ...v.tabProps.props }))
+    );
+  }
+
+  givenEntToTab(item: {
     givenEnt: GivenEnt;
   }): Result.Result<GivenTab, GivenEntToTabError> {
     return Result.pipe(
@@ -745,13 +739,13 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<GivenSt, GivenLt>, GetTabPropsError> =>
-          this.getTabPropsResult<GivenSt, GivenLt>({ ent: v.givenEnt })
+          this.getTabProps<GivenSt, GivenLt>({ ent: v.givenEnt })
       ),
       Result.map((v): GivenTab => ({ ...v.givenEnt, ...v.tabProps.props }))
     );
   }
 
-  roleEntToTabResult(item: {
+  roleEntToTab(item: {
     roleEnt: RoleEnt;
   }): Result.Result<RoleTab, RoleEntToTabError> {
     return Result.pipe(
@@ -759,19 +753,20 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<RoleSt, RoleLt>, GetTabPropsError> =>
-          this.getTabPropsResult<RoleSt, RoleLt>({ ent: v.roleEnt })
+          this.getTabProps<RoleSt, RoleLt>({ ent: v.roleEnt })
       ),
       Result.map((v): RoleTab => ({ ...v.roleEnt, ...v.tabProps.props }))
     );
   }
 
-  envEntToTab(envEnt: EnvEnt): EnvTab {
+  envEntToTabUnwrap(envEnt: EnvEnt): EnvTab {
     if (isUndefined(envEnt)) {
       return;
     }
 
-    let result: Result.Result<EnvTab, EnvEntToTabError> =
-      this.envEntToTabResult({ envEnt: envEnt });
+    let result: Result.Result<EnvTab, EnvEntToTabError> = this.envEntToTab({
+      envEnt: envEnt
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -782,7 +777,7 @@ export class TabService {
     return env;
   }
 
-  envEntToTabResult(item: {
+  envEntToTab(item: {
     envEnt: EnvEnt;
   }): Result.Result<EnvTab, EnvEntToTabError> {
     return Result.pipe(
@@ -790,19 +785,20 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<EnvSt, EnvLt>, GetTabPropsError> =>
-          this.getTabPropsResult<EnvSt, EnvLt>({ ent: v.envEnt })
+          this.getTabProps<EnvSt, EnvLt>({ ent: v.envEnt })
       ),
       Result.map((v): EnvTab => ({ ...v.envEnt, ...v.tabProps.props }))
     );
   }
 
-  kitEntToTab(kitEnt: KitEnt): KitTab {
+  kitEntToTabUnwrap(kitEnt: KitEnt): KitTab {
     if (isUndefined(kitEnt)) {
       return;
     }
 
-    let result: Result.Result<KitTab, KitEntToTabError> =
-      this.kitEntToTabResult({ kitEnt: kitEnt });
+    let result: Result.Result<KitTab, KitEntToTabError> = this.kitEntToTab({
+      kitEnt: kitEnt
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -813,7 +809,7 @@ export class TabService {
     return kit;
   }
 
-  kitEntToTabResult(item: {
+  kitEntToTab(item: {
     kitEnt: KitEnt;
   }): Result.Result<KitTab, KitEntToTabError> {
     return Result.pipe(
@@ -821,19 +817,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<KitSt, KitLt>, GetTabPropsError> =>
-          this.getTabPropsResult<KitSt, KitLt>({ ent: v.kitEnt })
+          this.getTabProps<KitSt, KitLt>({ ent: v.kitEnt })
       ),
       Result.map((v): KitTab => ({ ...v.kitEnt, ...v.tabProps.props }))
     );
   }
 
-  mconfigEntToTab(mconfigEnt: MconfigEnt): MconfigTab {
+  mconfigEntToTabUnwrap(mconfigEnt: MconfigEnt): MconfigTab {
     if (isUndefined(mconfigEnt)) {
       return;
     }
 
     let result: Result.Result<MconfigTab, MconfigEntToTabError> =
-      this.mconfigEntToTabResult({ mconfigEnt: mconfigEnt });
+      this.mconfigEntToTab({ mconfigEnt: mconfigEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -844,7 +840,7 @@ export class TabService {
     return mconfig;
   }
 
-  mconfigEntToTabResult(item: {
+  mconfigEntToTab(item: {
     mconfigEnt: MconfigEnt;
   }): Result.Result<MconfigTab, MconfigEntToTabError> {
     return Result.pipe(
@@ -852,19 +848,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<MconfigSt, MconfigLt>, GetTabPropsError> =>
-          this.getTabPropsResult<MconfigSt, MconfigLt>({ ent: v.mconfigEnt })
+          this.getTabProps<MconfigSt, MconfigLt>({ ent: v.mconfigEnt })
       ),
       Result.map((v): MconfigTab => ({ ...v.mconfigEnt, ...v.tabProps.props }))
     );
   }
 
-  memberEntToTab(memberEnt: MemberEnt): MemberTab {
+  memberEntToTabUnwrap(memberEnt: MemberEnt): MemberTab {
     if (isUndefined(memberEnt)) {
       return;
     }
 
     let result: Result.Result<MemberTab, MemberEntToTabError> =
-      this.memberEntToTabResult({ memberEnt: memberEnt });
+      this.memberEntToTab({ memberEnt: memberEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -875,7 +871,7 @@ export class TabService {
     return member;
   }
 
-  memberEntToTabResult(item: {
+  memberEntToTab(item: {
     memberEnt: MemberEnt;
   }): Result.Result<MemberTab, MemberEntToTabError> {
     return Result.pipe(
@@ -883,7 +879,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<MemberSt, MemberLt>, GetTabPropsError> =>
-          this.getTabPropsResult<MemberSt, MemberLt>({
+          this.getTabProps<MemberSt, MemberLt>({
             ent: v.memberEnt
           })
       ),
@@ -891,13 +887,13 @@ export class TabService {
     );
   }
 
-  modelEntToTab(modelEnt: ModelEnt): ModelTab {
+  modelEntToTabUnwrap(modelEnt: ModelEnt): ModelTab {
     if (isUndefined(modelEnt)) {
       return;
     }
 
     let result: Result.Result<ModelTab, ModelEntToTabError> =
-      this.modelEntToTabResult({ modelEnt: modelEnt });
+      this.modelEntToTab({ modelEnt: modelEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -908,7 +904,7 @@ export class TabService {
     return model;
   }
 
-  modelEntToTabResult(item: {
+  modelEntToTab(item: {
     modelEnt: ModelEnt;
   }): Result.Result<ModelTab, ModelEntToTabError> {
     return Result.pipe(
@@ -916,19 +912,20 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<ModelSt, ModelLt>, GetTabPropsError> =>
-          this.getTabPropsResult<ModelSt, ModelLt>({ ent: v.modelEnt })
+          this.getTabProps<ModelSt, ModelLt>({ ent: v.modelEnt })
       ),
       Result.map((v): ModelTab => ({ ...v.modelEnt, ...v.tabProps.props }))
     );
   }
 
-  noteEntToTab(noteEnt: NoteEnt): NoteTab {
+  noteEntToTabUnwrap(noteEnt: NoteEnt): NoteTab {
     if (isUndefined(noteEnt)) {
       return;
     }
 
-    let result: Result.Result<NoteTab, NoteEntToTabError> =
-      this.noteEntToTabResult({ noteEnt: noteEnt });
+    let result: Result.Result<NoteTab, NoteEntToTabError> = this.noteEntToTab({
+      noteEnt: noteEnt
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -939,7 +936,7 @@ export class TabService {
     return note;
   }
 
-  noteEntToTabResult(item: {
+  noteEntToTab(item: {
     noteEnt: NoteEnt;
   }): Result.Result<NoteTab, NoteEntToTabError> {
     return Result.pipe(
@@ -947,19 +944,20 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<NoteSt, NoteLt>, GetTabPropsError> =>
-          this.getTabPropsResult<NoteSt, NoteLt>({ ent: v.noteEnt })
+          this.getTabProps<NoteSt, NoteLt>({ ent: v.noteEnt })
       ),
       Result.map((v): NoteTab => ({ ...v.noteEnt, ...v.tabProps.props }))
     );
   }
 
-  orgEntToTab(orgEnt: OrgEnt): OrgTab {
+  orgEntToTabUnwrap(orgEnt: OrgEnt): OrgTab {
     if (isUndefined(orgEnt)) {
       return;
     }
 
-    let result: Result.Result<OrgTab, OrgEntToTabError> =
-      this.orgEntToTabResult({ orgEnt: orgEnt });
+    let result: Result.Result<OrgTab, OrgEntToTabError> = this.orgEntToTab({
+      orgEnt: orgEnt
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -970,7 +968,7 @@ export class TabService {
     return org;
   }
 
-  orgEntToTabResult(item: {
+  orgEntToTab(item: {
     orgEnt: OrgEnt;
   }): Result.Result<OrgTab, OrgEntToTabError> {
     return Result.pipe(
@@ -978,19 +976,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<OrgSt, OrgLt>, GetTabPropsError> =>
-          this.getTabPropsResult<OrgSt, OrgLt>({ ent: v.orgEnt })
+          this.getTabProps<OrgSt, OrgLt>({ ent: v.orgEnt })
       ),
       Result.map((v): OrgTab => ({ ...v.orgEnt, ...v.tabProps.props }))
     );
   }
 
-  projectEntToTab(projectEnt: ProjectEnt): ProjectTab {
+  projectEntToTabUnwrap(projectEnt: ProjectEnt): ProjectTab {
     if (isUndefined(projectEnt)) {
       return;
     }
 
     let result: Result.Result<ProjectTab, ProjectEntToTabError> =
-      this.projectEntToTabResult({ projectEnt: projectEnt });
+      this.projectEntToTab({ projectEnt: projectEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1001,7 +999,7 @@ export class TabService {
     return project;
   }
 
-  projectEntToTabResult(item: {
+  projectEntToTab(item: {
     projectEnt: ProjectEnt;
   }): Result.Result<ProjectTab, ProjectEntToTabError> {
     return Result.pipe(
@@ -1009,7 +1007,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<ProjectSt, ProjectLt>, GetTabPropsError> =>
-          this.getTabPropsResult<ProjectSt, ProjectLt>({
+          this.getTabProps<ProjectSt, ProjectLt>({
             ent: v.projectEnt
           })
       ),
@@ -1017,7 +1015,7 @@ export class TabService {
     );
   }
 
-  providerEntToTab(item: { providerEnt: ProviderEnt }): ProviderTab {
+  providerEntToTabUnwrap(item: { providerEnt: ProviderEnt }): ProviderTab {
     let { providerEnt } = item;
 
     if (isUndefined(providerEnt)) {
@@ -1025,7 +1023,7 @@ export class TabService {
     }
 
     let result: Result.Result<ProviderTab, ProviderEntToTabError> =
-      this.providerEntToTabResult({ providerEnt: providerEnt });
+      this.providerEntToTab({ providerEnt: providerEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1036,7 +1034,7 @@ export class TabService {
     return provider;
   }
 
-  providerEntToTabResult(item: {
+  providerEntToTab(item: {
     providerEnt: ProviderEnt;
   }): Result.Result<ProviderTab, ProviderEntToTabError> {
     return Result.pipe(
@@ -1046,7 +1044,7 @@ export class TabService {
         (
           v
         ): Result.Result<TabProps<ProviderSt, ProviderLt>, GetTabPropsError> =>
-          this.getTabPropsResult<ProviderSt, ProviderLt>({
+          this.getTabProps<ProviderSt, ProviderLt>({
             ent: v.providerEnt
           })
       ),
@@ -1057,13 +1055,13 @@ export class TabService {
     );
   }
 
-  queryEntToTab(queryEnt: QueryEnt): QueryTab {
+  queryEntToTabUnwrap(queryEnt: QueryEnt): QueryTab {
     if (isUndefined(queryEnt)) {
       return;
     }
 
     let result: Result.Result<QueryTab, QueryEntToTabError> =
-      this.queryEntToTabResult({ queryEnt: queryEnt });
+      this.queryEntToTab({ queryEnt: queryEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1074,7 +1072,7 @@ export class TabService {
     return query;
   }
 
-  queryEntToTabResult(item: {
+  queryEntToTab(item: {
     queryEnt: QueryEnt;
   }): Result.Result<QueryTab, QueryEntToTabError> {
     return Result.pipe(
@@ -1082,19 +1080,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<QuerySt, QueryLt>, GetTabPropsError> =>
-          this.getTabPropsResult<QuerySt, QueryLt>({ ent: v.queryEnt })
+          this.getTabProps<QuerySt, QueryLt>({ ent: v.queryEnt })
       ),
       Result.map((v): QueryTab => ({ ...v.queryEnt, ...v.tabProps.props }))
     );
   }
 
-  reportEntToTab(reportEnt: ReportEnt): ReportTab {
+  reportEntToTabUnwrap(reportEnt: ReportEnt): ReportTab {
     if (isUndefined(reportEnt)) {
       return;
     }
 
     let result: Result.Result<ReportTab, ReportEntToTabError> =
-      this.reportEntToTabResult({ reportEnt: reportEnt });
+      this.reportEntToTab({ reportEnt: reportEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1105,7 +1103,7 @@ export class TabService {
     return report;
   }
 
-  reportEntToTabResult(item: {
+  reportEntToTab(item: {
     reportEnt: ReportEnt;
   }): Result.Result<ReportTab, ReportEntToTabError> {
     return Result.pipe(
@@ -1113,19 +1111,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<ReportSt, ReportLt>, GetTabPropsError> =>
-          this.getTabPropsResult<ReportSt, ReportLt>({ ent: v.reportEnt })
+          this.getTabProps<ReportSt, ReportLt>({ ent: v.reportEnt })
       ),
       Result.map((v): ReportTab => ({ ...v.reportEnt, ...v.tabProps.props }))
     );
   }
 
-  structEntToTab(structEnt: StructEnt): StructTab {
+  structEntToTabUnwrap(structEnt: StructEnt): StructTab {
     if (isUndefined(structEnt)) {
       return;
     }
 
     let result: Result.Result<StructTab, StructEntToTabError> =
-      this.structEntToTabResult({ structEnt: structEnt });
+      this.structEntToTab({ structEnt: structEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1136,7 +1134,7 @@ export class TabService {
     return struct;
   }
 
-  structEntToTabResult(item: {
+  structEntToTab(item: {
     structEnt: StructEnt;
   }): Result.Result<StructTab, StructEntToTabError> {
     return Result.pipe(
@@ -1144,7 +1142,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<StructSt, StructLt>, GetTabPropsError> =>
-          this.getTabPropsResult<StructSt, StructLt>({
+          this.getTabProps<StructSt, StructLt>({
             ent: v.structEnt
           })
       ),
@@ -1152,13 +1150,14 @@ export class TabService {
     );
   }
 
-  userEntToTab(userEnt: UserEnt): UserTab {
+  userEntToTabUnwrap(userEnt: UserEnt): UserTab {
     if (isUndefined(userEnt)) {
       return;
     }
 
-    let result: Result.Result<UserTab, UserEntToTabError> =
-      this.userEntToTabResult({ userEnt: userEnt });
+    let result: Result.Result<UserTab, UserEntToTabError> = this.userEntToTab({
+      userEnt: userEnt
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1169,7 +1168,7 @@ export class TabService {
     return user;
   }
 
-  userEntToTabResult(item: {
+  userEntToTab(item: {
     userEnt: UserEnt;
   }): Result.Result<UserTab, UserEntToTabError> {
     return Result.pipe(
@@ -1177,19 +1176,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<UserSt, UserLt>, GetTabPropsError> =>
-          this.getTabPropsResult<UserSt, UserLt>({ ent: v.userEnt })
+          this.getTabProps<UserSt, UserLt>({ ent: v.userEnt })
       ),
       Result.map((v): UserTab => ({ ...v.userEnt, ...v.tabProps.props }))
     );
   }
 
-  sessionEntToTab(sessionEnt: SessionEnt): SessionTab {
+  sessionEntToTabUnwrap(sessionEnt: SessionEnt): SessionTab {
     if (isUndefined(sessionEnt)) {
       return;
     }
 
     let result: Result.Result<SessionTab, SessionEntToTabError> =
-      this.sessionEntToTabResult({ sessionEnt: sessionEnt });
+      this.sessionEntToTab({ sessionEnt: sessionEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1200,7 +1199,7 @@ export class TabService {
     return session;
   }
 
-  sessionEntToTabResult(item: {
+  sessionEntToTab(item: {
     sessionEnt: SessionEnt;
   }): Result.Result<SessionTab, SessionEntToTabError> {
     return Result.pipe(
@@ -1208,19 +1207,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<SessionSt, SessionLt>, GetTabPropsError> =>
-          this.getTabPropsResult<SessionSt, SessionLt>({ ent: v.sessionEnt })
+          this.getTabProps<SessionSt, SessionLt>({ ent: v.sessionEnt })
       ),
       Result.map((v): SessionTab => ({ ...v.sessionEnt, ...v.tabProps.props }))
     );
   }
 
-  ocSessionEntToTab(ocSessionEnt: OcSessionEnt): OcSessionTab {
+  ocSessionEntToTabUnwrap(ocSessionEnt: OcSessionEnt): OcSessionTab {
     if (isUndefined(ocSessionEnt)) {
       return;
     }
 
     let result: Result.Result<OcSessionTab, OcSessionEntToTabError> =
-      this.ocSessionEntToTabResult({ ocSessionEnt: ocSessionEnt });
+      this.ocSessionEntToTab({ ocSessionEnt: ocSessionEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1231,7 +1230,7 @@ export class TabService {
     return ocSession;
   }
 
-  ocSessionEntToTabResult(item: {
+  ocSessionEntToTab(item: {
     ocSessionEnt: OcSessionEnt;
   }): Result.Result<OcSessionTab, OcSessionEntToTabError> {
     return Result.pipe(
@@ -1244,7 +1243,7 @@ export class TabService {
           TabProps<OcSessionSt, OcSessionLt>,
           GetTabPropsError
         > =>
-          this.getTabPropsResult<OcSessionSt, OcSessionLt>({
+          this.getTabProps<OcSessionSt, OcSessionLt>({
             ent: v.ocSessionEnt
           })
       ),
@@ -1254,13 +1253,13 @@ export class TabService {
     );
   }
 
-  ocEventEntToTab(eventEnt: OcEventEnt): OcEventTab {
+  ocEventEntToTabUnwrap(eventEnt: OcEventEnt): OcEventTab {
     if (isUndefined(eventEnt)) {
       return;
     }
 
     let result: Result.Result<OcEventTab, OcEventEntToTabError> =
-      this.ocEventEntToTabResult({ eventEnt: eventEnt });
+      this.ocEventEntToTab({ eventEnt: eventEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1271,7 +1270,7 @@ export class TabService {
     return event;
   }
 
-  ocEventEntToTabResult(item: {
+  ocEventEntToTab(item: {
     eventEnt: OcEventEnt;
   }): Result.Result<OcEventTab, OcEventEntToTabError> {
     return Result.pipe(
@@ -1279,19 +1278,19 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<OcEventSt, OcEventLt>, GetTabPropsError> =>
-          this.getTabPropsResult<OcEventSt, OcEventLt>({ ent: v.eventEnt })
+          this.getTabProps<OcEventSt, OcEventLt>({ ent: v.eventEnt })
       ),
       Result.map((v): OcEventTab => ({ ...v.eventEnt, ...v.tabProps.props }))
     );
   }
 
-  ocMessageEntToTab(messageEnt: OcMessageEnt): OcMessageTab {
+  ocMessageEntToTabUnwrap(messageEnt: OcMessageEnt): OcMessageTab {
     if (isUndefined(messageEnt)) {
       return;
     }
 
     let result: Result.Result<OcMessageTab, OcMessageEntToTabError> =
-      this.ocMessageEntToTabResult({ messageEnt: messageEnt });
+      this.ocMessageEntToTab({ messageEnt: messageEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1302,7 +1301,7 @@ export class TabService {
     return message;
   }
 
-  ocMessageEntToTabResult(item: {
+  ocMessageEntToTab(item: {
     messageEnt: OcMessageEnt;
   }): Result.Result<OcMessageTab, OcMessageEntToTabError> {
     return Result.pipe(
@@ -1315,7 +1314,7 @@ export class TabService {
           TabProps<OcMessageSt, OcMessageLt>,
           GetTabPropsError
         > =>
-          this.getTabPropsResult<OcMessageSt, OcMessageLt>({
+          this.getTabProps<OcMessageSt, OcMessageLt>({
             ent: v.messageEnt
           })
       ),
@@ -1325,13 +1324,13 @@ export class TabService {
     );
   }
 
-  ocPartEntToTab(partEnt: OcPartEnt): OcPartTab {
+  ocPartEntToTabUnwrap(partEnt: OcPartEnt): OcPartTab {
     if (isUndefined(partEnt)) {
       return;
     }
 
     let result: Result.Result<OcPartTab, OcPartEntToTabError> =
-      this.ocPartEntToTabResult({ partEnt: partEnt });
+      this.ocPartEntToTab({ partEnt: partEnt });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -1342,7 +1341,7 @@ export class TabService {
     return part;
   }
 
-  ocPartEntToTabResult(item: {
+  ocPartEntToTab(item: {
     partEnt: OcPartEnt;
   }): Result.Result<OcPartTab, OcPartEntToTabError> {
     return Result.pipe(
@@ -1350,7 +1349,7 @@ export class TabService {
       Result.bind(
         'tabProps',
         (v): Result.Result<TabProps<OcPartSt, OcPartLt>, GetTabPropsError> =>
-          this.getTabPropsResult<OcPartSt, OcPartLt>({ ent: v.partEnt })
+          this.getTabProps<OcPartSt, OcPartLt>({ ent: v.partEnt })
       ),
       Result.map((v): OcPartTab => ({ ...v.partEnt, ...v.tabProps.props }))
     );

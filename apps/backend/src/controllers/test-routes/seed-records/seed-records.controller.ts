@@ -225,7 +225,7 @@ export class SeedRecordsController {
               x: ToBackendSeedRecordsInputUsersItem
             ): Result.ResultAsync<void, MakeAliasError | ParseApiKeyError> => {
               let aliasResult: Result.Result<string, MakeAliasError> =
-                await this.usersService.makeAliasResult({ email: x.email });
+                await this.usersService.makeAlias({ email: x.email });
 
               if (Result.isFailure(aliasResult)) {
                 return aliasResult;
@@ -376,7 +376,7 @@ export class SeedRecordsController {
               };
 
               let createOrgResult: Result.Result<unknown, SendToDiskError> =
-                await this.rpcService.sendToDiskResult({
+                await this.rpcService.sendToDisk({
                   request: {
                     operation: 'createOrg',
                     traceId: v.traceId,
@@ -449,7 +449,7 @@ export class SeedRecordsController {
             let newProviderResult: Result.Result<
               ProviderTab,
               MakeProviderError
-            > = this.providersService.makeProviderResult({
+            > = this.providersService.makeProvider({
               ...x,
               models: providerModels
             });
@@ -525,7 +525,7 @@ export class SeedRecordsController {
               let diskSeedProjectResult: Result.Result<
                 ToDiskSeedProjectOutput,
                 SendToDiskError
-              > = await this.rpcService.sendToDiskResult({
+              > = await this.rpcService.sendToDisk({
                 request: {
                   operation: 'seedProject',
                   traceId: v.traceId,
@@ -559,7 +559,7 @@ export class SeedRecordsController {
               let devRebuildStructOutput: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStructResult({
+              > = await this.blockmlService.rebuildStruct({
                 traceId: v.traceId,
                 orgId: newProject.orgId,
                 projectId: newProject.projectId,
@@ -593,7 +593,7 @@ export class SeedRecordsController {
               let prodRebuildStructOutput: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStructResult({
+              > = await this.blockmlService.rebuildStruct({
                 traceId: v.traceId,
                 orgId: newProject.orgId,
                 projectId: newProject.projectId,

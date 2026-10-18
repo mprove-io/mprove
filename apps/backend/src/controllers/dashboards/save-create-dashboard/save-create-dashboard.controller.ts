@@ -162,7 +162,7 @@ export class SaveCreateDashboardController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestrictedResult({ user: v.user });
+        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -171,7 +171,7 @@ export class SaveCreateDashboardController {
         return Result.succeed();
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -181,7 +181,7 @@ export class SaveCreateDashboardController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
@@ -196,7 +196,7 @@ export class SaveCreateDashboardController {
           let userMemberResult: Result.Result<
             MemberTab,
             GetMemberCheckExistsError
-          > = await this.membersService.getMemberCheckExistsResult({
+          > = await this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           });
@@ -239,7 +239,7 @@ export class SaveCreateDashboardController {
           let projectRestrictionResult: Result.Result<
             void,
             CheckProjectIsNotRestrictedError
-          > = await this.projectsService.checkProjectIsNotRestrictedResult({
+          > = await this.projectsService.checkProjectIsNotRestricted({
             projectId: v.projectId,
             userMember: v.userMember,
             repoId: v.repoId
@@ -265,14 +265,14 @@ export class SaveCreateDashboardController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -281,7 +281,7 @@ export class SaveCreateDashboardController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -291,7 +291,7 @@ export class SaveCreateDashboardController {
       Result.bind(
         'currentStruct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -331,16 +331,13 @@ export class SaveCreateDashboardController {
             let fromDashboardResult: Result.Result<
               DashboardX,
               GetDashboardXCheckExistsAndAccessError
-            > =
-              await this.dashboardsService.getDashboardXCheckExistsAndAccessResult(
-                {
-                  dashboardId: v.fromDashboardId,
-                  structId: v.bridge.structId,
-                  apiUserMember: v.apiUserMember,
-                  projectId: v.projectId,
-                  user: v.user
-                }
-              );
+            > = await this.dashboardsService.getDashboardXCheckExistsAndAccess({
+              dashboardId: v.fromDashboardId,
+              structId: v.bridge.structId,
+              apiUserMember: v.apiUserMember,
+              projectId: v.projectId,
+              user: v.user
+            });
 
             if (Result.isFailure(fromDashboardResult)) {
               return fromDashboardResult;
@@ -439,7 +436,7 @@ export class SaveCreateDashboardController {
       Result.bind(
         'diskCreateFileOutput',
         (v): Result.ResultAsync<ToDiskCreateFileOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'createFile',
               traceId: body.traceId,
@@ -549,7 +546,7 @@ export class SaveCreateDashboardController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -566,7 +563,7 @@ export class SaveCreateDashboardController {
           let rebuildStructOutput: Result.Result<
             RebuildStructOutput,
             RebuildStructError
-          > = await this.blockmlService.rebuildStructResult({
+          > = await this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.projectId,
@@ -662,7 +659,7 @@ export class SaveCreateDashboardController {
         let processDashboardOutput: Result.Result<
           ProcessDashboardOutput,
           ProcessDashboardError
-        > = await this.dashboardsService.processDashboardResult({
+        > = await this.dashboardsService.processDashboard({
           newApiDashboard: v.newApiDashboard,
           apiMconfigs: v.rebuild.mconfigs,
           apiQueries: v.rebuild.queries,
@@ -730,7 +727,7 @@ export class SaveCreateDashboardController {
       Result.bind(
         'dashboardsCatalog',
         (v): Result.ResultAsync<DashboardsCatalog, GetDashboardsCatalogError> =>
-          this.dashboardsService.getDashboardsCatalogResult({
+          this.dashboardsService.getDashboardsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

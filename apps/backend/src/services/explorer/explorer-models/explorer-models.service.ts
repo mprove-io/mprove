@@ -21,7 +21,7 @@ import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model'
 
 @Injectable()
 export class ExplorerModelsService {
-  getExplorerModelResult(item: {
+  getExplorerModel(item: {
     provider: ProviderTab;
     modelId: string;
     codexFetch?: typeof fetch;

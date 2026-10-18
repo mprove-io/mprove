@@ -109,12 +109,12 @@ export class RegisterUserController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'emailHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.email,
             hashSecret: v.hashSecret
           })
@@ -127,7 +127,7 @@ export class RegisterUserController {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.andThrough(v =>
@@ -148,7 +148,7 @@ export class RegisterUserController {
         async (v): Result.ResultAsync<string, MakeAliasError> =>
           isDefined(v.user)
             ? Result.succeed(undefined)
-            : this.usersService.makeAliasResult({ email: v.email })
+            : this.usersService.makeAlias({ email: v.email })
       ),
       Result.andThrough(v =>
         isUndefined(v.user) && v.alias === RESTRICTED_USER_ALIAS

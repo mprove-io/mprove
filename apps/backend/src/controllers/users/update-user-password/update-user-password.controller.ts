@@ -71,12 +71,12 @@ export class UpdateUserPasswordController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'passwordResetTokenHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.passwordResetToken,
             hashSecret: v.hashSecret
           })
@@ -99,7 +99,7 @@ export class UpdateUserPasswordController {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_UPDATE_PASSWORD_WRONG_TOKEN' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.andThrough(v => {

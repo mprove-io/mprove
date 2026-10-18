@@ -67,10 +67,10 @@ export class SetOrgOwnerController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwner({
           org: v.org,
           userId: v.userId
         })
@@ -78,12 +78,12 @@ export class SetOrgOwnerController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'ownerEmailHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.ownerEmail,
             hashSecret: v.hashSecret
           })
@@ -106,7 +106,7 @@ export class SetOrgOwnerController {
             .then((x: UserEnt) =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_NEW_OWNER_NOT_FOUND' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.map(v => {

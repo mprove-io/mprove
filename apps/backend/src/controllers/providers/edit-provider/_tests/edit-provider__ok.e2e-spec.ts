@@ -172,7 +172,9 @@ test('1', async t => {
 
       let tabService: TabService = prep.moduleRef.get<TabService>(TabService);
 
-      providerTab = tabService.providerEntToTab({ providerEnt: providerEnt });
+      providerTab = tabService.providerEntToTabUnwrap({
+        providerEnt: providerEnt
+      });
 
       await prep.app.close();
     } catch (e) {

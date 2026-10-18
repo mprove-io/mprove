@@ -121,7 +121,7 @@ test('1', async t => {
 
       let bridgesService = prep.moduleRef.get<BridgesService>(BridgesService);
 
-      let bridge = await bridgesService.getBridgeCheckExists({
+      let bridge = await bridgesService.getBridgeCheckExistsUnwrap({
         projectId: projectId,
         repoId: userId,
         branchId: BRANCH_MAIN,
@@ -159,7 +159,7 @@ test('1', async t => {
         SearchDwhSchemaFieldNamesService
       );
 
-      let matches = await svc.search({
+      let matches = await svc.searchUnwrap({
         userId: userId,
         projectId: projectId,
         repoId: userId,

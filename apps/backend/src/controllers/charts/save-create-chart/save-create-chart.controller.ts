@@ -172,7 +172,7 @@ export class SaveCreateChartController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestrictedResult({ user: v.user });
+        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -181,7 +181,7 @@ export class SaveCreateChartController {
         return Result.succeed();
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -191,7 +191,7 @@ export class SaveCreateChartController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
@@ -209,7 +209,7 @@ export class SaveCreateChartController {
           let userMemberResult: Result.Result<
             MemberTab,
             GetMemberCheckExistsError
-          > = await this.membersService.getMemberCheckExistsResult({
+          > = await this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           });
@@ -223,7 +223,7 @@ export class SaveCreateChartController {
           let projectRestrictionResult: Result.Result<
             void,
             CheckProjectIsNotRestrictedError
-          > = await this.projectsService.checkProjectIsNotRestrictedResult({
+          > = await this.projectsService.checkProjectIsNotRestricted({
             projectId: v.projectId,
             userMember: userMember,
             repoId: v.repoId
@@ -255,14 +255,14 @@ export class SaveCreateChartController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -271,7 +271,7 @@ export class SaveCreateChartController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -281,13 +281,13 @@ export class SaveCreateChartController {
       Result.bind(
         'currentStruct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.modelsService.getModelCheckExistsAndAccessResult({
+        this.modelsService.getModelCheckExistsAndAccess({
           structId: v.bridge.structId,
           modelId: v.mconfig.modelId,
           userMember: v.userMember
@@ -330,7 +330,7 @@ export class SaveCreateChartController {
       Result.bind(
         'diskCreateFileOutput',
         (v): Result.ResultAsync<ToDiskCreateFileOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'createFile',
               traceId: body.traceId,
@@ -428,7 +428,7 @@ export class SaveCreateChartController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -445,7 +445,7 @@ export class SaveCreateChartController {
           let rebuildStructOutput: Result.Result<
             RebuildStructOutput,
             RebuildStructError
-          > = await this.blockmlService.rebuildStructResult({
+          > = await this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.projectId,
@@ -626,7 +626,7 @@ export class SaveCreateChartController {
               Result.sequence(xs, x =>
                 isUndefined(x as ModelEnt)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x as ModelEnt
                     })
               )
@@ -640,7 +640,7 @@ export class SaveCreateChartController {
       Result.bind(
         'chartsCatalog',
         (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
-          this.chartsService.getChartsCatalogResult({
+          this.chartsService.getChartsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

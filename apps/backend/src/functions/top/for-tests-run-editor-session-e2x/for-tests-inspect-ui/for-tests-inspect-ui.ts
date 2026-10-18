@@ -29,10 +29,10 @@ export async function forTestsInspectUi(item: {
   // Periodic health check
   let editorOpencodeService = item.prep.app.get(EditorOpencodeService);
   let sessionsService = item.prep.app.get(SessionsService);
-  let session = await sessionsService.getSessionByIdCheckExists({
+  let session = await sessionsService.getSessionByIdCheck({
     sessionId: item.sessionId
   });
-  let client = await editorOpencodeService.getOpenCodeClient({
+  let client = await editorOpencodeService.getOpenCodeClientUnwrap({
     sessionId: item.sessionId
   });
 

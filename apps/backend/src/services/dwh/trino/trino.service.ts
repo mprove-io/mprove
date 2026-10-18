@@ -518,7 +518,7 @@ export class TrinoService {
               eq(queriesTable.projectId, projectId)
             )
           })
-          .then(x => this.tabService.queryEntToTab(x));
+          .then(x => this.tabService.queryEntToTabUnwrap(x));
 
         if (isDefined(q) || isUndefined(queryResult?.value)) {
           if (
@@ -609,7 +609,7 @@ export class TrinoService {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.tabService.queryEntToTab(x));
+      .then(x => this.tabService.queryEntToTabUnwrap(x));
 
     if (isDefined(q)) {
       q.status = 'Error';

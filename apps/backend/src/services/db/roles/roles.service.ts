@@ -63,7 +63,7 @@ export class RolesService {
     return apiRole;
   }
 
-  async checkRoleDoesNotExistResult(item: {
+  async checkRoleDoesNotExist(item: {
     projectId: string;
     roleId: string;
   }): Result.ResultAsync<void, CheckRoleDoesNotExistError> {
@@ -81,7 +81,7 @@ export class RolesService {
       : Result.succeed();
   }
 
-  async getRoleCheckExistsResult(item: {
+  async getRoleCheckExists(item: {
     projectId: string;
     roleId: string;
   }): Result.ResultAsync<RoleTab, GetRoleCheckExistsError> {
@@ -97,11 +97,11 @@ export class RolesService {
       .then((x: RoleEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_ROLE_DOES_NOT_EXIST' })
-          : this.tabService.roleEntToTabResult({ roleEnt: x })
+          : this.tabService.roleEntToTab({ roleEnt: x })
       );
   }
 
-  async checkRolesExistResult(item: {
+  async checkRolesExist(item: {
     projectId: string;
     roleIds: string[];
   }): Result.ResultAsync<void, CheckRolesExistError> {
@@ -144,7 +144,7 @@ export class RolesService {
     return Result.succeed();
   }
 
-  checkRoleGivenDoesNotExistResult(item: {
+  checkRoleGivenDoesNotExist(item: {
     role: RoleTab;
     givenId: string;
   }): Result.Result<void, CheckRoleGivenDoesNotExistError> {
@@ -155,7 +155,7 @@ export class RolesService {
       : Result.succeed();
   }
 
-  getRoleGivenCheckExistsResult(item: {
+  getRoleGivenCheckExists(item: {
     role: RoleTab;
     givenId: string;
   }): Result.Result<Gv, GetRoleGivenCheckExistsError> {
@@ -168,7 +168,7 @@ export class RolesService {
       : Result.succeed(roleGiven);
   }
 
-  async getRolesResult(item: {
+  async getRoles(item: {
     projectId: string;
   }): Result.ResultAsync<RoleTab[], GetRolesError> {
     let { projectId } = item;
@@ -178,13 +178,11 @@ export class RolesService {
         where: eq(rolesTable.projectId, projectId)
       })
       .then(xs =>
-        Result.sequence(xs, x =>
-          this.tabService.roleEntToTabResult({ roleEnt: x })
-        )
+        Result.sequence(xs, x => this.tabService.roleEntToTab({ roleEnt: x }))
       );
   }
 
-  async getApiRolesResult(item: {
+  async getApiRoles(item: {
     projectId: string;
   }): Result.ResultAsync<Role[], GetApiRolesError> {
     return Result.pipe(
@@ -196,7 +194,7 @@ export class RolesService {
             .findMany({ where: eq(rolesTable.projectId, v.projectId) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.roleEntToTabResult({ roleEnt: x })
+                this.tabService.roleEntToTab({ roleEnt: x })
               )
             )
       ),

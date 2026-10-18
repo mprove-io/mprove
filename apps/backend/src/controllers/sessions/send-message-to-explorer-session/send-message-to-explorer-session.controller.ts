@@ -95,12 +95,12 @@ export class SendMessageToExplorerSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.session.projectId
         })
       ),
@@ -164,7 +164,7 @@ export class SendMessageToExplorerSessionController {
       Result.bind(
         'ocSession',
         (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
-          this.sessionsService.getOcSessionBySessionIdResult({
+          this.sessionsService.getOcSessionBySessionId({
             sessionId: v.updatedSession.sessionId
           })
       ),
@@ -209,7 +209,7 @@ export class SendMessageToExplorerSessionController {
           GetModelSelectionOutput,
           GetModelSelectionError
         > =>
-          this.providersService.getModelSelectionResult({
+          this.providersService.getModelSelection({
             projectId: v.session.projectId,
             providerId: v.providerId,
             modelId: v.modelId,
@@ -232,7 +232,7 @@ export class SendMessageToExplorerSessionController {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.ocMessageEntToTabResult({ messageEnt: x })
+                : this.tabService.ocMessageEntToTab({ messageEnt: x })
             )
       ),
       Result.andThrough(v => {
@@ -269,7 +269,7 @@ export class SendMessageToExplorerSessionController {
       // Ensure codex auth is fresh in DB before stream / interact dispatch
       Result.andThrough(async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
-          ? this.codexService.prewarmCodexAuthResult({ userId: v.user.userId })
+          ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
           : Result.succeed()
       ),
       Result.bind(
@@ -336,7 +336,7 @@ export class SendMessageToExplorerSessionController {
         }
 
         // Another pod holds the lock - delegate via pub/sub
-        return this.explorerStreamService.publishInteractCommandResult({
+        return this.explorerStreamService.publishInteractCommand({
           sessionId: v.updatedSession.sessionId,
           provider: v.providerId,
           modelId: v.modelId,

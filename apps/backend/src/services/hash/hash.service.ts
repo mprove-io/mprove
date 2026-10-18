@@ -39,9 +39,8 @@ export class HashService {
     return crypto.randomBytes(32).toString('hex');
   }
 
-  makeHash(item: { input: string; hashSecret: string }) {
-    let result: Result.Result<string, MakeHashError> =
-      this.makeHashResult(item);
+  makeHashUnwrap(item: { input: string; hashSecret: string }) {
+    let result: Result.Result<string, MakeHashError> = this.makeHash(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -52,7 +51,7 @@ export class HashService {
     return hash;
   }
 
-  makeHashResult(item: {
+  makeHash(item: {
     input?: string;
     hashSecret?: string;
   }): Result.Result<string, MakeHashError> {

@@ -78,7 +78,7 @@ export class RunReportService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.reportEntToTabResult({ reportEnt: x })
+                this.tabService.reportEntToTab({ reportEnt: x })
               )
             )
       ),

@@ -79,7 +79,7 @@ export class ViewCachedColumnController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -88,13 +88,13 @@ export class ViewCachedColumnController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -103,7 +103,7 @@ export class ViewCachedColumnController {
       Result.bind(
         'cacheEnvId',
         (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvIdResult({
+          this.cachedColumnService.getCacheEnvId({
             projectId: v.projectId,
             envId: v.envId
           })
@@ -127,7 +127,7 @@ export class ViewCachedColumnController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.cachedPartEntToTabResult({
+                this.tabService.cachedPartEntToTab({
                   cachedPartEnt: x
                 })
               )
@@ -153,7 +153,7 @@ export class ViewCachedColumnController {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.cachedColumnEntToTabResult({
+                : this.tabService.cachedColumnEntToTab({
                     cachedColumnEnt: x
                   })
             )

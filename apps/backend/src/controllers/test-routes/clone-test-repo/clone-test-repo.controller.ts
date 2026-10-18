@@ -33,7 +33,7 @@ export class CloneTestRepoController {
   async cloneTestRepo(
     @Body() body: ToBackendCloneTestRepoRequestDto
   ): Promise<BackendResultForOperation<'cloneTestRepo'>> {
-    return this.rpcService.sendToDiskResult({
+    return this.rpcService.sendToDisk({
       request: {
         operation: 'cloneTestRepo',
         traceId: body.traceId,

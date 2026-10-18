@@ -67,14 +67,14 @@ export class GetBranchesListController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -150,7 +150,7 @@ export class GetBranchesListController {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.ocSessionEntToTabResult({
+                    this.tabService.ocSessionEntToTab({
                       ocSessionEnt: x
                     })
                   )
@@ -161,7 +161,7 @@ export class GetBranchesListController {
         'sessions',
         (v): Result.Result<SessionTab[], SessionEntToTabError> =>
           Result.sequence(v.sessionEnts, x =>
-            this.tabService.sessionEntToTabResult({
+            this.tabService.sessionEntToTab({
               sessionEnt: x
             })
           )

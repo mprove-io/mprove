@@ -48,7 +48,7 @@ export class QueryInfoReportService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getReportDataResult(item: {
+  async getReportData(item: {
     traceId: string;
     user: UserTab;
     userMember: MemberTab;
@@ -70,7 +70,7 @@ export class QueryInfoReportService {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -80,7 +80,7 @@ export class QueryInfoReportService {
         (
           v
         ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccessResult({
+          this.reportsService.getReportCheckExistsAndAccess({
             projectId: v.projectId,
             reportId: v.reportId,
             structId: v.bridge.structId,
@@ -96,7 +96,7 @@ export class QueryInfoReportService {
       Result.bind(
         'apiReport',
         (v): Result.ResultAsync<ReportX, GetReportDataError> =>
-          this.reportDataService.getReportDataResult({
+          this.reportDataService.getReportData({
             report: v.report,
             traceId: v.traceId,
             project: v.project,
@@ -150,7 +150,7 @@ export class QueryInfoReportService {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXs({
             structId: v.struct.structId,
             apiUserMember: v.apiUserMember
           })

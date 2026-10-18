@@ -138,7 +138,7 @@ export class MembersService {
     return apiMember;
   }
 
-  async getMemberCheckIsAdminResult(item: {
+  async getMemberCheckIsAdmin(item: {
     memberId: string;
     projectId: string;
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> {
@@ -167,12 +167,12 @@ export class MembersService {
       ),
       Result.andThen(
         (v): Result.Result<MemberTab, MemberEntToTabError> =>
-          this.tabService.memberEntToTabResult({ memberEnt: v.memberEnt })
+          this.tabService.memberEntToTab({ memberEnt: v.memberEnt })
       )
     );
   }
 
-  async getMemberCheckIsEditorOrAdminResult(item: {
+  async getMemberCheckIsEditorOrAdmin(item: {
     memberId: string;
     projectId: string;
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> {
@@ -181,7 +181,7 @@ export class MembersService {
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.getMemberCheckExistsResult({
+          this.getMemberCheckExists({
             memberId: v.memberId,
             projectId: v.projectId
           })
@@ -195,7 +195,7 @@ export class MembersService {
     );
   }
 
-  async getMemberCheckIsEditorResult(item: {
+  async getMemberCheckIsEditor(item: {
     memberId: string;
     projectId: string;
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> {
@@ -204,7 +204,7 @@ export class MembersService {
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.getMemberCheckExistsResult({
+          this.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.memberId
           })
@@ -218,7 +218,7 @@ export class MembersService {
     );
   }
 
-  async getMemberCheckExistsResult(item: {
+  async getMemberCheckExists(item: {
     memberId: string;
     projectId: string;
   }): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> {
@@ -234,11 +234,11 @@ export class MembersService {
       .then((x: MemberEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' })
-          : this.tabService.memberEntToTabResult({ memberEnt: x })
+          : this.tabService.memberEntToTab({ memberEnt: x })
       );
   }
 
-  async checkMemberDoesNotExistResult(item: {
+  async checkMemberDoesNotExist(item: {
     memberId: string;
     projectId: string;
   }): Result.ResultAsync<void, CheckMemberDoesNotExistError> {
@@ -257,7 +257,7 @@ export class MembersService {
       : Result.succeed();
   }
 
-  async addMemberToDemoProjectResult(item: {
+  async addMemberToDemoProject(item: {
     user: UserTab;
     traceId: string;
   }): Result.ResultAsync<void, AddMemberToDemoProjectError> {
@@ -279,7 +279,7 @@ export class MembersService {
                 .then(x =>
                   isUndefined(x)
                     ? Result.succeed(undefined)
-                    : this.tabService.projectEntToTabResult({ projectEnt: x })
+                    : this.tabService.projectEntToTab({ projectEnt: x })
                 )
       ),
       Result.bind(
@@ -297,7 +297,7 @@ export class MembersService {
                 .then(x =>
                   isUndefined(x)
                     ? Result.succeed(undefined)
-                    : this.tabService.memberEntToTabResult({ memberEnt: x })
+                    : this.tabService.memberEntToTab({ memberEnt: x })
                 )
       ),
       Result.bind(
@@ -331,7 +331,7 @@ export class MembersService {
         ): Result.ResultAsync<ToDiskCreateDevRepoOutput, SendToDiskError> =>
           isUndefined(v.newMember)
             ? Result.succeed(undefined)
-            : this.rpcService.sendToDiskResult({
+            : this.rpcService.sendToDisk({
                 request: {
                   operation: 'createDevRepo',
                   traceId: v.traceId,
@@ -415,7 +415,7 @@ export class MembersService {
           let rebuildStructOutput: Result.Result<
             RebuildStructOutput,
             RebuildStructError
-          > = await this.blockmlService.rebuildStructResult({
+          > = await this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.demoProjectId,
@@ -476,7 +476,7 @@ export class MembersService {
         .findFirst({
           where: eq(projectsTable.projectId, demoProjectId)
         })
-        .then(x => this.tabService.projectEntToTab(x));
+        .then(x => this.tabService.projectEntToTabUnwrap(x));
 
       if (isDefined(project)) {
         let member = await this.db.drizzle.query.membersTable
@@ -486,7 +486,7 @@ export class MembersService {
               eq(membersTable.projectId, demoProjectId)
             )
           })
-          .then(x => this.tabService.memberEntToTab(x));
+          .then(x => this.tabService.memberEntToTabUnwrap(x));
 
         if (isUndefined(member)) {
           let newMember: MemberTab = this.makeMember({

@@ -65,7 +65,7 @@ export class RunChartService {
             .findMany({ where: eq(chartsTable.structId, v.structId) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.chartEntToTabResult({ chartEnt: x })
+                this.tabService.chartEntToTab({ chartEnt: x })
               )
             )
       ),
@@ -76,7 +76,7 @@ export class RunChartService {
             .findMany({ where: eq(modelsTable.structId, v.structId) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.modelEntToTabResult({ modelEnt: x })
+                this.tabService.modelEntToTab({ modelEnt: x })
               )
             )
       ),

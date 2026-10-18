@@ -289,7 +289,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           .findFirst({
             where: isNotNull(uconfigsTable.uconfigId)
           })
-          .then(x => this.tabService.uconfigEntToTab(x));
+          .then(x => this.tabService.uconfigEntToTabUnwrap(x));
 
         if (isUndefined(uconfig)) {
           let uconfigInit: UconfigTab = {
@@ -328,9 +328,10 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           isDefinedAndNotEmpty(mproveAdminEmail) &&
           isDefinedAndNotEmpty(mproveAdminInitialPassword)
         ) {
-          let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+          let hashSecret =
+            await this.dconfigsService.getDconfigHashSecretUnwrap();
 
-          let mproveAdminEmailHash = this.hashService.makeHash({
+          let mproveAdminEmailHash = this.hashService.makeHashUnwrap({
             input: mproveAdminEmail,
             hashSecret: hashSecret
           });
@@ -339,7 +340,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
             .findFirst({
               where: eq(usersTable.emailHash, mproveAdminEmailHash)
             })
-            .then(x => this.tabService.userEntToTab(x));
+            .then(x => this.tabService.userEntToTabUnwrap(x));
 
           if (isUndefined(mproveAdminUser)) {
             mproveAdminUser = await this.usersService.addMproveAdminUser({
@@ -510,10 +511,10 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         .findFirst({
           where: eq(orgsTable.orgId, demoOrgId)
         })
-        .then(x => this.tabService.orgEntToTab(x));
+        .then(x => this.tabService.orgEntToTabUnwrap(x));
 
       if (isUndefined(demoOrg)) {
-        demoOrg = await this.orgsService.addOrg({
+        demoOrg = await this.orgsService.addOrgUnwrap({
           ownerId: mproveAdminUser.userId,
           ownerEmail: mproveAdminUser.email,
           name: DEMO_ORG_NAME,
@@ -530,7 +531,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         .findFirst({
           where: eq(projectsTable.projectId, demoProjectId)
         })
-        .then(x => this.tabService.projectEntToTab(x));
+        .then(x => this.tabService.projectEntToTabUnwrap(x));
 
       if (isUndefined(demoProject)) {
         let demoProjectRemoteType = this.cs.get<
@@ -578,7 +579,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           BackendConfig['demoProjectE2bApiKey']
         >('demoProjectE2bApiKey');
 
-        demoProject = await this.projectsService.addProject({
+        demoProject = await this.projectsService.addProjectUnwrap({
           orgId: demoOrg.orgId,
           name: demoProjectName,
           user: mproveAdminUser,
@@ -598,12 +599,12 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         });
       }
 
-      let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+      let hashSecret = await this.dconfigsService.getDconfigHashSecretUnwrap();
 
       let demoUserEmail = RESTRICTED_USER_EMAIL;
       let demoUserInitialPassword = RESTRICTED_USER_PASSWORD;
 
-      let demoUserEmailHash = this.hashService.makeHash({
+      let demoUserEmailHash = this.hashService.makeHashUnwrap({
         input: demoUserEmail,
         hashSecret: hashSecret
       });
@@ -612,7 +613,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         .findFirst({
           where: eq(usersTable.emailHash, demoUserEmailHash)
         })
-        .then(x => this.tabService.userEntToTab(x));
+        .then(x => this.tabService.userEntToTabUnwrap(x));
 
       if (isUndefined(demoUser)) {
         demoUser = await this.usersService.addDemoUser({

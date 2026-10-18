@@ -135,7 +135,7 @@ export class SuggestDimensionValuesController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -145,14 +145,14 @@ export class SuggestDimensionValuesController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -160,14 +160,14 @@ export class SuggestDimensionValuesController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -176,7 +176,7 @@ export class SuggestDimensionValuesController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -191,7 +191,7 @@ export class SuggestDimensionValuesController {
           StructTab,
           GetStructCheckExistsAndNotChangedError
         > =>
-          this.structsService.getStructCheckExistsAndNotChangedResult({
+          this.structsService.getStructCheckExistsAndNotChanged({
             projectId: v.projectId,
             bridgeStructId: v.bridge.structId,
             structId: v.structId
@@ -220,13 +220,13 @@ export class SuggestDimensionValuesController {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
-          this.modelsService.getModelCheckExistsResult({
+          this.modelsService.getModelCheckExists({
             structId: v.bridge.structId,
             modelId: v.modelId
           })
       ),
       Result.andThrough(v =>
-        this.parentService.checkParentAccessResult({
+        this.parentService.checkParentAccess({
           parentId: v.prepareParentPayload.parentId,
           parentType: v.prepareParentPayload.parentType,
           modelId: v.modelId,
@@ -311,7 +311,7 @@ export class SuggestDimensionValuesController {
         > =>
           v.model.type !== 'Store'
             ? Result.succeed(undefined)
-            : this.mconfigsService.prepStoreMconfigQueryResult({
+            : this.mconfigsService.prepStoreMconfigQuery({
                 struct: v.struct,
                 project: v.project,
                 envId: v.envId,
@@ -387,7 +387,7 @@ export class SuggestDimensionValuesController {
           v.model.type !== 'Store'
             ? Result.succeed(undefined)
             : v.prepStoreMconfigQueryOutput.isError === false
-              ? this.queriesService.getQueryCheckExistsResult({
+              ? this.queriesService.getQueryCheckExists({
                   queryId: v.prepStoreMconfigQueryOutput.newQuery.queryId,
                   projectId: v.projectId
                 })

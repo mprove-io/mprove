@@ -96,7 +96,7 @@ export class ExplorerChartRebuildService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async rebuildFromYamlResult(item: {
+  async rebuildFromYaml(item: {
     traceId: string;
     session: SessionTab;
     chartId: string;
@@ -108,21 +108,21 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.session.projectId
           })
       ),
       Result.bind(
         'user',
         (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          this.usersService.getUserCheckExistsResult({
+          this.usersService.getUserCheckExists({
             userId: v.session.userId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.session.projectId,
             memberId: v.session.userId
           })
@@ -130,7 +130,7 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.session.projectId,
             repoId: v.session.repoId,
             branchId: v.session.branchId
@@ -140,7 +140,7 @@ export class ExplorerChartRebuildService {
         let envAccessResult: Result.Result<
           EnvTab,
           GetEnvCheckExistsAndAccessError
-        > = await this.envsService.getEnvCheckExistsAndAccessResult({
+        > = await this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.session.projectId,
           envId: v.session.envId,
           member: v.userMember
@@ -155,7 +155,7 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -165,7 +165,7 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'currentStruct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.session.projectId
           })
@@ -173,7 +173,7 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessError> =>
-          this.modelsService.getModelCheckExistsAndAccessResult({
+          this.modelsService.getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
             modelId: v.modelId,
             userMember: v.userMember
@@ -231,7 +231,7 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'selectedGivens',
         (v): Result.ResultAsync<SelectedGiven[], GetSelectedGivensError> =>
-          this.usersService.getSelectedGivensResult({
+          this.usersService.getSelectedGivens({
             user: v.user,
             projectId: v.session.projectId
           })
@@ -239,7 +239,7 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'rebuild',
         (v): Result.ResultAsync<RebuildStructOutput, RebuildStructError> =>
-          this.blockmlService.rebuildStructResult({
+          this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.session.projectId,

@@ -94,7 +94,7 @@ export class CodexService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-  async prewarmCodexAuthResult(item: {
+  async prewarmCodexAuth(item: {
     userId: string;
   }): Result.ResultAsync<void, PrewarmCodexAuthError> {
     return Result.pipe(
@@ -102,7 +102,7 @@ export class CodexService {
       Result.bind(
         'auth',
         (v): Result.ResultAsync<CodexAuthOpenai, LoadAuthError> =>
-          this.loadAuthResult({ userId: v.userId })
+          this.loadAuth({ userId: v.userId })
       ),
       Result.bind(
         'tokens',
@@ -112,14 +112,14 @@ export class CodexService {
           v.auth.access &&
           v.auth.expires > Date.now() + CODEX_AUTH_REFRESH_BUFFER_MS
             ? Result.succeed(undefined)
-            : this.refreshAccessTokenResult({ refreshToken: v.auth.refresh })
+            : this.refreshAccessToken({ refreshToken: v.auth.refresh })
       ),
       Result.bind(
         'expiresIn',
         (v): Result.Result<number, ValidateExpiresInError> =>
           isUndefined(v.tokens)
             ? Result.succeed(undefined)
-            : this.validateExpiresInResult({ expiresIn: v.tokens.expires_in })
+            : this.validateExpiresIn({ expiresIn: v.tokens.expires_in })
       ),
       Result.bind(
         'accountId',
@@ -133,7 +133,7 @@ export class CodexService {
       Result.andThrough(v =>
         isUndefined(v.tokens)
           ? Result.succeed()
-          : this.persistRefreshedTokensResult({
+          : this.persistRefreshedTokens({
               userId: v.userId,
               newState: {
                 access: v.tokens.access_token,
@@ -146,14 +146,14 @@ export class CodexService {
       Result.map((v): void => undefined)
     );
   }
-  async buildCodexFetchResult(item: {
+  async buildCodexFetch(item: {
     userId: string;
     sessionId: string;
   }): Result.ResultAsync<typeof fetch, BuildCodexFetchError> {
     let { userId, sessionId } = item;
 
     let authResult: Result.Result<CodexAuthOpenai, LoadAuthError> =
-      await this.loadAuthResult({ userId: userId });
+      await this.loadAuth({ userId: userId });
 
     if (Result.isFailure(authResult)) {
       return authResult;
@@ -232,7 +232,7 @@ export class CodexService {
     let { userId } = item;
     try {
       let prewarmAuth: Result.Result<void, PrewarmCodexAuthError> =
-        await this.prewarmCodexAuthResult({ userId: userId });
+        await this.prewarmCodexAuth({ userId: userId });
 
       if (Result.isFailure(prewarmAuth)) {
         throw new ServerError({
@@ -245,7 +245,7 @@ export class CodexService {
       }
 
       let authResult: Result.Result<CodexAuthOpenai, LoadAuthError> =
-        await this.loadAuthResult({ userId: userId });
+        await this.loadAuth({ userId: userId });
 
       if (Result.isFailure(authResult)) {
         throw new ServerError({ message: authResult.error.code });
@@ -311,7 +311,7 @@ export class CodexService {
       return result;
     }
   }
-  private validateExpiresInResult(item: {
+  private validateExpiresIn(item: {
     expiresIn?: number;
   }): Result.Result<number, ValidateExpiresInError> {
     let { expiresIn } = item;
@@ -334,7 +334,7 @@ export class CodexService {
 
     return Result.succeed(expiresIn);
   }
-  private async loadAuthResult(item: {
+  private async loadAuth(item: {
     userId: string;
   }): Result.ResultAsync<CodexAuthOpenai, LoadAuthError> {
     return Result.pipe(
@@ -343,7 +343,7 @@ export class CodexService {
       Result.bind(
         'user',
         (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          this.usersService.getUserCheckExistsResult({ userId: v.userId })
+          this.usersService.getUserCheckExists({ userId: v.userId })
       ),
       Result.andThen(
         (
@@ -359,7 +359,7 @@ export class CodexService {
     );
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 501-519
-  async startDeviceAuthResult(): Result.ResultAsync<
+  async startDeviceAuth(): Result.ResultAsync<
     CodexDeviceAuthStart,
     StartDeviceAuthError
   > {
@@ -402,7 +402,7 @@ export class CodexService {
     return Result.succeed(codexDeviceAuthStart);
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 528-577
-  async pollDeviceAuthResult(item: {
+  async pollDeviceAuth(item: {
     userId: string;
     deviceAuthId: string;
     userCode: string;
@@ -446,7 +446,7 @@ export class CodexService {
           CodexTokenResponse,
           ExchangeDeviceAuthCodeError
         > =>
-          this.exchangeDeviceAuthCodeResult({
+          this.exchangeDeviceAuthCode({
             authorizationCode: v.authorizationCode,
             codeVerifier: v.codeVerifier
           })
@@ -454,7 +454,7 @@ export class CodexService {
       Result.bind(
         'expiresIn',
         (v): Result.Result<number, ValidateExpiresInError> =>
-          this.validateExpiresInResult({ expiresIn: v.tokens.expires_in })
+          this.validateExpiresIn({ expiresIn: v.tokens.expires_in })
       ),
       Result.bind(
         'newState',
@@ -467,7 +467,7 @@ export class CodexService {
           })
       ),
       Result.andThrough(v =>
-        this.persistRefreshedTokensResult({
+        this.persistRefreshedTokens({
           userId: v.userId,
           newState: v.newState
         })
@@ -476,7 +476,7 @@ export class CodexService {
     );
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 546-556
-  private async exchangeDeviceAuthCodeResult(item: {
+  private async exchangeDeviceAuthCode(item: {
     authorizationCode: string;
     codeVerifier: string;
   }): Result.ResultAsync<CodexTokenResponse, ExchangeDeviceAuthCodeError> {
@@ -508,7 +508,7 @@ export class CodexService {
   }
   // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 131-145
 
-  private async refreshAccessTokenResult(item: {
+  private async refreshAccessToken(item: {
     refreshToken: string;
   }): Result.ResultAsync<CodexTokenResponse, RefreshAccessTokenError> {
     let { refreshToken } = item;
@@ -597,7 +597,7 @@ export class CodexService {
       claims.organizations?.[0]?.id
     );
   }
-  private async persistRefreshedTokensResult(item: {
+  private async persistRefreshedTokens(item: {
     userId: string;
     newState: CodexTokenState;
   }): Result.ResultAsync<void, PersistRefreshedTokensError> {
@@ -606,7 +606,7 @@ export class CodexService {
       Result.bind(
         'user',
         (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          this.usersService.getUserCheckExistsResult({ userId: v.userId })
+          this.usersService.getUserCheckExists({ userId: v.userId })
       ),
       Result.map(v => {
         v.user.codexAuth = {

@@ -64,7 +64,7 @@ export class ClearCachedColumnController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -73,13 +73,13 @@ export class ClearCachedColumnController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -88,14 +88,14 @@ export class ClearCachedColumnController {
       Result.bind(
         'cacheEnvId',
         (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvIdResult({
+          this.cachedColumnService.getCacheEnvId({
             projectId: v.projectId,
             envId: v.envId
           })
       ),
       Result.andThrough(v =>
         v.cacheEnvId === PROJECT_ENV_PROD
-          ? this.membersService.getMemberCheckIsAdminResult({
+          ? this.membersService.getMemberCheckIsAdmin({
               memberId: v.userId,
               projectId: v.projectId
             })

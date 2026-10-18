@@ -87,12 +87,12 @@ export class EditLlmModelController {
         isCodexAuthSet: isDefined(user.codexAuth)
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -100,7 +100,7 @@ export class EditLlmModelController {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.providersService.getProviderCheckExistsResult({
+          this.providersService.getProviderCheckExists({
             projectId: v.projectId,
             providerId: v.providerId
           })
@@ -108,7 +108,7 @@ export class EditLlmModelController {
       Result.bind(
         'model',
         (v): Result.Result<LlmModel, GetLlmModelCheckExistsError> =>
-          this.providersService.getLlmModelCheckExistsResult({
+          this.providersService.getLlmModelCheckExists({
             provider: v.provider,
             modelId: v.modelId
           })
@@ -127,7 +127,7 @@ export class EditLlmModelController {
         ): Result.ResultAsync<LlmModelPart, GetDiscoveredLlmModelPartError> =>
           v.provider.type === 'OpenAICompatible' || v.model.isManual === true
             ? Result.succeed(undefined)
-            : this.llmModelService.getDiscoveredLlmModelPartResult({
+            : this.llmModelService.getDiscoveredLlmModelPart({
                 providerType: v.provider.type,
                 modelId: v.modelId,
                 apiKey:
@@ -149,7 +149,7 @@ export class EditLlmModelController {
         > =>
           isUndefined(v.modelPart)
             ? Result.succeed(v.submittedVariants)
-            : this.llmModelService.reconcileDiscoveredModelVariantsResult({
+            : this.llmModelService.reconcileDiscoveredModelVariants({
                 variants: v.submittedVariants,
                 storedVariants: v.model.variants,
                 currentVariantNames: [
@@ -185,7 +185,7 @@ export class EditLlmModelController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.llmModelService.validateModelVariantsResult({
+        this.llmModelService.validateModelVariants({
           variants: v.variants,
           isExplorer: v.isExplorer,
           isBuilder: v.isBuilder
@@ -199,7 +199,7 @@ export class EditLlmModelController {
       }),
       Result.andThrough(v =>
         v.isManualModel
-          ? this.llmModelService.validateManualModelLimitsResult({
+          ? this.llmModelService.validateManualModelLimits({
               modelInput: {
                 modelId: v.model.modelId,
                 name: v.model.name,

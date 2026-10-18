@@ -102,7 +102,7 @@ export class CreateBranchController {
       Result.bind(
         'repoType',
         (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
-          this.sessionsService.checkRepoIdResult({
+          this.sessionsService.checkRepoId({
             repoId: v.repoId,
             userId: v.userId,
             projectId: v.projectId,
@@ -119,12 +119,12 @@ export class CreateBranchController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsEditorResult({
+        this.membersService.getMemberCheckIsEditor({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -132,14 +132,14 @@ export class CreateBranchController {
       Result.bind(
         'fromBranch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.fromBranchId
           })
       ),
       Result.andThrough(v =>
-        this.branchesService.checkBranchDoesNotExistResult({
+        this.branchesService.checkBranchDoesNotExist({
           projectId: v.projectId,
           repoId: v.repoId,
           branchId: v.newBranchId
@@ -148,7 +148,7 @@ export class CreateBranchController {
       Result.bind(
         'diskCreateBranchOutput',
         (v): Result.ResultAsync<ToDiskCreateBranchOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'createBranch',
               traceId: v.traceId,
@@ -214,7 +214,7 @@ export class CreateBranchController {
               let result: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStructResult({
+              > = await this.blockmlService.rebuildStruct({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
                 projectId: v.projectId,

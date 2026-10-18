@@ -65,7 +65,7 @@ export class MalloyService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async editMalloyQueryResult(item: {
+  async editMalloyQuery(item: {
     projectId: string;
     envId: string;
     structId: string;
@@ -93,7 +93,7 @@ export class MalloyService {
           GetApiEnvConnectionsWithFallbackOutput,
           GetApiEnvConnectionsWithFallbackError
         > =>
-          this.envsService.getApiEnvConnectionsWithFallbackResult({
+          this.envsService.getApiEnvConnectionsWithFallback({
             projectId: v.projectId,
             envId: v.envId
           })
@@ -126,7 +126,7 @@ export class MalloyService {
       Result.bind(
         'selectedGivens',
         (v): Result.ResultAsync<SelectedGiven[], GetSelectedGivensError> =>
-          this.usersService.getSelectedGivensResult({
+          this.usersService.getSelectedGivens({
             user: v.user,
             projectId: v.projectId
           })

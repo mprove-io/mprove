@@ -30,7 +30,7 @@ export class SearchDwhSchemaFieldNamesService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async search(item: {
+  async searchUnwrap(item: {
     userId: string;
     projectId: string;
     repoId: string;
@@ -54,7 +54,7 @@ export class SearchDwhSchemaFieldNamesService {
     let result: Result.Result<
       SearchFieldMatch[],
       SearchDwhSchemaFieldNamesError
-    > = await this.searchResult({
+    > = await this.search({
       userId: userId,
       projectId: projectId,
       repoId: repoId,
@@ -74,7 +74,7 @@ export class SearchDwhSchemaFieldNamesService {
     return matches;
   }
 
-  async searchResult(item: {
+  async search(item: {
     userId: string;
     projectId: string;
     repoId: string;

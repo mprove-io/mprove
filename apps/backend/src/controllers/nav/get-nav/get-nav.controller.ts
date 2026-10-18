@@ -111,7 +111,7 @@ export class GetNavController {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.projectEntToTabResult({
+                    this.tabService.projectEntToTab({
                       projectEnt: x
                     })
                   )
@@ -133,7 +133,7 @@ export class GetNavController {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.orgEntToTabResult({ orgEnt: x })
+                    this.tabService.orgEntToTab({ orgEnt: x })
                   )
                 )
       ),
@@ -146,7 +146,7 @@ export class GetNavController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.orgEntToTabResult({ orgEnt: x })
+                this.tabService.orgEntToTab({ orgEnt: x })
               )
             )
       ),
@@ -224,7 +224,7 @@ export class GetNavController {
             .then((x: AvatarEnt) =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.avatarEntToTabResult({ avatarEnt: x })
+                : this.tabService.avatarEntToTab({ avatarEnt: x })
             )
       ),
       Result.bind(
@@ -241,7 +241,7 @@ export class GetNavController {
         'userMember',
         async (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           v.isGetRepo
-            ? this.membersService.getMemberCheckExistsResult({
+            ? this.membersService.getMemberCheckExists({
                 projectId: v.resultProject.projectId,
                 memberId: v.user.userId
               })
@@ -260,7 +260,7 @@ export class GetNavController {
         'struct',
         async (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           v.isGetRepo
-            ? this.structsService.getStructCheckExistsResult({
+            ? this.structsService.getStructCheckExists({
                 structId: v.bridgeEnt.structId,
                 projectId: v.resultProject.projectId
               })
@@ -270,7 +270,7 @@ export class GetNavController {
         'modelPartXs',
         async (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
           v.isGetRepo
-            ? this.modelsService.getModelPartXsResult({
+            ? this.modelsService.getModelPartXs({
                 structId: v.struct.structId,
                 apiUserMember: this.membersService.tabToApi({
                   member: v.userMember
@@ -296,7 +296,7 @@ export class GetNavController {
           v
         ): Result.ResultAsync<ToDiskGetCatalogNodesOutput, SendToDiskError> =>
           v.isGetRepo
-            ? this.rpcService.sendToDiskResult({
+            ? this.rpcService.sendToDisk({
                 request: {
                   operation: 'getCatalogNodes',
                   traceId: v.traceId,

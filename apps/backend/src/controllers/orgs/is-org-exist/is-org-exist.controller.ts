@@ -48,12 +48,12 @@ export class IsOrgExistController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.name,
             hashSecret: v.hashSecret
           })

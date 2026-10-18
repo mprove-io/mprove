@@ -118,7 +118,7 @@ export class GetOrgsListController {
               });
 
               return Result.sequence(orgEnts, x =>
-                this.tabService.orgEntToTabResult({ orgEnt: x })
+                this.tabService.orgEntToTab({ orgEnt: x })
               );
             })
       ),

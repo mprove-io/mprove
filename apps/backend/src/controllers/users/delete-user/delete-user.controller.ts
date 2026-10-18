@@ -73,7 +73,7 @@ export class DeleteUserController {
     return Result.pipe(
       Result.succeed({ user: user, traceId: body.traceId }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.bind(
         'ownerOrgEnts',
@@ -172,7 +172,7 @@ export class DeleteUserController {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.projectEntToTabResult({ projectEnt: x })
+                    this.tabService.projectEntToTab({ projectEnt: x })
                   )
                 )
       ),
@@ -190,7 +190,7 @@ export class DeleteUserController {
                 project: project
               });
 
-            return this.rpcService.sendToDiskResult({
+            return this.rpcService.sendToDisk({
               request: {
                 operation: 'deleteDevRepo',
                 traceId: v.traceId,

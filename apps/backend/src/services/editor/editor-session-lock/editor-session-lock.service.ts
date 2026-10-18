@@ -31,7 +31,7 @@ export class EditorSessionLockService implements OnModuleDestroy {
     });
   }
 
-  async acquireSessionLockResult(item: {
+  async acquireSessionLock(item: {
     sessionId: string;
   }): Result.ResultAsync<string, AcquireSessionLockError> {
     let { sessionId } = item;

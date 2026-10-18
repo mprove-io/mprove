@@ -52,7 +52,7 @@ The YAML is compiled immediately. If errors are returned, FIX the YAML and call 
               ToBackendProduceExplorerChartOutput,
               ProduceExplorerChartError
             > =>
-              this.produceExplorerChartService.produceExplorerChartResult({
+              this.produceExplorerChartService.produceExplorerChart({
                 user: v.user,
                 traceId: v.traceId,
                 sessionId: v.sessionId,

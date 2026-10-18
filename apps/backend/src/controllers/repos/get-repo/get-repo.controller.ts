@@ -84,7 +84,7 @@ export class GetRepoController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -94,14 +94,14 @@ export class GetRepoController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -109,14 +109,14 @@ export class GetRepoController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -125,7 +125,7 @@ export class GetRepoController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -135,7 +135,7 @@ export class GetRepoController {
       Result.bind(
         'diskGetCatalogNodesOutput',
         (v): Result.ResultAsync<ToDiskGetCatalogNodesOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'getCatalogNodes',
               traceId: v.traceId,
@@ -153,7 +153,7 @@ export class GetRepoController {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId,
             isGetEmptyStructOnError: true
@@ -167,7 +167,7 @@ export class GetRepoController {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXs({
             structId: v.struct.structId,
             apiUserMember: v.apiUserMember
           })

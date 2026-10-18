@@ -52,7 +52,7 @@ export class CloseExplorerSessionTabController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),

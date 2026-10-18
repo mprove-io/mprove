@@ -86,7 +86,7 @@ export class QueryInfoDashboardService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getDashboardDataResult(item: {
+  async getDashboardData(item: {
     traceId: string;
     user: UserTab;
     userMember: MemberTab;
@@ -109,7 +109,7 @@ export class QueryInfoDashboardService {
       Result.bind(
         'currentStruct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -122,7 +122,7 @@ export class QueryInfoDashboardService {
           DashboardX,
           GetDashboardXCheckExistsAndAccessError
         > =>
-          this.dashboardsService.getDashboardXCheckExistsAndAccessResult({
+          this.dashboardsService.getDashboardXCheckExistsAndAccess({
             dashboardId: v.dashboardId,
             structId: v.bridge.structId,
             apiUserMember: v.apiUserMember,
@@ -221,7 +221,7 @@ export class QueryInfoDashboardService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -230,7 +230,7 @@ export class QueryInfoDashboardService {
       Result.bind(
         'selectedGivens',
         (v): Result.ResultAsync<SelectedGiven[], GetSelectedGivensError> =>
-          this.usersService.getSelectedGivensResult({
+          this.usersService.getSelectedGivens({
             user: v.user,
             projectId: v.projectId
           })
@@ -238,7 +238,7 @@ export class QueryInfoDashboardService {
       Result.bind(
         'rebuild',
         (v): Result.ResultAsync<RebuildStructOutput, RebuildStructError> =>
-          this.blockmlService.rebuildStructResult({
+          this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.projectId,
@@ -289,7 +289,7 @@ export class QueryInfoDashboardService {
         (
           v
         ): Result.ResultAsync<ProcessDashboardOutput, ProcessDashboardError> =>
-          this.dashboardsService.processDashboardResult({
+          this.dashboardsService.processDashboard({
             newApiDashboard: v.newApiDashboard,
             apiMconfigs: v.rebuild.mconfigs,
             apiQueries: v.rebuild.queries,
@@ -344,7 +344,7 @@ export class QueryInfoDashboardService {
           DashboardX,
           GetDashboardXUsingDashboardTabError
         > =>
-          this.dashboardsService.getDashboardXUsingDashboardTabResult({
+          this.dashboardsService.getDashboardXUsingDashboardTab({
             dashboard: this.dashboardsService.apiToTab({
               apiDashboard: v.newApiDashboard
             }),
@@ -356,7 +356,7 @@ export class QueryInfoDashboardService {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -364,7 +364,7 @@ export class QueryInfoDashboardService {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXs({
             structId: v.struct.structId,
             apiUserMember: v.apiUserMember
           })

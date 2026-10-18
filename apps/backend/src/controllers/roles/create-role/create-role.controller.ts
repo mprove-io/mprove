@@ -70,20 +70,20 @@ export class CreateRoleController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdmin({
             memberId: v.user.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.rolesService.checkRoleDoesNotExistResult({
+        this.rolesService.checkRoleDoesNotExist({
           projectId: v.projectId,
           roleId: v.roleId
         })
@@ -119,7 +119,7 @@ export class CreateRoleController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateRoleOutput => ({

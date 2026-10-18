@@ -53,14 +53,14 @@ export class GetRolesController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -68,12 +68,12 @@ export class GetRolesController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.givensService.getApiGivensResult({ projectId: v.projectId })
+          this.givensService.getApiGivens({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetRolesOutput => ({

@@ -46,7 +46,7 @@ export class BranchesService {
     return branch;
   }
 
-  async getBranchCheckExistsResult(item: {
+  async getBranchCheckExists(item: {
     projectId: string;
     repoId: string;
     branchId: string;
@@ -64,11 +64,11 @@ export class BranchesService {
       .then((x: BranchEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_BRANCH_DOES_NOT_EXIST' })
-          : this.tabService.branchEntToTabResult({ branchEnt: x })
+          : this.tabService.branchEntToTab({ branchEnt: x })
       );
   }
 
-  async checkBranchDoesNotExistResult(item: {
+  async checkBranchDoesNotExist(item: {
     projectId: string;
     repoId: string;
     branchId: string;

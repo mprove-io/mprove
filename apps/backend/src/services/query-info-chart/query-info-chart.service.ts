@@ -68,7 +68,7 @@ export class QueryInfoChartService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getChartDataResult(item: {
+  async getChartData(item: {
     traceId: string;
     user: UserTab;
     userMember: MemberTab;
@@ -92,7 +92,7 @@ export class QueryInfoChartService {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.structId,
             projectId: v.projectId
           })
@@ -100,7 +100,7 @@ export class QueryInfoChartService {
       Result.bind(
         'chart',
         (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
-          this.chartsService.getChartCheckExistsResult({
+          this.chartsService.getChartCheckExists({
             structId: v.structId,
             chartId: v.chartId,
             userMember: v.userMember,
@@ -110,7 +110,7 @@ export class QueryInfoChartService {
       Result.bind(
         'chartMconfig',
         (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
-          this.mconfigsService.getMconfigCheckExistsResult({
+          this.mconfigsService.getMconfigCheckExists({
             structId: v.structId,
             mconfigId: v.chart.tiles[0].mconfigId
           })
@@ -118,7 +118,7 @@ export class QueryInfoChartService {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
-          this.modelsService.getModelCheckExistsResult({
+          this.modelsService.getModelCheckExists({
             structId: v.structId,
             modelId: v.chartMconfig.modelId
           })
@@ -126,7 +126,7 @@ export class QueryInfoChartService {
       Result.bind(
         'chartOrModelAccess',
         (v): Result.Result<ChartOrModelAccess, CheckChartOrModelAccessError> =>
-          this.chartsService.checkChartOrModelAccessResult({
+          this.chartsService.checkChartOrModelAccess({
             chart: v.chart,
             model: v.model,
             userMember: v.userMember
@@ -155,7 +155,7 @@ export class QueryInfoChartService {
           let prepStoreMconfigQueryOutput: Result.Result<
             PrepStoreMconfigQueryOutput,
             PrepStoreMconfigQueryError
-          > = await this.mconfigsService.prepStoreMconfigQueryResult({
+          > = await this.mconfigsService.prepStoreMconfigQuery({
             struct: v.struct,
             project: v.project,
             envId: v.envId,
@@ -191,7 +191,7 @@ export class QueryInfoChartService {
           let editMalloyQueryOutput: Result.Result<
             EditMalloyQueryOutput,
             EditMalloyQueryError
-          > = await this.malloyService.editMalloyQueryResult({
+          > = await this.malloyService.editMalloyQuery({
             projectId: v.projectId,
             envId: v.envId,
             structId: v.struct.structId,
@@ -277,7 +277,7 @@ export class QueryInfoChartService {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.queryEntToTabResult({
+                : this.tabService.queryEntToTab({
                     queryEnt: x
                   })
             )

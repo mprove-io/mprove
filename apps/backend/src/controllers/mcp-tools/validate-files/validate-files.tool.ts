@@ -63,7 +63,7 @@ export class ValidateFilesTool {
       }),
       Result.andThrough(v =>
         v.apiKeyType === 'PK'
-          ? this.toolService.validateUserRepoIdResult({
+          ? this.toolService.validateUserRepoId({
               repoId: v.repoId,
               userId: v.user.userId
             })
@@ -71,7 +71,7 @@ export class ValidateFilesTool {
       ),
       Result.andThrough(v =>
         v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionRepoIdResult({
+          ? this.toolService.validateSessionRepoId({
               repoId: v.repoId,
               request: v.request
             })
@@ -79,7 +79,7 @@ export class ValidateFilesTool {
       ),
       Result.andThrough(v =>
         v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionBranchIdResult({
+          ? this.toolService.validateSessionBranchId({
               branchId: v.branchId,
               request: v.request
             })
@@ -87,7 +87,7 @@ export class ValidateFilesTool {
       ),
       Result.andThrough(v =>
         v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionEnvIdResult({
+          ? this.toolService.validateSessionEnvId({
               envId: v.envId,
               request: v.request
             })

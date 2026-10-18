@@ -49,7 +49,7 @@ export class GetGivensController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -58,7 +58,7 @@ export class GetGivensController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -66,7 +66,7 @@ export class GetGivensController {
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.givensService.getApiGivensResult({ projectId: v.projectId })
+          this.givensService.getApiGivens({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetGivensOutput => ({

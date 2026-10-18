@@ -51,7 +51,7 @@ export class ProvidersService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  makeProviderResult(
+  makeProvider(
     item: {
       projectId: string;
       providerId: string;
@@ -225,7 +225,7 @@ export class ProvidersService {
     };
   }
 
-  async checkProviderDoesNotExistResult(item: {
+  async checkProviderDoesNotExist(item: {
     projectId: string;
     providerId: string;
   }): Result.ResultAsync<void, CheckProviderDoesNotExistError> {
@@ -244,7 +244,7 @@ export class ProvidersService {
       : Result.succeed();
   }
 
-  async getProviderCheckExistsResult(item: {
+  async getProviderCheckExists(item: {
     projectId: string;
     providerId: string;
   }): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> {
@@ -260,11 +260,11 @@ export class ProvidersService {
       .then((x: ProviderEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_PROVIDER_DOES_NOT_EXIST' })
-          : this.tabService.providerEntToTabResult({ providerEnt: x })
+          : this.tabService.providerEntToTab({ providerEnt: x })
       );
   }
 
-  async getEnabledProvidersResult(item: {
+  async getEnabledProviders(item: {
     projectId: string;
   }): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> {
     let { projectId } = item;
@@ -278,12 +278,12 @@ export class ProvidersService {
       })
       .then(xs =>
         Result.sequence(xs, x =>
-          this.tabService.providerEntToTabResult({ providerEnt: x })
+          this.tabService.providerEntToTab({ providerEnt: x })
         )
       );
   }
 
-  async getEnabledProviderCheckExistsResult(item: {
+  async getEnabledProviderCheckExists(item: {
     projectId: string;
     providerId: string;
   }): Result.ResultAsync<ProviderTab, GetEnabledProviderCheckExistsError> {
@@ -292,7 +292,7 @@ export class ProvidersService {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.getProviderCheckExistsResult({
+          this.getProviderCheckExists({
             projectId: v.projectId,
             providerId: v.providerId
           })
@@ -306,7 +306,7 @@ export class ProvidersService {
     );
   }
 
-  async getModelSelectionResult(item: {
+  async getModelSelection(item: {
     projectId: string;
     providerId: string;
     modelId: string;
@@ -324,7 +324,7 @@ export class ProvidersService {
           ProviderTab,
           GetEnabledProviderCheckExistsError
         > =>
-          this.getEnabledProviderCheckExistsResult({
+          this.getEnabledProviderCheckExists({
             projectId: v.projectId,
             providerId: v.providerId
           })
@@ -332,7 +332,7 @@ export class ProvidersService {
       Result.bind(
         'model',
         (v): Result.Result<LlmModel, GetLlmModelCheckExistsError> =>
-          this.getLlmModelCheckExistsResult({
+          this.getLlmModelCheckExists({
             provider: v.provider,
             modelId: v.modelId
           })
@@ -403,7 +403,7 @@ export class ProvidersService {
     );
   }
 
-  checkLlmModelDoesNotExistResult(item: {
+  checkLlmModelDoesNotExist(item: {
     provider: ProviderTab;
     modelId: string;
   }): Result.Result<void, CheckLlmModelDoesNotExistError> {
@@ -416,7 +416,7 @@ export class ProvidersService {
     return Result.succeed();
   }
 
-  getLlmModelCheckExistsResult(item: {
+  getLlmModelCheckExists(item: {
     provider: ProviderTab;
     modelId: string;
   }): Result.Result<LlmModel, GetLlmModelCheckExistsError> {

@@ -62,7 +62,7 @@ export class GetConnectionsController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -71,7 +71,7 @@ export class GetConnectionsController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -80,7 +80,7 @@ export class GetConnectionsController {
         'apiEnvs',
         async (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
           isDefined(v.envId)
-            ? this.envsService.getApiEnvsResult({ projectId: v.projectId })
+            ? this.envsService.getApiEnvs({ projectId: v.projectId })
             : Result.succeed([])
       ),
       Result.bind(
@@ -111,7 +111,7 @@ export class GetConnectionsController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.connectionEntToTabResult({
+                this.tabService.connectionEntToTab({
                   connectionEnt: x
                 })
               )

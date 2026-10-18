@@ -425,7 +425,7 @@ ${inputSub}
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.tabService.queryEntToTab(x));
+      .then(x => this.tabService.queryEntToTabUnwrap(x));
 
     try {
       let body = queryStart.apiBody;
@@ -433,7 +433,7 @@ ${inputSub}
       let url = queryStart.apiUrl;
 
       let apiUrlResult: Result.Result<void, CheckApiUrlError> =
-        await this.urlService.checkApiUrlResult({ urlStr: url });
+        await this.urlService.checkApiUrl({ urlStr: url });
 
       if (Result.isFailure(apiUrlResult)) {
         // This worker's terminal boundary rejects into its existing error-status
@@ -482,7 +482,7 @@ ${inputSub}
             eq(queriesTable.projectId, projectId)
           )
         })
-        .then(x => this.tabService.queryEntToTab(x));
+        .then(x => this.tabService.queryEntToTabUnwrap(x));
 
       if (isDefined(q)) {
         if (response.status !== 200 && response.status !== 201) {
@@ -546,7 +546,7 @@ ${inputSub}
             eq(queriesTable.projectId, projectId)
           )
         })
-        .then(x => this.tabService.queryEntToTab(x));
+        .then(x => this.tabService.queryEntToTabUnwrap(x));
 
       if (isDefined(q)) {
         q.status = 'Error';

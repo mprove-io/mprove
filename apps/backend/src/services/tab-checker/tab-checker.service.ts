@@ -138,7 +138,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(avatarsTable.serverTs)
       })
-      .then(x => this.tabService.avatarEntToTab(x));
+      .then(x => this.tabService.avatarEntToTabUnwrap(x));
 
     if (isUndefined(avatarLatest)) {
       return;
@@ -160,7 +160,7 @@ export class TabCheckerService {
     while (true) {
       let avatar = await this.db.drizzle.query.avatarsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.avatarEntToTab(x));
+        .then(x => this.tabService.avatarEntToTabUnwrap(x));
 
       if (isUndefined(avatar)) {
         break;
@@ -221,7 +221,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(branchesTable.serverTs)
       })
-      .then(x => this.tabService.branchEntToTab(x));
+      .then(x => this.tabService.branchEntToTabUnwrap(x));
 
     if (isUndefined(branchLatest)) {
       return;
@@ -243,7 +243,7 @@ export class TabCheckerService {
     while (true) {
       let branch = await this.db.drizzle.query.branchesTable
         .findFirst({ where: where })
-        .then(x => this.tabService.branchEntToTab(x));
+        .then(x => this.tabService.branchEntToTabUnwrap(x));
 
       if (isUndefined(branch)) {
         break;
@@ -304,7 +304,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(bridgesTable.serverTs)
       })
-      .then(x => this.tabService.bridgeEntToTab(x));
+      .then(x => this.tabService.bridgeEntToTabUnwrap(x));
 
     if (isUndefined(bridgeLatest)) {
       return;
@@ -326,7 +326,7 @@ export class TabCheckerService {
     while (true) {
       let bridge = await this.db.drizzle.query.bridgesTable
         .findFirst({ where: where })
-        .then(x => this.tabService.bridgeEntToTab(x));
+        .then(x => this.tabService.bridgeEntToTabUnwrap(x));
 
       if (isUndefined(bridge)) {
         break;
@@ -387,7 +387,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(cachedColumnsTable.serverTs)
       })
-      .then(x => this.tabService.cachedColumnEntToTab(x));
+      .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
 
     if (isUndefined(cachedColumnLatest)) {
       return;
@@ -409,7 +409,7 @@ export class TabCheckerService {
     while (true) {
       let cachedColumn = await this.db.drizzle.query.cachedColumnsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.cachedColumnEntToTab(x));
+        .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
 
       if (isUndefined(cachedColumn)) {
         break;
@@ -470,7 +470,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(cachedPartsTable.serverTs)
       })
-      .then(x => this.tabService.cachedPartEntToTab(x));
+      .then(x => this.tabService.cachedPartEntToTabUnwrap(x));
 
     if (isUndefined(cachedPartLatest)) {
       return;
@@ -492,7 +492,7 @@ export class TabCheckerService {
     while (true) {
       let cachedPart = await this.db.drizzle.query.cachedPartsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.cachedPartEntToTab(x));
+        .then(x => this.tabService.cachedPartEntToTabUnwrap(x));
 
       if (isUndefined(cachedPart)) {
         break;
@@ -553,7 +553,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(connectionsTable.serverTs)
       })
-      .then(x => this.tabService.connectionEntToTab(x));
+      .then(x => this.tabService.connectionEntToTabUnwrap(x));
 
     if (isUndefined(connectionLatest)) {
       return;
@@ -575,7 +575,7 @@ export class TabCheckerService {
     while (true) {
       let connection = await this.db.drizzle.query.connectionsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.connectionEntToTab(x));
+        .then(x => this.tabService.connectionEntToTabUnwrap(x));
 
       if (isUndefined(connection)) {
         break;
@@ -719,7 +719,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(uconfigsTable.serverTs)
       })
-      .then(x => this.tabService.uconfigEntToTab(x));
+      .then(x => this.tabService.uconfigEntToTabUnwrap(x));
 
     if (isUndefined(uconfigLatest)) {
       return;
@@ -741,7 +741,7 @@ export class TabCheckerService {
     while (true) {
       let uconfig = await this.db.drizzle.query.uconfigsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.uconfigEntToTab(x));
+        .then(x => this.tabService.uconfigEntToTabUnwrap(x));
 
       if (isUndefined(uconfig)) {
         break;
@@ -802,7 +802,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(envsTable.serverTs)
       })
-      .then(x => this.tabService.envEntToTab(x));
+      .then(x => this.tabService.envEntToTabUnwrap(x));
 
     if (isUndefined(envLatest)) {
       return;
@@ -821,7 +821,7 @@ export class TabCheckerService {
     while (true) {
       let env = await this.db.drizzle.query.envsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.envEntToTab(x));
+        .then(x => this.tabService.envEntToTabUnwrap(x));
 
       if (isUndefined(env)) {
         break;
@@ -882,7 +882,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(kitsTable.serverTs)
       })
-      .then(x => this.tabService.kitEntToTab(x));
+      .then(x => this.tabService.kitEntToTabUnwrap(x));
 
     if (isUndefined(kitLatest)) {
       return;
@@ -901,7 +901,7 @@ export class TabCheckerService {
     while (true) {
       let kit = await this.db.drizzle.query.kitsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.kitEntToTab(x));
+        .then(x => this.tabService.kitEntToTabUnwrap(x));
 
       if (isUndefined(kit)) {
         break;
@@ -962,7 +962,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(membersTable.serverTs)
       })
-      .then(x => this.tabService.memberEntToTab(x));
+      .then(x => this.tabService.memberEntToTabUnwrap(x));
 
     if (isUndefined(memberLatest)) {
       return;
@@ -984,7 +984,7 @@ export class TabCheckerService {
     while (true) {
       let member = await this.db.drizzle.query.membersTable
         .findFirst({ where: where })
-        .then(x => this.tabService.memberEntToTab(x));
+        .then(x => this.tabService.memberEntToTabUnwrap(x));
 
       if (isUndefined(member)) {
         break;
@@ -1045,7 +1045,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(notesTable.serverTs)
       })
-      .then(x => this.tabService.noteEntToTab(x));
+      .then(x => this.tabService.noteEntToTabUnwrap(x));
 
     if (isUndefined(noteLatest)) {
       return;
@@ -1067,7 +1067,7 @@ export class TabCheckerService {
     while (true) {
       let note = await this.db.drizzle.query.notesTable
         .findFirst({ where: where })
-        .then(x => this.tabService.noteEntToTab(x));
+        .then(x => this.tabService.noteEntToTabUnwrap(x));
 
       if (isUndefined(note)) {
         break;
@@ -1128,7 +1128,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(orgsTable.serverTs)
       })
-      .then(x => this.tabService.orgEntToTab(x));
+      .then(x => this.tabService.orgEntToTabUnwrap(x));
 
     if (isUndefined(orgLatest)) {
       return;
@@ -1147,7 +1147,7 @@ export class TabCheckerService {
     while (true) {
       let org = await this.db.drizzle.query.orgsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.orgEntToTab(x));
+        .then(x => this.tabService.orgEntToTabUnwrap(x));
 
       if (isUndefined(org)) {
         break;
@@ -1208,7 +1208,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(projectsTable.serverTs)
       })
-      .then(x => this.tabService.projectEntToTab(x));
+      .then(x => this.tabService.projectEntToTabUnwrap(x));
 
     if (isUndefined(projectLatest)) {
       return;
@@ -1230,7 +1230,7 @@ export class TabCheckerService {
     while (true) {
       let project = await this.db.drizzle.query.projectsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.projectEntToTab(x));
+        .then(x => this.tabService.projectEntToTabUnwrap(x));
 
       if (isUndefined(project)) {
         break;
@@ -1291,7 +1291,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(providersTable.serverTs)
       })
-      .then(x => this.tabService.providerEntToTab({ providerEnt: x }));
+      .then(x => this.tabService.providerEntToTabUnwrap({ providerEnt: x }));
 
     if (isUndefined(providerLatest)) {
       return;
@@ -1313,7 +1313,7 @@ export class TabCheckerService {
     while (true) {
       let provider = await this.db.drizzle.query.providersTable
         .findFirst({ where: where })
-        .then(x => this.tabService.providerEntToTab({ providerEnt: x }));
+        .then(x => this.tabService.providerEntToTabUnwrap({ providerEnt: x }));
 
       if (isUndefined(provider)) {
         break;
@@ -1374,7 +1374,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(queriesTable.serverTs)
       })
-      .then(x => this.tabService.queryEntToTab(x));
+      .then(x => this.tabService.queryEntToTabUnwrap(x));
 
     if (isUndefined(queryLatest)) {
       return;
@@ -1396,7 +1396,7 @@ export class TabCheckerService {
     while (true) {
       let query = await this.db.drizzle.query.queriesTable
         .findFirst({ where: where })
-        .then(x => this.tabService.queryEntToTab(x));
+        .then(x => this.tabService.queryEntToTabUnwrap(x));
 
       if (isUndefined(query)) {
         break;
@@ -1457,7 +1457,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(usersTable.serverTs)
       })
-      .then(x => this.tabService.userEntToTab(x));
+      .then(x => this.tabService.userEntToTabUnwrap(x));
 
     if (isUndefined(userLatest)) {
       return;
@@ -1479,7 +1479,7 @@ export class TabCheckerService {
     while (true) {
       let user = await this.db.drizzle.query.usersTable
         .findFirst({ where: where })
-        .then(x => this.tabService.userEntToTab(x));
+        .then(x => this.tabService.userEntToTabUnwrap(x));
 
       if (isUndefined(user)) {
         break;
@@ -1540,7 +1540,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(ocEventsTable.serverTs)
       })
-      .then(x => this.tabService.ocEventEntToTab(x));
+      .then(x => this.tabService.ocEventEntToTabUnwrap(x));
 
     if (isUndefined(eventLatest)) {
       return;
@@ -1562,7 +1562,7 @@ export class TabCheckerService {
     while (true) {
       let event = await this.db.drizzle.query.ocEventsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.ocEventEntToTab(x));
+        .then(x => this.tabService.ocEventEntToTabUnwrap(x));
 
       if (isUndefined(event)) {
         break;
@@ -1623,7 +1623,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(ocMessagesTable.serverTs)
       })
-      .then(x => this.tabService.ocMessageEntToTab(x));
+      .then(x => this.tabService.ocMessageEntToTabUnwrap(x));
 
     if (isUndefined(messageLatest)) {
       return;
@@ -1645,7 +1645,7 @@ export class TabCheckerService {
     while (true) {
       let message = await this.db.drizzle.query.ocMessagesTable
         .findFirst({ where: where })
-        .then(x => this.tabService.ocMessageEntToTab(x));
+        .then(x => this.tabService.ocMessageEntToTabUnwrap(x));
 
       if (isUndefined(message)) {
         break;
@@ -1706,7 +1706,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(ocPartsTable.serverTs)
       })
-      .then(x => this.tabService.ocPartEntToTab(x));
+      .then(x => this.tabService.ocPartEntToTabUnwrap(x));
 
     if (isUndefined(partLatest)) {
       return;
@@ -1728,7 +1728,7 @@ export class TabCheckerService {
     while (true) {
       let part = await this.db.drizzle.query.ocPartsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.ocPartEntToTab(x));
+        .then(x => this.tabService.ocPartEntToTabUnwrap(x));
 
       if (isUndefined(part)) {
         break;
@@ -1789,7 +1789,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(sessionsTable.serverTs)
       })
-      .then(x => this.tabService.sessionEntToTab(x));
+      .then(x => this.tabService.sessionEntToTabUnwrap(x));
 
     if (isUndefined(sessionLatest)) {
       return;
@@ -1811,7 +1811,7 @@ export class TabCheckerService {
     while (true) {
       let session = await this.db.drizzle.query.sessionsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.sessionEntToTab(x));
+        .then(x => this.tabService.sessionEntToTabUnwrap(x));
 
       if (isUndefined(session)) {
         break;
@@ -1872,7 +1872,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(ocSessionsTable.serverTs)
       })
-      .then(x => this.tabService.ocSessionEntToTab(x));
+      .then(x => this.tabService.ocSessionEntToTabUnwrap(x));
 
     if (isUndefined(ocSessionLatest)) {
       return;
@@ -1894,7 +1894,7 @@ export class TabCheckerService {
     while (true) {
       let ocSession = await this.db.drizzle.query.ocSessionsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.ocSessionEntToTab(x));
+        .then(x => this.tabService.ocSessionEntToTabUnwrap(x));
 
       if (isUndefined(ocSession)) {
         break;
@@ -1960,7 +1960,7 @@ export class TabCheckerService {
         .findFirst({
           where: isNotNull(structsTable.keyTag)
         })
-        .then(x => this.tabService.structEntToTab(x));
+        .then(x => this.tabService.structEntToTabUnwrap(x));
 
       if (isDefined(structEncrypted)) {
         isAllRecords = true;
@@ -1971,7 +1971,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(structsTable.serverTs)
       })
-      .then(x => this.tabService.structEntToTab(x));
+      .then(x => this.tabService.structEntToTabUnwrap(x));
 
     if (isUndefined(structLatest)) {
       return;
@@ -1993,7 +1993,7 @@ export class TabCheckerService {
     while (true) {
       let struct = await this.db.drizzle.query.structsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.structEntToTab(x));
+        .then(x => this.tabService.structEntToTabUnwrap(x));
 
       if (isUndefined(struct)) {
         break;
@@ -2055,7 +2055,7 @@ export class TabCheckerService {
         .findFirst({
           where: isNotNull(modelsTable.keyTag)
         })
-        .then(x => this.tabService.modelEntToTab(x));
+        .then(x => this.tabService.modelEntToTabUnwrap(x));
 
       if (isDefined(modelEncrypted)) {
         isAllRecords = true;
@@ -2066,7 +2066,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(modelsTable.serverTs)
       })
-      .then(x => this.tabService.modelEntToTab(x));
+      .then(x => this.tabService.modelEntToTabUnwrap(x));
 
     if (isUndefined(modelLatest)) {
       return;
@@ -2088,7 +2088,7 @@ export class TabCheckerService {
     while (true) {
       let model = await this.db.drizzle.query.modelsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.modelEntToTab(x));
+        .then(x => this.tabService.modelEntToTabUnwrap(x));
 
       if (isUndefined(model)) {
         break;
@@ -2150,7 +2150,7 @@ export class TabCheckerService {
         .findFirst({
           where: isNotNull(mconfigsTable.keyTag)
         })
-        .then(x => this.tabService.mconfigEntToTab(x));
+        .then(x => this.tabService.mconfigEntToTabUnwrap(x));
 
       if (isDefined(mconfigEncrypted)) {
         isAllRecords = true;
@@ -2161,7 +2161,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(mconfigsTable.serverTs)
       })
-      .then(x => this.tabService.mconfigEntToTab(x));
+      .then(x => this.tabService.mconfigEntToTabUnwrap(x));
 
     if (isUndefined(mconfigLatest)) {
       return;
@@ -2183,7 +2183,7 @@ export class TabCheckerService {
     while (true) {
       let mconfig = await this.db.drizzle.query.mconfigsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.mconfigEntToTab(x));
+        .then(x => this.tabService.mconfigEntToTabUnwrap(x));
 
       if (isUndefined(mconfig)) {
         break;
@@ -2245,7 +2245,7 @@ export class TabCheckerService {
         .findFirst({
           where: isNotNull(chartsTable.keyTag)
         })
-        .then(x => this.tabService.chartEntToTab(x));
+        .then(x => this.tabService.chartEntToTabUnwrap(x));
 
       if (isDefined(chartEncrypted)) {
         isAllRecords = true;
@@ -2256,7 +2256,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(chartsTable.serverTs)
       })
-      .then(x => this.tabService.chartEntToTab(x));
+      .then(x => this.tabService.chartEntToTabUnwrap(x));
 
     if (isUndefined(chartLatest)) {
       return;
@@ -2278,7 +2278,7 @@ export class TabCheckerService {
     while (true) {
       let chart = await this.db.drizzle.query.chartsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.chartEntToTab(x));
+        .then(x => this.tabService.chartEntToTabUnwrap(x));
 
       if (isUndefined(chart)) {
         break;
@@ -2340,7 +2340,7 @@ export class TabCheckerService {
         .findFirst({
           where: isNotNull(reportsTable.keyTag)
         })
-        .then(x => this.tabService.reportEntToTab(x));
+        .then(x => this.tabService.reportEntToTabUnwrap(x));
 
       if (isDefined(reportEncrypted)) {
         isAllRecords = true;
@@ -2351,7 +2351,7 @@ export class TabCheckerService {
       .findFirst({
         orderBy: desc(reportsTable.serverTs)
       })
-      .then(x => this.tabService.reportEntToTab(x));
+      .then(x => this.tabService.reportEntToTabUnwrap(x));
 
     if (isUndefined(reportLatest)) {
       return;
@@ -2373,7 +2373,7 @@ export class TabCheckerService {
     while (true) {
       let report = await this.db.drizzle.query.reportsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.reportEntToTab(x));
+        .then(x => this.tabService.reportEntToTabUnwrap(x));
 
       if (isUndefined(report)) {
         break;

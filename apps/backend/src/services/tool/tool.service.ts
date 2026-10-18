@@ -10,7 +10,7 @@ import type { ValidateUserRepoIdError } from '#common/types/backend/function-err
 
 @Injectable()
 export class ToolService {
-  validateUserRepoIdResult(item: {
+  validateUserRepoId(item: {
     repoId: string;
     userId: string;
   }): Result.Result<void, ValidateUserRepoIdError> {
@@ -25,7 +25,7 @@ export class ToolService {
     return Result.succeed();
   }
 
-  validateSessionProjectIdResult(item: {
+  validateSessionProjectId(item: {
     projectId: string;
     request: Request;
   }): Result.Result<void, ValidateSessionProjectIdError> {
@@ -43,7 +43,7 @@ export class ToolService {
     return Result.succeed();
   }
 
-  validateSessionRepoIdResult(item: {
+  validateSessionRepoId(item: {
     repoId: string;
     request: Request;
   }): Result.Result<void, ValidateSessionRepoIdError> {
@@ -61,7 +61,7 @@ export class ToolService {
     return Result.succeed();
   }
 
-  validateSessionEnvIdResult(item: {
+  validateSessionEnvId(item: {
     envId: string;
     request: Request;
   }): Result.Result<void, ValidateSessionEnvIdError> {
@@ -79,7 +79,7 @@ export class ToolService {
     return Result.succeed();
   }
 
-  validateSessionBranchIdResult(item: {
+  validateSessionBranchId(item: {
     branchId: string;
     request: Request;
   }): Result.Result<void, ValidateSessionBranchIdError> {

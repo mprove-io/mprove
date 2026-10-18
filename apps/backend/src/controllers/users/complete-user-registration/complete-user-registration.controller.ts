@@ -78,12 +78,12 @@ export class CompleteUserRegistrationController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'emailVerificationTokenHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.emailVerificationToken,
             hashSecret: v.hashSecret
           })
@@ -101,7 +101,7 @@ export class CompleteUserRegistrationController {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.andThrough(v =>
@@ -110,7 +110,7 @@ export class CompleteUserRegistrationController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.membersService.addMemberToDemoProjectResult({
+        this.membersService.addMemberToDemoProject({
           traceId: v.traceId,
           user: v.user
         })

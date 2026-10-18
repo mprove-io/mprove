@@ -46,10 +46,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       Result.bind(
         'user',
         (v): Result.ResultAsync<UserTab, GetUserByEmailCheckExistsError> =>
-          this.usersService.getUserByEmailCheckExistsResult({ email: v.email })
+          this.usersService.getUserByEmailCheckExists({ email: v.email })
       ),
       Result.andThrough(v =>
-        this.usersService.checkUserPasswordHashIsDefinedResult({ user: v.user })
+        this.usersService.checkUserPasswordHashIsDefined({ user: v.user })
       ),
       Result.bind(
         'passwordHash',

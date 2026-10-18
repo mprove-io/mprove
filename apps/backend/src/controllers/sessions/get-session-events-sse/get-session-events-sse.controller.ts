@@ -55,7 +55,7 @@ export class GetSessionEventsSseController {
     let sessionResult: Result.Result<
       SessionTab,
       GetSessionByIdCheckExistsError
-    > = await this.sessionsService.getSessionByIdCheckExistsResult({
+    > = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId
     });
 

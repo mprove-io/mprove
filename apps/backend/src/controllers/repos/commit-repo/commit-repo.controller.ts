@@ -75,7 +75,7 @@ export class CommitRepoController {
       Result.bind(
         'repoType',
         (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
-          this.sessionsService.checkRepoIdResult({
+          this.sessionsService.checkRepoId({
             repoId: v.repoId,
             userId: v.user.userId,
             projectId: v.projectId,
@@ -92,27 +92,27 @@ export class CommitRepoController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditorResult({
+          this.membersService.getMemberCheckIsEditor({
             projectId: v.projectId,
             memberId: v.user.userId
           })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestrictedResult({
+        this.projectsService.checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
           repoId: v.repoId
         })
       ),
       Result.andThrough(v =>
-        this.branchesService.getBranchCheckExistsResult({
+        this.branchesService.getBranchCheckExists({
           projectId: v.projectId,
           repoId: v.repoId,
           branchId: v.branchId
@@ -121,7 +121,7 @@ export class CommitRepoController {
       Result.bind(
         'diskCommitRepoOutput',
         (v): Result.ResultAsync<ToDiskCommitRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'commitRepo',
               traceId: v.traceId,
@@ -144,7 +144,7 @@ export class CommitRepoController {
         ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
           v.repoType !== 'session'
             ? Result.succeed(undefined)
-            : this.sessionsService.getSessionByIdCheckExistsResult({
+            : this.sessionsService.getSessionByIdCheckExists({
                 sessionId: v.repoId
               })
       ),
@@ -153,7 +153,7 @@ export class CommitRepoController {
         async (v): Result.ResultAsync<SessionApi, ArchiveSessionError> =>
           isUndefined(v.session)
             ? Result.succeed(undefined)
-            : this.sessionArchiveService.archiveSessionResult({
+            : this.sessionArchiveService.archiveSession({
                 session: v.session,
                 archiveReason: 'Commit',
                 e2bApiKey: v.project.e2bApiKey

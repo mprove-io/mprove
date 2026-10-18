@@ -53,7 +53,7 @@ export class IsBranchExistController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.userId,
           projectId: v.projectId,
@@ -61,12 +61,12 @@ export class IsBranchExistController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExists({
           memberId: v.userId,
           projectId: v.projectId
         })

@@ -134,14 +134,14 @@ export class SendMessageToEditorSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.session.projectId
           })
       ),
@@ -177,7 +177,7 @@ export class SendMessageToEditorSessionController {
           GetModelSelectionError
         > =>
           v.interactionType === 'Message'
-            ? this.providersService.getModelSelectionResult({
+            ? this.providersService.getModelSelection({
                 projectId: v.session.projectId,
                 providerId: v.providerId,
                 modelId: v.modelId,
@@ -190,7 +190,7 @@ export class SendMessageToEditorSessionController {
       Result.bind(
         'sessionLockToken',
         (v): Result.ResultAsync<string, AcquireSessionLockError> =>
-          this.editorSessionLockService.acquireSessionLockResult({
+          this.editorSessionLockService.acquireSessionLock({
             sessionId: v.session.sessionId
           })
       ),
@@ -226,7 +226,7 @@ export class SendMessageToEditorSessionController {
       Result.bind(
         'ocSession',
         (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
-          this.sessionsService.getOcSessionBySessionIdResult({
+          this.sessionsService.getOcSessionBySessionId({
             sessionId: v.updatedSession.sessionId
           })
       ),
@@ -268,7 +268,7 @@ export class SendMessageToEditorSessionController {
         Result.bind(
           'lockedSession',
           (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-            this.sessionsService.getSessionByIdCheckExistsResult({
+            this.sessionsService.getSessionByIdCheckExists({
               sessionId: v.session.sessionId
             })
         ),
@@ -286,7 +286,7 @@ export class SendMessageToEditorSessionController {
         ),
         Result.andThrough(async v =>
           v.isCodex
-            ? this.codexService.prewarmCodexAuthResult({
+            ? this.codexService.prewarmCodexAuth({
                 userId: v.user.userId
               })
             : Result.succeed()
@@ -295,7 +295,7 @@ export class SendMessageToEditorSessionController {
           'freshUser',
           async (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
             v.isCodex
-              ? this.usersService.getUserCheckExistsResult({
+              ? this.usersService.getUserCheckExists({
                   userId: v.user.userId
                 })
               : Result.succeed(v.user)
@@ -375,7 +375,7 @@ export class SendMessageToEditorSessionController {
         }
 
         let resumeResult: Result.Result<void, ResumeSandboxError> =
-          await this.editorSandboxService.resumeSandboxResult({
+          await this.editorSandboxService.resumeSandbox({
             sandboxType: session.sandboxType,
             sandboxId: session.sandboxId,
             e2bApiKey: project.e2bApiKey,
@@ -413,7 +413,7 @@ export class SendMessageToEditorSessionController {
           let providersResult: Result.Result<
             ProviderTab[],
             GetEnabledProvidersError
-          > = await this.providersService.getEnabledProvidersResult({
+          > = await this.providersService.getEnabledProviders({
             projectId: session.projectId
           });
 
@@ -436,7 +436,7 @@ export class SendMessageToEditorSessionController {
             let freshSessionResult: Result.Result<
               SessionTab,
               GetSessionByIdCheckExistsError
-            > = await this.sessionsService.getSessionByIdCheckExistsResult({
+            > = await this.sessionsService.getSessionByIdCheckExists({
               sessionId: session.sessionId
             });
 
@@ -478,7 +478,7 @@ export class SendMessageToEditorSessionController {
                 RestartOpencodeServerError
               > = await retryResult({
                 action: async () =>
-                  await this.editorOpencodeService.restartOpencodeServerResult({
+                  await this.editorOpencodeService.restartOpencodeServer({
                     sessionId: rotationOutput.session.sessionId,
                     sandboxType: rotationOutput.session.sandboxType,
                     sandboxId: rotationOutput.session.sandboxId,
@@ -526,7 +526,7 @@ export class SendMessageToEditorSessionController {
         let clientResult: Result.Result<
           OpencodeClient,
           GetOpenCodeClientError
-        > = await this.editorOpencodeService.getOpenCodeClientResult({
+        > = await this.editorOpencodeService.getOpenCodeClient({
           sessionId: session.sessionId,
           sandboxBaseUrl: session.sandboxBaseUrl,
           opencodePassword: session.opencodePassword
@@ -537,7 +537,7 @@ export class SendMessageToEditorSessionController {
         }
 
         let healthResult: Result.Result<void, HealthCheckOpenCodeError> =
-          await this.editorOpencodeService.healthCheckOpenCodeResult({
+          await this.editorOpencodeService.healthCheckOpenCode({
             sandboxBaseUrl: session.sandboxBaseUrl
           });
 
@@ -610,7 +610,7 @@ export class SendMessageToEditorSessionController {
       }
 
       let streamResult: Result.Result<boolean, StartEventStreamError> =
-        await this.editorStreamService.startEventStreamResult({
+        await this.editorStreamService.startEventStream({
           sessionId: session.sessionId,
           opencodeSessionId: session.opencodeSessionId,
           isSetReload: false
@@ -679,7 +679,7 @@ export class SendMessageToEditorSessionController {
         let interactionResult: Result.Result<
           ExecuteInteractionOutput,
           PublishInteractCommandError
-        > = await this.editorStreamService.publishInteractCommandResult({
+        > = await this.editorStreamService.publishInteractCommand({
           sessionId: session.sessionId,
           opencodeSessionId: session.opencodeSessionId,
           interactionType: interactionType,

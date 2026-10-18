@@ -58,7 +58,7 @@ export class GetProvidersController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -67,7 +67,7 @@ export class GetProvidersController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -81,7 +81,7 @@ export class GetProvidersController {
             })
             .then((xs: ProviderEnt[]) =>
               Result.sequence(xs, x =>
-                this.tabService.providerEntToTabResult({
+                this.tabService.providerEntToTab({
                   providerEnt: x
                 })
               )

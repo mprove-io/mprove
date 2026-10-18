@@ -53,17 +53,17 @@ export class IsProjectExistController {
         orgId: body.input.orgId
       }),
       Result.andThrough(v =>
-        this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+        this.orgsService.getOrgCheckExists({ orgId: v.orgId })
       ),
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.name,
             hashSecret: v.hashSecret
           })

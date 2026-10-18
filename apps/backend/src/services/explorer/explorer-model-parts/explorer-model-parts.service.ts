@@ -51,7 +51,7 @@ export class ExplorerModelPartsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getExplorerModelPartsResult(item: {
+  async getExplorerModelParts(item: {
     userId: string;
     projectId: string;
     repoId: string;
@@ -68,7 +68,7 @@ export class ExplorerModelPartsService {
           GetExplorerModelsOutput,
           GetExplorerModelsError
         > =>
-          this.getExplorerModelsResult({
+          this.getExplorerModels({
             userId: v.userId,
             projectId: v.projectId,
             repoId: v.repoId,
@@ -90,7 +90,7 @@ export class ExplorerModelPartsService {
     );
   }
 
-  async getExplorerModelsResult(item: {
+  async getExplorerModels(item: {
     userId: string;
     projectId: string;
     repoId: string;
@@ -104,20 +104,20 @@ export class ExplorerModelPartsService {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.userId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -126,7 +126,7 @@ export class ExplorerModelPartsService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,
@@ -136,7 +136,7 @@ export class ExplorerModelPartsService {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -150,7 +150,7 @@ export class ExplorerModelPartsService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.modelEntToTabResult({ modelEnt: x })
+                this.tabService.modelEntToTab({ modelEnt: x })
               )
             )
       ),
@@ -186,7 +186,7 @@ export class ExplorerModelPartsService {
       Result.bind(
         'diskGetCatalogFilesOutput',
         (v): Result.ResultAsync<ToDiskGetCatalogFilesOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'getCatalogFiles',
               traceId: v.traceId,

@@ -43,7 +43,7 @@ export class ProduceExplorerChartService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async produceExplorerChartResult(item: {
+  async produceExplorerChart(item: {
     user: UserTab;
     traceId: string;
     sessionId: string;
@@ -87,7 +87,7 @@ export class ProduceExplorerChartService {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
@@ -108,7 +108,7 @@ export class ProduceExplorerChartService {
       Result.bind(
         'rebuild',
         (v): Result.ResultAsync<ExplorerRebuildResult, RebuildFromYamlError> =>
-          this.explorerChartRebuildService.rebuildFromYamlResult({
+          this.explorerChartRebuildService.rebuildFromYaml({
             traceId: v.traceId,
             session: v.session,
             chartId: v.chartId,

@@ -97,7 +97,7 @@ export class DeleteSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
@@ -109,7 +109,7 @@ export class DeleteSessionController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.session.projectId
           })
       ),
@@ -117,7 +117,7 @@ export class DeleteSessionController {
         'sessionLockToken',
         async (v): Result.ResultAsync<string, AcquireSessionLockError> =>
           v.session.type === 'Editor'
-            ? this.editorSessionLockService.acquireSessionLockResult({
+            ? this.editorSessionLockService.acquireSessionLock({
                 sessionId: v.session.sessionId
               })
             : Result.succeed(undefined)
@@ -158,7 +158,7 @@ export class DeleteSessionController {
             v
           ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
             v.session.type === 'Editor'
-              ? this.sessionsService.getSessionByIdCheckExistsResult({
+              ? this.sessionsService.getSessionByIdCheckExists({
                   sessionId: v.session.sessionId
                 })
               : Result.succeed(v.session)
@@ -169,7 +169,7 @@ export class DeleteSessionController {
           ).some(status => status === v.freshSession.status);
 
           return v.freshSession.type === 'Editor' && isActiveOrPaused
-            ? this.editorSandboxService.stopSandboxResult({
+            ? this.editorSandboxService.stopSandbox({
                 sandboxType: v.freshSession.sandboxType,
                 sandboxId: v.freshSession.sandboxId,
                 e2bApiKey: v.project.e2bApiKey
@@ -184,7 +184,7 @@ export class DeleteSessionController {
           let baseProject: BaseProject =
             this.tabService.projectTabToBaseProject({ project: v.project });
 
-          return this.rpcService.sendToDiskResult({
+          return this.rpcService.sendToDisk({
             request: {
               operation: 'deleteDevRepo',
               traceId: v.traceId,

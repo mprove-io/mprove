@@ -161,12 +161,12 @@ export class CreateMemberController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.user.userId,
           projectId: v.projectId
         })
@@ -174,12 +174,12 @@ export class CreateMemberController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'emailHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.email,
             hashSecret: v.hashSecret
           })
@@ -192,7 +192,7 @@ export class CreateMemberController {
             .then((x: UserEnt) =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.bind(
@@ -208,7 +208,7 @@ export class CreateMemberController {
           }
 
           let aliasResult: Result.Result<string, MakeAliasError> =
-            await this.usersService.makeAliasResult({ email: v.email });
+            await this.usersService.makeAlias({ email: v.email });
 
           if (Result.isFailure(aliasResult)) {
             return Result.fail(aliasResult.error);
@@ -254,7 +254,7 @@ export class CreateMemberController {
       Result.andThrough(v =>
         isUndefined(v.invitedUser)
           ? Result.succeed()
-          : this.membersService.checkMemberDoesNotExistResult({
+          : this.membersService.checkMemberDoesNotExist({
               memberId: v.invitedUser.userId,
               projectId: v.projectId
             })
@@ -275,7 +275,7 @@ export class CreateMemberController {
       Result.bind(
         'diskCreateDevRepoOutput',
         (v): Result.ResultAsync<ToDiskCreateDevRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'createDevRepo',
               traceId: v.traceId,
@@ -349,7 +349,7 @@ export class CreateMemberController {
             let rebuildResult: Result.Result<
               RebuildStructOutput,
               RebuildStructError
-            > = await this.blockmlService.rebuildStructResult({
+            > = await this.blockmlService.rebuildStruct({
               traceId: v.traceId,
               orgId: v.project.orgId,
               projectId: v.projectId,
@@ -412,7 +412,7 @@ export class CreateMemberController {
             .where(eq(avatarsTable.userId, v.newMember.memberId))
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.avatarEntToTabResult({
+                this.tabService.avatarEntToTab({
                   avatarEnt: x as AvatarEnt
                 })
               )

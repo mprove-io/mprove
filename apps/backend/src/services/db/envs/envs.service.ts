@@ -147,7 +147,7 @@ export class EnvsService {
     return apiEnv;
   }
 
-  async checkEnvDoesNotExistResult(item: {
+  async checkEnvDoesNotExist(item: {
     projectId: string;
     envId: string;
   }): Result.ResultAsync<void, CheckEnvDoesNotExistError> {
@@ -166,7 +166,7 @@ export class EnvsService {
     return Result.succeed();
   }
 
-  async getEnvCheckExistsAndAccessResult(item: {
+  async getEnvCheckExistsAndAccess(item: {
     projectId: string;
     envId: string;
     member: MemberTab;
@@ -185,7 +185,7 @@ export class EnvsService {
 
     let envResult: Result.Result<EnvTab, EnvEntToTabError> = isUndefined(envEnt)
       ? Result.succeed(undefined)
-      : this.tabService.envEntToTabResult({ envEnt: envEnt });
+      : this.tabService.envEntToTab({ envEnt: envEnt });
 
     if (Result.isFailure(envResult)) {
       return envResult;
@@ -204,7 +204,7 @@ export class EnvsService {
     return Result.succeed(env);
   }
 
-  async getApiEnvsResult(item: {
+  async getApiEnvs(item: {
     projectId: string;
   }): Result.ResultAsync<Env[], GetApiEnvsError> {
     let { projectId } = item;
@@ -218,7 +218,7 @@ export class EnvsService {
       x =>
         isUndefined(x)
           ? Result.succeed(undefined)
-          : this.tabService.envEntToTabResult({ envEnt: x })
+          : this.tabService.envEntToTab({ envEnt: x })
     );
 
     if (Result.isFailure(envsResult)) {
@@ -242,7 +242,7 @@ export class EnvsService {
       Result.sequence(connectionEnts, x =>
         isUndefined(x)
           ? Result.succeed(undefined)
-          : this.tabService.connectionEntToTabResult({ connectionEnt: x })
+          : this.tabService.connectionEntToTab({ connectionEnt: x })
       );
 
     if (Result.isFailure(connectionsResult)) {
@@ -260,7 +260,7 @@ export class EnvsService {
       Result.sequence(memberEnts, x =>
         isUndefined(x)
           ? Result.succeed(undefined)
-          : this.tabService.memberEntToTabResult({
+          : this.tabService.memberEntToTab({
               memberEnt: x
             })
       );
@@ -321,7 +321,7 @@ export class EnvsService {
     return Result.succeed(apiEnvs);
   }
 
-  async getApiEnvConnectionsWithFallbackResult(item: {
+  async getApiEnvConnectionsWithFallback(item: {
     projectId: string;
     envId: string;
   }): Result.ResultAsync<
@@ -333,7 +333,7 @@ export class EnvsService {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.getApiEnvsResult({
+          this.getApiEnvs({
             projectId: v.projectId
           })
       ),
@@ -359,7 +359,7 @@ export class EnvsService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.connectionEntToTabResult({
+                  : this.tabService.connectionEntToTab({
                       connectionEnt: x
                     })
               )

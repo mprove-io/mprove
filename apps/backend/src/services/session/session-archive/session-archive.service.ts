@@ -33,7 +33,7 @@ export class SessionArchiveService {
     private logger: Logger
   ) {}
 
-  async archiveSessionResult(item: {
+  async archiveSession(item: {
     session: SessionTab;
     archiveReason: ArchiveReason;
     e2bApiKey: string;
@@ -45,7 +45,7 @@ export class SessionArchiveService {
     // TODO: check session type is editor
     if (session.type === 'Editor') {
       let lockResult: Result.Result<string, AcquireSessionLockError> =
-        await this.editorSessionLockService.acquireSessionLockResult({
+        await this.editorSessionLockService.acquireSessionLock({
           sessionId: session.sessionId
         });
 
@@ -58,7 +58,7 @@ export class SessionArchiveService {
 
     try {
       let result: Result.Result<SessionApi, ArchiveSessionWhileLockedError> =
-        await this.archiveSessionWhileLockedResult(item);
+        await this.archiveSessionWhileLocked(item);
 
       return result;
     } finally {
@@ -71,7 +71,7 @@ export class SessionArchiveService {
     }
   }
 
-  private async archiveSessionWhileLockedResult(item: {
+  private async archiveSessionWhileLocked(item: {
     session: SessionTab;
     archiveReason: ArchiveReason;
     e2bApiKey: string;
@@ -84,7 +84,7 @@ export class SessionArchiveService {
           v
         ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
           v.session.type === 'Editor'
-            ? this.sessionsService.getSessionByIdCheckExistsResult({
+            ? this.sessionsService.getSessionByIdCheckExists({
                 sessionId: v.session.sessionId
               })
             : Result.succeed(v.session)
@@ -95,7 +95,7 @@ export class SessionArchiveService {
         ).some(status => status === v.freshSession.status);
 
         return v.freshSession.type === 'Editor' && isActiveOrPaused
-          ? this.editorSandboxService.stopSandboxResult({
+          ? this.editorSandboxService.stopSandbox({
               sandboxType: v.freshSession.sandboxType,
               sandboxId: v.freshSession.sandboxId,
               e2bApiKey: v.e2bApiKey

@@ -76,14 +76,14 @@ export class DeleteRoleController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdmin({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -95,7 +95,7 @@ export class DeleteRoleController {
             .findMany({ where: eq(membersTable.projectId, v.projectId) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.memberEntToTabResult({ memberEnt: x })
+                this.tabService.memberEntToTab({ memberEnt: x })
               )
             )
       ),
@@ -140,7 +140,7 @@ export class DeleteRoleController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.bind(
         'responseUserMember',

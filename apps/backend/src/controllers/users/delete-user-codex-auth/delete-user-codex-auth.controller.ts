@@ -55,7 +55,7 @@ export class DeleteUserCodexAuthController {
     return Result.pipe(
       Result.succeed({ user: user }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.map(v => {
         v.user.codexAuth = undefined;

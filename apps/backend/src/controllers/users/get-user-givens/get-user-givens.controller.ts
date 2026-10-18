@@ -52,13 +52,13 @@ export class GetUserGivensController {
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.user.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.usersService.selectUnselectedGivensResult({
+        this.usersService.selectUnselectedGivens({
           user: v.user,
           projectId: v.projectId
         })
@@ -71,7 +71,7 @@ export class GetUserGivensController {
           MemberGiven[],
           GetMemberGivensForSelectionError
         > =>
-          this.givensService.getMemberGivensForSelectionResult({
+          this.givensService.getMemberGivensForSelection({
             projectId: v.projectId,
             roles: v.member.roles
           })

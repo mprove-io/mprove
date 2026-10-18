@@ -69,10 +69,10 @@ export class GetOrgUsersController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwner({
           org: v.org,
           userId: v.user.userId
         })
@@ -84,7 +84,7 @@ export class GetOrgUsersController {
             .findMany({ where: eq(projectsTable.orgId, v.orgId) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.projectEntToTabResult({ projectEnt: x })
+                this.tabService.projectEntToTab({ projectEnt: x })
               )
             )
       ),
@@ -116,7 +116,7 @@ export class GetOrgUsersController {
             .findMany({ where: and(inArray(usersTable.userId, v.userIds)) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.userEntToTabResult({ userEnt: x })
+                this.tabService.userEntToTab({ userEnt: x })
               )
             )
       ),
@@ -161,7 +161,7 @@ export class GetOrgUsersController {
                 .where(inArray(avatarsTable.userId, v.userIds))
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.avatarEntToTabResult({
+                    this.tabService.avatarEntToTab({
                       avatarEnt: x as AvatarEnt
                     })
                   )

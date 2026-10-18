@@ -38,12 +38,12 @@ export class GetConnectionsListService {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsEditorOrAdminResult({
+        this.membersService.getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -51,7 +51,7 @@ export class GetConnectionsListService {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.bind(
         'apiEnv',
@@ -79,7 +79,7 @@ export class GetConnectionsListService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.connectionEntToTabResult({
+                this.tabService.connectionEntToTab({
                   connectionEnt: x
                 })
               )

@@ -54,7 +54,7 @@ export class PauseEditorSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
@@ -71,7 +71,7 @@ export class PauseEditorSessionController {
       Result.bind(
         'sessionLockToken',
         (v): Result.ResultAsync<string, AcquireSessionLockError> =>
-          this.editorSessionLockService.acquireSessionLockResult({
+          this.editorSessionLockService.acquireSessionLock({
             sessionId: v.sessionId
           })
       ),
@@ -109,7 +109,7 @@ export class PauseEditorSessionController {
           return Result.succeed();
         }),
         Result.andThrough(v =>
-          this.editorSandboxService.pauseSessionByIdResult({
+          this.editorSandboxService.pauseSessionById({
             sessionId: v.sessionId,
             pauseReason: 'User'
           })
@@ -117,7 +117,7 @@ export class PauseEditorSessionController {
         Result.bind(
           'freshSession',
           (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-            this.sessionsService.getSessionByIdCheckExistsResult({
+            this.sessionsService.getSessionByIdCheckExists({
               sessionId: v.sessionId
             })
         ),

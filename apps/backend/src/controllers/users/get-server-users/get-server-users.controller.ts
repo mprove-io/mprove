@@ -99,7 +99,7 @@ export class GetServerUsersController {
             .offset(v.offset)
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.userEntToTabResult({ userEnt: x })
+                this.tabService.userEntToTab({ userEnt: x })
               )
             )
       ),
@@ -137,7 +137,7 @@ export class GetServerUsersController {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.projectEntToTabResult({ projectEnt: x })
+                    this.tabService.projectEntToTab({ projectEnt: x })
                   )
                 )
       ),
@@ -157,7 +157,7 @@ export class GetServerUsersController {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.orgEntToTabResult({ orgEnt: x })
+                    this.tabService.orgEntToTab({ orgEnt: x })
                   )
                 )
       ),
@@ -176,7 +176,7 @@ export class GetServerUsersController {
                 .where(inArray(avatarsTable.userId, v.userIds))
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.avatarEntToTabResult({
+                    this.tabService.avatarEntToTab({
                       avatarEnt: x as AvatarEnt
                     })
                   )

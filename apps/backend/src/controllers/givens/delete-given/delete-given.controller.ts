@@ -75,20 +75,20 @@ export class DeleteGivenController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdmin({
             memberId: v.user.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.givensService.getGivenCheckExistsResult({
+        this.givensService.getGivenCheckExists({
           projectId: v.projectId,
           givenId: v.givenId
         })
@@ -96,7 +96,7 @@ export class DeleteGivenController {
       Result.bind(
         'roles',
         (v): Result.ResultAsync<RoleTab[], GetRolesError> =>
-          this.rolesService.getRolesResult({ projectId: v.projectId })
+          this.rolesService.getRoles({ projectId: v.projectId })
       ),
       Result.bind(
         'rolesToUpdate',
@@ -141,7 +141,7 @@ export class DeleteGivenController {
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.givensService.getApiGivensResult({ projectId: v.projectId })
+          this.givensService.getApiGivens({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteGivenOutput => ({

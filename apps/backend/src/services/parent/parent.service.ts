@@ -37,7 +37,7 @@ export class ParentService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async checkParentAccessResult(item: {
+  async checkParentAccess(item: {
     user: UserTab;
     userMember: MemberTab;
     structId: string;
@@ -71,7 +71,7 @@ export class ParentService {
           GetDashboardCheckExistsAndAccessError
         > =>
           v.isDashboard
-            ? this.dashboardsService.getDashboardCheckExistsAndAccessResult({
+            ? this.dashboardsService.getDashboardCheckExistsAndAccess({
                 structId: v.structId,
                 dashboardId: v.parentId,
                 userMember: v.userMember,
@@ -100,7 +100,7 @@ export class ParentService {
           v
         ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
           v.isReport
-            ? this.reportsService.getReportCheckExistsAndAccessResult({
+            ? this.reportsService.getReportCheckExistsAndAccess({
                 projectId: v.projectId,
                 structId: v.structId,
                 reportId: v.parentId,
@@ -147,7 +147,7 @@ export class ParentService {
         'chart',
         async (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
           v.parentType === 'Chart'
-            ? this.chartsService.getChartCheckExistsResult({
+            ? this.chartsService.getChartCheckExists({
                 structId: v.structId,
                 chartId: v.parentId,
                 userMember: v.userMember,
@@ -159,7 +159,7 @@ export class ParentService {
         'chartModel',
         async (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
           v.parentType === 'Chart'
-            ? this.modelsService.getModelCheckExistsResult({
+            ? this.modelsService.getModelCheckExists({
                 structId: v.structId,
                 modelId: v.chart.modelId
               })
@@ -167,7 +167,7 @@ export class ParentService {
       ),
       Result.andThrough(v =>
         v.parentType === 'Chart'
-          ? this.chartsService.checkChartOrModelAccessResult({
+          ? this.chartsService.checkChartOrModelAccess({
               chart: v.chart,
               model: v.chartModel,
               userMember: v.userMember
@@ -177,7 +177,7 @@ export class ParentService {
       Result.andThrough(v =>
         v.isDashboard || v.isReport || v.parentType === 'Chart'
           ? Result.succeed()
-          : this.modelsService.getModelCheckExistsAndAccessResult({
+          : this.modelsService.getModelCheckExistsAndAccess({
               structId: v.structId,
               modelId: v.modelId,
               userMember: v.userMember

@@ -54,7 +54,7 @@ export class ArchiveSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
@@ -71,14 +71,14 @@ export class ArchiveSessionController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.session.projectId
           })
       ),
       Result.bind(
         'sessionApi',
         (v): Result.ResultAsync<SessionApi, ArchiveSessionError> =>
-          this.sessionArchiveService.archiveSessionResult({
+          this.sessionArchiveService.archiveSession({
             session: v.session,
             archiveReason: 'User',
             e2bApiKey: v.project.e2bApiKey

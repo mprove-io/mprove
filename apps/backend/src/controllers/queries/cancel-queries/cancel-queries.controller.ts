@@ -106,7 +106,7 @@ export class CancelQueriesController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -114,14 +114,14 @@ export class CancelQueriesController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -129,14 +129,14 @@ export class CancelQueriesController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -145,7 +145,7 @@ export class CancelQueriesController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -153,7 +153,7 @@ export class CancelQueriesController {
           })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExistsResult({
+        this.structsService.getStructCheckExists({
           structId: v.bridge.structId,
           projectId: v.projectId
         })
@@ -170,7 +170,7 @@ export class CancelQueriesController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.mconfigEntToTabResult({ mconfigEnt: x })
+                this.tabService.mconfigEntToTab({ mconfigEnt: x })
               )
             )
       ),
@@ -185,7 +185,7 @@ export class CancelQueriesController {
             x => x.parentId === parentId
           );
 
-          return this.parentService.checkParentAccessResult({
+          return this.parentService.checkParentAccess({
             parentId: mconfig.parentId,
             parentType: mconfig.parentType,
             modelId: mconfig.modelId,
@@ -209,7 +209,7 @@ export class CancelQueriesController {
           QueryTab[],
           GetQueriesCheckExistSkipSqlDataError
         > =>
-          this.queriesService.getQueriesCheckExistSkipSqlDataResult({
+          this.queriesService.getQueriesCheckExistSkipSqlData({
             queryIds: v.queryIds,
             projectId: v.projectId
           })
@@ -229,7 +229,7 @@ export class CancelQueriesController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.connectionEntToTabResult({ connectionEnt: x })
+                this.tabService.connectionEntToTab({ connectionEnt: x })
               )
             )
       ),
@@ -286,7 +286,7 @@ export class CancelQueriesController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.query.projectId })
+          this.envsService.getApiEnvs({ projectId: v.query.projectId })
       ),
       Result.bind(
         'connection',

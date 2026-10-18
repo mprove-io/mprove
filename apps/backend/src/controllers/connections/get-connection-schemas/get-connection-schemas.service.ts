@@ -120,7 +120,7 @@ export class GetConnectionSchemasService {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -129,7 +129,7 @@ export class GetConnectionSchemasService {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
@@ -137,7 +137,7 @@ export class GetConnectionSchemasService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,
@@ -147,7 +147,7 @@ export class GetConnectionSchemasService {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -155,7 +155,7 @@ export class GetConnectionSchemasService {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.bind(
         'apiEnv',
@@ -183,7 +183,7 @@ export class GetConnectionSchemasService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.connectionEntToTabResult({
+                this.tabService.connectionEntToTab({
                   connectionEnt: x
                 })
               )
@@ -282,7 +282,7 @@ export class GetConnectionSchemasService {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.cachedColumnEntToTabResult({
+                    this.tabService.cachedColumnEntToTab({
                       cachedColumnEnt: x
                     })
                   )

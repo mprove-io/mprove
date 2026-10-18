@@ -77,12 +77,12 @@ export class DeleteMemberController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -95,13 +95,13 @@ export class DeleteMemberController {
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.memberId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.rpcService.sendToDiskResult({
+        this.rpcService.sendToDisk({
           request: {
             operation: 'deleteDevRepo',
             traceId: v.traceId,

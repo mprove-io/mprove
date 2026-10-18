@@ -81,7 +81,7 @@ export class BlockmlService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async rebuildStructResult(item: {
+  async rebuildStruct(item: {
     traceId: string;
     orgId: string;
     projectId: string;
@@ -121,7 +121,7 @@ export class BlockmlService {
     } = item;
 
     let apiEnvsResult: Result.Result<Env[], GetApiEnvsError> =
-      await this.envsService.getApiEnvsResult({
+      await this.envsService.getApiEnvs({
         projectId: projectId
       });
 
@@ -154,7 +154,7 @@ export class BlockmlService {
         ConnectionTab[],
         ConnectionEntToTabError
       > = Result.sequence(connectionsWithFallbackEnts, x =>
-        this.tabService.connectionEntToTabResult({
+        this.tabService.connectionEntToTab({
           connectionEnt: x
         })
       );

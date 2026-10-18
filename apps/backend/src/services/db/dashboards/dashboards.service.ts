@@ -117,7 +117,7 @@ export class DashboardsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getDashboardsCatalogResult(item: {
+  async getDashboardsCatalog(item: {
     projectId: string;
     structId: string;
     user: UserTab;
@@ -387,7 +387,7 @@ export class DashboardsService {
     return dashboard;
   }
 
-  async getDashboardCheckExistsAndAccessResult(item: {
+  async getDashboardCheckExistsAndAccess(item: {
     dashboardId: string;
     structId: string;
     userMember: MemberTab | Member;
@@ -439,7 +439,7 @@ export class DashboardsService {
     );
   }
 
-  async getDashboardXCheckExistsAndAccessResult(item: {
+  async getDashboardXCheckExistsAndAccess(item: {
     dashboardId: string;
     structId: string;
     projectId: string;
@@ -456,7 +456,7 @@ export class DashboardsService {
           DashboardTab,
           GetDashboardCheckExistsAndAccessError
         > =>
-          this.getDashboardCheckExistsAndAccessResult({
+          this.getDashboardCheckExistsAndAccess({
             structId: v.structId,
             dashboardId: v.dashboardId,
             userMember: v.apiUserMember,
@@ -471,7 +471,7 @@ export class DashboardsService {
           DashboardX,
           GetDashboardXUsingDashboardTabError
         > =>
-          this.getDashboardXUsingDashboardTabResult({
+          this.getDashboardXUsingDashboardTab({
             dashboard: v.dashboard,
             structId: v.structId,
             projectId: v.projectId,
@@ -482,7 +482,7 @@ export class DashboardsService {
     );
   }
 
-  async getDashboardXUsingDashboardTabResult(item: {
+  async getDashboardXUsingDashboardTab(item: {
     dashboard: DashboardTab;
     structId: string;
     projectId: string;
@@ -508,7 +508,7 @@ export class DashboardsService {
                   Result.sequence(xs, x =>
                     isUndefined(x)
                       ? Result.succeed(undefined)
-                      : this.tabService.mconfigEntToTabResult({
+                      : this.tabService.mconfigEntToTab({
                           mconfigEnt: x
                         })
                   )
@@ -535,7 +535,7 @@ export class DashboardsService {
                   Result.sequence(xs, x =>
                     isUndefined(x)
                       ? Result.succeed(undefined)
-                      : this.tabService.queryEntToTabResult({
+                      : this.tabService.queryEntToTab({
                           queryEnt: x
                         })
                   )
@@ -552,7 +552,7 @@ export class DashboardsService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -599,7 +599,7 @@ export class DashboardsService {
     );
   }
 
-  async getDashboardPartsResult(item: {
+  async getDashboardParts(item: {
     structId: string;
     user: UserTab;
     apiUserMember: Member;
@@ -664,7 +664,7 @@ export class DashboardsService {
     );
   }
 
-  async processDashboardResult(item: {
+  async processDashboard(item: {
     newApiDashboard: Dashboard;
     apiMconfigs: Mconfig[];
     apiQueries: Query[];
@@ -774,7 +774,7 @@ export class DashboardsService {
             let prepStoreMconfigQueryOutput: Result.Result<
               PrepStoreMconfigQueryOutput,
               PrepStoreMconfigQueryError
-            > = await this.mconfigsService.prepStoreMconfigQueryResult({
+            > = await this.mconfigsService.prepStoreMconfigQuery({
               struct: v.tempStruct,
               project: v.project,
               envId: v.envId,

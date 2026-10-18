@@ -68,7 +68,7 @@ export class SessionSseService {
               let ocEventResult: Result.Result<
                 OcEventTab,
                 OcEventEntToTabError
-              > = this.tabService.ocEventEntToTabResult({ eventEnt: x });
+              > = this.tabService.ocEventEntToTab({ eventEnt: x });
 
               if (Result.isFailure(ocEventResult)) {
                 return ocEventResult;

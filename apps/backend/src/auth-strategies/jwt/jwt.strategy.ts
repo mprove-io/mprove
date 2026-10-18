@@ -70,7 +70,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.andThrough(v =>

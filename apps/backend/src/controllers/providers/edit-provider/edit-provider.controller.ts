@@ -70,12 +70,12 @@ export class EditProviderController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.input.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.input.projectId
         })
@@ -83,7 +83,7 @@ export class EditProviderController {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.providersService.getProviderCheckExistsResult({
+          this.providersService.getProviderCheckExists({
             projectId: v.input.projectId,
             providerId: v.input.providerId
           })
@@ -96,7 +96,7 @@ export class EditProviderController {
         ) {
           v.provider.name = v.input.name;
 
-          return this.urlService.checkApiUrlResult({
+          return this.urlService.checkApiUrl({
             urlStr: v.input.options.baseURL
           });
         }

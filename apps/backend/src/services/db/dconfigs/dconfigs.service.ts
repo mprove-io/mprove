@@ -23,9 +23,9 @@ export class DconfigsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getDconfigHashSecret(): Promise<string> {
+  async getDconfigHashSecretUnwrap(): Promise<string> {
     let result: Result.Result<string, GetDconfigHashSecretError> =
-      await this.getDconfigHashSecretResult();
+      await this.getDconfigHashSecret();
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -36,7 +36,7 @@ export class DconfigsService {
     return hashSecret;
   }
 
-  async getDconfigHashSecretResult(): Result.ResultAsync<
+  async getDconfigHashSecret(): Result.ResultAsync<
     string,
     GetDconfigHashSecretError
   > {

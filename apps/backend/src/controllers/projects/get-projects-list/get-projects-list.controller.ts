@@ -92,7 +92,7 @@ export class GetProjectsListController {
                 })
                 .then((xs: ProjectEnt[]) =>
                   Result.sequence(xs, x =>
-                    this.tabService.projectEntToTabResult({
+                    this.tabService.projectEntToTab({
                       projectEnt: x
                     })
                   )

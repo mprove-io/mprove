@@ -106,7 +106,7 @@ export class RunQueriesDryController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -116,7 +116,7 @@ export class RunQueriesDryController {
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -124,14 +124,14 @@ export class RunQueriesDryController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -140,7 +140,7 @@ export class RunQueriesDryController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -148,7 +148,7 @@ export class RunQueriesDryController {
           })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExistsResult({
+        this.structsService.getStructCheckExists({
           structId: v.bridge.structId,
           projectId: v.projectId
         })
@@ -165,7 +165,7 @@ export class RunQueriesDryController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.mconfigEntToTabResult({ mconfigEnt: x })
+                this.tabService.mconfigEntToTab({ mconfigEnt: x })
               )
             )
       ),
@@ -180,7 +180,7 @@ export class RunQueriesDryController {
             x => x.parentId === parentId
           );
 
-          return this.parentService.checkParentAccessResult({
+          return this.parentService.checkParentAccess({
             parentId: mconfig.parentId,
             parentType: mconfig.parentType,
             modelId: mconfig.modelId, // for chart as parent
@@ -264,7 +264,7 @@ export class RunQueriesDryController {
       Result.bind(
         'query',
         (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> =>
-          this.queriesService.getQueryCheckExistsSkipDataResult({
+          this.queriesService.getQueryCheckExistsSkipData({
             projectId: v.projectId,
             queryId: v.queryId
           })
@@ -272,7 +272,7 @@ export class RunQueriesDryController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.bind(
         'connection',
@@ -285,7 +285,7 @@ export class RunQueriesDryController {
             apiEnv.isFallbackToProdConnections === true &&
             apiEnv.fallbackConnectionIds.includes(v.query.connectionId);
 
-          return this.connectionsService.getConnectionCheckExistsResult({
+          return this.connectionsService.getConnectionCheckExists({
             projectId: v.query.projectId,
             envId: isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId,
             connectionId: v.query.connectionId

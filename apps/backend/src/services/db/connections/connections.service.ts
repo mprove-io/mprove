@@ -345,7 +345,7 @@ export class ConnectionsService {
     return apiBaseConnection;
   }
 
-  async checkConnectionDoesNotExistResult(item: {
+  async checkConnectionDoesNotExist(item: {
     projectId: string;
     envId: string;
     connectionId: string;
@@ -367,7 +367,7 @@ export class ConnectionsService {
       );
   }
 
-  async getConnectionCheckExistsResult(item: {
+  async getConnectionCheckExists(item: {
     connectionId: string;
     envId: string;
     projectId: string;
@@ -385,7 +385,7 @@ export class ConnectionsService {
       .then(x =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
-          : this.tabService.connectionEntToTabResult({
+          : this.tabService.connectionEntToTab({
               connectionEnt: x
             })
       );

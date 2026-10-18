@@ -133,7 +133,7 @@ export class GroupMetricByDimensionController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -143,14 +143,14 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -158,14 +158,14 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -174,7 +174,7 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -184,7 +184,7 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'oldMconfig',
         (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
-          this.mconfigsService.getMconfigCheckExistsResult({
+          this.mconfigsService.getMconfigCheckExists({
             mconfigId: v.mconfigId,
             structId: v.bridge.structId
           })
@@ -197,14 +197,14 @@ export class GroupMetricByDimensionController {
           StructTab,
           GetStructCheckExistsAndNotChangedError
         > =>
-          this.structsService.getStructCheckExistsAndNotChangedResult({
+          this.structsService.getStructCheckExistsAndNotChanged({
             projectId: v.projectId,
             bridgeStructId: v.bridge.structId,
             structId: v.oldMconfig.structId
           })
       ),
       Result.andThrough(v =>
-        this.parentService.checkParentAccessResult({
+        this.parentService.checkParentAccess({
           parentId: v.oldMconfig.parentId,
           parentType: v.oldMconfig.parentType,
           modelId: v.oldMconfig.modelId,
@@ -218,7 +218,7 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
-          this.modelsService.getModelCheckExistsResult({
+          this.modelsService.getModelCheckExists({
             structId: v.bridge.structId,
             modelId: v.oldMconfig.modelId
           })
@@ -284,7 +284,7 @@ export class GroupMetricByDimensionController {
           PrepStoreMconfigQueryError | EditMalloyQueryError
         > =>
           v.model.type === 'Store'
-            ? this.mconfigsService.prepStoreMconfigQueryResult({
+            ? this.mconfigsService.prepStoreMconfigQuery({
                 struct: v.struct,
                 project: v.project,
                 envId: v.envId,
@@ -308,7 +308,7 @@ export class GroupMetricByDimensionController {
                     })
                   : undefined
               })
-            : this.malloyService.editMalloyQueryResult({
+            : this.malloyService.editMalloyQuery({
                 projectId: v.projectId,
                 envId: v.envId,
                 structId: v.struct.structId,
@@ -361,7 +361,7 @@ export class GroupMetricByDimensionController {
                 eq(queriesTable.projectId, v.mconfigQuery.newQuery.projectId)
               )
             })
-            .then(x => this.tabService.queryEntToTabResult({ queryEnt: x }))
+            .then(x => this.tabService.queryEntToTab({ queryEnt: x }))
       ),
       Result.map(
         (v): ToBackendGroupMetricByDimensionOutput => ({

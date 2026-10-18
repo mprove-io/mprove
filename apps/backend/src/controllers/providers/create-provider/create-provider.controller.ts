@@ -70,19 +70,19 @@ export class CreateProviderController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.input.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.input.projectId
         })
       ),
       Result.andThrough(v =>
         v.input.type === 'OpenAICompatible' && 'baseURL' in v.input.options
-          ? this.urlService.checkApiUrlResult({
+          ? this.urlService.checkApiUrl({
               urlStr: v.input.options.baseURL
             })
           : Result.succeed()
@@ -96,7 +96,7 @@ export class CreateProviderController {
         return v;
       }),
       Result.andThrough(v =>
-        this.providersService.checkProviderDoesNotExistResult({
+        this.providersService.checkProviderDoesNotExist({
           projectId: v.input.projectId,
           providerId: v.input.providerId
         })
@@ -104,7 +104,7 @@ export class CreateProviderController {
       Result.bind(
         'provider',
         (v): Result.Result<ProviderTab, MakeProviderError> =>
-          this.providersService.makeProviderResult({
+          this.providersService.makeProvider({
             ...v.input,
             isEnabled: true,
             models: []

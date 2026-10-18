@@ -71,7 +71,7 @@ export class DocService implements OnModuleDestroy {
     this.calcDb.$pool.end();
   }
 
-  async calculateDataResult(item: {
+  async calculateData(item: {
     report: ReportX;
     timezone: string;
     timeSpec: TimeSpec;
@@ -131,7 +131,7 @@ export class DocService implements OnModuleDestroy {
     let reportDataColumnsResult: Result.Result<
       ReportDataColumn[],
       MakeReportDataColumnsError
-    > = this.makeReportDataColumnsResult({
+    > = this.makeReportDataColumns({
       report: report,
       timeSpec: timeSpec
     });
@@ -370,7 +370,7 @@ FROM main;`;
     return Result.succeed(report);
   }
 
-  makeReportDataColumnsResult(item: {
+  makeReportDataColumns(item: {
     report: ReportX;
     timeSpec: TimeSpec;
   }): Result.Result<ReportDataColumn[], MakeReportDataColumnsError> {

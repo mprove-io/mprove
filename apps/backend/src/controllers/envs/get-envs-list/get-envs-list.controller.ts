@@ -52,12 +52,12 @@ export class GetEnvsListController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExists({
           projectId: v.projectId,
           memberId: v.userId
         })
@@ -71,7 +71,7 @@ export class GetEnvsListController {
             })
             .then((xs: EnvEnt[]) =>
               Result.sequence(xs, x =>
-                this.tabService.envEntToTabResult({ envEnt: x })
+                this.tabService.envEntToTab({ envEnt: x })
               )
             )
       ),

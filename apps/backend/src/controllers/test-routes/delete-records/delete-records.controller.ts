@@ -107,13 +107,13 @@ export class DeleteRecordsController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'projectNameHashes',
         (v): Result.Result<string[], MakeHashError> =>
           Result.sequence(v.projectNames || [], projectName =>
-            this.hashService.makeHashResult({
+            this.hashService.makeHash({
               input: projectName,
               hashSecret: v.hashSecret
             })
@@ -144,7 +144,7 @@ export class DeleteRecordsController {
         'orgNameHashes',
         (v): Result.Result<string[], MakeHashError> =>
           Result.sequence(v.orgNames || [], orgName =>
-            this.hashService.makeHashResult({
+            this.hashService.makeHash({
               input: orgName,
               hashSecret: v.hashSecret
             })
@@ -171,7 +171,7 @@ export class DeleteRecordsController {
               poolSize: 1,
               inputs: v.orgIds,
               callback: orgId =>
-                this.rpcService.sendToDiskResult({
+                this.rpcService.sendToDisk({
                   request: {
                     operation: 'deleteOrg',
                     traceId: v.traceId,
@@ -190,7 +190,7 @@ export class DeleteRecordsController {
                 inputs: v.emails,
                 callback: async email => {
                   let emailHashResult: Result.Result<string, MakeHashError> =
-                    this.hashService.makeHashResult({
+                    this.hashService.makeHash({
                       input: email,
                       hashSecret: v.hashSecret
                     });

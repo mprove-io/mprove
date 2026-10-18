@@ -64,7 +64,7 @@ export class ReportsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getReportsCatalogResult(item: {
+  async getReportsCatalog(item: {
     projectId: string;
     structId: string;
     user: UserTab;
@@ -92,7 +92,7 @@ export class ReportsService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.reportEntToTabResult({ reportEnt: x })
+                this.tabService.reportEntToTab({ reportEnt: x })
               )
             )
       ),
@@ -408,7 +408,7 @@ export class ReportsService {
     return report;
   }
 
-  async getReportCheckExistsAndAccessResult(item: {
+  async getReportCheckExistsAndAccess(item: {
     projectId: string;
     reportId: string;
     structId: string;
@@ -459,7 +459,7 @@ export class ReportsService {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_REPORT_NOT_FOUND' })
-                : this.tabService.reportEntToTabResult({ reportEnt: x })
+                : this.tabService.reportEntToTab({ reportEnt: x })
             );
         }
       ),

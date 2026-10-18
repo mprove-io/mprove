@@ -127,13 +127,13 @@ export class RunQueriesService {
       Result.bind(
         'query',
         (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> =>
-          this.queriesService.getQueryCheckExistsSkipDataResult({
+          this.queriesService.getQueryCheckExistsSkipData({
             projectId: v.projectId,
             queryId: v.queryId
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExists({
           projectId: v.query.projectId,
           memberId: v.userId
         })
@@ -141,7 +141,7 @@ export class RunQueriesService {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.bind(
         'apiEnv',
@@ -158,7 +158,7 @@ export class RunQueriesService {
               ? v.apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
               : false;
 
-          return this.connectionsService.getConnectionCheckExistsResult({
+          return this.connectionsService.getConnectionCheckExists({
             projectId: v.query.projectId,
             envId: isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId,
             connectionId: v.query.connectionId
@@ -594,7 +594,7 @@ export class RunQueriesService {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -604,7 +604,7 @@ export class RunQueriesService {
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -612,7 +612,7 @@ export class RunQueriesService {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
@@ -622,7 +622,7 @@ export class RunQueriesService {
         let envAccessResult: Result.Result<
           EnvTab,
           GetEnvCheckExistsAndAccessError
-        > = await this.envsService.getEnvCheckExistsAndAccessResult({
+        > = await this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -637,7 +637,7 @@ export class RunQueriesService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -645,7 +645,7 @@ export class RunQueriesService {
           })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExistsResult({
+        this.structsService.getStructCheckExists({
           structId: v.bridge.structId,
           projectId: v.projectId
         })
@@ -664,7 +664,7 @@ export class RunQueriesService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.mconfigEntToTabResult({
+                  : this.tabService.mconfigEntToTab({
                       mconfigEnt: x
                     })
               )
@@ -691,7 +691,7 @@ export class RunQueriesService {
             let parentAccessResult: Result.Result<
               void,
               CheckParentAccessError
-            > = await this.parentService.checkParentAccessResult({
+            > = await this.parentService.checkParentAccess({
               parentId: mconfig.parentId,
               parentType: mconfig.parentType,
               modelId: mconfig.modelId,
@@ -728,7 +728,7 @@ export class RunQueriesService {
           QueryTab[],
           GetQueriesCheckExistSkipSqlDataError
         > =>
-          this.queriesService.getQueriesCheckExistSkipSqlDataResult({
+          this.queriesService.getQueriesCheckExistSkipSqlData({
             queryIds: v.queryIds,
             projectId: v.projectId
           })
@@ -752,7 +752,7 @@ export class RunQueriesService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -800,7 +800,7 @@ export class RunQueriesService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.connectionEntToTabResult({
+                  : this.tabService.connectionEntToTab({
                       connectionEnt: x
                     })
               )

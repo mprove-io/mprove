@@ -70,14 +70,14 @@ export class SetProjectSandboxProviderController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdmin({
             projectId: v.projectId,
             memberId: v.userId
           })

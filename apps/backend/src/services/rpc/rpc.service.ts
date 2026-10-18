@@ -314,7 +314,7 @@ export class RpcService implements OnModuleDestroy {
     let result: Result.Result<
       DiskSuccessOutput<TRequest>,
       SendToDiskError
-    > = await this.sendToDiskResult(item);
+    > = await this.sendToDisk(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({
@@ -345,7 +345,7 @@ export class RpcService implements OnModuleDestroy {
     return output;
   }
 
-  async sendToDiskResult<TRequest extends ToDiskRequest>(item: {
+  async sendToDisk<TRequest extends ToDiskRequest>(item: {
     request: TRequest;
   }): Result.ResultAsync<DiskSuccessOutput<TRequest>, SendToDiskError> {
     let { request } = item;

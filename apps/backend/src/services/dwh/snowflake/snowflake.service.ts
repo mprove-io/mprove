@@ -630,7 +630,7 @@ export class SnowFlakeService {
               eq(queriesTable.projectId, projectId)
             )
           })
-          .then(x => this.tabService.queryEntToTab(x));
+          .then(x => this.tabService.queryEntToTabUnwrap(x));
 
         if (isDefined(q)) {
           q.status = 'Completed';
@@ -714,7 +714,7 @@ export class SnowFlakeService {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.tabService.queryEntToTab(x));
+      .then(x => this.tabService.queryEntToTabUnwrap(x));
 
     if (isDefined(q)) {
       q.status = 'Error';

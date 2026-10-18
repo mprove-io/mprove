@@ -43,12 +43,12 @@ export class StartUserCodexAuthController {
     return Result.pipe(
       Result.succeed({ user: user }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.bind(
         'started',
         (v): Result.ResultAsync<CodexDeviceAuthStart, StartDeviceAuthError> =>
-          this.codexService.startDeviceAuthResult()
+          this.codexService.startDeviceAuth()
       ),
       Result.map(
         (v): ToBackendStartUserCodexAuthOutput => ({

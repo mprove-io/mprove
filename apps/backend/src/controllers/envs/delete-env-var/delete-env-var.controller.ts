@@ -79,7 +79,7 @@ export class DeleteEnvVarController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -88,13 +88,13 @@ export class DeleteEnvVarController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestrictedResult({
+        this.projectsService.checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
           repoId: undefined
@@ -103,7 +103,7 @@ export class DeleteEnvVarController {
       Result.bind(
         'env',
         (v): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessError> =>
-          this.envsService.getEnvCheckExistsAndAccessResult({
+          this.envsService.getEnvCheckExistsAndAccess({
             projectId: v.projectId,
             envId: v.envId,
             member: v.userMember
@@ -153,7 +153,7 @@ export class DeleteEnvVarController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteEnvVarOutput => ({

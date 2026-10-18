@@ -153,14 +153,14 @@ export class UsersService {
     return apiUser;
   }
 
-  async getSelectedGivensResult(item: {
+  async getSelectedGivens(item: {
     user: UserTab;
     projectId: string;
   }): Result.ResultAsync<SelectedGiven[], GetSelectedGivensError> {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.selectUnselectedGivensResult({
+        this.selectUnselectedGivens({
           user: v.user,
           projectId: v.projectId
         })
@@ -174,7 +174,7 @@ export class UsersService {
     );
   }
 
-  async selectUnselectedGivensResult(item: {
+  async selectUnselectedGivens(item: {
     user: UserTab;
     projectId: string;
   }): Result.ResultAsync<
@@ -199,7 +199,7 @@ export class UsersService {
         .then(x =>
           isUndefined(x)
             ? Result.succeed(undefined)
-            : this.tabService.memberEntToTabResult({ memberEnt: x })
+            : this.tabService.memberEntToTab({ memberEnt: x })
         );
 
     if (Result.isFailure(memberResult)) {
@@ -215,7 +215,7 @@ export class UsersService {
     let memberGivensResult: Result.Result<
       MemberGiven[],
       GetMemberGivensForSelectionError
-    > = await this.givensService.getMemberGivensForSelectionResult({
+    > = await this.givensService.getMemberGivensForSelection({
       projectId: member.projectId,
       roles: member.roles
     });
@@ -289,7 +289,7 @@ export class UsersService {
     return Result.succeed(user.ui.projectSelectedGivenLinks);
   }
 
-  checkUserPasswordHashIsDefinedResult(item: {
+  checkUserPasswordHashIsDefined(item: {
     user: UserTab;
   }): Result.Result<void, CheckUserPasswordHashIsDefinedError> {
     let { user } = item;
@@ -299,7 +299,7 @@ export class UsersService {
       : Result.succeed();
   }
 
-  async getUserCheckExistsResult(item: {
+  async getUserCheckExists(item: {
     userId: string;
   }): Result.ResultAsync<UserTab, GetUserCheckExistsError> {
     let { userId } = item;
@@ -311,11 +311,11 @@ export class UsersService {
       .then(x =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-          : this.tabService.userEntToTabResult({ userEnt: x })
+          : this.tabService.userEntToTab({ userEnt: x })
       );
   }
 
-  checkUserIsNotRestrictedResult(item: {
+  checkUserIsNotRestricted(item: {
     user: UserTab;
   }): Result.Result<void, CheckUserIsNotRestrictedError> {
     let { user } = item;
@@ -325,7 +325,7 @@ export class UsersService {
       : Result.succeed();
   }
 
-  async getUserByEmailCheckExistsResult(item: {
+  async getUserByEmailCheckExists(item: {
     email: string;
   }): Result.ResultAsync<UserTab, GetUserByEmailCheckExistsError> {
     return Result.pipe(
@@ -333,12 +333,12 @@ export class UsersService {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'emailHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.email,
             hashSecret: v.hashSecret
           })
@@ -355,7 +355,7 @@ export class UsersService {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       )
     );
@@ -368,7 +368,7 @@ export class UsersService {
       input: password
     });
 
-    let alias = await this.makeAlias(email);
+    let alias = await this.makeAliasUnwrap(email);
 
     let emailVerificationToken = makeId();
 
@@ -422,7 +422,7 @@ export class UsersService {
       input: password
     });
 
-    let alias = await this.makeAlias(email);
+    let alias = await this.makeAliasUnwrap(email);
 
     let emailVerificationToken = makeId();
 
@@ -469,9 +469,10 @@ export class UsersService {
     return user;
   }
 
-  async makeAlias(email: string): Promise<string> {
-    let result: Result.Result<string, MakeAliasError> =
-      await this.makeAliasResult({ email: email });
+  async makeAliasUnwrap(email: string): Promise<string> {
+    let result: Result.Result<string, MakeAliasError> = await this.makeAlias({
+      email: email
+    });
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -482,7 +483,7 @@ export class UsersService {
     return alias;
   }
 
-  async makeAliasResult(item: {
+  async makeAlias(item: {
     email: string;
   }): Result.ResultAsync<string, MakeAliasError> {
     return Result.pipe(
@@ -504,7 +505,7 @@ export class UsersService {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.andThen(async (v): Result.ResultAsync<string, MakeHashError> => {
         let alias: string = v.alias;
@@ -515,7 +516,7 @@ export class UsersService {
 
         while (isRestart) {
           let aliasHashResult: Result.Result<string, MakeHashError> =
-            this.hashService.makeHashResult({
+            this.hashService.makeHash({
               input: alias,
               hashSecret: v.hashSecret
             });

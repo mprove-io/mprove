@@ -133,7 +133,7 @@ export class QueriesService {
     return query;
   }
 
-  async getQueryCheckExistsSkipDataResult(item: {
+  async getQueryCheckExistsSkipData(item: {
     queryId: string;
     projectId: string;
   }): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> {
@@ -178,7 +178,7 @@ export class QueriesService {
             )
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.queryEntToTabResult({
+                this.tabService.queryEntToTab({
                   queryEnt: x as QueryEnt
                 })
               )
@@ -193,7 +193,7 @@ export class QueriesService {
     );
   }
 
-  async getQueryCheckExistsResult(item: {
+  async getQueryCheckExists(item: {
     queryId: string;
     projectId: string;
   }): Result.ResultAsync<QueryTab, GetQueryCheckExistsError> {
@@ -209,11 +209,11 @@ export class QueriesService {
       .then(x =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
-          : this.tabService.queryEntToTabResult({ queryEnt: x })
+          : this.tabService.queryEntToTab({ queryEnt: x })
       );
   }
 
-  async getQueriesCheckExistSkipSqlDataResult(item: {
+  async getQueriesCheckExistSkipSqlData(item: {
     queryIds: string[];
     projectId: string;
   }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistSkipSqlDataError> {
@@ -258,7 +258,7 @@ export class QueriesService {
             )
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.queryEntToTabResult({
+                this.tabService.queryEntToTab({
                   queryEnt: x as QueryEnt
                 })
               )
@@ -281,7 +281,7 @@ export class QueriesService {
     );
   }
 
-  async getQueriesCheckExistResult(item: {
+  async getQueriesCheckExist(item: {
     queryIds: string[];
     projectId: string;
   }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistError> {
@@ -299,7 +299,7 @@ export class QueriesService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.queryEntToTabResult({ queryEnt: x })
+                this.tabService.queryEntToTab({ queryEnt: x })
               )
             )
       ),
@@ -339,7 +339,7 @@ WHERE q.report_id is NULL
     }
   }
 
-  async checkBigqueryRunningQueriesResult(): Result.ResultAsync<
+  async checkBigqueryRunningQueries(): Result.ResultAsync<
     void,
     CheckBigqueryRunningQueriesError
   > {
@@ -353,7 +353,7 @@ WHERE q.report_id is NULL
         })
         .then(xs =>
           Result.sequence(xs, x =>
-            this.tabService.queryEntToTabResult({ queryEnt: x })
+            this.tabService.queryEntToTab({ queryEnt: x })
           )
         );
 
@@ -366,7 +366,7 @@ WHERE q.report_id is NULL
     await asyncPool(8, queries, async (query: QueryTab) => {
       try {
         let apiEnvsResult: Result.Result<Env[], GetApiEnvsError> =
-          await this.envsService.getApiEnvsResult({
+          await this.envsService.getApiEnvs({
             projectId: query.projectId
           });
 
@@ -394,9 +394,7 @@ WHERE q.report_id is NULL
               eq(connectionsTable.connectionId, query.connectionId)
             )
           })
-          .then(x =>
-            this.tabService.connectionEntToTabResult({ connectionEnt: x })
-          );
+          .then(x => this.tabService.connectionEntToTab({ connectionEnt: x }));
 
         if (Result.isFailure(connectionResult)) {
           throw new ServerError({ message: connectionResult.error.code });

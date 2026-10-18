@@ -45,7 +45,7 @@ export class EditorConnectionsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getMalloySandboxEnvsAndFilesResult(item: {
+  async getMalloySandboxEnvsAndFiles(item: {
     projectId: string;
     envId: string;
   }): Result.ResultAsync<
@@ -59,7 +59,7 @@ export class EditorConnectionsService {
     let malloySandboxFiles: { path: string; data: string }[] = [];
 
     let envResult: Result.Result<Env[], GetApiEnvsError> =
-      await this.envsService.getApiEnvsResult({
+      await this.envsService.getApiEnvs({
         projectId: projectId
       });
 
@@ -95,7 +95,7 @@ export class EditorConnectionsService {
         })
         .then(xs =>
           Result.sequence(xs, x =>
-            this.tabService.connectionEntToTabResult({ connectionEnt: x })
+            this.tabService.connectionEntToTab({ connectionEnt: x })
           )
         );
 

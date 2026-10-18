@@ -44,7 +44,7 @@ export class DbService {
       findFirst: item => this.db.drizzle.query.avatarsTable.findFirst(item),
       findMany: item => this.db.drizzle.query.avatarsTable.findMany(item),
       convert: avatarEnt =>
-        this.tabService.avatarEntToTabResult({ avatarEnt: avatarEnt })
+        this.tabService.avatarEntToTab({ avatarEnt: avatarEnt })
     });
 
     this.users = createDbReader<
@@ -55,8 +55,7 @@ export class DbService {
     >({
       findFirst: item => this.db.drizzle.query.usersTable.findFirst(item),
       findMany: item => this.db.drizzle.query.usersTable.findMany(item),
-      convert: userEnt =>
-        this.tabService.userEntToTabResult({ userEnt: userEnt })
+      convert: userEnt => this.tabService.userEntToTab({ userEnt: userEnt })
     });
   }
 

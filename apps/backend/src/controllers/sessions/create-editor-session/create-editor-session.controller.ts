@@ -159,12 +159,12 @@ export class CreateEditorSessionController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsEditorResult({
+        this.membersService.getMemberCheckIsEditor({
           memberId: v.user.userId,
           projectId: v.projectId
         })
@@ -191,7 +191,7 @@ export class CreateEditorSessionController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.sessionEntToTabResult({ sessionEnt: x })
+                this.tabService.sessionEntToTab({ sessionEnt: x })
               )
             )
       ),
@@ -208,7 +208,7 @@ export class CreateEditorSessionController {
           GetModelSelectionOutput,
           GetModelSelectionError
         > =>
-          this.providersService.getModelSelectionResult({
+          this.providersService.getModelSelection({
             projectId: v.projectId,
             providerId: v.providerId,
             modelId: v.modelId,
@@ -219,14 +219,14 @@ export class CreateEditorSessionController {
       ),
       Result.andThrough(async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
-          ? this.codexService.prewarmCodexAuthResult({ userId: v.user.userId })
+          ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
           : Result.succeed()
       ),
       Result.bind(
         'freshUser',
         async (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
           v.modelSelection.provider.type === 'OpenAICodex'
-            ? this.usersService.getUserCheckExistsResult({
+            ? this.usersService.getUserCheckExists({
                 userId: v.user.userId
               })
             : Result.succeed(v.user)
@@ -235,7 +235,7 @@ export class CreateEditorSessionController {
       Result.bind(
         'providers',
         (v): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> =>
-          this.providersService.getEnabledProvidersResult({
+          this.providersService.getEnabledProviders({
             projectId: v.projectId
           })
       ),
@@ -354,7 +354,7 @@ export class CreateEditorSessionController {
       }),
       // Malloy CLI files remain disabled in the sandbox, but preparation is still awaited.
       Result.andThrough(v =>
-        this.editorConnectionsService.getMalloySandboxEnvsAndFilesResult({
+        this.editorConnectionsService.getMalloySandboxEnvsAndFiles({
           projectId: v.projectId,
           envId: v.envId
         })
@@ -516,7 +516,7 @@ export class CreateEditorSessionController {
       let opencodeClientResult: Result.Result<
         OpencodeClient,
         GetOpenCodeClientError
-      > = await this.editorOpencodeService.getOpenCodeClientResult({
+      > = await this.editorOpencodeService.getOpenCodeClient({
         sessionId: sessionId,
         sandboxBaseUrl: sandboxBaseUrl,
         opencodePassword: opencodePassword
@@ -552,7 +552,7 @@ export class CreateEditorSessionController {
         let currentSessionResult: Result.Result<
           SessionTab,
           GetSessionByIdCheckExistsError
-        > = await this.sessionsService.getSessionByIdCheckExistsResult({
+        > = await this.sessionsService.getSessionByIdCheckExists({
           sessionId: sessionId
         });
 
@@ -617,7 +617,7 @@ export class CreateEditorSessionController {
       );
 
       let startEventStream: Result.Result<boolean, StartEventStreamError> =
-        await this.editorStreamService.startEventStreamResult({
+        await this.editorStreamService.startEventStream({
           sessionId: sessionId,
           opencodeSessionId: opencodeSessionId,
           isSetReload: false
@@ -734,7 +734,7 @@ export class CreateEditorSessionController {
       Result.bind(
         'diskCreateDevRepoOutput',
         (v): Result.ResultAsync<ToDiskCreateDevRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'createDevRepo',
               traceId: v.traceId,
@@ -809,7 +809,7 @@ export class CreateEditorSessionController {
             let rebuildStructOutput: Result.Result<
               RebuildStructOutput,
               RebuildStructError
-            > = await this.blockmlService.rebuildStructResult({
+            > = await this.blockmlService.rebuildStruct({
               traceId: v.traceId,
               orgId: v.project.orgId,
               projectId: v.projectId,

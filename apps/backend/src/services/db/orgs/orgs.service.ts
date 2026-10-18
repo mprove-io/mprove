@@ -58,7 +58,7 @@ export class OrgsService {
     return apiOrgsItem;
   }
 
-  async getOrgCheckExistsResult(item: {
+  async getOrgCheckExists(item: {
     orgId: string;
   }): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> {
     let { orgId } = item;
@@ -70,11 +70,11 @@ export class OrgsService {
       .then((x: OrgEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_ORG_DOES_NOT_EXIST' })
-          : this.tabService.orgEntToTabResult({ orgEnt: x })
+          : this.tabService.orgEntToTab({ orgEnt: x })
       );
   }
 
-  checkUserIsOrgOwnerResult(item: {
+  checkUserIsOrgOwner(item: {
     userId: string;
     org: OrgTab;
   }): Result.Result<void, CheckUserIsOrgOwnerError> {
@@ -87,15 +87,14 @@ export class OrgsService {
     return Result.succeed();
   }
 
-  async addOrg(item: {
+  async addOrgUnwrap(item: {
     ownerId: string;
     ownerEmail: string;
     name: string;
     traceId: string;
     orgId?: string;
   }): Promise<OrgTab> {
-    let result: Result.Result<OrgTab, AddOrgError> =
-      await this.addOrgResult(item);
+    let result: Result.Result<OrgTab, AddOrgError> = await this.addOrg(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({
@@ -121,7 +120,7 @@ export class OrgsService {
     return org;
   }
 
-  async addOrgResult(item: {
+  async addOrg(item: {
     ownerId: string;
     ownerEmail: string;
     name: string;
@@ -147,7 +146,7 @@ export class OrgsService {
         traceId: item.traceId
       }),
       Result.andThrough(v =>
-        this.rpcService.sendToDiskResult({
+        this.rpcService.sendToDisk({
           request: {
             operation: 'createOrg',
             traceId: v.traceId,

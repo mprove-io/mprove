@@ -97,7 +97,7 @@ export class GetQueriesController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -105,14 +105,14 @@ export class GetQueriesController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -120,14 +120,14 @@ export class GetQueriesController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -136,7 +136,7 @@ export class GetQueriesController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -144,7 +144,7 @@ export class GetQueriesController {
           })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExistsResult({
+        this.structsService.getStructCheckExists({
           structId: v.bridge.structId,
           projectId: v.projectId
         })
@@ -161,7 +161,7 @@ export class GetQueriesController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.mconfigEntToTabResult({
+                this.tabService.mconfigEntToTab({
                   mconfigEnt: x
                 })
               )
@@ -180,7 +180,7 @@ export class GetQueriesController {
             mconfig => mconfig.parentId === parentId
           );
 
-          return this.parentService.checkParentAccessResult({
+          return this.parentService.checkParentAccess({
             parentId: mconfig.parentId,
             parentType: mconfig.parentType,
             modelId: mconfig.modelId,
@@ -207,11 +207,11 @@ export class GetQueriesController {
           GetQueriesCheckExistError | GetQueriesCheckExistSkipSqlDataError
         > =>
           v.skipData === true
-            ? this.queriesService.getQueriesCheckExistSkipSqlDataResult({
+            ? this.queriesService.getQueriesCheckExistSkipSqlData({
                 queryIds: v.queryIds,
                 projectId: v.projectId
               })
-            : this.queriesService.getQueriesCheckExistResult({
+            : this.queriesService.getQueriesCheckExist({
                 queryIds: v.queryIds,
                 projectId: v.projectId
               })

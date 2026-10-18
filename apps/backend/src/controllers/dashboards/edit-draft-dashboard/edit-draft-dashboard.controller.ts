@@ -148,7 +148,7 @@ export class EditDraftDashboardController {
         timezone: body.input.timezone
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -158,14 +158,14 @@ export class EditDraftDashboardController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -178,14 +178,14 @@ export class EditDraftDashboardController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -194,7 +194,7 @@ export class EditDraftDashboardController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -204,7 +204,7 @@ export class EditDraftDashboardController {
       Result.bind(
         'currentStruct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -217,7 +217,7 @@ export class EditDraftDashboardController {
           DashboardX,
           GetDashboardXCheckExistsAndAccessError
         > =>
-          this.dashboardsService.getDashboardXCheckExistsAndAccessResult({
+          this.dashboardsService.getDashboardXCheckExistsAndAccess({
             dashboardId: v.oldDashboardId,
             structId: v.bridge.structId,
             apiUserMember: v.apiUserMember,
@@ -346,7 +346,7 @@ export class EditDraftDashboardController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -355,7 +355,7 @@ export class EditDraftDashboardController {
       Result.bind(
         'selectedGivens',
         (v): Result.ResultAsync<SelectedGiven[], GetSelectedGivensError> =>
-          this.usersService.getSelectedGivensResult({
+          this.usersService.getSelectedGivens({
             user: v.user,
             projectId: v.projectId
           })
@@ -363,7 +363,7 @@ export class EditDraftDashboardController {
       Result.bind(
         'rebuild',
         (v): Result.ResultAsync<RebuildStructOutput, RebuildStructError> =>
-          this.blockmlService.rebuildStructResult({
+          this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.projectId,
@@ -412,7 +412,7 @@ export class EditDraftDashboardController {
         (
           v
         ): Result.ResultAsync<ProcessDashboardOutput, ProcessDashboardError> =>
-          this.dashboardsService.processDashboardResult({
+          this.dashboardsService.processDashboard({
             newApiDashboard: v.newApiDashboard,
             apiMconfigs: v.rebuild.mconfigs,
             apiQueries: v.rebuild.queries,
@@ -468,7 +468,7 @@ export class EditDraftDashboardController {
           DashboardX,
           GetDashboardXCheckExistsAndAccessError
         > =>
-          this.dashboardsService.getDashboardXCheckExistsAndAccessResult({
+          this.dashboardsService.getDashboardXCheckExistsAndAccess({
             dashboardId: v.processedDashboard.newDashboard.dashboardId,
             projectId: v.projectId,
             structId: v.bridge.structId,

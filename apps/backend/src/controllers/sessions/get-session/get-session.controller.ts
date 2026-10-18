@@ -80,14 +80,14 @@ export class GetSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.session.projectId
           })
       ),
@@ -137,7 +137,7 @@ export class GetSessionController {
       Result.andThrough(async v => {
         if (v.session.status === 'Active' && v.session.opencodeSessionId) {
           let streamResult: Result.Result<boolean, StartEventStreamError> =
-            await this.editorStreamService.startEventStreamResult({
+            await this.editorStreamService.startEventStream({
               sessionId: v.sessionId,
               opencodeSessionId: v.session.opencodeSessionId,
               isSetReload: false
@@ -164,7 +164,7 @@ export class GetSessionController {
       Result.bind(
         'ocSession',
         (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
-          this.sessionsService.getOcSessionBySessionIdResult({
+          this.sessionsService.getOcSessionBySessionId({
             sessionId: v.sessionId
           })
       ),
@@ -212,7 +212,7 @@ export class GetSessionController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.ocMessageEntToTabResult({ messageEnt: x })
+                this.tabService.ocMessageEntToTab({ messageEnt: x })
               )
             )
       ),
@@ -226,7 +226,7 @@ export class GetSessionController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.ocPartEntToTabResult({ partEnt: x })
+                this.tabService.ocPartEntToTab({ partEnt: x })
               )
             )
       ),
@@ -246,7 +246,7 @@ export class GetSessionController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.ocEventEntToTabResult({ eventEnt: x })
+                this.tabService.ocEventEntToTab({ eventEnt: x })
               )
             )
       ),
@@ -258,7 +258,7 @@ export class GetSessionController {
           GetBasicSessionsListOutput,
           GetBasicSessionsListError
         > =>
-          this.sessionsService.getBasicSessionsListResult({
+          this.sessionsService.getBasicSessionsList({
             projectId: v.session.projectId,
             userId: v.userId,
             currentSessionId: v.sessionId

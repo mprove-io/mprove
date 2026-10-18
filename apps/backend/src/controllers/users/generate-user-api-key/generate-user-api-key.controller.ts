@@ -59,7 +59,7 @@ export class GenerateUserApiKeyController {
     return Result.pipe(
       Result.succeed({ user: user }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.bind(
         'apiKeyParts',

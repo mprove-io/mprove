@@ -85,12 +85,12 @@ export class GetSessionsListController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExists({
           projectId: v.projectId,
           memberId: v.userId
         })
@@ -110,7 +110,7 @@ export class GetSessionsListController {
                 })
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.sessionEntToTabResult({ sessionEnt: x })
+                    this.tabService.sessionEntToTab({ sessionEnt: x })
                   )
                 )
             : Result.succeed([])
@@ -266,7 +266,7 @@ export class GetSessionsListController {
       Result.bind(
         'sessions',
         (v): Result.ResultAsync<SessionApi[], EntsToSessionApisError> =>
-          this.sessionsService.entsToSessionApisResult({
+          this.sessionsService.entsToSessionApis({
             allEnts: isUndefined(v.currentSessionEnt)
               ? v.listedSessionEnts
               : [...v.listedSessionEnts, v.currentSessionEnt]

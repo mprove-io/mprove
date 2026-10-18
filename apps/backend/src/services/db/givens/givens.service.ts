@@ -75,7 +75,7 @@ export class GivensService {
     return apiGiven;
   }
 
-  validateGivenValuesResult(item: {
+  validateGivenValues(item: {
     type: GivenType;
     isMultiple: boolean;
     values: string[];
@@ -100,7 +100,7 @@ export class GivensService {
     return Result.succeed();
   }
 
-  async checkGivenDoesNotExistResult(item: {
+  async checkGivenDoesNotExist(item: {
     projectId: string;
     givenId: string;
   }): Result.ResultAsync<void, CheckGivenDoesNotExistError> {
@@ -118,7 +118,7 @@ export class GivensService {
       : Result.succeed();
   }
 
-  async getGivenCheckExistsResult(item: {
+  async getGivenCheckExists(item: {
     projectId: string;
     givenId: string;
   }): Result.ResultAsync<GivenTab, GetGivenCheckExistsError> {
@@ -134,11 +134,11 @@ export class GivensService {
       .then((x: GivenEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_GIVEN_DOES_NOT_EXIST' })
-          : this.tabService.givenEntToTabResult({ givenEnt: x })
+          : this.tabService.givenEntToTab({ givenEnt: x })
       );
   }
 
-  async getApiGivensResult(item: {
+  async getApiGivens(item: {
     projectId: string;
   }): Result.ResultAsync<Given[], GetApiGivensError> {
     return Result.pipe(
@@ -150,7 +150,7 @@ export class GivensService {
             .findMany({ where: eq(givensTable.projectId, v.projectId) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.givenEntToTabResult({ givenEnt: x })
+                this.tabService.givenEntToTab({ givenEnt: x })
               )
             )
       ),
@@ -164,7 +164,7 @@ export class GivensService {
     );
   }
 
-  async getMemberGivensForSelectionResult(item: {
+  async getMemberGivensForSelection(item: {
     projectId: string;
     roles: string[];
   }): Result.ResultAsync<MemberGiven[], GetMemberGivensForSelectionError> {
@@ -173,12 +173,12 @@ export class GivensService {
       Result.bind(
         'apiGivens',
         (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.getApiGivensResult({ projectId: v.projectId })
+          this.getApiGivens({ projectId: v.projectId })
       ),
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.map((v): MemberGiven[] => {
         let memberRoles: Role[] = v.apiRoles.filter(role =>

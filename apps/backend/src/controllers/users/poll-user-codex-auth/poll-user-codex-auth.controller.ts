@@ -50,12 +50,12 @@ export class PollUserCodexAuthController {
         userCode: body.input.userCode
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.bind(
         'status',
         (v): Result.ResultAsync<CodexDeviceAuthStatus, PollDeviceAuthError> =>
-          this.codexService.pollDeviceAuthResult({
+          this.codexService.pollDeviceAuth({
             userId: v.user.userId,
             deviceAuthId: v.deviceAuthId,
             userCode: v.userCode
@@ -65,7 +65,7 @@ export class PollUserCodexAuthController {
         'freshUser',
         async (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
           v.status === 'Authorized'
-            ? this.usersService.getUserCheckExistsResult({
+            ? this.usersService.getUserCheckExists({
                 userId: v.user.userId
               })
             : Result.succeed(undefined)

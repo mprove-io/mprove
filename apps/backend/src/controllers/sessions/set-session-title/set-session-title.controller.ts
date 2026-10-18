@@ -55,7 +55,7 @@ export class SetSessionTitleController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
@@ -70,7 +70,7 @@ export class SetSessionTitleController {
           let opencodeClientResult: Result.Result<
             OpencodeClient,
             GetOpenCodeClientError
-          > = await this.editorOpencodeService.getOpenCodeClientResult({
+          > = await this.editorOpencodeService.getOpenCodeClient({
             sessionId: v.sessionId
           });
 

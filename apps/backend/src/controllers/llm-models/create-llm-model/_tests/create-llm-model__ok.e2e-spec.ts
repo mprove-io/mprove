@@ -258,7 +258,9 @@ test('1', async t => {
 
       let tabService: TabService = prep.moduleRef.get<TabService>(TabService);
 
-      providerTab = tabService.providerEntToTab({ providerEnt: providerEnt });
+      providerTab = tabService.providerEntToTabUnwrap({
+        providerEnt: providerEnt
+      });
 
       let foundCodexProviderEnt: ProviderEnt =
         (await db.drizzle.query.providersTable.findFirst({
@@ -268,7 +270,7 @@ test('1', async t => {
           )
         })) as ProviderEnt;
 
-      codexProviderTab = tabService.providerEntToTab({
+      codexProviderTab = tabService.providerEntToTabUnwrap({
         providerEnt: foundCodexProviderEnt
       });
 

@@ -54,12 +54,12 @@ export class GetLlmModelsWithProviderController {
         isUserCodexAuthSet: isDefined(user.codexAuth)
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExists({
           projectId: v.projectId,
           memberId: v.userId
         })
@@ -67,7 +67,7 @@ export class GetLlmModelsWithProviderController {
       Result.bind(
         'providers',
         (v): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> =>
-          this.providersService.getEnabledProvidersResult({
+          this.providersService.getEnabledProviders({
             projectId: v.projectId
           })
       ),

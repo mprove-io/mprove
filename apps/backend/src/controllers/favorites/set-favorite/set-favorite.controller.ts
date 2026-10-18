@@ -49,18 +49,18 @@ export class SetFavoriteController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExistsResult({
+        this.membersService.getMemberCheckExists({
           projectId: v.projectId,
           memberId: v.user.userId
         })
       ),
       Result.andThrough(v =>
-        this.favoritesService.setFavoriteResult({
+        this.favoritesService.setFavorite({
           projectId: v.projectId,
           userId: v.user.userId,
           type: v.type,

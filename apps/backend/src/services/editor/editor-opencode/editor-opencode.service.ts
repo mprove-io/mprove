@@ -202,7 +202,7 @@ export class EditorOpencodeService {
       x => x.sessionId !== sessionId
     );
   }
-  async getOpenCodeClient(item: {
+  async getOpenCodeClientUnwrap(item: {
     sessionId: string;
     sandboxBaseUrl?: string;
     opencodePassword?: string;
@@ -210,7 +210,7 @@ export class EditorOpencodeService {
     let { sessionId, sandboxBaseUrl, opencodePassword } = item;
 
     let result: Result.Result<OpencodeClient, GetOpenCodeClientError> =
-      await this.getOpenCodeClientResult({
+      await this.getOpenCodeClient({
         sessionId: sessionId,
         sandboxBaseUrl: sandboxBaseUrl,
         opencodePassword: opencodePassword
@@ -225,7 +225,7 @@ export class EditorOpencodeService {
     return client;
   }
 
-  async getOpenCodeClientResult(item: {
+  async getOpenCodeClient(item: {
     sessionId: string;
     sandboxBaseUrl?: string;
     opencodePassword?: string;
@@ -241,7 +241,7 @@ export class EditorOpencodeService {
         let sessionResult: Result.Result<
           SessionTab,
           GetSessionByIdCheckExistsError
-        > = await this.sessionsService.getSessionByIdCheckExistsResult({
+        > = await this.sessionsService.getSessionByIdCheckExists({
           sessionId: sessionId
         });
 
@@ -332,7 +332,7 @@ export class EditorOpencodeService {
           );
           let host = sandbox.getHost(3000);
           let sandboxBaseUrl = `https://${host}`;
-          await this.healthCheckOpenCode({
+          await this.healthCheckOpenCodeUnwrap({
             sandboxBaseUrl: sandboxBaseUrl,
             maxAttempts: 30
           });
@@ -359,7 +359,7 @@ export class EditorOpencodeService {
       });
     }
   }
-  async restartOpencodeServerResult(item: {
+  async restartOpencodeServer(item: {
     sessionId: string;
     sandboxType: SandboxType;
     sandboxId: string;
@@ -424,7 +424,7 @@ export class EditorOpencodeService {
           );
 
           let healthResult: Result.Result<void, HealthCheckOpenCodeError> =
-            await this.healthCheckOpenCodeResult({
+            await this.healthCheckOpenCode({
               sandboxBaseUrl: sandboxBaseUrl,
               opencodePassword: opencodePassword,
               maxAttempts: 30
@@ -470,7 +470,7 @@ export class EditorOpencodeService {
       });
     }
   }
-  async healthCheckOpenCode(item: {
+  async healthCheckOpenCodeUnwrap(item: {
     sandboxBaseUrl: string;
     opencodePassword?: string;
     maxAttempts?: number;
@@ -478,7 +478,7 @@ export class EditorOpencodeService {
     let { sandboxBaseUrl, opencodePassword, maxAttempts } = item;
 
     let result: Result.Result<void, HealthCheckOpenCodeError> =
-      await this.healthCheckOpenCodeResult({
+      await this.healthCheckOpenCode({
         sandboxBaseUrl: sandboxBaseUrl,
         opencodePassword: opencodePassword,
         maxAttempts: maxAttempts
@@ -489,7 +489,7 @@ export class EditorOpencodeService {
     }
   }
 
-  async healthCheckOpenCodeResult(item: {
+  async healthCheckOpenCode(item: {
     sandboxBaseUrl: string;
     opencodePassword?: string;
     maxAttempts?: number;

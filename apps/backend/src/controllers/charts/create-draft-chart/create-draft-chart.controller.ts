@@ -142,7 +142,7 @@ export class CreateDraftChartController {
         queryOperation: body.input.queryOperation
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -152,14 +152,14 @@ export class CreateDraftChartController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -174,14 +174,14 @@ export class CreateDraftChartController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -190,7 +190,7 @@ export class CreateDraftChartController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -205,7 +205,7 @@ export class CreateDraftChartController {
           StructTab,
           GetStructCheckExistsAndNotChangedError
         > =>
-          this.structsService.getStructCheckExistsAndNotChangedResult({
+          this.structsService.getStructCheckExistsAndNotChanged({
             projectId: v.projectId,
             bridgeStructId: v.bridge.structId,
             structId: v.apiMconfig.structId
@@ -214,7 +214,7 @@ export class CreateDraftChartController {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessError> =>
-          this.modelsService.getModelCheckExistsAndAccessResult({
+          this.modelsService.getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
             modelId: v.apiMconfig.modelId,
             userMember: v.userMember
@@ -244,7 +244,7 @@ export class CreateDraftChartController {
           let prepStoreMconfigQueryOutput: Result.Result<
             PrepStoreMconfigQueryOutput,
             PrepStoreMconfigQueryError
-          > = await this.mconfigsService.prepStoreMconfigQueryResult({
+          > = await this.mconfigsService.prepStoreMconfigQuery({
             struct: v.struct,
             project: v.project,
             envId: v.envId,
@@ -289,7 +289,7 @@ export class CreateDraftChartController {
           let editMalloyQueryOutput: Result.Result<
             EditMalloyQueryOutput,
             EditMalloyQueryError
-          > = await this.malloyService.editMalloyQueryResult({
+          > = await this.malloyService.editMalloyQuery({
             projectId: v.projectId,
             envId: v.envId,
             structId: v.struct.structId,
@@ -334,7 +334,7 @@ export class CreateDraftChartController {
           v.prepareQueryPayload.newMconfig.queryId = v.apiMconfig.queryId;
 
           let queryResult: Result.Result<QueryTab, GetQueryCheckExistsError> =
-            await this.queriesService.getQueryCheckExistsResult({
+            await this.queriesService.getQueryCheckExists({
               queryId: v.prepareQueryPayload.newMconfig.queryId,
               projectId: v.projectId
             });
@@ -453,7 +453,7 @@ export class CreateDraftChartController {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.queryEntToTabResult({
+                : this.tabService.queryEntToTab({
                     queryEnt: x
                   })
             )
@@ -472,7 +472,7 @@ export class CreateDraftChartController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -481,7 +481,7 @@ export class CreateDraftChartController {
       Result.bind(
         'chartsCatalog',
         (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
-          this.chartsService.getChartsCatalogResult({
+          this.chartsService.getChartsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

@@ -36,7 +36,7 @@ export class UrlService {
     }
   }
 
-  async checkApiUrlResult(item: {
+  async checkApiUrl(item: {
     urlStr: string;
   }): Result.ResultAsync<void, CheckApiUrlError> {
     return Result.pipe(

@@ -55,7 +55,7 @@ export class GetConnectionsListTool {
       }),
       Result.andThrough(v =>
         v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionEnvIdResult({
+          ? this.toolService.validateSessionEnvId({
               envId: v.envId,
               request: v.request
             })

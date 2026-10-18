@@ -94,7 +94,7 @@ So searchFieldNames will be a list of individual words.`
               SearchModelFieldsToolResult,
               SearchModelFieldsError
             > =>
-              this.searchModelFieldsService.searchModelFieldsResult({
+              this.searchModelFieldsService.searchModelFields({
                 userId: v.userId,
                 projectId: v.projectId,
                 repoId: v.repoId,

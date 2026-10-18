@@ -31,7 +31,7 @@ export class FavoritesService {
     });
   }
 
-  async setFavoriteResult(item: {
+  async setFavorite(item: {
     projectId: string;
     userId: string;
     type: FavoriteType;

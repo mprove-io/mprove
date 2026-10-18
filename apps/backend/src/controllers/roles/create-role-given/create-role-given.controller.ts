@@ -77,14 +77,14 @@ export class CreateRoleGivenController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdminResult({
+          this.membersService.getMemberCheckIsAdmin({
             memberId: v.user.userId,
             projectId: v.projectId
           })
@@ -92,7 +92,7 @@ export class CreateRoleGivenController {
       Result.bind(
         'role',
         (v): Result.ResultAsync<RoleTab, GetRoleCheckExistsError> =>
-          this.rolesService.getRoleCheckExistsResult({
+          this.rolesService.getRoleCheckExists({
             projectId: v.projectId,
             roleId: v.roleId
           })
@@ -100,20 +100,20 @@ export class CreateRoleGivenController {
       Result.bind(
         'given',
         (v): Result.ResultAsync<GivenTab, GetGivenCheckExistsError> =>
-          this.givensService.getGivenCheckExistsResult({
+          this.givensService.getGivenCheckExists({
             projectId: v.projectId,
             givenId: v.givenId
           })
       ),
       Result.andThrough(v =>
-        this.givensService.validateGivenValuesResult({
+        this.givensService.validateGivenValues({
           type: v.given.type,
           isMultiple: v.given.isMultiple === true,
           values: v.values
         })
       ),
       Result.andThrough(v =>
-        this.rolesService.checkRoleGivenDoesNotExistResult({
+        this.rolesService.checkRoleGivenDoesNotExist({
           role: v.role,
           givenId: v.givenId
         })
@@ -142,7 +142,7 @@ export class CreateRoleGivenController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateRoleGivenOutput => ({

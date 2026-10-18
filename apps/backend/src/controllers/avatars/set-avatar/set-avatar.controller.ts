@@ -49,7 +49,7 @@ export class SetAvatarController {
         user: user
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.bind(
         'avatar',

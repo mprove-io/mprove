@@ -30,7 +30,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
 
         try {
           let drainQueues: Result.Result<string[], DrainAllQueuesError> =
-            await this.sessionDrainService.drainAllQueuesResult();
+            await this.sessionDrainService.drainAllQueues();
 
           if (Result.isFailure(drainQueues)) {
             throw new ServerError({ message: drainQueues.error.code });

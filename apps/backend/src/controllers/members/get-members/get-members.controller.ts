@@ -72,20 +72,20 @@ export class GetMembersController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestrictedResult({
+        this.projectsService.checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
           repoId: undefined
@@ -98,7 +98,7 @@ export class GetMembersController {
             .findMany({ where: and(eq(membersTable.projectId, v.projectId)) })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.memberEntToTabResult({ memberEnt: x })
+                this.tabService.memberEntToTab({ memberEnt: x })
               )
             )
       ),
@@ -138,7 +138,7 @@ export class GetMembersController {
                 .where(inArray(avatarsTable.userId, v.memberIds))
                 .then(xs =>
                   Result.sequence(xs, x =>
-                    this.tabService.avatarEntToTabResult({
+                    this.tabService.avatarEntToTab({
                       avatarEnt: x as AvatarEnt
                     })
                   )
@@ -161,7 +161,7 @@ export class GetMembersController {
       Result.bind(
         'apiRoles',
         (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRolesResult({ projectId: v.projectId })
+          this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.map(v => {
         v.apiMembers.forEach(apiMember => {

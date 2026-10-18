@@ -48,7 +48,7 @@ export class LlmModelService {
   private modelsDev?: ProviderMap;
   private modelsDevTs?: number;
   constructor(private codexService: CodexService) {}
-  async refreshModelResult(item: {
+  async refreshModel(item: {
     providerType: ProviderType;
     apiKey?: string;
     userId?: string;
@@ -77,7 +77,7 @@ export class LlmModelService {
 
     if (isManualModel) {
       let limitsResult: Result.Result<void, ValidateManualModelLimitsError> =
-        this.validateManualModelLimitsResult({ modelInput: modelInput });
+        this.validateManualModelLimits({ modelInput: modelInput });
 
       if (Result.isFailure(limitsResult)) {
         return limitsResult;
@@ -106,7 +106,7 @@ export class LlmModelService {
       };
 
       let variantsResult: Result.Result<void, ValidateModelVariantsError> =
-        this.validateModelVariantsResult({
+        this.validateModelVariants({
           variants: model.variants,
           isExplorer: model.isExplorer,
           isBuilder: model.isBuilder
@@ -122,7 +122,7 @@ export class LlmModelService {
     let discoveryResult: Result.Result<
       LlmModelPart,
       GetDiscoveredLlmModelPartError
-    > = await this.getDiscoveredLlmModelPartResult({
+    > = await this.getDiscoveredLlmModelPart({
       providerType: providerType,
       modelId: modelInput.modelId,
       apiKey: apiKey,
@@ -155,7 +155,7 @@ export class LlmModelService {
     let reconciledResult: Result.Result<
       LlmModelVariant[],
       ReconcileDiscoveredModelVariantsError
-    > = this.reconcileDiscoveredModelVariantsResult({
+    > = this.reconcileDiscoveredModelVariants({
       variants: model.variants,
       storedVariants: [],
       currentVariantNames: currentVariantNames,
@@ -170,7 +170,7 @@ export class LlmModelService {
     model.variants = reconciledResult.value;
 
     let variantsResult: Result.Result<void, ValidateModelVariantsError> =
-      this.validateModelVariantsResult({
+      this.validateModelVariants({
         variants: model.variants,
         isExplorer: model.isExplorer,
         isBuilder: model.isBuilder
@@ -183,7 +183,7 @@ export class LlmModelService {
     return Result.succeed(model);
   }
 
-  async getDiscoveredLlmModelPartResult(item: {
+  async getDiscoveredLlmModelPart(item: {
     providerType: ModelCatalogProviderType;
     modelId: string;
     apiKey?: string;
@@ -196,7 +196,7 @@ export class LlmModelService {
       Result.bind(
         'discovery',
         (v): Result.ResultAsync<LlmModelPartsResult, GetModelPartsError> =>
-          this.getModelPartsResult({
+          this.getModelParts({
             providerType: v.providerType,
             apiKey: v.apiKey,
             userId: v.userId,
@@ -218,7 +218,7 @@ export class LlmModelService {
     );
   }
 
-  validateModelVariantsResult(item: {
+  validateModelVariants(item: {
     variants: LlmModelVariant[];
     isExplorer: boolean;
     isBuilder: boolean;
@@ -267,7 +267,7 @@ export class LlmModelService {
     return Result.succeed();
   }
 
-  reconcileDiscoveredModelVariantsResult(item: {
+  reconcileDiscoveredModelVariants(item: {
     variants: LlmModelVariant[];
     storedVariants: LlmModelVariant[];
     currentVariantNames: string[];
@@ -387,7 +387,7 @@ export class LlmModelService {
     return adjustedVariants;
   }
 
-  validateManualModelLimitsResult(item: {
+  validateManualModelLimits(item: {
     modelInput: LlmModelInput;
   }): Result.Result<void, ValidateManualModelLimitsError> {
     let { modelInput } = item;
@@ -413,7 +413,7 @@ export class LlmModelService {
     return Result.succeed();
   }
 
-  async getModelPartsResult(item: {
+  async getModelParts(item: {
     providerType: ModelCatalogProviderType;
     apiKey?: string;
     userId?: string;
@@ -463,7 +463,7 @@ export class LlmModelService {
     }
 
     if (providerType === 'Anthropic') {
-      return this.getAnthropicModelPartsResult({
+      return this.getAnthropicModelParts({
         apiKey: apiKey as string
       }).then(result =>
         Result.isFailure(result)
@@ -559,7 +559,7 @@ export class LlmModelService {
     return Result.succeed(result);
   }
 
-  private async getAnthropicModelPartsResult(item: {
+  private async getAnthropicModelParts(item: {
     apiKey: string;
   }): Result.ResultAsync<LlmModelPart[], GetAnthropicModelPartsError> {
     let { apiKey } = item;

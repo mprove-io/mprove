@@ -73,10 +73,10 @@ export class GenerateProjectRemoteKeyController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwner({
           org: v.org,
           userId: v.userId
         })

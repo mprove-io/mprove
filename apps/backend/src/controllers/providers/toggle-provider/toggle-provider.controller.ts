@@ -66,12 +66,12 @@ export class ToggleProviderController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -79,7 +79,7 @@ export class ToggleProviderController {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.providersService.getProviderCheckExistsResult({
+          this.providersService.getProviderCheckExists({
             projectId: v.projectId,
             providerId: v.providerId
           })

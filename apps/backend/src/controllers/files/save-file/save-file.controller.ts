@@ -107,7 +107,7 @@ export class SaveFileController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -117,14 +117,14 @@ export class SaveFileController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditorResult({
+          this.membersService.getMemberCheckIsEditor({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -132,14 +132,14 @@ export class SaveFileController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -148,7 +148,7 @@ export class SaveFileController {
       Result.bind(
         'diskSaveFileOutput',
         (v): Result.ResultAsync<ToDiskSaveFileOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'saveFile',
               traceId: v.traceId,
@@ -188,7 +188,7 @@ export class SaveFileController {
               let result: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStructResult({
+              > = await this.blockmlService.rebuildStruct({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
                 projectId: v.projectId,
@@ -245,7 +245,7 @@ export class SaveFileController {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.currentBridgeEnt.structId,
             projectId: v.projectId
           })
@@ -253,7 +253,7 @@ export class SaveFileController {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXs({
             structId: v.struct.structId,
             apiUserMember: this.membersService.tabToApi({
               member: v.userMember

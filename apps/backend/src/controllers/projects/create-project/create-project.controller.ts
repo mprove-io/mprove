@@ -94,10 +94,10 @@ export class CreateProjectController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExistsResult({ orgId: v.orgId })
+          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwnerResult({
+        this.orgsService.checkUserIsOrgOwner({
           org: v.org,
           userId: v.user.userId
         })
@@ -113,12 +113,12 @@ export class CreateProjectController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.name,
             hashSecret: v.hashSecret
           })
@@ -136,7 +136,7 @@ export class CreateProjectController {
             .then((x: ProjectEnt) =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.projectEntToTabResult({
+                : this.tabService.projectEntToTab({
                     projectEnt: x
                   })
             )
@@ -163,7 +163,7 @@ export class CreateProjectController {
                 .then((x: NoteEnt) =>
                   isUndefined(x)
                     ? Result.fail({ code: 'BACKEND_NOTE_DOES_NOT_EXIST' })
-                    : this.tabService.noteEntToTabResult({
+                    : this.tabService.noteEntToTab({
                         noteEnt: x
                       })
                 )
@@ -171,7 +171,7 @@ export class CreateProjectController {
       Result.bind(
         'newProject',
         (v): Result.ResultAsync<ProjectTab, AddProjectError> =>
-          this.projectsService.addProjectResult({
+          this.projectsService.addProject({
             orgId: v.orgId,
             name: v.name,
             traceId: v.traceId,

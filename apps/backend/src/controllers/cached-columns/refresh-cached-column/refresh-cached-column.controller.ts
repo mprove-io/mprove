@@ -115,7 +115,7 @@ export class RefreshCachedColumnController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
@@ -124,13 +124,13 @@ export class RefreshCachedColumnController {
         (
           v
         ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdminResult({
+          this.membersService.getMemberCheckIsEditorOrAdmin({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -139,14 +139,14 @@ export class RefreshCachedColumnController {
       Result.bind(
         'cacheEnvId',
         (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvIdResult({
+          this.cachedColumnService.getCacheEnvId({
             projectId: v.projectId,
             envId: v.envId
           })
       ),
       Result.andThrough(v =>
         v.cacheEnvId === PROJECT_ENV_PROD
-          ? this.membersService.getMemberCheckIsAdminResult({
+          ? this.membersService.getMemberCheckIsAdmin({
               memberId: v.userId,
               projectId: v.projectId
             })
@@ -155,7 +155,7 @@ export class RefreshCachedColumnController {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.bind(
         'apiEnv',
@@ -185,7 +185,7 @@ export class RefreshCachedColumnController {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.connectionEntToTabResult({
+                this.tabService.connectionEntToTab({
                   connectionEnt: x
                 })
               )
@@ -278,7 +278,7 @@ export class RefreshCachedColumnController {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.cachedColumnEntToTabResult({
+                : this.tabService.cachedColumnEntToTab({
                     cachedColumnEnt: x
                   })
             )
@@ -443,7 +443,7 @@ export class RefreshCachedColumnController {
               })
             )
           })
-          .then(x => this.tabService.cachedColumnEntToTab(x));
+          .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
 
       if (
         isUndefined(currentCachedColumn) ||
@@ -511,7 +511,7 @@ export class RefreshCachedColumnController {
                       })
                     )
                   })
-                  .then(x => this.tabService.cachedColumnEntToTab(x));
+                  .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
 
               if (
                 isUndefined(currentCachedColumn) ||

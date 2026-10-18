@@ -84,7 +84,7 @@ export class EditorSandboxService {
     return all;
   }
 
-  async stopSandboxResult(item: {
+  async stopSandbox(item: {
     sandboxType?: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
@@ -107,7 +107,7 @@ export class EditorSandboxService {
     }
   }
 
-  async pauseSandboxResult(item: {
+  async pauseSandbox(item: {
     sandboxType?: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
@@ -128,7 +128,7 @@ export class EditorSandboxService {
     }
   }
 
-  async resumeSandboxResult(item: {
+  async resumeSandbox(item: {
     sandboxType?: SandboxType;
     sandboxId: string;
     e2bApiKey: string;
@@ -150,7 +150,7 @@ export class EditorSandboxService {
     }
   }
 
-  async getEditorSessionsToPauseResult(): Result.ResultAsync<
+  async getEditorSessionsToPause(): Result.ResultAsync<
     string[],
     GetEditorSessionsToPauseError
   > {
@@ -172,7 +172,7 @@ export class EditorSandboxService {
         })
         .then(xs =>
           Result.sequence(xs, x =>
-            this.tabService.sessionEntToTabResult({ sessionEnt: x })
+            this.tabService.sessionEntToTab({ sessionEnt: x })
           )
         );
 
@@ -192,7 +192,7 @@ export class EditorSandboxService {
     return Result.succeed(sessionIdsToPause);
   }
 
-  async pauseSessionByIdResult(item: {
+  async pauseSessionById(item: {
     sessionId: string;
     pauseReason: PauseReason;
   }): Result.ResultAsync<void, PauseSessionByIdError> {
@@ -201,7 +201,7 @@ export class EditorSandboxService {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExistsResult({
+          this.sessionsService.getSessionByIdCheckExists({
             sessionId: v.sessionId
           })
       ),
@@ -214,14 +214,14 @@ export class EditorSandboxService {
           v.session.status !== 'Active' ||
           !v.session.sandboxId
             ? Result.succeed(undefined)
-            : this.projectsService.getProjectCheckExistsResult({
+            : this.projectsService.getProjectCheckExists({
                 projectId: v.session.projectId
               })
       ),
       Result.andThrough(v =>
         !v.project?.e2bApiKey
           ? Result.succeed()
-          : this.pauseSandboxResult({
+          : this.pauseSandbox({
               sandboxType: v.session.sandboxType,
               sandboxId: v.session.sandboxId,
               e2bApiKey: v.project.e2bApiKey
@@ -252,7 +252,7 @@ export class EditorSandboxService {
     );
   }
 
-  async syncAllEditorSessionsStatusResult(): Result.ResultAsync<
+  async syncAllEditorSessionsStatus(): Result.ResultAsync<
     string[],
     SyncAllEditorSessionsStatusError
   > {
@@ -266,7 +266,7 @@ export class EditorSandboxService {
         })
         .then(xs =>
           Result.sequence(xs, x =>
-            this.tabService.sessionEntToTabResult({ sessionEnt: x })
+            this.tabService.sessionEntToTab({ sessionEnt: x })
           )
         );
 
@@ -287,7 +287,7 @@ export class EditorSandboxService {
         let projectResult: Result.Result<
           ProjectTab,
           GetProjectCheckExistsError
-        > = await this.projectsService.getProjectCheckExistsResult({
+        > = await this.projectsService.getProjectCheckExists({
           projectId: projectId
         });
 
@@ -353,7 +353,7 @@ export class EditorSandboxService {
         }
 
         let sessionLockResult: Result.Result<string, AcquireSessionLockError> =
-          await this.editorSessionLockService.acquireSessionLockResult({
+          await this.editorSessionLockService.acquireSessionLock({
             sessionId: session.sessionId
           });
 
@@ -367,7 +367,7 @@ export class EditorSandboxService {
           let freshSessionResult: Result.Result<
             SessionTab,
             GetSessionByIdCheckExistsError
-          > = await this.sessionsService.getSessionByIdCheckExistsResult({
+          > = await this.sessionsService.getSessionByIdCheckExists({
             sessionId: session.sessionId
           });
 

@@ -73,12 +73,12 @@ export class ConfirmUserEmailController {
       Result.bind(
         'hashSecret',
         (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecretResult()
+          this.dconfigsService.getDconfigHashSecret()
       ),
       Result.bind(
         'emailVerificationTokenHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.emailVerificationToken,
             hashSecret: v.hashSecret
           })
@@ -96,14 +96,14 @@ export class ConfirmUserEmailController {
             .then(x =>
               isUndefined(x)
                 ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-                : this.tabService.userEntToTabResult({ userEnt: x })
+                : this.tabService.userEntToTab({ userEnt: x })
             )
       ),
       Result.andThrough(v =>
-        this.usersService.checkUserPasswordHashIsDefinedResult({ user: v.user })
+        this.usersService.checkUserPasswordHashIsDefined({ user: v.user })
       ),
       Result.andThrough(v =>
-        this.membersService.addMemberToDemoProjectResult({
+        this.membersService.addMemberToDemoProject({
           traceId: v.traceId,
           user: v.user
         })

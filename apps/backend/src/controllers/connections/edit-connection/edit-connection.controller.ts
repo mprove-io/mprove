@@ -81,25 +81,25 @@ export class EditConnectionController {
       }),
       Result.andThrough(v =>
         isDefined(v.options.storeApi)
-          ? this.urlService.checkApiUrlResult({
+          ? this.urlService.checkApiUrl({
               urlStr: v.options.storeApi.baseUrl
             })
           : Result.succeed()
       ),
       Result.andThrough(v =>
         isDefined(v.options.storeGoogleApi)
-          ? this.urlService.checkApiUrlResult({
+          ? this.urlService.checkApiUrl({
               urlStr: v.options.storeApi.baseUrl
             })
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -107,7 +107,7 @@ export class EditConnectionController {
       Result.bind(
         'connection',
         (v): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsError> =>
-          this.connectionsService.getConnectionCheckExistsResult({
+          this.connectionsService.getConnectionCheckExists({
             projectId: v.projectId,
             envId: v.envId,
             connectionId: v.connectionId

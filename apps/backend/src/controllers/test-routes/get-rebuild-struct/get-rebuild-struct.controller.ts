@@ -81,7 +81,7 @@ export class GetRebuildStructController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
@@ -95,7 +95,7 @@ export class GetRebuildStructController {
       Result.bind(
         'diskGetCatalogFilesOutput',
         (v): Result.ResultAsync<ToDiskGetCatalogFilesOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'getCatalogFiles',
               traceId: v.traceId,
@@ -115,7 +115,7 @@ export class GetRebuildStructController {
           GetApiEnvConnectionsWithFallbackOutput,
           GetApiEnvConnectionsWithFallbackError
         > =>
-          this.envsService.getApiEnvConnectionsWithFallbackResult({
+          this.envsService.getApiEnvConnectionsWithFallback({
             projectId: v.projectId,
             envId: v.envId
           })

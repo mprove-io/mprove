@@ -82,12 +82,12 @@ export class CreateLlmModelController {
         isCodexAuthSet: isDefined(user.codexAuth)
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -95,13 +95,13 @@ export class CreateLlmModelController {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.providersService.getProviderCheckExistsResult({
+          this.providersService.getProviderCheckExists({
             projectId: v.projectId,
             providerId: v.providerId
           })
       ),
       Result.andThrough(v =>
-        this.providersService.checkLlmModelDoesNotExistResult({
+        this.providersService.checkLlmModelDoesNotExist({
           provider: v.provider,
           modelId: v.modelId
         })
@@ -109,7 +109,7 @@ export class CreateLlmModelController {
       Result.bind(
         'model',
         (v): Result.ResultAsync<LlmModel, RefreshModelError> =>
-          this.llmModelService.refreshModelResult({
+          this.llmModelService.refreshModel({
             providerType: v.provider.type,
             apiKey:
               v.provider.type === 'OpenAICodex'

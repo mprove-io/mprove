@@ -121,7 +121,7 @@ export class ReportDataService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getReportDataResult(item: {
+  async getReportData(item: {
     traceId: string;
     timezone: string;
     timeSpec: TimeSpec;
@@ -141,7 +141,7 @@ export class ReportDataService {
       Result.bind(
         'getTimeColumnsOutput',
         (v): Result.ResultAsync<GetTimeColumnsOutput, GetTimeColumnsError> =>
-          this.reportTimeColumnsService.getTimeColumnsResult({
+          this.reportTimeColumnsService.getTimeColumns({
             traceId: v.traceId,
             timezone: v.timezone,
             timeSpec: v.timeSpec,
@@ -215,7 +215,7 @@ export class ReportDataService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -555,7 +555,7 @@ export class ReportDataService {
                   let prepStoreMconfigQueryOutput: Result.Result<
                     PrepStoreMconfigQueryOutput,
                     PrepStoreMconfigQueryError
-                  > = await this.mconfigsService.prepStoreMconfigQueryResult({
+                  > = await this.mconfigsService.prepStoreMconfigQuery({
                     struct: v.struct,
                     project: v.project,
                     envId: v.envId,
@@ -597,7 +597,7 @@ export class ReportDataService {
                   let editMalloyQueryOutput: Result.Result<
                     EditMalloyQueryOutput,
                     EditMalloyQueryError
-                  > = await this.malloyService.editMalloyQueryResult({
+                  > = await this.malloyService.editMalloyQuery({
                     projectId: v.project.projectId,
                     envId: v.envId,
                     structId: v.struct.structId,
@@ -713,7 +713,7 @@ export class ReportDataService {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.mconfigEntToTabResult({
+                  : this.tabService.mconfigEntToTab({
                       mconfigEnt: x
                     })
               )
@@ -749,7 +749,7 @@ export class ReportDataService {
                 Result.sequence(xs, x =>
                   isUndefined(x)
                     ? Result.succeed(undefined)
-                    : this.tabService.queryEntToTabResult({
+                    : this.tabService.queryEntToTab({
                         queryEnt: x
                       })
                 )
@@ -783,7 +783,7 @@ export class ReportDataService {
                   Result.sequence(xs, x =>
                     isUndefined(x)
                       ? Result.succeed(undefined)
-                      : this.tabService.kitEntToTabResult({ kitEnt: x })
+                      : this.tabService.kitEntToTab({ kitEnt: x })
                   )
                 )
       ),
@@ -935,7 +935,7 @@ export class ReportDataService {
           let calculatedReportResult: Result.Result<
             ReportX,
             CalculateDataError
-          > = await this.docService.calculateDataResult({
+          > = await this.docService.calculateData({
             report: v.prepareReportCalculationPayload.reportApi,
             timezone: v.timezone,
             timeSpec: v.timeSpec,
@@ -953,7 +953,7 @@ export class ReportDataService {
           let reportDataColumnsResult: Result.Result<
             ReportDataColumn[],
             MakeReportDataColumnsError
-          > = this.docService.makeReportDataColumnsResult({
+          > = this.docService.makeReportDataColumns({
             report: v.prepareReportCalculationPayload.reportApi,
             timeSpec: v.timeSpec
           });

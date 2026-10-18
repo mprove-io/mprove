@@ -131,7 +131,7 @@ export class ModelsService {
     return model;
   }
 
-  async getModelCheckExistsResult(item: {
+  async getModelCheckExists(item: {
     modelId: string;
     structId: string;
   }): Result.ResultAsync<ModelTab, GetModelCheckExistsError> {
@@ -147,11 +147,11 @@ export class ModelsService {
       .then(x =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_MODEL_DOES_NOT_EXIST' })
-          : this.tabService.modelEntToTabResult({ modelEnt: x })
+          : this.tabService.modelEntToTab({ modelEnt: x })
       );
   }
 
-  async getModelCheckExistsAndAccessResult(item: {
+  async getModelCheckExistsAndAccess(item: {
     modelId: string;
     structId: string;
     userMember: MemberTab;
@@ -166,7 +166,7 @@ export class ModelsService {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
-          this.getModelCheckExistsResult({
+          this.getModelCheckExists({
             modelId: v.modelId,
             structId: v.structId
           })
@@ -183,7 +183,7 @@ export class ModelsService {
     );
   }
 
-  async getModelPartXsResult(item: {
+  async getModelPartXs(item: {
     structId: string;
     apiUserMember: Member;
   }): Result.ResultAsync<ModelPartX[], GetModelPartXsError> {
@@ -202,7 +202,7 @@ export class ModelsService {
             .where(and(eq(modelsTable.structId, v.structId)))
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.modelEntToTabResult({
+                this.tabService.modelEntToTab({
                   modelEnt: x as ModelEnt
                 })
               )

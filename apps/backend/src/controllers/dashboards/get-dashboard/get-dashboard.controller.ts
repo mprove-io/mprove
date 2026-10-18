@@ -70,7 +70,7 @@ export class GetDashboardController {
         timezone: body.input.timezone
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -80,14 +80,14 @@ export class GetDashboardController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -95,7 +95,7 @@ export class GetDashboardController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
@@ -105,7 +105,7 @@ export class GetDashboardController {
         let envAccessResult: Result.Result<
           EnvTab,
           GetEnvCheckExistsAndAccessError
-        > = await this.envsService.getEnvCheckExistsAndAccessResult({
+        > = await this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -120,7 +120,7 @@ export class GetDashboardController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -134,7 +134,7 @@ export class GetDashboardController {
           ToBackendGetDashboardOutput,
           GetDashboardDataError
         > =>
-          this.queryInfoDashboardService.getDashboardDataResult({
+          this.queryInfoDashboardService.getDashboardData({
             traceId: v.traceId,
             user: v.user,
             userMember: v.userMember,

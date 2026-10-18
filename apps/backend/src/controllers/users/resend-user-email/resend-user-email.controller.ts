@@ -64,10 +64,10 @@ export class ResendUserEmailController {
       Result.bind(
         'user',
         (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          this.usersService.getUserCheckExistsResult({ userId: v.userId })
+          this.usersService.getUserCheckExists({ userId: v.userId })
       ),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestrictedResult({ user: v.user })
+        this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.andThrough(async v => {
         if (v.user.isEmailVerified === true) {

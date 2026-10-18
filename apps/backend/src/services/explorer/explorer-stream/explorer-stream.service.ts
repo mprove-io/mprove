@@ -236,7 +236,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     return true;
   }
 
-  async publishInteractCommandResult(item: {
+  async publishInteractCommand(item: {
     sessionId: string;
     provider: string;
     modelId: string;
@@ -518,7 +518,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         });
 
         let runProducerOutput: Result.Result<void, RunProducerError> =
-          await this.runProducerResult({
+          await this.runProducer({
             sessionId: sessionId,
             provider: currentParams.provider,
             modelId: currentParams.modelId,
@@ -611,7 +611,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
   // --- Producer ---
 
-  private async runProducerResult(item: {
+  private async runProducer(item: {
     sessionId: string;
     provider: string;
     modelId: string;
@@ -633,7 +633,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     } = item;
 
     let historyResult: Result.Result<ModelMessage[], LoadMessageHistoryError> =
-      await this.loadMessageHistoryResult({
+      await this.loadMessageHistory({
         sessionId: sessionId
       });
 
@@ -646,7 +646,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let sessionResult: Result.Result<
       SessionTab,
       GetSessionByIdCheckExistsError
-    > = await this.sessionsService.getSessionByIdCheckExistsResult({
+    > = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId
     });
 
@@ -657,7 +657,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let session: SessionTab = sessionResult.value;
 
     let userResult: Result.Result<UserTab, GetUserCheckExistsError> =
-      await this.usersService.getUserCheckExistsResult({
+      await this.usersService.getUserCheckExists({
         userId: session.userId
       });
 
@@ -670,7 +670,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let modelSelectionResult: Result.Result<
       GetModelSelectionOutput,
       GetModelSelectionError
-    > = await this.providersService.getModelSelectionResult({
+    > = await this.providersService.getModelSelection({
       projectId: session.projectId,
       providerId: provider,
       modelId: modelId,
@@ -688,7 +688,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let isCodex = modelSelection.provider.type === 'OpenAICodex';
 
     let projectResult: Result.Result<ProjectTab, GetProjectCheckExistsError> =
-      await this.projectsService.getProjectCheckExistsResult({
+      await this.projectsService.getProjectCheckExists({
         projectId: session.projectId
       });
 
@@ -710,7 +710,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let traceId = makeId();
 
     let structResult: Result.Result<StructTab, GetStructCheckExistsError> =
-      await this.structsService.getStructCheckExistsResult({
+      await this.structsService.getStructCheckExists({
         structId: bridge.structId,
         projectId: session.projectId
       });
@@ -724,7 +724,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let explorerModelPartsResult: Result.Result<
       ExplorerModelPart[],
       GetExplorerModelPartsError
-    > = await this.explorerModelPartsService.getExplorerModelPartsResult({
+    > = await this.explorerModelPartsService.getExplorerModelParts({
       userId: user.userId,
       projectId: session.projectId,
       repoId: session.repoId,
@@ -827,7 +827,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     // Build codex fetch if needed (reads fresh auth from DB)
     let codexFetchResult: Result.Result<typeof fetch, BuildCodexFetchError> =
       isCodex
-        ? await this.codexService.buildCodexFetchResult({
+        ? await this.codexService.buildCodexFetch({
             userId: user.userId,
             sessionId: sessionId
           })
@@ -840,7 +840,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let codexFetch: typeof fetch = codexFetchResult.value;
 
     let modelResult: Result.Result<LanguageModel, GetExplorerModelError> =
-      this.explorerModelsService.getExplorerModelResult({
+      this.explorerModelsService.getExplorerModel({
         provider: modelSelection.provider,
         modelId: modelId,
         codexFetch: codexFetch
@@ -1339,7 +1339,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     };
   }
 
-  async loadMessageHistoryResult(item: {
+  async loadMessageHistory(item: {
     sessionId: string;
   }): Result.ResultAsync<ModelMessage[], LoadMessageHistoryError> {
     let { sessionId } = item;
@@ -1351,7 +1351,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let messagesResult: Result.Result<OcMessageTab[], OcMessageEntToTabError> =
       Result.sequence(messageEnts, x =>
-        this.tabService.ocMessageEntToTabResult({ messageEnt: x })
+        this.tabService.ocMessageEntToTab({ messageEnt: x })
       );
 
     if (Result.isFailure(messagesResult)) {
@@ -1367,7 +1367,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let partsResult: Result.Result<OcPartTab[], OcPartEntToTabError> =
       Result.sequence(partEnts, x =>
-        this.tabService.ocPartEntToTabResult({ partEnt: x })
+        this.tabService.ocPartEntToTab({ partEnt: x })
       );
 
     if (Result.isFailure(partsResult)) {

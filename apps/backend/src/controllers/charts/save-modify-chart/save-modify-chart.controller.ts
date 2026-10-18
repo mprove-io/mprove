@@ -201,7 +201,7 @@ export class SaveModifyChartController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestrictedResult({ user: v.user });
+        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -210,7 +210,7 @@ export class SaveModifyChartController {
         let repoAccessResult: Result.Result<
           'session' | 'production' | 'dev',
           CheckRepoIdError
-        > = await this.sessionsService.checkRepoIdResult({
+        > = await this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -226,7 +226,7 @@ export class SaveModifyChartController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
@@ -243,7 +243,7 @@ export class SaveModifyChartController {
           let userMemberResult: Result.Result<
             MemberTab,
             GetMemberCheckExistsError
-          > = await this.membersService.getMemberCheckExistsResult({
+          > = await this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           });
@@ -257,7 +257,7 @@ export class SaveModifyChartController {
           let projectRestrictionResult: Result.Result<
             void,
             CheckProjectIsNotRestrictedError
-          > = await this.projectsService.checkProjectIsNotRestrictedResult({
+          > = await this.projectsService.checkProjectIsNotRestricted({
             projectId: v.projectId,
             userMember: userMember,
             repoId: v.repoId
@@ -279,14 +279,14 @@ export class SaveModifyChartController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -295,7 +295,7 @@ export class SaveModifyChartController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -305,7 +305,7 @@ export class SaveModifyChartController {
       Result.bind(
         'currentStruct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -321,7 +321,7 @@ export class SaveModifyChartController {
           let existingChartResult: Result.Result<
             ChartTab,
             GetChartCheckExistsError
-          > = await this.chartsService.getChartCheckExistsResult({
+          > = await this.chartsService.getChartCheckExists({
             structId: v.bridge.structId,
             chartId: v.chartId,
             userMember: v.userMember,
@@ -339,7 +339,7 @@ export class SaveModifyChartController {
             v.userMember.isEditor === false
           ) {
             let chartPathResult: Result.Result<void, CheckChartPathError> =
-              this.chartsService.checkChartPathResult({
+              this.chartsService.checkChartPath({
                 userAlias: v.user.alias,
                 filePath: existingChart.filePath
               });
@@ -355,7 +355,7 @@ export class SaveModifyChartController {
       Result.bind(
         'mconfig',
         (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
-          this.mconfigsService.getMconfigCheckExistsResult({
+          this.mconfigsService.getMconfigCheckExists({
             structId: v.bridge.structId,
             mconfigId: v.existingChart.tiles[0].mconfigId
           })
@@ -363,7 +363,7 @@ export class SaveModifyChartController {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessError> =>
-          this.modelsService.getModelCheckExistsAndAccessResult({
+          this.modelsService.getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
             modelId: v.mconfig.modelId,
             userMember: v.userMember
@@ -464,7 +464,7 @@ export class SaveModifyChartController {
             let toDiskMoveCatalogNodeOutput: Result.Result<
               ToDiskMoveCatalogNodeOutput,
               SendToDiskError
-            > = await this.rpcService.sendToDiskResult({
+            > = await this.rpcService.sendToDisk({
               request: {
                 operation: 'moveCatalogNode',
                 traceId: body.traceId,
@@ -489,7 +489,7 @@ export class SaveModifyChartController {
       Result.bind(
         'diskSaveFileOutput',
         (v): Result.ResultAsync<ToDiskSaveFileOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'saveFile',
               traceId: body.traceId,
@@ -584,7 +584,7 @@ export class SaveModifyChartController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -601,7 +601,7 @@ export class SaveModifyChartController {
           let rebuildStructOutput: Result.Result<
             RebuildStructOutput,
             RebuildStructError
-          > = await this.blockmlService.rebuildStructResult({
+          > = await this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.projectId,
@@ -745,7 +745,7 @@ export class SaveModifyChartController {
             let prepStoreMconfigQueryOutput: Result.Result<
               PrepStoreMconfigQueryOutput,
               PrepStoreMconfigQueryError
-            > = await this.mconfigsService.prepStoreMconfigQueryResult({
+            > = await this.mconfigsService.prepStoreMconfigQuery({
               struct: v.rebuild.struct,
               project: v.project,
               envId: v.envId,
@@ -858,7 +858,7 @@ export class SaveModifyChartController {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.queryEntToTabResult({
+                : this.tabService.queryEntToTab({
                     queryEnt: x
                   })
             )
@@ -893,7 +893,7 @@ export class SaveModifyChartController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -902,7 +902,7 @@ export class SaveModifyChartController {
       Result.bind(
         'chartsCatalog',
         (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
-          this.chartsService.getChartsCatalogResult({
+          this.chartsService.getChartsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

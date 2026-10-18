@@ -184,7 +184,7 @@ export class SaveModifyReportController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestrictedResult({ user: v.user });
+        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -193,7 +193,7 @@ export class SaveModifyReportController {
         return Result.succeed();
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -203,7 +203,7 @@ export class SaveModifyReportController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
@@ -220,7 +220,7 @@ export class SaveModifyReportController {
           let userMemberResult: Result.Result<
             MemberTab,
             GetMemberCheckExistsError
-          > = await this.membersService.getMemberCheckExistsResult({
+          > = await this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           });
@@ -234,7 +234,7 @@ export class SaveModifyReportController {
           let projectRestrictionResult: Result.Result<
             void,
             CheckProjectIsNotRestrictedError
-          > = await this.projectsService.checkProjectIsNotRestrictedResult({
+          > = await this.projectsService.checkProjectIsNotRestricted({
             projectId: v.projectId,
             userMember: userMember,
             repoId: v.repoId
@@ -256,14 +256,14 @@ export class SaveModifyReportController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -272,7 +272,7 @@ export class SaveModifyReportController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -284,7 +284,7 @@ export class SaveModifyReportController {
         (
           v
         ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccessResult({
+          this.reportsService.getReportCheckExistsAndAccess({
             projectId: v.projectId,
             reportId: v.fromReportId,
             structId: v.bridge.structId,
@@ -295,7 +295,7 @@ export class SaveModifyReportController {
       Result.bind(
         'currentStruct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -305,7 +305,7 @@ export class SaveModifyReportController {
         (
           v
         ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccessResult({
+          this.reportsService.getReportCheckExistsAndAccess({
             projectId: v.projectId,
             reportId: v.modReportId,
             structId: v.bridge.structId,
@@ -363,7 +363,7 @@ export class SaveModifyReportController {
                   Result.sequence(xs, x =>
                     isUndefined(x)
                       ? Result.succeed(undefined)
-                      : this.tabService.modelEntToTabResult({
+                      : this.tabService.modelEntToTab({
                           modelEnt: x
                         })
                   )
@@ -472,7 +472,7 @@ export class SaveModifyReportController {
             let toDiskMoveCatalogNodeOutput: Result.Result<
               ToDiskMoveCatalogNodeOutput,
               SendToDiskError
-            > = await this.rpcService.sendToDiskResult({
+            > = await this.rpcService.sendToDisk({
               request: {
                 operation: 'moveCatalogNode',
                 traceId: body.traceId,
@@ -497,7 +497,7 @@ export class SaveModifyReportController {
       Result.bind(
         'diskSaveFileOutput',
         (v): Result.ResultAsync<ToDiskSaveFileOutput, SendToDiskError> =>
-          this.rpcService.sendToDiskResult({
+          this.rpcService.sendToDisk({
             request: {
               operation: 'saveFile',
               traceId: body.traceId,
@@ -586,7 +586,7 @@ export class SaveModifyReportController {
           let rebuildStructOutput: Result.Result<
             RebuildStructOutput,
             RebuildStructError
-          > = await this.blockmlService.rebuildStructResult({
+          > = await this.blockmlService.rebuildStruct({
             traceId: v.traceId,
             orgId: v.project.orgId,
             projectId: v.projectId,
@@ -744,7 +744,7 @@ export class SaveModifyReportController {
       Result.bind(
         'apiFinalReport',
         (v): Result.ResultAsync<ReportX, GetReportDataError> =>
-          this.reportDataService.getReportDataResult({
+          this.reportDataService.getReportData({
             report: v.saveReportPayload.report,
             traceId: v.traceId,
             project: v.project,
@@ -762,7 +762,7 @@ export class SaveModifyReportController {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXs({
             structId: v.currentStruct.structId,
             apiUserMember: v.apiUserMember
           })
@@ -770,7 +770,7 @@ export class SaveModifyReportController {
       Result.bind(
         'reportsCatalog',
         (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogError> =>
-          this.reportsService.getReportsCatalogResult({
+          this.reportsService.getReportsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

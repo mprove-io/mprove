@@ -1011,7 +1011,7 @@ export class TabToEntService {
       Result.bind(
         'emailHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.email,
             hashSecret: v.hashSecret
           })
@@ -1019,7 +1019,7 @@ export class TabToEntService {
       Result.bind(
         'aliasHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.alias,
             hashSecret: v.hashSecret
           })
@@ -1196,7 +1196,7 @@ export class TabToEntService {
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.name,
             hashSecret: v.hashSecret
           })
@@ -1204,7 +1204,7 @@ export class TabToEntService {
       Result.bind(
         'ownerEmailHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.ownerEmail,
             hashSecret: v.hashSecret
           })
@@ -1270,7 +1270,7 @@ export class TabToEntService {
       Result.bind(
         'nameHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.name,
             hashSecret: v.hashSecret
           })
@@ -1278,7 +1278,7 @@ export class TabToEntService {
       Result.bind(
         'gitUrlHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.gitUrl,
             hashSecret: v.hashSecret
           })
@@ -1378,7 +1378,7 @@ export class TabToEntService {
       Result.bind(
         'apiUrlHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.apiUrl,
             hashSecret: v.hashSecret
           })
@@ -1535,7 +1535,7 @@ export class TabToEntService {
       Result.bind(
         'emailHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.email,
             hashSecret: v.hashSecret
           })
@@ -1543,7 +1543,7 @@ export class TabToEntService {
       Result.bind(
         'aliasHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.alias,
             hashSecret: v.hashSecret
           })
@@ -1551,7 +1551,7 @@ export class TabToEntService {
       Result.bind(
         'emailVerificationTokenHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.emailVerificationToken,
             hashSecret: v.hashSecret
           })
@@ -1559,7 +1559,7 @@ export class TabToEntService {
       Result.bind(
         'passwordResetTokenHash',
         (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHashResult({
+          this.hashService.makeHash({
             input: v.tab.passwordResetToken,
             hashSecret: v.hashSecret
           })

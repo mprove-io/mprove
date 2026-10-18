@@ -102,14 +102,14 @@ export class CreateExplorerSessionController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -120,7 +120,7 @@ export class CreateExplorerSessionController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -130,21 +130,21 @@ export class CreateExplorerSessionController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
         })
       ),
       Result.andThrough(v =>
-        this.bridgesService.getBridgeCheckExistsResult({
+        this.bridgesService.getBridgeCheckExists({
           projectId: v.branch.projectId,
           repoId: v.branch.repoId,
           branchId: v.branch.branchId,
@@ -159,7 +159,7 @@ export class CreateExplorerSessionController {
           GetModelSelectionOutput,
           GetModelSelectionError
         > =>
-          this.providersService.getModelSelectionResult({
+          this.providersService.getModelSelection({
             projectId: v.projectId,
             providerId: v.providerId,
             modelId: v.modelId,
@@ -171,7 +171,7 @@ export class CreateExplorerSessionController {
       // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
       Result.andThrough(async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
-          ? this.codexService.prewarmCodexAuthResult({ userId: v.user.userId })
+          ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
           : Result.succeed()
       ),
       Result.bind(

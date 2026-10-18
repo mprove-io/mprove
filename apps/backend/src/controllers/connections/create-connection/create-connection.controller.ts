@@ -83,14 +83,14 @@ export class CreateConnectionController {
       }),
       Result.andThrough(v =>
         isDefined(v.options.storeApi)
-          ? this.urlService.checkApiUrlResult({
+          ? this.urlService.checkApiUrl({
               urlStr: v.options.storeApi.baseUrl
             })
           : Result.succeed()
       ),
       Result.andThrough(v =>
         isDefined(v.options.storeGoogleApi)
-          ? this.urlService.checkApiUrlResult({
+          ? this.urlService.checkApiUrl({
               urlStr: v.options.storeApi.baseUrl
             })
           : Result.succeed()
@@ -111,12 +111,12 @@ export class CreateConnectionController {
           : Result.succeed();
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -124,20 +124,20 @@ export class CreateConnectionController {
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.connectionsService.checkConnectionDoesNotExistResult({
+        this.connectionsService.checkConnectionDoesNotExist({
           projectId: v.projectId,
           envId: v.envId,
           connectionId: v.connectionId
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.member

@@ -110,7 +110,7 @@ export class EditDraftReportController {
         chart: body.input.chart
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -120,14 +120,14 @@ export class EditDraftReportController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -135,14 +135,14 @@ export class EditDraftReportController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -151,7 +151,7 @@ export class EditDraftReportController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -161,7 +161,7 @@ export class EditDraftReportController {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExistsResult({
+          this.structsService.getStructCheckExists({
             structId: v.bridge.structId,
             projectId: v.projectId
           })
@@ -171,7 +171,7 @@ export class EditDraftReportController {
         (
           v
         ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccessResult({
+          this.reportsService.getReportCheckExistsAndAccess({
             projectId: v.projectId,
             reportId: v.reportId,
             structId: v.bridge.structId,
@@ -192,7 +192,7 @@ export class EditDraftReportController {
           let modelAccessResult: Result.Result<
             ModelTab,
             GetModelCheckExistsAndAccessError
-          > = await this.modelsService.getModelCheckExistsAndAccessResult({
+          > = await this.modelsService.getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
             modelId: metric.modelId,
             userMember: v.userMember
@@ -265,7 +265,7 @@ export class EditDraftReportController {
       Result.bind(
         'repApi',
         (v): Result.ResultAsync<ReportX, GetReportDataError> =>
-          this.reportDataService.getReportDataResult({
+          this.reportDataService.getReportData({
             report: v.report,
             traceId: v.traceId,
             project: v.project,
@@ -284,7 +284,7 @@ export class EditDraftReportController {
       Result.bind(
         'modelPartXs',
         (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXsResult({
+          this.modelsService.getModelPartXs({
             structId: v.struct.structId,
             apiUserMember: v.prepareReportChangesPayload.apiUserMember
           })

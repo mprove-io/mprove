@@ -82,12 +82,12 @@ export class EditMemberController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdminResult({
+        this.membersService.getMemberCheckIsAdmin({
           memberId: v.userId,
           projectId: v.projectId
         })
@@ -100,7 +100,7 @@ export class EditMemberController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.rolesService.checkRolesExistResult({
+        this.rolesService.checkRolesExist({
           projectId: v.projectId,
           roleIds: v.roles
         })
@@ -108,7 +108,7 @@ export class EditMemberController {
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.memberId,
             projectId: v.projectId
           })
@@ -154,7 +154,7 @@ export class EditMemberController {
             .where(eq(avatarsTable.userId, v.member.memberId))
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.avatarEntToTabResult({
+                this.tabService.avatarEntToTab({
                   avatarEnt: x as AvatarEnt
                 })
               )

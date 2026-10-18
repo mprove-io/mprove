@@ -120,10 +120,7 @@ export class SessionDrainService {
     this.eventCounters.set(item.sessionId, eventIndex + 1);
   }
 
-  async drainAllQueuesResult(): Result.ResultAsync<
-    string[],
-    DrainAllQueuesError
-  > {
+  async drainAllQueues(): Result.ResultAsync<string[], DrainAllQueuesError> {
     let safePauseSessionIds: string[] = [];
 
     let pendingSessionIds = [...this.pendingEvents.keys()];
@@ -131,7 +128,7 @@ export class SessionDrainService {
     let drainQueues: Result.Result<void[], DrainQueueError> =
       await Result.sequence(pendingSessionIds, async sessionId => {
         let drainQueueOutput: Result.Result<DrainQueueOutput, DrainQueueError> =
-          await this.drainQueueResult({ sessionId: sessionId });
+          await this.drainQueue({ sessionId: sessionId });
 
         if (Result.isFailure(drainQueueOutput)) {
           return drainQueueOutput;
@@ -163,7 +160,7 @@ export class SessionDrainService {
     return Result.succeed(safePauseSessionIds);
   }
 
-  async drainQueueResult(item: {
+  async drainQueue(item: {
     sessionId: string;
   }): Result.ResultAsync<DrainQueueOutput, DrainQueueError> {
     let { sessionId } = item;
@@ -264,7 +261,7 @@ export class SessionDrainService {
       let ocSessionResult: Result.Result<
         OcSessionTab,
         GetOcSessionBySessionIdError
-      > = await this.sessionsService.getOcSessionBySessionIdResult({
+      > = await this.sessionsService.getOcSessionBySessionId({
         sessionId: sessionId
       });
 
@@ -535,7 +532,7 @@ export class SessionDrainService {
           let sessionResult: Result.Result<
             SessionTab,
             GetSessionByIdCheckExistsError
-          > = await this.sessionsService.getSessionByIdCheckExistsResult({
+          > = await this.sessionsService.getSessionByIdCheckExists({
             sessionId: sessionId
           });
 

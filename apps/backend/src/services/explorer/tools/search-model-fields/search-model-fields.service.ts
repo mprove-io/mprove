@@ -47,7 +47,7 @@ export class SearchModelFieldsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async searchModelFieldsResult(item: {
+  async searchModelFields(item: {
     userId: string;
     projectId: string;
     repoId: string;
@@ -67,20 +67,20 @@ export class SearchModelFieldsService {
           .filter(searchFieldName => searchFieldName.length > 0)
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExistsResult({
+        this.projectsService.getProjectCheckExists({
           projectId: v.projectId
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             memberId: v.userId,
             projectId: v.projectId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -89,7 +89,7 @@ export class SearchModelFieldsService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId,
@@ -105,7 +105,7 @@ export class SearchModelFieldsService {
             })
             .then(xs =>
               Result.sequence(xs, x =>
-                this.tabService.modelEntToTabResult({ modelEnt: x })
+                this.tabService.modelEntToTab({ modelEnt: x })
               )
             )
       ),
@@ -131,7 +131,7 @@ export class SearchModelFieldsService {
       Result.bind(
         'cacheEnvId',
         (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvIdResult({
+          this.cachedColumnService.getCacheEnvId({
             projectId: v.projectId,
             envId: v.envId
           })
@@ -171,7 +171,7 @@ export class SearchModelFieldsService {
             SearchDwhSchemaFieldNamesError
           > =
             v.searchFieldNames.length > 0
-              ? this.searchDwhSchemaFieldNamesService.searchResult({
+              ? this.searchDwhSchemaFieldNamesService.search({
                   userId: v.userId,
                   projectId: v.projectId,
                   repoId: v.repoId,

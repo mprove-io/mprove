@@ -70,7 +70,7 @@ export class StructsService {
     return apiStruct;
   }
 
-  async getStructCheckExistsResult(item: {
+  async getStructCheckExists(item: {
     structId: string;
     projectId: string;
     isGetEmptyStructOnError?: boolean;
@@ -120,11 +120,11 @@ export class StructsService {
           ? isGetEmptyStructOnError === true
             ? Result.succeed(emptyStruct)
             : Result.fail({ code: 'BACKEND_STRUCT_DOES_NOT_EXIST' })
-          : this.tabService.structEntToTabResult({ structEnt: x })
+          : this.tabService.structEntToTab({ structEnt: x })
       );
   }
 
-  async getStructCheckExistsAndNotChangedResult(item: {
+  async getStructCheckExistsAndNotChanged(item: {
     bridgeStructId: string;
     projectId: string;
     structId: string;
@@ -134,7 +134,7 @@ export class StructsService {
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.getStructCheckExistsResult({
+          this.getStructCheckExists({
             structId: v.bridgeStructId,
             projectId: v.projectId
           })

@@ -138,7 +138,7 @@ export class EditDraftChartController {
         queryOperation: body.input.queryOperation
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoIdResult({
+        this.sessionsService.checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
@@ -148,14 +148,14 @@ export class EditDraftChartController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExistsResult({
+          this.projectsService.getProjectCheckExists({
             projectId: v.projectId
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExistsResult({
+          this.membersService.getMemberCheckExists({
             projectId: v.projectId,
             memberId: v.user.userId
           })
@@ -170,14 +170,14 @@ export class EditDraftChartController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExistsResult({
+          this.branchesService.getBranchCheckExists({
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.branchId
           })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccessResult({
+        this.envsService.getEnvCheckExistsAndAccess({
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -186,7 +186,7 @@ export class EditDraftChartController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExistsResult({
+          this.bridgesService.getBridgeCheckExists({
             projectId: v.branch.projectId,
             repoId: v.branch.repoId,
             branchId: v.branch.branchId,
@@ -201,7 +201,7 @@ export class EditDraftChartController {
           StructTab,
           GetStructCheckExistsAndNotChangedError
         > =>
-          this.structsService.getStructCheckExistsAndNotChangedResult({
+          this.structsService.getStructCheckExistsAndNotChanged({
             projectId: v.projectId,
             bridgeStructId: v.bridge.structId,
             structId: v.apiMconfig.structId
@@ -210,7 +210,7 @@ export class EditDraftChartController {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessError> =>
-          this.modelsService.getModelCheckExistsAndAccessResult({
+          this.modelsService.getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
             modelId: v.apiMconfig.modelId,
             userMember: v.userMember
@@ -219,7 +219,7 @@ export class EditDraftChartController {
       Result.bind(
         'chart',
         (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
-          this.chartsService.getChartCheckExistsResult({
+          this.chartsService.getChartCheckExists({
             structId: v.bridge.structId,
             chartId: v.chartId,
             userMember: v.userMember,
@@ -254,7 +254,7 @@ export class EditDraftChartController {
           let prepStoreMconfigQueryOutput: Result.Result<
             PrepStoreMconfigQueryOutput,
             PrepStoreMconfigQueryError
-          > = await this.mconfigsService.prepStoreMconfigQueryResult({
+          > = await this.mconfigsService.prepStoreMconfigQuery({
             struct: v.struct,
             project: v.project,
             envId: v.envId,
@@ -285,7 +285,7 @@ export class EditDraftChartController {
           let editMalloyQueryOutput: Result.Result<
             EditMalloyQueryOutput,
             EditMalloyQueryError
-          > = await this.malloyService.editMalloyQueryResult({
+          > = await this.malloyService.editMalloyQuery({
             projectId: v.projectId,
             envId: v.envId,
             structId: v.struct.structId,
@@ -421,7 +421,7 @@ export class EditDraftChartController {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.queryEntToTabResult({
+                : this.tabService.queryEntToTab({
                     queryEnt: x
                   })
             )
@@ -440,7 +440,7 @@ export class EditDraftChartController {
               Result.sequence(xs, x =>
                 isUndefined(x)
                   ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTabResult({
+                  : this.tabService.modelEntToTab({
                       modelEnt: x
                     })
               )
@@ -449,7 +449,7 @@ export class EditDraftChartController {
       Result.bind(
         'chartsCatalog',
         (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
-          this.chartsService.getChartsCatalogResult({
+          this.chartsService.getChartsCatalog({
             projectId: v.projectId,
             structId: v.bridge.structId,
             user: v.user,

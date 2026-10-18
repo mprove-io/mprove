@@ -145,7 +145,7 @@ export class MconfigsService {
     return mconfig;
   }
 
-  async getMconfigCheckExistsResult(item: {
+  async getMconfigCheckExists(item: {
     mconfigId: string;
     structId: string;
   }): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> {
@@ -163,11 +163,11 @@ export class MconfigsService {
           ? Result.fail({ code: 'BACKEND_MCONFIG_DOES_NOT_EXIST' })
           : isUndefined(x)
             ? Result.succeed(undefined)
-            : this.tabService.mconfigEntToTabResult({ mconfigEnt: x })
+            : this.tabService.mconfigEntToTab({ mconfigEnt: x })
       );
   }
 
-  async prepStoreMconfigQueryResult(item: {
+  async prepStoreMconfigQuery(item: {
     struct: StructTab;
     project: ProjectTab;
     envId: string;
@@ -206,7 +206,7 @@ export class MconfigsService {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({
+          this.envsService.getApiEnvs({
             projectId: v.project.projectId
           })
       ),
@@ -235,7 +235,7 @@ export class MconfigsService {
             .then(x =>
               isUndefined(x)
                 ? Result.succeed(undefined)
-                : this.tabService.connectionEntToTabResult({
+                : this.tabService.connectionEntToTab({
                     connectionEnt: x
                   })
             )

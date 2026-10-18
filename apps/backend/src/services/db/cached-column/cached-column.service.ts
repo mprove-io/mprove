@@ -12,7 +12,7 @@ import type { Env } from '#common/types/backend/parts/env';
 export class CachedColumnService {
   constructor(private envsService: EnvsService) {}
 
-  async getCacheEnvIdResult(item: {
+  async getCacheEnvId(item: {
     projectId: string;
     envId: string;
   }): Result.ResultAsync<string, GetCacheEnvIdError> {
@@ -21,7 +21,7 @@ export class CachedColumnService {
       Result.bind(
         'apiEnvs',
         (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvsResult({ projectId: v.projectId })
+          this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map((v): string =>
         v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId)?.useProdCache ===

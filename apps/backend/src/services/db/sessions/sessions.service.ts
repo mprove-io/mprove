@@ -127,11 +127,9 @@ export class SessionsService {
     return ocSession;
   }
 
-  async getSessionByIdCheckExists(item: {
-    sessionId: string;
-  }): Promise<SessionTab> {
+  async getSessionByIdCheck(item: { sessionId: string }): Promise<SessionTab> {
     let result: Result.Result<SessionTab, GetSessionByIdCheckExistsError> =
-      await this.getSessionByIdCheckExistsResult(item);
+      await this.getSessionByIdCheckExists(item);
 
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
@@ -142,7 +140,7 @@ export class SessionsService {
     return session;
   }
 
-  async getSessionByIdCheckExistsResult(item: {
+  async getSessionByIdCheckExists(item: {
     sessionId: string;
   }): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> {
     let { sessionId } = item;
@@ -154,11 +152,11 @@ export class SessionsService {
       .then((x: SessionEnt) =>
         isUndefined(x)
           ? Result.fail({ code: 'BACKEND_SESSION_NOT_FOUND' })
-          : this.tabService.sessionEntToTabResult({ sessionEnt: x })
+          : this.tabService.sessionEntToTab({ sessionEnt: x })
       );
   }
 
-  async getOcSessionBySessionIdResult(item: {
+  async getOcSessionBySessionId(item: {
     sessionId: string;
   }): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> {
     let { sessionId } = item;
@@ -170,7 +168,7 @@ export class SessionsService {
       .then((x: OcSessionEnt) =>
         isUndefined(x)
           ? Result.succeed(undefined)
-          : this.tabService.ocSessionEntToTabResult({ ocSessionEnt: x })
+          : this.tabService.ocSessionEntToTab({ ocSessionEnt: x })
       );
   }
 
@@ -204,7 +202,7 @@ export class SessionsService {
     };
   }
 
-  async checkRepoIdResult(item: {
+  async checkRepoId(item: {
     repoId: string;
     userId: string;
     projectId: string;
@@ -255,7 +253,7 @@ export class SessionsService {
     };
   }
 
-  async getBasicSessionsListResult(item: {
+  async getBasicSessionsList(item: {
     projectId: string;
     userId: string;
     currentSessionId?: string;
@@ -316,7 +314,7 @@ export class SessionsService {
       Result.bind(
         'sessions',
         (v): Result.ResultAsync<SessionApi[], EntsToSessionApisError> =>
-          this.entsToSessionApisResult({
+          this.entsToSessionApis({
             allEnts: isUndefined(v.currentSessionEnt)
               ? [...v.sessionEnts]
               : [...v.sessionEnts, v.currentSessionEnt]
@@ -331,7 +329,7 @@ export class SessionsService {
     );
   }
 
-  async entsToSessionApisResult(item: {
+  async entsToSessionApis(item: {
     allEnts: SessionEnt[];
   }): Result.ResultAsync<SessionApi[], EntsToSessionApisError> {
     let { allEnts } = item;
@@ -368,14 +366,14 @@ export class SessionsService {
         'ocSessions',
         (v): Result.Result<OcSessionTab[], OcSessionEntToTabError> =>
           Result.sequence(v.ocSessionEnts, x =>
-            this.tabService.ocSessionEntToTabResult({ ocSessionEnt: x })
+            this.tabService.ocSessionEntToTab({ ocSessionEnt: x })
           )
       ),
       Result.bind(
         'sessions',
         (v): Result.Result<SessionTab[], SessionEntToTabError> =>
           Result.sequence(v.allEnts, x =>
-            this.tabService.sessionEntToTabResult({ sessionEnt: x })
+            this.tabService.sessionEntToTab({ sessionEnt: x })
           )
       ),
       Result.map((v): SessionApi[] =>
