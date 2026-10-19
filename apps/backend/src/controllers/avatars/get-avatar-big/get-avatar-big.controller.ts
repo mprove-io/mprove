@@ -23,7 +23,7 @@ import type { ToBackendGetAvatarBigOutput } from '#common/types/backend/routes/a
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetAvatarBigController {
-  constructor(private dbService: DbService) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetAvatarBig' satisfies ToBackendRoute)
   @ApiOperation({
@@ -44,7 +44,7 @@ export class GetAvatarBigController {
       Result.bind(
         'avatar',
         (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
-          this.dbService.avatars.findFirst({
+          this.db.avatars.findFirst({
             where: eq(avatarsTable.userId, v.avatarUserId)
           })
       ),

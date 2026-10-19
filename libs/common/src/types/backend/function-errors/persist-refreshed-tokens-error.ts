@@ -1,21 +1,19 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type GetUserCheckExistsError,
   zGetUserCheckExistsError
 } from '#common/types/backend/function-errors/get-user-check-exists-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
-export type PersistRefreshedTokensError =
-  | GetUserCheckExistsError
-  | DbErrorToError;
+export type PersistRefreshedTokensError = GetUserCheckExistsError | WriteError;
 
 export let zPersistRefreshedTokensError = z.union([
   zGetUserCheckExistsError,
-  zDbErrorToError
+  zWriteError
 ]);
 
 assertTypesEqual<

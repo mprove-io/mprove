@@ -25,10 +25,6 @@ import {
   zChartEntToTabError
 } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type GetMemberCheckExistsError,
   zGetMemberCheckExistsError
 } from '#common/types/backend/function-errors/get-member-check-exists-error';
@@ -56,6 +52,10 @@ import {
   type RunQueriesError,
   zRunQueriesError
 } from '#common/types/backend/function-errors/run-queries-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type GetExplorerChartTabError =
   | GetSessionByIdCheckExistsError
@@ -69,7 +69,7 @@ export type GetExplorerChartTabError =
   | MconfigEntToTabError
   | QueryEntToTabError
   | RebuildFromYamlError
-  | DbErrorToError
+  | WriteError
   | RunQueriesError
   | ModelEntToTabError;
 
@@ -85,7 +85,7 @@ export const zGetExplorerChartTabError = z.union([
   zMconfigEntToTabError,
   zQueryEntToTabError,
   zRebuildFromYamlError,
-  zDbErrorToError,
+  zWriteError,
   zRunQueriesError,
   zModelEntToTabError
 ]);

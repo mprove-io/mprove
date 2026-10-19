@@ -1,12 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { inArray, sql } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { notesTable } from '#backend/drizzle/postgres/schema/notes';
+import { DbService } from '#backend/services/db/db.service';
 
 @Injectable()
 export class NotesService {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(private db: DbService) {}
 
   async removeNotes() {
     let rawData: any = await this.db.drizzle.execute(sql`

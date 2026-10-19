@@ -111,7 +111,7 @@ export class RevertRepoToRemoteService {
         })
       ),
       Result.bind(
-        'remoteBranchExists',
+        'isRemoteBranchExist',
         (v): Result.ResultAsync<boolean, never> =>
           isRemoteBranchExist({
             repoDir: v.repoDir,
@@ -122,7 +122,7 @@ export class RevertRepoToRemoteService {
       ),
       Result.andThrough(
         (v): Result.Result<void, DiskRemoteBranchIsNotExistError> =>
-          v.remoteBranchExists === false
+          v.isRemoteBranchExist === false
             ? Result.fail({ code: 'DISK_REMOTE_BRANCH_IS_NOT_EXIST' })
             : Result.succeed()
       ),

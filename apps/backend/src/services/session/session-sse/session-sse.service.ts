@@ -1,15 +1,14 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, asc, eq, gt } from 'drizzle-orm';
 import { Observable } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { OcEventTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { DbService } from '#backend/services/db/db.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
@@ -25,7 +24,7 @@ export class SessionSseService {
     private cs: ConfigService<BackendConfig>,
     private tabService: TabService,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   subscribeWithBackfill(item: {

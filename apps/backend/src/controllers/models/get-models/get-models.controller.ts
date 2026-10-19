@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, type SQL } from 'drizzle-orm';
@@ -7,7 +7,6 @@ import {
   ToBackendGetModelsResponseDto
 } from '#backend/controllers/models/get-models/get-models.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -16,18 +15,19 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
@@ -47,16 +47,12 @@ import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/mode
 @Controller()
 export class GetModelsController {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
-    private projectsService: ProjectsService,
     private sessionsService: SessionsService,
-    private branchesService: BranchesService,
-    private bridgesService: BridgesService,
     private modelsService: ModelsService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetModels' satisfies ToBackendRoute)
@@ -89,25 +85,29 @@ export class GetModelsController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -120,11 +120,13 @@ export class GetModelsController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -139,13 +141,7 @@ export class GetModelsController {
             ];
           }
 
-          return this.db.drizzle.query.modelsTable
-            .findMany({ where: and(...where) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.modelEntToTab({ modelEnt: x })
-              )
-            );
+          return this.db.models.findMany({ where: and(...where) });
         }
       ),
       Result.bind(

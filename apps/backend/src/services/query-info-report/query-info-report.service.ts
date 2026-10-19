@@ -1,9 +1,6 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import type { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BridgeTab,
   MemberTab,
@@ -12,22 +9,20 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { QueryInfoReportGetReportDataError } from '#common/types/backend/function-errors/query-info-report-get-report-data-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
@@ -37,15 +32,12 @@ import type { TimeSpec } from '#common/types/shared/time/timespec';
 @Injectable()
 export class QueryInfoReportService {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
     private modelsService: ModelsService,
     private reportsService: ReportsService,
     private reportDataService: ReportDataService,
     private structsService: StructsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getReportData(item: {
@@ -121,22 +113,10 @@ export class QueryInfoReportService {
 
           v.user.ui.timeRangeFraction = v.apiReport.timeRangeFraction;
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(
-                      async tx =>
-                        await this.db.packer.writeUnwrap({
-                          tx: tx,
-                          insertOrUpdate: {
-                            users: [v.user]
-                          }
-                        })
-                    ),
-                  getRetryOption(this.cs, this.logger)
-                );
+          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+            await this.db.write({
+              insertOrUpdate: {
+                users: [v.user]
               }
             });
 

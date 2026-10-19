@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
@@ -7,9 +7,9 @@ import {
   ToBackendResendUserEmailResponseDto
 } from '#backend/controllers/users/resend-user-email/resend-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -45,7 +45,7 @@ export class ResendUserEmailController {
     private tabService: TabService,
     private usersService: UsersService,
     private emailService: EmailService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendResendUserEmail' satisfies ToBackendRoute)

@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import {
   type ModelFieldLeafEnt,
   modelFieldLeafsTable
 } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
+import { DbService } from '#backend/services/db/db.service';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
 import type { GetConnectionSchemasError } from '#common/types/backend/function-errors/get-connection-schemas-error';
 import type { SearchDwhSchemaFieldNamesError } from '#common/types/backend/function-errors/search-dwh-schema-field-names-error';
@@ -27,7 +27,7 @@ type DwhFieldNameMatch = {
 export class SearchDwhSchemaFieldNamesService {
   constructor(
     private getConnectionSchemasService: GetConnectionSchemasService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async searchUnwrap(item: {

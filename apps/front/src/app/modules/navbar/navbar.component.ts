@@ -207,7 +207,10 @@ export class NavbarComponent implements OnInit {
             if (resp.type === 'Success') {
               let output: ToBackendCheckLastNavOutput = resp.output;
 
-              if (output.modelExists === true && output.chartExists === true) {
+              if (
+                output.isModelExist === true &&
+                output.isChartExist === true
+              ) {
                 this.navigateService.navigateToChart({
                   modelId: pModelLink.modelId,
                   chartId: pChartLink.chartId
@@ -262,7 +265,7 @@ export class NavbarComponent implements OnInit {
             if (resp.type === 'Success') {
               let output: ToBackendCheckLastNavOutput = resp.output;
 
-              if (output.dashboardExists === true) {
+              if (output.isDashboardExist === true) {
                 this.navigateService.navigateToDashboard({
                   dashboardId: pLink.dashboardId
                 });
@@ -322,7 +325,7 @@ export class NavbarComponent implements OnInit {
             if (resp.type === 'Success') {
               let output: ToBackendCheckLastNavOutput = resp.output;
 
-              if (output.reportExists === true) {
+              if (output.isReportExist === true) {
                 this.navigateService.navigateToReport({
                   reportId: pLink.reportId
                 });

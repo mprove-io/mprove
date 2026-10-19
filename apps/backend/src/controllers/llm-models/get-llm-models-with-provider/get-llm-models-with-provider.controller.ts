@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendGetLlmModelsWithProviderRequestDto,
   ToBackendGetLlmModelsWithProviderResponseDto
@@ -11,10 +12,11 @@ import type {
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
+import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -28,11 +30,7 @@ import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/back
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetLlmModelsWithProviderController {
-  constructor(
-    private membersService: MembersService,
-    private projectsService: ProjectsService,
-    private providersService: ProvidersService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetLlmModelsWithProvider' satisfies ToBackendRoute)
   @ApiOperation({
@@ -54,21 +52,26 @@ export class GetLlmModelsWithProviderController {
         isUserCodexAuthSet: isDefined(user.codexAuth)
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExists({
-          projectId: v.projectId,
-          memberId: v.userId
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
         })
       ),
       Result.bind(
         'providers',
         (v): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> =>
-          this.providersService.getEnabledProviders({
-            projectId: v.projectId
+          this.db.providers.findMany({
+            where: and(
+              eq(providersTable.projectId, v.projectId),
+              eq(providersTable.isEnabled, true)
+            )
           })
       ),
       Result.bind(

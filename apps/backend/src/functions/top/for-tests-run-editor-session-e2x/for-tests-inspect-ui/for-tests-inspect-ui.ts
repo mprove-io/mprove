@@ -1,6 +1,9 @@
 import type { ExecutionContext } from 'ava';
+import { eq } from 'drizzle-orm';
+import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { Prep } from '#backend/interfaces/prep';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateEditorSessionResponse } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-response';
@@ -28,10 +31,12 @@ export async function forTestsInspectUi(item: {
 
   // Periodic health check
   let editorOpencodeService = item.prep.app.get(EditorOpencodeService);
-  let sessionsService = item.prep.app.get(SessionsService);
-  let session = await sessionsService.getSessionByIdCheck({
-    sessionId: item.sessionId
+  let db: DbService = item.prep.app.get(DbService);
+
+  let session: SessionTab = await db.sessions.findFirstCheckExistsUnwrap({
+    where: eq(sessionsTable.sessionId, item.sessionId)
   });
+
   let client = await editorOpencodeService.getOpenCodeClientUnwrap({
     sessionId: item.sessionId
   });

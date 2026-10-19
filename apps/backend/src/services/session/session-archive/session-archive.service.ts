@@ -1,13 +1,12 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
+import { eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { DbService } from '#backend/services/db/db.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
@@ -24,13 +23,13 @@ import type { SessionStatus } from '#common/types/backend/parts/session/session-
 @Injectable()
 export class SessionArchiveService {
   constructor(
-    @Inject(DRIZZLE) private db: Db,
     private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
     private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger
+    private logger: Logger,
+    private db: DbService
   ) {}
 
   async archiveSession(item: {
@@ -84,8 +83,8 @@ export class SessionArchiveService {
           v
         ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
           v.session.type === 'Editor'
-            ? this.sessionsService.getSessionByIdCheckExists({
-                sessionId: v.session.sessionId
+            ? this.db.sessions.findFirstCheckExists({
+                where: eq(sessionsTable.sessionId, v.session.sessionId)
               })
             : Result.succeed(v.session)
       ),
@@ -112,20 +111,9 @@ export class SessionArchiveService {
           })
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(async tx => {
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insertOrUpdate: {
-                      sessions: [v.updatedSession]
-                    }
-                  });
-                }),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insertOrUpdate: {
+            sessions: [v.updatedSession]
           }
         })
       ),

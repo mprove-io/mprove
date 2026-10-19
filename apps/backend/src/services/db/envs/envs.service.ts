@@ -1,24 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   EnvTab,
   MemberTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import type { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
-import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
+import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckEnvDoesNotExistError } from '#common/types/backend/function-errors/check-env-does-not-exist-error';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
@@ -39,9 +33,8 @@ export type GetApiEnvConnectionsWithFallbackOutput = {
 @Injectable()
 export class EnvsService {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   makeEnv(item: { projectId: string; envId: string; evs: Ev[] }): EnvTab {
@@ -153,11 +146,11 @@ export class EnvsService {
   }): Result.ResultAsync<void, CheckEnvDoesNotExistError> {
     let { projectId, envId } = item;
 
-    let envEnt: EnvEnt = await this.db.drizzle.query.envsTable.findFirst({
+    let isEnvExist: boolean = await this.db.envs.isExistUnwrap({
       where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
 
-    if (isDefined(envEnt)) {
+    if (isEnvExist) {
       return Result.fail({
         code: 'BACKEND_ENV_ALREADY_EXISTS'
       });
@@ -173,25 +166,25 @@ export class EnvsService {
   }): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessError> {
     let { projectId, envId, member } = item;
 
-    let envEnt: EnvEnt = await this.db.drizzle.query.envsTable.findFirst({
-      where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
-    });
-
-    if (isUndefined(envEnt)) {
-      return Result.fail({
-        code: 'BACKEND_ENV_DOES_NOT_EXIST'
+    let envResult: Result.Result<EnvTab, EnvEntToTabError> =
+      await this.db.envs.findFirst({
+        where: and(
+          eq(envsTable.envId, envId),
+          eq(envsTable.projectId, projectId)
+        )
       });
-    }
-
-    let envResult: Result.Result<EnvTab, EnvEntToTabError> = isUndefined(envEnt)
-      ? Result.succeed(undefined)
-      : this.tabService.envEntToTab({ envEnt: envEnt });
 
     if (Result.isFailure(envResult)) {
       return envResult;
     }
 
     let env: EnvTab = envResult.value;
+
+    if (isUndefined(env)) {
+      return Result.fail({
+        code: 'BACKEND_ENV_DOES_NOT_EXIST'
+      });
+    }
 
     if (envId !== PROJECT_ENV_PROD && member.isAdmin === false) {
       if (env.memberIds.indexOf(member.memberId) < 0) {
@@ -209,26 +202,19 @@ export class EnvsService {
   }): Result.ResultAsync<Env[], GetApiEnvsError> {
     let { projectId } = item;
 
-    let envEnts: EnvEnt[] = await this.db.drizzle.query.envsTable.findMany({
-      where: eq(connectionsTable.projectId, projectId)
-    });
+    let envResult: Result.Result<EnvTab[], GetApiEnvsError> =
+      await this.db.envs.findMany({
+        where: eq(connectionsTable.projectId, projectId)
+      });
 
-    let envsResult: Result.Result<EnvTab[], GetApiEnvsError> = Result.sequence(
-      envEnts,
-      x =>
-        isUndefined(x)
-          ? Result.succeed(undefined)
-          : this.tabService.envEntToTab({ envEnt: x })
-    );
-
-    if (Result.isFailure(envsResult)) {
-      return envsResult;
+    if (Result.isFailure(envResult)) {
+      return envResult;
     }
 
-    let envs: EnvTab[] = envsResult.value;
+    let envs: EnvTab[] = envResult.value;
 
-    let connectionEnts: ConnectionEnt[] =
-      await this.db.drizzle.query.connectionsTable.findMany({
+    let connectionResult: Result.Result<ConnectionTab[], GetApiEnvsError> =
+      await this.db.connections.findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),
           inArray(
@@ -238,38 +224,22 @@ export class EnvsService {
         )
       });
 
-    let connectionsResult: Result.Result<ConnectionTab[], GetApiEnvsError> =
-      Result.sequence(connectionEnts, x =>
-        isUndefined(x)
-          ? Result.succeed(undefined)
-          : this.tabService.connectionEntToTab({ connectionEnt: x })
-      );
-
-    if (Result.isFailure(connectionsResult)) {
-      return connectionsResult;
+    if (Result.isFailure(connectionResult)) {
+      return connectionResult;
     }
 
-    let connections: ConnectionTab[] = connectionsResult.value;
+    let connections: ConnectionTab[] = connectionResult.value;
 
-    let memberEnts: MemberEnt[] =
-      await this.db.drizzle.query.membersTable.findMany({
+    let memberResult: Result.Result<MemberTab[], GetApiEnvsError> =
+      await this.db.members.findMany({
         where: eq(membersTable.projectId, projectId)
       });
 
-    let membersResult: Result.Result<MemberTab[], GetApiEnvsError> =
-      Result.sequence(memberEnts, x =>
-        isUndefined(x)
-          ? Result.succeed(undefined)
-          : this.tabService.memberEntToTab({
-              memberEnt: x
-            })
-      );
-
-    if (Result.isFailure(membersResult)) {
-      return membersResult;
+    if (Result.isFailure(memberResult)) {
+      return memberResult;
     }
 
-    let members: MemberTab[] = membersResult.value;
+    let members: MemberTab[] = memberResult.value;
 
     let prodEnv: EnvTab = envs.find(x => x.envId === PROJECT_ENV_PROD);
 
@@ -345,25 +315,15 @@ export class EnvsService {
       Result.bind(
         'connectionsWithFallback',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: and(
-                eq(connectionsTable.projectId, v.projectId),
-                inArray(
-                  connectionsTable.connectionId,
-                  v.apiEnv.envConnectionIdsWithFallback
-                )
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.connectionEntToTab({
-                      connectionEnt: x
-                    })
+          this.db.connections.findMany({
+            where: and(
+              eq(connectionsTable.projectId, v.projectId),
+              inArray(
+                connectionsTable.connectionId,
+                v.apiEnv.envConnectionIdsWithFallback
               )
             )
+          })
       ),
       Result.map(
         (v): GetApiEnvConnectionsWithFallbackOutput => ({

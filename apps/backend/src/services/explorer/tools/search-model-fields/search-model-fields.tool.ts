@@ -61,15 +61,15 @@ So searchFieldNames will be a list of individual words.`
 
             let searchFieldNames: string[] = input.searchFieldNames ?? [];
 
-            let isSearchFieldValuePresent: boolean = searchFieldValues.some(
+            let isSearchFieldValueExist: boolean = searchFieldValues.some(
               searchFieldValue => searchFieldValue.trim().length > 0
             );
 
-            let isSearchFieldNamePresent: boolean = searchFieldNames.some(
+            let isSearchFieldNameExist: boolean = searchFieldNames.some(
               searchFieldName => searchFieldName.trim().length > 0
             );
 
-            return isSearchFieldValuePresent || isSearchFieldNamePresent;
+            return isSearchFieldValueExist || isSearchFieldNameExist;
           },
           {
             message:

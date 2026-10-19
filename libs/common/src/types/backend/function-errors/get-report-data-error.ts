@@ -5,10 +5,6 @@ import {
   zCalculateDataError
 } from '#common/types/backend/function-errors/calculate-data-error';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type EditMalloyQueryError,
   zEditMalloyQueryError
 } from '#common/types/backend/function-errors/edit-malloy-query-error';
@@ -40,6 +36,10 @@ import {
   type QueryEntToTabError,
   zQueryEntToTabError
 } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type GetReportDataError =
   | CalculateDataError
@@ -51,7 +51,7 @@ export type GetReportDataError =
   | MconfigEntToTabError
   | QueryEntToTabError
   | KitEntToTabError
-  | DbErrorToError;
+  | WriteError;
 
 export const zGetReportDataError = z.union([
   zCalculateDataError,
@@ -63,7 +63,7 @@ export const zGetReportDataError = z.union([
   zMconfigEntToTabError,
   zQueryEntToTabError,
   zKitEntToTabError,
-  zDbErrorToError
+  zWriteError
 ]);
 
 assertTypesEqual<GetReportDataError, z.infer<typeof zGetReportDataError>>({

@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -10,10 +10,10 @@ import {
   ToBackendCreateOrgResponseDto
 } from '#backend/controllers/orgs/create-org/create-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { type OrgEnt, orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -23,7 +23,6 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { AddOrgError } from '#common/types/backend/function-errors/add-org-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
@@ -42,7 +41,7 @@ export class CreateOrgController {
     private hashService: HashService,
     private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateOrg' satisfies ToBackendRoute)
@@ -95,13 +94,11 @@ export class CreateOrgController {
           })
       ),
       Result.bind(
-        'orgEnt',
-        (v): Result.ResultAsync<OrgEnt, never> =>
-          this.db.drizzle.query.orgsTable
-            .findFirst({
-              where: eq(orgsTable.nameHash, v.nameHash)
-            })
-            .then(orgEnt => Result.succeed(orgEnt))
+        'isOrgExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          this.db.orgs.isExist({
+            where: eq(orgsTable.nameHash, v.nameHash)
+          })
       ),
       Result.andThrough(v =>
         v.name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()
@@ -109,7 +106,7 @@ export class CreateOrgController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        isDefined(v.orgEnt)
+        v.isOrgExist
           ? Result.fail({ code: 'BACKEND_ORG_ALREADY_EXISTS' })
           : Result.succeed()
       ),

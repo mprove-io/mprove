@@ -1,16 +1,13 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGetMembersRequestDto,
   ToBackendGetMembersResponseDto
 } from '#backend/controllers/members/get-members/get-members.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   AvatarTab,
   MemberTab,
@@ -21,7 +18,9 @@ import {
   avatarsTable
 } from '#backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
@@ -48,8 +47,7 @@ export class GetMembersController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rolesService: RolesService,
-    private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetMembers' satisfies ToBackendRoute)
@@ -72,16 +70,18 @@ export class GetMembersController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            memberId: v.userId,
-            projectId: v.projectId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -94,13 +94,9 @@ export class GetMembersController {
       Result.bind(
         'projectMembers',
         (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
-          this.db.drizzle.query.membersTable
-            .findMany({ where: and(eq(membersTable.projectId, v.projectId)) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.memberEntToTab({ memberEnt: x })
-              )
-            )
+          this.db.members.findMany({
+            where: and(eq(membersTable.projectId, v.projectId))
+          })
       ),
       Result.bind(
         'sortedMembers',

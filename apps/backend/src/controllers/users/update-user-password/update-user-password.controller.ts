@@ -1,37 +1,24 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendUpdateUserPasswordRequestDto,
   ToBackendUpdateUserPasswordResponseDto
 } from '#backend/controllers/users/update-user-password/update-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import {
   type CreateSaltAndHashOutput,
   HashService
 } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+
 import type { BackendUpdatePasswordWrongTokenError } from '#common/types/backend/errors/backend-update-password-wrong-token-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
@@ -44,12 +31,9 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
-    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendUpdateUserPassword' satisfies ToBackendRoute)
@@ -89,18 +73,13 @@ export class UpdateUserPasswordController {
           UserTab,
           UserEntToTabError | BackendUpdatePasswordWrongTokenError
         > =>
-          this.db.drizzle.query.usersTable
-            .findFirst({
-              where: eq(
-                usersTable.passwordResetTokenHash,
-                v.passwordResetTokenHash
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_UPDATE_PASSWORD_WRONG_TOKEN' })
-                : this.tabService.userEntToTab({ userEnt: x })
-            )
+          this.db.users.findFirstCheckExists({
+            where: eq(
+              usersTable.passwordResetTokenHash,
+              v.passwordResetTokenHash
+            ),
+            error: { code: 'BACKEND_UPDATE_PASSWORD_WRONG_TOKEN' }
+          })
       ),
       Result.andThrough(v => {
         let nowTs: number = makeTsNumber();
@@ -127,21 +106,7 @@ export class UpdateUserPasswordController {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: { users: [v.user] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
+        this.db.write({ insertOrUpdate: { users: [v.user] } })
       ),
       Result.map((v): Record<string, never> => ({}))
     );

@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -18,12 +10,10 @@ import {
   ToBackendRegisterUserResponseDto
 } from '#backend/controllers/users/register-user/register-user.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
@@ -31,7 +21,6 @@ import {
   type CreateSaltAndHashOutput,
   HashService
 } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import {
@@ -71,14 +60,12 @@ import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/u
 @Controller()
 export class RegisterUserController {
   constructor(
-    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private usersService: UsersService,
     private emailService: EmailService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendRegisterUser' satisfies ToBackendRoute)
@@ -122,13 +109,9 @@ export class RegisterUserController {
       Result.bind(
         'user',
         (v): Result.ResultAsync<UserTab, UserEntToTabError> =>
-          this.db.drizzle.query.usersTable
-            .findFirst({ where: eq(usersTable.emailHash, v.emailHash) })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.userEntToTab({ userEnt: x })
-            )
+          this.db.users.findFirst({
+            where: eq(usersTable.emailHash, v.emailHash)
+          })
       ),
       Result.andThrough(v =>
         isDefined(v.user?.passwordHash) && v.user.isEmailVerified === true
@@ -191,22 +174,10 @@ export class RegisterUserController {
         });
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: { users: isDefined(v.user) ? [] : [v.newUser] },
-                      insertOrUpdate: {
-                        users: isDefined(v.user) ? [v.newUser] : []
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insert: { users: isDefined(v.user) ? [] : [v.newUser] },
+          insertOrUpdate: {
+            users: isDefined(v.user) ? [v.newUser] : []
           }
         })
       ),

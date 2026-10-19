@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
@@ -7,19 +7,18 @@ import {
   ToBackendGetConnectionsResponseDto
 } from '#backend/controllers/connections/get-connections/get-connections.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -35,12 +34,10 @@ import type { ToBackendGetConnectionsOutput } from '#common/types/backend/routes
 @Controller()
 export class GetConnectionsController {
   constructor(
-    private tabService: TabService,
     private connectionsService: ConnectionsService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetConnections' satisfies ToBackendRoute)
@@ -62,8 +59,8 @@ export class GetConnectionsController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -91,31 +88,23 @@ export class GetConnectionsController {
       Result.bind(
         'connections',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: isDefined(v.envId)
-                ? and(
-                    eq(connectionsTable.projectId, v.projectId),
-                    or(
-                      eq(connectionsTable.envId, v.envId),
-                      and(
-                        eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                        inArray(
-                          connectionsTable.connectionId,
-                          v.apiEnv.fallbackConnectionIds
-                        )
+          this.db.connections.findMany({
+            where: isDefined(v.envId)
+              ? and(
+                  eq(connectionsTable.projectId, v.projectId),
+                  or(
+                    eq(connectionsTable.envId, v.envId),
+                    and(
+                      eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                      inArray(
+                        connectionsTable.connectionId,
+                        v.apiEnv.fallbackConnectionIds
                       )
                     )
                   )
-                : eq(connectionsTable.projectId, v.projectId)
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.connectionEntToTab({
-                  connectionEnt: x
-                })
-              )
-            )
+                )
+              : eq(connectionsTable.projectId, v.projectId)
+          })
       ),
       Result.map(
         (v): ToBackendGetConnectionsOutput => ({

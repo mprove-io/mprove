@@ -1,18 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckConnectionDoesNotExistError } from '#common/types/backend/function-errors/check-connection-does-not-exist-error';
-import type { GetConnectionCheckExistsError } from '#common/types/backend/function-errors/get-connection-check-exists-error';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
@@ -24,9 +20,8 @@ import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connec
 export class ConnectionsService {
   constructor(
     private hashService: HashService,
-    private tabService: TabService,
     private tabToEntService: TabToEntService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   cleanInternalFields(item: { options: ConnectionOptions }) {
@@ -350,44 +345,24 @@ export class ConnectionsService {
     envId: string;
     connectionId: string;
   }): Result.ResultAsync<void, CheckConnectionDoesNotExistError> {
-    let { projectId, envId, connectionId } = item;
-
-    return this.db.drizzle.query.connectionsTable
-      .findFirst({
-        where: and(
-          eq(connectionsTable.connectionId, connectionId),
-          eq(connectionsTable.envId, envId),
-          eq(connectionsTable.projectId, projectId)
-        )
-      })
-      .then(connectionEnt =>
-        isDefined(connectionEnt)
-          ? Result.fail({ code: 'BACKEND_CONNECTION_ALREADY_EXISTS' })
-          : Result.succeed()
-      );
-  }
-
-  async getConnectionCheckExists(item: {
-    connectionId: string;
-    envId: string;
-    projectId: string;
-  }): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsError> {
-    let { projectId, envId, connectionId } = item;
-
-    return this.db.drizzle.query.connectionsTable
-      .findFirst({
-        where: and(
-          eq(connectionsTable.connectionId, connectionId),
-          eq(connectionsTable.envId, envId),
-          eq(connectionsTable.projectId, projectId)
-        )
-      })
-      .then(x =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
-          : this.tabService.connectionEntToTab({
-              connectionEnt: x
-            })
-      );
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThen(
+        (v): Result.ResultAsync<boolean, never> =>
+          this.db.connections.isExist({
+            where: and(
+              eq(connectionsTable.connectionId, v.connectionId),
+              eq(connectionsTable.envId, v.envId),
+              eq(connectionsTable.projectId, v.projectId)
+            )
+          })
+      ),
+      Result.andThen(
+        (v): Result.Result<void, CheckConnectionDoesNotExistError> =>
+          v
+            ? Result.fail({ code: 'BACKEND_CONNECTION_ALREADY_EXISTS' })
+            : Result.succeed()
+      )
+    );
   }
 }

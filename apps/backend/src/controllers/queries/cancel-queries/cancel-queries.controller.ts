@@ -1,17 +1,9 @@
 import { BigQuery, type Job } from '@google-cloud/bigquery';
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -19,7 +11,6 @@ import {
   ToBackendCancelQueriesResponseDto
 } from '#backend/controllers/queries/cancel-queries/cancel-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -29,23 +20,21 @@ import type {
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ParentService } from '#backend/services/parent/parent.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -71,19 +60,14 @@ import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom
 @Controller()
 export class CancelQueriesController {
   constructor(
-    private tabService: TabService,
     private parentService: ParentService,
     private structsService: StructsService,
-    private branchesService: BranchesService,
-    private bridgesService: BridgesService,
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCancelQueries' satisfies ToBackendRoute)
@@ -114,25 +98,29 @@ export class CancelQueriesController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -145,11 +133,13 @@ export class CancelQueriesController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -161,18 +151,12 @@ export class CancelQueriesController {
       Result.bind(
         'mconfigs',
         (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
-          this.db.drizzle.query.mconfigsTable
-            .findMany({
-              where: and(
-                eq(mconfigsTable.structId, v.bridge.structId),
-                inArray(mconfigsTable.mconfigId, v.mconfigIds)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.mconfigEntToTab({ mconfigEnt: x })
-              )
+          this.db.mconfigs.findMany({
+            where: and(
+              eq(mconfigsTable.structId, v.bridge.structId),
+              inArray(mconfigsTable.mconfigId, v.mconfigIds)
             )
+          })
       ),
       Result.bind(
         'uniqueParentIds',
@@ -217,21 +201,15 @@ export class CancelQueriesController {
       Result.bind(
         'connectionsWithAnyEnvId',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: and(
-                eq(connectionsTable.projectId, v.projectId),
-                inArray(
-                  connectionsTable.connectionId,
-                  v.queries.map(q => q.connectionId)
-                )
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.connectionEntToTab({ connectionEnt: x })
+          this.db.connections.findMany({
+            where: and(
+              eq(connectionsTable.projectId, v.projectId),
+              inArray(
+                connectionsTable.connectionId,
+                v.queries.map(q => q.connectionId)
               )
             )
+          })
       ),
       Result.andThrough(v =>
         customAsyncPool({
@@ -252,19 +230,8 @@ export class CancelQueriesController {
       Result.andThrough(v =>
         v.canceledQueries.length === 0
           ? Result.succeed()
-          : dbErrorToResult({
-              action: async (): Promise<void> => {
-                await retry(
-                  async () =>
-                    this.db.drizzle.transaction(async tx =>
-                      this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insertOrUpdate: { queries: v.canceledQueries }
-                      })
-                    ),
-                  getRetryOption(this.cs, this.logger)
-                );
-              }
+          : this.db.write({
+              insertOrUpdate: { queries: v.canceledQueries }
             })
       ),
       Result.map(

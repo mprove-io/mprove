@@ -1,25 +1,17 @@
 import crypto from 'node:crypto';
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
+import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSendMessageToEditorSessionRequestDto,
   ToBackendSendMessageToEditorSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcSessionTab,
   ProjectTab,
@@ -27,14 +19,17 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex/codex.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { DbService } from '#backend/services/db/db.service';
 import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
@@ -88,7 +83,6 @@ type MakeRotatedSessionCredentialsOutput = {
 export class SendMessageToEditorSessionController {
   constructor(
     private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
     private providersService: ProvidersService,
     private usersService: UsersService,
     private editorStreamService: EditorStreamService,
@@ -99,7 +93,7 @@ export class SendMessageToEditorSessionController {
     private codexService: CodexService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSendMessageToEditorSession' satisfies ToBackendRoute)
@@ -134,15 +128,15 @@ export class SendMessageToEditorSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.session.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.session.projectId)
           })
       ),
       Result.andThrough(v =>
@@ -226,8 +220,8 @@ export class SendMessageToEditorSessionController {
       Result.bind(
         'ocSession',
         (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
-          this.sessionsService.getOcSessionBySessionId({
-            sessionId: v.updatedSession.sessionId
+          this.db.ocSessions.findFirst({
+            where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
           })
       ),
       Result.map(
@@ -268,8 +262,8 @@ export class SendMessageToEditorSessionController {
         Result.bind(
           'lockedSession',
           (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-            this.sessionsService.getSessionByIdCheckExists({
-              sessionId: v.session.sessionId
+            this.db.sessions.findFirstCheckExists({
+              where: eq(sessionsTable.sessionId, v.session.sessionId)
             })
         ),
         Result.andThrough(v =>
@@ -411,8 +405,11 @@ export class SendMessageToEditorSessionController {
           let providersResult: Result.Result<
             ProviderTab[],
             GetEnabledProvidersError
-          > = await this.providersService.getEnabledProviders({
-            projectId: session.projectId
+          > = await this.db.providers.findMany({
+            where: and(
+              eq(providersTable.projectId, session.projectId),
+              eq(providersTable.isEnabled, true)
+            )
           });
 
           if (Result.isFailure(providersResult)) {
@@ -434,8 +431,8 @@ export class SendMessageToEditorSessionController {
             let freshSessionResult: Result.Result<
               SessionTab,
               GetSessionByIdCheckExistsError
-            > = await this.sessionsService.getSessionByIdCheckExists({
-              sessionId: session.sessionId
+            > = await this.db.sessions.findFirstCheckExists({
+              where: eq(sessionsTable.sessionId, session.sessionId)
             });
 
             if (Result.isFailure(freshSessionResult)) {
@@ -719,25 +716,17 @@ export class SendMessageToEditorSessionController {
   private async saveSession(item: {
     session: SessionTab;
   }): Result.ResultAsync<void, SaveSessionError> {
-    let { session } = item;
-
-    return dbErrorToResult({
-      action: async () => {
-        await retry(
-          async () =>
-            await this.db.drizzle.transaction(
-              async tx =>
-                await this.db.packer.writeUnwrap({
-                  tx: tx,
-                  insertOrUpdate: {
-                    sessions: [session]
-                  }
-                })
-            ),
-          getRetryOption(this.cs, this.logger)
-        );
-      }
-    });
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThrough(v =>
+        this.db.write({
+          insertOrUpdate: {
+            sessions: [v.session]
+          }
+        })
+      ),
+      Result.map((v): void => undefined)
+    );
   }
 
   private async makeRotatedSessionCredentials(item: {

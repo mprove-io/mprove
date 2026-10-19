@@ -1,13 +1,13 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendEditDraftReportRequestDto,
   ToBackendEditDraftReportResponseDto
 } from '#backend/controllers/reports/edit-draft-report/edit-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -18,13 +18,15 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -66,16 +68,13 @@ export class EditDraftReportController {
     private tabService: TabService,
     private modelsService: ModelsService,
     private membersService: MembersService,
-    private projectsService: ProjectsService,
     private reportsService: ReportsService,
     private sessionsService: SessionsService,
     private reportDataService: ReportDataService,
     private reportRowService: ReportRowService,
-    private branchesService: BranchesService,
-    private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendEditDraftReport' satisfies ToBackendRoute)
@@ -120,25 +119,29 @@ export class EditDraftReportController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -151,11 +154,13 @@ export class EditDraftReportController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(

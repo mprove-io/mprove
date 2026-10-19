@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
@@ -18,7 +11,12 @@ import {
   ToBackendDeleteRecordsResponseDto
 } from '#backend/controllers/test-routes/delete-records/delete-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  OrgTab,
+  ProjectTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -34,33 +32,28 @@ import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { type OrgEnt, orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import {
-  type ProjectEnt,
-  projectsTable
-} from '#backend/drizzle/postgres/schema/projects';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
-import {
-  type StructEnt,
-  structsTable
-} from '#backend/drizzle/postgres/schema/structs';
-import {
-  type UserEnt,
-  usersTable
-} from '#backend/drizzle/postgres/schema/users';
+import { structsTable } from '#backend/drizzle/postgres/schema/structs';
+import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
+import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
+import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { StructEntToTabError } from '#common/types/backend/function-errors/struct-ent-to-tab-error';
+import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRecordsOutput } from '#common/types/backend/routes/test-routes/delete-records/delete-records-output';
 import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
@@ -72,13 +65,12 @@ import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom
 @Controller()
 export class DeleteRecordsController {
   constructor(
-    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendDeleteRecords' satisfies ToBackendRoute)
@@ -120,25 +112,24 @@ export class DeleteRecordsController {
           )
       ),
       Result.bind(
+        'matchingProjects',
+        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+          v.projectNameHashes.length === 0
+            ? Result.succeed([])
+            : this.db.projects.findMany({
+                where: and(
+                  inArray(projectsTable.orgId, v.requestedOrgIds),
+                  inArray(projectsTable.nameHash, v.projectNameHashes)
+                )
+              })
+      ),
+      Result.bind(
         'projectIds',
-        async (v): Result.ResultAsync<string[], never> => {
-          if (v.projectNameHashes.length === 0) {
-            return Result.succeed(v.requestedProjectIds);
-          }
-
-          let projectEnts: ProjectEnt[] =
-            await this.db.drizzle.query.projectsTable.findMany({
-              where: and(
-                inArray(projectsTable.orgId, v.requestedOrgIds),
-                inArray(projectsTable.nameHash, v.projectNameHashes)
-              )
-            });
-
-          return Result.succeed([
+        (v): Result.Result<string[], never> =>
+          Result.succeed([
             ...v.requestedProjectIds,
-            ...projectEnts.map(projectEnt => projectEnt.projectId)
-          ]);
-        }
+            ...v.matchingProjects.map(project => project.projectId)
+          ])
       ),
       Result.bind(
         'orgNameHashes',
@@ -150,20 +141,23 @@ export class DeleteRecordsController {
             })
           )
       ),
-      Result.bind('orgIds', async (v): Result.ResultAsync<string[], never> => {
-        if (v.orgNameHashes.length === 0) {
-          return Result.succeed(v.requestedOrgIds);
-        }
-
-        let orgEnts: OrgEnt[] = await this.db.drizzle.query.orgsTable.findMany({
-          where: inArray(orgsTable.nameHash, v.orgNameHashes)
-        });
-
-        return Result.succeed([
-          ...v.requestedOrgIds,
-          ...orgEnts.map(orgEnt => orgEnt.orgId)
-        ]);
-      }),
+      Result.bind(
+        'matchingOrgs',
+        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+          v.orgNameHashes.length === 0
+            ? Result.succeed([])
+            : this.db.orgs.findMany({
+                where: inArray(orgsTable.nameHash, v.orgNameHashes)
+              })
+      ),
+      Result.bind(
+        'orgIds',
+        (v): Result.Result<string[], never> =>
+          Result.succeed([
+            ...v.requestedOrgIds,
+            ...v.matchingOrgs.map(org => org.orgId)
+          ])
+      ),
       Result.andThrough(v =>
         v.orgIds.length === 0
           ? Result.succeed()
@@ -182,13 +176,20 @@ export class DeleteRecordsController {
       ),
       Result.bind(
         'matchingUserIds',
-        async (v): Result.ResultAsync<string[], MakeHashError> =>
+        async (
+          v
+        ): Result.ResultAsync<string[], MakeHashError | UserEntToTabError> =>
           v.emails.length === 0
             ? Result.succeed([])
             : customAsyncPool({
                 poolSize: 1,
                 inputs: v.emails,
-                callback: async email => {
+                callback: async (
+                  email: string
+                ): Result.ResultAsync<
+                  string,
+                  MakeHashError | UserEntToTabError
+                > => {
                   let emailHashResult: Result.Result<string, MakeHashError> =
                     this.hashService.makeHash({
                       input: email,
@@ -199,12 +200,16 @@ export class DeleteRecordsController {
                     return emailHashResult;
                   }
 
-                  let userEnt: UserEnt =
-                    await this.db.drizzle.query.usersTable.findFirst({
+                  let userResult: Result.Result<UserTab, UserEntToTabError> =
+                    await this.db.users.findFirst({
                       where: eq(usersTable.emailHash, emailHashResult.value)
                     });
 
-                  return Result.succeed(userEnt?.userId);
+                  if (Result.isFailure(userResult)) {
+                    return userResult;
+                  }
+
+                  return Result.succeed(userResult.value?.userId);
                 }
               })
       ),
@@ -214,22 +219,20 @@ export class DeleteRecordsController {
           Result.succeed(v.matchingUserIds.filter(userId => isDefined(userId)))
       ),
       Result.bind(
-        'structEnts',
-        async (v): Result.ResultAsync<StructEnt[], never> =>
+        'structs',
+        async (v): Result.ResultAsync<StructTab[], StructEntToTabError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.structsTable
-                .findMany({
-                  where: inArray(structsTable.projectId, v.projectIds)
-                })
-                .then(xs => Result.succeed(xs))
+            : this.db.structs.findMany({
+                where: inArray(structsTable.projectId, v.projectIds)
+              })
       ),
       Result.bind(
         'structIds',
         (v): Result.Result<string[], never> =>
           Result.succeed([
             ...v.requestedStructIds,
-            ...v.structEnts.map(structEnt => structEnt.structId)
+            ...v.structs.map(struct => struct.structId)
           ])
       ),
       Result.andThrough(async v => {

@@ -1,23 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import { eq } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { and, eq } from 'drizzle-orm';
 import type {
   BridgeTab,
   MemberTab,
   ModelTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SearchCachedFieldValuesService } from '#backend/services/explorer/tools/search-model-fields/search-cached-field-values/search-cached-field-values.service';
 import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names/search-dwh-schema-field-names.service';
 import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
@@ -36,15 +35,11 @@ import type {
 export class SearchModelFieldsService {
   constructor(
     private cachedColumnService: CachedColumnService,
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
     private envsService: EnvsService,
-    private bridgesService: BridgesService,
-    private tabService: TabService,
     private searchCachedFieldValuesService: SearchCachedFieldValuesService,
     private searchModelFieldLeafNamesService: SearchModelFieldLeafNamesService,
     private searchDwhSchemaFieldNamesService: SearchDwhSchemaFieldNamesService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async searchModelFields(item: {
@@ -67,16 +62,18 @@ export class SearchModelFieldsService {
           .filter(searchFieldName => searchFieldName.length > 0)
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            memberId: v.userId,
-            projectId: v.projectId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -89,25 +86,21 @@ export class SearchModelFieldsService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.projectId),
+              eq(bridgesTable.repoId, v.repoId),
+              eq(bridgesTable.branchId, v.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: eq(modelsTable.structId, v.bridge.structId)
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.modelEntToTab({ modelEnt: x })
-              )
-            )
+          this.db.models.findMany({
+            where: eq(modelsTable.structId, v.bridge.structId)
+          })
       ),
       Result.bind(
         'accessibleMalloyModels',

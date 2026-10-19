@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendCreateSessionSseTicketRequestDto,
   ToBackendCreateSessionSseTicketResponseDto
@@ -11,8 +12,9 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { DbService } from '#backend/services/db/db.service';
 import { RedisService } from '#backend/services/redis/redis.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -27,8 +29,8 @@ import type { ToBackendCreateSessionSseTicketOutput } from '#common/types/backen
 @Controller()
 export class CreateSessionSseTicketController {
   constructor(
-    private sessionsService: SessionsService,
-    private redisService: RedisService
+    private redisService: RedisService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateSessionSseTicket' satisfies ToBackendRoute)
@@ -48,8 +50,8 @@ export class CreateSessionSseTicketController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>

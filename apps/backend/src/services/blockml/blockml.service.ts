@@ -1,17 +1,15 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BridgeTab,
   ConnectionTab,
   ModelFieldLeafTab,
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';
@@ -21,18 +19,22 @@ import { buildModelFieldLeafs } from '#backend/services/blockml/build-model-fiel
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
+import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
+import type { RebuildBranchBridgeError } from '#common/types/backend/function-errors/rebuild-branch-bridge-error';
+import type { RebuildBranchBridgesError } from '#common/types/backend/function-errors/rebuild-branch-bridges-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToBlockmlError } from '#common/types/backend/function-errors/send-to-blockml-error';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
@@ -67,7 +69,6 @@ export type RebuildStructOutput = {
 export class BlockmlService {
   constructor(
     private rpcService: RpcService,
-    private tabService: TabService,
     private envsService: EnvsService,
     private connectionsService: ConnectionsService,
     private modelsService: ModelsService,
@@ -78,8 +79,91 @@ export class BlockmlService {
     private dashboardsService: DashboardsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
+
+  async rebuildBranchBridges(item: {
+    branchBridges: BridgeTab[];
+    envId: string;
+    traceId: string;
+    orgId: string;
+    projectId: string;
+    repoId: string;
+    diskFiles: DiskCatalogFile[];
+    mproveDir: string;
+  }): Result.ResultAsync<void, RebuildBranchBridgesError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.andThrough(v =>
+        Result.sequence(
+          v.branchBridges,
+          (
+            bridge: BridgeTab
+          ): Result.ResultAsync<void, RebuildBranchBridgeError> =>
+            this.rebuildBranchBridge({
+              bridge: bridge,
+              envId: v.envId,
+              traceId: v.traceId,
+              orgId: v.orgId,
+              projectId: v.projectId,
+              repoId: v.repoId,
+              diskFiles: v.diskFiles,
+              mproveDir: v.mproveDir
+            })
+        )
+      ),
+      Result.map((v): void => undefined)
+    );
+  }
+
+  private async rebuildBranchBridge(item: {
+    bridge: BridgeTab;
+    envId: string;
+    traceId: string;
+    orgId: string;
+    projectId: string;
+    repoId: string;
+    diskFiles: DiskCatalogFile[];
+    mproveDir: string;
+  }): Result.ResultAsync<void, RebuildBranchBridgeError> {
+    let { bridge, envId } = item;
+
+    if (bridge.envId !== envId) {
+      bridge.structId = EMPTY_STRUCT_ID;
+      bridge.needValidate = true;
+
+      return Result.succeed();
+    }
+
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'structId',
+        (v): Result.Result<string, never> => Result.succeed(makeId())
+      ),
+      Result.andThrough(v =>
+        this.rebuildStruct({
+          traceId: v.traceId,
+          orgId: v.orgId,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          structId: v.structId,
+          diskFiles: v.diskFiles,
+          mproveDir: v.mproveDir,
+          envId: v.bridge.envId,
+          selectedGivens: [],
+          overrideTimezone: undefined
+        })
+      ),
+      Result.map(v => {
+        v.bridge.structId = v.structId;
+        v.bridge.needValidate = false;
+
+        return v;
+      }),
+      Result.map((v): void => undefined)
+    );
+  }
 
   async rebuildStruct(item: {
     traceId: string;
@@ -139,31 +223,24 @@ export class BlockmlService {
       isUndefined(connections) &&
       apiEnv?.envConnectionIdsWithFallback.length > 0
     ) {
-      let connectionsWithFallbackEnts: ConnectionEnt[] =
-        await this.db.drizzle.query.connectionsTable.findMany({
-          where: and(
-            eq(connectionsTable.projectId, projectId),
-            inArray(
-              connectionsTable.connectionId,
-              apiEnv.envConnectionIdsWithFallback
-            )
-          )
-        });
-
-      let connectionsResult: Result.Result<
+      let connectionResult: Result.Result<
         ConnectionTab[],
         ConnectionEntToTabError
-      > = Result.sequence(connectionsWithFallbackEnts, x =>
-        this.tabService.connectionEntToTab({
-          connectionEnt: x
-        })
-      );
+      > = await this.db.connections.findMany({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          inArray(
+            connectionsTable.connectionId,
+            apiEnv.envConnectionIdsWithFallback
+          )
+        )
+      });
 
-      if (Result.isFailure(connectionsResult)) {
-        return connectionsResult;
+      if (Result.isFailure(connectionResult)) {
+        return connectionResult;
       }
 
-      connectionsWithFallback = connectionsResult.value;
+      connectionsWithFallback = connectionResult.value;
     }
 
     let connectionsToUse: ConnectionTab[] = isDefined(connections)
@@ -247,40 +324,37 @@ export class BlockmlService {
                   }
                 );
 
-                await this.db.drizzle.transaction(async tx => {
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insert: {
-                      structs: [struct],
-                      charts: rs.charts.map(x =>
-                        this.chartsService.apiToTab({
-                          apiChart: x,
-                          chartType: rs.mconfigs.find(
-                            mconfig =>
-                              mconfig.mconfigId === x.tiles[0].mconfigId
-                          ).chart.type
-                        })
-                      ),
-                      models: rs.models.map(x =>
-                        this.modelsService.apiToTab({ apiModel: x })
-                      ),
-                      modelFieldLeafs: modelFieldLeafs,
-                      reports: rs.reports.map(x =>
-                        this.reportsService.apiToTab({ apiReport: x })
-                      ),
-                      mconfigs: rs.mconfigs.map(x =>
-                        this.mconfigsService.apiToTab({ apiMconfig: x })
-                      ),
-                      dashboards: rs.dashboards.map(x =>
-                        this.dashboardsService.apiToTab({ apiDashboard: x })
-                      )
-                    },
-                    insertOrDoNothing: {
-                      queries: rs.queries.map(x =>
-                        this.queriesService.apiToTab({ apiQuery: x })
-                      )
-                    }
-                  });
+                await this.db.writeUnwrap({
+                  insert: {
+                    structs: [struct],
+                    charts: rs.charts.map(x =>
+                      this.chartsService.apiToTab({
+                        apiChart: x,
+                        chartType: rs.mconfigs.find(
+                          mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
+                        ).chart.type
+                      })
+                    ),
+                    models: rs.models.map(x =>
+                      this.modelsService.apiToTab({ apiModel: x })
+                    ),
+                    modelFieldLeafs: modelFieldLeafs,
+                    reports: rs.reports.map(x =>
+                      this.reportsService.apiToTab({ apiReport: x })
+                    ),
+                    mconfigs: rs.mconfigs.map(x =>
+                      this.mconfigsService.apiToTab({ apiMconfig: x })
+                    ),
+                    dashboards: rs.dashboards.map(x =>
+                      this.dashboardsService.apiToTab({ apiDashboard: x })
+                    )
+                  },
+                  insertOrDoNothing: {
+                    queries: rs.queries.map(x =>
+                      this.queriesService.apiToTab({ apiQuery: x })
+                    )
+                  },
+                  retryOptions: { retries: 0 }
                 });
               },
               getRetryOption(this.cs, this.logger)

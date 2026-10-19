@@ -1,13 +1,22 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type EntsToSessionApisError,
-  zEntsToSessionApisError
-} from '#common/types/backend/function-errors/ents-to-session-apis-error';
+  type SessionEntToTabError,
+  zSessionEntToTabError
+} from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import {
+  type TabsToSessionApisError,
+  zTabsToSessionApisError
+} from '#common/types/backend/function-errors/tabs-to-session-apis-error';
 
-export type GetBasicSessionsListError = EntsToSessionApisError;
+export type GetBasicSessionsListError =
+  | TabsToSessionApisError
+  | SessionEntToTabError;
 
-export let zGetBasicSessionsListError = zEntsToSessionApisError;
+export let zGetBasicSessionsListError = z.union([
+  zTabsToSessionApisError,
+  zSessionEntToTabError
+]);
 
 assertTypesEqual<
   GetBasicSessionsListError,

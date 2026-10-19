@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
@@ -9,9 +9,9 @@ import {
   ToBackendGetServerUsersResponseDto
 } from '#backend/controllers/users/get-server-users/get-server-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   AvatarTab,
+  MemberTab,
   OrgTab,
   ProjectTab,
   UserTab
@@ -20,20 +20,20 @@ import {
   type AvatarEnt,
   avatarsTable
 } from '#backend/drizzle/postgres/schema/avatars';
-import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
-
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';
 import type { ServerUsersMembershipItem } from '#common/types/backend/parts/users/server-users-membership-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -46,7 +46,7 @@ export class GetServerUsersController {
   constructor(
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetServerUsers' satisfies ToBackendRoute)
@@ -109,21 +109,19 @@ export class GetServerUsersController {
           Result.succeed(v.users.map(user => user.userId))
       ),
       Result.bind(
-        'memberEnts',
-        async (v): Result.ResultAsync<MemberEnt[], never> =>
+        'members',
+        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
           v.userIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.membersTable
-                .findMany({
-                  where: inArray(membersTable.memberId, v.userIds)
-                })
-                .then(xs => Result.succeed(xs))
+            : this.db.members.findMany({
+                where: inArray(membersTable.memberId, v.userIds)
+              })
       ),
       Result.bind(
         'projectIds',
         (v): Result.Result<string[], never> =>
           Result.succeed([
-            ...new Set(v.memberEnts.map(memberEnt => memberEnt.projectId))
+            ...new Set(v.members.map(member => member.projectId))
           ])
       ),
       Result.bind(
@@ -131,15 +129,9 @@ export class GetServerUsersController {
         async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.projectsTable
-                .findMany({
-                  where: inArray(projectsTable.projectId, v.projectIds)
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.projectEntToTab({ projectEnt: x })
-                  )
-                )
+            : this.db.projects.findMany({
+                where: inArray(projectsTable.projectId, v.projectIds)
+              })
       ),
       Result.bind(
         'orgIds',
@@ -151,15 +143,9 @@ export class GetServerUsersController {
         async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
           v.orgIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.orgsTable
-                .findMany({
-                  where: inArray(orgsTable.orgId, v.orgIds)
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.orgEntToTab({ orgEnt: x })
-                  )
-                )
+            : this.db.orgs.findMany({
+                where: inArray(orgsTable.orgId, v.orgIds)
+              })
       ),
       Result.bind(
         'avatars',
@@ -184,14 +170,14 @@ export class GetServerUsersController {
       ),
       Result.map((v): ToBackendGetServerUsersOutput => {
         let serverUserItems: ServerUsersItem[] = v.users.map(user => {
-          let userMemberEnts: MemberEnt[] = v.memberEnts.filter(
-            memberEnt => memberEnt.memberId === user.userId
+          let userMembers: MemberTab[] = v.members.filter(
+            member => member.memberId === user.userId
           );
 
-          let memberships: ServerUsersMembershipItem[] = userMemberEnts.map(
-            memberEnt => {
+          let memberships: ServerUsersMembershipItem[] = userMembers.map(
+            member => {
               let project: ProjectTab = v.projects.find(
-                p => p.projectId === memberEnt.projectId
+                p => p.projectId === member.projectId
               );
 
               let org: OrgTab = v.orgs.find(o => o.orgId === project?.orgId);
@@ -199,10 +185,10 @@ export class GetServerUsersController {
               return {
                 orgId: project?.orgId,
                 isOrgOwner: org?.ownerId === user.userId,
-                projectId: memberEnt.projectId,
-                isAdmin: memberEnt.isAdmin === true,
-                isFileEditor: memberEnt.isEditor === true,
-                isExplorer: memberEnt.isExplorer === true
+                projectId: member.projectId,
+                isAdmin: member.isAdmin === true,
+                isFileEditor: member.isEditor === true,
+                isExplorer: member.isExplorer === true
               };
             }
           );

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import {
   type CommandHandle,
   type ProcessInfo,
@@ -16,7 +17,8 @@ import type {
   ProviderTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { DbService } from '#backend/services/db/db.service';
 import { anthropicModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/anthropic-model-to-open-code-config/anthropic-model-to-open-code-config';
 import { llmModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/llm-model-to-open-code-config/llm-model-to-open-code-config';
 import { openAiModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/open-ai-model-to-open-code-config/open-ai-model-to-open-code-config';
@@ -50,7 +52,7 @@ export class EditorOpencodeService {
   }[] = [];
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private sessionsService: SessionsService
+    private db: DbService
   ) {}
   async buildProviderConfig(item: {
     providers: ProviderTab[];
@@ -241,8 +243,8 @@ export class EditorOpencodeService {
         let sessionResult: Result.Result<
           SessionTab,
           GetSessionByIdCheckExistsError
-        > = await this.sessionsService.getSessionByIdCheckExists({
-          sessionId: sessionId
+        > = await this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, sessionId)
         });
 
         if (Result.isFailure(sessionResult)) {

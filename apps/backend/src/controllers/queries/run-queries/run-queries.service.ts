@@ -1,11 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { Credentials } from 'google-auth-library';
 import { JWT } from 'google-auth-library';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BranchTab,
@@ -18,17 +17,16 @@ import type {
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
-import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -42,7 +40,6 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.serv
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { ParentService } from '#backend/services/parent/parent.service';
 import { StoreService } from '#backend/services/store/store.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -88,16 +85,11 @@ const apiConnectionTypes = ['Api', 'GoogleApi'] satisfies ConnectionType[];
 @Injectable()
 export class RunQueriesService {
   constructor(
-    private tabService: TabService,
     private parentService: ParentService,
-    private branchesService: BranchesService,
-    private bridgesService: BridgesService,
     private structsService: StructsService,
     private queriesService: QueriesService,
-    private dbService: DbService,
+    private db: DbService,
     private sessionsService: SessionsService,
-    private connectionsService: ConnectionsService,
-    private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private databricksService: DatabricksService,
@@ -105,13 +97,11 @@ export class RunQueriesService {
     private prestoService: PrestoService,
     private trinoService: TrinoService,
     private storeService: StoreService,
-    // private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
     private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private logger: Logger
   ) {}
 
   private async getQueryExecutionContext(item: {
@@ -133,9 +123,11 @@ export class RunQueriesService {
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExists({
-          projectId: v.query.projectId,
-          memberId: v.userId
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.query.projectId)
+          )
         })
       ),
       Result.bind(
@@ -158,10 +150,15 @@ export class RunQueriesService {
               ? v.apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
               : false;
 
-          return this.connectionsService.getConnectionCheckExists({
-            projectId: v.query.projectId,
-            envId: isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId,
-            connectionId: v.query.connectionId
+          return this.db.connections.findFirstCheckExists({
+            where: and(
+              eq(connectionsTable.connectionId, v.query.connectionId),
+              eq(
+                connectionsTable.envId,
+                isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId
+              ),
+              eq(connectionsTable.projectId, v.query.projectId)
+            )
           });
         }
       ),
@@ -206,7 +203,7 @@ export class RunQueriesService {
       });
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbService.write({
+        await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -223,7 +220,7 @@ export class RunQueriesService {
       query.lastRunTs = makeTsNumber();
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbService.write({
+        await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -342,7 +339,7 @@ export class RunQueriesService {
       });
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbService.write({
+        await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -361,7 +358,7 @@ export class RunQueriesService {
       query.lastRunTs = makeTsNumber();
 
       let persistenceResult: Result.Result<PackerOutput, WriteError> =
-        await this.dbService.write({
+        await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
 
@@ -604,18 +601,22 @@ export class RunQueriesService {
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(async v => {
@@ -637,11 +638,13 @@ export class RunQueriesService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -653,22 +656,12 @@ export class RunQueriesService {
       Result.bind(
         'mconfigs',
         (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
-          this.db.drizzle.query.mconfigsTable
-            .findMany({
-              where: and(
-                eq(mconfigsTable.structId, v.bridge.structId),
-                inArray(mconfigsTable.mconfigId, v.mconfigIds)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.mconfigEntToTab({
-                      mconfigEnt: x
-                    })
-              )
+          this.db.mconfigs.findMany({
+            where: and(
+              eq(mconfigsTable.structId, v.bridge.structId),
+              inArray(mconfigsTable.mconfigId, v.mconfigIds)
             )
+          })
       ),
       Result.bind(
         'uniqueParentIds',
@@ -741,22 +734,12 @@ export class RunQueriesService {
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: and(
-                eq(modelsTable.structId, v.bridge.structId),
-                inArray(modelsTable.modelId, v.modelIds)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTab({
-                      modelEnt: x
-                    })
-              )
+          this.db.models.findMany({
+            where: and(
+              eq(modelsTable.structId, v.bridge.structId),
+              inArray(modelsTable.modelId, v.modelIds)
             )
+          })
       ),
       Result.bind(
         'prepareQueryExecutionPayload',
@@ -785,26 +768,16 @@ export class RunQueriesService {
       Result.bind(
         'uniqueGoogleApiConnectionsWithAnyEnvId',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: and(
-                eq(connectionsTable.projectId, v.projectId),
-                inArray(
-                  connectionsTable.connectionId,
-                  v.prepareQueryExecutionPayload
-                    .uniqueGoogleApiConnectionIdsWithAnyEnvId
-                )
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.connectionEntToTab({
-                      connectionEnt: x
-                    })
+          this.db.connections.findMany({
+            where: and(
+              eq(connectionsTable.projectId, v.projectId),
+              inArray(
+                connectionsTable.connectionId,
+                v.prepareQueryExecutionPayload
+                  .uniqueGoogleApiConnectionIdsWithAnyEnvId
               )
             )
+          })
       ),
       Result.andThrough(async v => {
         let connectionRefreshResult: Result.Result<void[], WriteError> =
@@ -838,7 +811,7 @@ export class RunQueriesService {
                   tokens.expiry_date;
 
                 let persistenceResult: Result.Result<PackerOutput, WriteError> =
-                  await this.dbService.write({
+                  await this.db.write({
                     insertOrUpdate: { connections: [connection] }
                   });
 

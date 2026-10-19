@@ -26,7 +26,7 @@ import type { ToBackendSetAvatarOutput } from '#common/types/backend/routes/avat
 @Controller()
 export class SetAvatarController {
   constructor(
-    private dbService: DbService,
+    private db: DbService,
     private usersService: UsersService
   ) {}
 
@@ -54,30 +54,28 @@ export class SetAvatarController {
       Result.bind(
         'avatar',
         (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
-          this.dbService.avatars
-            .findFirst({
-              where: eq(avatarsTable.userId, v.user.userId)
-            })
-            .then(avatar =>
-              Result.isSuccess(avatar) && isUndefined(avatar.value)
-                ? Result.succeed({
-                    userId: v.user.userId,
-                    avatarSmall: v.avatarSmall,
-                    avatarBig: undefined, // do not use avatarBig (encryption time)
-                    keyTag: undefined,
-                    serverTs: undefined
-                  })
-                : avatar
-            )
+          this.db.avatars.findFirst({
+            where: eq(avatarsTable.userId, v.user.userId)
+          })
       ),
       Result.map(v => {
+        if (isUndefined(v.avatar)) {
+          v.avatar = {
+            userId: v.user.userId,
+            avatarSmall: v.avatarSmall,
+            avatarBig: undefined, // do not use avatarBig (encryption time)
+            keyTag: undefined,
+            serverTs: undefined
+          };
+        }
+
         v.avatar.avatarSmall = v.avatarSmall;
         v.avatar.avatarBig = undefined; // do not use avatarBig (encryption time)
 
         return v;
       }),
       Result.andThrough(v =>
-        this.dbService.write({
+        this.db.write({
           insertOrUpdate: {
             avatars: [v.avatar]
           }

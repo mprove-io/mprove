@@ -1,10 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { favoritesTable } from '#backend/drizzle/postgres/schema/favorites';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { FavoriteType } from '#common/types/backend/parts/favorite/favorite-type';
 
@@ -12,7 +11,7 @@ import type { FavoriteType } from '#common/types/backend/parts/favorite/favorite
 export class FavoritesService {
   constructor(
     private hashService: HashService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   makeFavoriteFullId(item: {

@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
@@ -7,18 +7,14 @@ import {
   ToBackendIsBranchExistResponseDto
 } from '#backend/controllers/branches/is-branch-exist/is-branch-exist.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BranchEnt,
-  branchesTable
-} from '#backend/drizzle/postgres/schema/branches';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { DbService } from '#backend/services/db/db.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsBranchExistOutput } from '#common/types/backend/routes/branches/is-branch-exist/is-branch-exist-output';
 
@@ -27,10 +23,8 @@ import type { ToBackendIsBranchExistOutput } from '#common/types/backend/routes/
 @Controller()
 export class IsBranchExistController {
   constructor(
-    private projectsService: ProjectsService,
     private sessionsService: SessionsService,
-    private membersService: MembersService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendIsBranchExist' satisfies ToBackendRoute)
@@ -61,32 +55,32 @@ export class IsBranchExistController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExists({
-          memberId: v.userId,
-          projectId: v.projectId
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
         })
       ),
       Result.bind(
-        'branchEnt',
-        (v): Result.ResultAsync<BranchEnt, never> =>
-          this.db.drizzle.query.branchesTable
-            .findFirst({
-              where: and(
-                eq(branchesTable.projectId, v.projectId),
-                eq(branchesTable.repoId, v.repoId),
-                eq(branchesTable.branchId, v.branchId)
-              )
-            })
-            .then(branchEnt => Result.succeed(branchEnt))
+        'isBranchExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          this.db.branches.isExist({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
+          })
       ),
       Result.map(
         (v): ToBackendIsBranchExistOutput => ({
-          isExist: isDefined(v.branchEnt)
+          isExist: v.isBranchExist
         })
       )
     );

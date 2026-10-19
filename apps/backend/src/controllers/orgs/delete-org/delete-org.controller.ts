@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,8 +11,11 @@ import {
   ToBackendDeleteOrgResponseDto
 } from '#backend/controllers/orgs/delete-org/delete-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  OrgTab,
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
@@ -28,18 +24,17 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import {
-  type ProjectEnt,
-  projectsTable
-} from '#backend/drizzle/postgres/schema/projects';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
+import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteOrgOutput } from '#common/types/backend/routes/orgs/delete-org/delete-org-output';
 
@@ -54,7 +49,7 @@ export class DeleteOrgController {
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendDeleteOrg' satisfies ToBackendRoute)
@@ -78,7 +73,9 @@ export class DeleteOrgController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
+          this.db.orgs.findFirstCheckExists({
+            where: eq(orgsTable.orgId, v.orgId)
+          })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -96,17 +93,16 @@ export class DeleteOrgController {
         })
       ),
       Result.bind(
+        'projects',
+        (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+          this.db.projects.findMany({
+            where: eq(projectsTable.orgId, v.orgId)
+          })
+      ),
+      Result.bind(
         'projectIds',
-        (v): Result.ResultAsync<string[], never> =>
-          this.db.drizzle.query.projectsTable
-            .findMany({
-              where: eq(projectsTable.orgId, v.orgId)
-            })
-            .then((projectEnts: ProjectEnt[]) =>
-              Result.succeed(
-                projectEnts.map(projectEnt => projectEnt.projectId)
-              )
-            )
+        (v): Result.Result<string[], never> =>
+          Result.succeed(v.projects.map(project => project.projectId))
       ),
       Result.andThrough(async v => {
         await retry(

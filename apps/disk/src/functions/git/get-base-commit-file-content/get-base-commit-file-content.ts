@@ -15,11 +15,11 @@ export async function getBaseCommitFileContent(item: {
       let currentBranchName = branchSummary.current;
 
       let remoteBranches = await git.branch(['-r']);
-      let remoteBranchExists = remoteBranches.all.includes(
+      let isRemoteBranchExist: boolean = remoteBranches.all.includes(
         `origin/${currentBranchName}`
       );
 
-      if (!remoteBranchExists) {
+      if (!isRemoteBranchExist) {
         return Result.succeed('');
       }
 

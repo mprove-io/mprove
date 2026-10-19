@@ -1,42 +1,29 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendEditEnvFallbacksRequestDto,
   ToBackendEditEnvFallbacksResponseDto
 } from '#backend/controllers/envs/edit-env-fallbacks/edit-env-fallbacks.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BridgeTab,
   EnvTab,
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
@@ -50,13 +37,10 @@ import type { ToBackendEditEnvFallbacksOutput } from '#common/types/backend/rout
 @Controller()
 export class EditEnvFallbacksController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendEditEnvFallbacks' satisfies ToBackendRoute)
@@ -81,8 +65,8 @@ export class EditEnvFallbacksController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -121,39 +105,26 @@ export class EditEnvFallbacksController {
         return v;
       }),
       Result.bind(
-        'branchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.projectId),
-                eq(bridgesTable.envId, v.envId)
-              )
-            })
-            .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.projectId),
+              eq(bridgesTable.envId, v.envId)
+            )
+          })
       ),
       Result.map(v => {
-        v.branchBridgeEnts.forEach(bridgeEnt => {
-          bridgeEnt.needValidate = true;
+        v.branchBridges.forEach(bridge => {
+          bridge.needValidate = true;
         });
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(async tx => {
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insertOrUpdate: {
-                      bridges: [...v.branchBridgeEnts],
-                      envs: [v.env]
-                    }
-                  });
-                }),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insertOrUpdate: {
+            bridges: [...v.branchBridges],
+            envs: [v.env]
           }
         })
       ),

@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendCommitRepoRequestDto,
   ToBackendCommitRepoResponseDto
@@ -13,8 +14,11 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
@@ -47,8 +51,8 @@ export class CommitRepoController {
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private rpcService: RpcService,
-    private branchesService: BranchesService,
-    private sessionArchiveService: SessionArchiveService
+    private sessionArchiveService: SessionArchiveService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCommitRepo' satisfies ToBackendRoute)
@@ -92,8 +96,8 @@ export class CommitRepoController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
@@ -112,10 +116,12 @@ export class CommitRepoController {
         })
       ),
       Result.andThrough(v =>
-        this.branchesService.getBranchCheckExists({
-          projectId: v.projectId,
-          repoId: v.repoId,
-          branchId: v.branchId
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
         })
       ),
       Result.bind(
@@ -144,8 +150,8 @@ export class CommitRepoController {
         ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
           v.repoType !== 'session'
             ? Result.succeed(undefined)
-            : this.sessionsService.getSessionByIdCheckExists({
-                sessionId: v.repoId
+            : this.db.sessions.findFirstCheckExists({
+                where: eq(sessionsTable.sessionId, v.repoId)
               })
       ),
       Result.bind(

@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
@@ -8,7 +8,6 @@ import {
   ToBackendGetSessionResponseDto
 } from '#backend/controllers/sessions/get-session/get-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcEventTab,
   OcMessageTab,
@@ -21,14 +20,16 @@ import type {
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { DbService } from '#backend/services/db/db.service';
 import type { GetBasicSessionsListOutput } from '#backend/services/db/sessions/sessions.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -52,11 +53,9 @@ import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/ses
 export class GetSessionController {
   constructor(
     private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
-    private tabService: TabService,
     private editorSandboxService: EditorSandboxService,
     private editorStreamService: EditorStreamService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetSession' satisfies ToBackendRoute)
@@ -80,15 +79,15 @@ export class GetSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.session.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.session.projectId)
           })
       ),
       Result.andThrough(v =>
@@ -121,11 +120,8 @@ export class GetSessionController {
 
             return dbErrorToResult({
               action: async () => {
-                await this.db.drizzle.transaction(async tx => {
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insertOrUpdate: { sessions: [v.session] }
-                  });
+                await this.db.writeUnwrap({
+                  insertOrUpdate: { sessions: [v.session] }
                 });
               }
             });
@@ -164,8 +160,8 @@ export class GetSessionController {
       Result.bind(
         'ocSession',
         (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
-          this.sessionsService.getOcSessionBySessionId({
-            sessionId: v.sessionId
+          this.db.ocSessions.findFirst({
+            where: eq(ocSessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.bind(
@@ -205,50 +201,29 @@ export class GetSessionController {
       Result.bind(
         'messages',
         (v): Result.ResultAsync<OcMessageTab[], OcMessageEntToTabError> =>
-          this.db.drizzle.query.ocMessagesTable
-            .findMany({
-              where: eq(ocMessagesTable.sessionId, v.sessionId),
-              orderBy: [asc(ocMessagesTable.messageId)]
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.ocMessageEntToTab({ messageEnt: x })
-              )
-            )
+          this.db.ocMessages.findMany({
+            where: eq(ocMessagesTable.sessionId, v.sessionId),
+            orderBy: [asc(ocMessagesTable.messageId)]
+          })
       ),
       Result.bind(
         'parts',
         (v): Result.ResultAsync<OcPartTab[], OcPartEntToTabError> =>
-          this.db.drizzle.query.ocPartsTable
-            .findMany({
-              where: eq(ocPartsTable.sessionId, v.sessionId),
-              orderBy: [asc(ocPartsTable.partId)]
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.ocPartEntToTab({ partEnt: x })
-              )
-            )
+          this.db.ocParts.findMany({
+            where: eq(ocPartsTable.sessionId, v.sessionId),
+            orderBy: [asc(ocPartsTable.partId)]
+          })
       ),
       Result.bind(
         'events',
         (v): Result.ResultAsync<OcEventTab[], OcEventEntToTabError> =>
-          this.db.drizzle.query.ocEventsTable
-            .findMany({
-              where: and(
-                eq(ocEventsTable.sessionId, v.sessionId),
-                gt(
-                  ocEventsTable.eventIndex,
-                  v.session.lastFetchEventIndex ?? -1
-                )
-              ),
-              orderBy: [asc(ocEventsTable.eventIndex)]
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.ocEventEntToTab({ eventEnt: x })
-              )
-            )
+          this.db.ocEvents.findMany({
+            where: and(
+              eq(ocEventsTable.sessionId, v.sessionId),
+              gt(ocEventsTable.eventIndex, v.session.lastFetchEventIndex ?? -1)
+            ),
+            orderBy: [asc(ocEventsTable.eventIndex)]
+          })
       ),
       Result.bind(
         'sessionList',

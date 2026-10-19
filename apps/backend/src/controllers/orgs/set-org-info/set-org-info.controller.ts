@@ -1,33 +1,21 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import type { BackendConfig } from '#backend/config/backend-config';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendSetOrgInfoRequestDto,
   ToBackendSetOrgInfoResponseDto
 } from '#backend/controllers/orgs/set-org-info/set-org-info.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -39,11 +27,8 @@ import type { ToBackendSetOrgInfoOutput } from '#common/types/backend/routes/org
 @Controller()
 export class SetOrgInfoController {
   constructor(
-    private tabService: TabService,
     private orgsService: OrgsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSetOrgInfo' satisfies ToBackendRoute)
@@ -67,7 +52,9 @@ export class SetOrgInfoController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
+          this.db.orgs.findFirstCheckExists({
+            where: eq(orgsTable.orgId, v.orgId)
+          })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -89,21 +76,7 @@ export class SetOrgInfoController {
         return Result.succeed();
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: { orgs: [v.org] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
+        this.db.write({ insertOrUpdate: { orgs: [v.org] } })
       ),
       Result.map(
         (v): ToBackendSetOrgInfoOutput => ({

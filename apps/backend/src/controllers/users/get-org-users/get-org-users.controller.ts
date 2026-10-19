@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, sql } from 'drizzle-orm';
@@ -7,9 +7,9 @@ import {
   ToBackendGetOrgUsersResponseDto
 } from '#backend/controllers/users/get-org-users/get-org-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   AvatarTab,
+  MemberTab,
   OrgTab,
   ProjectTab,
   UserTab
@@ -18,17 +18,19 @@ import {
   type AvatarEnt,
   avatarsTable
 } from '#backend/drizzle/postgres/schema/avatars';
-import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
 import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { OrgUsersItem } from '#common/types/backend/parts/org-users/org-users-item';
@@ -44,7 +46,7 @@ export class GetOrgUsersController {
   constructor(
     private tabService: TabService,
     private orgsService: OrgsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetOrgUsers' satisfies ToBackendRoute)
@@ -69,7 +71,9 @@ export class GetOrgUsersController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
+          this.db.orgs.findFirstCheckExists({
+            where: eq(orgsTable.orgId, v.orgId)
+          })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -80,13 +84,9 @@ export class GetOrgUsersController {
       Result.bind(
         'projects',
         (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
-          this.db.drizzle.query.projectsTable
-            .findMany({ where: eq(projectsTable.orgId, v.orgId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.projectEntToTab({ projectEnt: x })
-              )
-            )
+          this.db.projects.findMany({
+            where: eq(projectsTable.orgId, v.orgId)
+          })
       ),
       Result.bind(
         'projectIds',
@@ -112,13 +112,9 @@ export class GetOrgUsersController {
       Result.bind(
         'sortedUsers',
         (v): Result.ResultAsync<UserTab[], UserEntToTabError> =>
-          this.db.drizzle.query.usersTable
-            .findMany({ where: and(inArray(usersTable.userId, v.userIds)) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.userEntToTab({ userEnt: x })
-              )
-            )
+          this.db.users.findMany({
+            where: and(inArray(usersTable.userId, v.userIds))
+          })
       ),
       Result.map(v => {
         v.sortedUsers.sort((a, b) =>
@@ -133,18 +129,16 @@ export class GetOrgUsersController {
         return Result.succeed(v.sortedUsers.slice(offset, offset + v.perPage));
       }),
       Result.bind(
-        'memberEnts',
-        async (v): Result.ResultAsync<MemberEnt[], never> =>
+        'members',
+        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
           v.userIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.membersTable
-                .findMany({
-                  where: and(
-                    inArray(membersTable.memberId, v.userIds),
-                    inArray(membersTable.projectId, v.projectIds)
-                  )
-                })
-                .then(xs => Result.succeed(xs))
+            : this.db.members.findMany({
+                where: and(
+                  inArray(membersTable.memberId, v.userIds),
+                  inArray(membersTable.projectId, v.projectIds)
+                )
+              })
       ),
       Result.bind(
         'avatars',
@@ -169,8 +163,8 @@ export class GetOrgUsersController {
       ),
       Result.map((v): ToBackendGetOrgUsersOutput => {
         let orgUserItems: OrgUsersItem[] = v.users.map(user => {
-          let userMemberEnts: MemberEnt[] = v.memberEnts.filter(
-            memberEnt => memberEnt.memberId === user.userId
+          let userMembers: MemberTab[] = v.members.filter(
+            member => member.memberId === user.userId
           );
 
           return {
@@ -185,9 +179,9 @@ export class GetOrgUsersController {
               firstName: user.firstName,
               lastName: user.lastName
             }),
-            adminProjects: userMemberEnts
-              .filter(memberEnt => memberEnt.isAdmin === true)
-              .map(memberEnt => memberEnt.projectId)
+            adminProjects: userMembers
+              .filter(member => member.isAdmin === true)
+              .map(member => member.projectId)
               .map(projectId => {
                 let project: ProjectTab = v.projects.find(
                   p => p.projectId === projectId
@@ -195,9 +189,9 @@ export class GetOrgUsersController {
 
                 return project.name;
               }),
-            editorProjects: userMemberEnts
-              .filter(memberEnt => memberEnt.isEditor === true)
-              .map(memberEnt => memberEnt.projectId)
+            editorProjects: userMembers
+              .filter(member => member.isEditor === true)
+              .map(member => member.projectId)
               .map(projectId => {
                 let project: ProjectTab = v.projects.find(
                   p => p.projectId === projectId
@@ -205,9 +199,9 @@ export class GetOrgUsersController {
 
                 return project.name;
               }),
-            explorerProjects: userMemberEnts
-              .filter(memberEnt => memberEnt.isExplorer === true)
-              .map(memberEnt => memberEnt.projectId)
+            explorerProjects: userMembers
+              .filter(member => member.isExplorer === true)
+              .map(member => member.projectId)
               .map(projectId => {
                 let project: ProjectTab = v.projects.find(
                   p => p.projectId === projectId
@@ -215,8 +209,8 @@ export class GetOrgUsersController {
 
                 return project.name;
               }),
-            projectUserProjects: userMemberEnts
-              .map(memberEnt => memberEnt.projectId)
+            projectUserProjects: userMembers
+              .map(member => member.projectId)
               .map(projectId => {
                 let project: ProjectTab = v.projects.find(
                   p => p.projectId === projectId

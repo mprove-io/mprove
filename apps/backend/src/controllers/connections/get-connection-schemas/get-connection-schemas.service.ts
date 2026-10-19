@@ -1,9 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 import { sortSchemaColumns } from '#backend/controllers/connections/get-connection-schemas/sort-schema-columns/sort-schema-columns';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   CachedColumnTab,
@@ -11,14 +10,15 @@ import type {
   MemberTab,
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
@@ -28,7 +28,6 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -65,11 +64,8 @@ const { forEachSeries } = pIteration;
 @Injectable()
 export class GetConnectionSchemasService {
   constructor(
-    private tabService: TabService,
     private cachedColumnService: CachedColumnService,
     private tabToEntService: TabToEntService,
-    private projectsService: ProjectsService,
-    private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
     private membersService: MembersService,
@@ -81,7 +77,7 @@ export class GetConnectionSchemasService {
     private duckDbService: DuckDbService,
     private prestoService: PrestoService,
     private trinoService: TrinoService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getConnectionSchemasUnwrap(item: {
@@ -120,8 +116,8 @@ export class GetConnectionSchemasService {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -137,11 +133,13 @@ export class GetConnectionSchemasService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.projectId),
+              eq(bridgesTable.repoId, v.repoId),
+              eq(bridgesTable.branchId, v.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -165,29 +163,21 @@ export class GetConnectionSchemasService {
       Result.bind(
         'connections',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: and(
-                eq(connectionsTable.projectId, v.projectId),
-                or(
-                  eq(connectionsTable.envId, v.envId),
-                  and(
-                    eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                    inArray(
-                      connectionsTable.connectionId,
-                      v.apiEnv.fallbackConnectionIds
-                    )
+          this.db.connections.findMany({
+            where: and(
+              eq(connectionsTable.projectId, v.projectId),
+              or(
+                eq(connectionsTable.envId, v.envId),
+                and(
+                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                  inArray(
+                    connectionsTable.connectionId,
+                    v.apiEnv.fallbackConnectionIds
                   )
                 )
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.connectionEntToTab({
-                  connectionEnt: x
-                })
-              )
             )
+          })
       ),
       Result.bind(
         'eligibleConnections',
@@ -272,21 +262,13 @@ export class GetConnectionSchemasService {
         ): Result.ResultAsync<CachedColumnTab[], CachedColumnEntToTabError> =>
           v.connectionIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.cachedColumnsTable
-                .findMany({
-                  where: and(
-                    eq(cachedColumnsTable.projectId, v.projectId),
-                    eq(cachedColumnsTable.envId, v.cacheEnvId),
-                    inArray(cachedColumnsTable.connectionId, v.connectionIds)
-                  )
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.cachedColumnEntToTab({
-                      cachedColumnEnt: x
-                    })
-                  )
+            : this.db.cachedColumns.findMany({
+                where: and(
+                  eq(cachedColumnsTable.projectId, v.projectId),
+                  eq(cachedColumnsTable.envId, v.cacheEnvId),
+                  inArray(cachedColumnsTable.connectionId, v.connectionIds)
                 )
+              })
       ),
       Result.bind(
         'combinedSchemaItems',

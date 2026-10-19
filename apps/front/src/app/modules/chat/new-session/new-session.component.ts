@@ -79,17 +79,17 @@ export class NewSessionComponent implements OnInit {
       alias: user.alias
     });
     let branchItem = { branchId: this.initialBranch, extraName: extraName };
-    let branchAlreadyPresent = this.branches.some(
+    let isBranchExist: boolean = this.branches.some(
       b => b.branchId === branchItem.branchId
     );
-    this.branches = branchAlreadyPresent ? this.branches : [branchItem];
+    this.branches = isBranchExist ? this.branches : [branchItem];
 
     let envsItem: EnvsItem = {
       envId: this.baseEnvId,
       projectId: nav.projectId
     };
-    let envAlreadyPresent = this.envs.some(e => e.envId === envsItem.envId);
-    this.envs = envAlreadyPresent ? this.envs : [envsItem];
+    let isEnvExist: boolean = this.envs.some(e => e.envId === envsItem.envId);
+    this.envs = isEnvExist ? this.envs : [envsItem];
   }
 
   ngOnInit() {
@@ -196,8 +196,11 @@ export class NewSessionComponent implements OnInit {
           alias: user.alias
         });
         let newBranchItem = { branchId: branchId, extraName: extraName };
-        let alreadyPresent = this.branches.some(b => b.branchId === branchId);
-        this.branches = alreadyPresent ? this.branches : [newBranchItem];
+        let isBranchExist: boolean = this.branches.some(
+          b => b.branchId === branchId
+        );
+
+        this.branches = isBranchExist ? this.branches : [newBranchItem];
       }
     })
   );

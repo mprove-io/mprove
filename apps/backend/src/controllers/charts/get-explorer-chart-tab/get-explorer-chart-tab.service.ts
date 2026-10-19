@@ -1,11 +1,8 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BridgeTab,
   ChartTab,
@@ -18,29 +15,25 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
-import type { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import type { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import {
   ExplorerChartRebuildService,
   type ExplorerRebuildResult
 } from '#backend/services/explorer/explorer-chart-rebuild/explorer-chart-rebuild.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { GetExplorerChartTabError } from '#common/types/backend/function-errors/get-explorer-chart-tab-error';
 import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
@@ -49,6 +42,7 @@ import type { ModelEntToTabError } from '#common/types/backend/function-errors/m
 import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { RebuildFromYamlError } from '#common/types/backend/function-errors/rebuild-from-yaml-error';
 import type { RunQueriesError } from '#common/types/backend/function-errors/run-queries-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { ChartX } from '#common/types/backend/parts/chart/chart-x';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Member } from '#common/types/backend/parts/member';
@@ -84,18 +78,14 @@ type GetExplorerChartTabErrors = Extract<
 @Injectable()
 export class GetExplorerChartTabService {
   constructor(
-    private sessionsService: SessionsService,
     private membersService: MembersService,
     private modelsService: ModelsService,
     private chartsService: ChartsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
-    private tabService: TabService,
     private explorerChartRebuildService: ExplorerChartRebuildService,
     private runQueriesService: RunQueriesService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getExplorerChartTab(item: {
@@ -112,8 +102,8 @@ export class GetExplorerChartTabService {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>
@@ -133,30 +123,24 @@ export class GetExplorerChartTabService {
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.session.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.session.projectId)
+            )
           })
       ),
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, BridgeEntToTabError> =>
-          this.db.drizzle.query.bridgesTable
-            .findFirst({
-              where: and(
-                eq(bridgesTable.projectId, v.session.projectId),
-                eq(bridgesTable.repoId, v.session.repoId),
-                eq(bridgesTable.branchId, v.session.branchId),
-                eq(bridgesTable.envId, v.session.envId)
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.bridgeEntToTab({
-                    bridgeEnt: x
-                  })
+          this.db.bridges.findFirst({
+            where: and(
+              eq(bridgesTable.projectId, v.session.projectId),
+              eq(bridgesTable.repoId, v.session.repoId),
+              eq(bridgesTable.branchId, v.session.branchId),
+              eq(bridgesTable.envId, v.session.envId)
             )
+          })
       ),
       Result.andThrough(v =>
         isUndefined(v.bridge)
@@ -168,20 +152,12 @@ export class GetExplorerChartTabService {
       Result.bind(
         'originalChart',
         (v): Result.ResultAsync<ChartTab, ChartEntToTabError> =>
-          this.db.drizzle.query.chartsTable
-            .findFirst({
-              where: and(
-                eq(chartsTable.sessionId, v.sessionId),
-                eq(chartsTable.chartId, v.chartId)
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.chartEntToTab({
-                    chartEnt: x
-                  })
+          this.db.charts.findFirst({
+            where: and(
+              eq(chartsTable.sessionId, v.sessionId),
+              eq(chartsTable.chartId, v.chartId)
             )
+          })
       ),
       Result.andThrough(v =>
         isUndefined(v.originalChart)
@@ -218,42 +194,27 @@ export class GetExplorerChartTabService {
       Result.bind(
         'chartAtCurrent',
         (v): Result.ResultAsync<ChartTab, ChartEntToTabError> =>
-          this.db.drizzle.query.chartsTable
-            .findFirst({
-              where: and(
-                eq(chartsTable.sessionId, v.sessionId),
-                eq(chartsTable.chartId, v.chartId),
-                eq(chartsTable.structId, v.bridge.structId)
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.chartEntToTab({
-                    chartEnt: x
-                  })
+          this.db.charts.findFirst({
+            where: and(
+              eq(chartsTable.sessionId, v.sessionId),
+              eq(chartsTable.chartId, v.chartId),
+              eq(chartsTable.structId, v.bridge.structId)
             )
+          })
       ),
       Result.andThrough(async v => {
         if (v.chartAtCurrent) {
           let chartTile: Tile = v.chartAtCurrent.tiles[0];
 
-          let mconfigEnt: MconfigEnt =
-            await this.db.drizzle.query.mconfigsTable.findFirst({
-              where: and(
-                eq(mconfigsTable.mconfigId, chartTile.mconfigId),
-                eq(mconfigsTable.structId, v.bridge.structId)
-              )
-            });
-
           let existingMconfigResult: Result.Result<
             MconfigTab,
             MconfigEntToTabError
-          > = isUndefined(mconfigEnt)
-            ? Result.succeed(undefined)
-            : this.tabService.mconfigEntToTab({
-                mconfigEnt: mconfigEnt
-              });
+          > = await this.db.mconfigs.findFirst({
+            where: and(
+              eq(mconfigsTable.mconfigId, chartTile.mconfigId),
+              eq(mconfigsTable.structId, v.bridge.structId)
+            )
+          });
 
           if (Result.isFailure(existingMconfigResult)) {
             return existingMconfigResult;
@@ -261,17 +222,10 @@ export class GetExplorerChartTabService {
 
           let existingMconfig: MconfigTab = existingMconfigResult.value;
 
-          let queryEnt: QueryEnt =
-            await this.db.drizzle.query.queriesTable.findFirst({
+          let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
+            await this.db.queries.findFirst({
               where: eq(queriesTable.queryId, chartTile.queryId)
             });
-
-          let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
-            isUndefined(queryEnt)
-              ? Result.succeed(undefined)
-              : this.tabService.queryEntToTab({
-                  queryEnt: queryEnt
-                });
 
           if (Result.isFailure(queryResult)) {
             return queryResult;
@@ -340,26 +294,14 @@ export class GetExplorerChartTabService {
 
             rebuiltChart.title = v.originalChart.title;
 
-            let persistenceResult: Result.Result<void, DbErrorToError> =
-              await dbErrorToResult({
-                action: async () => {
-                  await retry(
-                    async () =>
-                      await this.db.drizzle.transaction(
-                        async tx =>
-                          await this.db.packer.writeUnwrap({
-                            tx: tx,
-                            insert: {
-                              charts: [rebuiltChart],
-                              mconfigs: [rebuiltMconfig]
-                            },
-                            insertOrDoNothing: {
-                              queries: [rebuiltQuery]
-                            }
-                          })
-                      ),
-                    getRetryOption(this.cs, this.logger)
-                  );
+            let persistenceResult: Result.Result<PackerOutput, WriteError> =
+              await this.db.write({
+                insert: {
+                  charts: [rebuiltChart],
+                  mconfigs: [rebuiltMconfig]
+                },
+                insertOrDoNothing: {
+                  queries: [rebuiltQuery]
                 }
               });
 
@@ -383,21 +325,14 @@ export class GetExplorerChartTabService {
               return toBackendRunQueriesOutput;
             }
 
-            let queryEnt: QueryEnt =
-              await this.db.drizzle.query.queriesTable.findFirst({
+            let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
+              await this.db.queries.findFirst({
                 where: eq(queriesTable.queryId, rebuiltQuery.queryId)
               });
 
             v.resolveChartPayload.chart = rebuiltChart;
 
             v.resolveChartPayload.mconfig = rebuiltMconfig;
-
-            let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
-              isUndefined(queryEnt)
-                ? Result.succeed(undefined)
-                : this.tabService.queryEntToTab({
-                    queryEnt: queryEnt
-                  });
 
             if (Result.isFailure(queryResult)) {
               return queryResult;
@@ -442,26 +377,16 @@ export class GetExplorerChartTabService {
             });
           }
 
-          let modelsResult: Result.Result<ModelTab[], ModelEntToTabError> =
-            await this.db.drizzle.query.modelsTable
-              .findMany({
-                where: eq(modelsTable.structId, v.bridge.structId)
-              })
-              .then(xs =>
-                Result.sequence(xs, x =>
-                  isUndefined(x)
-                    ? Result.succeed(undefined)
-                    : this.tabService.modelEntToTab({
-                        modelEnt: x
-                      })
-                )
-              );
+          let modelResult: Result.Result<ModelTab[], ModelEntToTabError> =
+            await this.db.models.findMany({
+              where: eq(modelsTable.structId, v.bridge.structId)
+            });
 
-          if (Result.isFailure(modelsResult)) {
-            return modelsResult;
+          if (Result.isFailure(modelResult)) {
+            return modelResult;
           }
 
-          let allModels: ModelTab[] = modelsResult.value;
+          let allModels: ModelTab[] = modelResult.value;
 
           let model: ModelTab = allModels.find(
             x => x.modelId === v.resolveChartPayload.mconfig.modelId

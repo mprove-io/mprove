@@ -1,30 +1,25 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendTestConnectionRequestDto,
   ToBackendTestConnectionResponseDto
 } from '#backend/controllers/connections/test-connection/test-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -50,7 +45,6 @@ import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes
 export class TestConnectionController {
   constructor(
     private tabService: TabService,
-    private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private mysqlService: MysqlService,
     private pgService: PgService,
@@ -64,7 +58,7 @@ export class TestConnectionController {
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendTestConnection' satisfies ToBackendRoute)
@@ -104,8 +98,8 @@ export class TestConnectionController {
           : Result.succeed();
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -115,9 +109,11 @@ export class TestConnectionController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExists({
-          memberId: v.userId,
-          projectId: v.projectId
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
         })
       ),
       Result.bind(

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
   EventMessagePartUpdated,
@@ -19,8 +19,6 @@ import type {
 import { Result } from '@praha/byethrow';
 import { eq, max, sql } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcMessageTab,
   OcPartTab,
@@ -28,8 +26,11 @@ import type {
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { DbService } from '#backend/services/db/db.service';
 import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
 import { OcMessagesService } from '#backend/services/db/oc-messages/oc-messages.service';
 import { OcPartsService } from '#backend/services/db/oc-parts/oc-parts.service';
@@ -67,7 +68,7 @@ export class SessionDrainService {
     private ocMessagesService: OcMessagesService,
     private ocPartsService: OcPartsService,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   cleanup(item: { sessionId: string }): void {
@@ -261,8 +262,8 @@ export class SessionDrainService {
       let ocSessionResult: Result.Result<
         OcSessionTab,
         GetOcSessionBySessionIdError
-      > = await this.sessionsService.getOcSessionBySessionId({
-        sessionId: sessionId
+      > = await this.db.ocSessions.findFirst({
+        where: eq(ocSessionsTable.sessionId, sessionId)
       });
 
       if (Result.isFailure(ocSessionResult)) {
@@ -532,8 +533,8 @@ export class SessionDrainService {
           let sessionResult: Result.Result<
             SessionTab,
             GetSessionByIdCheckExistsError
-          > = await this.sessionsService.getSessionByIdCheckExists({
-            sessionId: sessionId
+          > = await this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, sessionId)
           });
 
           if (Result.isFailure(sessionResult)) {

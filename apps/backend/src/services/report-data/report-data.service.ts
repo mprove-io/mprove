@@ -1,10 +1,7 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   KitTab,
   MconfigTab,
@@ -21,9 +18,8 @@ import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { DbService } from '#backend/services/db/db.service';
 import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -34,7 +30,6 @@ import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.serv
 import { MalloyService } from '#backend/services/malloy/malloy.service';
 import type { GetTimeColumnsOutput } from '#backend/services/report-time-columns/report-time-columns.service';
 import { ReportTimeColumnsService } from '#backend/services/report-time-columns/report-time-columns.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
@@ -46,7 +41,6 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { CalculateDataError } from '#common/types/backend/function-errors/calculate-data-error';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
 import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
 import type { GetTimeColumnsError } from '#common/types/backend/function-errors/get-time-columns-error';
@@ -56,6 +50,7 @@ import type { MconfigEntToTabError } from '#common/types/backend/function-errors
 import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
@@ -108,7 +103,6 @@ type PrepareReportCalculationPayload = {
 @Injectable()
 export class ReportDataService {
   constructor(
-    private tabService: TabService,
     private docService: DocService,
     private malloyService: MalloyService,
     private modelsService: ModelsService,
@@ -116,9 +110,7 @@ export class ReportDataService {
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private reportTimeColumnsService: ReportTimeColumnsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getReportData(item: {
@@ -201,25 +193,15 @@ export class ReportDataService {
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: and(
-                inArray(
-                  modelsTable.modelId,
-                  v.prepareMetricRangePayload.modelIds
-                ),
-                eq(modelsTable.structId, v.struct.structId)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTab({
-                      modelEnt: x
-                    })
-              )
+          this.db.models.findMany({
+            where: and(
+              inArray(
+                modelsTable.modelId,
+                v.prepareMetricRangePayload.modelIds
+              ),
+              eq(modelsTable.structId, v.struct.structId)
             )
+          })
       ),
       Result.bind(
         'prepareReportQueriesPayload',
@@ -696,11 +678,8 @@ export class ReportDataService {
       ),
       Result.andThrough(async v => {
         if (v.prepareReportQueriesPayload.mconfigIds.length > 0) {
-          let mconfigsResult: Result.Result<
-            MconfigTab[],
-            MconfigEntToTabError
-          > = await this.db.drizzle.query.mconfigsTable
-            .findMany({
+          let mconfigResult: Result.Result<MconfigTab[], MconfigEntToTabError> =
+            await this.db.mconfigs.findMany({
               where: and(
                 inArray(
                   mconfigsTable.mconfigId,
@@ -708,22 +687,13 @@ export class ReportDataService {
                 ),
                 eq(mconfigsTable.structId, v.struct.structId)
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.mconfigEntToTab({
-                      mconfigEnt: x
-                    })
-              )
-            );
+            });
 
-          if (Result.isFailure(mconfigsResult)) {
-            return mconfigsResult;
+          if (Result.isFailure(mconfigResult)) {
+            return mconfigResult;
           }
 
-          v.mconfigs = mconfigsResult.value;
+          v.mconfigs = mconfigResult.value;
         }
 
         return Result.succeed();
@@ -734,32 +704,22 @@ export class ReportDataService {
       ),
       Result.andThrough(async v => {
         if (v.prepareReportQueriesPayload.queryIds.length > 0) {
-          let queriesResult: Result.Result<QueryTab[], QueryEntToTabError> =
-            await this.db.drizzle.query.queriesTable
-              .findMany({
-                where: and(
-                  inArray(
-                    queriesTable.queryId,
-                    v.prepareReportQueriesPayload.queryIds
-                  ),
-                  eq(queriesTable.projectId, v.project.projectId)
-                )
-              })
-              .then(xs =>
-                Result.sequence(xs, x =>
-                  isUndefined(x)
-                    ? Result.succeed(undefined)
-                    : this.tabService.queryEntToTab({
-                        queryEnt: x
-                      })
-                )
-              );
+          let queryResult: Result.Result<QueryTab[], QueryEntToTabError> =
+            await this.db.queries.findMany({
+              where: and(
+                inArray(
+                  queriesTable.queryId,
+                  v.prepareReportQueriesPayload.queryIds
+                ),
+                eq(queriesTable.projectId, v.project.projectId)
+              )
+            });
 
-          if (Result.isFailure(queriesResult)) {
-            return queriesResult;
+          if (Result.isFailure(queryResult)) {
+            return queryResult;
           }
 
-          v.queries = queriesResult.value;
+          v.queries = queryResult.value;
         }
 
         return Result.succeed();
@@ -769,23 +729,15 @@ export class ReportDataService {
         async (v): Result.ResultAsync<KitTab[], KitEntToTabError> =>
           v.prepareReportQueriesPayload.kitIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.kitsTable
-                .findMany({
-                  where: and(
-                    inArray(
-                      kitsTable.kitId,
-                      v.prepareReportQueriesPayload.kitIds
-                    ),
-                    eq(kitsTable.structId, v.report.structId)
-                  )
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    isUndefined(x)
-                      ? Result.succeed(undefined)
-                      : this.tabService.kitEntToTab({ kitEnt: x })
-                  )
+            : this.db.kits.findMany({
+                where: and(
+                  inArray(
+                    kitsTable.kitId,
+                    v.prepareReportQueriesPayload.kitIds
+                  ),
+                  eq(kitsTable.structId, v.report.structId)
                 )
+              })
       ),
       Result.bind(
         'prepareReportCalculationPayload',
@@ -1003,25 +955,13 @@ export class ReportDataService {
           v.prepareReportQueriesPayload.newMconfigs.length > 0 ||
           v.prepareReportQueriesPayload.newQueries.length > 0
         ) {
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(
-                      async tx =>
-                        await this.db.packer.writeUnwrap({
-                          tx: tx,
-                          insert: {
-                            mconfigs: v.prepareReportQueriesPayload.newMconfigs
-                          },
-                          insertOrDoNothing: {
-                            queries: v.prepareReportQueriesPayload.newQueries
-                          }
-                        })
-                    ),
-                  getRetryOption(this.cs, this.logger)
-                );
+          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+            await this.db.write({
+              insert: {
+                mconfigs: v.prepareReportQueriesPayload.newMconfigs
+              },
+              insertOrDoNothing: {
+                queries: v.prepareReportQueriesPayload.newQueries
               }
             });
 
@@ -1048,22 +988,10 @@ export class ReportDataService {
 
           v.report.rows = dbRows;
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(
-                      async tx =>
-                        await this.db.packer.writeUnwrap({
-                          tx: tx,
-                          insertOrUpdate: {
-                            reports: [v.report]
-                          }
-                        })
-                    ),
-                  getRetryOption(this.cs, this.logger)
-                );
+          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+            await this.db.write({
+              insertOrUpdate: {
+                reports: [v.report]
               }
             });
 

@@ -1,22 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type GivenEnt,
-  givensTable
-} from '#backend/drizzle/postgres/schema/givens';
+import { givensTable } from '#backend/drizzle/postgres/schema/givens';
+import { DbService } from '#backend/services/db/db.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckGivenDoesNotExistError } from '#common/types/backend/function-errors/check-given-does-not-exist-error';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { GetGivenCheckExistsError } from '#common/types/backend/function-errors/get-given-check-exists-error';
 import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
 import type { GivenEntToTabError } from '#common/types/backend/function-errors/given-ent-to-tab-error';
 import type { ValidateGivenValuesError } from '#common/types/backend/function-errors/validate-given-values-error';
@@ -29,10 +23,9 @@ import type { Role } from '#common/types/backend/parts/role';
 @Injectable()
 export class GivensService {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
     private rolesService: RolesService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   makeGiven(item: {
@@ -106,36 +99,16 @@ export class GivensService {
   }): Result.ResultAsync<void, CheckGivenDoesNotExistError> {
     let { projectId, givenId } = item;
 
-    let givenEnt: GivenEnt = await this.db.drizzle.query.givensTable.findFirst({
+    let isGivenExist: boolean = await this.db.givens.isExistUnwrap({
       where: and(
         eq(givensTable.projectId, projectId),
         eq(givensTable.givenId, givenId)
       )
     });
 
-    return isDefined(givenEnt)
+    return isGivenExist
       ? Result.fail({ code: 'BACKEND_GIVEN_ALREADY_EXISTS' })
       : Result.succeed();
-  }
-
-  async getGivenCheckExists(item: {
-    projectId: string;
-    givenId: string;
-  }): Result.ResultAsync<GivenTab, GetGivenCheckExistsError> {
-    let { projectId, givenId } = item;
-
-    return this.db.drizzle.query.givensTable
-      .findFirst({
-        where: and(
-          eq(givensTable.projectId, projectId),
-          eq(givensTable.givenId, givenId)
-        )
-      })
-      .then((x: GivenEnt) =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_GIVEN_DOES_NOT_EXIST' })
-          : this.tabService.givenEntToTab({ givenEnt: x })
-      );
   }
 
   async getApiGivens(item: {
@@ -146,13 +119,9 @@ export class GivensService {
       Result.bind(
         'givens',
         (v): Result.ResultAsync<GivenTab[], GivenEntToTabError> =>
-          this.db.drizzle.query.givensTable
-            .findMany({ where: eq(givensTable.projectId, v.projectId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.givenEntToTab({ givenEnt: x })
-              )
-            )
+          this.db.givens.findMany({
+            where: eq(givensTable.projectId, v.projectId)
+          })
       ),
       Result.map((v): Given[] =>
         v.givens

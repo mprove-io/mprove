@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
@@ -7,21 +7,17 @@ import {
   ToBackendGetProvidersResponseDto
 } from '#backend/controllers/providers/get-providers/get-providers.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type ProviderEnt,
-  providersTable
-} from '#backend/drizzle/postgres/schema/providers';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ProviderEntToTabError } from '#common/types/backend/function-errors/provider-ent-to-tab-error';
@@ -33,11 +29,9 @@ import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/p
 @Controller()
 export class GetProvidersController {
   constructor(
-    private tabService: TabService,
     private providersService: ProvidersService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetProviders' satisfies ToBackendRoute)
@@ -58,8 +52,8 @@ export class GetProvidersController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -75,17 +69,9 @@ export class GetProvidersController {
       Result.bind(
         'providers',
         (v): Result.ResultAsync<ProviderTab[], ProviderEntToTabError> =>
-          this.db.drizzle.query.providersTable
-            .findMany({
-              where: eq(providersTable.projectId, v.projectId)
-            })
-            .then((xs: ProviderEnt[]) =>
-              Result.sequence(xs, x =>
-                this.tabService.providerEntToTab({
-                  providerEnt: x
-                })
-              )
-            )
+          this.db.providers.findMany({
+            where: eq(providersTable.projectId, v.projectId)
+          })
       ),
       Result.map(
         (v): ToBackendGetProvidersOutput => ({

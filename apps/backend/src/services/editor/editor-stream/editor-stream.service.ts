@@ -1,10 +1,5 @@
 import crypto from 'node:crypto';
-import {
-  Inject,
-  Injectable,
-  Logger,
-  type OnModuleDestroy
-} from '@nestjs/common';
+import { Injectable, Logger, type OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
   AssistantMessage,
@@ -20,7 +15,6 @@ import { and, eq, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcMessageTab,
   OcPartTab,
@@ -28,7 +22,10 @@ import type {
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { DbService } from '#backend/services/db/db.service';
 import { OcMessagesService } from '#backend/services/db/oc-messages/oc-messages.service';
 import { OcPartsService } from '#backend/services/db/oc-parts/oc-parts.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
@@ -57,7 +54,6 @@ import type { AcquireSessionLockError } from '#common/types/backend/function-err
 import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
 import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { PauseSessionByIdError } from '#common/types/backend/function-errors/pause-session-by-id-error';
 import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
 import type { RejectQuestionError } from '#common/types/backend/function-errors/reject-question-error';
@@ -106,7 +102,7 @@ export class EditorStreamService implements OnModuleDestroy {
     private ocMessagesService: OcMessagesService,
     private ocPartsService: OcPartsService,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {
     let valkeyHost =
       this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
@@ -301,18 +297,10 @@ export class EditorStreamService implements OnModuleDestroy {
         let sessionLockToken: string = sessionLockResult.value;
 
         try {
-          let sessionResult: Result.Result<
-            SessionTab,
-            GetSessionByIdCheckExistsError
-          > = await this.sessionsService.getSessionByIdCheckExists({
-            sessionId: sessionId
-          });
-
-          if (Result.isFailure(sessionResult)) {
-            throw new ServerError({ message: sessionResult.error.code });
-          }
-
-          let session: SessionTab = sessionResult.value;
+          let session: SessionTab =
+            await this.db.sessions.findFirstCheckExistsUnwrap({
+              where: eq(sessionsTable.sessionId, sessionId)
+            });
 
           let clientResult: Result.Result<
             OpencodeClient,
@@ -808,8 +796,8 @@ export class EditorStreamService implements OnModuleDestroy {
       let ocSessionResult: Result.Result<
         OcSessionTab,
         GetOcSessionBySessionIdError
-      > = await this.sessionsService.getOcSessionBySessionId({
-        sessionId: item.sessionId
+      > = await this.db.ocSessions.findFirst({
+        where: eq(ocSessionsTable.sessionId, item.sessionId)
       });
 
       if (Result.isFailure(ocSessionResult)) {
@@ -1039,14 +1027,11 @@ export class EditorStreamService implements OnModuleDestroy {
             ocPart: userPart
           });
 
-          await this.db.drizzle.transaction(async tx => {
-            await this.db.packer.writeUnwrap({
-              tx: tx,
-              insertOrUpdate: {
-                ocMessages: [userOcMessage],
-                ocParts: [userOcPart]
-              }
-            });
+          await this.db.writeUnwrap({
+            insertOrUpdate: {
+              ocMessages: [userOcMessage],
+              ocParts: [userOcPart]
+            }
           });
         } catch (e: any) {
           // console.log(

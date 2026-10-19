@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
@@ -6,14 +6,13 @@ import {
   ToBackendIsOrgExistRequestDto,
   ToBackendIsOrgExistResponseDto
 } from '#backend/controllers/orgs/is-org-exist/is-org-exist.dto';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import { type OrgEnt, orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -27,7 +26,7 @@ export class IsOrgExistController {
     private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendIsOrgExist' satisfies ToBackendRoute)
@@ -59,17 +58,13 @@ export class IsOrgExistController {
           })
       ),
       Result.bind(
-        'orgEnt',
-        (v): Result.ResultAsync<OrgEnt, never> =>
-          this.db.drizzle.query.orgsTable
-            .findFirst({
-              where: eq(orgsTable.nameHash, v.nameHash)
-            })
-            .then(orgEnt => Result.succeed(orgEnt))
+        'isOrgExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          this.db.orgs.isExist({
+            where: eq(orgsTable.nameHash, v.nameHash)
+          })
       ),
-      Result.map(
-        (v): ToBackendIsOrgExistOutput => ({ isExist: isDefined(v.orgEnt) })
-      )
+      Result.map((v): ToBackendIsOrgExistOutput => ({ isExist: v.isOrgExist }))
     );
   }
 }

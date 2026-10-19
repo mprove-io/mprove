@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,20 +11,19 @@ import {
   ToBackendDeleteRoleResponseDto
 } from '#backend/controllers/roles/delete-role/delete-role.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -48,13 +40,11 @@ import type { ToBackendDeleteRoleOutput } from '#common/types/backend/routes/rol
 @Controller()
 export class DeleteRoleController {
   constructor(
-    private tabService: TabService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private rolesService: RolesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendDeleteRole' satisfies ToBackendRoute)
@@ -76,8 +66,8 @@ export class DeleteRoleController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -91,13 +81,9 @@ export class DeleteRoleController {
       Result.bind(
         'projectMembers',
         (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
-          this.db.drizzle.query.membersTable
-            .findMany({ where: eq(membersTable.projectId, v.projectId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.memberEntToTab({ memberEnt: x })
-              )
-            )
+          this.db.members.findMany({
+            where: eq(membersTable.projectId, v.projectId)
+          })
       ),
       Result.bind(
         'membersToUpdate',

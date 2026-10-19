@@ -1,3 +1,4 @@
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { BuildCodexFetchError } from '#common/types/backend/function-errors/build-codex-fetch-error';
 import type { GetExplorerModelError } from '#common/types/backend/function-errors/get-explorer-model-error';
 import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
@@ -9,6 +10,7 @@ import type { GetUserCheckExistsError } from '#common/types/backend/function-err
 import type { LoadMessageHistoryError } from '#common/types/backend/function-errors/load-message-history-error';
 
 export type RunProducerError =
+  | BridgeEntToTabError
   | LoadMessageHistoryError
   | GetSessionByIdCheckExistsError
   | GetUserCheckExistsError

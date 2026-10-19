@@ -1,42 +1,31 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import type { BackendConfig } from '#backend/config/backend-config';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendCreateEnvUserRequestDto,
   ToBackendCreateEnvUserResponseDto
 } from '#backend/controllers/envs/create-env-user/create-env-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   EnvTab,
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { Env } from '#common/types/backend/parts/env';
-
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateEnvUserOutput } from '#common/types/backend/routes/envs/create-env-user/create-env-user-output';
 
@@ -46,13 +35,10 @@ import type { ToBackendCreateEnvUserOutput } from '#common/types/backend/routes/
 @Controller()
 export class CreateEnvUserController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateEnvUser' satisfies ToBackendRoute)
@@ -75,8 +61,8 @@ export class CreateEnvUserController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -111,9 +97,11 @@ export class CreateEnvUserController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExists({
-          memberId: v.envUserId,
-          projectId: v.projectId
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.envUserId),
+            eq(membersTable.projectId, v.projectId)
+          )
         })
       ),
       Result.map(v => {
@@ -121,21 +109,7 @@ export class CreateEnvUserController {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: { envs: [v.env] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
+        this.db.write({ insertOrUpdate: { envs: [v.env] } })
       ),
       Result.bind(
         'apiEnvs',

@@ -1,19 +1,19 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type MakeReportDataColumnsError,
   zMakeReportDataColumnsError
 } from '#common/types/backend/function-errors/make-report-data-columns-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
-export type CalculateDataError = MakeReportDataColumnsError | DbErrorToError;
+export type CalculateDataError = MakeReportDataColumnsError | WriteError;
 
 export const zCalculateDataError = z.union([
   zMakeReportDataColumnsError,
-  zDbErrorToError
+  zWriteError
 ]);
 
 assertTypesEqual<CalculateDataError, z.infer<typeof zCalculateDataError>>({

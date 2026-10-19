@@ -13,10 +13,6 @@ import {
   zBackendMessageProviderRequiredError
 } from '#common/types/backend/errors/backend-message-provider-required-error';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type GetModelSelectionError,
   zGetModelSelectionError
 } from '#common/types/backend/function-errors/get-model-selection-error';
@@ -32,12 +28,16 @@ import {
   type PublishInteractCommandError,
   zPublishInteractCommandError
 } from '#common/types/backend/function-errors/publish-interact-command-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type SendExplorerMessageError =
   | GetModelSelectionError
   | OcMessageEntToTabError
   | PrewarmCodexAuthError
-  | DbErrorToError
+  | WriteError
   | PublishInteractCommandError
   | BackendMessageProviderRequiredError
   | BackendMessageModelRequiredError
@@ -47,7 +47,7 @@ export let zSendExplorerMessageError = z.union([
   zGetModelSelectionError,
   zOcMessageEntToTabError,
   zPrewarmCodexAuthError,
-  zDbErrorToError,
+  zWriteError,
   zPublishInteractCommandError,
   zBackendMessageProviderRequiredError,
   zBackendMessageModelRequiredError,

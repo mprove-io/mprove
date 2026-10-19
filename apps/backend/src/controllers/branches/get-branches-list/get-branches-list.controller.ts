@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, asc, eq, inArray } from 'drizzle-orm';
@@ -7,33 +7,28 @@ import {
   ToBackendGetBranchesListResponseDto
 } from '#backend/controllers/branches/get-branches-list/get-branches-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BranchTab,
   MemberTab,
   OcSessionTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BranchEnt,
-  branchesTable
-} from '#backend/drizzle/postgres/schema/branches';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import {
-  type SessionEnt,
-  sessionsTable
-} from '#backend/drizzle/postgres/schema/sessions';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROD_REPO_ID } from '#common/constants/top';
+import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
 import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { OcSessionEntToTabError } from '#common/types/backend/function-errors/oc-session-ent-to-tab-error';
 import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
-
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetBranchesListOutput } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-output';
 
@@ -42,11 +37,9 @@ import type { ToBackendGetBranchesListOutput } from '#common/types/backend/route
 @Controller()
 export class GetBranchesListController {
   constructor(
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetBranchesList' satisfies ToBackendRoute)
@@ -67,29 +60,29 @@ export class GetBranchesListController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            memberId: v.userId,
-            projectId: v.projectId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
-        'sessionEnts',
-        (v): Result.ResultAsync<SessionEnt[], never> =>
-          this.db.drizzle.query.sessionsTable
-            .findMany({
-              where: and(
-                eq(sessionsTable.userId, v.userId),
-                eq(sessionsTable.projectId, v.projectId)
-              )
-            })
-            .then(sessionEnts => Result.succeed(sessionEnts))
+        'sessions',
+        (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+          this.db.sessions.findMany({
+            where: and(
+              eq(sessionsTable.userId, v.userId),
+              eq(sessionsTable.projectId, v.projectId)
+            )
+          })
       ),
       Result.bind(
         'repoIds',
@@ -97,46 +90,41 @@ export class GetBranchesListController {
           Result.succeed([
             PROD_REPO_ID,
             v.userId,
-            ...v.sessionEnts.map(sessionEnt => sessionEnt.repoId)
+            ...v.sessions.map(session => session.repoId)
           ])
       ),
       Result.bind(
-        'branchEnts',
-        (v): Result.ResultAsync<BranchEnt[], never> =>
-          this.db.drizzle.query.branchesTable
-            .findMany({
-              where: and(
-                eq(branchesTable.projectId, v.projectId),
-                inArray(branchesTable.repoId, v.repoIds)
-              ),
-              orderBy: asc(branchesTable.branchId)
-            })
-            .then(branchEnts => Result.succeed(branchEnts))
+        'branches',
+        (v): Result.ResultAsync<BranchTab[], BranchEntToTabError> =>
+          this.db.branches.findMany({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              inArray(branchesTable.repoId, v.repoIds)
+            ),
+            orderBy: asc(branchesTable.branchId)
+          })
       ),
-      Result.bind(
-        'uniqueBranchEnts',
-        (v): Result.Result<BranchEnt[], never> => {
-          let seen: Record<string, boolean> = {};
+      Result.bind('uniqueBranches', (v): Result.Result<BranchTab[], never> => {
+        let seen: Record<string, boolean> = {};
 
-          let uniqueBranchEnts: BranchEnt[] = v.branchEnts.filter(branchEnt => {
-            let key: string = `${branchEnt.repoId}::${branchEnt.branchId}`;
+        let uniqueBranches: BranchTab[] = v.branches.filter(branch => {
+          let key: string = `${branch.repoId}::${branch.branchId}`;
 
-            if (seen[key]) {
-              return false;
-            }
+          if (seen[key]) {
+            return false;
+          }
 
-            seen[key] = true;
+          seen[key] = true;
 
-            return true;
-          });
+          return true;
+        });
 
-          return Result.succeed(uniqueBranchEnts);
-        }
-      ),
+        return Result.succeed(uniqueBranches);
+      }),
       Result.bind(
         'sessionIds',
         (v): Result.Result<string[], never> =>
-          Result.succeed(v.sessionEnts.map(sessionEnt => sessionEnt.sessionId))
+          Result.succeed(v.sessions.map(session => session.sessionId))
       ),
       Result.bind(
         'ocSessions',
@@ -144,27 +132,10 @@ export class GetBranchesListController {
           v
         ): Result.ResultAsync<OcSessionTab[], OcSessionEntToTabError> =>
           v.sessionIds.length > 0
-            ? this.db.drizzle.query.ocSessionsTable
-                .findMany({
-                  where: inArray(ocSessionsTable.sessionId, v.sessionIds)
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.ocSessionEntToTab({
-                      ocSessionEnt: x
-                    })
-                  )
-                )
+            ? this.db.ocSessions.findMany({
+                where: inArray(ocSessionsTable.sessionId, v.sessionIds)
+              })
             : Result.succeed([])
-      ),
-      Result.bind(
-        'sessions',
-        (v): Result.Result<SessionTab[], SessionEntToTabError> =>
-          Result.sequence(v.sessionEnts, x =>
-            this.tabService.sessionEntToTab({
-              sessionEnt: x
-            })
-          )
       ),
       Result.bind(
         'ocSessionsById',
@@ -184,15 +155,15 @@ export class GetBranchesListController {
               ocSession: v.ocSessionsById[session.sessionId]
             })
           ),
-          branchesList: v.uniqueBranchEnts.map(branchEnt => ({
-            repoId: branchEnt.repoId,
+          branchesList: v.uniqueBranches.map(branch => ({
+            repoId: branch.repoId,
             repoType:
-              branchEnt.repoId === PROD_REPO_ID
+              branch.repoId === PROD_REPO_ID
                 ? 'production'
-                : branchEnt.repoId === v.userId
+                : branch.repoId === v.userId
                   ? 'dev'
                   : 'session',
-            branchId: branchEnt.branchId
+            branchId: branch.branchId
           }))
         })
       )

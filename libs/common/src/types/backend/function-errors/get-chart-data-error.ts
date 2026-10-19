@@ -9,10 +9,6 @@ import {
   zCheckChartOrModelAccessError
 } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type EditMalloyQueryError,
   zEditMalloyQueryError
 } from '#common/types/backend/function-errors/edit-malloy-query-error';
@@ -40,6 +36,10 @@ import {
   type QueryEntToTabError,
   zQueryEntToTabError
 } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type GetChartDataError =
   | BackendMemberIsNotExplorerError
@@ -50,7 +50,7 @@ export type GetChartDataError =
   | CheckChartOrModelAccessError
   | PrepStoreMconfigQueryError
   | EditMalloyQueryError
-  | DbErrorToError
+  | WriteError
   | QueryEntToTabError;
 
 export const zGetChartDataError = z.union([
@@ -62,7 +62,7 @@ export const zGetChartDataError = z.union([
   zCheckChartOrModelAccessError,
   zPrepStoreMconfigQueryError,
   zEditMalloyQueryError,
-  zDbErrorToError,
+  zWriteError,
   zQueryEntToTabError
 ]);
 

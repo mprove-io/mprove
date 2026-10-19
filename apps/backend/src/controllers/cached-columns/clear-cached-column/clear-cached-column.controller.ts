@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
@@ -8,18 +8,18 @@ import {
   ToBackendClearCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/clear-cached-column/clear-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service.js';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -36,11 +36,10 @@ import type { ToBackendClearCachedColumnOutput } from '#common/types/backend/rou
 export class ClearCachedColumnController {
   constructor(
     private cachedColumnService: CachedColumnService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private hashService: HashService,
     private envsService: EnvsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendClearCachedColumn' satisfies ToBackendRoute)
@@ -64,8 +63,8 @@ export class ClearCachedColumnController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(

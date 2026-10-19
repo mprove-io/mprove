@@ -1,36 +1,25 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendEditConnectionRequestDto,
   ToBackendEditConnectionResponseDto
 } from '#backend/controllers/connections/edit-connection/edit-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BridgeTab,
   ConnectionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { UrlService } from '#backend/services/url/url.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
@@ -40,6 +29,7 @@ import {
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { GetConnectionCheckExistsError } from '#common/types/backend/function-errors/get-connection-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditConnectionOutput } from '#common/types/backend/routes/connections/edit-connection/edit-connection-output';
@@ -50,13 +40,10 @@ import type { ToBackendEditConnectionOutput } from '#common/types/backend/routes
 @Controller()
 export class EditConnectionController {
   constructor(
-    private projectsService: ProjectsService,
     private urlService: UrlService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendEditConnection' satisfies ToBackendRoute)
@@ -94,8 +81,8 @@ export class EditConnectionController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -107,10 +94,12 @@ export class EditConnectionController {
       Result.bind(
         'connection',
         (v): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsError> =>
-          this.connectionsService.getConnectionCheckExists({
-            projectId: v.projectId,
-            envId: v.envId,
-            connectionId: v.connectionId
+          this.db.connections.findFirstCheckExists({
+            where: and(
+              eq(connectionsTable.connectionId, v.connectionId),
+              eq(connectionsTable.envId, v.envId),
+              eq(connectionsTable.projectId, v.projectId)
+            )
           })
       ),
       Result.map(v => {
@@ -160,40 +149,26 @@ export class EditConnectionController {
         return v;
       }),
       Result.bind(
-        'branchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.projectId),
-                eq(bridgesTable.envId, v.envId)
-              )
-            })
-            .then(bridgeEnts => Result.succeed(bridgeEnts))
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.projectId),
+              eq(bridgesTable.envId, v.envId)
+            )
+          })
       ),
       Result.map(v => {
-        v.branchBridgeEnts.forEach(bridgeEnt => {
-          bridgeEnt.needValidate = true;
+        v.branchBridges.forEach(bridge => {
+          bridge.needValidate = true;
         });
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: {
-                        connections: [v.connection],
-                        bridges: [...v.branchBridgeEnts]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insertOrUpdate: {
+            connections: [v.connection],
+            bridges: [...v.branchBridges]
           }
         })
       ),

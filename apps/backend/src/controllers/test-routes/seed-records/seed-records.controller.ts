@@ -1,25 +1,14 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import * as bcrypt from 'bcrypt';
 import asyncPool from 'tiny-async-pool';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSeedRecordsRequestDto,
   ToBackendSeedRecordsResponseDto
 } from '#backend/controllers/test-routes/seed-records/seed-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -46,9 +35,7 @@ import {
   type ParseApiKeyOutput,
   parseApiKey
 } from '#backend/functions/api-key/parse-api-key/parse-api-key';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import {
   BlockmlService,
@@ -59,6 +46,7 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -159,9 +147,7 @@ export class SeedRecordsController {
     private reportsService: ReportsService,
     private dashboardsService: DashboardsService,
     private blockmlService: BlockmlService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSeedRecords' satisfies ToBackendRoute)
@@ -909,42 +895,30 @@ export class SeedRecordsController {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async (): Promise<void> => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: {
-                        users: v.prepareSeedPayload.users,
-                        orgs: v.prepareSeedPayload.orgs,
-                        projects: v.prepareSeedPayload.projects,
-                        envs: v.prepareSeedPayload.envs,
-                        members: v.prepareSeedPayload.members,
-                        connections: v.prepareSeedPayload.connections,
-                        providers: v.prepareSeedPayload.providers,
-                        branches: v.prepareSeedPayload.branches,
-                        bridges: v.prepareSeedPayload.bridges,
-                        structs: v.prepareSeedPayload.structs,
-                        charts: v.prepareSeedPayload.charts,
-                        models: v.prepareSeedPayload.models,
-                        reports: v.prepareSeedPayload.reports,
-                        mconfigs: v.prepareSeedPayload.mconfigs,
-                        dashboards: v.prepareSeedPayload.dashboards,
-                        sessions: v.prepareSeedPayload.sessions,
-                        cachedColumns: v.prepareSeedPayload.cachedColumns,
-                        cachedParts: v.prepareSeedPayload.cachedParts,
-                        modelFieldLeafs: v.prepareSeedPayload.modelFieldLeafs
-                      },
-                      insertOrUpdate: {
-                        queries: v.prepareSeedPayload.queries
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insert: {
+            users: v.prepareSeedPayload.users,
+            orgs: v.prepareSeedPayload.orgs,
+            projects: v.prepareSeedPayload.projects,
+            envs: v.prepareSeedPayload.envs,
+            members: v.prepareSeedPayload.members,
+            connections: v.prepareSeedPayload.connections,
+            providers: v.prepareSeedPayload.providers,
+            branches: v.prepareSeedPayload.branches,
+            bridges: v.prepareSeedPayload.bridges,
+            structs: v.prepareSeedPayload.structs,
+            charts: v.prepareSeedPayload.charts,
+            models: v.prepareSeedPayload.models,
+            reports: v.prepareSeedPayload.reports,
+            mconfigs: v.prepareSeedPayload.mconfigs,
+            dashboards: v.prepareSeedPayload.dashboards,
+            sessions: v.prepareSeedPayload.sessions,
+            cachedColumns: v.prepareSeedPayload.cachedColumns,
+            cachedParts: v.prepareSeedPayload.cachedParts,
+            modelFieldLeafs: v.prepareSeedPayload.modelFieldLeafs
+          },
+          insertOrUpdate: {
+            queries: v.prepareSeedPayload.queries
           }
         })
       ),

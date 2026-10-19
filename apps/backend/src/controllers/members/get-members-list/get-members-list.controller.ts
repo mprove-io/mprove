@@ -1,25 +1,22 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGetMembersListRequestDto,
   ToBackendGetMembersListResponseDto
 } from '#backend/controllers/members/get-members-list/get-members-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
@@ -31,12 +28,9 @@ import type { ToBackendGetMembersListOutput } from '#common/types/backend/routes
 @Controller()
 export class GetMembersListController {
   constructor(
-    private tabService: TabService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetMembersList' satisfies ToBackendRoute)
@@ -54,8 +48,8 @@ export class GetMembersListController {
     return Result.pipe(
       Result.succeed({ projectId: body.input.projectId, userId: user.userId }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -69,13 +63,9 @@ export class GetMembersListController {
       Result.bind(
         'members',
         (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
-          this.db.drizzle.query.membersTable
-            .findMany({ where: eq(membersTable.projectId, v.projectId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.memberEntToTab({ memberEnt: x })
-              )
-            )
+          this.db.members.findMany({
+            where: eq(membersTable.projectId, v.projectId)
+          })
       ),
       Result.map(
         (v): ToBackendGetMembersListOutput => ({

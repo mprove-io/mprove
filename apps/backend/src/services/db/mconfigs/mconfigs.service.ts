@@ -1,10 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   MconfigTab,
@@ -14,21 +10,18 @@ import type {
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
-import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { makeMconfigFields } from '#backend/services/db/mconfigs/make-mconfig-fields/make-mconfig-fields';
 import { makeMconfigFiltersX } from '#backend/services/db/mconfigs/make-mconfig-filters-x/make-mconfig-filters-x';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { StoreUserCodeReturn } from '#backend/services/store/store.service';
 import { StoreService } from '#backend/services/store/store.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
@@ -57,12 +50,9 @@ export type PrepStoreMconfigQueryOutput = {
 @Injectable()
 export class MconfigsService {
   constructor(
-    private tabService: TabService,
-    private hashService: HashService,
     private envsService: EnvsService,
     private storeService: StoreService,
-    private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   tabToApi(item: { mconfig: MconfigTab; modelFields: ModelField[] }): MconfigX {
@@ -145,28 +135,6 @@ export class MconfigsService {
     return mconfig;
   }
 
-  async getMconfigCheckExists(item: {
-    mconfigId: string;
-    structId: string;
-  }): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> {
-    let { mconfigId, structId } = item;
-
-    return this.db.drizzle.query.mconfigsTable
-      .findFirst({
-        where: and(
-          eq(mconfigsTable.mconfigId, mconfigId),
-          eq(mconfigsTable.structId, structId)
-        )
-      })
-      .then(x =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_MCONFIG_DOES_NOT_EXIST' })
-          : isUndefined(x)
-            ? Result.succeed(undefined)
-            : this.tabService.mconfigEntToTab({ mconfigEnt: x })
-      );
-  }
-
   async prepStoreMconfigQuery(item: {
     struct: StructTab;
     project: ProjectTab;
@@ -218,27 +186,19 @@ export class MconfigsService {
       Result.bind(
         'connection',
         (v): Result.ResultAsync<ConnectionTab, ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findFirst({
-              where: and(
-                eq(connectionsTable.projectId, v.project.projectId),
-                eq(
-                  connectionsTable.envId,
-                  v.apiEnv.fallbackConnectionIds.indexOf(v.model.connectionId) >
-                    -1
-                    ? PROJECT_ENV_PROD
-                    : v.envId
-                ),
-                eq(connectionsTable.connectionId, v.model.connectionId)
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.connectionEntToTab({
-                    connectionEnt: x
-                  })
+          this.db.connections.findFirst({
+            where: and(
+              eq(connectionsTable.projectId, v.project.projectId),
+              eq(
+                connectionsTable.envId,
+                v.apiEnv.fallbackConnectionIds.indexOf(v.model.connectionId) >
+                  -1
+                  ? PROJECT_ENV_PROD
+                  : v.envId
+              ),
+              eq(connectionsTable.connectionId, v.model.connectionId)
             )
+          })
       ),
       Result.bind(
         'processedRequest',

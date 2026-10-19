@@ -1,28 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, desc, eq, inArray, notInArray } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcSessionTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import type { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import {
-  type SessionEnt,
-  sessionsTable
-} from '#backend/drizzle/postgres/schema/sessions';
-import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { DbService } from '#backend/services/db/db.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
-import type { EntsToSessionApisError } from '#common/types/backend/function-errors/ents-to-session-apis-error';
 import type { GetBasicSessionsListError } from '#common/types/backend/function-errors/get-basic-sessions-list-error';
-import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { OcSessionEntToTabError } from '#common/types/backend/function-errors/oc-session-ent-to-tab-error';
 import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import type { TabsToSessionApisError } from '#common/types/backend/function-errors/tabs-to-session-apis-error';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
@@ -37,10 +29,7 @@ export type GetBasicSessionsListOutput = {
 
 @Injectable()
 export class SessionsService {
-  constructor(
-    @Inject(DRIZZLE) private db: Db,
-    private tabService: TabService
-  ) {}
+  constructor(private db: DbService) {}
 
   makeSession(item: {
     sessionId: string;
@@ -127,51 +116,6 @@ export class SessionsService {
     return ocSession;
   }
 
-  async getSessionByIdCheck(item: { sessionId: string }): Promise<SessionTab> {
-    let result: Result.Result<SessionTab, GetSessionByIdCheckExistsError> =
-      await this.getSessionByIdCheckExists(item);
-
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let session: SessionTab = result.value;
-
-    return session;
-  }
-
-  async getSessionByIdCheckExists(item: {
-    sessionId: string;
-  }): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> {
-    let { sessionId } = item;
-
-    return this.db.drizzle.query.sessionsTable
-      .findFirst({
-        where: eq(sessionsTable.sessionId, sessionId)
-      })
-      .then((x: SessionEnt) =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_SESSION_NOT_FOUND' })
-          : this.tabService.sessionEntToTab({ sessionEnt: x })
-      );
-  }
-
-  async getOcSessionBySessionId(item: {
-    sessionId: string;
-  }): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> {
-    let { sessionId } = item;
-
-    return this.db.drizzle.query.ocSessionsTable
-      .findFirst({
-        where: eq(ocSessionsTable.sessionId, sessionId)
-      })
-      .then((x: OcSessionEnt) =>
-        isUndefined(x)
-          ? Result.succeed(undefined)
-          : this.tabService.ocSessionEntToTab({ ocSessionEnt: x })
-      );
-  }
-
   tabToSessionApi(item: {
     session: SessionTab;
     ocSession?: OcSessionTab;
@@ -222,17 +166,16 @@ export class SessionsService {
       return Result.succeed('dev');
     }
 
-    let sessionEnt: SessionEnt =
-      await this.db.drizzle.query.sessionsTable.findFirst({
-        where: and(
-          eq(sessionsTable.sessionId, repoId),
-          eq(sessionsTable.repoId, repoId),
-          eq(sessionsTable.userId, userId),
-          eq(sessionsTable.projectId, projectId)
-        )
-      });
+    let isSessionExist: boolean = await this.db.sessions.isExistUnwrap({
+      where: and(
+        eq(sessionsTable.sessionId, repoId),
+        eq(sessionsTable.repoId, repoId),
+        eq(sessionsTable.userId, userId),
+        eq(sessionsTable.projectId, projectId)
+      )
+    });
 
-    if (sessionEnt) {
+    if (isSessionExist) {
       return Result.succeed('session');
     }
 
@@ -264,75 +207,68 @@ export class SessionsService {
     return Result.pipe(
       Result.succeed(item),
       Result.bind(
-        'sessionEnts',
-        (v): Result.ResultAsync<SessionEnt[], never> =>
-          this.db.drizzle.query.sessionsTable
-            .findMany({
-              where: and(
-                eq(sessionsTable.projectId, v.projectId),
-                eq(sessionsTable.userId, v.userId),
-                notInArray(sessionsTable.status, ['Deleted', 'Archived'])
-              ),
-              orderBy: [desc(sessionsTable.createdTs)]
-            })
-            .then(sessionEnts => Result.succeed(sessionEnts))
+        'sessions',
+        (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+          this.db.sessions.findMany({
+            where: and(
+              eq(sessionsTable.projectId, v.projectId),
+              eq(sessionsTable.userId, v.userId),
+              notInArray(sessionsTable.status, ['Deleted', 'Archived'])
+            ),
+            orderBy: [desc(sessionsTable.createdTs)]
+          })
       ),
       Result.bind(
-        'currentSessionEnt',
-        async (v): Result.ResultAsync<SessionEnt, never> => {
-          let isCurrentSessionIncluded: boolean = v.sessionEnts.some(
-            sessionEnt => sessionEnt.sessionId === v.currentSessionId
+        'currentSession',
+        async (v): Result.ResultAsync<SessionTab, SessionEntToTabError> => {
+          let isCurrentSessionIncluded: boolean = v.sessions.some(
+            session => session.sessionId === v.currentSessionId
           );
 
           return v.currentSessionId && isCurrentSessionIncluded === false
-            ? this.db.drizzle.query.sessionsTable
-                .findFirst({
-                  where: and(
-                    eq(sessionsTable.sessionId, v.currentSessionId),
-                    eq(sessionsTable.projectId, v.projectId),
-                    eq(sessionsTable.userId, v.userId)
-                  )
-                })
-                .then(sessionEnt => Result.succeed(sessionEnt))
+            ? this.db.sessions.findFirst({
+                where: and(
+                  eq(sessionsTable.sessionId, v.currentSessionId),
+                  eq(sessionsTable.projectId, v.projectId),
+                  eq(sessionsTable.userId, v.userId)
+                )
+              })
             : Result.succeed(undefined);
         }
       ),
       Result.bind(
         'hasMoreArchived',
         (v): Result.ResultAsync<boolean, never> =>
-          this.db.drizzle.query.sessionsTable
-            .findFirst({
-              where: and(
-                eq(sessionsTable.projectId, v.projectId),
-                eq(sessionsTable.userId, v.userId),
-                eq(sessionsTable.status, 'Archived')
-              ),
-              columns: { sessionId: true }
-            })
-            .then(sessionEnt => Result.succeed(!isUndefined(sessionEnt)))
+          this.db.sessions.isExist({
+            where: and(
+              eq(sessionsTable.projectId, v.projectId),
+              eq(sessionsTable.userId, v.userId),
+              eq(sessionsTable.status, 'Archived')
+            )
+          })
       ),
       Result.bind(
-        'sessions',
-        (v): Result.ResultAsync<SessionApi[], EntsToSessionApisError> =>
-          this.entsToSessionApis({
-            allEnts: isUndefined(v.currentSessionEnt)
-              ? [...v.sessionEnts]
-              : [...v.sessionEnts, v.currentSessionEnt]
+        'apiSessions',
+        (v): Result.ResultAsync<SessionApi[], TabsToSessionApisError> =>
+          this.tabsToSessionApis({
+            sessions: isUndefined(v.currentSession)
+              ? [...v.sessions]
+              : [...v.sessions, v.currentSession]
           })
       ),
       Result.map(
         (v): GetBasicSessionsListOutput => ({
-          sessions: v.sessions,
+          sessions: v.apiSessions,
           hasMoreArchived: v.hasMoreArchived
         })
       )
     );
   }
 
-  async entsToSessionApis(item: {
-    allEnts: SessionEnt[];
-  }): Result.ResultAsync<SessionApi[], EntsToSessionApisError> {
-    let { allEnts } = item;
+  async tabsToSessionApis(item: {
+    sessions: SessionTab[];
+  }): Result.ResultAsync<SessionApi[], TabsToSessionApisError> {
+    let { sessions } = item;
 
     let statusOrder: Partial<Record<SessionStatus, number>> = {
       ['New']: 0,
@@ -342,7 +278,7 @@ export class SessionsService {
       ['Archived']: 4
     };
 
-    allEnts.sort((a, b) => {
+    sessions.sort((a, b) => {
       let statusDiff: number =
         (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
 
@@ -351,30 +287,20 @@ export class SessionsService {
       return b.createdTs - a.createdTs;
     });
 
-    let sessionIds: string[] = allEnts.map(sessionEnt => sessionEnt.sessionId);
-
-    let ocSessionEnts: OcSessionEnt[] =
-      sessionIds.length > 0
-        ? await this.db.drizzle.query.ocSessionsTable.findMany({
-            where: inArray(ocSessionsTable.sessionId, sessionIds)
-          })
-        : [];
+    let sessionIds: string[] = sessions.map(session => session.sessionId);
 
     return Result.pipe(
-      Result.succeed({ allEnts: allEnts, ocSessionEnts: ocSessionEnts }),
+      Result.succeed({ sessions: sessions, sessionIds: sessionIds }),
       Result.bind(
         'ocSessions',
-        (v): Result.Result<OcSessionTab[], OcSessionEntToTabError> =>
-          Result.sequence(v.ocSessionEnts, x =>
-            this.tabService.ocSessionEntToTab({ ocSessionEnt: x })
-          )
-      ),
-      Result.bind(
-        'sessions',
-        (v): Result.Result<SessionTab[], SessionEntToTabError> =>
-          Result.sequence(v.allEnts, x =>
-            this.tabService.sessionEntToTab({ sessionEnt: x })
-          )
+        async (
+          v
+        ): Result.ResultAsync<OcSessionTab[], OcSessionEntToTabError> =>
+          v.sessionIds.length > 0
+            ? this.db.ocSessions.findMany({
+                where: inArray(ocSessionsTable.sessionId, v.sessionIds)
+              })
+            : Result.succeed([])
       ),
       Result.map((v): SessionApi[] =>
         v.sessions.map(session =>

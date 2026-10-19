@@ -1,8 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, isNull, or } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MemberTab,
@@ -14,10 +12,10 @@ import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { makeTilesX } from '#backend/functions/make-tiles-x/make-tiles-x';
 import { sortSpaceNodesRecursive as sortSpaceNodes } from '#backend/functions/space/sort-space-nodes-recursive/sort-space-nodes-recursive';
+import { DbService } from '#backend/services/db/db.service';
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { SpaceService } from '#backend/services/space/space.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { UnitsService } from '#backend/services/units/units.service';
 import {
   MPROVE_USERS_FOLDER,
@@ -59,9 +57,8 @@ export class ChartsService {
     private hashService: HashService,
     private favoritesService: FavoritesService,
     private spaceService: SpaceService,
-    private tabService: TabService,
     private unitsService: UnitsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getChartsCatalog(item: {
@@ -77,28 +74,22 @@ export class ChartsService {
       Result.bind(
         'charts',
         (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
-          this.db.drizzle.query.chartsTable
-            .findMany({
-              where: and(
-                eq(chartsTable.structId, v.structId),
-                or(
-                  isNull(chartsTable.isExplorer),
-                  eq(chartsTable.isExplorer, false)
-                ),
-                or(
-                  eq(chartsTable.draft, false),
-                  and(
-                    eq(chartsTable.draft, true),
-                    eq(chartsTable.creatorId, v.user.userId)
-                  )
+          this.db.charts.findMany({
+            where: and(
+              eq(chartsTable.structId, v.structId),
+              or(
+                isNull(chartsTable.isExplorer),
+                eq(chartsTable.isExplorer, false)
+              ),
+              or(
+                eq(chartsTable.draft, false),
+                and(
+                  eq(chartsTable.draft, true),
+                  eq(chartsTable.creatorId, v.user.userId)
                 )
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.chartEntToTab({ chartEnt: x })
-              )
             )
+          })
       ),
       Result.bind(
         'chartsGrantedAccess',
@@ -402,18 +393,12 @@ export class ChartsService {
       Result.bind(
         'chart',
         (v): Result.ResultAsync<ChartTab, ChartEntToTabError> =>
-          this.db.drizzle.query.chartsTable
-            .findFirst({
-              where: and(
-                eq(chartsTable.structId, v.structId),
-                eq(chartsTable.chartId, v.chartId)
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.chartEntToTab({ chartEnt: x })
+          this.db.charts.findFirst({
+            where: and(
+              eq(chartsTable.structId, v.structId),
+              eq(chartsTable.chartId, v.chartId)
             )
+          })
       ),
       Result.andThrough(v =>
         isUndefined(v.chart)

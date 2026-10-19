@@ -1,9 +1,7 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   MconfigTab,
@@ -12,6 +10,7 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DbService } from '#backend/services/db/db.service';
 import {
   EnvsService,
   type GetApiEnvConnectionsWithFallbackOutput
@@ -62,7 +61,7 @@ export class MalloyService {
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async editMalloyQuery(item: {

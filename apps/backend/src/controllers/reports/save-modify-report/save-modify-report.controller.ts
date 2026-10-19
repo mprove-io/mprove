@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,7 +11,7 @@ import {
   ToBackendSaveModifyReportResponseDto
 } from '#backend/controllers/reports/save-modify-report/save-modify-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BranchTab,
   BridgeTab,
@@ -29,11 +22,11 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path/get-report-space-from-file-path';
@@ -43,8 +36,8 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -58,7 +51,7 @@ import { ReportDataService } from '#backend/services/report-data/report-data.ser
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
+import { UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -69,6 +62,7 @@ import type { BackendModifyReportFailError } from '#common/types/backend/errors/
 import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
 import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
@@ -81,6 +75,7 @@ import type { GetStructCheckExistsError } from '#common/types/backend/function-e
 import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
@@ -139,14 +134,13 @@ export class SaveModifyReportController {
     private reportsService: ReportsService,
     private sessionsService: SessionsService,
     private reportDataService: ReportDataService,
-    private branchesService: BranchesService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSaveModifyReport' satisfies ToBackendRoute)
@@ -203,8 +197,8 @@ export class SaveModifyReportController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
@@ -220,9 +214,11 @@ export class SaveModifyReportController {
           let userMemberResult: Result.Result<
             MemberTab,
             GetMemberCheckExistsError
-          > = await this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          > = await this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           });
 
           if (Result.isFailure(userMemberResult)) {
@@ -256,10 +252,12 @@ export class SaveModifyReportController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -272,11 +270,13 @@ export class SaveModifyReportController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -349,25 +349,15 @@ export class SaveModifyReportController {
         async (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
           v.resolveReportDependenciesPayload.modelIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.modelsTable
-                .findMany({
-                  where: and(
-                    eq(modelsTable.structId, v.bridge.structId),
-                    inArray(
-                      modelsTable.modelId,
-                      v.resolveReportDependenciesPayload.modelIds
-                    )
-                  )
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    isUndefined(x)
-                      ? Result.succeed(undefined)
-                      : this.tabService.modelEntToTab({
-                          modelEnt: x
-                        })
+            : this.db.models.findMany({
+                where: and(
+                  eq(modelsTable.structId, v.bridge.structId),
+                  inArray(
+                    modelsTable.modelId,
+                    v.resolveReportDependenciesPayload.modelIds
                   )
                 )
+              })
       ),
       Result.bind(
         'prepareReportFilePayload',
@@ -513,37 +503,14 @@ export class SaveModifyReportController {
           })
       ),
       Result.bind(
-        'branchBridgeEnts',
-        async (v): Result.ResultAsync<BridgeEnt[], never> => {
-          let branchBridgeEnts: BridgeEnt[] =
-            await this.db.drizzle.query.bridgesTable.findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.branch.projectId),
-                eq(bridgesTable.repoId, v.branch.repoId),
-                eq(bridgesTable.branchId, v.branch.branchId)
-              )
-            });
-
-          let bridgeInvalidationResult: Result.Result<void[], never> =
-            Result.sequence(
-              branchBridgeEnts,
-              (x): Result.Result<void, never> => {
-                if (x.envId !== v.envId) {
-                  x.structId = EMPTY_STRUCT_ID;
-
-                  x.needValidate = true;
-                }
-
-                return Result.succeed();
-              }
-            );
-
-          if (Result.isFailure(bridgeInvalidationResult)) {
-            return bridgeInvalidationResult;
-          }
-
-          return Result.succeed(branchBridgeEnts);
-        }
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> =>
+          this.bridgesService.getBranchBridgesForRebuild({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
       ),
       Result.bind(
         'prepareRebuildPayload',
@@ -615,22 +582,11 @@ export class SaveModifyReportController {
             ...rebuild.struct.errors
           ];
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(async tx => {
-                      await this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insertOrUpdate: {
-                          structs: [v.currentStruct],
-                          bridges: [...v.branchBridgeEnts]
-                        }
-                      });
-                    }),
-                  getRetryOption(this.cs, this.logger)
-                );
+          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+            await this.db.write({
+              insertOrUpdate: {
+                structs: [v.currentStruct],
+                bridges: [...v.branchBridges]
               }
             });
 

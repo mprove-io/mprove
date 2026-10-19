@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendGetUserGivensRequestDto,
   ToBackendGetUserGivensResponseDto
@@ -11,9 +12,10 @@ import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { GivensService } from '#backend/services/db/givens/givens.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -30,8 +32,8 @@ import type { ToBackendGetUserGivensOutput } from '#common/types/backend/routes/
 export class GetUserGivensController {
   constructor(
     private givensService: GivensService,
-    private membersService: MembersService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetUserGivens' satisfies ToBackendRoute)
@@ -52,9 +54,11 @@ export class GetUserGivensController {
       Result.bind(
         'member',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            memberId: v.user.userId,
-            projectId: v.projectId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.andThrough(v =>

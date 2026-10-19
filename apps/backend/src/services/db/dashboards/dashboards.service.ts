@@ -1,8 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   DashboardTab,
   MconfigTab,
@@ -24,6 +22,7 @@ import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { makeTilesX } from '#backend/functions/make-tiles-x/make-tiles-x';
 import { makeDashboardFiltersX } from '#backend/services/db/dashboards/make-dashboard-filters-x/make-dashboard-filters-x';
+import { DbService } from '#backend/services/db/db.service';
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
 import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
@@ -114,7 +113,7 @@ export class DashboardsService {
     private favoritesService: FavoritesService,
     private spaceService: SpaceService,
     private unitsService: UnitsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getDashboardsCatalog(item: {
@@ -129,26 +128,18 @@ export class DashboardsService {
       Result.bind(
         'dashboards',
         (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabError> =>
-          this.db.drizzle.query.dashboardsTable
-            .findMany({
-              where: and(
-                eq(dashboardsTable.structId, v.structId),
-                or(
-                  eq(dashboardsTable.draft, false),
-                  and(
-                    eq(dashboardsTable.draft, true),
-                    eq(dashboardsTable.creatorId, v.user.userId)
-                  )
+          this.db.dashboards.findMany({
+            where: and(
+              eq(dashboardsTable.structId, v.structId),
+              or(
+                eq(dashboardsTable.draft, false),
+                and(
+                  eq(dashboardsTable.draft, true),
+                  eq(dashboardsTable.creatorId, v.user.userId)
                 )
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.dashboardEntToTab({ dashboardEnt: x })
-              )
             )
+          })
       ),
       Result.bind(
         'dashboardsGrantedAccess',
@@ -403,22 +394,12 @@ export class DashboardsService {
           DashboardTab,
           GetDashboardCheckExistsAndAccessError
         > =>
-          this.db.drizzle.query.dashboardsTable
-            .findFirst({
-              where: and(
-                eq(dashboardsTable.structId, v.structId),
-                eq(dashboardsTable.dashboardId, v.dashboardId)
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_DASHBOARD_DOES_NOT_EXIST' })
-                : isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.dashboardEntToTab({
-                      dashboardEnt: x
-                    })
+          this.db.dashboards.findFirstCheckExists({
+            where: and(
+              eq(dashboardsTable.structId, v.structId),
+              eq(dashboardsTable.dashboardId, v.dashboardId)
             )
+          })
       ),
       Result.andThrough(v =>
         v.dashboard.draft === true && v.dashboard.creatorId !== v.user.userId
@@ -500,19 +481,9 @@ export class DashboardsService {
         async (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
           v.mconfigIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.mconfigsTable
-                .findMany({
-                  where: inArray(mconfigsTable.mconfigId, v.mconfigIds)
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    isUndefined(x)
-                      ? Result.succeed(undefined)
-                      : this.tabService.mconfigEntToTab({
-                          mconfigEnt: x
-                        })
-                  )
-                )
+            : this.db.mconfigs.findMany({
+                where: inArray(mconfigsTable.mconfigId, v.mconfigIds)
+              })
       ),
       Result.bind(
         'queryIds',
@@ -524,39 +495,19 @@ export class DashboardsService {
         async (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
           v.queryIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.queriesTable
-                .findMany({
-                  where: and(
-                    inArray(queriesTable.queryId, v.queryIds),
-                    eq(queriesTable.projectId, v.projectId)
-                  )
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    isUndefined(x)
-                      ? Result.succeed(undefined)
-                      : this.tabService.queryEntToTab({
-                          queryEnt: x
-                        })
-                  )
+            : this.db.queries.findMany({
+                where: and(
+                  inArray(queriesTable.queryId, v.queryIds),
+                  eq(queriesTable.projectId, v.projectId)
                 )
+              })
       ),
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: eq(modelsTable.structId, v.structId)
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTab({
-                      modelEnt: x
-                    })
-              )
-            )
+          this.db.models.findMany({
+            where: eq(modelsTable.structId, v.structId)
+          })
       ),
       Result.bind(
         'assembleDashboardProjectionPayload',

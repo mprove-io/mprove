@@ -1,12 +1,10 @@
 import { BigQuery } from '@google-cloud/bigquery';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   QueryTab
@@ -17,21 +15,18 @@ import {
   queriesTable
 } from '#backend/drizzle/postgres/schema/queries';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckBigqueryRunningQueriesError } from '#common/types/backend/function-errors/check-bigquery-running-queries-error';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetQueriesCheckExistError } from '#common/types/backend/function-errors/get-queries-check-exist-error';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
-import type { GetQueryCheckExistsError } from '#common/types/backend/function-errors/get-query-check-exists-error';
 import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
 import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { Env } from '#common/types/backend/parts/env';
@@ -42,11 +37,10 @@ import type { StoreMethod } from '#common/types/blockml/parts/store/store-method
 export class QueriesService {
   constructor(
     private tabService: TabService,
-    private hashService: HashService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   tabToApi(item: { query: QueryTab }): Query {
@@ -193,26 +187,6 @@ export class QueriesService {
     );
   }
 
-  async getQueryCheckExists(item: {
-    queryId: string;
-    projectId: string;
-  }): Result.ResultAsync<QueryTab, GetQueryCheckExistsError> {
-    let { queryId, projectId } = item;
-
-    return this.db.drizzle.query.queriesTable
-      .findFirst({
-        where: and(
-          eq(queriesTable.queryId, queryId),
-          eq(queriesTable.projectId, projectId)
-        )
-      })
-      .then(x =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
-          : this.tabService.queryEntToTab({ queryEnt: x })
-      );
-  }
-
   async getQueriesCheckExistSkipSqlData(item: {
     queryIds: string[];
     projectId: string;
@@ -290,18 +264,12 @@ export class QueriesService {
       Result.bind(
         'queries',
         (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
-          this.db.drizzle.query.queriesTable
-            .findMany({
-              where: and(
-                inArray(queriesTable.queryId, v.queryIds),
-                eq(queriesTable.projectId, v.projectId)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.queryEntToTab({ queryEnt: x })
-              )
+          this.db.queries.findMany({
+            where: and(
+              inArray(queriesTable.queryId, v.queryIds),
+              eq(queriesTable.projectId, v.projectId)
             )
+          })
       ),
       Result.andThrough(v => {
         // Preserve the existing missing-ID predicate during signature migration.
@@ -344,18 +312,12 @@ WHERE q.report_id is NULL
     CheckBigqueryRunningQueriesError
   > {
     let queryCollection: Result.Result<QueryTab[], QueryEntToTabError> =
-      await this.db.drizzle.query.queriesTable
-        .findMany({
-          where: and(
-            eq(queriesTable.status, 'Running'),
-            eq(queriesTable.connectionType, 'BigQuery')
-          )
-        })
-        .then(xs =>
-          Result.sequence(xs, x =>
-            this.tabService.queryEntToTab({ queryEnt: x })
-          )
-        );
+      await this.db.queries.findMany({
+        where: and(
+          eq(queriesTable.status, 'Running'),
+          eq(queriesTable.connectionType, 'BigQuery')
+        )
+      });
 
     if (Result.isFailure(queryCollection)) {
       return queryCollection;
@@ -378,11 +340,8 @@ WHERE q.report_id is NULL
 
         let apiEnv: Env = apiEnvs.find(x => x.envId === query.envId);
 
-        let connectionResult: Result.Result<
-          ConnectionTab,
-          ConnectionEntToTabError
-        > = await this.db.drizzle.query.connectionsTable
-          .findFirst({
+        let connection: ConnectionTab =
+          await this.db.connections.findFirstUnwrap({
             where: and(
               eq(connectionsTable.projectId, query.projectId),
               eq(
@@ -393,14 +352,7 @@ WHERE q.report_id is NULL
               ),
               eq(connectionsTable.connectionId, query.connectionId)
             )
-          })
-          .then(x => this.tabService.connectionEntToTab({ connectionEnt: x }));
-
-        if (Result.isFailure(connectionResult)) {
-          throw new ServerError({ message: connectionResult.error.code });
-        }
-
-        let connection: ConnectionTab = connectionResult.value;
+          });
 
         if (isUndefined(connection)) {
           query.status = 'Error';
@@ -408,19 +360,11 @@ WHERE q.report_id is NULL
           query.lastErrorMessage = `Project connection not found`;
           query.lastErrorTs = makeTsNumber();
 
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [query]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
+          await this.db.writeUnwrap({
+            insertOrUpdate: {
+              queries: [query]
+            }
+          });
 
           return;
         }
@@ -445,38 +389,22 @@ WHERE q.report_id is NULL
                 query.bigqueryConsecutiveErrorsGetJob + 1;
             }
 
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: {
-                        queries: [query]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+            await this.db.writeUnwrap({
+              insertOrUpdate: {
+                queries: [query]
+              }
+            });
 
             return;
           });
 
         query.bigqueryConsecutiveErrorsGetJob = 0;
 
-        await retry(
-          async () =>
-            await this.db.drizzle.transaction(
-              async tx =>
-                await this.db.packer.writeUnwrap({
-                  tx: tx,
-                  insertOrUpdate: {
-                    queries: [query]
-                  }
-                })
-            ),
-          getRetryOption(this.cs, this.logger)
-        );
+        await this.db.writeUnwrap({
+          insertOrUpdate: {
+            queries: [query]
+          }
+        });
 
         let queryJob = (itemQueryJob as any)[0];
         let queryJobGetResponse: any = (itemQueryJob as any)[1];
@@ -494,19 +422,11 @@ WHERE q.report_id is NULL
               `Location: '${errorResult.location}'.`;
             query.lastErrorTs = makeTsNumber();
 
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: {
-                        queries: [query]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+            await this.db.writeUnwrap({
+              insertOrUpdate: {
+                queries: [query]
+              }
+            });
           } else {
             let queryResultsItem = await queryJob
               .getQueryResults()
@@ -521,19 +441,11 @@ WHERE q.report_id is NULL
                     query.bigqueryConsecutiveErrorsGetResults + 1;
                 }
 
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(
-                      async tx =>
-                        await this.db.packer.writeUnwrap({
-                          tx: tx,
-                          insertOrUpdate: {
-                            queries: [query]
-                          }
-                        })
-                    ),
-                  getRetryOption(this.cs, this.logger)
-                );
+                await this.db.writeUnwrap({
+                  insertOrUpdate: {
+                    queries: [query]
+                  }
+                });
 
                 return;
               });
@@ -550,19 +462,11 @@ WHERE q.report_id is NULL
             query.lastCompleteTs = newLastCompleteTs;
             query.lastCompleteDuration = newLastCompleteDuration;
 
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: {
-                        queries: [query]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+            await this.db.writeUnwrap({
+              insertOrUpdate: {
+                queries: [query]
+              }
+            });
           }
         }
       } catch (e) {

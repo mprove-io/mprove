@@ -1,24 +1,13 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGroupMetricByDimensionRequestDto,
   ToBackendGroupMetricByDimensionResponseDto
 } from '#backend/controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -30,25 +19,24 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
 import { ParentService } from '#backend/services/parent/parent.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -89,22 +77,14 @@ type SelectSorting = {
 @Controller()
 export class GroupMetricByDimensionController {
   constructor(
-    private tabService: TabService,
     private parentService: ParentService,
-    private projectsService: ProjectsService,
-    private modelsService: ModelsService,
-    private membersService: MembersService,
-    private branchesService: BranchesService,
     private structsService: StructsService,
-    private bridgesService: BridgesService,
     private envsService: EnvsService,
     private malloyService: MalloyService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGroupMetricByDimension' satisfies ToBackendRoute)
@@ -143,25 +123,29 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -174,19 +158,23 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
         'oldMconfig',
         (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
-          this.mconfigsService.getMconfigCheckExists({
-            mconfigId: v.mconfigId,
-            structId: v.bridge.structId
+          this.db.mconfigs.findFirstCheckExists({
+            where: and(
+              eq(mconfigsTable.mconfigId, v.mconfigId),
+              eq(mconfigsTable.structId, v.bridge.structId)
+            )
           })
       ),
       Result.bind(
@@ -218,9 +206,11 @@ export class GroupMetricByDimensionController {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
-          this.modelsService.getModelCheckExists({
-            structId: v.bridge.structId,
-            modelId: v.oldMconfig.modelId
+          this.db.models.findFirstCheckExists({
+            where: and(
+              eq(modelsTable.structId, v.bridge.structId),
+              eq(modelsTable.modelId, v.oldMconfig.modelId)
+            )
           })
       ),
       Result.bind(
@@ -324,44 +314,27 @@ export class GroupMetricByDimensionController {
               })
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async (): Promise<void> => {
-            await retry(
-              async () =>
-                this.db.drizzle.transaction(async tx =>
-                  this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insert: { mconfigs: [v.mconfigQuery.newMconfig] },
-                    insertOrUpdate: {
-                      queries:
-                        v.mconfigQuery.isError === true
-                          ? [v.mconfigQuery.newQuery]
-                          : []
-                    },
-                    insertOrDoNothing: {
-                      queries:
-                        v.mconfigQuery.isError === true
-                          ? []
-                          : [v.mconfigQuery.newQuery]
-                    }
-                  })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insert: { mconfigs: [v.mconfigQuery.newMconfig] },
+          insertOrUpdate: {
+            queries:
+              v.mconfigQuery.isError === true ? [v.mconfigQuery.newQuery] : []
+          },
+          insertOrDoNothing: {
+            queries:
+              v.mconfigQuery.isError === true ? [] : [v.mconfigQuery.newQuery]
           }
         })
       ),
       Result.bind(
         'query',
         (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
-          this.db.drizzle.query.queriesTable
-            .findFirst({
-              where: and(
-                eq(queriesTable.queryId, v.mconfigQuery.newQuery.queryId),
-                eq(queriesTable.projectId, v.mconfigQuery.newQuery.projectId)
-              )
-            })
-            .then(x => this.tabService.queryEntToTab({ queryEnt: x }))
+          this.db.queries.findFirst({
+            where: and(
+              eq(queriesTable.queryId, v.mconfigQuery.newQuery.queryId),
+              eq(queriesTable.projectId, v.mconfigQuery.newQuery.projectId)
+            )
+          })
       ),
       Result.map(
         (v): ToBackendGroupMetricByDimensionOutput => ({

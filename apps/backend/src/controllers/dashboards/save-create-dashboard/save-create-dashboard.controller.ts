@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,7 +11,7 @@ import {
   ToBackendSaveCreateDashboardResponseDto
 } from '#backend/controllers/dashboards/save-create-dashboard/save-create-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BranchTab,
   BridgeTab,
@@ -28,12 +21,12 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
@@ -41,13 +34,13 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import type { DashboardsCatalog } from '#backend/services/db/dashboards/dashboards.service';
 import {
   DashboardsService,
   type ProcessDashboardOutput
 } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -59,7 +52,7 @@ import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
+import { UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -70,6 +63,7 @@ import type { BackendMemberIsNotExplorerError } from '#common/types/backend/erro
 import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
 import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
@@ -81,6 +75,7 @@ import type { ModelEntToTabError } from '#common/types/backend/function-errors/m
 import type { ProcessDashboardError } from '#common/types/backend/function-errors/process-dashboard-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Member } from '#common/types/backend/parts/member';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
@@ -113,7 +108,6 @@ export class SaveCreateDashboardController {
   constructor(
     private tabService: TabService,
     private usersService: UsersService,
-    private branchesService: BranchesService,
     private structsService: StructsService,
     private rpcService: RpcService,
     private membersService: MembersService,
@@ -127,7 +121,7 @@ export class SaveCreateDashboardController {
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSaveCreateDashboard' satisfies ToBackendRoute)
@@ -181,8 +175,8 @@ export class SaveCreateDashboardController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
@@ -196,9 +190,11 @@ export class SaveCreateDashboardController {
           let userMemberResult: Result.Result<
             MemberTab,
             GetMemberCheckExistsError
-          > = await this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          > = await this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           });
 
           if (Result.isFailure(userMemberResult)) {
@@ -265,10 +261,12 @@ export class SaveCreateDashboardController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -281,11 +279,13 @@ export class SaveCreateDashboardController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -454,37 +454,14 @@ export class SaveCreateDashboardController {
           })
       ),
       Result.bind(
-        'branchBridgeEnts',
-        async (v): Result.ResultAsync<BridgeEnt[], never> => {
-          let branchBridgeEnts: BridgeEnt[] =
-            await this.db.drizzle.query.bridgesTable.findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.branch.projectId),
-                eq(bridgesTable.repoId, v.branch.repoId),
-                eq(bridgesTable.branchId, v.branch.branchId)
-              )
-            });
-
-          let bridgeInvalidationResult: Result.Result<void[], never> =
-            Result.sequence(
-              branchBridgeEnts,
-              (x): Result.Result<void, never> => {
-                if (x.envId !== v.envId) {
-                  x.structId = EMPTY_STRUCT_ID;
-
-                  x.needValidate = true;
-                }
-
-                return Result.succeed();
-              }
-            );
-
-          if (Result.isFailure(bridgeInvalidationResult)) {
-            return bridgeInvalidationResult;
-          }
-
-          return Result.succeed(branchBridgeEnts);
-        }
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> =>
+          this.bridgesService.getBranchBridgesForRebuild({
+            projectId: v.branch.projectId,
+            repoId: v.branch.repoId,
+            branchId: v.branch.branchId,
+            envId: v.envId
+          })
       ),
       Result.bind(
         'prepareRebuildPayload',
@@ -535,22 +512,12 @@ export class SaveCreateDashboardController {
       Result.bind(
         'cachedModels',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: and(
-                eq(modelsTable.structId, v.bridge.structId),
-                inArray(modelsTable.modelId, v.prepareRebuildPayload.modelIds)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTab({
-                      modelEnt: x
-                    })
-              )
+          this.db.models.findMany({
+            where: and(
+              eq(modelsTable.structId, v.bridge.structId),
+              inArray(modelsTable.modelId, v.prepareRebuildPayload.modelIds)
             )
+          })
       ),
       Result.bind(
         'rebuild',
@@ -592,22 +559,11 @@ export class SaveCreateDashboardController {
             ...rebuild.struct.errors
           ];
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(async tx => {
-                      await this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insertOrUpdate: {
-                          structs: [v.currentStruct],
-                          bridges: [...v.branchBridgeEnts]
-                        }
-                      });
-                    }),
-                  getRetryOption(this.cs, this.logger)
-                );
+          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+            await this.db.write({
+              insertOrUpdate: {
+                structs: [v.currentStruct],
+                bridges: [...v.branchBridges]
               }
             });
 

@@ -1,19 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { TabService } from '#backend/services/tab/tab.service';
+import { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+
 import type { BackendUserDoesNotExistError } from '#common/types/backend/errors/backend-user-does-not-exist-error';
 import type { AuthenticateJwtError } from '#common/types/backend/function-errors/authenticate-jwt-error';
 import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
@@ -21,9 +18,8 @@ import type { UserEntToTabError } from '#common/types/backend/function-errors/us
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -65,13 +61,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           UserTab,
           UserEntToTabError | BackendUserDoesNotExistError
         > =>
-          this.db.drizzle.query.usersTable
-            .findFirst({ where: eq(usersTable.userId, v.userId) })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-                : this.tabService.userEntToTab({ userEnt: x })
-            )
+          this.db.users.findFirstCheckExists({
+            where: eq(usersTable.userId, v.userId)
+          })
       ),
       Result.andThrough(v =>
         isDefined(v.user.jwtMinIat) && Number(v.user.jwtMinIat) > v.iat * 1000

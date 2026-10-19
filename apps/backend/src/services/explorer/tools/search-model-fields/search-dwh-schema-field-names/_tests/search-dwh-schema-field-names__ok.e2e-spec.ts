@@ -1,15 +1,17 @@
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
+import { and, eq } from 'drizzle-orm';
+import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
 import type { Prep } from '#backend/interfaces/prep';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names/search-dwh-schema-field-names.service';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendSeedRecordsRequest } from '#common/types/backend/routes/test-routes/seed-records/seed-records-request';
 
@@ -119,13 +121,15 @@ test('1', async t => {
         }
       });
 
-      let bridgesService = prep.moduleRef.get<BridgesService>(BridgesService);
+      let db: DbService = prep.moduleRef.get<DbService>(DbService);
 
-      let bridge = await bridgesService.getBridgeCheckExistsUnwrap({
-        projectId: projectId,
-        repoId: userId,
-        branchId: BRANCH_MAIN,
-        envId: envId
+      let bridge: BridgeTab = await db.bridges.findFirstCheckExistsUnwrap({
+        where: and(
+          eq(bridgesTable.projectId, projectId),
+          eq(bridgesTable.repoId, userId),
+          eq(bridgesTable.branchId, BRANCH_MAIN),
+          eq(bridgesTable.envId, envId)
+        )
       });
 
       let seedLeafsReq: ToBackendSeedRecordsRequest = {

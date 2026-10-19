@@ -1,37 +1,26 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import type { BackendConfig } from '#backend/config/backend-config';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendEditProviderRequestDto,
   ToBackendEditProviderResponseDto
 } from '#backend/controllers/providers/edit-provider/edit-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { UrlService } from '#backend/services/url/url.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -43,13 +32,10 @@ import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/p
 @Controller()
 export class EditProviderController {
   constructor(
-    private projectsService: ProjectsService,
     private providersService: ProvidersService,
     private membersService: MembersService,
     private urlService: UrlService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendEditProvider' satisfies ToBackendRoute)
@@ -70,8 +56,8 @@ export class EditProviderController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.input.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.input.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -83,9 +69,11 @@ export class EditProviderController {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.providersService.getProviderCheckExists({
-            projectId: v.input.projectId,
-            providerId: v.input.providerId
+          this.db.providers.findFirstCheckExists({
+            where: and(
+              eq(providersTable.projectId, v.input.projectId),
+              eq(providersTable.providerId, v.input.providerId)
+            )
           })
       ),
       Result.andThrough(v => {
@@ -141,21 +129,7 @@ export class EditProviderController {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      update: { providers: [v.provider] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
+        this.db.write({ update: { providers: [v.provider] } })
       ),
       Result.map(
         (v): ToBackendEditProviderOutput => ({

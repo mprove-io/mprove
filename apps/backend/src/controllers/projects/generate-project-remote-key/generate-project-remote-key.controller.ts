@@ -1,32 +1,22 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
+import { eq } from 'drizzle-orm';
 import sshpk from 'sshpk';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGenerateProjectRemoteKeyRequestDto,
   ToBackendGenerateProjectRemoteKeyResponseDto
 } from '#backend/controllers/projects/generate-project-remote-key/generate-project-remote-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   NoteTab,
   OrgTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -47,9 +37,7 @@ export class GenerateProjectRemoteKeyController {
   constructor(
     private tabService: TabService,
     private orgsService: OrgsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGenerateProjectRemoteKey' satisfies ToBackendRoute)
@@ -73,7 +61,9 @@ export class GenerateProjectRemoteKeyController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
+          this.db.orgs.findFirstCheckExists({
+            where: eq(orgsTable.orgId, v.orgId)
+          })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -109,23 +99,7 @@ export class GenerateProjectRemoteKeyController {
 
         return Result.succeed(note);
       }),
-      Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: { notes: [v.note] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
-      ),
+      Result.andThrough(v => this.db.write({ insert: { notes: [v.note] } })),
       Result.map(
         (v): ToBackendGenerateProjectRemoteKeyOutput => ({
           noteId: v.note.noteId,

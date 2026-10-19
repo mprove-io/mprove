@@ -1,24 +1,14 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateDraftChartRequestDto,
   ToBackendCreateDraftChartResponseDto
 } from '#backend/controllers/charts/create-draft-chart/create-draft-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BranchTab,
   BridgeTab,
@@ -31,36 +21,33 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import type { ChartsCatalog } from '#backend/services/db/charts/charts.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
@@ -73,6 +60,7 @@ import type { GetStructCheckExistsAndNotChangedError } from '#common/types/backe
 import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateDraftChartOutput } from '#common/types/backend/routes/charts/create-draft-chart/create-draft-chart-output';
@@ -96,23 +84,17 @@ type PrepareDraftChartPayload = {
 @Controller()
 export class CreateDraftChartController {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
     private malloyService: MalloyService,
-    private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private membersService: MembersService,
-    private branchesService: BranchesService,
     private structsService: StructsService,
-    private bridgesService: BridgesService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
     private envsService: EnvsService,
     private mconfigsService: MconfigsService,
     private chartsService: ChartsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateDraftChart' satisfies ToBackendRoute)
@@ -152,16 +134,18 @@ export class CreateDraftChartController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -174,10 +158,12 @@ export class CreateDraftChartController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -190,11 +176,13 @@ export class CreateDraftChartController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -334,9 +322,14 @@ export class CreateDraftChartController {
           v.prepareQueryPayload.newMconfig.queryId = v.apiMconfig.queryId;
 
           let queryResult: Result.Result<QueryTab, GetQueryCheckExistsError> =
-            await this.queriesService.getQueryCheckExists({
-              queryId: v.prepareQueryPayload.newMconfig.queryId,
-              projectId: v.projectId
+            await this.db.queries.findFirstCheckExists({
+              where: and(
+                eq(
+                  queriesTable.queryId,
+                  v.prepareQueryPayload.newMconfig.queryId
+                ),
+                eq(queriesTable.projectId, v.projectId)
+              )
             });
 
           if (Result.isFailure(queryResult)) {
@@ -396,35 +389,23 @@ export class CreateDraftChartController {
         }
       ),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<void, DbErrorToError> =
-          await dbErrorToResult({
-            action: async () => {
-              await retry(
-                async () =>
-                  await this.db.drizzle.transaction(
-                    async tx =>
-                      await this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insert: {
-                          charts: [v.prepareDraftChartPayload.newChart],
-                          mconfigs: [v.prepareQueryPayload.newMconfig]
-                        },
-                        insertOrUpdate: {
-                          queries:
-                            v.prepareQueryPayload.isError === true
-                              ? [v.prepareQueryPayload.newQuery]
-                              : []
-                        },
-                        insertOrDoNothing: {
-                          queries:
-                            v.prepareQueryPayload.isError === true
-                              ? []
-                              : [v.prepareQueryPayload.newQuery]
-                        }
-                      })
-                  ),
-                getRetryOption(this.cs, this.logger)
-              );
+        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+          await this.db.write({
+            insert: {
+              charts: [v.prepareDraftChartPayload.newChart],
+              mconfigs: [v.prepareQueryPayload.newMconfig]
+            },
+            insertOrUpdate: {
+              queries:
+                v.prepareQueryPayload.isError === true
+                  ? [v.prepareQueryPayload.newQuery]
+                  : []
+            },
+            insertOrDoNothing: {
+              queries:
+                v.prepareQueryPayload.isError === true
+                  ? []
+                  : [v.prepareQueryPayload.newQuery]
             }
           });
 
@@ -437,26 +418,15 @@ export class CreateDraftChartController {
       Result.bind(
         'query',
         (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
-          this.db.drizzle.query.queriesTable
-            .findFirst({
-              where: and(
-                eq(
-                  queriesTable.queryId,
-                  v.prepareQueryPayload.newQuery.queryId
-                ),
-                eq(
-                  queriesTable.projectId,
-                  v.prepareQueryPayload.newQuery.projectId
-                )
+          this.db.queries.findFirst({
+            where: and(
+              eq(queriesTable.queryId, v.prepareQueryPayload.newQuery.queryId),
+              eq(
+                queriesTable.projectId,
+                v.prepareQueryPayload.newQuery.projectId
               )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.queryEntToTab({
-                    queryEnt: x
-                  })
             )
+          })
       ),
       Result.bind(
         'apiUserMember',
@@ -466,17 +436,9 @@ export class CreateDraftChartController {
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTab({
-                      modelEnt: x
-                    })
-              )
-            )
+          this.db.models.findMany({
+            where: eq(modelsTable.structId, v.bridge.structId)
+          })
       ),
       Result.bind(
         'chartsCatalog',

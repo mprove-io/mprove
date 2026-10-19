@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -18,7 +10,6 @@ import {
   ToBackendCreateMemberResponseDto
 } from '#backend/controllers/members/create-member/create-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   AvatarTab,
   BranchTab,
@@ -31,30 +22,17 @@ import {
   type AvatarEnt,
   avatarsTable
 } from '#backend/drizzle/postgres/schema/avatars';
-import {
-  type BranchEnt,
-  branchesTable
-} from '#backend/drizzle/postgres/schema/branches';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
-import {
-  type UserEnt,
-  usersTable
-} from '#backend/drizzle/postgres/schema/users';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import {
-  BlockmlService,
-  type RebuildStructOutput
-} from '#backend/services/blockml/blockml.service';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
 import { HashService } from '#backend/services/hash/hash.service';
@@ -86,11 +64,12 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendRestrictedUserError } from '#common/types/backend/errors/backend-restricted-user-error';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
@@ -127,7 +106,6 @@ export class CreateMemberController {
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rpcService: RpcService,
-    private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private blockmlService: BlockmlService,
@@ -135,8 +113,7 @@ export class CreateMemberController {
     private membersService: MembersService,
     private emailService: EmailService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateMember' satisfies ToBackendRoute)
@@ -161,8 +138,8 @@ export class CreateMemberController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.andThrough(v =>
@@ -187,13 +164,9 @@ export class CreateMemberController {
       Result.bind(
         'invitedUser',
         (v): Result.ResultAsync<UserTab, UserEntToTabError> =>
-          this.db.drizzle.query.usersTable
-            .findFirst({ where: eq(usersTable.emailHash, v.emailHash) })
-            .then((x: UserEnt) =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.userEntToTab({ userEnt: x })
-            )
+          this.db.users.findFirst({
+            where: eq(usersTable.emailHash, v.emailHash)
+          })
       ),
       Result.bind(
         'newUser',
@@ -289,17 +262,15 @@ export class CreateMemberController {
           })
       ),
       Result.bind(
-        'prodBranchEnt',
-        (v): Result.ResultAsync<BranchEnt, never> =>
-          this.db.drizzle.query.branchesTable
-            .findFirst({
-              where: and(
-                eq(branchesTable.projectId, v.projectId),
-                eq(branchesTable.repoId, PROD_REPO_ID),
-                eq(branchesTable.branchId, v.project.defaultBranch)
-              )
-            })
-            .then(prodBranchEnt => Result.succeed(prodBranchEnt))
+        'prodBranch',
+        (v): Result.ResultAsync<BranchTab, BranchEntToTabError> =>
+          this.db.branches.findFirst({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, PROD_REPO_ID),
+              eq(branchesTable.branchId, v.project.defaultBranch)
+            )
+          })
       ),
       Result.bind(
         'devBranch',
@@ -313,28 +284,26 @@ export class CreateMemberController {
           )
       ),
       Result.bind(
-        'prodBranchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.prodBranchEnt.projectId),
-                eq(bridgesTable.repoId, v.prodBranchEnt.repoId),
-                eq(bridgesTable.branchId, v.prodBranchEnt.branchId)
-              )
-            })
-            .then(bridgeEnts => Result.succeed(bridgeEnts))
+        'prodBranchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.prodBranch.projectId),
+              eq(bridgesTable.repoId, v.prodBranch.repoId),
+              eq(bridgesTable.branchId, v.prodBranch.branchId)
+            )
+          })
       ),
       Result.bind(
         'devBranchBridges',
         (v): Result.Result<BridgeTab[], never> =>
           Result.succeed(
-            v.prodBranchBridgeEnts.map(bridgeEnt =>
+            v.prodBranchBridges.map(bridge =>
               this.bridgesService.makeBridge({
                 projectId: v.devBranch.projectId,
                 repoId: v.devBranch.repoId,
                 branchId: v.devBranch.branchId,
-                envId: bridgeEnt.envId,
+                envId: bridge.envId,
                 structId: EMPTY_STRUCT_ID,
                 needValidate: true
               })
@@ -342,59 +311,24 @@ export class CreateMemberController {
           )
       ),
       Result.andThrough(v =>
-        Result.sequence(v.devBranchBridges, async x => {
-          if (x.envId === PROJECT_ENV_PROD) {
-            let structId: string = makeId();
-
-            let rebuildResult: Result.Result<
-              RebuildStructOutput,
-              RebuildStructError
-            > = await this.blockmlService.rebuildStruct({
-              traceId: v.traceId,
-              orgId: v.project.orgId,
-              projectId: v.projectId,
-              repoId: v.newMember.memberId,
-              structId: structId,
-              diskFiles: v.diskCreateDevRepoOutput.files,
-              mproveDir: v.diskCreateDevRepoOutput.mproveDir,
-              envId: x.envId,
-              selectedGivens: [],
-              overrideTimezone: undefined
-            });
-
-            if (Result.isFailure(rebuildResult)) {
-              return Result.fail(rebuildResult.error);
-            }
-
-            x.structId = structId;
-            x.needValidate = false;
-          } else {
-            x.structId = EMPTY_STRUCT_ID;
-            x.needValidate = true;
-          }
-
-          return Result.succeed();
+        this.blockmlService.rebuildBranchBridges({
+          branchBridges: v.devBranchBridges,
+          envId: PROJECT_ENV_PROD,
+          traceId: v.traceId,
+          orgId: v.project.orgId,
+          projectId: v.projectId,
+          repoId: v.newMember.memberId,
+          diskFiles: v.diskCreateDevRepoOutput.files,
+          mproveDir: v.diskCreateDevRepoOutput.mproveDir
         })
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: {
-                        members: [v.newMember],
-                        users: isDefined(v.newUser) ? [v.newUser] : [],
-                        branches: [v.devBranch],
-                        bridges: [...v.devBranchBridges]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insert: {
+            members: [v.newMember],
+            users: isDefined(v.newUser) ? [v.newUser] : [],
+            branches: [v.devBranch],
+            bridges: [...v.devBranchBridges]
           }
         })
       ),

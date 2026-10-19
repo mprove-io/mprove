@@ -1,11 +1,8 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import { eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BranchTab,
   BridgeTab,
@@ -16,20 +13,14 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import {
-  type ProjectEnt,
-  projectsTable
-} from '#backend/drizzle/postgres/schema/projects';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
-import {
   BlockmlService,
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -39,10 +30,9 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { AddProjectError } from '#common/types/backend/function-errors/add-project-error';
 import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Ev } from '#common/types/backend/parts/ev';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { Project } from '#common/types/backend/parts/project/project';
@@ -54,7 +44,6 @@ import type { ToDiskCreateProjectOutput } from '#common/types/disk/routes/projec
 export class ProjectsService {
   constructor(
     private tabService: TabService,
-    private hashService: HashService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
@@ -62,8 +51,7 @@ export class ProjectsService {
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   wrapToApiProjectsItem(item: { project: ProjectTab }): ProjectsItem {
@@ -98,22 +86,6 @@ export class ProjectsService {
     };
 
     return apiProject;
-  }
-
-  async getProjectCheckExists(item: {
-    projectId: string;
-  }): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> {
-    let { projectId } = item;
-
-    return this.db.drizzle.query.projectsTable
-      .findFirst({
-        where: eq(projectsTable.projectId, projectId)
-      })
-      .then((x: ProjectEnt) =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_PROJECT_DOES_NOT_EXIST' })
-          : this.tabService.projectEntToTab({ projectEnt: x })
-      );
   }
 
   checkProjectIsNotRestricted(item: {
@@ -362,26 +334,14 @@ export class ProjectsService {
       return devStructResult;
     }
 
-    let persistence: Result.Result<void, DbErrorToError> =
-      await dbErrorToResult({
-        action: async () => {
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insert: {
-                      projects: [newProject],
-                      envs: [prodEnv],
-                      members: [newMember],
-                      branches: [prodBranch, devBranch],
-                      bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
+    let persistence: Result.Result<PackerOutput, WriteError> =
+      await this.db.write({
+        insert: {
+          projects: [newProject],
+          envs: [prodEnv],
+          members: [newMember],
+          branches: [prodBranch, devBranch],
+          bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
         }
       });
 

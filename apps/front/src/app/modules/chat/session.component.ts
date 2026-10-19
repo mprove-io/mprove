@@ -64,7 +64,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   permissions: PermissionRequest[] = [];
   questions: QuestionRequest[] = [];
 
-  previousLastTurnResponsesExist = false;
+  isPreviousLastTurnResponseExist = false;
   userSentMessage = false;
   isActivating = false;
   isArchived = false;
@@ -297,7 +297,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.updateWorkingSpinner();
 
     this.previousTurnsCount = this.turns.length;
-    this.previousLastTurnResponsesExist =
+    this.isPreviousLastTurnResponseExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
     this.sessionService.managePollingAndSse({
@@ -423,12 +423,12 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     let lastTurn = this.turns[this.turns.length - 1];
     let lastTurnHasResponses = lastTurn?.responses?.length > 0;
-    if (lastTurnHasResponses && !this.previousLastTurnResponsesExist) {
+    if (lastTurnHasResponses && !this.isPreviousLastTurnResponseExist) {
       shouldScroll = true;
     }
 
     this.previousTurnsCount = this.turns.length;
-    this.previousLastTurnResponsesExist = lastTurnHasResponses;
+    this.isPreviousLastTurnResponseExist = lastTurnHasResponses;
 
     if (shouldScroll) {
       this.scrollTrigger++;

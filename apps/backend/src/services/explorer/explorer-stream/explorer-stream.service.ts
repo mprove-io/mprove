@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { EventMessagePartUpdated, ToolPart } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
@@ -15,8 +15,8 @@ import { and, asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BridgeTab,
   OcMessageTab,
   OcPartTab,
   ProjectTab,
@@ -27,14 +27,15 @@ import type {
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { CodexService } from '#backend/services/codex/codex.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { DbService } from '#backend/services/db/db.service';
 import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
@@ -46,7 +47,6 @@ import { ExplorerTitleService } from '#backend/services/explorer/explorer-title/
 import { ExplorerToolsService } from '#backend/services/explorer/explorer-tools/explorer-tools.service';
 import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
 import { SessionDrainService } from '#backend/services/session/session-drain/session-drain.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { InteractCommandReply } from '#backend/types/interact-command-reply';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_ASSISTANT_RESPONSE_MESSAGE } from '#common/constants/top';
@@ -57,6 +57,7 @@ import {
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { BuildCodexFetchError } from '#common/types/backend/function-errors/build-codex-fetch-error';
 import type { GetExplorerModelError } from '#common/types/backend/function-errors/get-explorer-model-error';
 import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
@@ -115,14 +116,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private explorerToolsService: ExplorerToolsService,
     private explorerModelPartsService: ExplorerModelPartsService,
-    private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
     private providersService: ProvidersService,
     private structsService: StructsService,
     private usersService: UsersService,
-    private tabService: TabService,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {
     let valkeyHost =
       this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
@@ -646,8 +644,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let sessionResult: Result.Result<
       SessionTab,
       GetSessionByIdCheckExistsError
-    > = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
+    > = await this.db.sessions.findFirstCheckExists({
+      where: eq(sessionsTable.sessionId, sessionId)
     });
 
     if (Result.isFailure(sessionResult)) {
@@ -688,8 +686,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let isCodex = modelSelection.provider.type === 'OpenAICodex';
 
     let projectResult: Result.Result<ProjectTab, GetProjectCheckExistsError> =
-      await this.projectsService.getProjectCheckExists({
-        projectId: session.projectId
+      await this.db.projects.findFirstCheckExists({
+        where: eq(projectsTable.projectId, session.projectId)
       });
 
     if (Result.isFailure(projectResult)) {
@@ -698,14 +696,21 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let project: ProjectTab = projectResult.value;
 
-    let bridge = await this.db.drizzle.query.bridgesTable.findFirst({
-      where: and(
-        eq(bridgesTable.projectId, session.projectId),
-        eq(bridgesTable.repoId, session.repoId),
-        eq(bridgesTable.branchId, session.branchId),
-        eq(bridgesTable.envId, session.envId)
-      )
-    });
+    let bridgeResult: Result.Result<BridgeTab, BridgeEntToTabError> =
+      await this.db.bridges.findFirst({
+        where: and(
+          eq(bridgesTable.projectId, session.projectId),
+          eq(bridgesTable.repoId, session.repoId),
+          eq(bridgesTable.branchId, session.branchId),
+          eq(bridgesTable.envId, session.envId)
+        )
+      });
+
+    if (Result.isFailure(bridgeResult)) {
+      return bridgeResult;
+    }
+
+    let bridge: BridgeTab = bridgeResult.value;
 
     let traceId = makeId();
 
@@ -1344,15 +1349,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
   }): Result.ResultAsync<ModelMessage[], LoadMessageHistoryError> {
     let { sessionId } = item;
 
-    let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
-      where: eq(ocMessagesTable.sessionId, sessionId),
-      orderBy: [asc(ocMessagesTable.createdTs)]
-    });
-
     let messagesResult: Result.Result<OcMessageTab[], OcMessageEntToTabError> =
-      Result.sequence(messageEnts, x =>
-        this.tabService.ocMessageEntToTab({ messageEnt: x })
-      );
+      await this.db.ocMessages.findMany({
+        where: eq(ocMessagesTable.sessionId, sessionId),
+        orderBy: [asc(ocMessagesTable.createdTs)]
+      });
 
     if (Result.isFailure(messagesResult)) {
       return messagesResult;
@@ -1360,15 +1361,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let messages: OcMessageTab[] = messagesResult.value;
 
-    let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
-      where: eq(ocPartsTable.sessionId, sessionId),
-      orderBy: [asc(ocPartsTable.createdTs)]
-    });
-
     let partsResult: Result.Result<OcPartTab[], OcPartEntToTabError> =
-      Result.sequence(partEnts, x =>
-        this.tabService.ocPartEntToTab({ partEnt: x })
-      );
+      await this.db.ocParts.findMany({
+        where: eq(ocPartsTable.sessionId, sessionId),
+        orderBy: [asc(ocPartsTable.createdTs)]
+      });
 
     if (Result.isFailure(partsResult)) {
       return partsResult;

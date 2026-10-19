@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
@@ -17,30 +17,26 @@ import {
   ToBackendGetSessionsListResponseDto
 } from '#backend/controllers/sessions/get-sessions-list/get-sessions-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProjectTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type SessionEnt,
-  sessionsTable
-} from '#backend/drizzle/postgres/schema/sessions';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { DbService } from '#backend/services/db/db.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { EntsToSessionApisError } from '#common/types/backend/function-errors/ents-to-session-apis-error';
 import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetSessionListError } from '#common/types/backend/function-errors/get-session-list-error';
 import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import type { TabsToSessionApisError } from '#common/types/backend/function-errors/tabs-to-session-apis-error';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { SessionType } from '#common/types/backend/parts/session/session-type';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -52,12 +48,9 @@ import type { ToBackendGetSessionsListOutput } from '#common/types/backend/route
 @Controller()
 export class GetSessionsListController {
   constructor(
-    private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
-    private membersService: MembersService,
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetSessionsList' satisfies ToBackendRoute)
@@ -85,34 +78,30 @@ export class GetSessionsListController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExists({
-          projectId: v.projectId,
-          memberId: v.userId
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
         })
       ),
       Result.bind(
         'editorSessions',
         async (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
           v.project.e2bApiKey && v.sessionType === 'Editor'
-            ? this.db.drizzle.query.sessionsTable
-                .findMany({
-                  where: and(
-                    eq(sessionsTable.projectId, v.projectId),
-                    eq(sessionsTable.userId, v.userId),
-                    eq(sessionsTable.type, 'Editor'),
-                    inArray(sessionsTable.status, ['Active', 'Paused'])
-                  )
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.sessionEntToTab({ sessionEnt: x })
-                  )
+            ? this.db.sessions.findMany({
+                where: and(
+                  eq(sessionsTable.projectId, v.projectId),
+                  eq(sessionsTable.userId, v.userId),
+                  eq(sessionsTable.type, 'Editor'),
+                  inArray(sessionsTable.status, ['Active', 'Paused'])
                 )
+              })
             : Result.succeed([])
       ),
       Result.andThrough(async v => {
@@ -160,19 +149,17 @@ export class GetSessionsListController {
         archivedPageLimit: item.archivedLimit ?? 10
       }),
       Result.bind(
-        'sessionEnts',
-        (v): Result.ResultAsync<SessionEnt[], never> =>
-          this.db.drizzle.query.sessionsTable
-            .findMany({
-              where: and(
-                eq(sessionsTable.projectId, v.projectId),
-                eq(sessionsTable.userId, v.userId),
-                notInArray(sessionsTable.status, ['Deleted', 'Archived']),
-                eq(sessionsTable.type, v.sessionType)
-              ),
-              orderBy: [desc(sessionsTable.createdTs)]
-            })
-            .then(sessionEnts => Result.succeed(sessionEnts))
+        'sessions',
+        (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+          this.db.sessions.findMany({
+            where: and(
+              eq(sessionsTable.projectId, v.projectId),
+              eq(sessionsTable.userId, v.userId),
+              notInArray(sessionsTable.status, ['Deleted', 'Archived']),
+              eq(sessionsTable.type, v.sessionType)
+            ),
+            orderBy: [desc(sessionsTable.createdTs)]
+          })
       ),
       Result.bind(
         'baseConditions',
@@ -186,95 +173,88 @@ export class GetSessionsListController {
       ),
       // All archived sessions above cursor (previously loaded + newly archived)
       Result.bind(
-        'aboveCursorEnts',
-        async (v): Result.ResultAsync<SessionEnt[], never> =>
+        'aboveCursorSessions',
+        async (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
           v.includeArchived === true && isDefined(v.archivedLastCreatedTs)
-            ? this.db.drizzle.query.sessionsTable
-                .findMany({
-                  where: and(
-                    ...v.baseConditions,
-                    gte(sessionsTable.createdTs, v.archivedLastCreatedTs)
-                  ),
-                  orderBy: [desc(sessionsTable.createdTs)]
-                })
-                .then(sessionEnts => Result.succeed(sessionEnts))
+            ? this.db.sessions.findMany({
+                where: and(
+                  ...v.baseConditions,
+                  gte(sessionsTable.createdTs, v.archivedLastCreatedTs)
+                ),
+                orderBy: [desc(sessionsTable.createdTs)]
+              })
             : Result.succeed([])
       ),
       // Next page below cursor, or first load when no cursor is provided
       Result.bind(
-        'archivedPageEnts',
-        async (v): Result.ResultAsync<SessionEnt[], never> =>
+        'archivedPageSessions',
+        async (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
           v.includeArchived === true
-            ? this.db.drizzle.query.sessionsTable
-                .findMany({
-                  where: and(
-                    ...v.baseConditions,
-                    isDefined(v.archivedLastCreatedTs)
-                      ? lt(sessionsTable.createdTs, v.archivedLastCreatedTs)
-                      : undefined
-                  ),
-                  orderBy: [desc(sessionsTable.createdTs)],
-                  limit: v.archivedPageLimit + 1
-                })
-                .then(sessionEnts => Result.succeed(sessionEnts))
+            ? this.db.sessions.findMany({
+                where: and(
+                  ...v.baseConditions,
+                  isDefined(v.archivedLastCreatedTs)
+                    ? lt(sessionsTable.createdTs, v.archivedLastCreatedTs)
+                    : undefined
+                ),
+                orderBy: [desc(sessionsTable.createdTs)],
+                limit: v.archivedPageLimit + 1
+              })
             : Result.succeed([])
       ),
       Result.bind(
         'hasMoreArchived',
         async (v): Result.ResultAsync<boolean, never> =>
           v.includeArchived === true
-            ? Result.succeed(v.archivedPageEnts.length > v.archivedPageLimit)
-            : this.db.drizzle.query.sessionsTable
-                .findFirst({
-                  where: and(...v.baseConditions),
-                  columns: { sessionId: true }
-                })
-                .then(sessionEnt => Result.succeed(isDefined(sessionEnt)))
+            ? Result.succeed(
+                v.archivedPageSessions.length > v.archivedPageLimit
+              )
+            : this.db.sessions.isExist({
+                where: and(...v.baseConditions)
+              })
       ),
       Result.bind(
-        'listedSessionEnts',
-        (v): Result.Result<SessionEnt[], never> =>
+        'listedSessions',
+        (v): Result.Result<SessionTab[], never> =>
           Result.succeed([
-            ...v.sessionEnts,
-            ...v.aboveCursorEnts,
+            ...v.sessions,
+            ...v.aboveCursorSessions,
             ...(v.hasMoreArchived
-              ? v.archivedPageEnts.slice(0, v.archivedPageLimit)
-              : v.archivedPageEnts)
+              ? v.archivedPageSessions.slice(0, v.archivedPageLimit)
+              : v.archivedPageSessions)
           ])
       ),
       Result.bind(
-        'currentSessionEnt',
-        async (v): Result.ResultAsync<SessionEnt, never> => {
-          let isCurrentSessionIncluded: boolean = v.listedSessionEnts.some(
-            sessionEnt => sessionEnt.sessionId === v.currentSessionId
+        'currentSession',
+        async (v): Result.ResultAsync<SessionTab, SessionEntToTabError> => {
+          let isCurrentSessionIncluded: boolean = v.listedSessions.some(
+            session => session.sessionId === v.currentSessionId
           );
 
           return v.currentSessionId && isCurrentSessionIncluded === false
-            ? this.db.drizzle.query.sessionsTable
-                .findFirst({
-                  where: and(
-                    eq(sessionsTable.sessionId, v.currentSessionId),
-                    eq(sessionsTable.projectId, v.projectId),
-                    eq(sessionsTable.userId, v.userId),
-                    eq(sessionsTable.type, v.sessionType)
-                  )
-                })
-                .then(sessionEnt => Result.succeed(sessionEnt))
+            ? this.db.sessions.findFirst({
+                where: and(
+                  eq(sessionsTable.sessionId, v.currentSessionId),
+                  eq(sessionsTable.projectId, v.projectId),
+                  eq(sessionsTable.userId, v.userId),
+                  eq(sessionsTable.type, v.sessionType)
+                )
+              })
             : Result.succeed(undefined);
         }
       ),
       Result.bind(
-        'sessions',
-        (v): Result.ResultAsync<SessionApi[], EntsToSessionApisError> =>
-          this.sessionsService.entsToSessionApis({
-            allEnts: isUndefined(v.currentSessionEnt)
-              ? v.listedSessionEnts
-              : [...v.listedSessionEnts, v.currentSessionEnt]
+        'apiSessions',
+        (v): Result.ResultAsync<SessionApi[], TabsToSessionApisError> =>
+          this.sessionsService.tabsToSessionApis({
+            sessions: isUndefined(v.currentSession)
+              ? v.listedSessions
+              : [...v.listedSessions, v.currentSession]
           })
       ),
       Result.map(
         (v): ToBackendGetSessionsListOutput => ({
-          sessions: v.sessions,
+          sessions: v.apiSessions,
           hasMoreArchived: v.hasMoreArchived
         })
       )

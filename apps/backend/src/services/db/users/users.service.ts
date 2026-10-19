@@ -1,25 +1,16 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import {
-  type UserEnt,
-  usersTable
-} from '#backend/drizzle/postgres/schema/users';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
@@ -52,11 +43,8 @@ export class UsersService {
   constructor(
     private dconfigsService: DconfigsService,
     private givensService: GivensService,
-    private tabService: TabService,
     private hashService: HashService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   tabToApi(item: { user: UserTab }): User {
@@ -189,18 +177,12 @@ export class UsersService {
       user.ui.projectSelectedGivenLinks ?? [];
 
     let memberResult: Result.Result<MemberTab, MemberEntToTabError> =
-      await this.db.drizzle.query.membersTable
-        .findFirst({
-          where: and(
-            eq(membersTable.memberId, user.userId),
-            eq(membersTable.projectId, projectId)
-          )
-        })
-        .then(x =>
-          isUndefined(x)
-            ? Result.succeed(undefined)
-            : this.tabService.memberEntToTab({ memberEnt: x })
-        );
+      await this.db.members.findFirst({
+        where: and(
+          eq(membersTable.memberId, user.userId),
+          eq(membersTable.projectId, projectId)
+        )
+      });
 
     if (Result.isFailure(memberResult)) {
       return memberResult;
@@ -278,9 +260,9 @@ export class UsersService {
       navTs: existingLink?.navTs ?? Date.now()
     };
 
-    let isExistingLink: boolean = isDefined(existingLink);
+    let isLinkExist: boolean = isDefined(existingLink);
 
-    user.ui.projectSelectedGivenLinks = isExistingLink
+    user.ui.projectSelectedGivenLinks = isLinkExist
       ? existingLinks.map(link =>
           link.projectId === projectId ? projectSelectedGivenLink : link
         )
@@ -304,15 +286,9 @@ export class UsersService {
   }): Result.ResultAsync<UserTab, GetUserCheckExistsError> {
     let { userId } = item;
 
-    return this.db.drizzle.query.usersTable
-      .findFirst({
-        where: eq(usersTable.userId, userId)
-      })
-      .then(x =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-          : this.tabService.userEntToTab({ userEnt: x })
-      );
+    return this.db.users.findFirstCheckExists({
+      where: eq(usersTable.userId, userId)
+    });
   }
 
   checkUserIsNotRestricted(item: {
@@ -350,13 +326,9 @@ export class UsersService {
           UserTab,
           UserEntToTabError | BackendUserDoesNotExistError
         > =>
-          this.db.drizzle.query.usersTable
-            .findFirst({ where: eq(usersTable.emailHash, v.emailHash) })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_USER_DOES_NOT_EXIST' })
-                : this.tabService.userEntToTab({ userEnt: x })
-            )
+          this.db.users.findFirstCheckExists({
+            where: eq(usersTable.emailHash, v.emailHash)
+          })
       )
     );
   }
@@ -398,19 +370,11 @@ export class UsersService {
       createdTs: Date.now()
     };
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.writeUnwrap({
-              tx: tx,
-              insert: {
-                users: [user]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
+    await this.db.writeUnwrap({
+      insert: {
+        users: [user]
+      }
+    });
 
     return user;
   }
@@ -452,19 +416,11 @@ export class UsersService {
       createdTs: Date.now()
     };
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.writeUnwrap({
-              tx: tx,
-              insert: {
-                users: [user]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
+    await this.db.writeUnwrap({
+      insert: {
+        users: [user]
+      }
+    });
 
     return user;
   }
@@ -525,12 +481,11 @@ export class UsersService {
             return Result.fail(aliasHashResult.error);
           }
 
-          let aliasUserEnt: UserEnt =
-            await this.db.drizzle.query.usersTable.findFirst({
-              where: eq(usersTable.aliasHash, aliasHashResult.value)
-            });
+          let isAliasUserExist: boolean = await this.db.users.isExistUnwrap({
+            where: eq(usersTable.aliasHash, aliasHashResult.value)
+          });
 
-          if (isDefined(aliasUserEnt)) {
+          if (isAliasUserExist) {
             alias = `${alias}${count}`;
 
             count++;

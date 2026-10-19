@@ -1,17 +1,13 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import type { BackendConfig } from '#backend/config/backend-config';
+import { eq } from 'drizzle-orm';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { DbService } from '#backend/services/db/db.service';
 import {
   ExplorerChartRebuildService,
   type ExplorerRebuildOk,
@@ -33,14 +29,11 @@ export const CHART_ID_PLACEHOLDER = '<chart-id-placeholder>';
 @Injectable()
 export class ProduceExplorerChartService {
   constructor(
-    private sessionsService: SessionsService,
     private explorerChartRebuildService: ExplorerChartRebuildService,
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private sessionDrainService: SessionDrainService,
     private runQueriesService: RunQueriesService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async produceExplorerChart(item: {
@@ -87,8 +80,8 @@ export class ProduceExplorerChartService {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>
@@ -130,25 +123,12 @@ export class ProduceExplorerChartService {
 
         let rebuild: ExplorerRebuildOk = v.rebuild;
 
-        return dbErrorToResult({
-          action: async () => {
-            // Keep rejection inside the full transaction/retry boundary.
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: {
-                        charts: [rebuild.chart],
-                        mconfigs: [rebuild.mconfig]
-                      },
-                      insertOrDoNothing: { queries: [rebuild.query] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
+        return this.db.write({
+          insert: {
+            charts: [rebuild.chart],
+            mconfigs: [rebuild.mconfig]
+          },
+          insertOrDoNothing: { queries: [rebuild.query] }
         });
       }),
       Result.andThrough(async v =>

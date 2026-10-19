@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  Req,
-  UseGuards
-} from '@nestjs/common';
+import { Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -15,7 +8,6 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { buildUserApiKey } from '#backend/controllers/users/generate-user-api-key/build-user-api-key/build-user-api-key';
 import { ToBackendGenerateUserApiKeyResponseDto } from '#backend/controllers/users/generate-user-api-key/generate-user-api-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   type GenerateApiKeyPartsOutput,
@@ -24,6 +16,7 @@ import {
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -40,7 +33,7 @@ export class GenerateUserApiKeyController {
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGenerateUserApiKey' satisfies ToBackendRoute)
@@ -79,15 +72,12 @@ export class GenerateUserApiKeyController {
                     v.user.apiKeySecretHash = apiKeyParts.secretHash;
                     v.user.apiKeySalt = apiKeyParts.salt;
 
-                    await this.db.drizzle.transaction(
-                      async tx =>
-                        await this.db.packer.writeUnwrap({
-                          tx: tx,
-                          update: {
-                            users: [v.user]
-                          }
-                        })
-                    );
+                    await this.db.writeUnwrap({
+                      update: {
+                        users: [v.user]
+                      },
+                      retryOptions: { retries: 0 }
+                    });
                   },
                   getRetryOption(this.cs, this.logger)
                 );

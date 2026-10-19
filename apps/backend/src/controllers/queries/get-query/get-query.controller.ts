@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendGetQueryRequestDto,
   ToBackendGetQueryResponseDto
@@ -15,13 +16,15 @@ import type {
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ParentService } from '#backend/services/parent/parent.service';
@@ -33,7 +36,6 @@ import type { GetBridgeCheckExistsError } from '#common/types/backend/function-e
 import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
 import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { GetQueryCheckExistsError } from '#common/types/backend/function-errors/get-query-check-exists-error';
-
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
 
@@ -63,12 +65,8 @@ export class GetQueryController {
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
     private parentService: ParentService,
-    private membersService: MembersService,
-    private branchesService: BranchesService,
-    private projectsService: ProjectsService,
-    private mconfigsService: MconfigsService,
-    private bridgesService: BridgesService,
-    private envsService: EnvsService
+    private envsService: EnvsService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetQuery' satisfies ToBackendRoute)
@@ -102,25 +100,29 @@ export class GetQueryController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -133,19 +135,23 @@ export class GetQueryController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
         'mconfig',
         (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
-          this.mconfigsService.getMconfigCheckExists({
-            mconfigId: v.mconfigId,
-            structId: v.bridge.structId
+          this.db.mconfigs.findFirstCheckExists({
+            where: and(
+              eq(mconfigsTable.mconfigId, v.mconfigId),
+              eq(mconfigsTable.structId, v.bridge.structId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -167,9 +173,11 @@ export class GetQueryController {
       Result.bind(
         'query',
         (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsError> =>
-          this.queriesService.getQueryCheckExists({
-            queryId: v.queryId,
-            projectId: v.projectId
+          this.db.queries.findFirstCheckExists({
+            where: and(
+              eq(queriesTable.queryId, v.queryId),
+              eq(queriesTable.projectId, v.projectId)
+            )
           })
       ),
       Result.map(

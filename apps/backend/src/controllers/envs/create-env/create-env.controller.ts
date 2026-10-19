@@ -1,45 +1,31 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateEnvRequestDto,
   ToBackendCreateEnvResponseDto
 } from '#backend/controllers/envs/create-env/create-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BranchTab,
   BridgeTab,
   EnvTab,
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BranchEnt,
-  branchesTable
-} from '#backend/drizzle/postgres/schema/branches';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { Env } from '#common/types/backend/parts/env';
@@ -52,14 +38,10 @@ import type { ToBackendCreateEnvOutput } from '#common/types/backend/routes/envs
 @Controller()
 export class CreateEnvController {
   constructor(
-    private tabService: TabService,
-    private projectsService: ProjectsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateEnv' satisfies ToBackendRoute)
@@ -81,8 +63,8 @@ export class CreateEnvController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -111,20 +93,18 @@ export class CreateEnvController {
           )
       ),
       Result.bind(
-        'branchEnts',
-        (v): Result.ResultAsync<BranchEnt[], never> =>
-          this.db.drizzle.query.branchesTable
-            .findMany({
-              where: eq(branchesTable.projectId, v.projectId)
-            })
-            .then(branchEnts => Result.succeed(branchEnts))
+        'branches',
+        (v): Result.ResultAsync<BranchTab[], BranchEntToTabError> =>
+          this.db.branches.findMany({
+            where: eq(branchesTable.projectId, v.projectId)
+          })
       ),
       Result.bind('newBridges', (v): Result.Result<BridgeTab[], never> => {
-        let newBridges: BridgeTab[] = v.branchEnts.map(branchEnt =>
+        let newBridges: BridgeTab[] = v.branches.map(branch =>
           this.bridgesService.makeBridge({
             projectId: v.projectId,
-            repoId: branchEnt.repoId,
-            branchId: branchEnt.branchId,
+            repoId: branch.repoId,
+            branchId: branch.branchId,
             envId: v.envId,
             structId: EMPTY_STRUCT_ID,
             needValidate: true
@@ -134,20 +114,8 @@ export class CreateEnvController {
         return Result.succeed(newBridges);
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: { envs: [v.newEnv], bridges: v.newBridges }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
+        this.db.write({
+          insert: { envs: [v.newEnv], bridges: v.newBridges }
         })
       ),
       Result.bind(

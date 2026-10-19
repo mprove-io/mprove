@@ -1,34 +1,24 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGetProjectsListRequestDto,
   ToBackendGetProjectsListResponseDto
 } from '#backend/controllers/projects/get-projects-list/get-projects-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  MemberTab,
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';
@@ -38,11 +28,8 @@ import type { ToBackendGetProjectsListOutput } from '#common/types/backend/route
 @Controller()
 export class GetProjectsListController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetProjectsList' satisfies ToBackendRoute)
@@ -63,40 +50,28 @@ export class GetProjectsListController {
         userId: user.userId
       }),
       Result.bind(
-        'userMemberEnts',
-        (v): Result.ResultAsync<MemberEnt[], never> =>
-          this.db.drizzle.query.membersTable
-            .findMany({
-              where: eq(membersTable.memberId, v.userId)
-            })
-            .then(userMemberEnts => Result.succeed(userMemberEnts))
+        'userMembers',
+        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+          this.db.members.findMany({
+            where: eq(membersTable.memberId, v.userId)
+          })
       ),
       Result.bind(
         'projectIds',
         (v): Result.Result<string[], never> =>
-          Result.succeed(
-            v.userMemberEnts.map(userMemberEnt => userMemberEnt.projectId)
-          )
+          Result.succeed(v.userMembers.map(userMember => userMember.projectId))
       ),
       Result.bind(
         'projects',
         async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.projectsTable
-                .findMany({
-                  where: and(
-                    inArray(projectsTable.projectId, v.projectIds),
-                    eq(projectsTable.orgId, v.orgId)
-                  )
-                })
-                .then((xs: ProjectEnt[]) =>
-                  Result.sequence(xs, x =>
-                    this.tabService.projectEntToTab({
-                      projectEnt: x
-                    })
-                  )
+            : this.db.projects.findMany({
+                where: and(
+                  inArray(projectsTable.projectId, v.projectIds),
+                  eq(projectsTable.orgId, v.orgId)
                 )
+              })
       ),
       Result.map(
         (v): ToBackendGetProjectsListOutput => ({

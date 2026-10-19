@@ -64,10 +64,10 @@ export class EnvSelectComponent {
         envId: x.envId,
         projectId: x.projectId
       };
-      let alreadyPresent = this.envsList.some(
+      let isEnvExist: boolean = this.envsList.some(
         item => item.envId === envsItem.envId
       );
-      this.envsList = alreadyPresent ? this.envsList : [envsItem];
+      this.envsList = isEnvExist ? this.envsList : [envsItem];
       this.selectedProjectId = x.projectId;
       this.selectedEnvId = x.envId;
 

@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import { DbService } from '#backend/services/db/db.service';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
 import type { ModelType } from '#common/types/blockml/parts/model/model-type';
 
@@ -17,7 +17,7 @@ export const SEARCH_FIELD_NAME_MATCH_FIELDS_LIMIT = 50;
 
 @Injectable()
 export class SearchModelFieldLeafNamesService {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(private db: DbService) {}
 
   async search(item: {
     structId: string;

@@ -1,31 +1,20 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendResetUserPasswordRequestDto,
   ToBackendResetUserPasswordResponseDto
 } from '#backend/controllers/users/reset-user-password/reset-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PATH_UPDATE_PASSWORD } from '#common/constants/top';
 import {
@@ -58,12 +47,10 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class ResetUserPasswordController {
   constructor(
-    private tabService: TabService,
     private emailService: EmailService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendResetUserPassword' satisfies ToBackendRoute)
@@ -100,21 +87,9 @@ export class ResetUserPasswordController {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: {
-                        users: [v.user]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insertOrUpdate: {
+            users: [v.user]
           }
         })
       ),

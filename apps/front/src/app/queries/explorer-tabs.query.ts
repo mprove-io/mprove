@@ -55,17 +55,20 @@ export class ExplorerTabsQuery extends BaseQuery<ExplorerTabsState> {
   appendTab(item: { tab: ExplorerTab }): boolean {
     let state = this.getValue();
 
-    let allExists = state.allTabs.some(t => t.id === item.tab.id);
-    let allTabs = allExists
+    let isAllTabsEntryExist: boolean = state.allTabs.some(
+      t => t.id === item.tab.id
+    );
+
+    let allTabs = isAllTabsEntryExist
       ? state.allTabs.map(t => (t.id === item.tab.id ? item.tab : t))
       : [...state.allTabs, item.tab];
 
     let isClosed = state.closedTabIds.indexOf(item.tab.id) > -1;
 
-    let exists = state.tabs.some(t => t.id === item.tab.id);
+    let isTabExist: boolean = state.tabs.some(t => t.id === item.tab.id);
 
-    if (exists || isClosed) {
-      console.log('appendTab: exists || isClosed');
+    if (isTabExist || isClosed) {
+      console.log('appendTab: isTabExist || isClosed');
 
       let tabs = state.tabs.map(t => (t.id === item.tab.id ? item.tab : t));
 

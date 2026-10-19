@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendGetRolesRequestDto,
   ToBackendGetRolesResponseDto
@@ -10,10 +11,12 @@ import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
@@ -29,10 +32,10 @@ import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles
 @Controller()
 export class GetRolesController {
   constructor(
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private rolesService: RolesService,
-    private givensService: GivensService
+    private givensService: GivensService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetRoles' satisfies ToBackendRoute)
@@ -53,16 +56,18 @@ export class GetRolesController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            memberId: v.user.userId,
-            projectId: v.projectId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(

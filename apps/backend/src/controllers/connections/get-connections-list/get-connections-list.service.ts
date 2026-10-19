@@ -1,13 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
@@ -20,11 +19,9 @@ import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/ro
 @Injectable()
 export class GetConnectionsListService {
   constructor(
-    private tabService: TabService,
-    private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getConnectionsList(item: {
@@ -38,8 +35,8 @@ export class GetConnectionsListService {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -61,29 +58,21 @@ export class GetConnectionsListService {
       Result.bind(
         'connections',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: and(
-                eq(connectionsTable.projectId, v.projectId),
-                or(
-                  eq(connectionsTable.envId, v.envId),
-                  and(
-                    eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                    inArray(
-                      connectionsTable.connectionId,
-                      v.apiEnv.fallbackConnectionIds
-                    )
+          this.db.connections.findMany({
+            where: and(
+              eq(connectionsTable.projectId, v.projectId),
+              or(
+                eq(connectionsTable.envId, v.envId),
+                and(
+                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                  inArray(
+                    connectionsTable.connectionId,
+                    v.apiEnv.fallbackConnectionIds
                   )
                 )
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.connectionEntToTab({
-                  connectionEnt: x
-                })
-              )
             )
+          })
       ),
       Result.bind(
         'connectionItems',

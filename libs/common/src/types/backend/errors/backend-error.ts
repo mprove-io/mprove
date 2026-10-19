@@ -9,11 +9,14 @@ import type { BackendApiInvalidUrlError } from '#common/types/backend/errors/bac
 import type { BackendApiKeyNotFoundError } from '#common/types/backend/errors/backend-api-key-not-found-error';
 import type { BackendApiKeyNotValidError } from '#common/types/backend/errors/backend-api-key-not-valid-error';
 import type { BackendApiProtocolMustBeHttpsOrHttpError } from '#common/types/backend/errors/backend-api-protocol-must-be-https-or-http-error';
+import type { BackendAvatarDoesNotExistError } from '#common/types/backend/errors/backend-avatar-does-not-exist-error';
 import type { BackendBigqueryCancelQueryJobFailError } from '#common/types/backend/errors/backend-bigquery-cancel-query-job-fail-error';
 import type { BackendBranchAlreadyExistsError } from '#common/types/backend/errors/backend-branch-already-exists-error';
 import type { BackendBranchDoesNotExistError } from '#common/types/backend/errors/backend-branch-does-not-exist-error';
 import type { BackendBranchIdDoesNotMatchSessionError } from '#common/types/backend/errors/backend-branch-id-does-not-match-session-error';
 import type { BackendBridgeBranchEnvDoesNotExistError } from '#common/types/backend/errors/backend-bridge-branch-env-does-not-exist-error';
+import type { BackendCachedColumnDoesNotExistError } from '#common/types/backend/errors/backend-cached-column-does-not-exist-error';
+import type { BackendCachedPartDoesNotExistError } from '#common/types/backend/errors/backend-cached-part-does-not-exist-error';
 import type { BackendChartCreatorIdMismatchError } from '#common/types/backend/errors/backend-chart-creator-id-mismatch-error';
 import type { BackendChartDoesNotExistError } from '#common/types/backend/errors/backend-chart-does-not-exist-error';
 import type { BackendChartIsNotDraftError } from '#common/types/backend/errors/backend-chart-is-not-draft-error';
@@ -42,6 +45,7 @@ import type { BackendDbRecordHasBothDecryptedAndEncryptedPropsError } from '#com
 import type { BackendDbRecordHasNoDecryptedAndNoEncryptedPropsError } from '#common/types/backend/errors/backend-db-record-has-no-decrypted-and-no-encrypted-props-error';
 import type { BackendDbRecordIsDecryptedButHasKeyTagError } from '#common/types/backend/errors/backend-db-record-is-decrypted-but-has-key-tag-error';
 import type { BackendDbRecordKeyTagDoesNotMatchCurrentOrPrevError } from '#common/types/backend/errors/backend-db-record-key-tag-does-not-match-current-or-prev-error';
+import type { BackendDconfigDoesNotExistError } from '#common/types/backend/errors/backend-dconfig-does-not-exist-error';
 import type { BackendDefaultBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-default-branch-cannot-be-deleted-error';
 import type { BackendEditDraftDashboardFailedError } from '#common/types/backend/errors/backend-edit-draft-dashboard-failed-error';
 import type { BackendEditorSessionLockFailedError } from '#common/types/backend/errors/backend-editor-session-lock-failed-error';
@@ -87,6 +91,7 @@ import type { BackendInteractFailedError } from '#common/types/backend/errors/ba
 import type { BackendInteractTimeoutError } from '#common/types/backend/errors/backend-interact-timeout-error';
 import type { BackendInternalError } from '#common/types/backend/errors/backend-internal-error';
 import type { BackendInvalidRequestError } from '#common/types/backend/errors/backend-invalid-request-error';
+import type { BackendKitDoesNotExistError } from '#common/types/backend/errors/backend-kit-does-not-exist-error';
 import type { BackendLlmModelAlreadyExistsError } from '#common/types/backend/errors/backend-llm-model-already-exists-error';
 import type { BackendLlmModelContextLimitRequiredError } from '#common/types/backend/errors/backend-llm-model-context-limit-required-error';
 import type { BackendLlmModelDiscoveryFailedError } from '#common/types/backend/errors/backend-llm-model-discovery-failed-error';
@@ -123,6 +128,10 @@ import type { BackendMysqlConnectionCloseError } from '#common/types/backend/err
 import type { BackendNewOwnerNotFoundError } from '#common/types/backend/errors/backend-new-owner-not-found-error';
 import type { BackendNotAuthorizedError } from '#common/types/backend/errors/backend-not-authorized-error';
 import type { BackendNoteDoesNotExistError } from '#common/types/backend/errors/backend-note-does-not-exist-error';
+import type { BackendOcEventDoesNotExistError } from '#common/types/backend/errors/backend-oc-event-does-not-exist-error';
+import type { BackendOcMessageDoesNotExistError } from '#common/types/backend/errors/backend-oc-message-does-not-exist-error';
+import type { BackendOcPartDoesNotExistError } from '#common/types/backend/errors/backend-oc-part-does-not-exist-error';
+import type { BackendOcSessionDoesNotExistError } from '#common/types/backend/errors/backend-oc-session-does-not-exist-error';
 import type { BackendOnlyOrgOwnerCanAccessError } from '#common/types/backend/errors/backend-only-org-owner-can-access-error';
 import type { BackendOrgAlreadyExistsError } from '#common/types/backend/errors/backend-org-already-exists-error';
 import type { BackendOrgDoesNotExistError } from '#common/types/backend/errors/backend-org-does-not-exist-error';
@@ -195,6 +204,7 @@ import type { BackendThrottlerUserIdIsNotDefinedError } from '#common/types/back
 import type { BackendTileIndexDoesNotWorkWithoutDashboardIdError } from '#common/types/backend/errors/backend-tile-index-does-not-work-without-dashboard-id-error';
 import type { BackendTooManyActiveEditorSessionsError } from '#common/types/backend/errors/backend-too-many-active-editor-sessions-error';
 import type { BackendTransactionRetryError } from '#common/types/backend/errors/backend-transaction-retry-error';
+import type { BackendUconfigDoesNotExistError } from '#common/types/backend/errors/backend-uconfig-does-not-exist-error';
 import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
 import type { BackendUnknownSandboxTypeError } from '#common/types/backend/errors/backend-unknown-sandbox-type-error';
 import type { BackendUpdatePasswordTokenExpiredError } from '#common/types/backend/errors/backend-update-password-token-expired-error';
@@ -237,11 +247,14 @@ export type BackendError =
   | BackendApiKeyNotFoundError
   | BackendApiKeyNotValidError
   | BackendApiProtocolMustBeHttpsOrHttpError
+  | BackendAvatarDoesNotExistError
   | BackendBigqueryCancelQueryJobFailError
   | BackendBranchAlreadyExistsError
   | BackendBranchDoesNotExistError
   | BackendBranchIdDoesNotMatchSessionError
   | BackendBridgeBranchEnvDoesNotExistError
+  | BackendCachedColumnDoesNotExistError
+  | BackendCachedPartDoesNotExistError
   | BackendChartCreatorIdMismatchError
   | BackendChartDoesNotExistError
   | BackendChartIsNotDraftError
@@ -270,6 +283,7 @@ export type BackendError =
   | BackendDbRecordHasNoDecryptedAndNoEncryptedPropsError
   | BackendDbRecordIsDecryptedButHasKeyTagError
   | BackendDbRecordKeyTagDoesNotMatchCurrentOrPrevError
+  | BackendDconfigDoesNotExistError
   | BackendDefaultBranchCannotBeDeletedError
   | BackendEditorSessionLockFailedError
   | BackendEditDraftDashboardFailedError
@@ -313,6 +327,7 @@ export type BackendError =
   | BackendIdempUserMismatchError
   | BackendInteractFailedError
   | BackendInteractTimeoutError
+  | BackendKitDoesNotExistError
   | BackendMalloyConnectionCloseError
   | BackendManualCommitToProductionRepoIsForbiddenError
   | BackendMconfigDoesNotExistError
@@ -339,6 +354,10 @@ export type BackendError =
   | BackendNewOwnerNotFoundError
   | BackendNoteDoesNotExistError
   | BackendNotAuthorizedError
+  | BackendOcEventDoesNotExistError
+  | BackendOcMessageDoesNotExistError
+  | BackendOcPartDoesNotExistError
+  | BackendOcSessionDoesNotExistError
   | BackendOnlyOrgOwnerCanAccessError
   | BackendOrgAlreadyExistsError
   | BackendOrgDoesNotExistError
@@ -421,6 +440,7 @@ export type BackendError =
   | BackendTileIndexDoesNotWorkWithoutDashboardIdError
   | BackendTooManyActiveEditorSessionsError
   | BackendTransactionRetryError
+  | BackendUconfigDoesNotExistError
   | BackendUnauthorizedError
   | BackendUnknownSandboxTypeError
   | BackendUpdatePasswordTokenExpiredError

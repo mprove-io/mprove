@@ -1,17 +1,11 @@
 import os from 'node:os';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { z } from 'zod';
 import { backendPackageJson } from '#backend/backend-package-json';
-import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { isCodexModelAvailable } from '#backend/services/codex/is-codex-model-available/is-codex-model-available';
+import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -90,9 +84,8 @@ export type CodexModelsResult = {
 export class CodexService {
   constructor(
     private usersService: UsersService,
-    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
   async prewarmCodexAuth(item: {
     userId: string;
@@ -625,21 +618,7 @@ export class CodexService {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: { users: [v.user] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
+        this.db.write({ insertOrUpdate: { users: [v.user] } })
       ),
       Result.map((v): void => undefined)
     );

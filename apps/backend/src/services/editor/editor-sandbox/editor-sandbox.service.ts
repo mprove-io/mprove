@@ -1,22 +1,20 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, lt } from 'drizzle-orm';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProjectTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
@@ -41,12 +39,9 @@ const { forEachSeries } = pIteration;
 export class EditorSandboxService {
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
-    private tabService: TabService,
     private editorSessionLockService: EditorSessionLockService,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getSandboxInfo(item: {
@@ -162,19 +157,13 @@ export class EditorSandboxService {
       Date.now() - sessionLastActivityToPauseMinutes * 60 * 1000;
 
     let sessionCollection: Result.Result<SessionTab[], SessionEntToTabError> =
-      await this.db.drizzle.query.sessionsTable
-        .findMany({
-          where: and(
-            eq(sessionsTable.type, 'Editor'),
-            eq(sessionsTable.status, 'Active'),
-            lt(sessionsTable.lastActivityTs, pauseThresholdTs)
-          )
-        })
-        .then(xs =>
-          Result.sequence(xs, x =>
-            this.tabService.sessionEntToTab({ sessionEnt: x })
-          )
-        );
+      await this.db.sessions.findMany({
+        where: and(
+          eq(sessionsTable.type, 'Editor'),
+          eq(sessionsTable.status, 'Active'),
+          lt(sessionsTable.lastActivityTs, pauseThresholdTs)
+        )
+      });
 
     if (Result.isFailure(sessionCollection)) {
       return sessionCollection;
@@ -201,8 +190,8 @@ export class EditorSandboxService {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.bind(
@@ -214,8 +203,8 @@ export class EditorSandboxService {
           v.session.status !== 'Active' ||
           !v.session.sandboxId
             ? Result.succeed(undefined)
-            : this.projectsService.getProjectCheckExists({
-                projectId: v.session.projectId
+            : this.db.projects.findFirstCheckExists({
+                where: eq(projectsTable.projectId, v.session.projectId)
               })
       ),
       Result.andThrough(v =>
@@ -238,13 +227,9 @@ export class EditorSandboxService {
                   pauseReason: v.pauseReason
                 };
 
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: { sessions: [updatedSession] }
-                    })
-                );
+                await this.db.writeUnwrap({
+                  insertOrUpdate: { sessions: [updatedSession] }
+                });
               }
             })
       ),
@@ -257,18 +242,12 @@ export class EditorSandboxService {
     SyncAllEditorSessionsStatusError
   > {
     let sessionCollection: Result.Result<SessionTab[], SessionEntToTabError> =
-      await this.db.drizzle.query.sessionsTable
-        .findMany({
-          where: and(
-            eq(sessionsTable.type, 'Editor'),
-            inArray(sessionsTable.status, activeOrPausedStatuses)
-          )
-        })
-        .then(xs =>
-          Result.sequence(xs, x =>
-            this.tabService.sessionEntToTab({ sessionEnt: x })
-          )
-        );
+      await this.db.sessions.findMany({
+        where: and(
+          eq(sessionsTable.type, 'Editor'),
+          inArray(sessionsTable.status, activeOrPausedStatuses)
+        )
+      });
 
     if (Result.isFailure(sessionCollection)) {
       return sessionCollection;
@@ -284,18 +263,10 @@ export class EditorSandboxService {
 
     await forEachSeries(uniqueProjectIds, async projectId => {
       try {
-        let projectResult: Result.Result<
-          ProjectTab,
-          GetProjectCheckExistsError
-        > = await this.projectsService.getProjectCheckExists({
-          projectId: projectId
-        });
-
-        if (Result.isFailure(projectResult)) {
-          throw new ServerError({ message: projectResult.error.code });
-        }
-
-        let project: ProjectTab = projectResult.value;
+        let project: ProjectTab =
+          await this.db.projects.findFirstCheckExistsUnwrap({
+            where: eq(projectsTable.projectId, projectId)
+          });
 
         if (!project.e2bApiKey) {
           return;
@@ -364,18 +335,10 @@ export class EditorSandboxService {
         let sessionLockToken: string = sessionLockResult.value;
 
         try {
-          let freshSessionResult: Result.Result<
-            SessionTab,
-            GetSessionByIdCheckExistsError
-          > = await this.sessionsService.getSessionByIdCheckExists({
-            sessionId: session.sessionId
-          });
-
-          if (Result.isFailure(freshSessionResult)) {
-            throw new ServerError({ message: freshSessionResult.error.code });
-          }
-
-          let freshSession: SessionTab = freshSessionResult.value;
+          let freshSession: SessionTab =
+            await this.db.sessions.findFirstCheckExistsUnwrap({
+              where: eq(sessionsTable.sessionId, session.sessionId)
+            });
 
           let isActiveOrPaused = activeOrPausedStatuses.includes(
             freshSession.status
@@ -398,13 +361,10 @@ export class EditorSandboxService {
               archiveReason: 'Expire'
             };
 
-            await this.db.drizzle.transaction(async tx => {
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                insertOrUpdate: {
-                  sessions: [updatedSession]
-                }
-              });
+            await this.db.writeUnwrap({
+              insertOrUpdate: {
+                sessions: [updatedSession]
+              }
             });
           } else if (
             freshSession.status === 'Active' &&
@@ -419,15 +379,11 @@ export class EditorSandboxService {
               sandboxInfo: sandboxInfo
             };
 
-            await this.db.drizzle.transaction(
-              async tx =>
-                await this.db.packer.writeUnwrap({
-                  tx: tx,
-                  insertOrUpdate: {
-                    sessions: [updatedSession]
-                  }
-                })
-            );
+            await this.db.writeUnwrap({
+              insertOrUpdate: {
+                sessions: [updatedSession]
+              }
+            });
 
             pausedSessionIds.push(freshSession.sessionId);
           }

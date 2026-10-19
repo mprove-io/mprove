@@ -236,7 +236,7 @@ export class LlmModelService {
     let isUniqueVariantNames: boolean =
       uniqueVariantNames.size === normalizedVariantNames.length;
 
-    let isDefaultVariantPresent: boolean = variantNames.includes(
+    let isDefaultVariantExist: boolean = variantNames.includes(
       LLM_MODEL_DEFAULT_VARIANT
     );
 
@@ -256,7 +256,7 @@ export class LlmModelService {
 
     let isInvalid: boolean =
       isUniqueVariantNames === false ||
-      isDefaultVariantPresent === false ||
+      isDefaultVariantExist === false ||
       isExplorerVariantEnabled === false ||
       isBuilderVariantEnabled === false;
 
@@ -301,13 +301,13 @@ export class LlmModelService {
       return Result.fail({ code: 'BACKEND_LLM_MODEL_VARIANTS_INVALID' });
     }
 
-    let isUnknownVariantPresent: boolean = variants.some(
+    let isUnknownVariantExist: boolean = variants.some(
       variant =>
         currentNames.has(variant.variant) === false &&
         storedNames.has(variant.variant) === false
     );
 
-    if (isUnknownVariantPresent) {
+    if (isUnknownVariantExist) {
       return Result.fail({ code: 'BACKEND_LLM_MODEL_VARIANTS_INVALID' });
     }
 
@@ -463,12 +463,19 @@ export class LlmModelService {
     }
 
     if (providerType === 'Anthropic') {
-      return this.getAnthropicModelParts({
-        apiKey: apiKey as string
-      }).then(result =>
-        Result.isFailure(result)
-          ? result
-          : Result.succeed({ modelParts: result.value })
+      return Result.pipe(
+        Result.succeed({ apiKey: apiKey as string }),
+        Result.andThen(
+          (
+            v
+          ): Result.ResultAsync<LlmModelPart[], GetAnthropicModelPartsError> =>
+            this.getAnthropicModelParts({ apiKey: v.apiKey })
+        ),
+        Result.map(
+          (v): LlmModelPartsResult => ({
+            modelParts: v
+          })
+        )
       );
     }
 

@@ -1,10 +1,9 @@
-import { type ExecutionContext, Inject, Injectable } from '@nestjs/common';
+import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import type { Observable } from 'rxjs';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   SessionTab,
   UserTab
@@ -16,13 +15,13 @@ import {
   parseApiKey
 } from '#backend/functions/api-key/parse-api-key/parse-api-key';
 import { validateApiKeySecret } from '#backend/guards/jwt-auth/validate-api-key-secret/validate-api-key-secret';
-import { TabService } from '#backend/services/tab/tab.service';
+import { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-session-allowed-request-names';
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { SKIP_JWT } from '#common/constants/top-backend';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+
 import type { BackendApiKeyNotFoundError } from '#common/types/backend/errors/backend-api-key-not-found-error';
 import type { AuthenticateApiKeyError } from '#common/types/backend/function-errors/authenticate-api-key-error';
 import type { AuthenticatePersonalApiKeyError } from '#common/types/backend/function-errors/authenticate-personal-api-key-error';
@@ -50,8 +49,7 @@ type ApiKeyAuthRequest = {
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private reflector: Reflector,
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {
     super();
   }
@@ -167,13 +165,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           UserTab,
           UserEntToTabError | BackendApiKeyNotFoundError
         > =>
-          this.db.drizzle.query.usersTable
-            .findFirst({ where: eq(usersTable.apiKeyPrefix, v.parsed.prefix) })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
-                : this.tabService.userEntToTab({ userEnt: x })
-            )
+          this.db.users.findFirstCheckExists({
+            where: eq(usersTable.apiKeyPrefix, v.parsed.prefix),
+            error: { code: 'BACKEND_API_KEY_NOT_FOUND' }
+          })
       ),
       Result.andThrough(v =>
         v.user.apiKeySecretHash
@@ -246,15 +241,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           SessionTab,
           SessionEntToTabError | BackendApiKeyNotFoundError
         > =>
-          this.db.drizzle.query.sessionsTable
-            .findFirst({
-              where: eq(sessionsTable.apiKeyPrefix, v.parsed.prefix)
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
-                : this.tabService.sessionEntToTab({ sessionEnt: x })
-            )
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.apiKeyPrefix, v.parsed.prefix),
+            error: { code: 'BACKEND_API_KEY_NOT_FOUND' }
+          })
       ),
       Result.andThrough(v =>
         v.session.apiKeySecretHash
@@ -280,13 +270,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           UserTab,
           UserEntToTabError | BackendApiKeyNotFoundError
         > =>
-          this.db.drizzle.query.usersTable
-            .findFirst({ where: eq(usersTable.userId, v.session.userId) })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
-                : this.tabService.userEntToTab({ userEnt: x })
-            )
+          this.db.users.findFirstCheckExists({
+            where: eq(usersTable.userId, v.session.userId),
+            error: { code: 'BACKEND_API_KEY_NOT_FOUND' }
+          })
       ),
       Result.map(v => {
         v.request.user = v.user;

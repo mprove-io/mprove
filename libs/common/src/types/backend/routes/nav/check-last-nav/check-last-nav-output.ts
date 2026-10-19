@@ -2,18 +2,18 @@ import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 export type ToBackendCheckLastNavOutput = {
-  modelExists: boolean;
-  chartExists: boolean;
-  dashboardExists: boolean;
-  reportExists: boolean;
+  isModelExist: boolean;
+  isChartExist: boolean;
+  isDashboardExist: boolean;
+  isReportExist: boolean;
 };
 
 export let zToBackendCheckLastNavOutput = z
   .object({
-    modelExists: z.boolean(),
-    chartExists: z.boolean(),
-    dashboardExists: z.boolean(),
-    reportExists: z.boolean()
+    isModelExist: z.boolean(),
+    isChartExist: z.boolean(),
+    isDashboardExist: z.boolean(),
+    isReportExist: z.boolean()
   })
   .meta({ id: 'ToBackendCheckLastNavOutput' });
 

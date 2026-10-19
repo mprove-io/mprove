@@ -1,32 +1,22 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import type { BackendConfig } from '#backend/config/backend-config';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendEditLlmModelRequestDto,
   ToBackendEditLlmModelResponseDto
 } from '#backend/controllers/llm-models/edit-llm-model/edit-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { LlmModelService } from '#backend/services/llm-model/llm-model.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -52,13 +42,10 @@ import type { ToBackendEditLlmModelOutput } from '#common/types/backend/routes/l
 @Controller()
 export class EditLlmModelController {
   constructor(
-    private projectsService: ProjectsService,
     private providersService: ProvidersService,
     private membersService: MembersService,
     private llmModelService: LlmModelService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendEditLlmModel' satisfies ToBackendRoute)
@@ -87,8 +74,8 @@ export class EditLlmModelController {
         isCodexAuthSet: isDefined(user.codexAuth)
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -100,9 +87,11 @@ export class EditLlmModelController {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.providersService.getProviderCheckExists({
-            projectId: v.projectId,
-            providerId: v.providerId
+          this.db.providers.findFirstCheckExists({
+            where: and(
+              eq(providersTable.projectId, v.projectId),
+              eq(providersTable.providerId, v.providerId)
+            )
           })
       ),
       Result.bind(
@@ -226,21 +215,7 @@ export class EditLlmModelController {
         return v;
       }),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      update: { providers: [v.provider] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
+        this.db.write({ update: { providers: [v.provider] } })
       ),
       Result.map(
         (v): ToBackendEditLlmModelOutput => ({

@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
+import { DbService } from '#backend/services/db/db.service';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
 import type { FieldResult } from '#common/types/blockml/parts/field/field-result';
 import type { ModelType } from '#common/types/blockml/parts/model/model-type';
@@ -22,7 +22,7 @@ export const SEARCH_FIELD_VALUE_MATCH_VALUES_LIMIT = 20;
 
 @Injectable()
 export class SearchCachedFieldValuesService {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(private db: DbService) {}
 
   async search(item: {
     projectId: string;

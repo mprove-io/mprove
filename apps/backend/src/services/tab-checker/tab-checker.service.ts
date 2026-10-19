@@ -1,6 +1,5 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import retry from 'async-retry';
 import {
   and,
   desc,
@@ -13,8 +12,36 @@ import {
   sql
 } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  AvatarTab,
+  BranchTab,
+  BridgeTab,
+  CachedColumnTab,
+  CachedPartTab,
+  ChartTab,
+  ConnectionTab,
+  DashboardTab,
+  DconfigTab,
+  EnvTab,
+  KitTab,
+  MconfigTab,
+  MemberTab,
+  ModelTab,
+  NoteTab,
+  OcEventTab,
+  OcMessageTab,
+  OcPartTab,
+  OcSessionTab,
+  OrgTab,
+  ProjectTab,
+  ProviderTab,
+  QueryTab,
+  ReportTab,
+  SessionTab,
+  StructTab,
+  UconfigTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -43,9 +70,8 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { structsTable } from '#backend/drizzle/postgres/schema/structs';
 import { uconfigsTable } from '#backend/drizzle/postgres/schema/uconfigs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import { TabService } from '#backend/services/tab/tab.service';
+import { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -59,10 +85,9 @@ export class TabCheckerService {
   private isEncryptMetadata: boolean;
 
   constructor(
-    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {
     this.keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
 
@@ -134,11 +159,9 @@ export class TabCheckerService {
   async checkAvatars(isAllRecords: boolean) {
     let startTs = Date.now();
 
-    let avatarLatest = await this.db.drizzle.query.avatarsTable
-      .findFirst({
-        orderBy: desc(avatarsTable.serverTs)
-      })
-      .then(x => this.tabService.avatarEntToTabUnwrap(x));
+    let avatarLatest: AvatarTab = await this.db.avatars.findFirstUnwrap({
+      orderBy: desc(avatarsTable.serverTs)
+    });
 
     if (isUndefined(avatarLatest)) {
       return;
@@ -158,30 +181,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let avatar = await this.db.drizzle.query.avatarsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.avatarEntToTabUnwrap(x));
+      let avatar: AvatarTab = await this.db.avatars.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(avatar)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  avatars: [avatar]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          avatars: [avatar]
+        }
+      });
     }
 
-    let avatarsResult = await this.db.drizzle
+    let avatarResult = await this.db.drizzle
       .select({
         record: avatarsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -194,13 +209,13 @@ export class TabCheckerService {
         )
       );
 
-    if (avatarsResult.length > 0 && avatarsResult[0].total > 0) {
+    if (avatarResult.length > 0 && avatarResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'avatars',
-          count: avatarsResult[0].total
+          count: avatarResult[0].total
         }
       });
     }
@@ -217,11 +232,9 @@ export class TabCheckerService {
 
   async checkBranches(isAllRecords: boolean) {
     let startTs = Date.now();
-    let branchLatest = await this.db.drizzle.query.branchesTable
-      .findFirst({
-        orderBy: desc(branchesTable.serverTs)
-      })
-      .then(x => this.tabService.branchEntToTabUnwrap(x));
+    let branchLatest: BranchTab = await this.db.branches.findFirstUnwrap({
+      orderBy: desc(branchesTable.serverTs)
+    });
 
     if (isUndefined(branchLatest)) {
       return;
@@ -241,30 +254,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let branch = await this.db.drizzle.query.branchesTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.branchEntToTabUnwrap(x));
+      let branch: BranchTab = await this.db.branches.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(branch)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  branches: [branch]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          branches: [branch]
+        }
+      });
     }
 
-    let branchesResult = await this.db.drizzle
+    let branchResult = await this.db.drizzle
       .select({
         record: branchesTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -277,13 +282,13 @@ export class TabCheckerService {
         )
       );
 
-    if (branchesResult.length > 0 && branchesResult[0].total > 0) {
+    if (branchResult.length > 0 && branchResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'branches',
-          count: branchesResult[0].total
+          count: branchResult[0].total
         }
       });
     }
@@ -300,11 +305,9 @@ export class TabCheckerService {
 
   async checkBridges(isAllRecords: boolean) {
     let startTs = Date.now();
-    let bridgeLatest = await this.db.drizzle.query.bridgesTable
-      .findFirst({
-        orderBy: desc(bridgesTable.serverTs)
-      })
-      .then(x => this.tabService.bridgeEntToTabUnwrap(x));
+    let bridgeLatest: BridgeTab = await this.db.bridges.findFirstUnwrap({
+      orderBy: desc(bridgesTable.serverTs)
+    });
 
     if (isUndefined(bridgeLatest)) {
       return;
@@ -324,30 +327,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let bridge = await this.db.drizzle.query.bridgesTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.bridgeEntToTabUnwrap(x));
+      let bridge: BridgeTab = await this.db.bridges.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(bridge)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  bridges: [bridge]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          bridges: [bridge]
+        }
+      });
     }
 
-    let bridgesResult = await this.db.drizzle
+    let bridgeResult = await this.db.drizzle
       .select({
         record: bridgesTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -360,13 +355,13 @@ export class TabCheckerService {
         )
       );
 
-    if (bridgesResult.length > 0 && bridgesResult[0].total > 0) {
+    if (bridgeResult.length > 0 && bridgeResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'bridges',
-          count: bridgesResult[0].total
+          count: bridgeResult[0].total
         }
       });
     }
@@ -383,11 +378,10 @@ export class TabCheckerService {
 
   async checkCachedColumns(isAllRecords: boolean) {
     let startTs = Date.now();
-    let cachedColumnLatest = await this.db.drizzle.query.cachedColumnsTable
-      .findFirst({
+    let cachedColumnLatest: CachedColumnTab =
+      await this.db.cachedColumns.findFirstUnwrap({
         orderBy: desc(cachedColumnsTable.serverTs)
-      })
-      .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
+      });
 
     if (isUndefined(cachedColumnLatest)) {
       return;
@@ -407,30 +401,23 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let cachedColumn = await this.db.drizzle.query.cachedColumnsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
+      let cachedColumn: CachedColumnTab =
+        await this.db.cachedColumns.findFirstUnwrap({
+          where: where
+        });
 
       if (isUndefined(cachedColumn)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  cachedColumns: [cachedColumn]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          cachedColumns: [cachedColumn]
+        }
+      });
     }
 
-    let cachedColumnsResult = await this.db.drizzle
+    let cachedColumnResult = await this.db.drizzle
       .select({
         record: cachedColumnsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -443,13 +430,13 @@ export class TabCheckerService {
         )
       );
 
-    if (cachedColumnsResult.length > 0 && cachedColumnsResult[0].total > 0) {
+    if (cachedColumnResult.length > 0 && cachedColumnResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'cached_columns',
-          count: cachedColumnsResult[0].total
+          count: cachedColumnResult[0].total
         }
       });
     }
@@ -466,11 +453,10 @@ export class TabCheckerService {
 
   async checkCachedParts(isAllRecords: boolean) {
     let startTs = Date.now();
-    let cachedPartLatest = await this.db.drizzle.query.cachedPartsTable
-      .findFirst({
+    let cachedPartLatest: CachedPartTab =
+      await this.db.cachedParts.findFirstUnwrap({
         orderBy: desc(cachedPartsTable.serverTs)
-      })
-      .then(x => this.tabService.cachedPartEntToTabUnwrap(x));
+      });
 
     if (isUndefined(cachedPartLatest)) {
       return;
@@ -490,30 +476,24 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let cachedPart = await this.db.drizzle.query.cachedPartsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.cachedPartEntToTabUnwrap(x));
+      let cachedPart: CachedPartTab = await this.db.cachedParts.findFirstUnwrap(
+        {
+          where: where
+        }
+      );
 
       if (isUndefined(cachedPart)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  cachedParts: [cachedPart]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          cachedParts: [cachedPart]
+        }
+      });
     }
 
-    let cachedPartsResult = await this.db.drizzle
+    let cachedPartResult = await this.db.drizzle
       .select({
         record: cachedPartsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -526,13 +506,13 @@ export class TabCheckerService {
         )
       );
 
-    if (cachedPartsResult.length > 0 && cachedPartsResult[0].total > 0) {
+    if (cachedPartResult.length > 0 && cachedPartResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'cached_parts',
-          count: cachedPartsResult[0].total
+          count: cachedPartResult[0].total
         }
       });
     }
@@ -549,11 +529,10 @@ export class TabCheckerService {
 
   async checkConnections(isAllRecords: boolean) {
     let startTs = Date.now();
-    let connectionLatest = await this.db.drizzle.query.connectionsTable
-      .findFirst({
+    let connectionLatest: ConnectionTab =
+      await this.db.connections.findFirstUnwrap({
         orderBy: desc(connectionsTable.serverTs)
-      })
-      .then(x => this.tabService.connectionEntToTabUnwrap(x));
+      });
 
     if (isUndefined(connectionLatest)) {
       return;
@@ -573,30 +552,24 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let connection = await this.db.drizzle.query.connectionsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.connectionEntToTabUnwrap(x));
+      let connection: ConnectionTab = await this.db.connections.findFirstUnwrap(
+        {
+          where: where
+        }
+      );
 
       if (isUndefined(connection)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  connections: [connection]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          connections: [connection]
+        }
+      });
     }
 
-    let connectionsResult = await this.db.drizzle
+    let connectionResult = await this.db.drizzle
       .select({
         record: connectionsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -609,13 +582,13 @@ export class TabCheckerService {
         )
       );
 
-    if (connectionsResult.length > 0 && connectionsResult[0].total > 0) {
+    if (connectionResult.length > 0 && connectionResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'connections',
-          count: connectionsResult[0].total
+          count: connectionResult[0].total
         }
       });
     }
@@ -632,11 +605,9 @@ export class TabCheckerService {
 
   async checkDconfigs(isAllRecords: boolean) {
     let startTs = Date.now();
-    let dconfigLatest = await this.db.drizzle.query.dconfigsTable
-      .findFirst({
-        orderBy: desc(dconfigsTable.serverTs)
-      })
-      .then(x => this.tabService.dconfigEntToTabUnwrap(x));
+    let dconfigLatest: DconfigTab = await this.db.dconfigs.findFirstUnwrap({
+      orderBy: desc(dconfigsTable.serverTs)
+    });
 
     if (isUndefined(dconfigLatest)) {
       return;
@@ -656,30 +627,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let dconfig = await this.db.drizzle.query.dconfigsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.dconfigEntToTabUnwrap(x));
+      let dconfig: DconfigTab = await this.db.dconfigs.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(dconfig)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  dconfigs: [dconfig]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          dconfigs: [dconfig]
+        }
+      });
     }
 
-    let dconfigsResult = await this.db.drizzle
+    let dconfigResult = await this.db.drizzle
       .select({
         record: dconfigsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -692,13 +655,13 @@ export class TabCheckerService {
         )
       );
 
-    if (dconfigsResult.length > 0 && dconfigsResult[0].total > 0) {
+    if (dconfigResult.length > 0 && dconfigResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'dconfigs',
-          count: dconfigsResult[0].total
+          count: dconfigResult[0].total
         }
       });
     }
@@ -715,11 +678,9 @@ export class TabCheckerService {
 
   async checkUconfigs(isAllRecords: boolean) {
     let startTs = Date.now();
-    let uconfigLatest = await this.db.drizzle.query.uconfigsTable
-      .findFirst({
-        orderBy: desc(uconfigsTable.serverTs)
-      })
-      .then(x => this.tabService.uconfigEntToTabUnwrap(x));
+    let uconfigLatest: UconfigTab = await this.db.uconfigs.findFirstUnwrap({
+      orderBy: desc(uconfigsTable.serverTs)
+    });
 
     if (isUndefined(uconfigLatest)) {
       return;
@@ -739,30 +700,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let uconfig = await this.db.drizzle.query.uconfigsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.uconfigEntToTabUnwrap(x));
+      let uconfig: UconfigTab = await this.db.uconfigs.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(uconfig)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  uconfigs: [uconfig]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          uconfigs: [uconfig]
+        }
+      });
     }
 
-    let uconfigsResult = await this.db.drizzle
+    let uconfigResult = await this.db.drizzle
       .select({
         record: uconfigsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -775,13 +728,13 @@ export class TabCheckerService {
         )
       );
 
-    if (uconfigsResult.length > 0 && uconfigsResult[0].total > 0) {
+    if (uconfigResult.length > 0 && uconfigResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'uconfigs',
-          count: uconfigsResult[0].total
+          count: uconfigResult[0].total
         }
       });
     }
@@ -798,11 +751,9 @@ export class TabCheckerService {
 
   async checkEnvs(isAllRecords: boolean) {
     let startTs = Date.now();
-    let envLatest = await this.db.drizzle.query.envsTable
-      .findFirst({
-        orderBy: desc(envsTable.serverTs)
-      })
-      .then(x => this.tabService.envEntToTabUnwrap(x));
+    let envLatest: EnvTab = await this.db.envs.findFirstUnwrap({
+      orderBy: desc(envsTable.serverTs)
+    });
 
     if (isUndefined(envLatest)) {
       return;
@@ -819,30 +770,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let env = await this.db.drizzle.query.envsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.envEntToTabUnwrap(x));
+      let env: EnvTab = await this.db.envs.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(env)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  envs: [env]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          envs: [env]
+        }
+      });
     }
 
-    let envsResult = await this.db.drizzle
+    let envResult = await this.db.drizzle
       .select({
         record: envsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -855,13 +798,13 @@ export class TabCheckerService {
         )
       );
 
-    if (envsResult.length > 0 && envsResult[0].total > 0) {
+    if (envResult.length > 0 && envResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'envs',
-          count: envsResult[0].total
+          count: envResult[0].total
         }
       });
     }
@@ -878,11 +821,9 @@ export class TabCheckerService {
 
   async checkKits(isAllRecords: boolean) {
     let startTs = Date.now();
-    let kitLatest = await this.db.drizzle.query.kitsTable
-      .findFirst({
-        orderBy: desc(kitsTable.serverTs)
-      })
-      .then(x => this.tabService.kitEntToTabUnwrap(x));
+    let kitLatest: KitTab = await this.db.kits.findFirstUnwrap({
+      orderBy: desc(kitsTable.serverTs)
+    });
 
     if (isUndefined(kitLatest)) {
       return;
@@ -899,30 +840,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let kit = await this.db.drizzle.query.kitsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.kitEntToTabUnwrap(x));
+      let kit: KitTab = await this.db.kits.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(kit)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  kits: [kit]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          kits: [kit]
+        }
+      });
     }
 
-    let kitsResult = await this.db.drizzle
+    let kitResult = await this.db.drizzle
       .select({
         record: kitsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -935,13 +868,13 @@ export class TabCheckerService {
         )
       );
 
-    if (kitsResult.length > 0 && kitsResult[0].total > 0) {
+    if (kitResult.length > 0 && kitResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'kits',
-          count: kitsResult[0].total
+          count: kitResult[0].total
         }
       });
     }
@@ -958,11 +891,9 @@ export class TabCheckerService {
 
   async checkMembers(isAllRecords: boolean) {
     let startTs = Date.now();
-    let memberLatest = await this.db.drizzle.query.membersTable
-      .findFirst({
-        orderBy: desc(membersTable.serverTs)
-      })
-      .then(x => this.tabService.memberEntToTabUnwrap(x));
+    let memberLatest: MemberTab = await this.db.members.findFirstUnwrap({
+      orderBy: desc(membersTable.serverTs)
+    });
 
     if (isUndefined(memberLatest)) {
       return;
@@ -982,30 +913,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let member = await this.db.drizzle.query.membersTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.memberEntToTabUnwrap(x));
+      let member: MemberTab = await this.db.members.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(member)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  members: [member]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          members: [member]
+        }
+      });
     }
 
-    let membersResult = await this.db.drizzle
+    let memberResult = await this.db.drizzle
       .select({
         record: membersTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1018,13 +941,13 @@ export class TabCheckerService {
         )
       );
 
-    if (membersResult.length > 0 && membersResult[0].total > 0) {
+    if (memberResult.length > 0 && memberResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'members',
-          count: membersResult[0].total
+          count: memberResult[0].total
         }
       });
     }
@@ -1041,11 +964,9 @@ export class TabCheckerService {
 
   async checkNotes(isAllRecords: boolean) {
     let startTs = Date.now();
-    let noteLatest = await this.db.drizzle.query.notesTable
-      .findFirst({
-        orderBy: desc(notesTable.serverTs)
-      })
-      .then(x => this.tabService.noteEntToTabUnwrap(x));
+    let noteLatest: NoteTab = await this.db.notes.findFirstUnwrap({
+      orderBy: desc(notesTable.serverTs)
+    });
 
     if (isUndefined(noteLatest)) {
       return;
@@ -1065,30 +986,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let note = await this.db.drizzle.query.notesTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.noteEntToTabUnwrap(x));
+      let note: NoteTab = await this.db.notes.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(note)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  notes: [note]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          notes: [note]
+        }
+      });
     }
 
-    let notesResult = await this.db.drizzle
+    let noteResult = await this.db.drizzle
       .select({
         record: notesTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1101,13 +1014,13 @@ export class TabCheckerService {
         )
       );
 
-    if (notesResult.length > 0 && notesResult[0].total > 0) {
+    if (noteResult.length > 0 && noteResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'notes',
-          count: notesResult[0].total
+          count: noteResult[0].total
         }
       });
     }
@@ -1124,11 +1037,9 @@ export class TabCheckerService {
 
   async checkOrgs(isAllRecords: boolean) {
     let startTs = Date.now();
-    let orgLatest = await this.db.drizzle.query.orgsTable
-      .findFirst({
-        orderBy: desc(orgsTable.serverTs)
-      })
-      .then(x => this.tabService.orgEntToTabUnwrap(x));
+    let orgLatest: OrgTab = await this.db.orgs.findFirstUnwrap({
+      orderBy: desc(orgsTable.serverTs)
+    });
 
     if (isUndefined(orgLatest)) {
       return;
@@ -1145,30 +1056,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let org = await this.db.drizzle.query.orgsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.orgEntToTabUnwrap(x));
+      let org: OrgTab = await this.db.orgs.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(org)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  orgs: [org]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          orgs: [org]
+        }
+      });
     }
 
-    let orgsResult = await this.db.drizzle
+    let orgResult = await this.db.drizzle
       .select({
         record: orgsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1181,13 +1084,13 @@ export class TabCheckerService {
         )
       );
 
-    if (orgsResult.length > 0 && orgsResult[0].total > 0) {
+    if (orgResult.length > 0 && orgResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'orgs',
-          count: orgsResult[0].total
+          count: orgResult[0].total
         }
       });
     }
@@ -1204,11 +1107,9 @@ export class TabCheckerService {
 
   async checkProjects(isAllRecords: boolean) {
     let startTs = Date.now();
-    let projectLatest = await this.db.drizzle.query.projectsTable
-      .findFirst({
-        orderBy: desc(projectsTable.serverTs)
-      })
-      .then(x => this.tabService.projectEntToTabUnwrap(x));
+    let projectLatest: ProjectTab = await this.db.projects.findFirstUnwrap({
+      orderBy: desc(projectsTable.serverTs)
+    });
 
     if (isUndefined(projectLatest)) {
       return;
@@ -1228,30 +1129,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let project = await this.db.drizzle.query.projectsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.projectEntToTabUnwrap(x));
+      let project: ProjectTab = await this.db.projects.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(project)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  projects: [project]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          projects: [project]
+        }
+      });
     }
 
-    let projectsResult = await this.db.drizzle
+    let projectResult = await this.db.drizzle
       .select({
         record: projectsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1264,13 +1157,13 @@ export class TabCheckerService {
         )
       );
 
-    if (projectsResult.length > 0 && projectsResult[0].total > 0) {
+    if (projectResult.length > 0 && projectResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'projects',
-          count: projectsResult[0].total
+          count: projectResult[0].total
         }
       });
     }
@@ -1287,11 +1180,9 @@ export class TabCheckerService {
 
   async checkProviders(isAllRecords: boolean) {
     let startTs = Date.now();
-    let providerLatest = await this.db.drizzle.query.providersTable
-      .findFirst({
-        orderBy: desc(providersTable.serverTs)
-      })
-      .then(x => this.tabService.providerEntToTabUnwrap({ providerEnt: x }));
+    let providerLatest: ProviderTab = await this.db.providers.findFirstUnwrap({
+      orderBy: desc(providersTable.serverTs)
+    });
 
     if (isUndefined(providerLatest)) {
       return;
@@ -1311,30 +1202,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let provider = await this.db.drizzle.query.providersTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.providerEntToTabUnwrap({ providerEnt: x }));
+      let provider: ProviderTab = await this.db.providers.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(provider)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  providers: [provider]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          providers: [provider]
+        }
+      });
     }
 
-    let providersResult = await this.db.drizzle
+    let providerResult = await this.db.drizzle
       .select({
         record: providersTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1347,13 +1230,13 @@ export class TabCheckerService {
         )
       );
 
-    if (providersResult.length > 0 && providersResult[0].total > 0) {
+    if (providerResult.length > 0 && providerResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'providers',
-          count: providersResult[0].total
+          count: providerResult[0].total
         }
       });
     }
@@ -1370,11 +1253,9 @@ export class TabCheckerService {
 
   async checkQueries(isAllRecords: boolean) {
     let startTs = Date.now();
-    let queryLatest = await this.db.drizzle.query.queriesTable
-      .findFirst({
-        orderBy: desc(queriesTable.serverTs)
-      })
-      .then(x => this.tabService.queryEntToTabUnwrap(x));
+    let queryLatest: QueryTab = await this.db.queries.findFirstUnwrap({
+      orderBy: desc(queriesTable.serverTs)
+    });
 
     if (isUndefined(queryLatest)) {
       return;
@@ -1394,30 +1275,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let query = await this.db.drizzle.query.queriesTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.queryEntToTabUnwrap(x));
+      let query: QueryTab = await this.db.queries.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(query)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  queries: [query]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          queries: [query]
+        }
+      });
     }
 
-    let queriesResult = await this.db.drizzle
+    let queryResult = await this.db.drizzle
       .select({
         record: queriesTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1430,13 +1303,13 @@ export class TabCheckerService {
         )
       );
 
-    if (queriesResult.length > 0 && queriesResult[0].total > 0) {
+    if (queryResult.length > 0 && queryResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'queries',
-          count: queriesResult[0].total
+          count: queryResult[0].total
         }
       });
     }
@@ -1453,11 +1326,9 @@ export class TabCheckerService {
 
   async checkUsers(isAllRecords: boolean) {
     let startTs = Date.now();
-    let userLatest = await this.db.drizzle.query.usersTable
-      .findFirst({
-        orderBy: desc(usersTable.serverTs)
-      })
-      .then(x => this.tabService.userEntToTabUnwrap(x));
+    let userLatest: UserTab = await this.db.users.findFirstUnwrap({
+      orderBy: desc(usersTable.serverTs)
+    });
 
     if (isUndefined(userLatest)) {
       return;
@@ -1477,30 +1348,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let user = await this.db.drizzle.query.usersTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.userEntToTabUnwrap(x));
+      let user: UserTab = await this.db.users.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(user)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  users: [user]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          users: [user]
+        }
+      });
     }
 
-    let usersResult = await this.db.drizzle
+    let userResult = await this.db.drizzle
       .select({
         record: usersTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1513,13 +1376,13 @@ export class TabCheckerService {
         )
       );
 
-    if (usersResult.length > 0 && usersResult[0].total > 0) {
+    if (userResult.length > 0 && userResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'users',
-          count: usersResult[0].total
+          count: userResult[0].total
         }
       });
     }
@@ -1536,11 +1399,9 @@ export class TabCheckerService {
 
   async checkOcEvents(isAllRecords: boolean) {
     let startTs = Date.now();
-    let eventLatest = await this.db.drizzle.query.ocEventsTable
-      .findFirst({
-        orderBy: desc(ocEventsTable.serverTs)
-      })
-      .then(x => this.tabService.ocEventEntToTabUnwrap(x));
+    let eventLatest: OcEventTab = await this.db.ocEvents.findFirstUnwrap({
+      orderBy: desc(ocEventsTable.serverTs)
+    });
 
     if (isUndefined(eventLatest)) {
       return;
@@ -1560,27 +1421,19 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let event = await this.db.drizzle.query.ocEventsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.ocEventEntToTabUnwrap(x));
+      let event: OcEventTab = await this.db.ocEvents.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(event)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  ocEvents: [event]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          ocEvents: [event]
+        }
+      });
     }
 
     let eventsResult = await this.db.drizzle
@@ -1619,11 +1472,9 @@ export class TabCheckerService {
 
   async checkOcMessages(isAllRecords: boolean) {
     let startTs = Date.now();
-    let messageLatest = await this.db.drizzle.query.ocMessagesTable
-      .findFirst({
-        orderBy: desc(ocMessagesTable.serverTs)
-      })
-      .then(x => this.tabService.ocMessageEntToTabUnwrap(x));
+    let messageLatest: OcMessageTab = await this.db.ocMessages.findFirstUnwrap({
+      orderBy: desc(ocMessagesTable.serverTs)
+    });
 
     if (isUndefined(messageLatest)) {
       return;
@@ -1643,27 +1494,19 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let message = await this.db.drizzle.query.ocMessagesTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.ocMessageEntToTabUnwrap(x));
+      let message: OcMessageTab = await this.db.ocMessages.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(message)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  ocMessages: [message]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          ocMessages: [message]
+        }
+      });
     }
 
     let messagesResult = await this.db.drizzle
@@ -1702,11 +1545,9 @@ export class TabCheckerService {
 
   async checkOcParts(isAllRecords: boolean) {
     let startTs = Date.now();
-    let partLatest = await this.db.drizzle.query.ocPartsTable
-      .findFirst({
-        orderBy: desc(ocPartsTable.serverTs)
-      })
-      .then(x => this.tabService.ocPartEntToTabUnwrap(x));
+    let partLatest: OcPartTab = await this.db.ocParts.findFirstUnwrap({
+      orderBy: desc(ocPartsTable.serverTs)
+    });
 
     if (isUndefined(partLatest)) {
       return;
@@ -1726,27 +1567,19 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let part = await this.db.drizzle.query.ocPartsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.ocPartEntToTabUnwrap(x));
+      let part: OcPartTab = await this.db.ocParts.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(part)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  ocParts: [part]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          ocParts: [part]
+        }
+      });
     }
 
     let partsResult = await this.db.drizzle
@@ -1785,11 +1618,9 @@ export class TabCheckerService {
 
   async checkSessions(isAllRecords: boolean) {
     let startTs = Date.now();
-    let sessionLatest = await this.db.drizzle.query.sessionsTable
-      .findFirst({
-        orderBy: desc(sessionsTable.serverTs)
-      })
-      .then(x => this.tabService.sessionEntToTabUnwrap(x));
+    let sessionLatest: SessionTab = await this.db.sessions.findFirstUnwrap({
+      orderBy: desc(sessionsTable.serverTs)
+    });
 
     if (isUndefined(sessionLatest)) {
       return;
@@ -1809,30 +1640,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let session = await this.db.drizzle.query.sessionsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.sessionEntToTabUnwrap(x));
+      let session: SessionTab = await this.db.sessions.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(session)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  sessions: [session]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          sessions: [session]
+        }
+      });
     }
 
-    let sessionsResult = await this.db.drizzle
+    let sessionResult = await this.db.drizzle
       .select({
         record: sessionsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1845,13 +1668,13 @@ export class TabCheckerService {
         )
       );
 
-    if (sessionsResult.length > 0 && sessionsResult[0].total > 0) {
+    if (sessionResult.length > 0 && sessionResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'sessions',
-          count: sessionsResult[0].total
+          count: sessionResult[0].total
         }
       });
     }
@@ -1868,11 +1691,10 @@ export class TabCheckerService {
 
   async checkOcSessions(isAllRecords: boolean) {
     let startTs = Date.now();
-    let ocSessionLatest = await this.db.drizzle.query.ocSessionsTable
-      .findFirst({
+    let ocSessionLatest: OcSessionTab =
+      await this.db.ocSessions.findFirstUnwrap({
         orderBy: desc(ocSessionsTable.serverTs)
-      })
-      .then(x => this.tabService.ocSessionEntToTabUnwrap(x));
+      });
 
     if (isUndefined(ocSessionLatest)) {
       return;
@@ -1892,30 +1714,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let ocSession = await this.db.drizzle.query.ocSessionsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.ocSessionEntToTabUnwrap(x));
+      let ocSession: OcSessionTab = await this.db.ocSessions.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(ocSession)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  ocSessions: [ocSession]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          ocSessions: [ocSession]
+        }
+      });
     }
 
-    let ocSessionsResult = await this.db.drizzle
+    let ocSessionResult = await this.db.drizzle
       .select({
         record: ocSessionsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -1928,13 +1742,13 @@ export class TabCheckerService {
         )
       );
 
-    if (ocSessionsResult.length > 0 && ocSessionsResult[0].total > 0) {
+    if (ocSessionResult.length > 0 && ocSessionResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'oc_sessions',
-          count: ocSessionsResult[0].total
+          count: ocSessionResult[0].total
         }
       });
     }
@@ -1956,22 +1770,18 @@ export class TabCheckerService {
   async checkStructsMetadata(isAllRecords: boolean) {
     let startTs = Date.now();
     if (this.isEncryptMetadata === false) {
-      let structEncrypted = await this.db.drizzle.query.structsTable
-        .findFirst({
-          where: isNotNull(structsTable.keyTag)
-        })
-        .then(x => this.tabService.structEntToTabUnwrap(x));
+      let structEncrypted: StructTab = await this.db.structs.findFirstUnwrap({
+        where: isNotNull(structsTable.keyTag)
+      });
 
       if (isDefined(structEncrypted)) {
         isAllRecords = true;
       }
     }
 
-    let structLatest = await this.db.drizzle.query.structsTable
-      .findFirst({
-        orderBy: desc(structsTable.serverTs)
-      })
-      .then(x => this.tabService.structEntToTabUnwrap(x));
+    let structLatest: StructTab = await this.db.structs.findFirstUnwrap({
+      orderBy: desc(structsTable.serverTs)
+    });
 
     if (isUndefined(structLatest)) {
       return;
@@ -1991,30 +1801,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let struct = await this.db.drizzle.query.structsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.structEntToTabUnwrap(x));
+      let struct: StructTab = await this.db.structs.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(struct)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  structs: [struct]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          structs: [struct]
+        }
+      });
     }
 
-    let structsResult = await this.db.drizzle
+    let structResult = await this.db.drizzle
       .select({
         record: structsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -2027,13 +1829,13 @@ export class TabCheckerService {
         )
       );
 
-    if (structsResult.length > 0 && structsResult[0].total > 0) {
+    if (structResult.length > 0 && structResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'structs',
-          count: structsResult[0].total
+          count: structResult[0].total
         }
       });
     }
@@ -2051,22 +1853,18 @@ export class TabCheckerService {
   async checkModelsMetadata(isAllRecords: boolean) {
     let startTs = Date.now();
     if (this.isEncryptMetadata === false) {
-      let modelEncrypted = await this.db.drizzle.query.modelsTable
-        .findFirst({
-          where: isNotNull(modelsTable.keyTag)
-        })
-        .then(x => this.tabService.modelEntToTabUnwrap(x));
+      let modelEncrypted: ModelTab = await this.db.models.findFirstUnwrap({
+        where: isNotNull(modelsTable.keyTag)
+      });
 
       if (isDefined(modelEncrypted)) {
         isAllRecords = true;
       }
     }
 
-    let modelLatest = await this.db.drizzle.query.modelsTable
-      .findFirst({
-        orderBy: desc(modelsTable.serverTs)
-      })
-      .then(x => this.tabService.modelEntToTabUnwrap(x));
+    let modelLatest: ModelTab = await this.db.models.findFirstUnwrap({
+      orderBy: desc(modelsTable.serverTs)
+    });
 
     if (isUndefined(modelLatest)) {
       return;
@@ -2086,30 +1884,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let model = await this.db.drizzle.query.modelsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.modelEntToTabUnwrap(x));
+      let model: ModelTab = await this.db.models.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(model)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  models: [model]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          models: [model]
+        }
+      });
     }
 
-    let modelsResult = await this.db.drizzle
+    let modelResult = await this.db.drizzle
       .select({
         record: modelsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -2122,13 +1912,13 @@ export class TabCheckerService {
         )
       );
 
-    if (modelsResult.length > 0 && modelsResult[0].total > 0) {
+    if (modelResult.length > 0 && modelResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'models',
-          count: modelsResult[0].total
+          count: modelResult[0].total
         }
       });
     }
@@ -2146,22 +1936,20 @@ export class TabCheckerService {
   async checkMconfigsMetadata(isAllRecords: boolean) {
     let startTs = Date.now();
     if (this.isEncryptMetadata === false) {
-      let mconfigEncrypted = await this.db.drizzle.query.mconfigsTable
-        .findFirst({
+      let mconfigEncrypted: MconfigTab = await this.db.mconfigs.findFirstUnwrap(
+        {
           where: isNotNull(mconfigsTable.keyTag)
-        })
-        .then(x => this.tabService.mconfigEntToTabUnwrap(x));
+        }
+      );
 
       if (isDefined(mconfigEncrypted)) {
         isAllRecords = true;
       }
     }
 
-    let mconfigLatest = await this.db.drizzle.query.mconfigsTable
-      .findFirst({
-        orderBy: desc(mconfigsTable.serverTs)
-      })
-      .then(x => this.tabService.mconfigEntToTabUnwrap(x));
+    let mconfigLatest: MconfigTab = await this.db.mconfigs.findFirstUnwrap({
+      orderBy: desc(mconfigsTable.serverTs)
+    });
 
     if (isUndefined(mconfigLatest)) {
       return;
@@ -2181,30 +1969,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let mconfig = await this.db.drizzle.query.mconfigsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.mconfigEntToTabUnwrap(x));
+      let mconfig: MconfigTab = await this.db.mconfigs.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(mconfig)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  mconfigs: [mconfig]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          mconfigs: [mconfig]
+        }
+      });
     }
 
-    let mconfigsResult = await this.db.drizzle
+    let mconfigResult = await this.db.drizzle
       .select({
         record: mconfigsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -2217,13 +1997,13 @@ export class TabCheckerService {
         )
       );
 
-    if (mconfigsResult.length > 0 && mconfigsResult[0].total > 0) {
+    if (mconfigResult.length > 0 && mconfigResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'mconfigs',
-          count: mconfigsResult[0].total
+          count: mconfigResult[0].total
         }
       });
     }
@@ -2241,22 +2021,18 @@ export class TabCheckerService {
   async checkChartsMetadata(isAllRecords: boolean) {
     let startTs = Date.now();
     if (this.isEncryptMetadata === false) {
-      let chartEncrypted = await this.db.drizzle.query.chartsTable
-        .findFirst({
-          where: isNotNull(chartsTable.keyTag)
-        })
-        .then(x => this.tabService.chartEntToTabUnwrap(x));
+      let chartEncrypted: ChartTab = await this.db.charts.findFirstUnwrap({
+        where: isNotNull(chartsTable.keyTag)
+      });
 
       if (isDefined(chartEncrypted)) {
         isAllRecords = true;
       }
     }
 
-    let chartLatest = await this.db.drizzle.query.chartsTable
-      .findFirst({
-        orderBy: desc(chartsTable.serverTs)
-      })
-      .then(x => this.tabService.chartEntToTabUnwrap(x));
+    let chartLatest: ChartTab = await this.db.charts.findFirstUnwrap({
+      orderBy: desc(chartsTable.serverTs)
+    });
 
     if (isUndefined(chartLatest)) {
       return;
@@ -2276,30 +2052,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let chart = await this.db.drizzle.query.chartsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.chartEntToTabUnwrap(x));
+      let chart: ChartTab = await this.db.charts.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(chart)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  charts: [chart]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          charts: [chart]
+        }
+      });
     }
 
-    let chartsResult = await this.db.drizzle
+    let chartResult = await this.db.drizzle
       .select({
         record: chartsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -2312,13 +2080,13 @@ export class TabCheckerService {
         )
       );
 
-    if (chartsResult.length > 0 && chartsResult[0].total > 0) {
+    if (chartResult.length > 0 && chartResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'charts',
-          count: chartsResult[0].total
+          count: chartResult[0].total
         }
       });
     }
@@ -2336,22 +2104,18 @@ export class TabCheckerService {
   async checkReportsMetadata(isAllRecords: boolean) {
     let startTs = Date.now();
     if (this.isEncryptMetadata === false) {
-      let reportEncrypted = await this.db.drizzle.query.reportsTable
-        .findFirst({
-          where: isNotNull(reportsTable.keyTag)
-        })
-        .then(x => this.tabService.reportEntToTabUnwrap(x));
+      let reportEncrypted: ReportTab = await this.db.reports.findFirstUnwrap({
+        where: isNotNull(reportsTable.keyTag)
+      });
 
       if (isDefined(reportEncrypted)) {
         isAllRecords = true;
       }
     }
 
-    let reportLatest = await this.db.drizzle.query.reportsTable
-      .findFirst({
-        orderBy: desc(reportsTable.serverTs)
-      })
-      .then(x => this.tabService.reportEntToTabUnwrap(x));
+    let reportLatest: ReportTab = await this.db.reports.findFirstUnwrap({
+      orderBy: desc(reportsTable.serverTs)
+    });
 
     if (isUndefined(reportLatest)) {
       return;
@@ -2371,30 +2135,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let report = await this.db.drizzle.query.reportsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.reportEntToTabUnwrap(x));
+      let report: ReportTab = await this.db.reports.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(report)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  reports: [report]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          reports: [report]
+        }
+      });
     }
 
-    let reportsResult = await this.db.drizzle
+    let reportResult = await this.db.drizzle
       .select({
         record: reportsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -2407,13 +2163,13 @@ export class TabCheckerService {
         )
       );
 
-    if (reportsResult.length > 0 && reportsResult[0].total > 0) {
+    if (reportResult.length > 0 && reportResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'reports',
-          count: reportsResult[0].total
+          count: reportResult[0].total
         }
       });
     }
@@ -2431,22 +2187,20 @@ export class TabCheckerService {
   async checkDashboardsMetadata(isAllRecords: boolean) {
     let startTs = Date.now();
     if (this.isEncryptMetadata === false) {
-      let dashboardEncrypted = await this.db.drizzle.query.dashboardsTable
-        .findFirst({
+      let dashboardEncrypted: DashboardTab =
+        await this.db.dashboards.findFirstUnwrap({
           where: isNotNull(dashboardsTable.keyTag)
-        })
-        .then(x => this.tabService.dashboardEntToTabUnwrap(x));
+        });
 
       if (isDefined(dashboardEncrypted)) {
         isAllRecords = true;
       }
     }
 
-    let dashboardLatest = await this.db.drizzle.query.dashboardsTable
-      .findFirst({
+    let dashboardLatest: DashboardTab =
+      await this.db.dashboards.findFirstUnwrap({
         orderBy: desc(dashboardsTable.serverTs)
-      })
-      .then(x => this.tabService.dashboardEntToTabUnwrap(x));
+      });
 
     if (isUndefined(dashboardLatest)) {
       return;
@@ -2466,30 +2220,22 @@ export class TabCheckerService {
             );
 
     while (true) {
-      let dashboard = await this.db.drizzle.query.dashboardsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.dashboardEntToTabUnwrap(x));
+      let dashboard: DashboardTab = await this.db.dashboards.findFirstUnwrap({
+        where: where
+      });
 
       if (isUndefined(dashboard)) {
         break;
       }
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  dashboards: [dashboard]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          dashboards: [dashboard]
+        }
+      });
     }
 
-    let dashboardsResult = await this.db.drizzle
+    let dashboardResult = await this.db.drizzle
       .select({
         record: dashboardsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
@@ -2502,13 +2248,13 @@ export class TabCheckerService {
         )
       );
 
-    if (dashboardsResult.length > 0 && dashboardsResult[0].total > 0) {
+    if (dashboardResult.length > 0 && dashboardResult[0].total > 0) {
       throw new ServerError({
         message:
           'BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV',
         customData: {
           table: 'dashboards',
-          count: dashboardsResult[0].total
+          count: dashboardResult[0].total
         }
       });
     }

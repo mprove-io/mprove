@@ -1,11 +1,10 @@
 import type { ConnectionConfigEntry } from '@malloydata/malloy';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
@@ -15,7 +14,6 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
@@ -33,7 +31,6 @@ export type GetMalloySandboxEnvsAndFilesOutput = {
 export class EditorConnectionsService {
   constructor(
     private envsService: EnvsService,
-    private tabService: TabService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private bigQueryService: BigQueryService,
@@ -42,7 +39,7 @@ export class EditorConnectionsService {
     private databricksService: DatabricksService,
     private trinoService: TrinoService,
     private prestoService: PrestoService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getMalloySandboxEnvsAndFiles(item: {
@@ -74,36 +71,30 @@ export class EditorConnectionsService {
     let connections: ConnectionTab[] = [];
 
     if (isDefined(apiEnv)) {
-      let connectionsResult: Result.Result<
+      let connectionResult: Result.Result<
         ConnectionTab[],
         ConnectionEntToTabError
-      > = await this.db.drizzle.query.connectionsTable
-        .findMany({
-          where: and(
-            eq(connectionsTable.projectId, projectId),
-            or(
-              eq(connectionsTable.envId, envId),
-              and(
-                eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                inArray(
-                  connectionsTable.connectionId,
-                  apiEnv.fallbackConnectionIds
-                )
+      > = await this.db.connections.findMany({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          or(
+            eq(connectionsTable.envId, envId),
+            and(
+              eq(connectionsTable.envId, PROJECT_ENV_PROD),
+              inArray(
+                connectionsTable.connectionId,
+                apiEnv.fallbackConnectionIds
               )
             )
           )
-        })
-        .then(xs =>
-          Result.sequence(xs, x =>
-            this.tabService.connectionEntToTab({ connectionEnt: x })
-          )
-        );
+        )
+      });
 
-      if (Result.isFailure(connectionsResult)) {
-        return connectionsResult;
+      if (Result.isFailure(connectionResult)) {
+        return connectionResult;
       }
 
-      connections = connectionsResult.value;
+      connections = connectionResult.value;
     }
 
     let malloyConnectionConfigEntries: Record<string, ConnectionConfigEntry> =

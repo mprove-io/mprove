@@ -1,24 +1,14 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendEditDraftDashboardRequestDto,
   ToBackendEditDraftDashboardResponseDto
 } from '#backend/controllers/dashboards/edit-draft-dashboard/edit-draft-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BranchTab,
   BridgeTab,
@@ -28,29 +18,28 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import {
   DashboardsService,
   type ProcessDashboardOutput
 } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -61,7 +50,6 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
 import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
@@ -72,6 +60,7 @@ import type { GetStructCheckExistsError } from '#common/types/backend/function-e
 import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { ProcessDashboardError } from '#common/types/backend/function-errors/process-dashboard-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { Member } from '#common/types/backend/parts/member';
@@ -103,12 +92,9 @@ type ReviseDashboardFilePayload = {
 @Controller()
 export class EditDraftDashboardController {
   constructor(
-    private tabService: TabService,
-    private branchesService: BranchesService,
     private modelsService: ModelsService,
     private membersService: MembersService,
     private usersService: UsersService,
-    private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
     private structsService: StructsService,
     private dashboardsService: DashboardsService,
@@ -116,10 +102,7 @@ export class EditDraftDashboardController {
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
     private envsService: EnvsService,
-    private bridgesService: BridgesService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendEditDraftDashboard' satisfies ToBackendRoute)
@@ -158,16 +141,18 @@ export class EditDraftDashboardController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
@@ -178,10 +163,12 @@ export class EditDraftDashboardController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -194,11 +181,13 @@ export class EditDraftDashboardController {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -332,25 +321,15 @@ export class EditDraftDashboardController {
       Result.bind(
         'cachedModels',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: and(
-                eq(modelsTable.structId, v.bridge.structId),
-                inArray(
-                  modelsTable.modelId,
-                  v.reviseDashboardFilePayload.modelIds
-                )
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTab({
-                      modelEnt: x
-                    })
+          this.db.models.findMany({
+            where: and(
+              eq(modelsTable.structId, v.bridge.structId),
+              inArray(
+                modelsTable.modelId,
+                v.reviseDashboardFilePayload.modelIds
               )
             )
+          })
       ),
       Result.bind(
         'selectedGivens',
@@ -428,29 +407,17 @@ export class EditDraftDashboardController {
           })
       ),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<void, DbErrorToError> =
-          await dbErrorToResult({
-            action: async () => {
-              await retry(
-                async () =>
-                  await this.db.drizzle.transaction(
-                    async tx =>
-                      await this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insert: {
-                          mconfigs: v.processedDashboard.insertMconfigs
-                        },
-                        insertOrUpdate: {
-                          dashboards: [v.processedDashboard.newDashboard],
-                          queries: v.processedDashboard.insertOrUpdateQueries
-                        },
-                        insertOrDoNothing: {
-                          queries: v.processedDashboard.insertOrDoNothingQueries
-                        }
-                      })
-                  ),
-                getRetryOption(this.cs, this.logger)
-              );
+        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+          await this.db.write({
+            insert: {
+              mconfigs: v.processedDashboard.insertMconfigs
+            },
+            insertOrUpdate: {
+              dashboards: [v.processedDashboard.newDashboard],
+              queries: v.processedDashboard.insertOrUpdateQueries
+            },
+            insertOrDoNothing: {
+              queries: v.processedDashboard.insertOrDoNothingQueries
             }
           });
 

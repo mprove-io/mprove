@@ -1,20 +1,21 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendCloseExplorerSessionTabRequestDto,
   ToBackendCloseExplorerSessionTabResponseDto
 } from '#backend/controllers/sessions/close-explorer-session-tab/close-explorer-session-tab.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
@@ -26,10 +27,7 @@ import type { ToBackendCloseExplorerSessionTabOutput } from '#common/types/backe
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CloseExplorerSessionTabController {
-  constructor(
-    private sessionsService: SessionsService,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendCloseExplorerSessionTab' satisfies ToBackendRoute)
   @ApiOperation({
@@ -52,8 +50,8 @@ export class CloseExplorerSessionTabController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>
@@ -68,11 +66,8 @@ export class CloseExplorerSessionTabController {
       Result.andThrough(v =>
         dbErrorToResult({
           action: async () => {
-            await this.db.drizzle.transaction(async tx => {
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                insertOrUpdate: { sessions: [v.session] }
-              });
+            await this.db.writeUnwrap({
+              insertOrUpdate: { sessions: [v.session] }
             });
           }
         })

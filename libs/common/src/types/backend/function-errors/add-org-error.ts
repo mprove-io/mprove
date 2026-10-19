@@ -1,17 +1,17 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type SendToDiskError,
   zSendToDiskError
 } from '#common/types/backend/function-errors/send-to-disk-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
-export type AddOrgError = SendToDiskError | DbErrorToError;
+export type AddOrgError = SendToDiskError | WriteError;
 
-export let zAddOrgError = z.union([zSendToDiskError, zDbErrorToError]);
+export let zAddOrgError = z.union([zSendToDiskError, zWriteError]);
 
 assertTypesEqual<AddOrgError, z.infer<typeof zAddOrgError>>({
   value: true

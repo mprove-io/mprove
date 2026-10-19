@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { and, eq } from 'drizzle-orm';
 import type {
   BranchTab,
   BridgeTab,
@@ -15,16 +15,17 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -82,18 +83,14 @@ export type ExplorerRebuildResult = ExplorerRebuildOk | ExplorerRebuildErr;
 export class ExplorerChartRebuildService {
   constructor(
     private usersService: UsersService,
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private branchesService: BranchesService,
     private envsService: EnvsService,
-    private bridgesService: BridgesService,
     private structsService: StructsService,
     private modelsService: ModelsService,
     private blockmlService: BlockmlService,
     private chartsService: ChartsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async rebuildFromYaml(item: {
@@ -108,8 +105,8 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.session.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.session.projectId)
           })
       ),
       Result.bind(
@@ -122,18 +119,22 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.session.projectId,
-            memberId: v.session.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.session.userId),
+              eq(membersTable.projectId, v.session.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.session.projectId,
-            repoId: v.session.repoId,
-            branchId: v.session.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.session.projectId),
+              eq(branchesTable.repoId, v.session.repoId),
+              eq(branchesTable.branchId, v.session.branchId)
+            )
           })
       ),
       Result.andThrough(async v => {
@@ -155,11 +156,13 @@ export class ExplorerChartRebuildService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.session.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.session.envId)
+            )
           })
       ),
       Result.bind(

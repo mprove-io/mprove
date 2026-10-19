@@ -1,27 +1,21 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
+  BridgeTab,
   MemberTab,
   ProjectTab,
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import {
   BlockmlService,
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -31,6 +25,7 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
@@ -53,12 +48,9 @@ export class ValidateFilesService {
     private rpcService: RpcService,
     private sessionsService: SessionsService,
     private blockmlService: BlockmlService,
-    private branchesService: BranchesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async validateFiles(item: {
@@ -82,8 +74,8 @@ export class ValidateFilesService {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
@@ -104,10 +96,12 @@ export class ValidateFilesService {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -135,23 +129,23 @@ export class ValidateFilesService {
           })
       ),
       Result.bind(
-        'branchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.branch.projectId),
-                eq(bridgesTable.repoId, v.branch.repoId),
-                eq(bridgesTable.branchId, v.branch.branchId)
-              )
-            })
-            .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId)
+            )
+          })
       ),
       Result.andThrough(v =>
         Result.sequence(
-          v.branchBridgeEnts,
-          async (bridgeEnt): Result.ResultAsync<void, RebuildStructError> => {
-            if (bridgeEnt.envId === v.envId) {
+          v.branchBridges,
+          async (
+            bridge: BridgeTab
+          ): Result.ResultAsync<void, RebuildStructError> => {
+            if (bridge.envId === v.envId) {
               let structId: string = makeId();
 
               let result: Result.Result<
@@ -165,7 +159,7 @@ export class ValidateFilesService {
                 structId: structId,
                 diskFiles: v.diskGetCatalogFilesOutput.files,
                 mproveDir: v.diskGetCatalogFilesOutput.mproveDir,
-                envId: bridgeEnt.envId,
+                envId: bridge.envId,
                 selectedGivens: [],
                 overrideTimezone: undefined
               });
@@ -174,8 +168,8 @@ export class ValidateFilesService {
                 return result;
               }
 
-              bridgeEnt.structId = structId;
-              bridgeEnt.needValidate = false;
+              bridge.structId = structId;
+              bridge.needValidate = false;
             }
 
             return Result.succeed();
@@ -183,36 +177,24 @@ export class ValidateFilesService {
         )
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: {
-                        bridges: [...v.branchBridgeEnts]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insertOrUpdate: {
+            bridges: [...v.branchBridges]
           }
         })
       ),
       Result.bind(
-        'currentBridgeEnt',
-        (v): Result.Result<BridgeEnt, never> =>
+        'currentBridge',
+        (v): Result.Result<BridgeTab, never> =>
           Result.succeed(
-            v.branchBridgeEnts.find(bridgeEnt => bridgeEnt.envId === v.envId)
+            v.branchBridges.find(bridge => bridge.envId === v.envId)
           )
       ),
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExists({
-            structId: v.currentBridgeEnt.structId,
+            structId: v.currentBridge.structId,
             projectId: v.projectId
           })
       ),
@@ -229,7 +211,7 @@ export class ValidateFilesService {
       Result.map(
         (v): ToBackendValidateFilesOutput => ({
           repo: v.diskGetCatalogFilesOutput.repo,
-          needValidate: v.currentBridgeEnt.needValidate,
+          needValidate: v.currentBridge.needValidate,
           struct: this.structsService.tabToApi({
             struct: v.struct,
             modelPartXs: v.modelPartXs

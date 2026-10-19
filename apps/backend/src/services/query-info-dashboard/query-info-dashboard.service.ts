@@ -1,10 +1,7 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BridgeTab,
   MemberTab,
@@ -14,20 +11,18 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import {
   DashboardsService,
   type ProcessDashboardOutput
 } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -38,7 +33,6 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { GetDashboardDataError } from '#common/types/backend/function-errors/get-dashboard-data-error';
 import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
 import type { GetDashboardXUsingDashboardTabError } from '#common/types/backend/function-errors/get-dashboard-x-using-dashboard-tab-error';
@@ -48,6 +42,7 @@ import type { GetStructCheckExistsError } from '#common/types/backend/function-e
 import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { ProcessDashboardError } from '#common/types/backend/function-errors/process-dashboard-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { Member } from '#common/types/backend/parts/member';
@@ -74,16 +69,13 @@ type PrepareQueryDashboardFilePayload = {
 @Injectable()
 export class QueryInfoDashboardService {
   constructor(
-    private tabService: TabService,
     private usersService: UsersService,
     private membersService: MembersService,
     private modelsService: ModelsService,
     private blockmlService: BlockmlService,
     private structsService: StructsService,
     private dashboardsService: DashboardsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getDashboardData(item: {
@@ -207,25 +199,15 @@ export class QueryInfoDashboardService {
       Result.bind(
         'cachedModels',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: and(
-                eq(modelsTable.structId, v.bridge.structId),
-                inArray(
-                  modelsTable.modelId,
-                  v.prepareQueryDashboardFilePayload.modelIds
-                )
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                isUndefined(x)
-                  ? Result.succeed(undefined)
-                  : this.tabService.modelEntToTab({
-                      modelEnt: x
-                    })
+          this.db.models.findMany({
+            where: and(
+              eq(modelsTable.structId, v.bridge.structId),
+              inArray(
+                modelsTable.modelId,
+                v.prepareQueryDashboardFilePayload.modelIds
               )
             )
+          })
       ),
       Result.bind(
         'selectedGivens',
@@ -305,28 +287,16 @@ export class QueryInfoDashboardService {
           })
       ),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<void, DbErrorToError> =
-          await dbErrorToResult({
-            action: async () => {
-              await retry(
-                async () =>
-                  await this.db.drizzle.transaction(
-                    async tx =>
-                      await this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insert: {
-                          mconfigs: v.processedDashboard.insertMconfigs
-                        },
-                        insertOrUpdate: {
-                          queries: v.processedDashboard.insertOrUpdateQueries
-                        },
-                        insertOrDoNothing: {
-                          queries: v.processedDashboard.insertOrDoNothingQueries
-                        }
-                      })
-                  ),
-                getRetryOption(this.cs, this.logger)
-              );
+        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+          await this.db.write({
+            insert: {
+              mconfigs: v.processedDashboard.insertMconfigs
+            },
+            insertOrUpdate: {
+              queries: v.processedDashboard.insertOrUpdateQueries
+            },
+            insertOrDoNothing: {
+              queries: v.processedDashboard.insertOrDoNothingQueries
             }
           });
 
@@ -375,22 +345,10 @@ export class QueryInfoDashboardService {
 
           v.user.ui.timezone = v.timezone;
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(
-                      async tx =>
-                        await this.db.packer.writeUnwrap({
-                          tx: tx,
-                          insertOrUpdate: {
-                            users: [v.user]
-                          }
-                        })
-                    ),
-                  getRetryOption(this.cs, this.logger)
-                );
+          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+            await this.db.write({
+              insertOrUpdate: {
+                users: [v.user]
               }
             });
 

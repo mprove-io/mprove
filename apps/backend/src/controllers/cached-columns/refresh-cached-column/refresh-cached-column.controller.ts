@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -10,7 +10,6 @@ import {
   ToBackendRefreshCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/refresh-cached-column/refresh-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   CachedColumnTab,
   CachedPartTab,
@@ -21,14 +20,15 @@ import type {
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -38,7 +38,6 @@ import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -76,10 +75,8 @@ export class RefreshCachedColumnController {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private cachedColumnService: CachedColumnService,
-    private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private tabService: TabService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private snowFlakeService: SnowFlakeService,
@@ -89,7 +86,7 @@ export class RefreshCachedColumnController {
     private prestoService: PrestoService,
     private trinoService: TrinoService,
     private hashService: HashService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendRefreshCachedColumn' satisfies ToBackendRoute)
@@ -115,8 +112,8 @@ export class RefreshCachedColumnController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -167,29 +164,21 @@ export class RefreshCachedColumnController {
       Result.bind(
         'connections',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: and(
-                eq(connectionsTable.projectId, v.projectId),
-                or(
-                  eq(connectionsTable.envId, v.cacheEnvId),
-                  and(
-                    eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                    inArray(
-                      connectionsTable.connectionId,
-                      v.apiEnv?.fallbackConnectionIds ?? []
-                    )
+          this.db.connections.findMany({
+            where: and(
+              eq(connectionsTable.projectId, v.projectId),
+              or(
+                eq(connectionsTable.envId, v.cacheEnvId),
+                and(
+                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                  inArray(
+                    connectionsTable.connectionId,
+                    v.apiEnv?.fallbackConnectionIds ?? []
                   )
                 )
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.connectionEntToTab({
-                  connectionEnt: x
-                })
-              )
             )
+          })
       ),
       Result.bind(
         'connection',
@@ -261,27 +250,19 @@ export class RefreshCachedColumnController {
       Result.bind(
         'currentCachedColumn',
         (v): Result.ResultAsync<CachedColumnTab, CachedColumnEntToTabError> =>
-          this.db.drizzle.query.cachedColumnsTable
-            .findFirst({
-              where: eq(
-                cachedColumnsTable.cachedColumnFullId,
-                this.hashService.makeCachedColumnFullId({
-                  projectId: v.projectId,
-                  connectionId: v.connectionId,
-                  envId: v.cacheEnvId,
-                  schemaName: v.schemaName,
-                  tableName: v.tableName,
-                  columnName: v.columnName
-                })
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.cachedColumnEntToTab({
-                    cachedColumnEnt: x
-                  })
+          this.db.cachedColumns.findFirst({
+            where: eq(
+              cachedColumnsTable.cachedColumnFullId,
+              this.hashService.makeCachedColumnFullId({
+                projectId: v.projectId,
+                connectionId: v.connectionId,
+                envId: v.cacheEnvId,
+                schemaName: v.schemaName,
+                tableName: v.tableName,
+                columnName: v.columnName
+              })
             )
+          })
       ),
       Result.bind(
         'runningCachedColumn',
@@ -329,21 +310,13 @@ export class RefreshCachedColumnController {
         dbErrorToResult({
           action: async () => {
             if (isUndefined(v.currentCachedColumn)) {
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insertOrUpdate: { cachedColumns: [v.runningCachedColumn] }
-                  })
-              );
+              await this.db.writeUnwrap({
+                insertOrUpdate: { cachedColumns: [v.runningCachedColumn] }
+              });
             } else {
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    update: { cachedColumns: [v.runningCachedColumn] }
-                  })
-              );
+              await this.db.writeUnwrap({
+                update: { cachedColumns: [v.runningCachedColumn] }
+              });
             }
           }
         })
@@ -429,21 +402,19 @@ export class RefreshCachedColumnController {
 
     await this.db.drizzle.transaction(async tx => {
       let currentCachedColumn: CachedColumnTab =
-        await this.db.drizzle.query.cachedColumnsTable
-          .findFirst({
-            where: eq(
-              cachedColumnsTable.cachedColumnFullId,
-              this.hashService.makeCachedColumnFullId({
-                projectId: projectId,
-                connectionId: connectionId,
-                envId: cacheEnvId,
-                schemaName: schemaName,
-                tableName: tableName,
-                columnName: columnName
-              })
-            )
-          })
-          .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
+        await this.db.cachedColumns.findFirstUnwrap({
+          where: eq(
+            cachedColumnsTable.cachedColumnFullId,
+            this.hashService.makeCachedColumnFullId({
+              projectId: projectId,
+              connectionId: connectionId,
+              envId: cacheEnvId,
+              schemaName: schemaName,
+              tableName: tableName,
+              columnName: columnName
+            })
+          )
+        });
 
       if (
         isUndefined(currentCachedColumn) ||
@@ -497,21 +468,19 @@ export class RefreshCachedColumnController {
             await this.db.drizzle.transaction(async tx => {
               // Reject conversion/write failures so the complete transaction rolls back.
               let currentCachedColumn: CachedColumnTab =
-                await this.db.drizzle.query.cachedColumnsTable
-                  .findFirst({
-                    where: eq(
-                      cachedColumnsTable.cachedColumnFullId,
-                      this.hashService.makeCachedColumnFullId({
-                        projectId: v.projectId,
-                        connectionId: v.connectionId,
-                        envId: v.cacheEnvId,
-                        schemaName: v.schemaName,
-                        tableName: v.tableName,
-                        columnName: v.columnName
-                      })
-                    )
-                  })
-                  .then(x => this.tabService.cachedColumnEntToTabUnwrap(x));
+                await this.db.cachedColumns.findFirstUnwrap({
+                  where: eq(
+                    cachedColumnsTable.cachedColumnFullId,
+                    this.hashService.makeCachedColumnFullId({
+                      projectId: v.projectId,
+                      connectionId: v.connectionId,
+                      envId: v.cacheEnvId,
+                      schemaName: v.schemaName,
+                      tableName: v.tableName,
+                      columnName: v.columnName
+                    })
+                  )
+                });
 
               if (
                 isUndefined(currentCachedColumn) ||

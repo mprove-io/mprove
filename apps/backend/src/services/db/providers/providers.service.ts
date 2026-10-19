@@ -1,15 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type ProviderEnt,
-  providersTable
-} from '#backend/drizzle/postgres/schema/providers';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import {
   ANTHROPIC_PROVIDER_ID,
   CODEX_PROVIDER_ID,
@@ -24,7 +19,6 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckLlmModelDoesNotExistError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-error';
 import type { CheckProviderDoesNotExistError } from '#common/types/backend/function-errors/check-provider-does-not-exist-error';
 import type { GetEnabledProviderCheckExistsError } from '#common/types/backend/function-errors/get-enabled-provider-check-exists-error';
-import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
 import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
@@ -47,8 +41,7 @@ export type GetModelSelectionOutput = {
 export class ProvidersService {
   constructor(
     private hashService: HashService,
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   makeProvider(
@@ -231,56 +224,16 @@ export class ProvidersService {
   }): Result.ResultAsync<void, CheckProviderDoesNotExistError> {
     let { projectId, providerId } = item;
 
-    let providerEnt: ProviderEnt =
-      await this.db.drizzle.query.providersTable.findFirst({
-        where: and(
-          eq(providersTable.projectId, projectId),
-          eq(providersTable.providerId, providerId)
-        )
-      });
+    let isProviderExist: boolean = await this.db.providers.isExistUnwrap({
+      where: and(
+        eq(providersTable.projectId, projectId),
+        eq(providersTable.providerId, providerId)
+      )
+    });
 
-    return isDefined(providerEnt)
+    return isProviderExist
       ? Result.fail({ code: 'BACKEND_PROVIDER_ALREADY_EXISTS' })
       : Result.succeed();
-  }
-
-  async getProviderCheckExists(item: {
-    projectId: string;
-    providerId: string;
-  }): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> {
-    let { projectId, providerId } = item;
-
-    return this.db.drizzle.query.providersTable
-      .findFirst({
-        where: and(
-          eq(providersTable.projectId, projectId),
-          eq(providersTable.providerId, providerId)
-        )
-      })
-      .then((x: ProviderEnt) =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_PROVIDER_DOES_NOT_EXIST' })
-          : this.tabService.providerEntToTab({ providerEnt: x })
-      );
-  }
-
-  async getEnabledProviders(item: {
-    projectId: string;
-  }): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> {
-    let { projectId } = item;
-
-    return this.db.drizzle.query.providersTable
-      .findMany({
-        where: and(
-          eq(providersTable.projectId, projectId),
-          eq(providersTable.isEnabled, true)
-        )
-      })
-      .then(xs =>
-        Result.sequence(xs, x =>
-          this.tabService.providerEntToTab({ providerEnt: x })
-        )
-      );
   }
 
   async getEnabledProviderCheckExists(item: {
@@ -292,9 +245,11 @@ export class ProvidersService {
       Result.bind(
         'provider',
         (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
-          this.getProviderCheckExists({
-            projectId: v.projectId,
-            providerId: v.providerId
+          this.db.providers.findFirstCheckExists({
+            where: and(
+              eq(providersTable.projectId, v.projectId),
+              eq(providersTable.providerId, v.providerId)
+            )
           })
       ),
       Result.andThrough(v =>

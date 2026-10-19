@@ -1,18 +1,18 @@
 import type { ConnectionConfigEntry } from '@malloydata/malloy';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import * as MYSQL from 'mysql2/promise';
 import { BackendConfig } from '#backend/config/backend-config';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ConnectionTab,
+  QueryTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
-import { TabService } from '#backend/services/tab/tab.service';
+import { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
@@ -27,10 +27,9 @@ import type { MalloyConfigPart } from '#common/types/backend/parts/malloy-config
 @Injectable()
 export class MysqlService {
   constructor(
-    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   makeMalloyConfigPart(item: {
@@ -492,15 +491,13 @@ export class MysqlService {
       .then(async (result: [MYSQL.QueryResult, MYSQL.FieldPacket[]]) => {
         let data = result[0];
 
-        let q = await this.db.drizzle.query.queriesTable
-          .findFirst({
-            where: and(
-              eq(queriesTable.queryId, queryId),
-              eq(queriesTable.queryJobId, queryJobId),
-              eq(queriesTable.projectId, projectId)
-            )
-          })
-          .then(x => this.tabService.queryEntToTabUnwrap(x));
+        let q: QueryTab = await this.db.queries.findFirstUnwrap({
+          where: and(
+            eq(queriesTable.queryId, queryId),
+            eq(queriesTable.queryJobId, queryJobId),
+            eq(queriesTable.projectId, projectId)
+          )
+        });
 
         if (isDefined(q)) {
           q.status = 'Completed';
@@ -511,19 +508,11 @@ export class MysqlService {
             (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000
           );
 
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [q]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
+          await this.db.writeUnwrap({
+            insertOrUpdate: {
+              queries: [q]
+            }
+          });
         }
       })
       .catch(async e =>
@@ -556,15 +545,13 @@ export class MysqlService {
   }) {
     let { e, queryId, queryJobId, projectId } = item;
 
-    let q = await this.db.drizzle.query.queriesTable
-      .findFirst({
-        where: and(
-          eq(queriesTable.queryId, queryId),
-          eq(queriesTable.queryJobId, queryJobId),
-          eq(queriesTable.projectId, projectId)
-        )
-      })
-      .then(x => this.tabService.queryEntToTabUnwrap(x));
+    let q: QueryTab = await this.db.queries.findFirstUnwrap({
+      where: and(
+        eq(queriesTable.queryId, queryId),
+        eq(queriesTable.queryJobId, queryJobId),
+        eq(queriesTable.projectId, projectId)
+      )
+    });
 
     if (isDefined(q)) {
       q.status = 'Error';
@@ -573,19 +560,11 @@ export class MysqlService {
       q.lastErrorMessage = e.message;
       q.lastErrorTs = makeTsNumber();
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                insertOrUpdate: {
-                  queries: [q]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        insertOrUpdate: {
+          queries: [q]
+        }
+      });
     }
   }
 }

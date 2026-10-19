@@ -1,10 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { getModelUrl } from '#backend/controllers/state/get-state/get-model-url/get-model-url';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -16,20 +15,22 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
@@ -57,16 +58,13 @@ export class GetStateService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private tabService: TabService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private rpcService: RpcService,
     private sessionsService: SessionsService,
     private structsService: StructsService,
-    private branchesService: BranchesService,
-    private bridgesService: BridgesService,
     private envsService: EnvsService,
     private dashboardsService: DashboardsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getState(item: {
@@ -99,25 +97,29 @@ export class GetStateService {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.user.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -130,11 +132,13 @@ export class GetStateService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -171,13 +175,9 @@ export class GetStateService {
       Result.bind(
         'allModels',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({ where: eq(modelsTable.structId, v.bridge.structId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.modelEntToTab({ modelEnt: x })
-              )
-            )
+          this.db.models.findMany({
+            where: eq(modelsTable.structId, v.bridge.structId)
+          })
       ),
       Result.bind(
         'modelsWithAccess',
@@ -194,13 +194,9 @@ export class GetStateService {
       Result.bind(
         'charts',
         (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
-          this.db.drizzle.query.chartsTable
-            .findMany({ where: eq(chartsTable.structId, v.bridge.structId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.chartEntToTab({ chartEnt: x })
-              )
-            )
+          this.db.charts.findMany({
+            where: eq(chartsTable.structId, v.bridge.structId)
+          })
       ),
       Result.bind(
         'chartsGrantedAccess',
@@ -232,35 +228,23 @@ export class GetStateService {
       Result.bind(
         'draftReports',
         (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
-          this.db.drizzle.query.reportsTable
-            .findMany({
-              where: and(
-                eq(reportsTable.draft, true),
-                eq(reportsTable.creatorId, v.user.userId),
-                eq(reportsTable.structId, v.bridge.structId)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.reportEntToTab({ reportEnt: x })
-              )
+          this.db.reports.findMany({
+            where: and(
+              eq(reportsTable.draft, true),
+              eq(reportsTable.creatorId, v.user.userId),
+              eq(reportsTable.structId, v.bridge.structId)
             )
+          })
       ),
       Result.bind(
         'structReports',
         (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
-          this.db.drizzle.query.reportsTable
-            .findMany({
-              where: and(
-                eq(reportsTable.draft, false),
-                eq(reportsTable.structId, v.bridge.structId)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.reportEntToTab({ reportEnt: x })
-              )
+          this.db.reports.findMany({
+            where: and(
+              eq(reportsTable.draft, false),
+              eq(reportsTable.structId, v.bridge.structId)
             )
+          })
       ),
       Result.bind(
         'reportsGrantedAccess',

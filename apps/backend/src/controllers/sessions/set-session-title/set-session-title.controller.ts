@@ -3,6 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendSetSessionTitleRequestDto,
   ToBackendSetSessionTitleResponseDto
@@ -12,8 +13,9 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -29,9 +31,9 @@ import type { ToBackendSetSessionTitleOutput } from '#common/types/backend/route
 @Controller()
 export class SetSessionTitleController {
   constructor(
-    private sessionsService: SessionsService,
     private editorOpencodeService: EditorOpencodeService,
-    private explorerStreamService: ExplorerStreamService
+    private explorerStreamService: ExplorerStreamService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSetSessionTitle' satisfies ToBackendRoute)
@@ -55,8 +57,8 @@ export class SetSessionTitleController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>

@@ -1,61 +1,42 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendRenameCatalogNodeRequestDto,
   ToBackendRenameCatalogNodeResponseDto
 } from '#backend/controllers/catalogs/rename-catalog-node/rename-catalog-node.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
+  BridgeTab,
   MemberTab,
   ProjectTab,
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import {
-  BlockmlService,
-  type RebuildStructOutput
-} from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { makeId } from '#common/functions/make-id/make-id';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -69,18 +50,14 @@ import type { ToDiskRenameCatalogNodeOutput } from '#common/types/disk/routes/ca
 export class RenameCatalogNodeController {
   constructor(
     private tabService: TabService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private modelsService: ModelsService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
-    private branchesService: BranchesService,
     private structsService: StructsService,
     private envsService: EnvsService,
     private sessionsService: SessionsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendRenameCatalogNode' satisfies ToBackendRoute)
@@ -115,8 +92,8 @@ export class RenameCatalogNodeController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
@@ -130,10 +107,12 @@ export class RenameCatalogNodeController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -165,85 +144,45 @@ export class RenameCatalogNodeController {
           })
       ),
       Result.bind(
-        'branchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.branch.projectId),
-                eq(bridgesTable.repoId, v.branch.repoId),
-                eq(bridgesTable.branchId, v.branch.branchId)
-              )
-            })
-            .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId)
+            )
+          })
       ),
       Result.andThrough(v =>
-        Result.sequence(
-          v.branchBridgeEnts,
-          async (bridgeEnt): Result.ResultAsync<void, RebuildStructError> => {
-            if (bridgeEnt.envId === v.envId) {
-              let structId: string = makeId();
-
-              let result: Result.Result<
-                RebuildStructOutput,
-                RebuildStructError
-              > = await this.blockmlService.rebuildStruct({
-                traceId: v.traceId,
-                orgId: v.project.orgId,
-                projectId: v.projectId,
-                repoId: v.repoId,
-                structId: structId,
-                diskFiles: v.diskRenameCatalogNodeOutput.files,
-                mproveDir: v.diskRenameCatalogNodeOutput.mproveDir,
-                envId: bridgeEnt.envId,
-                selectedGivens: [],
-                overrideTimezone: undefined
-              });
-
-              if (Result.isFailure(result)) {
-                return result;
-              }
-
-              bridgeEnt.structId = structId;
-              bridgeEnt.needValidate = false;
-            } else {
-              bridgeEnt.structId = EMPTY_STRUCT_ID;
-              bridgeEnt.needValidate = true;
-            }
-
-            return Result.succeed();
-          }
-        )
+        this.blockmlService.rebuildBranchBridges({
+          branchBridges: v.branchBridges,
+          envId: v.envId,
+          traceId: v.traceId,
+          orgId: v.project.orgId,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          diskFiles: v.diskRenameCatalogNodeOutput.files,
+          mproveDir: v.diskRenameCatalogNodeOutput.mproveDir
+        })
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: { bridges: [...v.branchBridgeEnts] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
+        this.db.write({
+          insertOrUpdate: { bridges: [...v.branchBridges] }
         })
       ),
       Result.bind(
-        'currentBridgeEnt',
-        (v): Result.Result<BridgeEnt, never> =>
+        'currentBridge',
+        (v): Result.Result<BridgeTab, never> =>
           Result.succeed(
-            v.branchBridgeEnts.find(bridgeEnt => bridgeEnt.envId === v.envId)
+            v.branchBridges.find(bridge => bridge.envId === v.envId)
           )
       ),
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExists({
-            structId: v.currentBridgeEnt.structId,
+            structId: v.currentBridge.structId,
             projectId: v.projectId
           })
       ),
@@ -264,7 +203,7 @@ export class RenameCatalogNodeController {
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),
-          needValidate: v.currentBridgeEnt.needValidate
+          needValidate: v.currentBridge.needValidate
         })
       )
     );

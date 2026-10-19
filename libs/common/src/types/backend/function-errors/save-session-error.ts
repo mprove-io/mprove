@@ -1,13 +1,13 @@
 import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
-export type SaveSessionError = DbErrorToError;
+export type SaveSessionError = WriteError;
 
-export let zSaveSessionError = zDbErrorToError;
+export let zSaveSessionError = zWriteError;
 
 assertTypesEqual<SaveSessionError, z.infer<typeof zSaveSessionError>>({
   value: true

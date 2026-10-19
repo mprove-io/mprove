@@ -51,9 +51,9 @@ export function applyTreeDoubleUnderscore(item: {
       let fieldGroupNode = parentNode.children.find(
         node => node.id === fieldGroupNodeId
       );
-      let fieldGroupNodeExists = isDefined(fieldGroupNode);
+      let isFieldGroupNodeExist: boolean = isDefined(fieldGroupNode);
 
-      if (!fieldGroupNodeExists) {
+      if (!isFieldGroupNodeExist) {
         fieldGroupNode = {
           ...treeField.fieldGroupNode,
           id: fieldGroupNodeId,

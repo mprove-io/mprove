@@ -1,20 +1,13 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import {
-  Inject,
-  Logger,
-  Module,
-  OnModuleDestroy,
-  OnModuleInit
-} from '@nestjs/common';
+import { Logger, Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
-import retry from 'async-retry';
 import { and, DefaultLogger, eq, isNotNull } from 'drizzle-orm';
 import {
   drizzle as drizzlePg,
@@ -25,22 +18,26 @@ import fse from 'fs-extra';
 import Redis from 'ioredis';
 import type { ClientConfig } from 'pg';
 import pg from 'pg';
-
-const { Client } = pg;
-
 import { BackendConfig } from '#backend/config/backend-config';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import type {
+  ConnectionTab,
+  DconfigTab,
+  OrgTab,
+  ProjectTab,
+  UconfigTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { JwtAuthGuard } from '#backend/guards/jwt-auth/jwt-auth.guard';
 import { ZodValidationPipe } from '#backend/pipes/zod-validation/zod-validation.pipe';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { TabCheckerService } from '#backend/services/tab-checker/tab-checker.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
@@ -61,16 +58,9 @@ import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
 import { appProviders } from './app-providers';
 import { getConfig } from './config/get.config';
-import type { Db } from './drizzle/drizzle.module';
-import { DRIZZLE, DrizzleModule } from './drizzle/drizzle.module';
+import { DrizzleModule } from './drizzle/drizzle.module';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
 import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
-import type {
-  ConnectionTab,
-  DconfigTab,
-  UconfigTab,
-  UserTab
-} from './drizzle/postgres/schema/_tabs';
 import { connectionsTable } from './drizzle/postgres/schema/connections';
 import { dconfigsTable } from './drizzle/postgres/schema/dconfigs';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
@@ -78,6 +68,8 @@ import { projectsTable } from './drizzle/postgres/schema/projects';
 import { uconfigsTable } from './drizzle/postgres/schema/uconfigs';
 import { usersTable } from './drizzle/postgres/schema/users';
 import { mcpProviders } from './mcp-providers';
+
+const { Client } = pg;
 
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
@@ -186,10 +178,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private hashService: HashService,
-    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @WithTraceSpan()
@@ -247,11 +238,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
 
         // dconfig
 
-        let dconfig = await this.db.drizzle.query.dconfigsTable
-          .findFirst({
-            where: isNotNull(dconfigsTable.dconfigId)
-          })
-          .then(x => this.tabService.dconfigEntToTabUnwrap(x));
+        let dconfig: DconfigTab = await this.db.dconfigs.findFirstUnwrap({
+          where: isNotNull(dconfigsTable.dconfigId)
+        });
 
         if (isUndefined(dconfig)) {
           let hashSecret = this.hashService.createHashSecret();
@@ -264,19 +253,11 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
             serverTs: undefined
           };
 
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insert: {
-                      dconfigs: [dconfigInit]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
+          await this.db.writeUnwrap({
+            insert: {
+              dconfigs: [dconfigInit]
+            }
+          });
         }
 
         // encryption
@@ -285,11 +266,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
 
         // uconfig
 
-        let uconfig = await this.db.drizzle.query.uconfigsTable
-          .findFirst({
-            where: isNotNull(uconfigsTable.uconfigId)
-          })
-          .then(x => this.tabService.uconfigEntToTabUnwrap(x));
+        let uconfig: UconfigTab = await this.db.uconfigs.findFirstUnwrap({
+          where: isNotNull(uconfigsTable.uconfigId)
+        });
 
         if (isUndefined(uconfig)) {
           let uconfigInit: UconfigTab = {
@@ -298,19 +277,11 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
             serverTs: undefined
           };
 
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insert: {
-                      uconfigs: [uconfigInit]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
+          await this.db.writeUnwrap({
+            insert: {
+              uconfigs: [uconfigInit]
+            }
+          });
         }
 
         // admin
@@ -336,11 +307,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
             hashSecret: hashSecret
           });
 
-          mproveAdminUser = await this.db.drizzle.query.usersTable
-            .findFirst({
-              where: eq(usersTable.emailHash, mproveAdminEmailHash)
-            })
-            .then(x => this.tabService.userEntToTabUnwrap(x));
+          mproveAdminUser = await this.db.users.findFirstUnwrap({
+            where: eq(usersTable.emailHash, mproveAdminEmailHash)
+          });
 
           if (isUndefined(mproveAdminUser)) {
             mproveAdminUser = await this.usersService.addMproveAdminUser({
@@ -425,11 +394,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       });
     }
 
-    let dconfigA = await this.db.drizzle.query.dconfigsTable
-      .findFirst({
-        where: isNotNull(dconfigsTable.dconfigId)
-      })
-      .then(x => this.tabService.dconfigEntToTabUnwrap(x));
+    let dconfigA: DconfigTab = await this.db.dconfigs.findFirstUnwrap({
+      where: isNotNull(dconfigsTable.dconfigId)
+    });
 
     if (isUndefined(dconfigA)) {
       throw new ServerError({
@@ -449,46 +416,28 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     if (isUpdateHashSecret === true) {
       dconfigA.hashSecret = this.hashService.createHashSecret(); // hashSecretCheck is prev value
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.writeUnwrap({
-                tx: tx,
-                update: {
-                  dconfigs: [dconfigA] // tab-to-ent sets keyTag
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+      await this.db.writeUnwrap({
+        update: {
+          dconfigs: [dconfigA] // tab-to-ent sets keyTag
+        }
+      });
     }
 
     await this.checkTabService.readWriteRecords({
       isAllRecords: isUpdateHashSecret
     });
 
-    let dconfigB = await this.db.drizzle.query.dconfigsTable
-      .findFirst({
-        where: isNotNull(dconfigsTable.dconfigId)
-      })
-      .then(x => this.tabService.dconfigEntToTabUnwrap(x));
+    let dconfigB: DconfigTab = await this.db.dconfigs.findFirstUnwrap({
+      where: isNotNull(dconfigsTable.dconfigId)
+    });
 
     dconfigB.hashSecretCheck = dconfigB.hashSecret;
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.writeUnwrap({
-              tx: tx,
-              update: {
-                dconfigs: [dconfigB] // tab-to-ent sets keyTag
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
+    await this.db.writeUnwrap({
+      update: {
+        dconfigs: [dconfigB] // tab-to-ent sets keyTag
+      }
+    });
   }
 
   async seedDemoOrgAndProject(item: { mproveAdminUser: UserTab }) {
@@ -507,11 +456,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       isDefinedAndNotEmpty(demoOrgId) &&
       isDefinedAndNotEmpty(demoProjectId)
     ) {
-      let demoOrg = await this.db.drizzle.query.orgsTable
-        .findFirst({
-          where: eq(orgsTable.orgId, demoOrgId)
-        })
-        .then(x => this.tabService.orgEntToTabUnwrap(x));
+      let demoOrg: OrgTab = await this.db.orgs.findFirstUnwrap({
+        where: eq(orgsTable.orgId, demoOrgId)
+      });
 
       if (isUndefined(demoOrg)) {
         demoOrg = await this.orgsService.addOrgUnwrap({
@@ -527,11 +474,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         demoProjectId: demoProjectId
       });
 
-      let demoProject = await this.db.drizzle.query.projectsTable
-        .findFirst({
-          where: eq(projectsTable.projectId, demoProjectId)
-        })
-        .then(x => this.tabService.projectEntToTabUnwrap(x));
+      let demoProject: ProjectTab = await this.db.projects.findFirstUnwrap({
+        where: eq(projectsTable.projectId, demoProjectId)
+      });
 
       if (isUndefined(demoProject)) {
         let demoProjectRemoteType = this.cs.get<
@@ -609,11 +554,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         hashSecret: hashSecret
       });
 
-      let demoUser = await this.db.drizzle.query.usersTable
-        .findFirst({
-          where: eq(usersTable.emailHash, demoUserEmailHash)
-        })
-        .then(x => this.tabService.userEntToTabUnwrap(x));
+      let demoUser: UserTab = await this.db.users.findFirstUnwrap({
+        where: eq(usersTable.emailHash, demoUserEmailHash)
+      });
 
       if (isUndefined(demoUser)) {
         demoUser = await this.usersService.addDemoUser({
@@ -633,7 +576,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
 
     let connections: ConnectionTab[] = [];
 
-    let c1connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC1ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -646,7 +589,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhPostgresPassword');
 
     if (
-      isUndefined(c1connection) &&
+      !isC1ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhPostgresPassword)
     ) {
       let c1 = this.connectionsService.makeConnection({
@@ -673,7 +616,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c1);
     }
 
-    let c3connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC3ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -686,7 +629,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhBigqueryCredentialsPath');
 
     if (
-      isUndefined(c3connection) &&
+      !isC3ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhBigqueryCredentialsPath)
     ) {
       let bigqueryTestCredentials = JSON.parse(
@@ -711,7 +654,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c3);
     }
 
-    let c4connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC4ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -724,7 +667,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhSnowflakeAccount');
 
     if (
-      isUndefined(c4connection) &&
+      !isC4ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhSnowflakeAccount)
     ) {
       let c4 = this.connectionsService.makeConnection({
@@ -752,7 +695,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c4);
     }
 
-    let c5connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC5ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -765,7 +708,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhMotherDuckToken');
 
     if (
-      isUndefined(c5connection) &&
+      !isC5ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhMotherDuckToken)
     ) {
       let c5 = this.connectionsService.makeConnection({
@@ -786,7 +729,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c5);
     }
 
-    let c6connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC6ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -799,7 +742,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhMysqlPassword');
 
     if (
-      isUndefined(c6connection) &&
+      !isC6ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhMysqlPassword)
     ) {
       let c6 = this.connectionsService.makeConnection({
@@ -829,7 +772,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c6);
     }
 
-    let c7connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC7ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -842,7 +785,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhGoogleApiCredentialsPath');
 
     if (
-      isUndefined(c7connection) &&
+      !isC7ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhGoogleApiCredentialsPath)
     ) {
       let googleApiTestCredentials = JSON.parse(
@@ -873,7 +816,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c7);
     }
 
-    let c8connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC8ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -885,10 +828,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       BackendConfig['demoProjectDwhTrinoUser']
     >('demoProjectDwhTrinoUser');
 
-    if (
-      isUndefined(c8connection) &&
-      isDefinedAndNotEmpty(demoProjectDwhTrinoUser)
-    ) {
+    if (!isC8ConnectionExist && isDefinedAndNotEmpty(demoProjectDwhTrinoUser)) {
       let c8 = this.connectionsService.makeConnection({
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
@@ -911,7 +851,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c8);
     }
 
-    let c9connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let isC9ConnectionExist: boolean = await this.db.connections.isExistUnwrap({
       where: and(
         eq(connectionsTable.projectId, demoProjectId),
         eq(connectionsTable.envId, PROJECT_ENV_PROD),
@@ -924,7 +864,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhPrestoUser');
 
     if (
-      isUndefined(c9connection) &&
+      !isC9ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhPrestoUser)
     ) {
       let c9 = this.connectionsService.makeConnection({
@@ -950,19 +890,11 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       connections.push(c9);
     }
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.writeUnwrap({
-              tx: tx,
-              insert: {
-                connections: connections
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
+    await this.db.writeUnwrap({
+      insert: {
+        connections: connections
+      }
+    });
 
     return connections;
   }

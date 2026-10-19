@@ -1,20 +1,19 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import {
   ToBackendGetEnvsListRequestDto,
   ToBackendGetEnvsListResponseDto
 } from '#backend/controllers/envs/get-envs-list/get-envs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { EnvTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { type EnvEnt, envsTable } from '#backend/drizzle/postgres/schema/envs';
+import { envsTable } from '#backend/drizzle/postgres/schema/envs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import type { EnvEntToTabError } from '#common/types/backend/function-errors/env-ent-to-tab-error';
@@ -26,11 +25,8 @@ import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/en
 @Controller()
 export class GetEnvsListController {
   constructor(
-    private tabService: TabService,
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
     private envsService: EnvsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetEnvsList' satisfies ToBackendRoute)
@@ -52,28 +48,24 @@ export class GetEnvsListController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckExists({
-          projectId: v.projectId,
-          memberId: v.userId
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
         })
       ),
       Result.bind(
         'envs',
         (v): Result.ResultAsync<EnvTab[], EnvEntToTabError> =>
-          this.db.drizzle.query.envsTable
-            .findMany({
-              where: eq(envsTable.projectId, v.projectId)
-            })
-            .then((xs: EnvEnt[]) =>
-              Result.sequence(xs, x =>
-                this.tabService.envEntToTab({ envEnt: x })
-              )
-            )
+          this.db.envs.findMany({
+            where: eq(envsTable.projectId, v.projectId)
+          })
       ),
       Result.bind(
         'visibleEnvs',

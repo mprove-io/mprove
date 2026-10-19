@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import type {
   BranchTab,
   BridgeTab,
@@ -7,13 +8,16 @@ import type {
   ModelTab,
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
@@ -32,13 +36,11 @@ import type { ToBackendGetModelOutput } from '#common/types/backend/routes/model
 export class GetModelService {
   constructor(
     private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
-    private branchesService: BranchesService,
     private envsService: EnvsService,
-    private bridgesService: BridgesService,
     private modelsService: ModelsService,
-    private structsService: StructsService
+    private structsService: StructsService,
+    private db: DbService
   ) {}
 
   async getModel(item: {
@@ -61,25 +63,29 @@ export class GetModelService {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -92,20 +98,24 @@ export class GetModelService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       // Users can get models for dashboard/report filters without model access.
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
-          this.modelsService.getModelCheckExists({
-            structId: v.bridge.structId,
-            modelId: v.modelId
+          this.db.models.findFirstCheckExists({
+            where: and(
+              eq(modelsTable.structId, v.bridge.structId),
+              eq(modelsTable.modelId, v.modelId)
+            )
           })
       ),
       Result.bind(

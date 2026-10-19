@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,20 +11,23 @@ import {
   ToBackendDeleteConnectionResponseDto
 } from '#backend/controllers/connections/delete-connection/delete-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import type {
+  BridgeTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteConnectionOutput } from '#common/types/backend/routes/connections/delete-connection/delete-connection-output';
 
@@ -41,11 +37,10 @@ import type { ToBackendDeleteConnectionOutput } from '#common/types/backend/rout
 @Controller()
 export class DeleteConnectionController {
   constructor(
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendDeleteConnection' satisfies ToBackendRoute)
@@ -68,8 +63,8 @@ export class DeleteConnectionController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -79,20 +74,18 @@ export class DeleteConnectionController {
         })
       ),
       Result.bind(
-        'branchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.projectId),
-                eq(bridgesTable.envId, v.envId)
-              )
-            })
-            .then(bridgeEnts => Result.succeed(bridgeEnts))
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.projectId),
+              eq(bridgesTable.envId, v.envId)
+            )
+          })
       ),
       Result.map(v => {
-        v.branchBridgeEnts.forEach(bridgeEnt => {
-          bridgeEnt.needValidate = true;
+        v.branchBridges.forEach(bridge => {
+          bridge.needValidate = true;
         });
         return v;
       }),
@@ -135,7 +128,7 @@ export class DeleteConnectionController {
                   await this.db.packer.writeUnwrap({
                     tx: tx,
                     insertOrUpdate: {
-                      bridges: [...v.branchBridgeEnts]
+                      bridges: [...v.branchBridges]
                     }
                   });
                 }),

@@ -1,58 +1,39 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateBranchRequestDto,
   ToBackendCreateBranchResponseDto
 } from '#backend/controllers/branches/create-branch/create-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import {
-  BlockmlService,
-  type RebuildStructOutput
-} from '#backend/services/blockml/blockml.service';
+import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
-import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendSessionBranchCannotBeCreatedError } from '#common/types/backend/errors/backend-session-branch-cannot-be-created-error';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
 import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
 import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/branches/create-branch/create-branch-output';
@@ -66,16 +47,13 @@ import type { ToDiskCreateBranchOutput } from '#common/types/disk/routes/branche
 export class CreateBranchController {
   constructor(
     private tabService: TabService,
-    private projectsService: ProjectsService,
     private rpcService: RpcService,
     private sessionsService: SessionsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private membersService: MembersService,
     private blockmlService: BlockmlService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateBranch' satisfies ToBackendRoute)
@@ -119,8 +97,8 @@ export class CreateBranchController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.andThrough(v =>
@@ -132,10 +110,12 @@ export class CreateBranchController {
       Result.bind(
         'fromBranch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.fromBranchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.fromBranchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -176,28 +156,26 @@ export class CreateBranchController {
           )
       ),
       Result.bind(
-        'fromBranchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.fromBranch.projectId),
-                eq(bridgesTable.repoId, v.fromBranch.repoId),
-                eq(bridgesTable.branchId, v.fromBranch.branchId)
-              )
-            })
-            .then(bridgeEnts => Result.succeed(bridgeEnts))
+        'fromBranchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.fromBranch.projectId),
+              eq(bridgesTable.repoId, v.fromBranch.repoId),
+              eq(bridgesTable.branchId, v.fromBranch.branchId)
+            )
+          })
       ),
       Result.bind(
         'newBranchBridges',
         (v): Result.Result<BridgeTab[], never> =>
           Result.succeed(
-            v.fromBranchBridgeEnts.map(bridgeEnt =>
+            v.fromBranchBridges.map(bridge =>
               this.bridgesService.makeBridge({
                 projectId: v.newBranch.projectId,
                 repoId: v.newBranch.repoId,
                 branchId: v.newBranch.branchId,
-                envId: bridgeEnt.envId,
+                envId: bridge.envId,
                 structId: EMPTY_STRUCT_ID,
                 needValidate: true
               })
@@ -205,60 +183,22 @@ export class CreateBranchController {
           )
       ),
       Result.andThrough(v =>
-        Result.sequence(
-          v.newBranchBridges,
-          async (bridge): Result.ResultAsync<void, RebuildStructError> => {
-            if (bridge.envId === PROJECT_ENV_PROD) {
-              let structId: string = makeId();
-
-              let result: Result.Result<
-                RebuildStructOutput,
-                RebuildStructError
-              > = await this.blockmlService.rebuildStruct({
-                traceId: v.traceId,
-                orgId: v.project.orgId,
-                projectId: v.projectId,
-                repoId: v.repoId,
-                structId: structId,
-                diskFiles: v.diskCreateBranchOutput.files,
-                mproveDir: v.diskCreateBranchOutput.mproveDir,
-                envId: bridge.envId,
-                selectedGivens: [],
-                overrideTimezone: undefined
-              });
-
-              if (Result.isFailure(result)) {
-                return result;
-              }
-
-              bridge.structId = structId;
-              bridge.needValidate = false;
-            } else {
-              bridge.structId = EMPTY_STRUCT_ID;
-              bridge.needValidate = true;
-            }
-
-            return Result.succeed();
-          }
-        )
+        this.blockmlService.rebuildBranchBridges({
+          branchBridges: v.newBranchBridges,
+          envId: PROJECT_ENV_PROD,
+          traceId: v.traceId,
+          orgId: v.project.orgId,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          diskFiles: v.diskCreateBranchOutput.files,
+          mproveDir: v.diskCreateBranchOutput.mproveDir
+        })
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: {
-                        branches: [v.newBranch],
-                        bridges: [...v.newBranchBridges]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insert: {
+            branches: [v.newBranch],
+            bridges: [...v.newBranchBridges]
           }
         })
       ),

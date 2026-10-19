@@ -1,7 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import { eq } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { and, eq } from 'drizzle-orm';
 import type {
   BridgeTab,
   MemberTab,
@@ -9,13 +8,14 @@ import type {
   ProjectTab,
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
 import type {
@@ -40,15 +40,12 @@ import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/cata
 @Injectable()
 export class ExplorerModelPartsService {
   constructor(
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
     private envsService: EnvsService,
-    private bridgesService: BridgesService,
     private modelsService: ModelsService,
     private structsService: StructsService,
     private rpcService: RpcService,
     private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getExplorerModelParts(item: {
@@ -104,16 +101,18 @@ export class ExplorerModelPartsService {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
         (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
-          this.membersService.getMemberCheckExists({
-            projectId: v.projectId,
-            memberId: v.userId
+          this.db.members.findFirstCheckExists({
+            where: and(
+              eq(membersTable.memberId, v.userId),
+              eq(membersTable.projectId, v.projectId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -126,11 +125,13 @@ export class ExplorerModelPartsService {
       Result.bind(
         'bridge',
         (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
-          this.bridgesService.getBridgeCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId
+          this.db.bridges.findFirstCheckExists({
+            where: and(
+              eq(bridgesTable.projectId, v.projectId),
+              eq(bridgesTable.repoId, v.repoId),
+              eq(bridgesTable.branchId, v.branchId),
+              eq(bridgesTable.envId, v.envId)
+            )
           })
       ),
       Result.bind(
@@ -144,15 +145,9 @@ export class ExplorerModelPartsService {
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({
-              where: eq(modelsTable.structId, v.struct.structId)
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.modelEntToTab({ modelEnt: x })
-              )
-            )
+          this.db.models.findMany({
+            where: eq(modelsTable.structId, v.struct.structId)
+          })
       ),
       Result.bind(
         'requestedModelIdSet',

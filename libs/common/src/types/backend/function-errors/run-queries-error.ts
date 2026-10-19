@@ -13,10 +13,6 @@ import {
   zConnectionEntToTabError
 } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type GetBranchCheckExistsError,
   zGetBranchCheckExistsError
 } from '#common/types/backend/function-errors/get-branch-check-exists-error';
@@ -52,6 +48,10 @@ import {
   type RunQueriesSetupErrorToError,
   zRunQueriesSetupErrorToError
 } from '#common/types/backend/function-errors/run-queries-setup-error-to-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type RunQueriesError =
   | RunQueriesSetupErrorToError
@@ -66,7 +66,7 @@ export type RunQueriesError =
   | GetQueriesCheckExistSkipSqlDataError
   | ModelEntToTabError
   | ConnectionEntToTabError
-  | DbErrorToError;
+  | WriteError;
 
 export const zRunQueriesError = z.union([
   zRunQueriesSetupErrorToError,
@@ -81,7 +81,7 @@ export const zRunQueriesError = z.union([
   zGetQueriesCheckExistSkipSqlDataError,
   zModelEntToTabError,
   zConnectionEntToTabError,
-  zDbErrorToError
+  zWriteError
 ]);
 
 assertTypesEqual<RunQueriesError, z.infer<typeof zRunQueriesError>>({

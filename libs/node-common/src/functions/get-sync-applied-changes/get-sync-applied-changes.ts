@@ -49,9 +49,9 @@ export async function getSyncAppliedChanges(item: {
           })
         );
 
-        let pathExists: boolean = await fse.pathExists(filePath);
+        let isPathExist: boolean = await fse.pathExists(filePath);
 
-        if (pathExists === true) {
+        if (isPathExist === true) {
           changes.push({
             status: 'deleted',
             path: deletedFile.path

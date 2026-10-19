@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -15,7 +15,6 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -32,8 +31,6 @@ import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/r
 @Injectable()
 export class GetConnectionSampleService {
   constructor(
-    private tabService: TabService,
-    private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
     private pgService: PgService,
@@ -44,7 +41,7 @@ export class GetConnectionSampleService {
     private duckDbService: DuckDbService,
     private prestoService: PrestoService,
     private trinoService: TrinoService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getConnectionSample(item: {
@@ -68,8 +65,8 @@ export class GetConnectionSampleService {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -91,29 +88,21 @@ export class GetConnectionSampleService {
       Result.bind(
         'connections',
         (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
-          this.db.drizzle.query.connectionsTable
-            .findMany({
-              where: and(
-                eq(connectionsTable.projectId, v.projectId),
-                or(
-                  eq(connectionsTable.envId, v.envId),
-                  and(
-                    eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                    inArray(
-                      connectionsTable.connectionId,
-                      v.apiEnv.fallbackConnectionIds
-                    )
+          this.db.connections.findMany({
+            where: and(
+              eq(connectionsTable.projectId, v.projectId),
+              or(
+                eq(connectionsTable.envId, v.envId),
+                and(
+                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                  inArray(
+                    connectionsTable.connectionId,
+                    v.apiEnv.fallbackConnectionIds
                   )
                 )
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.connectionEntToTab({
-                  connectionEnt: x
-                })
-              )
             )
+          })
       ),
       Result.bind(
         'connection',

@@ -1,17 +1,9 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { AssistantMessage } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, desc, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -19,7 +11,6 @@ import {
   ToBackendSendMessageToExplorerSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcMessageTab,
   OcSessionTab,
@@ -27,17 +18,17 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex/codex.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
+import { DbService } from '#backend/services/db/db.service';
 import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
@@ -58,14 +49,12 @@ import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/types/
 export class SendMessageToExplorerSessionController {
   constructor(
     private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
     private providersService: ProvidersService,
     private codexService: CodexService,
     private explorerStreamService: ExplorerStreamService,
-    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSendMessageToExplorerSession' satisfies ToBackendRoute)
@@ -95,13 +84,13 @@ export class SendMessageToExplorerSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.session.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.session.projectId)
         })
       ),
       Result.andThrough(v =>
@@ -164,8 +153,8 @@ export class SendMessageToExplorerSessionController {
       Result.bind(
         'ocSession',
         (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
-          this.sessionsService.getOcSessionBySessionId({
-            sessionId: v.updatedSession.sessionId
+          this.db.ocSessions.findFirst({
+            where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
           })
       ),
       Result.map(
@@ -221,19 +210,13 @@ export class SendMessageToExplorerSessionController {
       Result.bind(
         'latestAssistantMessage',
         (v): Result.ResultAsync<OcMessageTab, OcMessageEntToTabError> =>
-          this.db.drizzle.query.ocMessagesTable
-            .findFirst({
-              where: and(
-                eq(ocMessagesTable.sessionId, v.session.sessionId),
-                eq(ocMessagesTable.role, 'assistant')
-              ),
-              orderBy: [desc(ocMessagesTable.createdTs)]
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.ocMessageEntToTab({ messageEnt: x })
-            )
+          this.db.ocMessages.findFirst({
+            where: and(
+              eq(ocMessagesTable.sessionId, v.session.sessionId),
+              eq(ocMessagesTable.role, 'assistant')
+            ),
+            orderBy: [desc(ocMessagesTable.createdTs)]
+          })
       ),
       Result.andThrough(v => {
         if (isDefined(v.latestAssistantMessage)) {
@@ -288,20 +271,8 @@ export class SendMessageToExplorerSessionController {
           })
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: { sessions: [v.updatedSession] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
+        this.db.write({
+          insertOrUpdate: { sessions: [v.updatedSession] }
         })
       ),
       Result.andThrough(async v => {

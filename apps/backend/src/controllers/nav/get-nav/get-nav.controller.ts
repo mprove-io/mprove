@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
@@ -9,24 +9,22 @@ import {
   ToBackendGetNavResponseDto
 } from '#backend/controllers/nav/get-nav/get-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   AvatarTab,
+  BridgeTab,
   MemberTab,
   OrgTab,
   ProjectTab,
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import type { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
-import type { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import type { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
@@ -39,9 +37,11 @@ import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
@@ -65,7 +65,7 @@ export class GetNavController {
     private structsService: StructsService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetNav' satisfies ToBackendRoute)
@@ -89,33 +89,25 @@ export class GetNavController {
         user: user
       }),
       Result.bind(
-        'memberEnts',
-        (v): Result.ResultAsync<MemberEnt[], never> =>
-          this.db.drizzle.query.membersTable
-            .findMany({ where: eq(membersTable.memberId, v.user.userId) })
-            .then(memberEnts => Result.succeed(memberEnts))
+        'members',
+        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+          this.db.members.findMany({
+            where: eq(membersTable.memberId, v.user.userId)
+          })
       ),
       Result.bind(
         'projectIds',
         (v): Result.Result<string[], never> =>
-          Result.succeed(v.memberEnts.map(memberEnt => memberEnt.projectId))
+          Result.succeed(v.members.map(member => member.projectId))
       ),
       Result.bind(
         'projects',
         async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.projectsTable
-                .findMany({
-                  where: inArray(projectsTable.projectId, v.projectIds)
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.projectEntToTab({
-                      projectEnt: x
-                    })
-                  )
-                )
+            : this.db.projects.findMany({
+                where: inArray(projectsTable.projectId, v.projectIds)
+              })
       ),
       Result.bind(
         'orgIds',
@@ -127,28 +119,16 @@ export class GetNavController {
         async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
           v.orgIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.orgsTable
-                .findMany({
-                  where: inArray(orgsTable.orgId, v.orgIds)
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.orgEntToTab({ orgEnt: x })
-                  )
-                )
+            : this.db.orgs.findMany({
+                where: inArray(orgsTable.orgId, v.orgIds)
+              })
       ),
       Result.bind(
         'ownerOrgs',
         (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
-          this.db.drizzle.query.orgsTable
-            .findMany({
-              where: eq(orgsTable.ownerId, v.user.userId)
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.orgEntToTab({ orgEnt: x })
-              )
-            )
+          this.db.orgs.findMany({
+            where: eq(orgsTable.ownerId, v.user.userId)
+          })
       ),
       Result.bind(
         'existingOrgIds',
@@ -158,10 +138,10 @@ export class GetNavController {
           ])
       ),
       Result.bind('resultOrgId', (v): Result.Result<string, never> => {
-        let isExistingOrg: boolean = v.existingOrgIds.includes(v.orgId);
+        let isOrgExist: boolean = v.existingOrgIds.includes(v.orgId);
 
         return Result.succeed(
-          isDefined(v.orgId) && isExistingOrg ? v.orgId : v.existingOrgIds[0]
+          isDefined(v.orgId) && isOrgExist ? v.orgId : v.existingOrgIds[0]
         );
       }),
       Result.bind(
@@ -181,12 +161,12 @@ export class GetNavController {
           )
       ),
       Result.bind('resultProjectId', (v): Result.Result<string, never> => {
-        let isExistingProject: boolean = v.existingProjectIds.includes(
+        let isProjectExist: boolean = v.existingProjectIds.includes(
           v.projectId
         );
 
         return Result.succeed(
-          isDefined(v.projectId) && isExistingProject
+          isDefined(v.projectId) && isProjectExist
             ? v.projectId
             : v.existingProjectIds[0]
         );
@@ -199,33 +179,25 @@ export class GetNavController {
           )
       ),
       Result.bind(
-        'bridgeEnt',
-        async (v): Result.ResultAsync<BridgeEnt, never> =>
+        'bridge',
+        async (v): Result.ResultAsync<BridgeTab, BridgeEntToTabError> =>
           isUndefined(v.resultProject)
             ? Result.succeed(undefined)
-            : this.db.drizzle.query.bridgesTable
-                .findFirst({
-                  where: and(
-                    eq(bridgesTable.projectId, v.resultProject.projectId),
-                    eq(bridgesTable.repoId, PROD_REPO_ID),
-                    eq(bridgesTable.branchId, v.resultProject.defaultBranch),
-                    eq(bridgesTable.envId, PROJECT_ENV_PROD)
-                  )
-                })
-                .then(bridgeEnt => Result.succeed(bridgeEnt))
+            : this.db.bridges.findFirst({
+                where: and(
+                  eq(bridgesTable.projectId, v.resultProject.projectId),
+                  eq(bridgesTable.repoId, PROD_REPO_ID),
+                  eq(bridgesTable.branchId, v.resultProject.defaultBranch),
+                  eq(bridgesTable.envId, PROJECT_ENV_PROD)
+                )
+              })
       ),
       Result.bind(
         'avatar',
         (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
-          this.db.drizzle.query.avatarsTable
-            .findFirst({
-              where: eq(avatarsTable.userId, v.user.userId)
-            })
-            .then((x: AvatarEnt) =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.avatarEntToTab({ avatarEnt: x })
-            )
+          this.db.avatars.findFirst({
+            where: eq(avatarsTable.userId, v.user.userId)
+          })
       ),
       Result.bind(
         'isGetRepo',
@@ -234,16 +206,18 @@ export class GetNavController {
             v.getRepo === true &&
               isDefined(v.resultOrgId) &&
               isDefined(v.resultProjectId) &&
-              isDefined(v.bridgeEnt)
+              isDefined(v.bridge)
           )
       ),
       Result.bind(
         'userMember',
         async (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
           v.isGetRepo
-            ? this.membersService.getMemberCheckExists({
-                projectId: v.resultProject.projectId,
-                memberId: v.user.userId
+            ? this.db.members.findFirstCheckExists({
+                where: and(
+                  eq(membersTable.memberId, v.user.userId),
+                  eq(membersTable.projectId, v.resultProject.projectId)
+                )
               })
             : Result.succeed(undefined)
       ),
@@ -261,7 +235,7 @@ export class GetNavController {
         async (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           v.isGetRepo
             ? this.structsService.getStructCheckExists({
-                structId: v.bridgeEnt.structId,
+                structId: v.bridge.structId,
                 projectId: v.resultProject.projectId
               })
             : Result.succeed(undefined)
@@ -304,8 +278,8 @@ export class GetNavController {
                     baseProject: this.tabService.projectTabToBaseProject({
                       project: v.resultProject
                     }),
-                    repoId: v.bridgeEnt.repoId,
-                    branch: v.bridgeEnt.branchId,
+                    repoId: v.bridge.repoId,
+                    branch: v.bridge.branchId,
                     isFetch: false
                   }
                 }
@@ -326,9 +300,7 @@ export class GetNavController {
           repoType: 'production',
           branchId: v.resultProject?.defaultBranch,
           envId: PROJECT_ENV_PROD,
-          needValidate: isDefined(v.bridgeEnt)
-            ? v.bridgeEnt.needValidate
-            : false,
+          needValidate: isDefined(v.bridge) ? v.bridge.needValidate : false,
           user: this.usersService.tabToApi({ user: v.user }),
           serverNowTs: Date.now(),
           isMproveAdmin:

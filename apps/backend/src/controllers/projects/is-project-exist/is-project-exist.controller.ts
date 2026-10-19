@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
@@ -7,17 +7,15 @@ import {
   ToBackendIsProjectExistResponseDto
 } from '#backend/controllers/projects/is-project-exist/is-project-exist.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -31,8 +29,7 @@ export class IsProjectExistController {
     private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
-    private orgsService: OrgsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendIsProjectExist' satisfies ToBackendRoute)
@@ -53,7 +50,9 @@ export class IsProjectExistController {
         orgId: body.input.orgId
       }),
       Result.andThrough(v =>
-        this.orgsService.getOrgCheckExists({ orgId: v.orgId })
+        this.db.orgs.findFirstCheckExists({
+          where: eq(orgsTable.orgId, v.orgId)
+        })
       ),
       Result.bind(
         'hashSecret',
@@ -69,17 +68,15 @@ export class IsProjectExistController {
           })
       ),
       Result.bind(
-        'projectEnt',
-        (v): Result.ResultAsync<ProjectEnt, never> =>
-          this.db.drizzle.query.projectsTable
-            .findFirst({
-              where: eq(projectsTable.nameHash, v.nameHash)
-            })
-            .then(projectEnt => Result.succeed(projectEnt))
+        'isProjectExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          this.db.projects.isExist({
+            where: eq(projectsTable.nameHash, v.nameHash)
+          })
       ),
       Result.map(
         (v): ToBackendIsProjectExistOutput => ({
-          isExist: isDefined(v.projectEnt)
+          isExist: v.isProjectExist
         })
       )
     );

@@ -1,8 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   ModelTab
@@ -12,6 +10,7 @@ import {
   modelsTable
 } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -31,7 +30,7 @@ export class ModelsService {
   constructor(
     private tabService: TabService,
     private hashService: HashService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   tabToApi(item: { model: ModelTab; hasAccess: boolean }): ModelX {
@@ -131,26 +130,6 @@ export class ModelsService {
     return model;
   }
 
-  async getModelCheckExists(item: {
-    modelId: string;
-    structId: string;
-  }): Result.ResultAsync<ModelTab, GetModelCheckExistsError> {
-    let { modelId, structId } = item;
-
-    return this.db.drizzle.query.modelsTable
-      .findFirst({
-        where: and(
-          eq(modelsTable.structId, structId),
-          eq(modelsTable.modelId, modelId)
-        )
-      })
-      .then(x =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_MODEL_DOES_NOT_EXIST' })
-          : this.tabService.modelEntToTab({ modelEnt: x })
-      );
-  }
-
   async getModelCheckExistsAndAccess(item: {
     modelId: string;
     structId: string;
@@ -166,9 +145,11 @@ export class ModelsService {
       Result.bind(
         'model',
         (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
-          this.getModelCheckExists({
-            modelId: v.modelId,
-            structId: v.structId
+          this.db.models.findFirstCheckExists({
+            where: and(
+              eq(modelsTable.structId, v.structId),
+              eq(modelsTable.modelId, v.modelId)
+            )
           })
       ),
       Result.andThrough(v =>

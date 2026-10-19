@@ -6,9 +6,9 @@ import { walkRecursive } from './walk-recursive/walk-recursive';
 export async function checkSymlinksInDir(item: {
   dir: string;
 }): Result.ResultAsync<void, DiskCheckSymlinksInDirError> {
-  let dirExists: boolean = await fse.pathExists(item.dir);
+  let isDirExist: boolean = await fse.pathExists(item.dir);
 
-  if (dirExists === false) {
+  if (isDirExist === false) {
     return Result.succeed();
   }
 

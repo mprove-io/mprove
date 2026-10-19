@@ -9,11 +9,13 @@ import {
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import type { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { DbService } from '#backend/services/db/db.service';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { SessionSseService } from '#backend/services/session/session-sse/session-sse.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -29,7 +31,7 @@ export class GetSessionEventsSseController {
   constructor(
     private redisService: RedisService,
     private sessionSseService: SessionSseService,
-    private sessionsService: SessionsService
+    private db: DbService
   ) {}
 
   @Sse(SSE_SESSION_EVENTS_PATH)
@@ -55,8 +57,8 @@ export class GetSessionEventsSseController {
     let sessionResult: Result.Result<
       SessionTab,
       GetSessionByIdCheckExistsError
-    > = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
+    > = await this.db.sessions.findFirstCheckExists({
+      where: eq(sessionsTable.sessionId, sessionId)
     });
 
     if (Result.isFailure(sessionResult)) {

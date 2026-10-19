@@ -1,19 +1,16 @@
-import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { format, fromUnixTime } from 'date-fns';
 import dayjs from 'dayjs';
 import { DateTime } from 'luxon';
 import pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix/node-format-ts-unix';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { DbService } from '#backend/services/db/db.service';
 import { makeTs } from '#backend/services/doc/make-ts/make-ts';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import {
@@ -24,8 +21,8 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { CalculateDataError } from '#common/types/backend/function-errors/calculate-data-error';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { MakeReportDataColumnsError } from '#common/types/backend/function-errors/make-report-data-columns-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { ReportDataColumn } from '#common/types/backend/parts/report/report-data-column';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
@@ -46,8 +43,7 @@ export class DocService implements OnModuleDestroy {
   private calcDb: pgPromise.IDatabase<unknown>;
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {
     this.pgp = pgPromise({ noWarnings: true });
 
@@ -343,22 +339,10 @@ FROM main;`;
       });
 
     if (newKits.length > 0) {
-      let persistenceResult: Result.Result<void, DbErrorToError> =
-        await dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: {
-                        kits: newKits
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+      let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        await this.db.write({
+          insert: {
+            kits: newKits
           }
         });
 

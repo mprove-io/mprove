@@ -1,8 +1,25 @@
-import type { MemberTabToEntError } from '#common/types/backend/function-errors/member-tab-to-ent-error';
-import type { OrgTabToEntError } from '#common/types/backend/function-errors/org-tab-to-ent-error';
-import type { ProjectTabToEntError } from '#common/types/backend/function-errors/project-tab-to-ent-error';
-import type { QueryTabToEntError } from '#common/types/backend/function-errors/query-tab-to-ent-error';
-import type { UserTabToEntError } from '#common/types/backend/function-errors/user-tab-to-ent-error';
+import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type MemberTabToEntError,
+  zMemberTabToEntError
+} from '#common/types/backend/function-errors/member-tab-to-ent-error';
+import {
+  type OrgTabToEntError,
+  zOrgTabToEntError
+} from '#common/types/backend/function-errors/org-tab-to-ent-error';
+import {
+  type ProjectTabToEntError,
+  zProjectTabToEntError
+} from '#common/types/backend/function-errors/project-tab-to-ent-error';
+import {
+  type QueryTabToEntError,
+  zQueryTabToEntError
+} from '#common/types/backend/function-errors/query-tab-to-ent-error';
+import {
+  type UserTabToEntError,
+  zUserTabToEntError
+} from '#common/types/backend/function-errors/user-tab-to-ent-error';
 
 export type TabsPackToEntsPackError =
   | MemberTabToEntError
@@ -10,3 +27,18 @@ export type TabsPackToEntsPackError =
   | ProjectTabToEntError
   | QueryTabToEntError
   | UserTabToEntError;
+
+export let zTabsPackToEntsPackError = z.union([
+  zMemberTabToEntError,
+  zOrgTabToEntError,
+  zProjectTabToEntError,
+  zQueryTabToEntError,
+  zUserTabToEntError
+]);
+
+assertTypesEqual<
+  TabsPackToEntsPackError,
+  z.infer<typeof zTabsPackToEntsPackError>
+>({
+  value: true
+});

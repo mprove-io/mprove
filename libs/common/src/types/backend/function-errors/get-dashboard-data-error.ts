@@ -5,10 +5,6 @@ import {
   zBackendGetDashboardFailError
 } from '#common/types/backend/errors/backend-get-dashboard-fail-error';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
-import {
   type GetDashboardXCheckExistsAndAccessError,
   zGetDashboardXCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
@@ -40,6 +36,10 @@ import {
   type RebuildStructError,
   zRebuildStructError
 } from '#common/types/backend/function-errors/rebuild-struct-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type GetDashboardDataError =
   | GetStructCheckExistsError
@@ -49,7 +49,7 @@ export type GetDashboardDataError =
   | RebuildStructError
   | BackendGetDashboardFailError
   | ProcessDashboardError
-  | DbErrorToError
+  | WriteError
   | GetDashboardXUsingDashboardTabError
   | GetModelPartXsError;
 
@@ -61,7 +61,7 @@ export const zGetDashboardDataError = z.union([
   zRebuildStructError,
   zBackendGetDashboardFailError,
   zProcessDashboardError,
-  zDbErrorToError,
+  zWriteError,
   zGetDashboardXUsingDashboardTabError,
   zGetModelPartXsError
 ]);

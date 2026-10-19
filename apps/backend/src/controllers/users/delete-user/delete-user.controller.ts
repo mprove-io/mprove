@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,27 +11,27 @@ import {
   ToBackendDeleteUserResponseDto
 } from '#backend/controllers/users/delete-user/delete-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  MemberTab,
+  OrgTab,
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
-import {
-  type MemberEnt,
-  membersTable
-} from '#backend/drizzle/postgres/schema/members';
-import type { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
+import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -55,7 +48,7 @@ export class DeleteUserController {
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendDeleteUser' satisfies ToBackendRoute)
@@ -76,56 +69,48 @@ export class DeleteUserController {
         this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
       Result.bind(
-        'ownerOrgEnts',
-        (v): Result.ResultAsync<OrgEnt[], never> =>
-          this.db.drizzle.query.orgsTable
-            .findMany({
-              where: eq(orgsTable.ownerId, v.user.userId)
-            })
-            .then(xs => Result.succeed(xs))
+        'ownerOrgs',
+        (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+          this.db.orgs.findMany({
+            where: eq(orgsTable.ownerId, v.user.userId)
+          })
       ),
       Result.andThrough(v =>
-        v.ownerOrgEnts.length > 0
+        v.ownerOrgs.length > 0
           ? Result.fail({
               code: 'BACKEND_USER_IS_ORG_OWNER',
               displayData: {
-                orgIds: v.ownerOrgEnts.map(orgEnt => orgEnt.orgId)
+                orgIds: v.ownerOrgs.map(org => org.orgId)
               }
             })
           : Result.succeed()
       ),
       Result.bind(
-        'userAdminMemberEnts',
-        (v): Result.ResultAsync<MemberEnt[], never> =>
-          this.db.drizzle.query.membersTable
-            .findMany({
-              where: and(
-                eq(membersTable.memberId, v.user.userId),
-                eq(membersTable.isAdmin, true)
-              )
-            })
-            .then(xs => Result.succeed(xs))
+        'userAdminMembers',
+        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+          this.db.members.findMany({
+            where: and(
+              eq(membersTable.memberId, v.user.userId),
+              eq(membersTable.isAdmin, true)
+            )
+          })
       ),
       Result.bind(
         'userAdminProjectIds',
         (v): Result.Result<string[], never> =>
-          Result.succeed(
-            v.userAdminMemberEnts.map(memberEnt => memberEnt.projectId)
-          )
+          Result.succeed(v.userAdminMembers.map(member => member.projectId))
       ),
       Result.bind(
-        'adminEnts',
-        async (v): Result.ResultAsync<MemberEnt[], never> =>
+        'admins',
+        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
           v.userAdminProjectIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.membersTable
-                .findMany({
-                  where: and(
-                    inArray(membersTable.projectId, v.userAdminProjectIds),
-                    eq(membersTable.isAdmin, true)
-                  )
-                })
-                .then(xs => Result.succeed(xs))
+            : this.db.members.findMany({
+                where: and(
+                  inArray(membersTable.projectId, v.userAdminProjectIds),
+                  eq(membersTable.isAdmin, true)
+                )
+              })
       ),
       Result.bind(
         'erProjectIds',
@@ -133,9 +118,8 @@ export class DeleteUserController {
           Result.succeed(
             v.userAdminProjectIds.filter(
               projectId =>
-                v.adminEnts.filter(
-                  memberEnt => memberEnt.projectId === projectId
-                ).length === 1
+                v.admins.filter(member => member.projectId === projectId)
+                  .length === 1
             )
           )
       ),
@@ -148,41 +132,33 @@ export class DeleteUserController {
           : Result.succeed()
       ),
       Result.bind(
-        'userMemberEnts',
-        (v): Result.ResultAsync<MemberEnt[], never> =>
-          this.db.drizzle.query.membersTable
-            .findMany({
-              where: eq(membersTable.memberId, v.user.userId)
-            })
-            .then(xs => Result.succeed(xs))
+        'userMembers',
+        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+          this.db.members.findMany({
+            where: eq(membersTable.memberId, v.user.userId)
+          })
       ),
       Result.bind(
         'projectIds',
         (v): Result.Result<string[], never> =>
-          Result.succeed(v.userMemberEnts.map(memberEnt => memberEnt.projectId))
+          Result.succeed(v.userMembers.map(member => member.projectId))
       ),
       Result.bind(
         'projects',
         async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.projectsTable
-                .findMany({
-                  where: inArray(projectsTable.projectId, v.projectIds)
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.projectEntToTab({ projectEnt: x })
-                  )
-                )
+            : this.db.projects.findMany({
+                where: inArray(projectsTable.projectId, v.projectIds)
+              })
       ),
       Result.andThrough(v =>
         customAsyncPool({
           poolSize: 1,
-          inputs: v.userMemberEnts,
-          callback: async memberEnt => {
+          inputs: v.userMembers,
+          callback: async (member: MemberTab) => {
             let project: ProjectTab = v.projects.find(
-              p => p.projectId === memberEnt.projectId
+              p => p.projectId === member.projectId
             );
 
             let baseProject: BaseProject =

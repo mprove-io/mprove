@@ -1,10 +1,6 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   ReportTab,
@@ -12,11 +8,11 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access/check-access';
+import { DbService } from '#backend/services/db/db.service';
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
 import { makeReportFiltersX } from '#backend/services/db/reports/make-report-filters-x/make-report-filters-x';
 import { HashService } from '#backend/services/hash/hash.service';
 import { SpaceService } from '#backend/services/space/space.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { UnitsService } from '#backend/services/units/units.service';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import {
@@ -54,14 +50,11 @@ export type ReportsCatalog = {
 @Injectable()
 export class ReportsService {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
     private favoritesService: FavoritesService,
     private spaceService: SpaceService,
     private unitsService: UnitsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async getReportsCatalog(item: {
@@ -77,24 +70,18 @@ export class ReportsService {
       Result.bind(
         'reports',
         (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
-          this.db.drizzle.query.reportsTable
-            .findMany({
-              where: and(
-                eq(reportsTable.structId, v.structId),
-                or(
-                  eq(reportsTable.draft, false),
-                  and(
-                    eq(reportsTable.draft, true),
-                    eq(reportsTable.creatorId, v.user.userId)
-                  )
+          this.db.reports.findMany({
+            where: and(
+              eq(reportsTable.structId, v.structId),
+              or(
+                eq(reportsTable.draft, false),
+                and(
+                  eq(reportsTable.draft, true),
+                  eq(reportsTable.creatorId, v.user.userId)
                 )
               )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.reportEntToTab({ reportEnt: x })
-              )
             )
+          })
       ),
       Result.bind(
         'draftReports',
@@ -448,19 +435,13 @@ export class ReportsService {
             return Result.succeed(emptyReport);
           }
 
-          return this.db.drizzle.query.reportsTable
-            .findFirst({
-              where: and(
-                eq(reportsTable.projectId, v.projectId),
-                eq(reportsTable.structId, v.structId),
-                eq(reportsTable.reportId, v.reportId)
-              )
-            })
-            .then(x =>
-              isUndefined(x)
-                ? Result.fail({ code: 'BACKEND_REPORT_NOT_FOUND' })
-                : this.tabService.reportEntToTab({ reportEnt: x })
-            );
+          return this.db.reports.findFirstCheckExists({
+            where: and(
+              eq(reportsTable.projectId, v.projectId),
+              eq(reportsTable.structId, v.structId),
+              eq(reportsTable.reportId, v.reportId)
+            )
+          });
         }
       ),
       Result.andThrough(v =>

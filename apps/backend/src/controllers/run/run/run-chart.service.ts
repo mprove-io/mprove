@@ -1,8 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MemberTab,
@@ -12,7 +10,7 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
-import { TabService } from '#backend/services/tab/tab.service';
+import { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
 import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
@@ -39,10 +37,7 @@ export type PrepareRunChartOutput = {
 
 @Injectable()
 export class RunChartService {
-  constructor(
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(private db: DbService) {}
 
   async prepareRunChart(item: {
     structId: string;
@@ -61,24 +56,16 @@ export class RunChartService {
       Result.bind(
         'charts',
         (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
-          this.db.drizzle.query.chartsTable
-            .findMany({ where: eq(chartsTable.structId, v.structId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.chartEntToTab({ chartEnt: x })
-              )
-            )
+          this.db.charts.findMany({
+            where: eq(chartsTable.structId, v.structId)
+          })
       ),
       Result.bind(
         'models',
         (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle.query.modelsTable
-            .findMany({ where: eq(modelsTable.structId, v.structId) })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.modelEntToTab({ modelEnt: x })
-              )
-            )
+          this.db.models.findMany({
+            where: eq(modelsTable.structId, v.structId)
+          })
       ),
       Result.bind(
         'chartsGrantedAccess',

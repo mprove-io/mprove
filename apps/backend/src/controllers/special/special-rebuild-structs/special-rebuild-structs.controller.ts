@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -18,24 +10,21 @@ import {
   ToBackendSpecialRebuildStructsResponseDto
 } from '#backend/controllers/special/special-rebuild-structs/special-rebuild-structs.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
+  BridgeTab,
   MemberTab,
   ProjectTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import {
   BlockmlService,
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
+import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -44,11 +33,13 @@ import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
 import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
+import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { BridgeItem } from '#common/types/backend/parts/special/bridge-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSpecialRebuildStructsOutput } from '#common/types/backend/routes/special/special-rebuild-structs/special-rebuild-structs-output';
@@ -84,8 +75,7 @@ export class SpecialRebuildStructsController {
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSpecialRebuildStructs' satisfies ToBackendRoute)
@@ -121,15 +111,9 @@ export class SpecialRebuildStructsController {
         async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
           v.userIds.length === 0
             ? Result.succeed([])
-            : this.db.drizzle.query.membersTable
-                .findMany({ where: inArray(membersTable.memberId, v.userIds) })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.memberEntToTab({
-                      memberEnt: x
-                    })
-                  )
-                )
+            : this.db.members.findMany({
+                where: inArray(membersTable.memberId, v.userIds)
+              })
       ),
       Result.bind(
         'projectIds',
@@ -139,26 +123,34 @@ export class SpecialRebuildStructsController {
       Result.bind(
         'projects',
         (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
-          (v.projectIds.length > 0
-            ? this.db.drizzle.query.projectsTable.findMany({
+          v.projectIds.length > 0
+            ? this.db.projects.findMany({
                 where: inArray(projectsTable.projectId, v.projectIds)
               })
-            : this.db.drizzle.select().from(projectsTable)
-          ).then(xs =>
-            Result.sequence(xs, x =>
-              this.tabService.projectEntToTab({ projectEnt: x })
-            )
-          )
+            : this.db.drizzle
+                .select()
+                .from(projectsTable)
+                .then(xs =>
+                  Result.sequence(xs, x =>
+                    this.tabService.projectEntToTab({ projectEnt: x })
+                  )
+                )
       ),
       Result.bind(
-        'bridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          (v.userIds.length > 0
-            ? this.db.drizzle.query.bridgesTable.findMany({
+        'bridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          v.userIds.length > 0
+            ? this.db.bridges.findMany({
                 where: inArray(bridgesTable.repoId, v.userIds)
               })
-            : this.db.drizzle.select().from(bridgesTable)
-          ).then(bridgeEnts => Result.succeed(bridgeEnts))
+            : this.db.drizzle
+                .select()
+                .from(bridgesTable)
+                .then(xs =>
+                  Result.sequence(xs, x =>
+                    this.tabService.bridgeEntToTab({ bridgeEnt: x })
+                  )
+                )
       ),
       Result.bind(
         'prepareRebuildPayload',
@@ -171,18 +163,16 @@ export class SpecialRebuildStructsController {
       ),
       Result.andThrough(v =>
         Result.sequence(
-          v.bridgeEnts,
+          v.bridges,
           async (
-            bridgeEnt
+            bridge: BridgeTab
           ): Result.ResultAsync<void, RebuildStructError | DbErrorToError> => {
             let project: ProjectTab = v.projects.find(
-              project => project.projectId === bridgeEnt.projectId
+              project => project.projectId === bridge.projectId
             );
 
             if (isUndefined(project)) {
-              v.prepareRebuildPayload.notFoundProjectIds.push(
-                bridgeEnt.projectId
-              );
+              v.prepareRebuildPayload.notFoundProjectIds.push(bridge.projectId);
 
               return Result.succeed();
             }
@@ -190,11 +180,11 @@ export class SpecialRebuildStructsController {
             let bridgeItem: BridgeItem = {
               orgId: project.orgId,
               projectId: project.projectId,
-              repoId: bridgeEnt.repoId,
-              branchId: bridgeEnt.branchId,
-              envId: bridgeEnt.envId,
-              structId: bridgeEnt.structId,
-              needValidate: bridgeEnt.needValidate
+              repoId: bridge.repoId,
+              branchId: bridge.branchId,
+              envId: bridge.envId,
+              structId: bridge.structId,
+              needValidate: bridge.needValidate
             };
 
             if (v.skipRebuild === false) {
@@ -209,8 +199,8 @@ export class SpecialRebuildStructsController {
                     baseProject: this.tabService.projectTabToBaseProject({
                       project: project
                     }),
-                    repoId: bridgeEnt.repoId,
-                    branch: bridgeEnt.branchId
+                    repoId: bridge.repoId,
+                    branch: bridge.branchId
                   }
                 }
               });
@@ -236,11 +226,11 @@ export class SpecialRebuildStructsController {
                 traceId: v.traceId,
                 orgId: project.orgId,
                 projectId: project.projectId,
-                repoId: bridgeEnt.repoId,
+                repoId: bridge.repoId,
                 structId: structId,
                 diskFiles: diskResult.value.files,
                 mproveDir: diskResult.value.mproveDir,
-                envId: bridgeEnt.envId,
+                envId: bridge.envId,
                 selectedGivens: [],
                 overrideTimezone: v.overrideTimezone
               });
@@ -249,36 +239,24 @@ export class SpecialRebuildStructsController {
                 return rebuildResult;
               }
 
-              bridgeEnt.structId = structId;
-              bridgeEnt.needValidate = false;
+              bridge.structId = structId;
+              bridge.needValidate = false;
             } else {
-              bridgeEnt.structId = EMPTY_STRUCT_ID;
-              bridgeEnt.needValidate = true;
+              bridge.structId = EMPTY_STRUCT_ID;
+              bridge.needValidate = true;
             }
 
-            let writeResult: Result.Result<void, DbErrorToError> =
-              await dbErrorToResult({
-                action: async () => {
-                  await retry(
-                    async () =>
-                      await this.db.drizzle.transaction(
-                        async tx =>
-                          await this.db.packer.writeUnwrap({
-                            tx: tx,
-                            insertOrUpdate: { bridges: [bridgeEnt] }
-                          })
-                      ),
-                    getRetryOption(this.cs, this.logger)
-                  );
-                }
+            let writeResult: Result.Result<PackerOutput, WriteError> =
+              await this.db.write({
+                insertOrUpdate: { bridges: [bridge] }
               });
 
             if (Result.isFailure(writeResult)) {
               return writeResult;
             }
 
-            bridgeItem.structId = bridgeEnt.structId;
-            bridgeItem.needValidate = bridgeEnt.needValidate;
+            bridgeItem.structId = bridge.structId;
+            bridgeItem.needValidate = bridge.needValidate;
 
             v.prepareRebuildPayload.successBridgeItems.push(bridgeItem);
 

@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
+  type BridgeEntToTabError,
+  zBridgeEntToTabError
+} from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
+import {
   type CheckProjectIsNotRestrictedError,
   zCheckProjectIsNotRestrictedError
 } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
@@ -8,10 +12,6 @@ import {
   type CheckRepoIdError,
   zCheckRepoIdError
 } from '#common/types/backend/function-errors/check-repo-id-error';
-import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
 import {
   type GetBranchCheckExistsError,
   zGetBranchCheckExistsError
@@ -44,8 +44,13 @@ import {
   type SendToDiskError,
   zSendToDiskError
 } from '#common/types/backend/function-errors/send-to-disk-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type ValidateFilesError =
+  | BridgeEntToTabError
   | CheckRepoIdError
   | GetProjectCheckExistsError
   | GetMemberCheckIsEditorError
@@ -54,11 +59,12 @@ export type ValidateFilesError =
   | GetEnvCheckExistsAndAccessError
   | SendToDiskError
   | RebuildStructError
-  | DbErrorToError
+  | WriteError
   | GetStructCheckExistsError
   | GetModelPartXsError;
 
 export let zValidateFilesError = z.union([
+  zBridgeEntToTabError,
   zCheckRepoIdError,
   zGetProjectCheckExistsError,
   zGetMemberCheckIsEditorError,
@@ -67,7 +73,7 @@ export let zValidateFilesError = z.union([
   zGetEnvCheckExistsAndAccessError,
   zSendToDiskError,
   zRebuildStructError,
-  zDbErrorToError,
+  zWriteError,
   zGetStructCheckExistsError,
   zGetModelPartXsError
 ]);

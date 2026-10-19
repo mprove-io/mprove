@@ -1,9 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
+import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   DashboardTab,
@@ -12,8 +11,10 @@ import type {
   ReportTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
@@ -34,7 +35,7 @@ export class ParentService {
     private reportsService: ReportsService,
     private modelsService: ModelsService,
     private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   async checkParentAccess(item: {
@@ -159,9 +160,11 @@ export class ParentService {
         'chartModel',
         async (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
           v.parentType === 'Chart'
-            ? this.modelsService.getModelCheckExists({
-                structId: v.structId,
-                modelId: v.chart.modelId
+            ? this.db.models.findFirstCheckExists({
+                where: and(
+                  eq(modelsTable.structId, v.structId),
+                  eq(modelsTable.modelId, v.chart.modelId)
+                )
               })
             : Result.succeed(undefined)
       ),

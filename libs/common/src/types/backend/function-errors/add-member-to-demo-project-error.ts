@@ -1,9 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DbErrorToError,
-  zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
+  type BranchEntToTabError,
+  zBranchEntToTabError
+} from '#common/types/backend/function-errors/branch-ent-to-tab-error';
+import {
+  type BridgeEntToTabError,
+  zBridgeEntToTabError
+} from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import {
   type MemberEntToTabError,
   zMemberEntToTabError
@@ -13,27 +17,35 @@ import {
   zProjectEntToTabError
 } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import {
-  type RebuildStructError,
-  zRebuildStructError
-} from '#common/types/backend/function-errors/rebuild-struct-error';
+  type RebuildBranchBridgesError,
+  zRebuildBranchBridgesError
+} from '#common/types/backend/function-errors/rebuild-branch-bridges-error';
 import {
   type SendToDiskError,
   zSendToDiskError
 } from '#common/types/backend/function-errors/send-to-disk-error';
+import {
+  type WriteError,
+  zWriteError
+} from '#common/types/backend/function-errors/write-error';
 
 export type AddMemberToDemoProjectError =
+  | BranchEntToTabError
+  | BridgeEntToTabError
   | ProjectEntToTabError
   | MemberEntToTabError
   | SendToDiskError
-  | RebuildStructError
-  | DbErrorToError;
+  | RebuildBranchBridgesError
+  | WriteError;
 
 export const zAddMemberToDemoProjectError = z.union([
+  zBranchEntToTabError,
+  zBridgeEntToTabError,
   zProjectEntToTabError,
   zMemberEntToTabError,
   zSendToDiskError,
-  zRebuildStructError,
-  zDbErrorToError
+  zRebuildBranchBridgesError,
+  zWriteError
 ]);
 
 assertTypesEqual<

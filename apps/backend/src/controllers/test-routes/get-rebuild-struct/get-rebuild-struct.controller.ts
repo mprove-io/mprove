@@ -1,26 +1,27 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendGetRebuildStructRequestDto,
   ToBackendGetRebuildStructResponseDto
 } from '#backend/controllers/test-routes/get-rebuild-struct/get-rebuild-struct.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
+import { DbService } from '#backend/services/db/db.service';
 import {
   EnvsService,
   type GetApiEnvConnectionsWithFallbackOutput
 } from '#backend/services/db/envs/envs.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -45,10 +46,9 @@ export class GetRebuildStructController {
   constructor(
     private tabService: TabService,
     private rpcService: RpcService,
-    private projectsService: ProjectsService,
     private envsService: EnvsService,
     private connectionsService: ConnectionsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetRebuildStruct' satisfies ToBackendRoute)
@@ -81,8 +81,8 @@ export class GetRebuildStructController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(

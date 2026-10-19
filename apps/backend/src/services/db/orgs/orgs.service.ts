@@ -1,36 +1,20 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
-import { eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { type OrgEnt, orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
-import { HashService } from '#backend/services/hash/hash.service';
+import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { AddOrgError } from '#common/types/backend/function-errors/add-org-error';
 import type { CheckUserIsOrgOwnerError } from '#common/types/backend/function-errors/check-user-is-org-owner-error';
-import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 import type { Org } from '#common/types/backend/parts/org';
 import type { OrgsItem } from '#common/types/backend/parts/orgs-item';
 
 @Injectable()
 export class OrgsService {
   constructor(
-    private tabService: TabService,
-    private hashService: HashService,
     private rpcService: RpcService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   tabToApi(item: { org: OrgTab }): Org {
@@ -56,22 +40,6 @@ export class OrgsService {
     };
 
     return apiOrgsItem;
-  }
-
-  async getOrgCheckExists(item: {
-    orgId: string;
-  }): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> {
-    let { orgId } = item;
-
-    return this.db.drizzle.query.orgsTable
-      .findFirst({
-        where: eq(orgsTable.orgId, orgId)
-      })
-      .then((x: OrgEnt) =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_ORG_DOES_NOT_EXIST' })
-          : this.tabService.orgEntToTab({ orgEnt: x })
-      );
   }
 
   checkUserIsOrgOwner(item: {
@@ -154,23 +122,7 @@ export class OrgsService {
           }
         })
       ),
-      Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insert: { orgs: [v.org] }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
-          }
-        })
-      ),
+      Result.andThrough(v => this.db.write({ insert: { orgs: [v.org] } })),
       Result.map((v): OrgTab => v.org)
     );
   }

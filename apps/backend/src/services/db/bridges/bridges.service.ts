@@ -1,25 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
-import { ServerError } from '#common/classes/server-error/server-error';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import { EMPTY_STRUCT_ID } from '#common/constants/top';
+import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
+import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
 
 @Injectable()
 export class BridgesService {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   makeBridge(item: {
@@ -52,45 +46,35 @@ export class BridgesService {
     return bridge;
   }
 
-  async getBridgeCheckExistsUnwrap(item: {
+  async getBranchBridgesForRebuild(item: {
     projectId: string;
     repoId: string;
     branchId: string;
     envId: string;
-  }): Promise<BridgeTab> {
-    let result: Result.Result<BridgeTab, GetBridgeCheckExistsError> =
-      await this.getBridgeCheckExists(item);
+  }): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> {
+    return Result.pipe(
+      Result.succeed(item),
+      Result.bind(
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.projectId),
+              eq(bridgesTable.repoId, v.repoId),
+              eq(bridgesTable.branchId, v.branchId)
+            )
+          })
+      ),
+      Result.map((v): BridgeTab[] => {
+        v.branchBridges.forEach(bridge => {
+          if (bridge.envId !== v.envId) {
+            bridge.structId = EMPTY_STRUCT_ID;
+            bridge.needValidate = true;
+          }
+        });
 
-    if (Result.isFailure(result)) {
-      throw new ServerError({ message: result.error.code });
-    }
-
-    let bridge: BridgeTab = result.value;
-
-    return bridge;
-  }
-
-  async getBridgeCheckExists(item: {
-    projectId: string;
-    repoId: string;
-    branchId: string;
-    envId: string;
-  }): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> {
-    let { projectId, repoId, branchId, envId } = item;
-
-    return this.db.drizzle.query.bridgesTable
-      .findFirst({
-        where: and(
-          eq(bridgesTable.projectId, projectId),
-          eq(bridgesTable.repoId, repoId),
-          eq(bridgesTable.branchId, branchId),
-          eq(bridgesTable.envId, envId)
-        )
+        return v.branchBridges;
       })
-      .then((x: BridgeEnt) =>
-        isUndefined(x)
-          ? Result.fail({ code: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST' })
-          : this.tabService.bridgeEntToTab({ bridgeEnt: x })
-      );
+    );
   }
 }

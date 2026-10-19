@@ -1,6 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendGetGivensRequestDto,
   ToBackendGetGivensResponseDto
@@ -10,10 +11,11 @@ import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
@@ -26,9 +28,9 @@ import type { ToBackendGetGivensOutput } from '#common/types/backend/routes/give
 @Controller()
 export class GetGivensController {
   constructor(
-    private projectsService: ProjectsService,
     private membersService: MembersService,
-    private givensService: GivensService
+    private givensService: GivensService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetGivens' satisfies ToBackendRoute)
@@ -49,8 +51,8 @@ export class GetGivensController {
         user: user
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(

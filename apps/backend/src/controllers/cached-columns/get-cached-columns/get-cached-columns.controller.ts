@@ -1,27 +1,26 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import { inArray } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import {
   ToBackendGetCachedColumnsRequestDto,
   ToBackendGetCachedColumnsResponseDto
 } from '#backend/controllers/cached-columns/get-cached-columns/get-cached-columns.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   CachedColumnTab,
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service.js';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
@@ -37,12 +36,10 @@ import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/rout
 export class GetCachedColumnsController {
   constructor(
     private cachedColumnService: CachedColumnService,
-    private projectsService: ProjectsService,
     private membersService: MembersService,
     private hashService: HashService,
-    private tabService: TabService,
     private envsService: EnvsService,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendGetCachedColumns' satisfies ToBackendRoute)
@@ -63,8 +60,8 @@ export class GetCachedColumnsController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.projectsService.getProjectCheckExists({
-          projectId: v.projectId
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
         })
       ),
       Result.bind(
@@ -114,20 +111,12 @@ export class GetCachedColumnsController {
           v
         ): Result.ResultAsync<CachedColumnTab[], CachedColumnEntToTabError> =>
           v.cachedColumnFullIds.length > 0
-            ? this.db.drizzle.query.cachedColumnsTable
-                .findMany({
-                  where: inArray(
-                    cachedColumnsTable.cachedColumnFullId,
-                    v.cachedColumnFullIds
-                  )
-                })
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.cachedColumnEntToTab({
-                      cachedColumnEnt: x
-                    })
-                  )
+            ? this.db.cachedColumns.findMany({
+                where: inArray(
+                  cachedColumnsTable.cachedColumnFullId,
+                  v.cachedColumnFullIds
                 )
+              })
             : Result.succeed([])
       ),
       Result.map(

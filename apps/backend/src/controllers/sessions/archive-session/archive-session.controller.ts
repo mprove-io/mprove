@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendArchiveSessionRequestDto,
   ToBackendArchiveSessionResponseDto
@@ -12,9 +13,10 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { DbService } from '#backend/services/db/db.service';
 import { SessionArchiveService } from '#backend/services/session/session-archive/session-archive.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -22,7 +24,6 @@ import type { ArchiveSessionError } from '#common/types/backend/function-errors/
 import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
-
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendArchiveSessionOutput } from '#common/types/backend/routes/sessions/archive-session/archive-session-output';
 
@@ -32,9 +33,8 @@ import type { ToBackendArchiveSessionOutput } from '#common/types/backend/routes
 @Controller()
 export class ArchiveSessionController {
   constructor(
-    private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
-    private sessionArchiveService: SessionArchiveService
+    private sessionArchiveService: SessionArchiveService,
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendArchiveSession' satisfies ToBackendRoute)
@@ -54,8 +54,8 @@ export class ArchiveSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>
@@ -71,8 +71,8 @@ export class ArchiveSessionController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.session.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.session.projectId)
           })
       ),
       Result.bind(

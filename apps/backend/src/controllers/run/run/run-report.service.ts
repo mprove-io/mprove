@@ -1,8 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   ReportTab,
@@ -11,7 +9,7 @@ import type {
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
-import { TabService } from '#backend/services/tab/tab.service';
+import { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { PrepareRunReportError } from '#common/types/backend/function-errors/prepare-run-report-error';
@@ -43,10 +41,7 @@ export type PrepareRunReportOutput = {
 
 @Injectable()
 export class RunReportService {
-  constructor(
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(private db: DbService) {}
 
   async prepareRunReport(item: {
     structId: string;
@@ -66,21 +61,15 @@ export class RunReportService {
       Result.bind(
         'reports',
         (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
-          this.db.drizzle.query.reportsTable
-            .findMany({
-              where: and(
-                eq(reportsTable.structId, v.structId),
-                or(
-                  eq(reportsTable.draft, false),
-                  eq(reportsTable.creatorId, v.user.userId)
-                )
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.reportEntToTab({ reportEnt: x })
+          this.db.reports.findMany({
+            where: and(
+              eq(reportsTable.structId, v.structId),
+              or(
+                eq(reportsTable.draft, false),
+                eq(reportsTable.creatorId, v.user.userId)
               )
             )
+          })
       ),
       Result.bind(
         'reportsGrantedAccess',

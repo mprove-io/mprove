@@ -1,24 +1,13 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
-import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendPushRepoRequestDto,
   ToBackendPushRepoResponseDto
 } from '#backend/controllers/repos/push-repo/push-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -27,16 +16,9 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type BranchEnt,
-  branchesTable
-} from '#backend/drizzle/postgres/schema/branches';
-import {
-  type BridgeEnt,
-  bridgesTable
-} from '#backend/drizzle/postgres/schema/bridges';
-import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import {
   BlockmlService,
@@ -44,6 +26,7 @@ import {
 } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -92,9 +75,7 @@ export class PushRepoController {
     private bridgesService: BridgesService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendPushRepo' satisfies ToBackendRoute)
@@ -129,8 +110,8 @@ export class PushRepoController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
@@ -151,10 +132,12 @@ export class PushRepoController {
       Result.bind(
         'branch',
         (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
-          this.branchesService.getBranchCheckExists({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId
+          this.db.branches.findFirstCheckExists({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, v.repoId),
+              eq(branchesTable.branchId, v.branchId)
+            )
           })
       ),
       Result.andThrough(v =>
@@ -183,51 +166,37 @@ export class PushRepoController {
           })
       ),
       Result.bind(
-        'branchBridgeEnts',
-        (v): Result.ResultAsync<BridgeEnt[], never> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.branch.projectId),
-                eq(bridgesTable.repoId, v.branch.repoId),
-                eq(bridgesTable.branchId, v.branch.branchId)
-              )
-            })
-            .then(branchBridgeEnts => Result.succeed(branchBridgeEnts))
+        'branchBridges',
+        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, v.branch.repoId),
+              eq(bridgesTable.branchId, v.branch.branchId)
+            )
+          })
       ),
       Result.bind(
         'prodBranch',
         (v): Result.ResultAsync<BranchTab, BranchEntToTabError> =>
-          this.db.drizzle.query.branchesTable
-            .findFirst({
-              where: and(
-                eq(branchesTable.projectId, v.projectId),
-                eq(branchesTable.repoId, PROD_REPO_ID),
-                eq(branchesTable.branchId, v.branchId)
-              )
-            })
-            .then((x: BranchEnt) =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.branchEntToTab({ branchEnt: x })
+          this.db.branches.findFirst({
+            where: and(
+              eq(branchesTable.projectId, v.projectId),
+              eq(branchesTable.repoId, PROD_REPO_ID),
+              eq(branchesTable.branchId, v.branchId)
             )
+          })
       ),
       Result.bind(
         'prodBranchBridges',
         (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
-          this.db.drizzle.query.bridgesTable
-            .findMany({
-              where: and(
-                eq(bridgesTable.projectId, v.branch.projectId),
-                eq(bridgesTable.repoId, PROD_REPO_ID),
-                eq(bridgesTable.branchId, v.branch.branchId)
-              )
-            })
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.bridgeEntToTab({ bridgeEnt: x })
-              )
+          this.db.bridges.findMany({
+            where: and(
+              eq(bridgesTable.projectId, v.branch.projectId),
+              eq(bridgesTable.repoId, PROD_REPO_ID),
+              eq(bridgesTable.branchId, v.branch.branchId)
             )
+          })
       ),
       Result.bind('productionBranch', (v): Result.Result<BranchTab, never> => {
         let productionBranch: BranchTab = v.prodBranch;
@@ -239,12 +208,12 @@ export class PushRepoController {
             branchId: v.branchId
           });
 
-          v.branchBridgeEnts.forEach(bridgeEnt => {
+          v.branchBridges.forEach(bridge => {
             let prodBranchBridge: BridgeTab = this.bridgesService.makeBridge({
               projectId: v.branch.projectId,
               repoId: PROD_REPO_ID,
               branchId: v.branch.branchId,
-              envId: bridgeEnt.envId,
+              envId: bridge.envId,
               structId: EMPTY_STRUCT_ID,
               needValidate: true
             });
@@ -294,37 +263,25 @@ export class PushRepoController {
         )
       ),
       Result.andThrough(v =>
-        dbErrorToResult({
-          action: async () => {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(
-                  async tx =>
-                    await this.db.packer.writeUnwrap({
-                      tx: tx,
-                      insertOrUpdate: {
-                        branches: [v.productionBranch],
-                        bridges: [...v.prodBranchBridges]
-                      }
-                    })
-                ),
-              getRetryOption(this.cs, this.logger)
-            );
+        this.db.write({
+          insertOrUpdate: {
+            branches: [v.productionBranch],
+            bridges: [...v.prodBranchBridges]
           }
         })
       ),
       Result.bind(
-        'currentBridgeEnt',
-        (v): Result.Result<BridgeEnt, never> =>
+        'currentBridge',
+        (v): Result.Result<BridgeTab, never> =>
           Result.succeed(
-            v.branchBridgeEnts.find(bridgeEnt => bridgeEnt.envId === v.envId)
+            v.branchBridges.find(bridge => bridge.envId === v.envId)
           )
       ),
       Result.bind(
         'struct',
         (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
           this.structsService.getStructCheckExists({
-            structId: v.currentBridgeEnt.structId,
+            structId: v.currentBridge.structId,
             projectId: v.projectId
           })
       ),
@@ -345,7 +302,7 @@ export class PushRepoController {
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),
-          needValidate: v.currentBridgeEnt.needValidate
+          needValidate: v.currentBridge.needValidate
         })
       )
     );

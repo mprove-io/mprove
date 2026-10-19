@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,7 +11,6 @@ import {
   ToBackendDeleteSessionResponseDto
 } from '#backend/controllers/sessions/delete-session/delete-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProjectTab,
   SessionTab,
@@ -32,13 +24,14 @@ import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
@@ -63,8 +56,6 @@ import type { ToBackendDeleteSessionOutput } from '#common/types/backend/routes/
 @Controller()
 export class DeleteSessionController {
   constructor(
-    private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
     private editorSandboxService: EditorSandboxService,
     private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
@@ -73,7 +64,7 @@ export class DeleteSessionController {
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendDeleteSession' satisfies ToBackendRoute)
@@ -97,8 +88,8 @@ export class DeleteSessionController {
       Result.bind(
         'session',
         (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
-          this.sessionsService.getSessionByIdCheckExists({
-            sessionId: v.sessionId
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.andThrough(v =>
@@ -109,8 +100,8 @@ export class DeleteSessionController {
       Result.bind(
         'project',
         (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
-          this.projectsService.getProjectCheckExists({
-            projectId: v.session.projectId
+          this.db.projects.findFirstCheckExists({
+            where: eq(projectsTable.projectId, v.session.projectId)
           })
       ),
       Result.bind(
@@ -158,8 +149,8 @@ export class DeleteSessionController {
             v
           ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
             v.session.type === 'Editor'
-              ? this.sessionsService.getSessionByIdCheckExists({
-                  sessionId: v.session.sessionId
+              ? this.db.sessions.findFirstCheckExists({
+                  where: eq(sessionsTable.sessionId, v.session.sessionId)
                 })
               : Result.succeed(v.session)
         ),
@@ -203,15 +194,11 @@ export class DeleteSessionController {
         Result.andThrough(v =>
           dbErrorToResult({
             action: async () => {
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.writeUnwrap({
-                    tx: tx,
-                    insertOrUpdate: {
-                      sessions: [v.updatedSession]
-                    }
-                  })
-              );
+              await this.db.writeUnwrap({
+                insertOrUpdate: {
+                  sessions: [v.updatedSession]
+                }
+              });
             }
           })
         ),

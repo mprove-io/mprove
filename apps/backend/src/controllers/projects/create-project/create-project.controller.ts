@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  UseGuards
-} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -17,31 +10,24 @@ import {
   ToBackendCreateProjectResponseDto
 } from '#backend/controllers/projects/create-project/create-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   NoteTab,
   OrgTab,
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import {
-  type NoteEnt,
-  notesTable
-} from '#backend/drizzle/postgres/schema/notes';
-import {
-  type ProjectEnt,
-  projectsTable
-} from '#backend/drizzle/postgres/schema/projects';
+import { notesTable } from '#backend/drizzle/postgres/schema/notes';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendNoteDoesNotExistError } from '#common/types/backend/errors/backend-note-does-not-exist-error';
 import type { AddProjectError } from '#common/types/backend/function-errors/add-project-error';
@@ -59,14 +45,12 @@ import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/
 @Controller()
 export class CreateProjectController {
   constructor(
-    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
-    private logger: Logger,
     private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateProject' satisfies ToBackendRoute)
@@ -94,7 +78,9 @@ export class CreateProjectController {
       Result.bind(
         'org',
         (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
-          this.orgsService.getOrgCheckExists({ orgId: v.orgId })
+          this.db.orgs.findFirstCheckExists({
+            where: eq(orgsTable.orgId, v.orgId)
+          })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -126,20 +112,12 @@ export class CreateProjectController {
       Result.bind(
         'existingProject',
         (v): Result.ResultAsync<ProjectTab, ProjectEntToTabError> =>
-          this.db.drizzle.query.projectsTable
-            .findFirst({
-              where: and(
-                eq(projectsTable.orgId, v.orgId),
-                eq(projectsTable.nameHash, v.nameHash)
-              )
-            })
-            .then((x: ProjectEnt) =>
-              isUndefined(x)
-                ? Result.succeed(undefined)
-                : this.tabService.projectEntToTab({
-                    projectEnt: x
-                  })
+          this.db.projects.findFirst({
+            where: and(
+              eq(projectsTable.orgId, v.orgId),
+              eq(projectsTable.nameHash, v.nameHash)
             )
+          })
       ),
       Result.andThrough(v =>
         isDefined(v.existingProject)
@@ -156,17 +134,9 @@ export class CreateProjectController {
         > =>
           v.remoteType !== 'GitClone'
             ? Result.succeed(undefined)
-            : this.db.drizzle.query.notesTable
-                .findFirst({
-                  where: eq(notesTable.noteId, v.noteId)
-                })
-                .then((x: NoteEnt) =>
-                  isUndefined(x)
-                    ? Result.fail({ code: 'BACKEND_NOTE_DOES_NOT_EXIST' })
-                    : this.tabService.noteEntToTab({
-                        noteEnt: x
-                      })
-                )
+            : this.db.notes.findFirstCheckExists({
+                where: eq(notesTable.noteId, v.noteId)
+              })
       ),
       Result.bind(
         'newProject',
