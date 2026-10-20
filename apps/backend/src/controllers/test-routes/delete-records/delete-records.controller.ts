@@ -54,7 +54,6 @@ import type { DbStructsFindManyError } from '#common/types/backend/function-erro
 import type { DbUsersFindFirstError } from '#common/types/backend/function-errors/db/users/db-users-find-first-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRecordsOutput } from '#common/types/backend/routes/test-routes/delete-records/delete-records-output';
 import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
@@ -179,7 +178,10 @@ export class DeleteRecordsController {
         'matchingUserIds',
         async (
           v
-        ): Result.ResultAsync<string[], MakeHashError | UserEntToTabError> =>
+        ): Result.ResultAsync<
+          string[],
+          MakeHashError | DbUsersFindFirstError
+        > =>
           v.emails.length === 0
             ? Result.succeed([])
             : customAsyncPool({
@@ -189,7 +191,7 @@ export class DeleteRecordsController {
                   email: string
                 ): Result.ResultAsync<
                   string,
-                  MakeHashError | UserEntToTabError
+                  MakeHashError | DbUsersFindFirstError
                 > => {
                   let emailHashResult: Result.Result<string, MakeHashError> =
                     this.hashService.makeHash({
