@@ -721,16 +721,14 @@ when their bodies contain no `await`. Expression-bodied arrow functions
 
 Otherwise, do not add `async` to callbacks solely because they return a promise
 when no `ts(80006)` suggestion applies. Expression-bodied Result combinator
-callbacks may directly return a promise chain with an explicit
-`Result.ResultAsync<Success, Error>` return type and no `async`. Use `async`
-when the callback needs `await`; keep synchronous `.then(...)` conversion
-callbacks non-async.
+callbacks may directly return a promise chain without `async`. Pipe-step return
+annotations follow "Result callback return types". Use `async` when the callback
+needs `await`; keep synchronous `.then(...)` conversion callbacks non-async.
 
 When a Result callback must return a promise but has a synchronous fallback
 branch, make the enclosing callback `async` and return `Result.succeed(...)`
 directly from that branch instead of `Promise.resolve(Result.succeed(...))`.
-Retain its explicit `Result.ResultAsync<Success, Error>` return type and keep
-query `.then(...)` conversion chains intact.
+Keep query `.then(...)` conversion chains intact.
 
 Keeping `async` on functions and methods also preserves conversion of
 synchronous exceptions in the outer body to promise rejections. Direct returns
@@ -1127,38 +1125,28 @@ Meaningful numeric names such as `keyBase64` are allowed.
 
 ### Result callback return types
 
-Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
-`Result.Result<Success, Error>` or `Result.ResultAsync<Success, Error>` return
-type, matching whether the callback returns a synchronous Result or a promise.
+Do not annotate return types on inline callbacks passed to Result combinators as
+`Result.pipe` steps, including `Result.bind`, `Result.andThen`, `Result.map`,
+and `Result.andThrough`. Infer step outputs from the returned expressions.
+Parameter annotations follow "Pipe step argument types".
 
-Use named handwritten types for object-shaped callback success values, including
-array elements, rather than inline object types. Keep local types in the same
-file unless shared. Type reuse and intermediate naming follow "Singular and
-plural names"; final projection contracts follow "Function return types".
-Function parameter types still follow "Function and method args".
+Do not introduce types solely to annotate pipe steps. Keep explicit return
+contracts on enclosing functions and methods where otherwise required; final
+projection contracts follow "Function return types".
 
 ```ts
-Result.bind(
-  'manifest',
-  (v): Result.Result<Manifest, ComposerError> =>
-    loadManifest({
-      manifestPath: v.manifestPath
-    })
+Result.bind('manifest', v =>
+  loadManifest({
+    manifestPath: v.manifestPath
+  })
 );
 ```
 
 ```ts
-Result.andThen(
-  (v): Result.Result<Something, DoSomethingError> => doSomething(v)
-);
+Result.andThen(v => doSomething({ projectId: v.projectId }));
 ```
 
-Callbacks passed to `Result.map` must declare an explicit success-value return
-type.
-
-Exception: synchronous in-place mutation callbacks described in "Byethrow
-function selection" may infer their return type. Do not introduce a state type
-solely to annotate them.
+Synchronous in-place mutation callbacks follow "Byethrow function selection".
 
 ```ts
 Result.map(v => {
@@ -1176,15 +1164,11 @@ followed by `return payload`. Intermediate operations follow "Pipe step
 granularity".
 
 ```ts
-Result.map(
-  (v): SomeType => ({
-    modelId: v.modelId,
-    name: v.name
-  })
-);
+Result.map(v => ({
+  modelId: v.modelId,
+  name: v.name
+}));
 ```
-
-Callbacks passed to `Result.andThrough` do not require an explicit return type.
 
 ### Combine lookup and conversion
 
@@ -1199,18 +1183,16 @@ The outer callback follows "Async promise chains". Conversion callback names
 follow the exception under "Entity and Tab variable names".
 
 ```ts
-Result.bind(
-  'avatar',
-  (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
-    this.db.drizzle.query.avatarsTable
-      .findFirst({
-        where: eq(avatarsTable.userId, v.avatarUserId)
-      })
-      .then((x: AvatarEnt) =>
-        isUndefined(x)
-          ? Result.succeed(undefined)
-          : this.tabService.avatarEntToTabResult({ avatarEnt: x })
-      )
+Result.bind('avatar', v =>
+  this.db.drizzle.query.avatarsTable
+    .findFirst({
+      where: eq(avatarsTable.userId, v.avatarUserId)
+    })
+    .then((x: AvatarEnt) =>
+      isUndefined(x)
+        ? Result.succeed(undefined)
+        : this.tabService.avatarEntToTabResult({ avatarEnt: x })
+    )
 );
 ```
 
@@ -1396,9 +1378,7 @@ return Result.pipe(
     orgId: item.orgId,
     projectId: item.projectId
   }),
-  Result.andThen(
-    (v): Result.Result<Something, DoSomethingError> => doSomething(v)
-  )
+  Result.andThen(v => doSomething({ orgId: v.orgId, projectId: v.projectId }))
 );
 ```
 
@@ -1422,12 +1402,11 @@ return Result.pipe(
     projectId: body.input.projectId,
     userId: user.userId
   }),
-  Result.andThen(
-    (v): Result.Result<Something, DoSomethingError> =>
-      this.someService.doSomething({
-        projectId: v.projectId,
-        userId: v.userId
-      })
+  Result.andThen(v =>
+    this.someService.doSomething({
+      projectId: v.projectId,
+      userId: v.userId
+    })
   )
 );
 ```
@@ -1445,8 +1424,8 @@ callback.
 - Bind a value once when multiple later steps use it, rather than repeating a
   lookup or transformation. Keep the binding at the original first-use point.
 - For infallible named intermediate values, use `Result.bind` with
-  `Result.succeed` and an explicit `Result.Result<Value, never>` callback return
-  type. Do not manually rebuild the full pipeline state just to add a property.
+  `Result.succeed`. Do not manually rebuild the full pipeline state just to add
+  a property.
 
 Do not add steps merely for every expression or trivial one-off output field.
 Keep lookup/conversion together as specified by "Combine lookup and conversion",
@@ -1460,12 +1439,8 @@ or retry into pipeline steps, introduce new existence failures, or move
 post-persistence selection before persistence.
 
 ```ts
-Result.bind(
-  'projectIds',
-  (v): Result.Result<string[], never> =>
-    Result.succeed(
-      v.userMemberEnts.map(userMemberEnt => userMemberEnt.projectId)
-    )
+Result.bind('projectIds', v =>
+  Result.succeed(v.userMemberEnts.map(userMemberEnt => userMemberEnt.projectId))
 );
 ```
 

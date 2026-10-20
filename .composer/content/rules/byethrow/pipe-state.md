@@ -53,9 +53,7 @@ return Result.pipe(
     orgId: item.orgId,
     projectId: item.projectId
   }),
-  Result.andThen(
-    (v): Result.Result<Something, DoSomethingError> => doSomething(v)
-  )
+  Result.andThen(v => doSomething({ orgId: v.orgId, projectId: v.projectId }))
 );
 ```
 
@@ -79,12 +77,11 @@ return Result.pipe(
     projectId: body.input.projectId,
     userId: user.userId
   }),
-  Result.andThen(
-    (v): Result.Result<Something, DoSomethingError> =>
-      this.someService.doSomething({
-        projectId: v.projectId,
-        userId: v.userId
-      })
+  Result.andThen(v =>
+    this.someService.doSomething({
+      projectId: v.projectId,
+      userId: v.userId
+    })
   )
 );
 ```

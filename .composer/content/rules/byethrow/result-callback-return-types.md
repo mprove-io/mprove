@@ -1,37 +1,27 @@
 # Result callback return types
 
-Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
-`Result.Result<Success, Error>` or `Result.ResultAsync<Success, Error>` return
-type, matching whether the callback returns a synchronous Result or a promise.
+Do not annotate return types on inline callbacks passed to Result combinators as
+`Result.pipe` steps, including `Result.bind`, `Result.andThen`, `Result.map`,
+and `Result.andThrough`. Infer step outputs from the returned expressions.
+Parameter annotations follow "Pipe step argument types".
 
-Use named handwritten types for object-shaped callback success values, including
-array elements, rather than inline object types. Keep local types in the same
-file unless shared. Type reuse and intermediate naming follow "Singular and
-plural names"; final projection contracts follow "Function return types".
-Function parameter types still follow "Function and method args".
+Do not introduce types solely to annotate pipe steps. Keep explicit return
+contracts on enclosing functions and methods where otherwise required; final
+projection contracts follow "Function return types".
 
 ```ts
-Result.bind(
-  'manifest',
-  (v): Result.Result<Manifest, ComposerError> =>
-    loadManifest({
-      manifestPath: v.manifestPath
-    })
+Result.bind('manifest', v =>
+  loadManifest({
+    manifestPath: v.manifestPath
+  })
 );
 ```
 
 ```ts
-Result.andThen(
-  (v): Result.Result<Something, DoSomethingError> => doSomething(v)
-);
+Result.andThen(v => doSomething({ projectId: v.projectId }));
 ```
 
-Callbacks passed to `Result.map` must declare an explicit success-value return
-type.
-
-Exception: synchronous in-place mutation callbacks described in "Byethrow
-function selection" may infer their return type. Do not introduce a state type
-solely to annotate them.
+Synchronous in-place mutation callbacks follow "Byethrow function selection".
 
 ```ts
 Result.map(v => {
@@ -49,12 +39,8 @@ followed by `return payload`. Intermediate operations follow "Pipe step
 granularity".
 
 ```ts
-Result.map(
-  (v): SomeType => ({
-    modelId: v.modelId,
-    name: v.name
-  })
-);
+Result.map(v => ({
+  modelId: v.modelId,
+  name: v.name
+}));
 ```
-
-Callbacks passed to `Result.andThrough` do not require an explicit return type.

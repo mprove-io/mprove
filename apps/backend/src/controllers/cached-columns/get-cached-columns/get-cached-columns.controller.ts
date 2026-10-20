@@ -9,7 +9,6 @@ import {
 } from '#backend/controllers/cached-columns/get-cached-columns/get-cached-columns.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  CachedColumnTab,
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -23,7 +22,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbCachedColumnsFindManyError } from '#common/types/backend/function-errors/db/cached-columns/db-cached-columns-find-many-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -105,22 +103,15 @@ export class GetCachedColumnsController {
             )
           )
       ),
-      Result.bind(
-        'cachedColumns',
-        async (
-          v
-        ): Result.ResultAsync<
-          CachedColumnTab[],
-          DbCachedColumnsFindManyError
-        > =>
-          v.cachedColumnFullIds.length > 0
-            ? this.db.cachedColumns.findMany({
-                where: inArray(
-                  cachedColumnsTable.cachedColumnFullId,
-                  v.cachedColumnFullIds
-                )
-              })
-            : Result.succeed([])
+      Result.bind('cachedColumns', async v =>
+        v.cachedColumnFullIds.length > 0
+          ? this.db.cachedColumns.findMany({
+              where: inArray(
+                cachedColumnsTable.cachedColumnFullId,
+                v.cachedColumnFullIds
+              )
+            })
+          : Result.succeed([])
       ),
       Result.map(
         (v): ToBackendGetCachedColumnsOutput => ({

@@ -14,16 +14,14 @@ when their bodies contain no `await`. Expression-bodied arrow functions
 
 Otherwise, do not add `async` to callbacks solely because they return a promise
 when no `ts(80006)` suggestion applies. Expression-bodied Result combinator
-callbacks may directly return a promise chain with an explicit
-`Result.ResultAsync<Success, Error>` return type and no `async`. Use `async`
-when the callback needs `await`; keep synchronous `.then(...)` conversion
-callbacks non-async.
+callbacks may directly return a promise chain without `async`. Pipe-step return
+annotations follow "Result callback return types". Use `async` when the callback
+needs `await`; keep synchronous `.then(...)` conversion callbacks non-async.
 
 When a Result callback must return a promise but has a synchronous fallback
 branch, make the enclosing callback `async` and return `Result.succeed(...)`
 directly from that branch instead of `Promise.resolve(Result.succeed(...))`.
-Retain its explicit `Result.ResultAsync<Success, Error>` return type and keep
-query `.then(...)` conversion chains intact.
+Keep query `.then(...)` conversion chains intact.
 
 Keeping `async` on functions and methods also preserves conversion of
 synchronous exceptions in the outer body to promise rejections. Direct returns

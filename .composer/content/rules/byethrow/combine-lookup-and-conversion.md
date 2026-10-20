@@ -11,18 +11,16 @@ The outer callback follows "Async promise chains". Conversion callback names
 follow the exception under "Entity and Tab variable names".
 
 ```ts
-Result.bind(
-  'avatar',
-  (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
-    this.db.drizzle.query.avatarsTable
-      .findFirst({
-        where: eq(avatarsTable.userId, v.avatarUserId)
-      })
-      .then((x: AvatarEnt) =>
-        isUndefined(x)
-          ? Result.succeed(undefined)
-          : this.tabService.avatarEntToTabResult({ avatarEnt: x })
-      )
+Result.bind('avatar', v =>
+  this.db.drizzle.query.avatarsTable
+    .findFirst({
+      where: eq(avatarsTable.userId, v.avatarUserId)
+    })
+    .then((x: AvatarEnt) =>
+      isUndefined(x)
+        ? Result.succeed(undefined)
+        : this.tabService.avatarEntToTabResult({ avatarEnt: x })
+    )
 );
 ```
 
