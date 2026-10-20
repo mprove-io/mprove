@@ -9,10 +9,10 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CheckGivenDoesNotExistError } from '#common/types/backend/function-errors/check-given-does-not-exist-error';
+import type { DbGivensFindManyError } from '#common/types/backend/function-errors/db/givens/db-givens-find-many-error';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
 import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
-import type { GivenEntToTabError } from '#common/types/backend/function-errors/given-ent-to-tab-error';
 import type { ValidateGivenValuesError } from '#common/types/backend/function-errors/validate-given-values-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
@@ -118,7 +118,7 @@ export class GivensService {
       Result.succeed(item),
       Result.bind(
         'givens',
-        (v): Result.ResultAsync<GivenTab[], GivenEntToTabError> =>
+        (v): Result.ResultAsync<GivenTab[], DbGivensFindManyError> =>
           this.db.givens.findMany({
             where: eq(givensTable.projectId, v.projectId)
           })

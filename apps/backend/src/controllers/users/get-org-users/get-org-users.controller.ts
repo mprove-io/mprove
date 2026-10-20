@@ -29,10 +29,10 @@ import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
+import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
+import type { DbUsersFindManyError } from '#common/types/backend/function-errors/db/users/db-users-find-many-error';
 import type { OrgUsersItem } from '#common/types/backend/parts/org-users/org-users-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-output';
@@ -70,7 +70,7 @@ export class GetOrgUsersController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
+        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
           this.db.orgs.findFirstCheckExists({
             where: eq(orgsTable.orgId, v.orgId)
           })
@@ -83,7 +83,7 @@ export class GetOrgUsersController {
       ),
       Result.bind(
         'projects',
-        (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           this.db.projects.findMany({
             where: eq(projectsTable.orgId, v.orgId)
           })
@@ -111,7 +111,7 @@ export class GetOrgUsersController {
       ),
       Result.bind(
         'sortedUsers',
-        (v): Result.ResultAsync<UserTab[], UserEntToTabError> =>
+        (v): Result.ResultAsync<UserTab[], DbUsersFindManyError> =>
           this.db.users.findMany({
             where: and(inArray(usersTable.userId, v.userIds))
           })
@@ -130,7 +130,7 @@ export class GetOrgUsersController {
       }),
       Result.bind(
         'members',
-        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           v.userIds.length === 0
             ? Result.succeed([])
             : this.db.members.findMany({

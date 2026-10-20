@@ -20,9 +20,10 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendUserAliasIsUndefinedError } from '#common/types/backend/errors/backend-user-alias-is-undefined-error';
-import type { BackendUserDoesNotExistError } from '#common/types/backend/errors/backend-user-does-not-exist-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
 import type { CheckUserPasswordHashIsDefinedError } from '#common/types/backend/function-errors/check-user-password-hash-is-defined-error';
+import type { DbMembersFindFirstError } from '#common/types/backend/function-errors/db/members/db-members-find-first-error';
+import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
 import type { GetSelectedGivensError } from '#common/types/backend/function-errors/get-selected-givens-error';
@@ -30,9 +31,7 @@ import type { GetUserByEmailCheckExistsError } from '#common/types/backend/funct
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { SelectUnselectedGivensError } from '#common/types/backend/function-errors/select-unselected-givens-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
 import type { ProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
@@ -176,7 +175,7 @@ export class UsersService {
     let existingLinks: ProjectSelectedGivenLink[] =
       user.ui.projectSelectedGivenLinks ?? [];
 
-    let memberResult: Result.Result<MemberTab, MemberEntToTabError> =
+    let memberResult: Result.Result<MemberTab, DbMembersFindFirstError> =
       await this.db.members.findFirst({
         where: and(
           eq(membersTable.memberId, user.userId),
@@ -320,12 +319,7 @@ export class UsersService {
           })
       ),
       Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<
-          UserTab,
-          UserEntToTabError | BackendUserDoesNotExistError
-        > =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
           this.db.users.findFirstCheckExists({
             where: eq(usersTable.emailHash, v.emailHash)
           })

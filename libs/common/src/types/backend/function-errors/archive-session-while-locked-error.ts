@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type GetSessionByIdCheckExistsError,
-  zGetSessionByIdCheckExistsError
-} from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+  type DbSessionsFindFirstCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import {
   type StopSandboxError,
   zStopSandboxError
@@ -14,12 +14,12 @@ import {
 } from '#common/types/backend/function-errors/write-error';
 
 export type ArchiveSessionWhileLockedError =
-  | GetSessionByIdCheckExistsError
+  | DbSessionsFindFirstCheckExistsError
   | StopSandboxError
   | WriteError;
 
 export let zArchiveSessionWhileLockedError = z.union([
-  zGetSessionByIdCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError,
   zStopSandboxError,
   zWriteError
 ]);

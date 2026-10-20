@@ -9,7 +9,7 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetConnectionsListError } from '#common/types/backend/function-errors/get-connections-list-error';
 import type { ConnectionItem } from '#common/types/backend/parts/connections/connection-item';
@@ -57,7 +57,7 @@ export class GetConnectionsListService {
       ),
       Result.bind(
         'connections',
-        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
+        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
           this.db.connections.findMany({
             where: and(
               eq(connectionsTable.projectId, v.projectId),

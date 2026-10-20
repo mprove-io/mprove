@@ -19,9 +19,9 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -62,7 +62,9 @@ export class GetRolesController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),

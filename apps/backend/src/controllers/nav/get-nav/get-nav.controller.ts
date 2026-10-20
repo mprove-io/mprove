@@ -36,14 +36,14 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { DbAvatarsFindFirstError } from '#common/types/backend/function-errors/db/avatars/db-avatars-find-first-error';
+import type { DbBridgesFindFirstError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
+import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
@@ -90,7 +90,7 @@ export class GetNavController {
       }),
       Result.bind(
         'members',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           this.db.members.findMany({
             where: eq(membersTable.memberId, v.user.userId)
           })
@@ -102,7 +102,7 @@ export class GetNavController {
       ),
       Result.bind(
         'projects',
-        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
             : this.db.projects.findMany({
@@ -116,7 +116,7 @@ export class GetNavController {
       ),
       Result.bind(
         'orgs',
-        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+        async (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
           v.orgIds.length === 0
             ? Result.succeed([])
             : this.db.orgs.findMany({
@@ -125,7 +125,7 @@ export class GetNavController {
       ),
       Result.bind(
         'ownerOrgs',
-        (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+        (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
           this.db.orgs.findMany({
             where: eq(orgsTable.ownerId, v.user.userId)
           })
@@ -180,7 +180,7 @@ export class GetNavController {
       ),
       Result.bind(
         'bridge',
-        async (v): Result.ResultAsync<BridgeTab, BridgeEntToTabError> =>
+        async (v): Result.ResultAsync<BridgeTab, DbBridgesFindFirstError> =>
           isUndefined(v.resultProject)
             ? Result.succeed(undefined)
             : this.db.bridges.findFirst({
@@ -194,7 +194,7 @@ export class GetNavController {
       ),
       Result.bind(
         'avatar',
-        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
+        (v): Result.ResultAsync<AvatarTab, DbAvatarsFindFirstError> =>
           this.db.avatars.findFirst({
             where: eq(avatarsTable.userId, v.user.userId)
           })
@@ -211,7 +211,9 @@ export class GetNavController {
       ),
       Result.bind(
         'userMember',
-        async (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        async (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           v.isGetRepo
             ? this.db.members.findFirstCheckExists({
                 where: and(

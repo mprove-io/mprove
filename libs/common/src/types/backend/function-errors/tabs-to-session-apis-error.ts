@@ -1,13 +1,13 @@
 import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type OcSessionEntToTabError,
-  zOcSessionEntToTabError
-} from '#common/types/backend/function-errors/oc-session-ent-to-tab-error';
+  type DbOcSessionsFindManyError,
+  zDbOcSessionsFindManyError
+} from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-many-error';
 
-export type TabsToSessionApisError = OcSessionEntToTabError;
+export type TabsToSessionApisError = DbOcSessionsFindManyError;
 
-export let zTabsToSessionApisError = zOcSessionEntToTabError;
+export let zTabsToSessionApisError = zDbOcSessionsFindManyError;
 
 assertTypesEqual<
   TabsToSessionApisError,

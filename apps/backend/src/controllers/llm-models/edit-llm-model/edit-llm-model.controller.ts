@@ -26,9 +26,9 @@ import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
+import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
 import type { GetDiscoveredLlmModelPartError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-error';
 import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
-import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
 import type { ReconcileDiscoveredModelVariantsError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
@@ -86,7 +86,12 @@ export class EditLlmModelController {
       ),
       Result.bind(
         'provider',
-        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProviderTab,
+          DbProvidersFindFirstCheckExistsError
+        > =>
           this.db.providers.findFirstCheckExists({
             where: and(
               eq(providersTable.projectId, v.projectId),

@@ -21,9 +21,9 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { DbRolesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/roles/db-roles-find-first-check-exists-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { GetRoleCheckExistsError } from '#common/types/backend/function-errors/get-role-check-exists-error';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRoleGivenOutput } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-output';
@@ -73,7 +73,7 @@ export class DeleteRoleGivenController {
       ),
       Result.bind(
         'role',
-        (v): Result.ResultAsync<RoleTab, GetRoleCheckExistsError> =>
+        (v): Result.ResultAsync<RoleTab, DbRolesFindFirstCheckExistsError> =>
           this.db.roles.findFirstCheckExists({
             where: and(
               eq(rolesTable.projectId, v.projectId),

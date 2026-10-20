@@ -11,9 +11,8 @@ import { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
-import type { BackendUserDoesNotExistError } from '#common/types/backend/errors/backend-user-does-not-exist-error';
 import type { AuthenticateJwtError } from '#common/types/backend/function-errors/authenticate-jwt-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
+import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -55,12 +54,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       Result.succeed(item),
       Result.bind(
         'user',
-        (
-          v
-        ): Result.ResultAsync<
-          UserTab,
-          UserEntToTabError | BackendUserDoesNotExistError
-        > =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
           this.db.users.findFirstCheckExists({
             where: eq(usersTable.userId, v.userId)
           })

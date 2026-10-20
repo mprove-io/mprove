@@ -1,9 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type SessionEntToTabError,
-  zSessionEntToTabError
-} from '#common/types/backend/function-errors/session-ent-to-tab-error';
+  type DbSessionsFindFirstError,
+  zDbSessionsFindFirstError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-error';
+import {
+  type DbSessionsFindManyError,
+  zDbSessionsFindManyError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import {
   type TabsToSessionApisError,
   zTabsToSessionApisError
@@ -11,11 +15,13 @@ import {
 
 export type GetBasicSessionsListError =
   | TabsToSessionApisError
-  | SessionEntToTabError;
+  | DbSessionsFindManyError
+  | DbSessionsFindFirstError;
 
 export let zGetBasicSessionsListError = z.union([
   zTabsToSessionApisError,
-  zSessionEntToTabError
+  zDbSessionsFindManyError,
+  zDbSessionsFindFirstError
 ]);
 
 assertTypesEqual<

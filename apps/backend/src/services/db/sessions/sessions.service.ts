@@ -11,9 +11,10 @@ import { DbService } from '#backend/services/db/db.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
+import type { DbOcSessionsFindManyError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-many-error';
+import type { DbSessionsFindFirstError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-error';
+import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { GetBasicSessionsListError } from '#common/types/backend/function-errors/get-basic-sessions-list-error';
-import type { OcSessionEntToTabError } from '#common/types/backend/function-errors/oc-session-ent-to-tab-error';
-import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
 import type { TabsToSessionApisError } from '#common/types/backend/function-errors/tabs-to-session-apis-error';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
@@ -208,7 +209,7 @@ export class SessionsService {
       Result.succeed(item),
       Result.bind(
         'sessions',
-        (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+        (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
           this.db.sessions.findMany({
             where: and(
               eq(sessionsTable.projectId, v.projectId),
@@ -220,7 +221,7 @@ export class SessionsService {
       ),
       Result.bind(
         'currentSession',
-        async (v): Result.ResultAsync<SessionTab, SessionEntToTabError> => {
+        async (v): Result.ResultAsync<SessionTab, DbSessionsFindFirstError> => {
           let isCurrentSessionIncluded: boolean = v.sessions.some(
             session => session.sessionId === v.currentSessionId
           );
@@ -295,7 +296,7 @@ export class SessionsService {
         'ocSessions',
         async (
           v
-        ): Result.ResultAsync<OcSessionTab[], OcSessionEntToTabError> =>
+        ): Result.ResultAsync<OcSessionTab[], DbOcSessionsFindManyError> =>
           v.sessionIds.length > 0
             ? this.db.ocSessions.findMany({
                 where: inArray(ocSessionsTable.sessionId, v.sessionIds)

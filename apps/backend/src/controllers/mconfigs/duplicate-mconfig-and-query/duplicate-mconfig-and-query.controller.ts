@@ -40,13 +40,13 @@ import {
 } from '#common/constants/mconfig-chart';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDuplicateMconfigAndQueryOutput } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-output';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
@@ -105,14 +105,21 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -122,7 +129,9 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -140,7 +149,9 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -152,7 +163,12 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'oldMconfig',
-        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          MconfigTab,
+          DbMconfigsFindFirstCheckExistsError
+        > =>
           this.db.mconfigs.findFirstCheckExists({
             where: and(
               eq(mconfigsTable.mconfigId, v.oldMconfigId),
@@ -181,7 +197,7 @@ export class DuplicateMconfigAndQueryController {
       // Dashboard tiles and report metrics do not require model access here.
       Result.bind(
         'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
+        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
           this.db.models.findFirstCheckExists({
             where: and(
               eq(modelsTable.structId, v.bridge.structId),
@@ -191,7 +207,7 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.bind(
         'oldQuery',
-        (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
+        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
           this.db.queries.findFirst({
             where: and(
               eq(queriesTable.queryId, v.oldMconfig.queryId),

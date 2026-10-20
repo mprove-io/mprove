@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
+  type DbSessionsFindFirstCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
+import {
   type DispatchEditorInteractionError,
   zDispatchEditorInteractionError
 } from '#common/types/backend/function-errors/dispatch-editor-interaction-error';
-import {
-  type GetSessionByIdCheckExistsError,
-  zGetSessionByIdCheckExistsError
-} from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import {
   type GetUserCheckExistsError,
   zGetUserCheckExistsError
@@ -30,7 +30,7 @@ import {
 } from '#common/types/backend/function-errors/validate-session-status-error';
 
 export type SendEditorInteractionWhileLockedError =
-  | GetSessionByIdCheckExistsError
+  | DbSessionsFindFirstCheckExistsError
   | ValidateSessionStatusError
   | PrewarmCodexAuthError
   | GetUserCheckExistsError
@@ -39,7 +39,7 @@ export type SendEditorInteractionWhileLockedError =
   | SaveSessionError;
 
 export let zSendEditorInteractionWhileLockedError = z.union([
-  zGetSessionByIdCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError,
   zValidateSessionStatusError,
   zPrewarmCodexAuthError,
   zGetUserCheckExistsError,

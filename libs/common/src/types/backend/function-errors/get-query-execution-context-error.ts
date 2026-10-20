@@ -1,17 +1,17 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
+  type DbConnectionsFindFirstCheckExistsError,
+  zDbConnectionsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/connections/db-connections-find-first-check-exists-error';
+import {
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import {
   type GetApiEnvsError,
   zGetApiEnvsError
 } from '#common/types/backend/function-errors/get-api-envs-error';
-import {
-  type GetConnectionCheckExistsError,
-  zGetConnectionCheckExistsError
-} from '#common/types/backend/function-errors/get-connection-check-exists-error';
-import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
 import {
   type GetQueryCheckExistsSkipDataError,
   zGetQueryCheckExistsSkipDataError
@@ -19,15 +19,15 @@ import {
 
 export type GetQueryExecutionContextError =
   | GetQueryCheckExistsSkipDataError
-  | GetMemberCheckExistsError
+  | DbMembersFindFirstCheckExistsError
   | GetApiEnvsError
-  | GetConnectionCheckExistsError;
+  | DbConnectionsFindFirstCheckExistsError;
 
 export const zGetQueryExecutionContextError = z.union([
   zGetQueryCheckExistsSkipDataError,
-  zGetMemberCheckExistsError,
+  zDbMembersFindFirstCheckExistsError,
   zGetApiEnvsError,
-  zGetConnectionCheckExistsError
+  zDbConnectionsFindFirstCheckExistsError
 ]);
 
 assertTypesEqual<

@@ -47,12 +47,12 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { GetQueryCheckExistsError } from '#common/types/backend/function-errors/get-query-check-exists-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbQueriesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-check-exists-error';
 import type { GetStructCheckExistsAndNotChangedError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { CachedColumnStatus } from '#common/types/backend/parts/connections/cached-column-status';
@@ -124,14 +124,21 @@ export class SuggestDimensionValuesController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -141,7 +148,9 @@ export class SuggestDimensionValuesController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -159,7 +168,9 @@ export class SuggestDimensionValuesController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -205,7 +216,7 @@ export class SuggestDimensionValuesController {
       ),
       Result.bind(
         'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
+        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
           this.db.models.findFirstCheckExists({
             where: and(
               eq(modelsTable.structId, v.bridge.structId),
@@ -360,7 +371,9 @@ export class SuggestDimensionValuesController {
       ),
       Result.bind(
         'query',
-        async (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsError> =>
+        async (
+          v
+        ): Result.ResultAsync<QueryTab, DbQueriesFindFirstCheckExistsError> =>
           v.model.type !== 'Store'
             ? Result.succeed(undefined)
             : v.prepStoreMconfigQueryOutput.isError === false

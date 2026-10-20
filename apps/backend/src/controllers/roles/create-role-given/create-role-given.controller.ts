@@ -24,10 +24,10 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { DbGivensFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/givens/db-givens-find-first-check-exists-error';
+import type { DbRolesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/roles/db-roles-find-first-check-exists-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { GetGivenCheckExistsError } from '#common/types/backend/function-errors/get-given-check-exists-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { GetRoleCheckExistsError } from '#common/types/backend/function-errors/get-role-check-exists-error';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateRoleGivenOutput } from '#common/types/backend/routes/roles/create-role-given/create-role-given-output';
@@ -79,7 +79,7 @@ export class CreateRoleGivenController {
       ),
       Result.bind(
         'role',
-        (v): Result.ResultAsync<RoleTab, GetRoleCheckExistsError> =>
+        (v): Result.ResultAsync<RoleTab, DbRolesFindFirstCheckExistsError> =>
           this.db.roles.findFirstCheckExists({
             where: and(
               eq(rolesTable.projectId, v.projectId),
@@ -89,7 +89,7 @@ export class CreateRoleGivenController {
       ),
       Result.bind(
         'given',
-        (v): Result.ResultAsync<GivenTab, GetGivenCheckExistsError> =>
+        (v): Result.ResultAsync<GivenTab, DbGivensFindFirstCheckExistsError> =>
           this.db.givens.findFirstCheckExists({
             where: and(
               eq(givensTable.projectId, v.projectId),

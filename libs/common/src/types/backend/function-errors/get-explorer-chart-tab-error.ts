@@ -17,33 +17,33 @@ import {
   zBackendUnauthorizedError
 } from '#common/types/backend/errors/backend-unauthorized-error';
 import {
-  type BridgeEntToTabError,
-  zBridgeEntToTabError
-} from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
+  type DbBridgesFindFirstError,
+  zDbBridgesFindFirstError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-error';
 import {
-  type ChartEntToTabError,
-  zChartEntToTabError
-} from '#common/types/backend/function-errors/chart-ent-to-tab-error';
+  type DbChartsFindFirstError,
+  zDbChartsFindFirstError
+} from '#common/types/backend/function-errors/db/charts/db-charts-find-first-error';
 import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
+  type DbMconfigsFindFirstError,
+  zDbMconfigsFindFirstError
+} from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-error';
 import {
-  type GetSessionByIdCheckExistsError,
-  zGetSessionByIdCheckExistsError
-} from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import {
-  type MconfigEntToTabError,
-  zMconfigEntToTabError
-} from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
+  type DbModelsFindManyError,
+  zDbModelsFindManyError
+} from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import {
-  type ModelEntToTabError,
-  zModelEntToTabError
-} from '#common/types/backend/function-errors/model-ent-to-tab-error';
+  type DbQueriesFindFirstError,
+  zDbQueriesFindFirstError
+} from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import {
-  type QueryEntToTabError,
-  zQueryEntToTabError
-} from '#common/types/backend/function-errors/query-ent-to-tab-error';
+  type DbSessionsFindFirstCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import {
   type RebuildFromYamlError,
   zRebuildFromYamlError
@@ -58,36 +58,36 @@ import {
 } from '#common/types/backend/function-errors/write-error';
 
 export type GetExplorerChartTabError =
-  | GetSessionByIdCheckExistsError
+  | DbSessionsFindFirstCheckExistsError
   | BackendUnauthorizedError
   | BackendSessionTypeIsNotExplorerError
-  | GetMemberCheckExistsError
-  | BridgeEntToTabError
+  | DbMembersFindFirstCheckExistsError
   | BackendBridgeBranchEnvDoesNotExistError
-  | ChartEntToTabError
   | BackendChartDoesNotExistError
-  | MconfigEntToTabError
-  | QueryEntToTabError
   | RebuildFromYamlError
   | WriteError
   | RunQueriesError
-  | ModelEntToTabError;
+  | DbBridgesFindFirstError
+  | DbChartsFindFirstError
+  | DbMconfigsFindFirstError
+  | DbQueriesFindFirstError
+  | DbModelsFindManyError;
 
 export const zGetExplorerChartTabError = z.union([
-  zGetSessionByIdCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError,
   zBackendUnauthorizedError,
   zBackendSessionTypeIsNotExplorerError,
-  zGetMemberCheckExistsError,
-  zBridgeEntToTabError,
+  zDbMembersFindFirstCheckExistsError,
   zBackendBridgeBranchEnvDoesNotExistError,
-  zChartEntToTabError,
   zBackendChartDoesNotExistError,
-  zMconfigEntToTabError,
-  zQueryEntToTabError,
   zRebuildFromYamlError,
   zWriteError,
   zRunQueriesError,
-  zModelEntToTabError
+  zDbBridgesFindFirstError,
+  zDbChartsFindFirstError,
+  zDbMconfigsFindFirstError,
+  zDbQueriesFindFirstError,
+  zDbModelsFindManyError
 ]);
 
 assertTypesEqual<

@@ -1,17 +1,17 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type GetEnabledProvidersError,
-  zGetEnabledProvidersError
-} from '#common/types/backend/function-errors/get-enabled-providers-error';
+  type DbProvidersFindManyError,
+  zDbProvidersFindManyError
+} from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
+import {
+  type DbSessionsFindFirstCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import {
   type GetOpenCodeClientError,
   zGetOpenCodeClientError
 } from '#common/types/backend/function-errors/get-open-code-client-error';
-import {
-  type GetSessionByIdCheckExistsError,
-  zGetSessionByIdCheckExistsError
-} from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import {
   type HealthCheckOpenCodeError,
   zHealthCheckOpenCodeError
@@ -31,8 +31,8 @@ import {
 
 export type PrepareEditorSandboxError =
   | ResumeSandboxError
-  | GetEnabledProvidersError
-  | GetSessionByIdCheckExistsError
+  | DbProvidersFindManyError
+  | DbSessionsFindFirstCheckExistsError
   | RestartOpencodeServerError
   | SaveSessionError
   | GetOpenCodeClientError
@@ -40,8 +40,8 @@ export type PrepareEditorSandboxError =
 
 export let zPrepareEditorSandboxError = z.union([
   zResumeSandboxError,
-  zGetEnabledProvidersError,
-  zGetSessionByIdCheckExistsError,
+  zDbProvidersFindManyError,
+  zDbSessionsFindFirstCheckExistsError,
   zRestartOpencodeServerError,
   zSaveSessionError,
   zGetOpenCodeClientError,

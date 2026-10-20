@@ -33,13 +33,13 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import type { GetDashboardDataError } from '#common/types/backend/function-errors/get-dashboard-data-error';
 import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
 import type { GetDashboardXUsingDashboardTabError } from '#common/types/backend/function-errors/get-dashboard-x-using-dashboard-tab-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import type { GetSelectedGivensError } from '#common/types/backend/function-errors/get-selected-givens-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { ProcessDashboardError } from '#common/types/backend/function-errors/process-dashboard-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
@@ -198,7 +198,7 @@ export class QueryInfoDashboardService {
       ),
       Result.bind(
         'cachedModels',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: and(
               eq(modelsTable.structId, v.bridge.structId),

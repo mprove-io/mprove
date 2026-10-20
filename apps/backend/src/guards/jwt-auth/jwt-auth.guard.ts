@@ -26,9 +26,9 @@ import type { BackendApiKeyNotFoundError } from '#common/types/backend/errors/ba
 import type { AuthenticateApiKeyError } from '#common/types/backend/function-errors/authenticate-api-key-error';
 import type { AuthenticatePersonalApiKeyError } from '#common/types/backend/function-errors/authenticate-personal-api-key-error';
 import type { AuthenticateSessionApiKeyError } from '#common/types/backend/function-errors/authenticate-session-api-key-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
+import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 import type { ParseApiKeyError } from '#common/types/backend/function-errors/parse-api-key-error';
-import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 
@@ -159,16 +159,17 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       Result.succeed(item),
       Result.bind(
         'user',
-        (
-          v
-        ): Result.ResultAsync<
-          UserTab,
-          UserEntToTabError | BackendApiKeyNotFoundError
-        > =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
           this.db.users.findFirstCheckExists({
-            where: eq(usersTable.apiKeyPrefix, v.parsed.prefix),
-            error: { code: 'BACKEND_API_KEY_NOT_FOUND' }
+            where: eq(usersTable.apiKeyPrefix, v.parsed.prefix)
           })
+      ),
+      Result.mapError(v =>
+        v.code === 'BACKEND_USER_DOES_NOT_EXIST'
+          ? ({
+              code: 'BACKEND_API_KEY_NOT_FOUND'
+            } satisfies BackendApiKeyNotFoundError)
+          : v
       ),
       Result.andThrough(v =>
         v.user.apiKeySecretHash
@@ -239,12 +240,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           v
         ): Result.ResultAsync<
           SessionTab,
-          SessionEntToTabError | BackendApiKeyNotFoundError
+          DbSessionsFindFirstCheckExistsError
         > =>
           this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.apiKeyPrefix, v.parsed.prefix),
-            error: { code: 'BACKEND_API_KEY_NOT_FOUND' }
+            where: eq(sessionsTable.apiKeyPrefix, v.parsed.prefix)
           })
+      ),
+      Result.mapError(v =>
+        v.code === 'BACKEND_SESSION_NOT_FOUND'
+          ? ({
+              code: 'BACKEND_API_KEY_NOT_FOUND'
+            } satisfies BackendApiKeyNotFoundError)
+          : v
       ),
       Result.andThrough(v =>
         v.session.apiKeySecretHash
@@ -264,16 +271,17 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }),
       Result.bind(
         'user',
-        (
-          v
-        ): Result.ResultAsync<
-          UserTab,
-          UserEntToTabError | BackendApiKeyNotFoundError
-        > =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
           this.db.users.findFirstCheckExists({
-            where: eq(usersTable.userId, v.session.userId),
-            error: { code: 'BACKEND_API_KEY_NOT_FOUND' }
+            where: eq(usersTable.userId, v.session.userId)
           })
+      ),
+      Result.mapError(v =>
+        v.code === 'BACKEND_USER_DOES_NOT_EXIST'
+          ? ({
+              code: 'BACKEND_API_KEY_NOT_FOUND'
+            } satisfies BackendApiKeyNotFoundError)
+          : v
       ),
       Result.map(v => {
         v.request.user = v.user;

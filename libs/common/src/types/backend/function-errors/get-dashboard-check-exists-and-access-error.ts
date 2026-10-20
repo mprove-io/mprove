@@ -5,29 +5,23 @@ import {
   zBackendDashboardCreatorIdMismatchError
 } from '#common/types/backend/errors/backend-dashboard-creator-id-mismatch-error';
 import {
-  type BackendDashboardDoesNotExistError,
-  zBackendDashboardDoesNotExistError
-} from '#common/types/backend/errors/backend-dashboard-does-not-exist-error';
-import {
   type BackendForbiddenDashboardError,
   zBackendForbiddenDashboardError
 } from '#common/types/backend/errors/backend-forbidden-dashboard-error';
 import {
-  type DashboardEntToTabError,
-  zDashboardEntToTabError
-} from '#common/types/backend/function-errors/dashboard-ent-to-tab-error';
+  type DbDashboardsFindFirstCheckExistsError,
+  zDbDashboardsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/dashboards/db-dashboards-find-first-check-exists-error';
 
 export type GetDashboardCheckExistsAndAccessError =
   | BackendDashboardCreatorIdMismatchError
-  | BackendDashboardDoesNotExistError
   | BackendForbiddenDashboardError
-  | DashboardEntToTabError;
+  | DbDashboardsFindFirstCheckExistsError;
 
 export let zGetDashboardCheckExistsAndAccessError = z.union([
   zBackendDashboardCreatorIdMismatchError,
-  zBackendDashboardDoesNotExistError,
   zBackendForbiddenDashboardError,
-  zDashboardEntToTabError
+  zDbDashboardsFindFirstCheckExistsError
 ]);
 
 assertTypesEqual<

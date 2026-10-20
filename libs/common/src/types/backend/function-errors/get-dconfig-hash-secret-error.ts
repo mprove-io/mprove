@@ -1,13 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DconfigEntToTabError,
-  zDconfigEntToTabError
-} from '#common/types/backend/function-errors/dconfig-ent-to-tab-error';
+  type DbDconfigsFindFirstError,
+  zDbDconfigsFindFirstError
+} from '#common/types/backend/function-errors/db/dconfigs/db-dconfigs-find-first-error';
 
-export type GetDconfigHashSecretError = DconfigEntToTabError;
+export type GetDconfigHashSecretError = DbDconfigsFindFirstError;
 
-export let zGetDconfigHashSecretError = zDconfigEntToTabError;
+export let zGetDconfigHashSecretError = zDbDconfigsFindFirstError;
 
 assertTypesEqual<
   GetDconfigHashSecretError,

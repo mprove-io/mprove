@@ -25,10 +25,10 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROD_REPO_ID } from '#common/constants/top';
-import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { OcSessionEntToTabError } from '#common/types/backend/function-errors/oc-session-ent-to-tab-error';
-import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import type { DbBranchesFindManyError } from '#common/types/backend/function-errors/db/branches/db-branches-find-many-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbOcSessionsFindManyError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-many-error';
+import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetBranchesListOutput } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-output';
 
@@ -66,7 +66,9 @@ export class GetBranchesListController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.userId),
@@ -76,7 +78,7 @@ export class GetBranchesListController {
       ),
       Result.bind(
         'sessions',
-        (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+        (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
           this.db.sessions.findMany({
             where: and(
               eq(sessionsTable.userId, v.userId),
@@ -95,7 +97,7 @@ export class GetBranchesListController {
       ),
       Result.bind(
         'branches',
-        (v): Result.ResultAsync<BranchTab[], BranchEntToTabError> =>
+        (v): Result.ResultAsync<BranchTab[], DbBranchesFindManyError> =>
           this.db.branches.findMany({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -130,7 +132,7 @@ export class GetBranchesListController {
         'ocSessions',
         async (
           v
-        ): Result.ResultAsync<OcSessionTab[], OcSessionEntToTabError> =>
+        ): Result.ResultAsync<OcSessionTab[], DbOcSessionsFindManyError> =>
           v.sessionIds.length > 0
             ? this.db.ocSessions.findMany({
                 where: inArray(ocSessionsTable.sessionId, v.sessionIds)

@@ -23,8 +23,8 @@ import { anthropicModelToOpenCodeConfig } from '#backend/services/editor/editor-
 import { llmModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/llm-model-to-open-code-config/llm-model-to-open-code-config';
 import { openAiModelToOpenCodeConfig } from '#backend/services/editor/editor-opencode/open-ai-model-to-open-code-config/open-ai-model-to-open-code-config';
 import { ServerError } from '#common/classes/server-error/server-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { HealthCheckOpenCodeError } from '#common/types/backend/function-errors/health-check-open-code-error';
 import type { RestartOpencodeServerError } from '#common/types/backend/function-errors/restart-opencode-server-error';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
@@ -242,7 +242,7 @@ export class EditorOpencodeService {
       if (!sandboxBaseUrl || !opencodePassword) {
         let sessionResult: Result.Result<
           SessionTab,
-          GetSessionByIdCheckExistsError
+          DbSessionsFindFirstCheckExistsError
         > = await this.db.sessions.findFirstCheckExists({
           where: eq(sessionsTable.sessionId, sessionId)
         });

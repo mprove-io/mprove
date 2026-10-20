@@ -17,7 +17,7 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
+import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetOrgInfoOutput } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-output';
 
@@ -51,7 +51,7 @@ export class SetOrgInfoController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
+        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
           this.db.orgs.findFirstCheckExists({
             where: eq(orgsTable.orgId, v.orgId)
           })

@@ -34,10 +34,10 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { DbOcMessagesFindFirstError } from '#common/types/backend/function-errors/db/oc-messages/db-oc-messages-find-first-error';
+import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
-import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
-import type { OcMessageEntToTabError } from '#common/types/backend/function-errors/oc-message-ent-to-tab-error';
 import type { SendExplorerMessageError } from '#common/types/backend/function-errors/send-explorer-message-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-output';
@@ -83,7 +83,12 @@ export class SendMessageToExplorerSessionController {
       }),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })
@@ -152,7 +157,7 @@ export class SendMessageToExplorerSessionController {
       }),
       Result.bind(
         'ocSession',
-        (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
+        (v): Result.ResultAsync<OcSessionTab, DbOcSessionsFindFirstError> =>
           this.db.ocSessions.findFirst({
             where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
           })
@@ -209,7 +214,7 @@ export class SendMessageToExplorerSessionController {
       ),
       Result.bind(
         'latestAssistantMessage',
-        (v): Result.ResultAsync<OcMessageTab, OcMessageEntToTabError> =>
+        (v): Result.ResultAsync<OcMessageTab, DbOcMessagesFindFirstError> =>
           this.db.ocMessages.findFirst({
             where: and(
               eq(ocMessagesTable.sessionId, v.session.sessionId),

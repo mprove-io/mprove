@@ -1,7 +1,8 @@
 import { BackendResponseError } from '#common/classes/backend-response-error/backend-response-error';
-import type { BackendError } from '#common/types/backend/errors/backend-error';
 import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseBase } from '#common/types/backend/response/to-backend-response-base';
+
+type BackendResponseFailure = Extract<ToBackendResponse, { type: 'Failure' }>;
 
 export function unwrapBackendResponseOutput<
   TResponse extends ToBackendResponse
@@ -10,11 +11,19 @@ export function unwrapBackendResponseOutput<
 }): Extract<TResponse, { type: 'Success' }>['output'];
 
 export function unwrapBackendResponseOutput<TOutput>(item: {
-  response: ToBackendResponseBase<string, TOutput, BackendError>;
+  response: ToBackendResponseBase<
+    string,
+    TOutput,
+    BackendResponseFailure['error']
+  >;
 }): TOutput;
 
 export function unwrapBackendResponseOutput(item: {
-  response: ToBackendResponseBase<string, unknown, BackendError>;
+  response: ToBackendResponseBase<
+    string,
+    unknown,
+    BackendResponseFailure['error']
+  >;
 }): unknown {
   let { response } = item;
 

@@ -20,7 +20,7 @@ import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
+import type { DbProvidersFindManyError } from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
 import type { LlmModelWithProvider } from '#common/types/backend/parts/llm-models/llm-model-with-provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
@@ -66,7 +66,7 @@ export class GetLlmModelsWithProviderController {
       ),
       Result.bind(
         'providers',
-        (v): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> =>
+        (v): Result.ResultAsync<ProviderTab[], DbProvidersFindManyError> =>
           this.db.providers.findMany({
             where: and(
               eq(providersTable.projectId, v.projectId),

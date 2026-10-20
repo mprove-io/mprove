@@ -15,8 +15,10 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckEnvDoesNotExistError } from '#common/types/backend/function-errors/check-env-does-not-exist-error';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
-import type { EnvEntToTabError } from '#common/types/backend/function-errors/env-ent-to-tab-error';
+import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
+import type { DbEnvsFindFirstError } from '#common/types/backend/function-errors/db/envs/db-envs-find-first-error';
+import type { DbEnvsFindManyError } from '#common/types/backend/function-errors/db/envs/db-envs-find-many-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
 import type { GetApiEnvConnectionsWithFallbackError } from '#common/types/backend/function-errors/get-api-env-connections-with-fallback-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
@@ -166,7 +168,7 @@ export class EnvsService {
   }): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessError> {
     let { projectId, envId, member } = item;
 
-    let envResult: Result.Result<EnvTab, EnvEntToTabError> =
+    let envResult: Result.Result<EnvTab, DbEnvsFindFirstError> =
       await this.db.envs.findFirst({
         where: and(
           eq(envsTable.envId, envId),
@@ -202,7 +204,7 @@ export class EnvsService {
   }): Result.ResultAsync<Env[], GetApiEnvsError> {
     let { projectId } = item;
 
-    let envResult: Result.Result<EnvTab[], GetApiEnvsError> =
+    let envResult: Result.Result<EnvTab[], DbEnvsFindManyError> =
       await this.db.envs.findMany({
         where: eq(connectionsTable.projectId, projectId)
       });
@@ -213,16 +215,18 @@ export class EnvsService {
 
     let envs: EnvTab[] = envResult.value;
 
-    let connectionResult: Result.Result<ConnectionTab[], GetApiEnvsError> =
-      await this.db.connections.findMany({
-        where: and(
-          eq(connectionsTable.projectId, projectId),
-          inArray(
-            connectionsTable.envId,
-            envs.map(x => x.envId)
-          )
+    let connectionResult: Result.Result<
+      ConnectionTab[],
+      DbConnectionsFindManyError
+    > = await this.db.connections.findMany({
+      where: and(
+        eq(connectionsTable.projectId, projectId),
+        inArray(
+          connectionsTable.envId,
+          envs.map(x => x.envId)
         )
-      });
+      )
+    });
 
     if (Result.isFailure(connectionResult)) {
       return connectionResult;
@@ -230,7 +234,7 @@ export class EnvsService {
 
     let connections: ConnectionTab[] = connectionResult.value;
 
-    let memberResult: Result.Result<MemberTab[], GetApiEnvsError> =
+    let memberResult: Result.Result<MemberTab[], DbMembersFindManyError> =
       await this.db.members.findMany({
         where: eq(membersTable.projectId, projectId)
       });
@@ -314,7 +318,7 @@ export class EnvsService {
       ),
       Result.bind(
         'connectionsWithFallback',
-        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
+        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
           this.db.connections.findMany({
             where: and(
               eq(connectionsTable.projectId, v.projectId),

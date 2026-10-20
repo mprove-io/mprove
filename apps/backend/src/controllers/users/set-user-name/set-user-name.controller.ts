@@ -18,7 +18,7 @@ import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetUserNameOutput } from '#common/types/backend/routes/users/set-user-name/set-user-name-output';
 
@@ -61,7 +61,7 @@ export class SetUserNameController {
       }),
       Result.bind(
         'userMembers',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           this.db.members.findMany({
             where: eq(membersTable.memberId, v.user.userId)
           })

@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ConnectionEntToTabError,
-  zConnectionEntToTabError
-} from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+  type DbConnectionsFindManyError,
+  zDbConnectionsFindManyError
+} from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import {
   type GetApiEnvsError,
   zGetApiEnvsError
@@ -11,11 +11,11 @@ import {
 
 export type GetApiEnvConnectionsWithFallbackError =
   | GetApiEnvsError
-  | ConnectionEntToTabError;
+  | DbConnectionsFindManyError;
 
 export const zGetApiEnvConnectionsWithFallbackError = z.union([
   zGetApiEnvsError,
-  zConnectionEntToTabError
+  zDbConnectionsFindManyError
 ]);
 
 assertTypesEqual<

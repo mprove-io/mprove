@@ -5,17 +5,17 @@ import {
   zBackendQueriesDoNotExistError
 } from '#common/types/backend/errors/backend-queries-do-not-exist-error';
 import {
-  type QueryEntToTabError,
-  zQueryEntToTabError
-} from '#common/types/backend/function-errors/query-ent-to-tab-error';
+  type DbQueriesFindManyError,
+  zDbQueriesFindManyError
+} from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 
 export type GetQueriesCheckExistError =
   | BackendQueriesDoNotExistError
-  | QueryEntToTabError;
+  | DbQueriesFindManyError;
 
 export let zGetQueriesCheckExistError = z.union([
   zBackendQueriesDoNotExistError,
-  zQueryEntToTabError
+  zDbQueriesFindManyError
 ]);
 
 assertTypesEqual<

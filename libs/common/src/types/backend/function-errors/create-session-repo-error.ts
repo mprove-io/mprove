@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BranchEntToTabError,
-  zBranchEntToTabError
-} from '#common/types/backend/function-errors/branch-ent-to-tab-error';
+  type DbBranchesFindFirstError,
+  zDbBranchesFindFirstError
+} from '#common/types/backend/function-errors/db/branches/db-branches-find-first-error';
 import {
-  type BridgeEntToTabError,
-  zBridgeEntToTabError
-} from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
+  type DbBridgesFindManyError,
+  zDbBridgesFindManyError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import {
   type RebuildStructError,
   zRebuildStructError
@@ -22,18 +22,18 @@ import {
 } from '#common/types/backend/function-errors/write-error';
 
 export type CreateSessionRepoError =
-  | BranchEntToTabError
-  | BridgeEntToTabError
   | SendToDiskError
   | RebuildStructError
-  | WriteError;
+  | WriteError
+  | DbBranchesFindFirstError
+  | DbBridgesFindManyError;
 
 export let zCreateSessionRepoError = z.union([
-  zBranchEntToTabError,
-  zBridgeEntToTabError,
   zSendToDiskError,
   zRebuildStructError,
-  zWriteError
+  zWriteError,
+  zDbBranchesFindFirstError,
+  zDbBridgesFindManyError
 ]);
 
 assertTypesEqual<

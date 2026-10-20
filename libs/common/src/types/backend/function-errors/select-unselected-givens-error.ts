@@ -1,21 +1,21 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
+  type DbMembersFindFirstError,
+  zDbMembersFindFirstError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-error';
+import {
   type GetMemberGivensForSelectionError,
   zGetMemberGivensForSelectionError
 } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
-import {
-  type MemberEntToTabError,
-  zMemberEntToTabError
-} from '#common/types/backend/function-errors/member-ent-to-tab-error';
 
 export type SelectUnselectedGivensError =
-  | MemberEntToTabError
-  | GetMemberGivensForSelectionError;
+  | GetMemberGivensForSelectionError
+  | DbMembersFindFirstError;
 
 export const zSelectUnselectedGivensError = z.union([
-  zMemberEntToTabError,
-  zGetMemberGivensForSelectionError
+  zGetMemberGivensForSelectionError,
+  zDbMembersFindFirstError
 ]);
 
 assertTypesEqual<

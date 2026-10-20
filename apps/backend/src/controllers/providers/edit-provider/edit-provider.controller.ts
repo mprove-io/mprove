@@ -22,7 +22,7 @@ import { UrlService } from '#backend/services/url/url.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
+import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/providers/edit-provider/edit-provider-output';
 
@@ -68,7 +68,12 @@ export class EditProviderController {
       ),
       Result.bind(
         'provider',
-        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProviderTab,
+          DbProvidersFindFirstCheckExistsError
+        > =>
           this.db.providers.findFirstCheckExists({
             where: and(
               eq(providersTable.projectId, v.input.projectId),

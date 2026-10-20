@@ -6,7 +6,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
+import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
 
 @Injectable()
@@ -56,7 +56,7 @@ export class BridgesService {
       Result.succeed(item),
       Result.bind(
         'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
           this.db.bridges.findMany({
             where: and(
               eq(bridgesTable.projectId, v.projectId),

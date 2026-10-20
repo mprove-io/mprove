@@ -1,3 +1,3 @@
-import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
+import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 
-export type SyncAllEditorSessionsStatusError = SessionEntToTabError;
+export type SyncAllEditorSessionsStatusError = DbSessionsFindManyError;

@@ -29,9 +29,9 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -76,7 +76,9 @@ export class GetMembersController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.userId),
@@ -93,7 +95,7 @@ export class GetMembersController {
       ),
       Result.bind(
         'projectMembers',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           this.db.members.findMany({
             where: and(eq(membersTable.projectId, v.projectId))
           })

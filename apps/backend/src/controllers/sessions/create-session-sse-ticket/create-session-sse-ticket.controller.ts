@@ -19,7 +19,7 @@ import { RedisService } from '#backend/services/redis/redis.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateSessionSseTicketOutput } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-output';
 
@@ -49,7 +49,12 @@ export class CreateSessionSseTicketController {
       Result.succeed({ sessionId: body.input.sessionId, userId: user.userId }),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })

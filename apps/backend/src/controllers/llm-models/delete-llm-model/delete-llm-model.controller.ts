@@ -20,7 +20,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
+import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteLlmModelOutput } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-output';
 
@@ -65,7 +65,12 @@ export class DeleteLlmModelController {
       ),
       Result.bind(
         'provider',
-        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProviderTab,
+          DbProvidersFindFirstCheckExistsError
+        > =>
           this.db.providers.findFirstCheckExists({
             where: and(
               eq(providersTable.projectId, v.projectId),

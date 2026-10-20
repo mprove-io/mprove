@@ -41,9 +41,9 @@ import { ExplorerStreamService } from '#backend/services/explorer/explorer-strea
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
@@ -98,7 +98,9 @@ export class CreateExplorerSessionController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -121,7 +123,9 @@ export class CreateExplorerSessionController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),

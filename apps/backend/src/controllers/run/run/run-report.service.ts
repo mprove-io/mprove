@@ -12,8 +12,8 @@ import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { DbReportsFindManyError } from '#common/types/backend/function-errors/db/reports/db-reports-find-many-error';
 import type { PrepareRunReportError } from '#common/types/backend/function-errors/prepare-run-report-error';
-import type { ReportEntToTabError } from '#common/types/backend/function-errors/report-ent-to-tab-error';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 import type { RunReport } from '#common/types/backend/parts/run/run-report';
 
@@ -60,7 +60,7 @@ export class RunReportService {
       Result.succeed(item),
       Result.bind(
         'reports',
-        (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
+        (v): Result.ResultAsync<ReportTab[], DbReportsFindManyError> =>
           this.db.reports.findMany({
             where: and(
               eq(reportsTable.structId, v.structId),

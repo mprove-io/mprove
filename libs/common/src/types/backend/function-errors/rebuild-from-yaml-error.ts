@@ -5,29 +5,29 @@ import {
   zBackendCreateChartFailError
 } from '#common/types/backend/errors/backend-create-chart-fail-error';
 import {
-  type GetBranchCheckExistsError,
-  zGetBranchCheckExistsError
-} from '#common/types/backend/function-errors/get-branch-check-exists-error';
+  type DbBranchesFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
 import {
-  type GetBridgeCheckExistsError,
-  zGetBridgeCheckExistsError
-} from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+  type DbBridgesFindFirstCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import {
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import {
+  type DbProjectsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import {
   type GetEnvCheckExistsAndAccessError,
   zGetEnvCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
-import {
   type GetModelCheckExistsAndAccessError,
   zGetModelCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
-import {
-  type GetProjectCheckExistsError,
-  zGetProjectCheckExistsError
-} from '#common/types/backend/function-errors/get-project-check-exists-error';
 import {
   type GetSelectedGivensError,
   zGetSelectedGivensError
@@ -46,26 +46,26 @@ import {
 } from '#common/types/backend/function-errors/rebuild-struct-error';
 
 export type RebuildFromYamlError =
-  | GetProjectCheckExistsError
+  | DbProjectsFindFirstCheckExistsError
   | GetUserCheckExistsError
   | GetSelectedGivensError
-  | GetMemberCheckExistsError
-  | GetBranchCheckExistsError
+  | DbMembersFindFirstCheckExistsError
+  | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
-  | GetBridgeCheckExistsError
+  | DbBridgesFindFirstCheckExistsError
   | GetStructCheckExistsError
   | GetModelCheckExistsAndAccessError
   | RebuildStructError
   | BackendCreateChartFailError;
 
 export const zRebuildFromYamlError = z.union([
-  zGetProjectCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError,
   zGetUserCheckExistsError,
   zGetSelectedGivensError,
-  zGetMemberCheckExistsError,
-  zGetBranchCheckExistsError,
+  zDbMembersFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,
-  zGetBridgeCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError,
   zGetStructCheckExistsError,
   zGetModelCheckExistsAndAccessError,
   zRebuildStructError,

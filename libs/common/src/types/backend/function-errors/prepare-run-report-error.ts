@@ -5,17 +5,17 @@ import {
   zBackendReportNotFoundError
 } from '#common/types/backend/errors/backend-report-not-found-error';
 import {
-  type ReportEntToTabError,
-  zReportEntToTabError
-} from '#common/types/backend/function-errors/report-ent-to-tab-error';
+  type DbReportsFindManyError,
+  zDbReportsFindManyError
+} from '#common/types/backend/function-errors/db/reports/db-reports-find-many-error';
 
 export type PrepareRunReportError =
-  | ReportEntToTabError
-  | BackendReportNotFoundError;
+  | BackendReportNotFoundError
+  | DbReportsFindManyError;
 
 export const zPrepareRunReportError = z.union([
-  zReportEntToTabError,
-  zBackendReportNotFoundError
+  zBackendReportNotFoundError,
+  zDbReportsFindManyError
 ]);
 
 assertTypesEqual<PrepareRunReportError, z.infer<typeof zPrepareRunReportError>>(

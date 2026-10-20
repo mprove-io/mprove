@@ -41,16 +41,18 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardEntToTabError } from '#common/types/backend/function-errors/dashboard-ent-to-tab-error';
+import type { DbDashboardsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/dashboards/db-dashboards-find-first-check-exists-error';
+import type { DbDashboardsFindManyError } from '#common/types/backend/function-errors/db/dashboards/db-dashboards-find-many-error';
+import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
+import type { DbQueriesFindManyError } from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
 import type { GetDashboardPartsError } from '#common/types/backend/function-errors/get-dashboard-parts-error';
 import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
 import type { GetDashboardXUsingDashboardTabError } from '#common/types/backend/function-errors/get-dashboard-x-using-dashboard-tab-error';
 import type { GetDashboardsCatalogError } from '#common/types/backend/function-errors/get-dashboards-catalog-error';
-import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { ProcessDashboardError } from '#common/types/backend/function-errors/process-dashboard-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
@@ -127,7 +129,7 @@ export class DashboardsService {
       Result.succeed(item),
       Result.bind(
         'dashboards',
-        (v): Result.ResultAsync<DashboardTab[], DashboardEntToTabError> =>
+        (v): Result.ResultAsync<DashboardTab[], DbDashboardsFindManyError> =>
           this.db.dashboards.findMany({
             where: and(
               eq(dashboardsTable.structId, v.structId),
@@ -392,7 +394,7 @@ export class DashboardsService {
           v
         ): Result.ResultAsync<
           DashboardTab,
-          GetDashboardCheckExistsAndAccessError
+          DbDashboardsFindFirstCheckExistsError
         > =>
           this.db.dashboards.findFirstCheckExists({
             where: and(
@@ -478,7 +480,7 @@ export class DashboardsService {
       ),
       Result.bind(
         'mconfigs',
-        async (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+        async (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
           v.mconfigIds.length === 0
             ? Result.succeed([])
             : this.db.mconfigs.findMany({
@@ -492,7 +494,7 @@ export class DashboardsService {
       ),
       Result.bind(
         'queries',
-        async (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
+        async (v): Result.ResultAsync<QueryTab[], DbQueriesFindManyError> =>
           v.queryIds.length === 0
             ? Result.succeed([])
             : this.db.queries.findMany({
@@ -504,7 +506,7 @@ export class DashboardsService {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: eq(modelsTable.structId, v.structId)
           })

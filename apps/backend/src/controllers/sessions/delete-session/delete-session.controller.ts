@@ -42,9 +42,9 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { DeleteWhileLockedError } from '#common/types/backend/function-errors/delete-while-locked-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -87,7 +87,12 @@ export class DeleteSessionController {
       }),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })
@@ -99,7 +104,12 @@ export class DeleteSessionController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.session.projectId)
           })
@@ -147,7 +157,10 @@ export class DeleteSessionController {
           'freshSession',
           async (
             v
-          ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+          ): Result.ResultAsync<
+            SessionTab,
+            DbSessionsFindFirstCheckExistsError
+          > =>
             v.session.type === 'Editor'
               ? this.db.sessions.findFirstCheckExists({
                   where: eq(sessionsTable.sessionId, v.session.sessionId)

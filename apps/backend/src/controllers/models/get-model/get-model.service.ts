@@ -20,10 +20,10 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
 import type { GetModelError } from '#common/types/backend/function-errors/get-model-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
@@ -69,7 +69,9 @@ export class GetModelService {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.userId),
@@ -79,7 +81,9 @@ export class GetModelService {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -97,7 +101,9 @@ export class GetModelService {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -110,7 +116,7 @@ export class GetModelService {
       // Users can get models for dashboard/report filters without model access.
       Result.bind(
         'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
+        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
           this.db.models.findFirstCheckExists({
             where: and(
               eq(modelsTable.structId, v.bridge.structId),

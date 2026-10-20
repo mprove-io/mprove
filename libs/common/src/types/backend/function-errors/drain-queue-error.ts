@@ -1,8 +1,8 @@
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
-import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
+import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 
 export type DrainQueueError =
-  | GetOcSessionBySessionIdError
-  | GetSessionByIdCheckExistsError
+  | DbOcSessionsFindFirstError
+  | DbSessionsFindFirstCheckExistsError
   | DbErrorToError;

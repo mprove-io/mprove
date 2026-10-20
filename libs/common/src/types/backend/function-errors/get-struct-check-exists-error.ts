@@ -1,22 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendStructDoesNotExistError,
-  zBackendStructDoesNotExistError
-} from '#common/types/backend/errors/backend-struct-does-not-exist-error';
-import {
-  type StructEntToTabError,
-  zStructEntToTabError
-} from '#common/types/backend/function-errors/struct-ent-to-tab-error';
+  type DbStructsFindFirstCheckExistsError,
+  zDbStructsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/structs/db-structs-find-first-check-exists-error';
 
-export type GetStructCheckExistsError =
-  | BackendStructDoesNotExistError
-  | StructEntToTabError;
+export type GetStructCheckExistsError = DbStructsFindFirstCheckExistsError;
 
-export let zGetStructCheckExistsError = z.union([
-  zBackendStructDoesNotExistError,
-  zStructEntToTabError
-]);
+export let zGetStructCheckExistsError = zDbStructsFindFirstCheckExistsError;
 
 assertTypesEqual<
   GetStructCheckExistsError,

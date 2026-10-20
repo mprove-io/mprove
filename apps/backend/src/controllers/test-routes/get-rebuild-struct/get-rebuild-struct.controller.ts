@@ -26,8 +26,8 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import type { GetApiEnvConnectionsWithFallbackError } from '#common/types/backend/function-errors/get-api-env-connections-with-fallback-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { SendToBlockmlError } from '#common/types/backend/function-errors/send-to-blockml-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
@@ -80,7 +80,12 @@ export class GetRebuildStructController {
       }),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })

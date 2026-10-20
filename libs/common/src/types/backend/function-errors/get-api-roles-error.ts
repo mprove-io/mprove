@@ -1,13 +1,13 @@
 import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type RoleEntToTabError,
-  zRoleEntToTabError
-} from '#common/types/backend/function-errors/role-ent-to-tab-error';
+  type DbRolesFindManyError,
+  zDbRolesFindManyError
+} from '#common/types/backend/function-errors/db/roles/db-roles-find-many-error';
 
-export type GetApiRolesError = RoleEntToTabError;
+export type GetApiRolesError = DbRolesFindManyError;
 
-export let zGetApiRolesError = zRoleEntToTabError;
+export let zGetApiRolesError = zDbRolesFindManyError;
 
 assertTypesEqual<GetApiRolesError, z.infer<typeof zGetApiRolesError>>({
   value: true

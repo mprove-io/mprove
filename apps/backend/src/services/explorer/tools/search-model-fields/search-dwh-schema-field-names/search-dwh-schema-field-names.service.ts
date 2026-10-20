@@ -30,7 +30,7 @@ export class SearchDwhSchemaFieldNamesService {
     private db: DbService
   ) {}
 
-  async searchUnwrap(item: {
+  async searchDwhSchemaFieldNamesUnwrap(item: {
     userId: string;
     projectId: string;
     repoId: string;
@@ -54,7 +54,7 @@ export class SearchDwhSchemaFieldNamesService {
     let result: Result.Result<
       SearchFieldMatch[],
       SearchDwhSchemaFieldNamesError
-    > = await this.search({
+    > = await this.searchDwhSchemaFieldNames({
       userId: userId,
       projectId: projectId,
       repoId: repoId,
@@ -74,7 +74,7 @@ export class SearchDwhSchemaFieldNamesService {
     return matches;
   }
 
-  async search(item: {
+  async searchDwhSchemaFieldNames(item: {
     userId: string;
     projectId: string;
     repoId: string;

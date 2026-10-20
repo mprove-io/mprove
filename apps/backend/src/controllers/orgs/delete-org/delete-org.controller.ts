@@ -33,8 +33,8 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteOrgOutput } from '#common/types/backend/routes/orgs/delete-org/delete-org-output';
 
@@ -72,7 +72,7 @@ export class DeleteOrgController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
+        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
           this.db.orgs.findFirstCheckExists({
             where: eq(orgsTable.orgId, v.orgId)
           })
@@ -94,7 +94,7 @@ export class DeleteOrgController {
       ),
       Result.bind(
         'projects',
-        (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           this.db.projects.findMany({
             where: eq(projectsTable.orgId, v.orgId)
           })

@@ -33,10 +33,10 @@ import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
@@ -108,7 +108,7 @@ export class SpecialRebuildStructsController {
       }),
       Result.bind(
         'members',
-        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           v.userIds.length === 0
             ? Result.succeed([])
             : this.db.members.findMany({
@@ -122,7 +122,7 @@ export class SpecialRebuildStructsController {
       ),
       Result.bind(
         'projects',
-        (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           v.projectIds.length > 0
             ? this.db.projects.findMany({
                 where: inArray(projectsTable.projectId, v.projectIds)
@@ -138,7 +138,7 @@ export class SpecialRebuildStructsController {
       ),
       Result.bind(
         'bridges',
-        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
           v.userIds.length > 0
             ? this.db.bridges.findMany({
                 where: inArray(bridgesTable.repoId, v.userIds)

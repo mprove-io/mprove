@@ -5,17 +5,17 @@ import {
   zBackendRolesDoNotExistError
 } from '#common/types/backend/errors/backend-roles-do-not-exist-error';
 import {
-  type RoleEntToTabError,
-  zRoleEntToTabError
-} from '#common/types/backend/function-errors/role-ent-to-tab-error';
+  type DbRolesFindManyError,
+  zDbRolesFindManyError
+} from '#common/types/backend/function-errors/db/roles/db-roles-find-many-error';
 
 export type CheckRolesExistError =
   | BackendRolesDoNotExistError
-  | RoleEntToTabError;
+  | DbRolesFindManyError;
 
 export let zCheckRolesExistError = z.union([
   zBackendRolesDoNotExistError,
-  zRoleEntToTabError
+  zDbRolesFindManyError
 ]);
 
 assertTypesEqual<CheckRolesExistError, z.infer<typeof zCheckRolesExistError>>({

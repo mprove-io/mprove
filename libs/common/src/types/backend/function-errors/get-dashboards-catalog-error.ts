@@ -1,13 +1,13 @@
 import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DashboardEntToTabError,
-  zDashboardEntToTabError
-} from '#common/types/backend/function-errors/dashboard-ent-to-tab-error';
+  type DbDashboardsFindManyError,
+  zDbDashboardsFindManyError
+} from '#common/types/backend/function-errors/db/dashboards/db-dashboards-find-many-error';
 
-export type GetDashboardsCatalogError = DashboardEntToTabError;
+export type GetDashboardsCatalogError = DbDashboardsFindManyError;
 
-export let zGetDashboardsCatalogError = zDashboardEntToTabError;
+export let zGetDashboardsCatalogError = zDbDashboardsFindManyError;
 
 assertTypesEqual<
   GetDashboardsCatalogError,

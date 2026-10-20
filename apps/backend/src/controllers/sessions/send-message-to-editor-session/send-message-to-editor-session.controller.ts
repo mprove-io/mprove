@@ -49,14 +49,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbProvidersFindManyError } from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { DispatchEditorInteractionError } from '#common/types/backend/function-errors/dispatch-editor-interaction-error';
 import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
-import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
-import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { HealthCheckOpenCodeError } from '#common/types/backend/function-errors/health-check-open-code-error';
 import type { PrepareEditorSandboxError } from '#common/types/backend/function-errors/prepare-editor-sandbox-error';
@@ -127,14 +127,24 @@ export class SendMessageToEditorSessionController {
       }),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.session.projectId)
           })
@@ -219,7 +229,7 @@ export class SendMessageToEditorSessionController {
       ),
       Result.bind(
         'ocSession',
-        (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
+        (v): Result.ResultAsync<OcSessionTab, DbOcSessionsFindFirstError> =>
           this.db.ocSessions.findFirst({
             where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
           })
@@ -261,7 +271,12 @@ export class SendMessageToEditorSessionController {
         Result.succeed(item),
         Result.bind(
           'lockedSession',
-          (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+          (
+            v
+          ): Result.ResultAsync<
+            SessionTab,
+            DbSessionsFindFirstCheckExistsError
+          > =>
             this.db.sessions.findFirstCheckExists({
               where: eq(sessionsTable.sessionId, v.session.sessionId)
             })
@@ -404,7 +419,7 @@ export class SendMessageToEditorSessionController {
         if (interactionType === 'Message') {
           let providersResult: Result.Result<
             ProviderTab[],
-            GetEnabledProvidersError
+            DbProvidersFindManyError
           > = await this.db.providers.findMany({
             where: and(
               eq(providersTable.projectId, session.projectId),
@@ -430,7 +445,7 @@ export class SendMessageToEditorSessionController {
           if (isProviderConfigChanged) {
             let freshSessionResult: Result.Result<
               SessionTab,
-              GetSessionByIdCheckExistsError
+              DbSessionsFindFirstCheckExistsError
             > = await this.db.sessions.findFirstCheckExists({
               where: eq(sessionsTable.sessionId, session.sessionId)
             });

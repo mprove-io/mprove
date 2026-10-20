@@ -28,8 +28,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateConnectionOutput } from '#common/types/backend/routes/connections/create-connection/create-connection-output';
 
@@ -109,7 +109,9 @@ export class CreateConnectionController {
       ),
       Result.bind(
         'member',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.userId),
@@ -146,7 +148,7 @@ export class CreateConnectionController {
       ),
       Result.bind(
         'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
           this.db.bridges.findMany({
             where: and(
               eq(bridgesTable.projectId, v.projectId),

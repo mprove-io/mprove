@@ -12,8 +12,8 @@ import { checkModelAccess } from '#backend/functions/check-model-access/check-mo
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
+import type { DbChartsFindManyError } from '#common/types/backend/function-errors/db/charts/db-charts-find-many-error';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import type { PrepareRunChartError } from '#common/types/backend/function-errors/prepare-run-chart-error';
 import type { RunChart } from '#common/types/backend/parts/run/run-chart';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
@@ -55,14 +55,14 @@ export class RunChartService {
       Result.succeed(item),
       Result.bind(
         'charts',
-        (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
+        (v): Result.ResultAsync<ChartTab[], DbChartsFindManyError> =>
           this.db.charts.findMany({
             where: eq(chartsTable.structId, v.structId)
           })
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: eq(modelsTable.structId, v.structId)
           })

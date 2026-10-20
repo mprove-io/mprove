@@ -44,16 +44,16 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetStructCheckExistsAndNotChangedError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
 import type { QueryOperationType } from '#common/types/backend/parts/query-operation/query-operation-type';
@@ -122,14 +122,21 @@ export class GroupMetricByDimensionController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -139,7 +146,9 @@ export class GroupMetricByDimensionController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -157,7 +166,9 @@ export class GroupMetricByDimensionController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -169,7 +180,12 @@ export class GroupMetricByDimensionController {
       ),
       Result.bind(
         'oldMconfig',
-        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          MconfigTab,
+          DbMconfigsFindFirstCheckExistsError
+        > =>
           this.db.mconfigs.findFirstCheckExists({
             where: and(
               eq(mconfigsTable.mconfigId, v.mconfigId),
@@ -205,7 +221,7 @@ export class GroupMetricByDimensionController {
       // Grouping does not require additional model access.
       Result.bind(
         'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
+        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
           this.db.models.findFirstCheckExists({
             where: and(
               eq(modelsTable.structId, v.bridge.structId),
@@ -328,7 +344,7 @@ export class GroupMetricByDimensionController {
       ),
       Result.bind(
         'query',
-        (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
+        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
           this.db.queries.findFirst({
             where: and(
               eq(queriesTable.queryId, v.mconfigQuery.newQuery.queryId),

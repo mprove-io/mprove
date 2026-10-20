@@ -18,7 +18,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCloseExplorerSessionTabOutput } from '#common/types/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-output';
 
@@ -49,7 +49,12 @@ export class CloseExplorerSessionTabController {
       }),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })

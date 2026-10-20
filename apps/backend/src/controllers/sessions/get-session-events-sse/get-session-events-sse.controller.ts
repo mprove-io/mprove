@@ -19,7 +19,7 @@ import { DbService } from '#backend/services/db/db.service';
 import { RedisService } from '#backend/services/redis/redis.service';
 import { SessionSseService } from '#backend/services/session/session-sse/session-sse.service';
 import { ServerError } from '#common/classes/server-error/server-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 
 export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';
 
@@ -56,7 +56,7 @@ export class GetSessionEventsSseController {
 
     let sessionResult: Result.Result<
       SessionTab,
-      GetSessionByIdCheckExistsError
+      DbSessionsFindFirstCheckExistsError
     > = await this.db.sessions.findFirstCheckExists({
       where: eq(sessionsTable.sessionId, sessionId)
     });

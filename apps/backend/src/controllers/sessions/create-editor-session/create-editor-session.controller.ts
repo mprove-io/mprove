@@ -56,18 +56,18 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { CreateSessionRepoError } from '#common/types/backend/function-errors/create-session-repo-error';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { DbBranchesFindFirstError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-error';
+import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbProvidersFindManyError } from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
+import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
-import type { GetEnabledProvidersError } from '#common/types/backend/function-errors/get-enabled-providers-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
-import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
 import type { StartEventStreamError } from '#common/types/backend/function-errors/start-event-stream-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
@@ -145,7 +145,12 @@ export class CreateEditorSessionController {
       }),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
@@ -167,7 +172,7 @@ export class CreateEditorSessionController {
       ),
       Result.bind(
         'activeSessions',
-        (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+        (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
           this.db.sessions.findMany({
             where: and(
               eq(sessionsTable.userId, v.user.userId),
@@ -215,7 +220,7 @@ export class CreateEditorSessionController {
       // Type Editor: existing sandboxed opencode flow
       Result.bind(
         'providers',
-        (v): Result.ResultAsync<ProviderTab[], GetEnabledProvidersError> =>
+        (v): Result.ResultAsync<ProviderTab[], DbProvidersFindManyError> =>
           this.db.providers.findMany({
             where: and(
               eq(providersTable.projectId, v.projectId),
@@ -706,7 +711,7 @@ export class CreateEditorSessionController {
       // console.log(`sendToDisk took ${(Date.now() - sendToDiskStart) / 1000}s`);
       Result.bind(
         'prodBranch',
-        (v): Result.ResultAsync<BranchTab, BranchEntToTabError> =>
+        (v): Result.ResultAsync<BranchTab, DbBranchesFindFirstError> =>
           this.db.branches.findFirst({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -728,7 +733,7 @@ export class CreateEditorSessionController {
       ),
       Result.bind(
         'prodBranchBridges',
-        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
           this.db.bridges.findMany({
             where: and(
               eq(bridgesTable.projectId, v.prodBranch.projectId),

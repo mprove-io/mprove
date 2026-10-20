@@ -21,13 +21,21 @@ import {
   zCheckRepoIdError
 } from '#common/types/backend/function-errors/check-repo-id-error';
 import {
-  type GetBranchCheckExistsError,
-  zGetBranchCheckExistsError
-} from '#common/types/backend/function-errors/get-branch-check-exists-error';
+  type DbBranchesFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
 import {
-  type GetBridgeCheckExistsError,
-  zGetBridgeCheckExistsError
-} from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+  type DbBridgesFindFirstCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import {
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import {
+  type DbProjectsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import {
   type GetChartDataError,
   zGetChartDataError
@@ -41,17 +49,9 @@ import {
   zGetEnvCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
-import {
-  type GetProjectCheckExistsError,
-  zGetProjectCheckExistsError
-} from '#common/types/backend/function-errors/get-project-check-exists-error';
-import {
-  type QueryInfoReportGetReportDataError,
-  zQueryInfoReportGetReportDataError
-} from '#common/types/backend/function-errors/query-info-report-get-report-data-error';
+  type GetQueryInfoReportDataError,
+  zGetQueryInfoReportDataError
+} from '#common/types/backend/function-errors/get-query-info-report-data-error';
 
 export type GetQueryInfoError =
   | BackendMutuallyExclusiveParamsError
@@ -59,14 +59,14 @@ export type GetQueryInfoError =
   | BackendTileIndexDoesNotWorkWithoutDashboardIdError
   | BackendRowIdDoesNotWorkWithoutReportIdError
   | CheckRepoIdError
-  | GetProjectCheckExistsError
-  | GetMemberCheckExistsError
-  | GetBranchCheckExistsError
+  | DbProjectsFindFirstCheckExistsError
+  | DbMembersFindFirstCheckExistsError
+  | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
-  | GetBridgeCheckExistsError
+  | DbBridgesFindFirstCheckExistsError
   | GetChartDataError
   | GetDashboardDataError
-  | QueryInfoReportGetReportDataError;
+  | GetQueryInfoReportDataError;
 
 export const zGetQueryInfoError = z.union([
   zBackendMutuallyExclusiveParamsError,
@@ -74,14 +74,14 @@ export const zGetQueryInfoError = z.union([
   zBackendTileIndexDoesNotWorkWithoutDashboardIdError,
   zBackendRowIdDoesNotWorkWithoutReportIdError,
   zCheckRepoIdError,
-  zGetProjectCheckExistsError,
-  zGetMemberCheckExistsError,
-  zGetBranchCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,
-  zGetBridgeCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError,
   zGetChartDataError,
   zGetDashboardDataError,
-  zQueryInfoReportGetReportDataError
+  zGetQueryInfoReportDataError
 ]);
 
 assertTypesEqual<GetQueryInfoError, z.infer<typeof zGetQueryInfoError>>({

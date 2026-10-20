@@ -22,7 +22,7 @@ import { EditorStreamService } from '#backend/services/editor/editor-stream/edit
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { PauseWhileLockedError } from '#common/types/backend/function-errors/pause-while-locked-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPauseEditorSessionOutput } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-output';
@@ -56,7 +56,12 @@ export class PauseEditorSessionController {
       Result.succeed({ sessionId: body.input.sessionId, userId: user.userId }),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })
@@ -119,7 +124,12 @@ export class PauseEditorSessionController {
         ),
         Result.bind(
           'freshSession',
-          (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+          (
+            v
+          ): Result.ResultAsync<
+            SessionTab,
+            DbSessionsFindFirstCheckExistsError
+          > =>
             this.db.sessions.findFirstCheckExists({
               where: eq(sessionsTable.sessionId, v.sessionId)
             })

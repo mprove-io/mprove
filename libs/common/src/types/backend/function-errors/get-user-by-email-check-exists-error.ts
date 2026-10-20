@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendUserDoesNotExistError,
-  zBackendUserDoesNotExistError
-} from '#common/types/backend/errors/backend-user-does-not-exist-error';
+  type DbUsersFindFirstCheckExistsError,
+  zDbUsersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 import {
   type GetDconfigHashSecretError,
   zGetDconfigHashSecretError
@@ -12,22 +12,16 @@ import {
   type MakeHashError,
   zMakeHashError
 } from '#common/types/backend/function-errors/make-hash-error';
-import {
-  type UserEntToTabError,
-  zUserEntToTabError
-} from '#common/types/backend/function-errors/user-ent-to-tab-error';
 
 export type GetUserByEmailCheckExistsError =
   | GetDconfigHashSecretError
   | MakeHashError
-  | UserEntToTabError
-  | BackendUserDoesNotExistError;
+  | DbUsersFindFirstCheckExistsError;
 
 export const zGetUserByEmailCheckExistsError = z.union([
   zGetDconfigHashSecretError,
   zMakeHashError,
-  zUserEntToTabError,
-  zBackendUserDoesNotExistError
+  zDbUsersFindFirstCheckExistsError
 ]);
 
 assertTypesEqual<

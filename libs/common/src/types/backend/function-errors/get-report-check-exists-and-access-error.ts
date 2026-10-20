@@ -9,25 +9,19 @@ import {
   zBackendReportCreatorIdMismatchError
 } from '#common/types/backend/errors/backend-report-creator-id-mismatch-error';
 import {
-  type BackendReportNotFoundError,
-  zBackendReportNotFoundError
-} from '#common/types/backend/errors/backend-report-not-found-error';
-import {
-  type ReportEntToTabError,
-  zReportEntToTabError
-} from '#common/types/backend/function-errors/report-ent-to-tab-error';
+  type DbReportsFindFirstCheckExistsError,
+  zDbReportsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/reports/db-reports-find-first-check-exists-error';
 
 export type GetReportCheckExistsAndAccessError =
   | BackendForbiddenReportError
   | BackendReportCreatorIdMismatchError
-  | BackendReportNotFoundError
-  | ReportEntToTabError;
+  | DbReportsFindFirstCheckExistsError;
 
 export let zGetReportCheckExistsAndAccessError = z.union([
   zBackendForbiddenReportError,
   zBackendReportCreatorIdMismatchError,
-  zBackendReportNotFoundError,
-  zReportEntToTabError
+  zDbReportsFindFirstCheckExistsError
 ]);
 
 assertTypesEqual<

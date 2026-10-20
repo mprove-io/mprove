@@ -9,6 +9,18 @@ import {
   zCheckChartOrModelAccessError
 } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
 import {
+  type DbMconfigsFindFirstCheckExistsError,
+  zDbMconfigsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
+import {
+  type DbModelsFindFirstCheckExistsError,
+  zDbModelsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
+import {
+  type DbQueriesFindFirstError,
+  zDbQueriesFindFirstError
+} from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
+import {
   type EditMalloyQueryError,
   zEditMalloyQueryError
 } from '#common/types/backend/function-errors/edit-malloy-query-error';
@@ -16,14 +28,6 @@ import {
   type GetChartCheckExistsError,
   zGetChartCheckExistsError
 } from '#common/types/backend/function-errors/get-chart-check-exists-error';
-import {
-  type GetMconfigCheckExistsError,
-  zGetMconfigCheckExistsError
-} from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
-import {
-  type GetModelCheckExistsError,
-  zGetModelCheckExistsError
-} from '#common/types/backend/function-errors/get-model-check-exists-error';
 import {
   type GetStructCheckExistsError,
   zGetStructCheckExistsError
@@ -33,10 +37,6 @@ import {
   zPrepStoreMconfigQueryError
 } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import {
-  type QueryEntToTabError,
-  zQueryEntToTabError
-} from '#common/types/backend/function-errors/query-ent-to-tab-error';
-import {
   type WriteError,
   zWriteError
 } from '#common/types/backend/function-errors/write-error';
@@ -45,25 +45,25 @@ export type GetChartDataError =
   | BackendMemberIsNotExplorerError
   | GetStructCheckExistsError
   | GetChartCheckExistsError
-  | GetMconfigCheckExistsError
-  | GetModelCheckExistsError
+  | DbMconfigsFindFirstCheckExistsError
+  | DbModelsFindFirstCheckExistsError
   | CheckChartOrModelAccessError
   | PrepStoreMconfigQueryError
   | EditMalloyQueryError
   | WriteError
-  | QueryEntToTabError;
+  | DbQueriesFindFirstError;
 
 export const zGetChartDataError = z.union([
   zBackendMemberIsNotExplorerError,
   zGetStructCheckExistsError,
   zGetChartCheckExistsError,
-  zGetMconfigCheckExistsError,
-  zGetModelCheckExistsError,
+  zDbMconfigsFindFirstCheckExistsError,
+  zDbModelsFindFirstCheckExistsError,
   zCheckChartOrModelAccessError,
   zPrepStoreMconfigQueryError,
   zEditMalloyQueryError,
   zWriteError,
-  zQueryEntToTabError
+  zDbQueriesFindFirstError
 ]);
 
 assertTypesEqual<GetChartDataError, z.infer<typeof zGetChartDataError>>({

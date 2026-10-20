@@ -13,25 +13,25 @@ import {
   zCheckRepoIdError
 } from '#common/types/backend/function-errors/check-repo-id-error';
 import {
-  type GetBranchCheckExistsError,
-  zGetBranchCheckExistsError
-} from '#common/types/backend/function-errors/get-branch-check-exists-error';
+  type DbBranchesFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
 import {
-  type GetBridgeCheckExistsError,
-  zGetBridgeCheckExistsError
-} from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+  type DbBridgesFindFirstCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import {
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import {
+  type DbProjectsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import {
   type GetEnvCheckExistsAndAccessError,
   zGetEnvCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
-import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
-import {
-  type GetProjectCheckExistsError,
-  zGetProjectCheckExistsError
-} from '#common/types/backend/function-errors/get-project-check-exists-error';
 import {
   type GetQueriesCheckExistSkipSqlDataError,
   zGetQueriesCheckExistSkipSqlDataError
@@ -61,11 +61,11 @@ export type RunError =
   | BackendMutuallyExclusiveParamsError
   | BackendSleepDoesNotWorkWithoutWaitError
   | CheckRepoIdError
-  | GetProjectCheckExistsError
-  | GetMemberCheckExistsError
-  | GetBranchCheckExistsError
+  | DbProjectsFindFirstCheckExistsError
+  | DbMembersFindFirstCheckExistsError
+  | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
-  | GetBridgeCheckExistsError
+  | DbBridgesFindFirstCheckExistsError
   | GetStructCheckExistsError
   | PrepareRunChartError
   | PrepareRunDashboardError
@@ -77,11 +77,11 @@ export const zRunError = z.union([
   zBackendMutuallyExclusiveParamsError,
   zBackendSleepDoesNotWorkWithoutWaitError,
   zCheckRepoIdError,
-  zGetProjectCheckExistsError,
-  zGetMemberCheckExistsError,
-  zGetBranchCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,
-  zGetBridgeCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError,
   zGetStructCheckExistsError,
   zPrepareRunChartError,
   zPrepareRunDashboardError,

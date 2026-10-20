@@ -18,13 +18,13 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
+import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { GetEditorSessionsToPauseError } from '#common/types/backend/function-errors/get-editor-sessions-to-pause-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { PauseSandboxError } from '#common/types/backend/function-errors/pause-sandbox-error';
 import type { PauseSessionByIdError } from '#common/types/backend/function-errors/pause-session-by-id-error';
 import type { ResumeSandboxError } from '#common/types/backend/function-errors/resume-sandbox-error';
-import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
 import type { StopSandboxError } from '#common/types/backend/function-errors/stop-sandbox-error';
 import type { SyncAllEditorSessionsStatusError } from '#common/types/backend/function-errors/sync-all-editor-sessions-status-error';
 import type { PauseReason } from '#common/types/backend/parts/session/pause-reason';
@@ -156,14 +156,16 @@ export class EditorSandboxService {
     let pauseThresholdTs =
       Date.now() - sessionLastActivityToPauseMinutes * 60 * 1000;
 
-    let sessionCollection: Result.Result<SessionTab[], SessionEntToTabError> =
-      await this.db.sessions.findMany({
-        where: and(
-          eq(sessionsTable.type, 'Editor'),
-          eq(sessionsTable.status, 'Active'),
-          lt(sessionsTable.lastActivityTs, pauseThresholdTs)
-        )
-      });
+    let sessionCollection: Result.Result<
+      SessionTab[],
+      DbSessionsFindManyError
+    > = await this.db.sessions.findMany({
+      where: and(
+        eq(sessionsTable.type, 'Editor'),
+        eq(sessionsTable.status, 'Active'),
+        lt(sessionsTable.lastActivityTs, pauseThresholdTs)
+      )
+    });
 
     if (Result.isFailure(sessionCollection)) {
       return sessionCollection;
@@ -189,7 +191,12 @@ export class EditorSandboxService {
       Result.succeed(item),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })
@@ -198,7 +205,10 @@ export class EditorSandboxService {
         'project',
         async (
           v
-        ): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           v.session.type !== 'Editor' ||
           v.session.status !== 'Active' ||
           !v.session.sandboxId
@@ -241,13 +251,15 @@ export class EditorSandboxService {
     string[],
     SyncAllEditorSessionsStatusError
   > {
-    let sessionCollection: Result.Result<SessionTab[], SessionEntToTabError> =
-      await this.db.sessions.findMany({
-        where: and(
-          eq(sessionsTable.type, 'Editor'),
-          inArray(sessionsTable.status, activeOrPausedStatuses)
-        )
-      });
+    let sessionCollection: Result.Result<
+      SessionTab[],
+      DbSessionsFindManyError
+    > = await this.db.sessions.findMany({
+      where: and(
+        eq(sessionsTable.type, 'Editor'),
+        inArray(sessionsTable.status, activeOrPausedStatuses)
+      )
+    });
 
     if (Result.isFailure(sessionCollection)) {
       return sessionCollection;

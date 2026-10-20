@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ConnectionEntToTabError,
-  zConnectionEntToTabError
-} from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+  type DbConnectionsFindManyError,
+  zDbConnectionsFindManyError
+} from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import {
   type DbErrorToError,
   zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
+} from '#common/types/backend/function-errors/db/db-error-to-error';
 import {
   type GetApiEnvsError,
   zGetApiEnvsError
@@ -19,15 +19,15 @@ import {
 
 export type RebuildStructError =
   | GetApiEnvsError
-  | ConnectionEntToTabError
   | SendToBlockmlError
-  | DbErrorToError;
+  | DbErrorToError
+  | DbConnectionsFindManyError;
 
 export let zRebuildStructError = z.union([
   zGetApiEnvsError,
-  zConnectionEntToTabError,
   zSendToBlockmlError,
-  zDbErrorToError
+  zDbErrorToError,
+  zDbConnectionsFindManyError
 ]);
 
 assertTypesEqual<RebuildStructError, z.infer<typeof zRebuildStructError>>({

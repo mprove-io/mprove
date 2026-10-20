@@ -27,8 +27,8 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendWrongOffsetError } from '#common/types/backend/errors/backend-wrong-offset-error';
-import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
-import type { CachedPartEntToTabError } from '#common/types/backend/function-errors/cached-part-ent-to-tab-error';
+import type { DbCachedColumnsFindFirstError } from '#common/types/backend/function-errors/db/cached-columns/db-cached-columns-find-first-error';
+import type { DbCachedPartsFindManyError } from '#common/types/backend/function-errors/db/cached-parts/db-cached-parts-find-many-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -107,7 +107,7 @@ export class ViewCachedColumnController {
       ),
       Result.bind(
         'rows',
-        (v): Result.ResultAsync<CachedPartTab[], CachedPartEntToTabError> =>
+        (v): Result.ResultAsync<CachedPartTab[], DbCachedPartsFindManyError> =>
           this.db.cachedParts.findMany({
             where: and(
               eq(cachedPartsTable.projectId, v.projectId),
@@ -124,7 +124,9 @@ export class ViewCachedColumnController {
       ),
       Result.bind(
         'cachedColumn',
-        (v): Result.ResultAsync<CachedColumnTab, CachedColumnEntToTabError> =>
+        (
+          v
+        ): Result.ResultAsync<CachedColumnTab, DbCachedColumnsFindFirstError> =>
           this.db.cachedColumns.findFirst({
             where: eq(
               cachedColumnsTable.cachedColumnFullId,

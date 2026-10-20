@@ -31,11 +31,11 @@ import { ParentService } from '#backend/services/parent/parent.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { GetQueryCheckExistsError } from '#common/types/backend/function-errors/get-query-check-exists-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbQueriesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
 
@@ -106,7 +106,9 @@ export class GetQueryController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -116,7 +118,9 @@ export class GetQueryController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -134,7 +138,9 @@ export class GetQueryController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -146,7 +152,12 @@ export class GetQueryController {
       ),
       Result.bind(
         'mconfig',
-        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          MconfigTab,
+          DbMconfigsFindFirstCheckExistsError
+        > =>
           this.db.mconfigs.findFirstCheckExists({
             where: and(
               eq(mconfigsTable.mconfigId, v.mconfigId),
@@ -172,7 +183,7 @@ export class GetQueryController {
       ),
       Result.bind(
         'query',
-        (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsError> =>
+        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstCheckExistsError> =>
           this.db.queries.findFirstCheckExists({
             where: and(
               eq(queriesTable.queryId, v.queryId),

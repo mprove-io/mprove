@@ -23,7 +23,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
+import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
@@ -106,7 +106,7 @@ export class EditEnvFallbacksController {
       }),
       Result.bind(
         'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
           this.db.bridges.findMany({
             where: and(
               eq(bridgesTable.projectId, v.projectId),

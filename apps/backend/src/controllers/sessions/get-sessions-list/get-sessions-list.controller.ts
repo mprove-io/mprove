@@ -33,9 +33,10 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbSessionsFindFirstError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-error';
+import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { GetSessionListError } from '#common/types/backend/function-errors/get-session-list-error';
-import type { SessionEntToTabError } from '#common/types/backend/function-errors/session-ent-to-tab-error';
 import type { TabsToSessionApisError } from '#common/types/backend/function-errors/tabs-to-session-apis-error';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { SessionType } from '#common/types/backend/parts/session/session-type';
@@ -77,7 +78,12 @@ export class GetSessionsListController {
       }),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
@@ -92,7 +98,7 @@ export class GetSessionsListController {
       ),
       Result.bind(
         'editorSessions',
-        async (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+        async (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
           v.project.e2bApiKey && v.sessionType === 'Editor'
             ? this.db.sessions.findMany({
                 where: and(
@@ -150,7 +156,7 @@ export class GetSessionsListController {
       }),
       Result.bind(
         'sessions',
-        (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+        (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
           this.db.sessions.findMany({
             where: and(
               eq(sessionsTable.projectId, v.projectId),
@@ -174,7 +180,7 @@ export class GetSessionsListController {
       // All archived sessions above cursor (previously loaded + newly archived)
       Result.bind(
         'aboveCursorSessions',
-        async (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+        async (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
           v.includeArchived === true && isDefined(v.archivedLastCreatedTs)
             ? this.db.sessions.findMany({
                 where: and(
@@ -188,7 +194,7 @@ export class GetSessionsListController {
       // Next page below cursor, or first load when no cursor is provided
       Result.bind(
         'archivedPageSessions',
-        async (v): Result.ResultAsync<SessionTab[], SessionEntToTabError> =>
+        async (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
           v.includeArchived === true
             ? this.db.sessions.findMany({
                 where: and(
@@ -226,7 +232,7 @@ export class GetSessionsListController {
       ),
       Result.bind(
         'currentSession',
-        async (v): Result.ResultAsync<SessionTab, SessionEntToTabError> => {
+        async (v): Result.ResultAsync<SessionTab, DbSessionsFindFirstError> => {
           let isCurrentSessionIncluded: boolean = v.listedSessions.some(
             session => session.sessionId === v.currentSessionId
           );

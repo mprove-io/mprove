@@ -1,0 +1,17 @@
+import type { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type SessionEntToTabError,
+  zSessionEntToTabError
+} from '#common/types/backend/function-errors/session-ent-to-tab-error';
+
+export type DbSessionsFindManyError = SessionEntToTabError;
+
+export let zDbSessionsFindManyError = zSessionEntToTabError;
+
+assertTypesEqual<
+  DbSessionsFindManyError,
+  z.infer<typeof zDbSessionsFindManyError>
+>({
+  value: true
+});

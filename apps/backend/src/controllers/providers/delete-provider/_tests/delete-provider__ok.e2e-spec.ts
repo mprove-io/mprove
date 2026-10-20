@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
 import { and, eq } from 'drizzle-orm';
-import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-test-and-seed';
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
 import type { Prep } from '#backend/interfaces/prep';
+import { DbService } from '#backend/services/db/db.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 
@@ -135,7 +135,7 @@ test('1', async t => {
         req: req
       });
 
-      let db: Db = prep.moduleRef.get<Db>(DRIZZLE);
+      let db: DbService = prep.moduleRef.get<DbService>(DbService);
 
       deletedProvider = await db.drizzle.query.providersTable.findFirst({
         where: and(

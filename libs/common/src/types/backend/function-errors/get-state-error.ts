@@ -1,21 +1,37 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ChartEntToTabError,
-  zChartEntToTabError
-} from '#common/types/backend/function-errors/chart-ent-to-tab-error';
-import {
   type CheckRepoIdError,
   zCheckRepoIdError
 } from '#common/types/backend/function-errors/check-repo-id-error';
 import {
-  type GetBranchCheckExistsError,
-  zGetBranchCheckExistsError
-} from '#common/types/backend/function-errors/get-branch-check-exists-error';
+  type DbBranchesFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
 import {
-  type GetBridgeCheckExistsError,
-  zGetBridgeCheckExistsError
-} from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+  type DbBridgesFindFirstCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import {
+  type DbChartsFindManyError,
+  zDbChartsFindManyError
+} from '#common/types/backend/function-errors/db/charts/db-charts-find-many-error';
+import {
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import {
+  type DbModelsFindManyError,
+  zDbModelsFindManyError
+} from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
+import {
+  type DbProjectsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import {
+  type DbReportsFindManyError,
+  zDbReportsFindManyError
+} from '#common/types/backend/function-errors/db/reports/db-reports-find-many-error';
 import {
   type GetDashboardPartsError,
   zGetDashboardPartsError
@@ -25,25 +41,9 @@ import {
   zGetEnvCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
-import {
-  type GetProjectCheckExistsError,
-  zGetProjectCheckExistsError
-} from '#common/types/backend/function-errors/get-project-check-exists-error';
-import {
   type GetStructCheckExistsError,
   zGetStructCheckExistsError
 } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import {
-  type ModelEntToTabError,
-  zModelEntToTabError
-} from '#common/types/backend/function-errors/model-ent-to-tab-error';
-import {
-  type ReportEntToTabError,
-  zReportEntToTabError
-} from '#common/types/backend/function-errors/report-ent-to-tab-error';
 import {
   type SendToDiskError,
   zSendToDiskError
@@ -51,31 +51,31 @@ import {
 
 export type GetStateError =
   | CheckRepoIdError
-  | GetProjectCheckExistsError
-  | GetMemberCheckExistsError
-  | GetBranchCheckExistsError
+  | DbProjectsFindFirstCheckExistsError
+  | DbMembersFindFirstCheckExistsError
+  | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
-  | GetBridgeCheckExistsError
+  | DbBridgesFindFirstCheckExistsError
   | SendToDiskError
   | GetStructCheckExistsError
-  | ModelEntToTabError
-  | ChartEntToTabError
   | GetDashboardPartsError
-  | ReportEntToTabError;
+  | DbModelsFindManyError
+  | DbChartsFindManyError
+  | DbReportsFindManyError;
 
 export let zGetStateError = z.union([
   zCheckRepoIdError,
-  zGetProjectCheckExistsError,
-  zGetMemberCheckExistsError,
-  zGetBranchCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,
-  zGetBridgeCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError,
   zSendToDiskError,
   zGetStructCheckExistsError,
-  zModelEntToTabError,
-  zChartEntToTabError,
   zGetDashboardPartsError,
-  zReportEntToTabError
+  zDbModelsFindManyError,
+  zDbChartsFindManyError,
+  zDbReportsFindManyError
 ]);
 
 assertTypesEqual<GetStateError, z.infer<typeof zGetStateError>>({

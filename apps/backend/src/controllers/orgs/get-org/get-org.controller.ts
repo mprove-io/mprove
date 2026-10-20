@@ -19,8 +19,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
+import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgOutput } from '#common/types/backend/routes/orgs/get-org/get-org-output';
 
@@ -52,14 +52,14 @@ export class GetOrgController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
+        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
           this.db.orgs.findFirstCheckExists({
             where: eq(orgsTable.orgId, v.orgId)
           })
       ),
       Result.bind(
         'userMembers',
-        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           v.org.ownerId === v.userId
             ? Result.succeed([])
             : this.db.members.findMany({

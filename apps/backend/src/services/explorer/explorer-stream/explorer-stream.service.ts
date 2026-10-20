@@ -57,18 +57,18 @@ import {
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { BuildCodexFetchError } from '#common/types/backend/function-errors/build-codex-fetch-error';
+import type { DbBridgesFindFirstError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-error';
+import type { DbOcMessagesFindManyError } from '#common/types/backend/function-errors/db/oc-messages/db-oc-messages-find-many-error';
+import type { DbOcPartsFindManyError } from '#common/types/backend/function-errors/db/oc-parts/db-oc-parts-find-many-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetExplorerModelError } from '#common/types/backend/function-errors/get-explorer-model-error';
 import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { LoadMessageHistoryError } from '#common/types/backend/function-errors/load-message-history-error';
-import type { OcMessageEntToTabError } from '#common/types/backend/function-errors/oc-message-ent-to-tab-error';
-import type { OcPartEntToTabError } from '#common/types/backend/function-errors/oc-part-ent-to-tab-error';
 import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
 import type { RunProducerError } from '#common/types/backend/function-errors/run-producer-error';
 import type { ProviderType } from '#common/types/backend/parts/provider/provider-type';
@@ -643,7 +643,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let sessionResult: Result.Result<
       SessionTab,
-      GetSessionByIdCheckExistsError
+      DbSessionsFindFirstCheckExistsError
     > = await this.db.sessions.findFirstCheckExists({
       where: eq(sessionsTable.sessionId, sessionId)
     });
@@ -685,10 +685,12 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let isCodex = modelSelection.provider.type === 'OpenAICodex';
 
-    let projectResult: Result.Result<ProjectTab, GetProjectCheckExistsError> =
-      await this.db.projects.findFirstCheckExists({
-        where: eq(projectsTable.projectId, session.projectId)
-      });
+    let projectResult: Result.Result<
+      ProjectTab,
+      DbProjectsFindFirstCheckExistsError
+    > = await this.db.projects.findFirstCheckExists({
+      where: eq(projectsTable.projectId, session.projectId)
+    });
 
     if (Result.isFailure(projectResult)) {
       return projectResult;
@@ -696,7 +698,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let project: ProjectTab = projectResult.value;
 
-    let bridgeResult: Result.Result<BridgeTab, BridgeEntToTabError> =
+    let bridgeResult: Result.Result<BridgeTab, DbBridgesFindFirstError> =
       await this.db.bridges.findFirst({
         where: and(
           eq(bridgesTable.projectId, session.projectId),
@@ -1349,11 +1351,13 @@ export class ExplorerStreamService implements OnModuleDestroy {
   }): Result.ResultAsync<ModelMessage[], LoadMessageHistoryError> {
     let { sessionId } = item;
 
-    let messagesResult: Result.Result<OcMessageTab[], OcMessageEntToTabError> =
-      await this.db.ocMessages.findMany({
-        where: eq(ocMessagesTable.sessionId, sessionId),
-        orderBy: [asc(ocMessagesTable.createdTs)]
-      });
+    let messagesResult: Result.Result<
+      OcMessageTab[],
+      DbOcMessagesFindManyError
+    > = await this.db.ocMessages.findMany({
+      where: eq(ocMessagesTable.sessionId, sessionId),
+      orderBy: [asc(ocMessagesTable.createdTs)]
+    });
 
     if (Result.isFailure(messagesResult)) {
       return messagesResult;
@@ -1361,7 +1365,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let messages: OcMessageTab[] = messagesResult.value;
 
-    let partsResult: Result.Result<OcPartTab[], OcPartEntToTabError> =
+    let partsResult: Result.Result<OcPartTab[], DbOcPartsFindManyError> =
       await this.db.ocParts.findMany({
         where: eq(ocPartsTable.sessionId, sessionId),
         orderBy: [asc(ocPartsTable.createdTs)]

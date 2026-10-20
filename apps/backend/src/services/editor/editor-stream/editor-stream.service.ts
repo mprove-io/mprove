@@ -51,8 +51,8 @@ import {
 } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
+import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
 import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
-import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
 import type { PauseSessionByIdError } from '#common/types/backend/function-errors/pause-session-by-id-error';
 import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
@@ -795,7 +795,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
       let ocSessionResult: Result.Result<
         OcSessionTab,
-        GetOcSessionBySessionIdError
+        DbOcSessionsFindFirstError
       > = await this.db.ocSessions.findFirst({
         where: eq(ocSessionsTable.sessionId, item.sessionId)
       });

@@ -20,9 +20,9 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
+import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
 import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
 import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
-import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
 import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
@@ -158,7 +158,9 @@ export class ParentService {
       ),
       Result.bind(
         'chartModel',
-        async (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
+        async (
+          v
+        ): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
           v.parentType === 'Chart'
             ? this.db.models.findFirstCheckExists({
                 where: and(

@@ -27,9 +27,9 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { DbRolesFindManyError } from '#common/types/backend/function-errors/db/roles/db-roles-find-many-error';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { GetRolesError } from '#common/types/backend/function-errors/get-roles-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteGivenOutput } from '#common/types/backend/routes/givens/delete-given/delete-given-output';
@@ -88,7 +88,7 @@ export class DeleteGivenController {
       ),
       Result.bind(
         'roles',
-        (v): Result.ResultAsync<RoleTab[], GetRolesError> =>
+        (v): Result.ResultAsync<RoleTab[], DbRolesFindManyError> =>
           this.db.roles.findMany({
             where: eq(rolesTable.projectId, v.projectId)
           })

@@ -42,13 +42,13 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendConnectionDoesNotExistError } from '#common/types/backend/errors/backend-connection-does-not-exist-error';
 import type { CancelQueryError } from '#common/types/backend/function-errors/cancel-query-error';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
+import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
-import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
@@ -104,7 +104,9 @@ export class CancelQueriesController {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -114,7 +116,9 @@ export class CancelQueriesController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -132,7 +136,9 @@ export class CancelQueriesController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -150,7 +156,7 @@ export class CancelQueriesController {
       ),
       Result.bind(
         'mconfigs',
-        (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+        (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
           this.db.mconfigs.findMany({
             where: and(
               eq(mconfigsTable.structId, v.bridge.structId),
@@ -200,7 +206,7 @@ export class CancelQueriesController {
       ),
       Result.bind(
         'connectionsWithAnyEnvId',
-        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
+        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
           this.db.connections.findMany({
             where: and(
               eq(connectionsTable.projectId, v.projectId),

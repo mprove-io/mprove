@@ -9,9 +9,9 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckRoleDoesNotExistError } from '#common/types/backend/function-errors/check-role-does-not-exist-error';
 import type { CheckRoleGivenDoesNotExistError } from '#common/types/backend/function-errors/check-role-given-does-not-exist-error';
 import type { CheckRolesExistError } from '#common/types/backend/function-errors/check-roles-exist-error';
+import type { DbRolesFindManyError } from '#common/types/backend/function-errors/db/roles/db-roles-find-many-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
 import type { GetRoleGivenCheckExistsError } from '#common/types/backend/function-errors/get-role-given-check-exists-error';
-import type { RoleEntToTabError } from '#common/types/backend/function-errors/role-ent-to-tab-error';
 import type { Gv } from '#common/types/backend/parts/gv';
 import type { Role } from '#common/types/backend/parts/role';
 
@@ -90,7 +90,7 @@ export class RolesService {
       return Result.succeed();
     }
 
-    let rolesResult: Result.Result<RoleTab[], RoleEntToTabError> =
+    let rolesResult: Result.Result<RoleTab[], DbRolesFindManyError> =
       await this.db.roles.findMany({
         where: and(
           eq(rolesTable.projectId, projectId),
@@ -153,7 +153,7 @@ export class RolesService {
       Result.succeed(item),
       Result.bind(
         'roles',
-        (v): Result.ResultAsync<RoleTab[], RoleEntToTabError> =>
+        (v): Result.ResultAsync<RoleTab[], DbRolesFindManyError> =>
           this.db.roles.findMany({
             where: eq(rolesTable.projectId, v.projectId)
           })

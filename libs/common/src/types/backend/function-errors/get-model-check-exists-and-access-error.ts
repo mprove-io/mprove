@@ -9,19 +9,19 @@ import {
   zBackendModelIdIsNotDefinedError
 } from '#common/types/backend/errors/backend-model-id-is-not-defined-error';
 import {
-  type GetModelCheckExistsError,
-  zGetModelCheckExistsError
-} from '#common/types/backend/function-errors/get-model-check-exists-error';
+  type DbModelsFindFirstCheckExistsError,
+  zDbModelsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
 
 export type GetModelCheckExistsAndAccessError =
   | BackendModelIdIsNotDefinedError
   | BackendForbiddenModelError
-  | GetModelCheckExistsError;
+  | DbModelsFindFirstCheckExistsError;
 
 export let zGetModelCheckExistsAndAccessError = z.union([
   zBackendModelIdIsNotDefinedError,
   zBackendForbiddenModelError,
-  zGetModelCheckExistsError
+  zDbModelsFindFirstCheckExistsError
 ]);
 
 assertTypesEqual<

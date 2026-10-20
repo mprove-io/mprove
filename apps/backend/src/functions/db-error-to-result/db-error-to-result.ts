@@ -4,12 +4,12 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import {
   type DbErrorToError,
   zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
+} from '#common/types/backend/function-errors/db/db-error-to-error';
 
 /**
  * Compatibility adapter for legacy throwing DB conversions. Validate the
  * original domain failure instead of reconstructing it from an error message.
- * Prefer retryTransaction with Result-returning operations for new code.
+ * Prefer DbService.write for Result-returning persistence in new code.
  */
 export async function dbErrorToResult<Output = void>(item: {
   action: () => Promise<Output>;

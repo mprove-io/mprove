@@ -22,7 +22,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { Env } from '#common/types/backend/parts/env';
@@ -87,7 +87,7 @@ export class GetConnectionsController {
       ),
       Result.bind(
         'connections',
-        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
+        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
           this.db.connections.findMany({
             where: isDefined(v.envId)
               ? and(

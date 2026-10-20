@@ -29,13 +29,12 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BackendNoteDoesNotExistError } from '#common/types/backend/errors/backend-note-does-not-exist-error';
 import type { AddProjectError } from '#common/types/backend/function-errors/add-project-error';
+import type { DbNotesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/notes/db-notes-find-first-check-exists-error';
+import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
+import type { DbProjectsFindFirstError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { NoteEntToTabError } from '#common/types/backend/function-errors/note-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/projects/create-project/create-project-output';
 
@@ -77,7 +76,7 @@ export class CreateProjectController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
+        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
           this.db.orgs.findFirstCheckExists({
             where: eq(orgsTable.orgId, v.orgId)
           })
@@ -111,7 +110,7 @@ export class CreateProjectController {
       ),
       Result.bind(
         'existingProject',
-        (v): Result.ResultAsync<ProjectTab, ProjectEntToTabError> =>
+        (v): Result.ResultAsync<ProjectTab, DbProjectsFindFirstError> =>
           this.db.projects.findFirst({
             where: and(
               eq(projectsTable.orgId, v.orgId),
@@ -128,10 +127,7 @@ export class CreateProjectController {
         'note',
         async (
           v
-        ): Result.ResultAsync<
-          NoteTab,
-          BackendNoteDoesNotExistError | NoteEntToTabError
-        > =>
+        ): Result.ResultAsync<NoteTab, DbNotesFindFirstCheckExistsError> =>
           v.remoteType !== 'GitClone'
             ? Result.succeed(undefined)
             : this.db.notes.findFirstCheckExists({

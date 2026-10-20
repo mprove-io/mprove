@@ -64,14 +64,14 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendRestrictedUserError } from '#common/types/backend/errors/backend-restricted-user-error';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
+import type { DbBranchesFindFirstError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-error';
+import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbUsersFindFirstError } from '#common/types/backend/function-errors/db/users/db-users-find-first-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/members/create-member/create-member-output';
@@ -137,7 +137,12 @@ export class CreateMemberController {
       }),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
@@ -163,7 +168,7 @@ export class CreateMemberController {
       ),
       Result.bind(
         'invitedUser',
-        (v): Result.ResultAsync<UserTab, UserEntToTabError> =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstError> =>
           this.db.users.findFirst({
             where: eq(usersTable.emailHash, v.emailHash)
           })
@@ -263,7 +268,7 @@ export class CreateMemberController {
       ),
       Result.bind(
         'prodBranch',
-        (v): Result.ResultAsync<BranchTab, BranchEntToTabError> =>
+        (v): Result.ResultAsync<BranchTab, DbBranchesFindFirstError> =>
           this.db.branches.findFirst({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -285,7 +290,7 @@ export class CreateMemberController {
       ),
       Result.bind(
         'prodBranchBridges',
-        (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
           this.db.bridges.findMany({
             where: and(
               eq(bridgesTable.projectId, v.prodBranch.projectId),

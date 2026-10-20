@@ -47,9 +47,9 @@ import type { BackendConnectionSchemaIsNotFoundError } from '#common/types/backe
 import type { BackendWrongColumnNameError } from '#common/types/backend/errors/backend-wrong-column-name-error';
 import type { BackendWrongSchemaNameError } from '#common/types/backend/errors/backend-wrong-schema-name-error';
 import type { BackendWrongTableNameError } from '#common/types/backend/errors/backend-wrong-table-name-error';
-import type { CachedColumnEntToTabError } from '#common/types/backend/function-errors/cached-column-ent-to-tab-error';
 import type { CompleteRefreshCachedColumnError } from '#common/types/backend/function-errors/complete-refresh-cached-column-error';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { DbCachedColumnsFindFirstError } from '#common/types/backend/function-errors/db/cached-columns/db-cached-columns-find-first-error';
+import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import type { FetchCachedPartsError } from '#common/types/backend/function-errors/fetch-cached-parts-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
@@ -163,7 +163,7 @@ export class RefreshCachedColumnController {
       ),
       Result.bind(
         'connections',
-        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
+        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
           this.db.connections.findMany({
             where: and(
               eq(connectionsTable.projectId, v.projectId),
@@ -249,7 +249,9 @@ export class RefreshCachedColumnController {
       ),
       Result.bind(
         'currentCachedColumn',
-        (v): Result.ResultAsync<CachedColumnTab, CachedColumnEntToTabError> =>
+        (
+          v
+        ): Result.ResultAsync<CachedColumnTab, DbCachedColumnsFindFirstError> =>
           this.db.cachedColumns.findFirst({
             where: eq(
               cachedColumnsTable.cachedColumnFullId,

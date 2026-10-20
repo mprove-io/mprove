@@ -20,9 +20,9 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
+import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgsListOutput } from '#common/types/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
 
@@ -53,7 +53,7 @@ export class GetOrgsListController {
       }),
       Result.bind(
         'userMembers',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           this.db.members.findMany({
             where: eq(membersTable.memberId, v.userId)
           })
@@ -65,7 +65,7 @@ export class GetOrgsListController {
       ),
       Result.bind(
         'userProjects',
-        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           v.userProjectIds.length === 0
             ? Result.succeed([])
             : this.db.projects.findMany({
@@ -79,7 +79,7 @@ export class GetOrgsListController {
       ),
       Result.bind(
         'userOrgs',
-        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+        async (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
           v.userOrgIds.length === 0
             ? Result.succeed([])
             : this.db.orgs.findMany({
@@ -88,7 +88,7 @@ export class GetOrgsListController {
       ),
       Result.bind(
         'ownerOrgs',
-        (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+        (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
           this.db.orgs.findMany({
             where: eq(orgsTable.ownerId, v.userId)
           })

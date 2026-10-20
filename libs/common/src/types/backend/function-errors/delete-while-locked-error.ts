@@ -3,11 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DbErrorToError,
   zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
+} from '#common/types/backend/function-errors/db/db-error-to-error';
 import {
-  type GetSessionByIdCheckExistsError,
-  zGetSessionByIdCheckExistsError
-} from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+  type DbSessionsFindFirstCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import {
   type SendToDiskError,
   zSendToDiskError
@@ -18,13 +18,13 @@ import {
 } from '#common/types/backend/function-errors/stop-sandbox-error';
 
 export type DeleteWhileLockedError =
-  | GetSessionByIdCheckExistsError
+  | DbSessionsFindFirstCheckExistsError
   | StopSandboxError
   | SendToDiskError
   | DbErrorToError;
 
 export let zDeleteWhileLockedError = z.union([
-  zGetSessionByIdCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError,
   zStopSandboxError,
   zSendToDiskError,
   zDbErrorToError

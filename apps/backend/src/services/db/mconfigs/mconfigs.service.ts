@@ -20,7 +20,7 @@ import { StoreService } from '#backend/services/store/store.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { DbConnectionsFindFirstError } from '#common/types/backend/function-errors/db/connections/db-connections-find-first-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { Env } from '#common/types/backend/parts/env';
@@ -185,7 +185,7 @@ export class MconfigsService {
       ),
       Result.bind(
         'connection',
-        (v): Result.ResultAsync<ConnectionTab, ConnectionEntToTabError> =>
+        (v): Result.ResultAsync<ConnectionTab, DbConnectionsFindFirstError> =>
           this.db.connections.findFirst({
             where: and(
               eq(connectionsTable.projectId, v.project.projectId),

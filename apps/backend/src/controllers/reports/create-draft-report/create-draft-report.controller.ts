@@ -45,19 +45,19 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbKitsFindManyError } from '#common/types/backend/function-errors/db/kits/db-kits-find-many-error';
+import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbQueriesFindManyError } from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
 import type { GetReportsCatalogError } from '#common/types/backend/function-errors/get-reports-catalog-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { KitEntToTabError } from '#common/types/backend/function-errors/kit-ent-to-tab-error';
-import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
@@ -158,14 +158,21 @@ export class CreateDraftReportController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -175,7 +182,9 @@ export class CreateDraftReportController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -193,7 +202,9 @@ export class CreateDraftReportController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -349,7 +360,7 @@ export class CreateDraftReportController {
       ),
       Result.bind(
         'copyQueries',
-        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
+        (v): Result.ResultAsync<QueryTab[], DbQueriesFindManyError> =>
           this.db.queries.findMany({
             where: and(
               inArray(
@@ -362,7 +373,7 @@ export class CreateDraftReportController {
       ),
       Result.bind(
         'copyMconfigs',
-        (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+        (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
           this.db.mconfigs.findMany({
             where: and(
               inArray(
@@ -375,7 +386,7 @@ export class CreateDraftReportController {
       ),
       Result.bind(
         'copyKits',
-        (v): Result.ResultAsync<KitTab[], KitEntToTabError> =>
+        (v): Result.ResultAsync<KitTab[], DbKitsFindManyError> =>
           this.db.kits.findMany({
             where: and(
               inArray(

@@ -27,9 +27,9 @@ import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
 import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
 import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRoleOutput } from '#common/types/backend/routes/roles/delete-role/delete-role-output';
@@ -80,7 +80,7 @@ export class DeleteRoleController {
       ),
       Result.bind(
         'projectMembers',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           this.db.members.findMany({
             where: eq(membersTable.projectId, v.projectId)
           })

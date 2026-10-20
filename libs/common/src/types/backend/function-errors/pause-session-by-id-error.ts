@@ -3,29 +3,29 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DbErrorToError,
   zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
+} from '#common/types/backend/function-errors/db/db-error-to-error';
 import {
-  type GetProjectCheckExistsError,
-  zGetProjectCheckExistsError
-} from '#common/types/backend/function-errors/get-project-check-exists-error';
+  type DbProjectsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import {
-  type GetSessionByIdCheckExistsError,
-  zGetSessionByIdCheckExistsError
-} from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+  type DbSessionsFindFirstCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import {
   type PauseSandboxError,
   zPauseSandboxError
 } from '#common/types/backend/function-errors/pause-sandbox-error';
 
 export type PauseSessionByIdError =
-  | GetSessionByIdCheckExistsError
-  | GetProjectCheckExistsError
+  | DbSessionsFindFirstCheckExistsError
+  | DbProjectsFindFirstCheckExistsError
   | PauseSandboxError
   | DbErrorToError;
 
 export let zPauseSessionByIdError = z.union([
-  zGetSessionByIdCheckExistsError,
-  zGetProjectCheckExistsError,
+  zDbSessionsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError,
   zPauseSandboxError,
   zDbErrorToError
 ]);

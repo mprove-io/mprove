@@ -25,7 +25,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
+import type { DbBranchesFindManyError } from '#common/types/backend/function-errors/db/branches/db-branches-find-many-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { Env } from '#common/types/backend/parts/env';
@@ -94,7 +94,7 @@ export class CreateEnvController {
       ),
       Result.bind(
         'branches',
-        (v): Result.ResultAsync<BranchTab[], BranchEntToTabError> =>
+        (v): Result.ResultAsync<BranchTab[], DbBranchesFindManyError> =>
           this.db.branches.findMany({
             where: eq(branchesTable.projectId, v.projectId)
           })

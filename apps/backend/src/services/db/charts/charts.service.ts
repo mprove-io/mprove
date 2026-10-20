@@ -23,9 +23,10 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
 import type { CheckChartOrModelAccessError } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
 import type { CheckChartPathError } from '#common/types/backend/function-errors/check-chart-path-error';
+import type { DbChartsFindFirstError } from '#common/types/backend/function-errors/db/charts/db-charts-find-first-error';
+import type { DbChartsFindManyError } from '#common/types/backend/function-errors/db/charts/db-charts-find-many-error';
 import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
 import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
 import type { ChartUnit } from '#common/types/backend/parts/chart/chart-unit';
@@ -73,7 +74,7 @@ export class ChartsService {
       Result.succeed(item),
       Result.bind(
         'charts',
-        (v): Result.ResultAsync<ChartTab[], ChartEntToTabError> =>
+        (v): Result.ResultAsync<ChartTab[], DbChartsFindManyError> =>
           this.db.charts.findMany({
             where: and(
               eq(chartsTable.structId, v.structId),
@@ -392,7 +393,7 @@ export class ChartsService {
       Result.succeed(item),
       Result.bind(
         'chart',
-        (v): Result.ResultAsync<ChartTab, ChartEntToTabError> =>
+        (v): Result.ResultAsync<ChartTab, DbChartsFindFirstError> =>
           this.db.charts.findFirst({
             where: and(
               eq(chartsTable.structId, v.structId),

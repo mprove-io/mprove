@@ -18,10 +18,10 @@ import { SearchCachedFieldValuesService } from '#backend/services/explorer/tools
 import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names/search-dwh-schema-field-names.service';
 import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { SearchDwhSchemaFieldNamesError } from '#common/types/backend/function-errors/search-dwh-schema-field-names-error';
 import type { SearchModelFieldsError } from '#common/types/backend/function-errors/search-model-fields-error';
 import type {
@@ -68,7 +68,9 @@ export class SearchModelFieldsService {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.userId),
@@ -85,7 +87,9 @@ export class SearchModelFieldsService {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.projectId),
@@ -97,7 +101,7 @@ export class SearchModelFieldsService {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: eq(modelsTable.structId, v.bridge.structId)
           })
@@ -164,16 +168,18 @@ export class SearchModelFieldsService {
             SearchDwhSchemaFieldNamesError
           > =
             v.searchFieldNames.length > 0
-              ? this.searchDwhSchemaFieldNamesService.search({
-                  userId: v.userId,
-                  projectId: v.projectId,
-                  repoId: v.repoId,
-                  branchId: v.branchId,
-                  envId: v.envId,
-                  structId: v.bridge.structId,
-                  searchFieldNames: v.searchFieldNames,
-                  modelIds: v.modelIds
-                })
+              ? this.searchDwhSchemaFieldNamesService.searchDwhSchemaFieldNames(
+                  {
+                    userId: v.userId,
+                    projectId: v.projectId,
+                    repoId: v.repoId,
+                    branchId: v.branchId,
+                    envId: v.envId,
+                    structId: v.bridge.structId,
+                    searchFieldNames: v.searchFieldNames,
+                    modelIds: v.modelIds
+                  }
+                )
               : Promise.resolve(Result.succeed([]));
 
           let failure: Result.Failure<SearchDwhSchemaFieldNamesError>;

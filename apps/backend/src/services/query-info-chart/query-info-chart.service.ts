@@ -29,14 +29,14 @@ import { MalloyService } from '#backend/services/malloy/malloy.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { CheckChartOrModelAccessError } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
+import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
+import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
+import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
 import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
 import type { GetChartDataError } from '#common/types/backend/function-errors/get-chart-data-error';
-import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
-import type { GetModelCheckExistsError } from '#common/types/backend/function-errors/get-model-check-exists-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
@@ -102,7 +102,12 @@ export class QueryInfoChartService {
       ),
       Result.bind(
         'chartMconfig',
-        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          MconfigTab,
+          DbMconfigsFindFirstCheckExistsError
+        > =>
           this.db.mconfigs.findFirstCheckExists({
             where: and(
               eq(mconfigsTable.mconfigId, v.chart.tiles[0].mconfigId),
@@ -112,7 +117,7 @@ export class QueryInfoChartService {
       ),
       Result.bind(
         'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsError> =>
+        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
           this.db.models.findFirstCheckExists({
             where: and(
               eq(modelsTable.structId, v.structId),
@@ -245,7 +250,7 @@ export class QueryInfoChartService {
       }),
       Result.bind(
         'query',
-        (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
+        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
           this.db.queries.findFirst({
             where: and(
               eq(queriesTable.queryId, v.prepareQueryPayload.newQuery.queryId),

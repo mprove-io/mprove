@@ -1,16 +1,18 @@
 import { ServerError } from '#common/classes/server-error/server-error';
-import type { BackendError } from '#common/types/backend/errors/backend-error';
+import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import type { ToBackendResponseBase } from '#common/types/backend/response/to-backend-response-base';
+
+type BackendResponseFailure = Extract<ToBackendResponse, { type: 'Failure' }>;
 
 export class BackendResponseError extends ServerError {
   readonly response: Extract<
-    ToBackendResponseBase<string, unknown, BackendError>,
+    ToBackendResponseBase<string, unknown, BackendResponseFailure['error']>,
     { type: 'Failure' }
   >;
 
   constructor(item: {
     response: Extract<
-      ToBackendResponseBase<string, unknown, BackendError>,
+      ToBackendResponseBase<string, unknown, BackendResponseFailure['error']>,
       { type: 'Failure' }
     >;
   }) {

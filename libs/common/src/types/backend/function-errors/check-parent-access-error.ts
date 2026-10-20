@@ -9,6 +9,10 @@ import {
   zCheckChartOrModelAccessError
 } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
 import {
+  type DbModelsFindFirstCheckExistsError,
+  zDbModelsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
+import {
   type GetChartCheckExistsError,
   zGetChartCheckExistsError
 } from '#common/types/backend/function-errors/get-chart-check-exists-error';
@@ -21,10 +25,6 @@ import {
   zGetModelCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
 import {
-  type GetModelCheckExistsError,
-  zGetModelCheckExistsError
-} from '#common/types/backend/function-errors/get-model-check-exists-error';
-import {
   type GetReportCheckExistsAndAccessError,
   zGetReportCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
@@ -34,7 +34,7 @@ export type CheckParentAccessError =
   | GetDashboardCheckExistsAndAccessError
   | GetReportCheckExistsAndAccessError
   | GetChartCheckExistsError
-  | GetModelCheckExistsError
+  | DbModelsFindFirstCheckExistsError
   | GetModelCheckExistsAndAccessError
   | CheckChartOrModelAccessError;
 
@@ -43,7 +43,7 @@ export let zCheckParentAccessError = z.union([
   zGetDashboardCheckExistsAndAccessError,
   zGetReportCheckExistsAndAccessError,
   zGetChartCheckExistsError,
-  zGetModelCheckExistsError,
+  zDbModelsFindFirstCheckExistsError,
   zGetModelCheckExistsAndAccessError,
   zCheckChartOrModelAccessError
 ]);

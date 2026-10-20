@@ -163,7 +163,7 @@ test('1', async t => {
         SearchDwhSchemaFieldNamesService
       );
 
-      let matches = await svc.searchUnwrap({
+      let matches = await svc.searchDwhSchemaFieldNamesUnwrap({
         userId: userId,
         projectId: projectId,
         repoId: userId,

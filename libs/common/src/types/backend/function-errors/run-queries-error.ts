@@ -9,25 +9,33 @@ import {
   zCheckRepoIdError
 } from '#common/types/backend/function-errors/check-repo-id-error';
 import {
-  type ConnectionEntToTabError,
-  zConnectionEntToTabError
-} from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+  type DbBranchesFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
 import {
-  type GetBranchCheckExistsError,
-  zGetBranchCheckExistsError
-} from '#common/types/backend/function-errors/get-branch-check-exists-error';
+  type DbBridgesFindFirstCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
 import {
-  type GetBridgeCheckExistsError,
-  zGetBridgeCheckExistsError
-} from '#common/types/backend/function-errors/get-bridge-check-exists-error';
+  type DbConnectionsFindManyError,
+  zDbConnectionsFindManyError
+} from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
+import {
+  type DbMconfigsFindManyError,
+  zDbMconfigsFindManyError
+} from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
+import {
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import {
+  type DbModelsFindManyError,
+  zDbModelsFindManyError
+} from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import {
   type GetEnvCheckExistsAndAccessError,
   zGetEnvCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
-import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
 import {
   type GetQueriesCheckExistSkipSqlDataError,
   zGetQueriesCheckExistSkipSqlDataError
@@ -37,51 +45,43 @@ import {
   zGetStructCheckExistsError
 } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import {
-  type MconfigEntToTabError,
-  zMconfigEntToTabError
-} from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
-import {
-  type ModelEntToTabError,
-  zModelEntToTabError
-} from '#common/types/backend/function-errors/model-ent-to-tab-error';
-import {
-  type RunQueriesSetupErrorToError,
-  zRunQueriesSetupErrorToError
-} from '#common/types/backend/function-errors/run-queries-setup-error-to-error';
+  type LaunchPooledQueryError,
+  zLaunchPooledQueryError
+} from '#common/types/backend/function-errors/launch-pooled-query-error';
 import {
   type WriteError,
   zWriteError
 } from '#common/types/backend/function-errors/write-error';
 
 export type RunQueriesError =
-  | RunQueriesSetupErrorToError
+  | LaunchPooledQueryError
   | CheckRepoIdError
-  | GetMemberCheckExistsError
-  | GetBranchCheckExistsError
+  | DbMembersFindFirstCheckExistsError
+  | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
-  | GetBridgeCheckExistsError
+  | DbBridgesFindFirstCheckExistsError
   | GetStructCheckExistsError
-  | MconfigEntToTabError
   | CheckParentAccessError
   | GetQueriesCheckExistSkipSqlDataError
-  | ModelEntToTabError
-  | ConnectionEntToTabError
-  | WriteError;
+  | WriteError
+  | DbMconfigsFindManyError
+  | DbModelsFindManyError
+  | DbConnectionsFindManyError;
 
 export const zRunQueriesError = z.union([
-  zRunQueriesSetupErrorToError,
+  zLaunchPooledQueryError,
   zCheckRepoIdError,
-  zGetMemberCheckExistsError,
-  zGetBranchCheckExistsError,
+  zDbMembersFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,
-  zGetBridgeCheckExistsError,
+  zDbBridgesFindFirstCheckExistsError,
   zGetStructCheckExistsError,
-  zMconfigEntToTabError,
   zCheckParentAccessError,
   zGetQueriesCheckExistSkipSqlDataError,
-  zModelEntToTabError,
-  zConnectionEntToTabError,
-  zWriteError
+  zWriteError,
+  zDbMconfigsFindManyError,
+  zDbModelsFindManyError,
+  zDbConnectionsFindManyError
 ]);
 
 assertTypesEqual<RunQueriesError, z.infer<typeof zRunQueriesError>>({

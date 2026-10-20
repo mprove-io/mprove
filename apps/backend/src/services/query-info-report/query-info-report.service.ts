@@ -18,10 +18,10 @@ import { ReportDataService } from '#backend/services/report-data/report-data.ser
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
+import type { GetQueryInfoReportDataError } from '#common/types/backend/function-errors/get-query-info-report-data-error';
 import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { QueryInfoReportGetReportDataError } from '#common/types/backend/function-errors/query-info-report-get-report-data-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
@@ -40,7 +40,7 @@ export class QueryInfoReportService {
     private db: DbService
   ) {}
 
-  async getReportData(item: {
+  async getQueryInfoReportData(item: {
     traceId: string;
     user: UserTab;
     userMember: MemberTab;
@@ -55,7 +55,7 @@ export class QueryInfoReportService {
     skipUi: boolean;
   }): Result.ResultAsync<
     ToBackendGetReportOutput,
-    QueryInfoReportGetReportDataError
+    GetQueryInfoReportDataError
   > {
     return Result.pipe(
       Result.succeed(item),

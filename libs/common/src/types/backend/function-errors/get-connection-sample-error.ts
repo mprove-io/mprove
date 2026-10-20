@@ -29,9 +29,13 @@ import {
   zBackendWrongTableNameError
 } from '#common/types/backend/errors/backend-wrong-table-name-error';
 import {
-  type ConnectionEntToTabError,
-  zConnectionEntToTabError
-} from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+  type DbConnectionsFindManyError,
+  zDbConnectionsFindManyError
+} from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
+import {
+  type DbProjectsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import {
   type GetApiEnvsError,
   zGetApiEnvsError
@@ -40,36 +44,32 @@ import {
   type GetMemberCheckIsEditorOrAdminError,
   zGetMemberCheckIsEditorOrAdminError
 } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import {
-  type GetProjectCheckExistsError,
-  zGetProjectCheckExistsError
-} from '#common/types/backend/function-errors/get-project-check-exists-error';
 
 export type GetConnectionSampleError =
-  | GetProjectCheckExistsError
+  | DbProjectsFindFirstCheckExistsError
   | GetMemberCheckIsEditorOrAdminError
   | GetApiEnvsError
-  | ConnectionEntToTabError
   | BackendWrongOffsetError
   | BackendConnectionDoesNotExistError
   | BackendConnectionTypeIsNotSupportedForSampleError
   | BackendConnectionSchemaIsNotFoundError
   | BackendWrongSchemaNameError
   | BackendWrongTableNameError
-  | BackendWrongColumnNameError;
+  | BackendWrongColumnNameError
+  | DbConnectionsFindManyError;
 
 export let zGetConnectionSampleError = z.union([
-  zGetProjectCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError,
   zGetMemberCheckIsEditorOrAdminError,
   zGetApiEnvsError,
-  zConnectionEntToTabError,
   zBackendWrongOffsetError,
   zBackendConnectionDoesNotExistError,
   zBackendConnectionTypeIsNotSupportedForSampleError,
   zBackendConnectionSchemaIsNotFoundError,
   zBackendWrongSchemaNameError,
   zBackendWrongTableNameError,
-  zBackendWrongColumnNameError
+  zBackendWrongColumnNameError,
+  zDbConnectionsFindManyError
 ]);
 
 assertTypesEqual<

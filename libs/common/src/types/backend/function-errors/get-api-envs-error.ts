@@ -1,27 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ConnectionEntToTabError,
-  zConnectionEntToTabError
-} from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+  type DbConnectionsFindManyError,
+  zDbConnectionsFindManyError
+} from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import {
-  type EnvEntToTabError,
-  zEnvEntToTabError
-} from '#common/types/backend/function-errors/env-ent-to-tab-error';
+  type DbEnvsFindManyError,
+  zDbEnvsFindManyError
+} from '#common/types/backend/function-errors/db/envs/db-envs-find-many-error';
 import {
-  type MemberEntToTabError,
-  zMemberEntToTabError
-} from '#common/types/backend/function-errors/member-ent-to-tab-error';
+  type DbMembersFindManyError,
+  zDbMembersFindManyError
+} from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
 
 export type GetApiEnvsError =
-  | EnvEntToTabError
-  | ConnectionEntToTabError
-  | MemberEntToTabError;
+  | DbEnvsFindManyError
+  | DbConnectionsFindManyError
+  | DbMembersFindManyError;
 
 export let zGetApiEnvsError = z.union([
-  zEnvEntToTabError,
-  zConnectionEntToTabError,
-  zMemberEntToTabError
+  zDbEnvsFindManyError,
+  zDbConnectionsFindManyError,
+  zDbMembersFindManyError
 ]);
 
 assertTypesEqual<GetApiEnvsError, z.infer<typeof zGetApiEnvsError>>({

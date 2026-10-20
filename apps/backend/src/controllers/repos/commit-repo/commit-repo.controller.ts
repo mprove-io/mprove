@@ -30,9 +30,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ArchiveSessionError } from '#common/types/backend/function-errors/archive-session-error';
 import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -95,7 +95,12 @@ export class CommitRepoController {
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
@@ -147,7 +152,10 @@ export class CommitRepoController {
         'session',
         async (
           v
-        ): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           v.repoType !== 'session'
             ? Result.succeed(undefined)
             : this.db.sessions.findFirstCheckExists({

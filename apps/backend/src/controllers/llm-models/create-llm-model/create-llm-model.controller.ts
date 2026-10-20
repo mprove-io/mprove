@@ -24,7 +24,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
-import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
+import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
 import type { RefreshModelError } from '#common/types/backend/function-errors/refresh-model-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -81,7 +81,12 @@ export class CreateLlmModelController {
       ),
       Result.bind(
         'provider',
-        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProviderTab,
+          DbProvidersFindFirstCheckExistsError
+        > =>
           this.db.providers.findFirstCheckExists({
             where: and(
               eq(providersTable.projectId, v.projectId),

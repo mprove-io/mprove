@@ -16,7 +16,7 @@ import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { EnvEntToTabError } from '#common/types/backend/function-errors/env-ent-to-tab-error';
+import type { DbEnvsFindManyError } from '#common/types/backend/function-errors/db/envs/db-envs-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-output';
 
@@ -62,7 +62,7 @@ export class GetEnvsListController {
       ),
       Result.bind(
         'envs',
-        (v): Result.ResultAsync<EnvTab[], EnvEntToTabError> =>
+        (v): Result.ResultAsync<EnvTab[], DbEnvsFindManyError> =>
           this.db.envs.findMany({
             where: eq(envsTable.projectId, v.projectId)
           })

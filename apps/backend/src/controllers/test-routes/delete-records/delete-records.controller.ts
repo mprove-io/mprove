@@ -48,11 +48,12 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
+import type { DbStructsFindManyError } from '#common/types/backend/function-errors/db/structs/db-structs-find-many-error';
+import type { DbUsersFindFirstError } from '#common/types/backend/function-errors/db/users/db-users-find-first-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
-import type { StructEntToTabError } from '#common/types/backend/function-errors/struct-ent-to-tab-error';
 import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRecordsOutput } from '#common/types/backend/routes/test-routes/delete-records/delete-records-output';
@@ -113,7 +114,7 @@ export class DeleteRecordsController {
       ),
       Result.bind(
         'matchingProjects',
-        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           v.projectNameHashes.length === 0
             ? Result.succeed([])
             : this.db.projects.findMany({
@@ -143,7 +144,7 @@ export class DeleteRecordsController {
       ),
       Result.bind(
         'matchingOrgs',
-        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+        async (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
           v.orgNameHashes.length === 0
             ? Result.succeed([])
             : this.db.orgs.findMany({
@@ -200,10 +201,12 @@ export class DeleteRecordsController {
                     return emailHashResult;
                   }
 
-                  let userResult: Result.Result<UserTab, UserEntToTabError> =
-                    await this.db.users.findFirst({
-                      where: eq(usersTable.emailHash, emailHashResult.value)
-                    });
+                  let userResult: Result.Result<
+                    UserTab,
+                    DbUsersFindFirstError
+                  > = await this.db.users.findFirst({
+                    where: eq(usersTable.emailHash, emailHashResult.value)
+                  });
 
                   if (Result.isFailure(userResult)) {
                     return userResult;
@@ -220,7 +223,7 @@ export class DeleteRecordsController {
       ),
       Result.bind(
         'structs',
-        async (v): Result.ResultAsync<StructTab[], StructEntToTabError> =>
+        async (v): Result.ResultAsync<StructTab[], DbStructsFindManyError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
             : this.db.structs.findMany({

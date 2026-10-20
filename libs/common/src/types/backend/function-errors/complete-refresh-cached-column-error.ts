@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DbErrorToError,
   zDbErrorToError
-} from '#common/types/backend/function-errors/db-error-to-error';
+} from '#common/types/backend/function-errors/db/db-error-to-error';
 import {
   type FetchCachedPartsError,
   zFetchCachedPartsError

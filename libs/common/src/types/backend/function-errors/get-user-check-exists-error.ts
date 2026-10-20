@@ -1,22 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendUserDoesNotExistError,
-  zBackendUserDoesNotExistError
-} from '#common/types/backend/errors/backend-user-does-not-exist-error';
-import {
-  type UserEntToTabError,
-  zUserEntToTabError
-} from '#common/types/backend/function-errors/user-ent-to-tab-error';
+  type DbUsersFindFirstCheckExistsError,
+  zDbUsersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 
-export type GetUserCheckExistsError =
-  | UserEntToTabError
-  | BackendUserDoesNotExistError;
+export type GetUserCheckExistsError = DbUsersFindFirstCheckExistsError;
 
-export const zGetUserCheckExistsError = z.union([
-  zUserEntToTabError,
-  zBackendUserDoesNotExistError
-]);
+export let zGetUserCheckExistsError = zDbUsersFindFirstCheckExistsError;
 
 assertTypesEqual<
   GetUserCheckExistsError,

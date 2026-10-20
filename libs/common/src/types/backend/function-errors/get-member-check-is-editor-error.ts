@@ -5,16 +5,16 @@ import {
   zBackendMemberIsNotEditorError
 } from '#common/types/backend/errors/backend-member-is-not-editor-error';
 import {
-  type GetMemberCheckExistsError,
-  zGetMemberCheckExistsError
-} from '#common/types/backend/function-errors/get-member-check-exists-error';
+  type DbMembersFindFirstCheckExistsError,
+  zDbMembersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 
 export type GetMemberCheckIsEditorError =
-  | GetMemberCheckExistsError
+  | DbMembersFindFirstCheckExistsError
   | BackendMemberIsNotEditorError;
 
 export let zGetMemberCheckIsEditorError = z.union([
-  zGetMemberCheckExistsError,
+  zDbMembersFindFirstCheckExistsError,
   zBackendMemberIsNotEditorError
 ]);
 

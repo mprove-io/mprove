@@ -1,27 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type MconfigEntToTabError,
-  zMconfigEntToTabError
-} from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
+  type DbMconfigsFindManyError,
+  zDbMconfigsFindManyError
+} from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
 import {
-  type ModelEntToTabError,
-  zModelEntToTabError
-} from '#common/types/backend/function-errors/model-ent-to-tab-error';
+  type DbModelsFindManyError,
+  zDbModelsFindManyError
+} from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import {
-  type QueryEntToTabError,
-  zQueryEntToTabError
-} from '#common/types/backend/function-errors/query-ent-to-tab-error';
+  type DbQueriesFindManyError,
+  zDbQueriesFindManyError
+} from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 
 export type GetDashboardXUsingDashboardTabError =
-  | MconfigEntToTabError
-  | QueryEntToTabError
-  | ModelEntToTabError;
+  | DbMconfigsFindManyError
+  | DbQueriesFindManyError
+  | DbModelsFindManyError;
 
 export const zGetDashboardXUsingDashboardTabError = z.union([
-  zMconfigEntToTabError,
-  zQueryEntToTabError,
-  zModelEntToTabError
+  zDbMconfigsFindManyError,
+  zDbQueriesFindManyError,
+  zDbModelsFindManyError
 ]);
 
 assertTypesEqual<

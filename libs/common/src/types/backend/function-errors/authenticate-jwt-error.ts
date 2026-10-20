@@ -5,23 +5,17 @@ import {
   zBackendNotAuthorizedError
 } from '#common/types/backend/errors/backend-not-authorized-error';
 import {
-  type BackendUserDoesNotExistError,
-  zBackendUserDoesNotExistError
-} from '#common/types/backend/errors/backend-user-does-not-exist-error';
-import {
-  type UserEntToTabError,
-  zUserEntToTabError
-} from '#common/types/backend/function-errors/user-ent-to-tab-error';
+  type DbUsersFindFirstCheckExistsError,
+  zDbUsersFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 
 export type AuthenticateJwtError =
-  | UserEntToTabError
-  | BackendUserDoesNotExistError
-  | BackendNotAuthorizedError;
+  | BackendNotAuthorizedError
+  | DbUsersFindFirstCheckExistsError;
 
 export const zAuthenticateJwtError = z.union([
-  zUserEntToTabError,
-  zBackendUserDoesNotExistError,
-  zBackendNotAuthorizedError
+  zBackendNotAuthorizedError,
+  zDbUsersFindFirstCheckExistsError
 ]);
 
 assertTypesEqual<AuthenticateJwtError, z.infer<typeof zAuthenticateJwtError>>({

@@ -20,9 +20,9 @@ import {
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 
 import type { BackendUpdatePasswordWrongTokenError } from '#common/types/backend/errors/backend-update-password-wrong-token-error';
+import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Users')
@@ -67,19 +67,20 @@ export class UpdateUserPasswordController {
       ),
       Result.bind(
         'user',
-        (
-          v
-        ): Result.ResultAsync<
-          UserTab,
-          UserEntToTabError | BackendUpdatePasswordWrongTokenError
-        > =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
           this.db.users.findFirstCheckExists({
             where: eq(
               usersTable.passwordResetTokenHash,
               v.passwordResetTokenHash
-            ),
-            error: { code: 'BACKEND_UPDATE_PASSWORD_WRONG_TOKEN' }
+            )
           })
+      ),
+      Result.mapError(v =>
+        v.code === 'BACKEND_USER_DOES_NOT_EXIST'
+          ? ({
+              code: 'BACKEND_UPDATE_PASSWORD_WRONG_TOKEN'
+            } satisfies BackendUpdatePasswordWrongTokenError)
+          : v
       ),
       Result.andThrough(v => {
         let nowTs: number = makeTsNumber();

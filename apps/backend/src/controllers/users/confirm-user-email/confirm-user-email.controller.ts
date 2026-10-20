@@ -17,9 +17,8 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-
+import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-output';
@@ -69,7 +68,7 @@ export class ConfirmUserEmailController {
       ),
       Result.bind(
         'user',
-        (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
           this.db.users.findFirstCheckExists({
             where: eq(
               usersTable.emailVerificationTokenHash,

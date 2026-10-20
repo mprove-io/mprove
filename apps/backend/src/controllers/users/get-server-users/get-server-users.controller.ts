@@ -30,9 +30,9 @@ import { DbService } from '#backend/services/db/db.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
+import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';
 import type { ServerUsersMembershipItem } from '#common/types/backend/parts/users/server-users-membership-item';
@@ -110,7 +110,7 @@ export class GetServerUsersController {
       ),
       Result.bind(
         'members',
-        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           v.userIds.length === 0
             ? Result.succeed([])
             : this.db.members.findMany({
@@ -126,7 +126,7 @@ export class GetServerUsersController {
       ),
       Result.bind(
         'projects',
-        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
             : this.db.projects.findMany({
@@ -140,7 +140,7 @@ export class GetServerUsersController {
       ),
       Result.bind(
         'orgs',
-        async (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+        async (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
           v.orgIds.length === 0
             ? Result.succeed([])
             : this.db.orgs.findMany({

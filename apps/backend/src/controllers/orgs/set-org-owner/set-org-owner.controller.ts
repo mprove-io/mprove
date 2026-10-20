@@ -19,10 +19,10 @@ import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { BackendNewOwnerNotFoundError } from '#common/types/backend/errors/backend-new-owner-not-found-error';
+import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
+import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { GetOrgCheckExistsError } from '#common/types/backend/function-errors/get-org-check-exists-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetOrgOwnerOutput } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-output';
 
@@ -58,7 +58,7 @@ export class SetOrgOwnerController {
       }),
       Result.bind(
         'org',
-        (v): Result.ResultAsync<OrgTab, GetOrgCheckExistsError> =>
+        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
           this.db.orgs.findFirstCheckExists({
             where: eq(orgsTable.orgId, v.orgId)
           })
@@ -84,19 +84,20 @@ export class SetOrgOwnerController {
       ),
       Result.bind(
         'newOwner',
-        (
-          v
-        ): Result.ResultAsync<
-          UserTab,
-          BackendNewOwnerNotFoundError | UserEntToTabError
-        > =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
           this.db.users.findFirstCheckExists({
             where: and(
               eq(usersTable.emailHash, v.ownerEmailHash),
               eq(usersTable.isEmailVerified, true)
-            ),
-            error: { code: 'BACKEND_NEW_OWNER_NOT_FOUND' }
+            )
           })
+      ),
+      Result.mapError(v =>
+        v.code === 'BACKEND_USER_DOES_NOT_EXIST'
+          ? ({
+              code: 'BACKEND_NEW_OWNER_NOT_FOUND'
+            } satisfies BackendNewOwnerNotFoundError)
+          : v
       ),
       Result.map(v => {
         v.org.ownerId = v.newOwner.userId;

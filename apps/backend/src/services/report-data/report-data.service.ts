@@ -41,15 +41,15 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { CalculateDataError } from '#common/types/backend/function-errors/calculate-data-error';
+import type { DbKitsFindManyError } from '#common/types/backend/function-errors/db/kits/db-kits-find-many-error';
+import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
+import type { DbQueriesFindManyError } from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
 import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
 import type { GetTimeColumnsError } from '#common/types/backend/function-errors/get-time-columns-error';
-import type { KitEntToTabError } from '#common/types/backend/function-errors/kit-ent-to-tab-error';
 import type { MakeReportDataColumnsError } from '#common/types/backend/function-errors/make-report-data-columns-error';
-import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { Member } from '#common/types/backend/parts/member';
@@ -192,7 +192,7 @@ export class ReportDataService {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: and(
               inArray(
@@ -678,16 +678,18 @@ export class ReportDataService {
       ),
       Result.andThrough(async v => {
         if (v.prepareReportQueriesPayload.mconfigIds.length > 0) {
-          let mconfigResult: Result.Result<MconfigTab[], MconfigEntToTabError> =
-            await this.db.mconfigs.findMany({
-              where: and(
-                inArray(
-                  mconfigsTable.mconfigId,
-                  v.prepareReportQueriesPayload.mconfigIds
-                ),
-                eq(mconfigsTable.structId, v.struct.structId)
-              )
-            });
+          let mconfigResult: Result.Result<
+            MconfigTab[],
+            DbMconfigsFindManyError
+          > = await this.db.mconfigs.findMany({
+            where: and(
+              inArray(
+                mconfigsTable.mconfigId,
+                v.prepareReportQueriesPayload.mconfigIds
+              ),
+              eq(mconfigsTable.structId, v.struct.structId)
+            )
+          });
 
           if (Result.isFailure(mconfigResult)) {
             return mconfigResult;
@@ -704,7 +706,7 @@ export class ReportDataService {
       ),
       Result.andThrough(async v => {
         if (v.prepareReportQueriesPayload.queryIds.length > 0) {
-          let queryResult: Result.Result<QueryTab[], QueryEntToTabError> =
+          let queryResult: Result.Result<QueryTab[], DbQueriesFindManyError> =
             await this.db.queries.findMany({
               where: and(
                 inArray(
@@ -726,7 +728,7 @@ export class ReportDataService {
       }),
       Result.bind(
         'kits',
-        async (v): Result.ResultAsync<KitTab[], KitEntToTabError> =>
+        async (v): Result.ResultAsync<KitTab[], DbKitsFindManyError> =>
           v.prepareReportQueriesPayload.kitIds.length === 0
             ? Result.succeed([])
             : this.db.kits.findMany({

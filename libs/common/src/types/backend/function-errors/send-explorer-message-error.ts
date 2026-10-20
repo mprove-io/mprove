@@ -13,13 +13,13 @@ import {
   zBackendMessageProviderRequiredError
 } from '#common/types/backend/errors/backend-message-provider-required-error';
 import {
+  type DbOcMessagesFindFirstError,
+  zDbOcMessagesFindFirstError
+} from '#common/types/backend/function-errors/db/oc-messages/db-oc-messages-find-first-error';
+import {
   type GetModelSelectionError,
   zGetModelSelectionError
 } from '#common/types/backend/function-errors/get-model-selection-error';
-import {
-  type OcMessageEntToTabError,
-  zOcMessageEntToTabError
-} from '#common/types/backend/function-errors/oc-message-ent-to-tab-error';
 import {
   type PrewarmCodexAuthError,
   zPrewarmCodexAuthError
@@ -35,23 +35,23 @@ import {
 
 export type SendExplorerMessageError =
   | GetModelSelectionError
-  | OcMessageEntToTabError
   | PrewarmCodexAuthError
   | WriteError
   | PublishInteractCommandError
   | BackendMessageProviderRequiredError
   | BackendMessageModelRequiredError
-  | BackendExplorerContextLimitReachedError;
+  | BackendExplorerContextLimitReachedError
+  | DbOcMessagesFindFirstError;
 
 export let zSendExplorerMessageError = z.union([
   zGetModelSelectionError,
-  zOcMessageEntToTabError,
   zPrewarmCodexAuthError,
   zWriteError,
   zPublishInteractCommandError,
   zBackendMessageProviderRequiredError,
   zBackendMessageModelRequiredError,
-  zBackendExplorerContextLimitReachedError
+  zBackendExplorerContextLimitReachedError,
+  zDbOcMessagesFindFirstError
 ]);
 
 assertTypesEqual<

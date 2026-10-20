@@ -17,7 +17,7 @@ import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
+import type { DbAvatarsFindFirstError } from '#common/types/backend/function-errors/db/avatars/db-avatars-find-first-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetAvatarOutput } from '#common/types/backend/routes/avatars/set-avatar/set-avatar-output';
 
@@ -53,7 +53,7 @@ export class SetAvatarController {
       ),
       Result.bind(
         'avatar',
-        (v): Result.ResultAsync<AvatarTab, AvatarEntToTabError> =>
+        (v): Result.ResultAsync<AvatarTab, DbAvatarsFindFirstError> =>
           this.db.avatars.findFirst({
             where: eq(avatarsTable.userId, v.user.userId)
           })

@@ -21,8 +21,8 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { DbGivensFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/givens/db-givens-find-first-check-exists-error';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
-import type { GetGivenCheckExistsError } from '#common/types/backend/function-errors/get-given-check-exists-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -73,7 +73,7 @@ export class EditGivenController {
       ),
       Result.bind(
         'given',
-        (v): Result.ResultAsync<GivenTab, GetGivenCheckExistsError> =>
+        (v): Result.ResultAsync<GivenTab, DbGivensFindFirstCheckExistsError> =>
           this.db.givens.findFirstCheckExists({
             where: and(
               eq(givensTable.projectId, v.projectId),

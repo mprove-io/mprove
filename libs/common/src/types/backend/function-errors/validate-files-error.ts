@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BridgeEntToTabError,
-  zBridgeEntToTabError
-} from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
-import {
   type CheckProjectIsNotRestrictedError,
   zCheckProjectIsNotRestrictedError
 } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
@@ -13,9 +9,17 @@ import {
   zCheckRepoIdError
 } from '#common/types/backend/function-errors/check-repo-id-error';
 import {
-  type GetBranchCheckExistsError,
-  zGetBranchCheckExistsError
-} from '#common/types/backend/function-errors/get-branch-check-exists-error';
+  type DbBranchesFindFirstCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import {
+  type DbBridgesFindManyError,
+  zDbBridgesFindManyError
+} from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
+import {
+  type DbProjectsFindFirstCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError
+} from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import {
   type GetEnvCheckExistsAndAccessError,
   zGetEnvCheckExistsAndAccessError
@@ -28,10 +32,6 @@ import {
   type GetModelPartXsError,
   zGetModelPartXsError
 } from '#common/types/backend/function-errors/get-model-part-xs-error';
-import {
-  type GetProjectCheckExistsError,
-  zGetProjectCheckExistsError
-} from '#common/types/backend/function-errors/get-project-check-exists-error';
 import {
   type GetStructCheckExistsError,
   zGetStructCheckExistsError
@@ -50,32 +50,32 @@ import {
 } from '#common/types/backend/function-errors/write-error';
 
 export type ValidateFilesError =
-  | BridgeEntToTabError
   | CheckRepoIdError
-  | GetProjectCheckExistsError
+  | DbProjectsFindFirstCheckExistsError
   | GetMemberCheckIsEditorError
   | CheckProjectIsNotRestrictedError
-  | GetBranchCheckExistsError
+  | DbBranchesFindFirstCheckExistsError
   | GetEnvCheckExistsAndAccessError
   | SendToDiskError
   | RebuildStructError
   | WriteError
   | GetStructCheckExistsError
-  | GetModelPartXsError;
+  | GetModelPartXsError
+  | DbBridgesFindManyError;
 
 export let zValidateFilesError = z.union([
-  zBridgeEntToTabError,
   zCheckRepoIdError,
-  zGetProjectCheckExistsError,
+  zDbProjectsFindFirstCheckExistsError,
   zGetMemberCheckIsEditorError,
   zCheckProjectIsNotRestrictedError,
-  zGetBranchCheckExistsError,
+  zDbBranchesFindFirstCheckExistsError,
   zGetEnvCheckExistsAndAccessError,
   zSendToDiskError,
   zRebuildStructError,
   zWriteError,
   zGetStructCheckExistsError,
-  zGetModelPartXsError
+  zGetModelPartXsError,
+  zDbBridgesFindManyError
 ]);
 
 assertTypesEqual<ValidateFilesError, z.infer<typeof zValidateFilesError>>({

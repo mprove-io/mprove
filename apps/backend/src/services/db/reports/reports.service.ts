@@ -24,9 +24,10 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
+import type { DbReportsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/reports/db-reports-find-first-check-exists-error';
+import type { DbReportsFindManyError } from '#common/types/backend/function-errors/db/reports/db-reports-find-many-error';
 import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { GetReportsCatalogError } from '#common/types/backend/function-errors/get-reports-catalog-error';
-import type { ReportEntToTabError } from '#common/types/backend/function-errors/report-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
@@ -69,7 +70,7 @@ export class ReportsService {
       Result.succeed(item),
       Result.bind(
         'reports',
-        (v): Result.ResultAsync<ReportTab[], ReportEntToTabError> =>
+        (v): Result.ResultAsync<ReportTab[], DbReportsFindManyError> =>
           this.db.reports.findMany({
             where: and(
               eq(reportsTable.structId, v.structId),
@@ -410,7 +411,7 @@ export class ReportsService {
           v
         ): Result.ResultAsync<
           ReportTab,
-          GetReportCheckExistsAndAccessError
+          DbReportsFindFirstCheckExistsError
         > => {
           let chart: MconfigChart = makeCopy(DEFAULT_CHART);
 

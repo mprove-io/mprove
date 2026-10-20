@@ -33,13 +33,13 @@ import { EditorStreamService } from '#backend/services/editor/editor-stream/edit
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { DbOcEventsFindManyError } from '#common/types/backend/function-errors/db/oc-events/db-oc-events-find-many-error';
+import type { DbOcMessagesFindManyError } from '#common/types/backend/function-errors/db/oc-messages/db-oc-messages-find-many-error';
+import type { DbOcPartsFindManyError } from '#common/types/backend/function-errors/db/oc-parts/db-oc-parts-find-many-error';
+import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetBasicSessionsListError } from '#common/types/backend/function-errors/get-basic-sessions-list-error';
-import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
-import type { OcEventEntToTabError } from '#common/types/backend/function-errors/oc-event-ent-to-tab-error';
-import type { OcMessageEntToTabError } from '#common/types/backend/function-errors/oc-message-ent-to-tab-error';
-import type { OcPartEntToTabError } from '#common/types/backend/function-errors/oc-part-ent-to-tab-error';
 import type { StartEventStreamError } from '#common/types/backend/function-errors/start-event-stream-error';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
@@ -78,14 +78,24 @@ export class GetSessionController {
       }),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })
       ),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.session.projectId)
           })
@@ -159,7 +169,7 @@ export class GetSessionController {
       }),
       Result.bind(
         'ocSession',
-        (v): Result.ResultAsync<OcSessionTab, GetOcSessionBySessionIdError> =>
+        (v): Result.ResultAsync<OcSessionTab, DbOcSessionsFindFirstError> =>
           this.db.ocSessions.findFirst({
             where: eq(ocSessionsTable.sessionId, v.sessionId)
           })
@@ -200,7 +210,7 @@ export class GetSessionController {
       ),
       Result.bind(
         'messages',
-        (v): Result.ResultAsync<OcMessageTab[], OcMessageEntToTabError> =>
+        (v): Result.ResultAsync<OcMessageTab[], DbOcMessagesFindManyError> =>
           this.db.ocMessages.findMany({
             where: eq(ocMessagesTable.sessionId, v.sessionId),
             orderBy: [asc(ocMessagesTable.messageId)]
@@ -208,7 +218,7 @@ export class GetSessionController {
       ),
       Result.bind(
         'parts',
-        (v): Result.ResultAsync<OcPartTab[], OcPartEntToTabError> =>
+        (v): Result.ResultAsync<OcPartTab[], DbOcPartsFindManyError> =>
           this.db.ocParts.findMany({
             where: eq(ocPartsTable.sessionId, v.sessionId),
             orderBy: [asc(ocPartsTable.partId)]
@@ -216,7 +226,7 @@ export class GetSessionController {
       ),
       Result.bind(
         'events',
-        (v): Result.ResultAsync<OcEventTab[], OcEventEntToTabError> =>
+        (v): Result.ResultAsync<OcEventTab[], DbOcEventsFindManyError> =>
           this.db.ocEvents.findMany({
             where: and(
               eq(ocEventsTable.sessionId, v.sessionId),

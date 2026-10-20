@@ -18,7 +18,7 @@ import { SessionDrainService } from '#backend/services/session/session-drain/ses
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendSessionTypeIsNotExplorerError } from '#common/types/backend/errors/backend-session-type-is-not-explorer-error';
 import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { ProduceExplorerChartError } from '#common/types/backend/function-errors/produce-explorer-chart-error';
 import type { RebuildFromYamlError } from '#common/types/backend/function-errors/rebuild-from-yaml-error';
 import type { SessionTabCreatedEvent } from '#common/types/backend/parts/session/session-tab-created-event';
@@ -79,7 +79,12 @@ export class ProduceExplorerChartService {
       ),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })

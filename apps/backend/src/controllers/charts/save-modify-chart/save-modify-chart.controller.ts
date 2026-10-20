@@ -69,20 +69,20 @@ import type { CheckChartPathError } from '#common/types/backend/function-errors/
 import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
 import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
+import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
+import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
+import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
 import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
 import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
-import type { GetMconfigCheckExistsError } from '#common/types/backend/function-errors/get-mconfig-check-exists-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
-import type { GetProjectCheckExistsError } from '#common/types/backend/function-errors/get-project-check-exists-error';
 import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
@@ -219,7 +219,12 @@ export class SaveModifyChartController {
       }),
       Result.bind(
         'project',
-        (v): Result.ResultAsync<ProjectTab, GetProjectCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProjectTab,
+          DbProjectsFindFirstCheckExistsError
+        > =>
           this.db.projects.findFirstCheckExists({
             where: eq(projectsTable.projectId, v.projectId)
           })
@@ -230,13 +235,13 @@ export class SaveModifyChartController {
           v
         ): Result.ResultAsync<
           MemberTab,
-          | GetMemberCheckExistsError
+          | DbMembersFindFirstCheckExistsError
           | CheckProjectIsNotRestrictedError
           | BackendMemberIsNotExplorerError
         > => {
           let userMemberResult: Result.Result<
             MemberTab,
-            GetMemberCheckExistsError
+            DbMembersFindFirstCheckExistsError
           > = await this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -274,7 +279,9 @@ export class SaveModifyChartController {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -292,7 +299,9 @@ export class SaveModifyChartController {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -354,7 +363,12 @@ export class SaveModifyChartController {
       ),
       Result.bind(
         'mconfig',
-        (v): Result.ResultAsync<MconfigTab, GetMconfigCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          MconfigTab,
+          DbMconfigsFindFirstCheckExistsError
+        > =>
           this.db.mconfigs.findFirstCheckExists({
             where: and(
               eq(mconfigsTable.mconfigId, v.existingChart.tiles[0].mconfigId),
@@ -551,7 +565,7 @@ export class SaveModifyChartController {
       ),
       Result.bind(
         'cachedModels',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: and(
               eq(modelsTable.structId, v.bridge.structId),
@@ -799,7 +813,7 @@ export class SaveModifyChartController {
       ),
       Result.bind(
         'query',
-        (v): Result.ResultAsync<QueryTab, QueryEntToTabError> =>
+        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
           this.db.queries.findFirst({
             where: and(
               eq(queriesTable.queryId, v.prepareQueryPayload.newQuery.queryId),
@@ -833,7 +847,7 @@ export class SaveModifyChartController {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: eq(modelsTable.structId, v.bridge.structId)
           })

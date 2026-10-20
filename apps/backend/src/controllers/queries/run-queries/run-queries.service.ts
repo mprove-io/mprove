@@ -46,22 +46,22 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { CustomAsyncPoolError } from '#common/types/backend/function-errors/custom-async-pool-error';
+import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
+import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
+import type { DbConnectionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/connections/db-connections-find-first-check-exists-error';
+import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
+import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetBranchCheckExistsError } from '#common/types/backend/function-errors/get-branch-check-exists-error';
-import type { GetBridgeCheckExistsError } from '#common/types/backend/function-errors/get-bridge-check-exists-error';
-import type { GetConnectionCheckExistsError } from '#common/types/backend/function-errors/get-connection-check-exists-error';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
 import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
 import type { GetQueryExecutionContextError } from '#common/types/backend/function-errors/get-query-execution-context-error';
 import type { LaunchPooledQueryError } from '#common/types/backend/function-errors/launch-pooled-query-error';
-import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { RunPooledQueryError } from '#common/types/backend/function-errors/run-pooled-query-error';
 import type { RunQueriesError } from '#common/types/backend/function-errors/run-queries-error';
-import type { RunQueriesSetupErrorToError } from '#common/types/backend/function-errors/run-queries-setup-error-to-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 import type { Env } from '#common/types/backend/parts/env';
@@ -144,7 +144,10 @@ export class RunQueriesService {
         'connection',
         async (
           v
-        ): Result.ResultAsync<ConnectionTab, GetConnectionCheckExistsError> => {
+        ): Result.ResultAsync<
+          ConnectionTab,
+          DbConnectionsFindFirstCheckExistsError
+        > => {
           let isFallbackConnection: boolean =
             v.apiEnv.isFallbackToProdConnections === true
               ? v.apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
@@ -600,7 +603,9 @@ export class RunQueriesService {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -610,7 +615,9 @@ export class RunQueriesService {
       ),
       Result.bind(
         'branch',
-        (v): Result.ResultAsync<BranchTab, GetBranchCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
           this.db.branches.findFirstCheckExists({
             where: and(
               eq(branchesTable.projectId, v.projectId),
@@ -637,7 +644,9 @@ export class RunQueriesService {
       }),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, GetBridgeCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
           this.db.bridges.findFirstCheckExists({
             where: and(
               eq(bridgesTable.projectId, v.branch.projectId),
@@ -655,7 +664,7 @@ export class RunQueriesService {
       ),
       Result.bind(
         'mconfigs',
-        (v): Result.ResultAsync<MconfigTab[], MconfigEntToTabError> =>
+        (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
           this.db.mconfigs.findMany({
             where: and(
               eq(mconfigsTable.structId, v.bridge.structId),
@@ -733,7 +742,7 @@ export class RunQueriesService {
       ),
       Result.bind(
         'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
+        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
           this.db.models.findMany({
             where: and(
               eq(modelsTable.structId, v.bridge.structId),
@@ -767,7 +776,7 @@ export class RunQueriesService {
       ),
       Result.bind(
         'uniqueGoogleApiConnectionsWithAnyEnvId',
-        (v): Result.ResultAsync<ConnectionTab[], ConnectionEntToTabError> =>
+        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
           this.db.connections.findMany({
             where: and(
               eq(connectionsTable.projectId, v.projectId),
@@ -869,7 +878,7 @@ export class RunQueriesService {
         } else {
           let queryLaunchResult: Result.Result<
             void[],
-            RunQueriesSetupErrorToError
+            CustomAsyncPoolError<LaunchPooledQueryError>
           > = await customAsyncPool({
             poolSize: 8,
             inputs: v.queryIds,

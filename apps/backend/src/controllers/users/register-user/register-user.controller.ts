@@ -31,10 +31,10 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { DbUsersFindFirstError } from '#common/types/backend/function-errors/db/users/db-users-find-first-error';
 import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/users/register-user/register-user-output';
 
@@ -108,7 +108,7 @@ export class RegisterUserController {
       ),
       Result.bind(
         'user',
-        (v): Result.ResultAsync<UserTab, UserEntToTabError> =>
+        (v): Result.ResultAsync<UserTab, DbUsersFindFirstError> =>
           this.db.users.findFirst({
             where: eq(usersTable.emailHash, v.emailHash)
           })

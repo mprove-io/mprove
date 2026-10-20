@@ -30,9 +30,9 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { OrgEntToTabError } from '#common/types/backend/function-errors/org-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
+import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
+import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
+import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
@@ -70,7 +70,7 @@ export class DeleteUserController {
       ),
       Result.bind(
         'ownerOrgs',
-        (v): Result.ResultAsync<OrgTab[], OrgEntToTabError> =>
+        (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
           this.db.orgs.findMany({
             where: eq(orgsTable.ownerId, v.user.userId)
           })
@@ -87,7 +87,7 @@ export class DeleteUserController {
       ),
       Result.bind(
         'userAdminMembers',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           this.db.members.findMany({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -102,7 +102,7 @@ export class DeleteUserController {
       ),
       Result.bind(
         'admins',
-        async (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           v.userAdminProjectIds.length === 0
             ? Result.succeed([])
             : this.db.members.findMany({
@@ -133,7 +133,7 @@ export class DeleteUserController {
       ),
       Result.bind(
         'userMembers',
-        (v): Result.ResultAsync<MemberTab[], MemberEntToTabError> =>
+        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
           this.db.members.findMany({
             where: eq(membersTable.memberId, v.user.userId)
           })
@@ -145,7 +145,7 @@ export class DeleteUserController {
       ),
       Result.bind(
         'projects',
-        async (v): Result.ResultAsync<ProjectTab[], ProjectEntToTabError> =>
+        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
           v.projectIds.length === 0
             ? Result.succeed([])
             : this.db.projects.findMany({

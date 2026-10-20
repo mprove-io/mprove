@@ -9,19 +9,19 @@ import {
   zBackendChartDoesNotExistError
 } from '#common/types/backend/errors/backend-chart-does-not-exist-error';
 import {
-  type ChartEntToTabError,
-  zChartEntToTabError
-} from '#common/types/backend/function-errors/chart-ent-to-tab-error';
+  type DbChartsFindFirstError,
+  zDbChartsFindFirstError
+} from '#common/types/backend/function-errors/db/charts/db-charts-find-first-error';
 
 export type GetChartCheckExistsError =
   | BackendChartDoesNotExistError
   | BackendChartCreatorIdMismatchError
-  | ChartEntToTabError;
+  | DbChartsFindFirstError;
 
 export let zGetChartCheckExistsError = z.union([
   zBackendChartDoesNotExistError,
   zBackendChartCreatorIdMismatchError,
-  zChartEntToTabError
+  zDbChartsFindFirstError
 ]);
 
 assertTypesEqual<

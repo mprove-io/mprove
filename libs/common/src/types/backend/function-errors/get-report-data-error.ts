@@ -5,6 +5,22 @@ import {
   zCalculateDataError
 } from '#common/types/backend/function-errors/calculate-data-error';
 import {
+  type DbKitsFindManyError,
+  zDbKitsFindManyError
+} from '#common/types/backend/function-errors/db/kits/db-kits-find-many-error';
+import {
+  type DbMconfigsFindManyError,
+  zDbMconfigsFindManyError
+} from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
+import {
+  type DbModelsFindManyError,
+  zDbModelsFindManyError
+} from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
+import {
+  type DbQueriesFindManyError,
+  zDbQueriesFindManyError
+} from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
+import {
   type EditMalloyQueryError,
   zEditMalloyQueryError
 } from '#common/types/backend/function-errors/edit-malloy-query-error';
@@ -13,29 +29,13 @@ import {
   zGetTimeColumnsError
 } from '#common/types/backend/function-errors/get-time-columns-error';
 import {
-  type KitEntToTabError,
-  zKitEntToTabError
-} from '#common/types/backend/function-errors/kit-ent-to-tab-error';
-import {
   type MakeReportDataColumnsError,
   zMakeReportDataColumnsError
 } from '#common/types/backend/function-errors/make-report-data-columns-error';
 import {
-  type MconfigEntToTabError,
-  zMconfigEntToTabError
-} from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
-import {
-  type ModelEntToTabError,
-  zModelEntToTabError
-} from '#common/types/backend/function-errors/model-ent-to-tab-error';
-import {
   type PrepStoreMconfigQueryError,
   zPrepStoreMconfigQueryError
 } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
-import {
-  type QueryEntToTabError,
-  zQueryEntToTabError
-} from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import {
   type WriteError,
   zWriteError
@@ -45,25 +45,25 @@ export type GetReportDataError =
   | CalculateDataError
   | MakeReportDataColumnsError
   | GetTimeColumnsError
-  | ModelEntToTabError
   | PrepStoreMconfigQueryError
   | EditMalloyQueryError
-  | MconfigEntToTabError
-  | QueryEntToTabError
-  | KitEntToTabError
-  | WriteError;
+  | WriteError
+  | DbModelsFindManyError
+  | DbMconfigsFindManyError
+  | DbQueriesFindManyError
+  | DbKitsFindManyError;
 
 export const zGetReportDataError = z.union([
   zCalculateDataError,
   zMakeReportDataColumnsError,
   zGetTimeColumnsError,
-  zModelEntToTabError,
   zPrepStoreMconfigQueryError,
   zEditMalloyQueryError,
-  zMconfigEntToTabError,
-  zQueryEntToTabError,
-  zKitEntToTabError,
-  zWriteError
+  zWriteError,
+  zDbModelsFindManyError,
+  zDbMconfigsFindManyError,
+  zDbQueriesFindManyError,
+  zDbKitsFindManyError
 ]);
 
 assertTypesEqual<GetReportDataError, z.infer<typeof zGetReportDataError>>({

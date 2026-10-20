@@ -5,6 +5,10 @@ import {
   zBackendGetDashboardFailError
 } from '#common/types/backend/errors/backend-get-dashboard-fail-error';
 import {
+  type DbModelsFindManyError,
+  zDbModelsFindManyError
+} from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
+import {
   type GetDashboardXCheckExistsAndAccessError,
   zGetDashboardXCheckExistsAndAccessError
 } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
@@ -25,10 +29,6 @@ import {
   zGetStructCheckExistsError
 } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import {
-  type ModelEntToTabError,
-  zModelEntToTabError
-} from '#common/types/backend/function-errors/model-ent-to-tab-error';
-import {
   type ProcessDashboardError,
   zProcessDashboardError
 } from '#common/types/backend/function-errors/process-dashboard-error';
@@ -44,26 +44,26 @@ import {
 export type GetDashboardDataError =
   | GetStructCheckExistsError
   | GetDashboardXCheckExistsAndAccessError
-  | ModelEntToTabError
   | GetSelectedGivensError
   | RebuildStructError
   | BackendGetDashboardFailError
   | ProcessDashboardError
   | WriteError
   | GetDashboardXUsingDashboardTabError
-  | GetModelPartXsError;
+  | GetModelPartXsError
+  | DbModelsFindManyError;
 
 export const zGetDashboardDataError = z.union([
   zGetStructCheckExistsError,
   zGetDashboardXCheckExistsAndAccessError,
-  zModelEntToTabError,
   zGetSelectedGivensError,
   zRebuildStructError,
   zBackendGetDashboardFailError,
   zProcessDashboardError,
   zWriteError,
   zGetDashboardXUsingDashboardTabError,
-  zGetModelPartXsError
+  zGetModelPartXsError,
+  zDbModelsFindManyError
 ]);
 
 assertTypesEqual<GetDashboardDataError, z.infer<typeof zGetDashboardDataError>>(

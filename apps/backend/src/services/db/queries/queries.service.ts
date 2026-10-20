@@ -24,6 +24,7 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckBigqueryRunningQueriesError } from '#common/types/backend/function-errors/check-bigquery-running-queries-error';
+import type { DbQueriesFindManyError } from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetQueriesCheckExistError } from '#common/types/backend/function-errors/get-queries-check-exist-error';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
@@ -263,7 +264,7 @@ export class QueriesService {
       Result.succeed(item),
       Result.bind(
         'queries',
-        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
+        (v): Result.ResultAsync<QueryTab[], DbQueriesFindManyError> =>
           this.db.queries.findMany({
             where: and(
               inArray(queriesTable.queryId, v.queryIds),
@@ -311,7 +312,7 @@ WHERE q.report_id is NULL
     void,
     CheckBigqueryRunningQueriesError
   > {
-    let queryCollection: Result.Result<QueryTab[], QueryEntToTabError> =
+    let queryCollection: Result.Result<QueryTab[], DbQueriesFindManyError> =
       await this.db.queries.findMany({
         where: and(
           eq(queriesTable.status, 'Running'),

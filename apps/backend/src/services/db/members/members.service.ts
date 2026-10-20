@@ -35,15 +35,16 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
 import type { AddMemberToDemoProjectError } from '#common/types/backend/function-errors/add-member-to-demo-project-error';
-import type { BranchEntToTabError } from '#common/types/backend/function-errors/branch-ent-to-tab-error';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
 import type { CheckMemberDoesNotExistError } from '#common/types/backend/function-errors/check-member-does-not-exist-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
+import type { DbBranchesFindFirstError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-error';
+import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbMembersFindFirstError } from '#common/types/backend/function-errors/db/members/db-members-find-first-error';
+import type { DbProjectsFindFirstError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { ProjectEntToTabError } from '#common/types/backend/function-errors/project-ent-to-tab-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
@@ -165,7 +166,9 @@ export class MembersService {
       Result.succeed(item),
       Result.bind(
         'member',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.memberId),
@@ -190,7 +193,9 @@ export class MembersService {
       Result.succeed(item),
       Result.bind(
         'member',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.memberId),
@@ -237,7 +242,7 @@ export class MembersService {
       }),
       Result.bind(
         'project',
-        async (v): Result.ResultAsync<ProjectTab, ProjectEntToTabError> =>
+        async (v): Result.ResultAsync<ProjectTab, DbProjectsFindFirstError> =>
           isUndefined(v.demoProjectId)
             ? Result.succeed(undefined)
             : this.db.projects.findFirst({
@@ -246,7 +251,7 @@ export class MembersService {
       ),
       Result.bind(
         'member',
-        async (v): Result.ResultAsync<MemberTab, MemberEntToTabError> =>
+        async (v): Result.ResultAsync<MemberTab, DbMembersFindFirstError> =>
           isUndefined(v.project)
             ? Result.succeed(undefined)
             : this.db.members.findFirst({
@@ -300,7 +305,7 @@ export class MembersService {
       ),
       Result.bind(
         'prodBranch',
-        async (v): Result.ResultAsync<BranchTab, BranchEntToTabError> =>
+        async (v): Result.ResultAsync<BranchTab, DbBranchesFindFirstError> =>
           isUndefined(v.newMember)
             ? Result.succeed(undefined)
             : this.db.branches.findFirst({
@@ -326,7 +331,7 @@ export class MembersService {
       ),
       Result.bind(
         'prodBranchBridges',
-        async (v): Result.ResultAsync<BridgeTab[], BridgeEntToTabError> =>
+        async (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
           isUndefined(v.newMember)
             ? Result.succeed([])
             : this.db.bridges.findMany({

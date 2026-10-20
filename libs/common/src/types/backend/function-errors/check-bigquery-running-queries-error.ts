@@ -1,3 +1,3 @@
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
+import type { DbQueriesFindManyError } from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 
-export type CheckBigqueryRunningQueriesError = QueryEntToTabError;
+export type CheckBigqueryRunningQueriesError = DbQueriesFindManyError;

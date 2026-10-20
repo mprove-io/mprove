@@ -22,7 +22,7 @@ import { schemaPostgres } from './postgres/schema/_schema-postgres';
 
 export const DRIZZLE = 'DRIZZLE';
 
-export interface Db {
+export interface DbExtra {
   drizzle: NodePgDatabase<typeof schemaPostgres>;
   packer: DrizzlePacker;
   pool: PoolType;
@@ -97,23 +97,23 @@ export interface Db {
 
         let postgresPacker = new DrizzlePacker(tabService, tabToEntService);
 
-        let db: Db = {
+        let dbExtra: DbExtra = {
           drizzle: postgresPoolDrizzle,
           packer: postgresPacker,
           pool: postgresPool
         };
 
-        return db;
+        return dbExtra;
       }
     }
   ],
   exports: [DRIZZLE]
 })
 export class DrizzleModule implements OnModuleDestroy {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(@Inject(DRIZZLE) private dbExtra: DbExtra) {}
 
   async onModuleDestroy() {
-    const pool = this.db.pool;
+    const pool = this.dbExtra.pool;
 
     // Wait up to 5 seconds for active queries to complete
     const maxWaitMs = 5000;

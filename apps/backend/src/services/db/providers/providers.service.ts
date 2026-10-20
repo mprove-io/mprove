@@ -18,10 +18,10 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckLlmModelDoesNotExistError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-error';
 import type { CheckProviderDoesNotExistError } from '#common/types/backend/function-errors/check-provider-does-not-exist-error';
+import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
 import type { GetEnabledProviderCheckExistsError } from '#common/types/backend/function-errors/get-enabled-provider-check-exists-error';
 import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
-import type { GetProviderCheckExistsError } from '#common/types/backend/function-errors/get-provider-check-exists-error';
 import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
@@ -244,7 +244,12 @@ export class ProvidersService {
       Result.succeed(item),
       Result.bind(
         'provider',
-        (v): Result.ResultAsync<ProviderTab, GetProviderCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          ProviderTab,
+          DbProvidersFindFirstCheckExistsError
+        > =>
           this.db.providers.findFirstCheckExists({
             where: and(
               eq(providersTable.projectId, v.projectId),

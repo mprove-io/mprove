@@ -9,19 +9,19 @@ import {
   zBackendMemberDoesNotHaveAccessToEnvError
 } from '#common/types/backend/errors/backend-member-does-not-have-access-to-env-error';
 import {
-  type EnvEntToTabError,
-  zEnvEntToTabError
-} from '#common/types/backend/function-errors/env-ent-to-tab-error';
+  type DbEnvsFindFirstError,
+  zDbEnvsFindFirstError
+} from '#common/types/backend/function-errors/db/envs/db-envs-find-first-error';
 
 export type GetEnvCheckExistsAndAccessError =
   | BackendEnvDoesNotExistError
-  | EnvEntToTabError
-  | BackendMemberDoesNotHaveAccessToEnvError;
+  | BackendMemberDoesNotHaveAccessToEnvError
+  | DbEnvsFindFirstError;
 
 export let zGetEnvCheckExistsAndAccessError = z.union([
   zBackendEnvDoesNotExistError,
-  zEnvEntToTabError,
-  zBackendMemberDoesNotHaveAccessToEnvError
+  zBackendMemberDoesNotHaveAccessToEnvError,
+  zDbEnvsFindFirstError
 ]);
 
 assertTypesEqual<

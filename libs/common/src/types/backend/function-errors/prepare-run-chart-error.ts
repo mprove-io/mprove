@@ -5,23 +5,23 @@ import {
   zBackendChartNotFoundError
 } from '#common/types/backend/errors/backend-chart-not-found-error';
 import {
-  type ChartEntToTabError,
-  zChartEntToTabError
-} from '#common/types/backend/function-errors/chart-ent-to-tab-error';
+  type DbChartsFindManyError,
+  zDbChartsFindManyError
+} from '#common/types/backend/function-errors/db/charts/db-charts-find-many-error';
 import {
-  type ModelEntToTabError,
-  zModelEntToTabError
-} from '#common/types/backend/function-errors/model-ent-to-tab-error';
+  type DbModelsFindManyError,
+  zDbModelsFindManyError
+} from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 
 export type PrepareRunChartError =
-  | ChartEntToTabError
-  | ModelEntToTabError
-  | BackendChartNotFoundError;
+  | BackendChartNotFoundError
+  | DbChartsFindManyError
+  | DbModelsFindManyError;
 
 export const zPrepareRunChartError = z.union([
-  zChartEntToTabError,
-  zModelEntToTabError,
-  zBackendChartNotFoundError
+  zBackendChartNotFoundError,
+  zDbChartsFindManyError,
+  zDbModelsFindManyError
 ]);
 
 assertTypesEqual<PrepareRunChartError, z.infer<typeof zPrepareRunChartError>>({

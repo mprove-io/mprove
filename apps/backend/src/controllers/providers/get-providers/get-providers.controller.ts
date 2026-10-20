@@ -19,8 +19,8 @@ import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
+import type { DbProvidersFindManyError } from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import type { ProviderEntToTabError } from '#common/types/backend/function-errors/provider-ent-to-tab-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
 
@@ -68,7 +68,7 @@ export class GetProvidersController {
       ),
       Result.bind(
         'providers',
-        (v): Result.ResultAsync<ProviderTab[], ProviderEntToTabError> =>
+        (v): Result.ResultAsync<ProviderTab[], DbProvidersFindManyError> =>
           this.db.providers.findMany({
             where: eq(providersTable.projectId, v.projectId)
           })

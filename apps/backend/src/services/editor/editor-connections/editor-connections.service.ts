@@ -16,7 +16,7 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.serv
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ConnectionEntToTabError } from '#common/types/backend/function-errors/connection-ent-to-tab-error';
+import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetMalloySandboxEnvsAndFilesError } from '#common/types/backend/function-errors/get-malloy-sandbox-envs-and-files-error';
 import type { Env } from '#common/types/backend/parts/env';
@@ -73,7 +73,7 @@ export class EditorConnectionsService {
     if (isDefined(apiEnv)) {
       let connectionResult: Result.Result<
         ConnectionTab[],
-        ConnectionEntToTabError
+        DbConnectionsFindManyError
       > = await this.db.connections.findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),

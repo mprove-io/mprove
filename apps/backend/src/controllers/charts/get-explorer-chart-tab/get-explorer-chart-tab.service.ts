@@ -32,14 +32,14 @@ import {
   type ExplorerRebuildResult
 } from '#backend/services/explorer/explorer-chart-rebuild/explorer-chart-rebuild.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BridgeEntToTabError } from '#common/types/backend/function-errors/bridge-ent-to-tab-error';
-import type { ChartEntToTabError } from '#common/types/backend/function-errors/chart-ent-to-tab-error';
+import type { DbBridgesFindFirstError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-error';
+import type { DbChartsFindFirstError } from '#common/types/backend/function-errors/db/charts/db-charts-find-first-error';
+import type { DbMconfigsFindFirstError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-error';
+import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
+import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
+import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetExplorerChartTabError } from '#common/types/backend/function-errors/get-explorer-chart-tab-error';
-import type { GetMemberCheckExistsError } from '#common/types/backend/function-errors/get-member-check-exists-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
-import type { MconfigEntToTabError } from '#common/types/backend/function-errors/mconfig-ent-to-tab-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { RebuildFromYamlError } from '#common/types/backend/function-errors/rebuild-from-yaml-error';
 import type { RunQueriesError } from '#common/types/backend/function-errors/run-queries-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
@@ -101,7 +101,12 @@ export class GetExplorerChartTabService {
       Result.succeed(item),
       Result.bind(
         'session',
-        (v): Result.ResultAsync<SessionTab, GetSessionByIdCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<
+          SessionTab,
+          DbSessionsFindFirstCheckExistsError
+        > =>
           this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, v.sessionId)
           })
@@ -122,7 +127,9 @@ export class GetExplorerChartTabService {
       ),
       Result.bind(
         'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckExistsError> =>
+        (
+          v
+        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
           this.db.members.findFirstCheckExists({
             where: and(
               eq(membersTable.memberId, v.user.userId),
@@ -132,7 +139,7 @@ export class GetExplorerChartTabService {
       ),
       Result.bind(
         'bridge',
-        (v): Result.ResultAsync<BridgeTab, BridgeEntToTabError> =>
+        (v): Result.ResultAsync<BridgeTab, DbBridgesFindFirstError> =>
           this.db.bridges.findFirst({
             where: and(
               eq(bridgesTable.projectId, v.session.projectId),
@@ -151,7 +158,7 @@ export class GetExplorerChartTabService {
       ),
       Result.bind(
         'originalChart',
-        (v): Result.ResultAsync<ChartTab, ChartEntToTabError> =>
+        (v): Result.ResultAsync<ChartTab, DbChartsFindFirstError> =>
           this.db.charts.findFirst({
             where: and(
               eq(chartsTable.sessionId, v.sessionId),
@@ -193,7 +200,7 @@ export class GetExplorerChartTabService {
       ),
       Result.bind(
         'chartAtCurrent',
-        (v): Result.ResultAsync<ChartTab, ChartEntToTabError> =>
+        (v): Result.ResultAsync<ChartTab, DbChartsFindFirstError> =>
           this.db.charts.findFirst({
             where: and(
               eq(chartsTable.sessionId, v.sessionId),
@@ -208,7 +215,7 @@ export class GetExplorerChartTabService {
 
           let existingMconfigResult: Result.Result<
             MconfigTab,
-            MconfigEntToTabError
+            DbMconfigsFindFirstError
           > = await this.db.mconfigs.findFirst({
             where: and(
               eq(mconfigsTable.mconfigId, chartTile.mconfigId),
@@ -222,7 +229,7 @@ export class GetExplorerChartTabService {
 
           let existingMconfig: MconfigTab = existingMconfigResult.value;
 
-          let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
+          let queryResult: Result.Result<QueryTab, DbQueriesFindFirstError> =
             await this.db.queries.findFirst({
               where: eq(queriesTable.queryId, chartTile.queryId)
             });
@@ -325,7 +332,7 @@ export class GetExplorerChartTabService {
               return toBackendRunQueriesOutput;
             }
 
-            let queryResult: Result.Result<QueryTab, QueryEntToTabError> =
+            let queryResult: Result.Result<QueryTab, DbQueriesFindFirstError> =
               await this.db.queries.findFirst({
                 where: eq(queriesTable.queryId, rebuiltQuery.queryId)
               });
@@ -377,7 +384,7 @@ export class GetExplorerChartTabService {
             });
           }
 
-          let modelResult: Result.Result<ModelTab[], ModelEntToTabError> =
+          let modelResult: Result.Result<ModelTab[], DbModelsFindManyError> =
             await this.db.models.findMany({
               where: eq(modelsTable.structId, v.bridge.structId)
             });

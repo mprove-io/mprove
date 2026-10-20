@@ -38,11 +38,11 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { ServerError } from '#common/classes/server-error/server-error';
 import { SESSION_TITLE_UPDATED_EVENT_TYPE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbErrorToError } from '#common/types/backend/function-errors/db-error-to-error';
+import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
+import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
+import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { DrainAllQueuesError } from '#common/types/backend/function-errors/drain-all-queues-error';
 import type { DrainQueueError } from '#common/types/backend/function-errors/drain-queue-error';
-import type { GetOcSessionBySessionIdError } from '#common/types/backend/function-errors/get-oc-session-by-session-id-error';
-import type { GetSessionByIdCheckExistsError } from '#common/types/backend/function-errors/get-session-by-id-check-exists-error';
 import type {
   MproveSessionTitleUpdatedEvent,
   SessionStreamEvent
@@ -261,7 +261,7 @@ export class SessionDrainService {
     ) {
       let ocSessionResult: Result.Result<
         OcSessionTab,
-        GetOcSessionBySessionIdError
+        DbOcSessionsFindFirstError
       > = await this.db.ocSessions.findFirst({
         where: eq(ocSessionsTable.sessionId, sessionId)
       });
@@ -532,7 +532,7 @@ export class SessionDrainService {
         if (sessionPauseOnUserTurnMinutes) {
           let sessionResult: Result.Result<
             SessionTab,
-            GetSessionByIdCheckExistsError
+            DbSessionsFindFirstCheckExistsError
           > = await this.db.sessions.findFirstCheckExists({
             where: eq(sessionsTable.sessionId, sessionId)
           });
