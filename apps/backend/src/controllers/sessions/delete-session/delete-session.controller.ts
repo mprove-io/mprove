@@ -37,7 +37,6 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -57,7 +56,6 @@ export class DeleteSessionController {
     private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
     private explorerStreamService: ExplorerStreamService,
-    private tabService: TabService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -153,8 +151,9 @@ export class DeleteSessionController {
             return Result.succeed();
           }
 
-          let baseProject: BaseProject =
-            this.tabService.projectTabToBaseProject({ project: v.project });
+          let baseProject: BaseProject = this.db.projectTabToBaseProject({
+            project: v.project
+          });
 
           return this.rpcService.sendToDisk({
             request: {

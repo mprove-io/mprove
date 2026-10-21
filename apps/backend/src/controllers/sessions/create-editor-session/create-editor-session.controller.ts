@@ -46,7 +46,6 @@ import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/
 import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
@@ -95,7 +94,6 @@ export class CreateEditorSessionController {
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private editorConnectionsService: EditorConnectionsService,
-    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -636,9 +634,7 @@ export class CreateEditorSessionController {
         projectId: item.session.projectId
       }),
       Result.bind('baseProject', v =>
-        Result.succeed(
-          this.tabService.projectTabToBaseProject({ project: v.project })
-        )
+        Result.succeed(this.db.projectTabToBaseProject({ project: v.project }))
       ),
       // let sendToDiskStart = Date.now();
       Result.bind('diskCreateDevRepoOutput', v =>

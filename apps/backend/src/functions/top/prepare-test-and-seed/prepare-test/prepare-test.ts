@@ -14,7 +14,7 @@ import { getConfig } from '#backend/config/get.config';
 import type { Prep } from '#backend/interfaces/prep';
 import { EmailService } from '#backend/services/email/email.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 
 const { json, urlencoded } = bodyParser;
@@ -74,7 +74,7 @@ export async function prepareTest(item: {
     await app.init();
     let httpServer = app.getHttpServer();
     let rpcService = moduleRef.get<RpcService>(RpcService);
-    let tabToEntService = moduleRef.get<TabToEntService>(TabToEntService);
+    let tabService = moduleRef.get<TabService>(TabService);
     let logger = await moduleRef.resolve<Logger>(Logger);
     let cs = await moduleRef.resolve<ConfigService>(ConfigService);
     let prep: Prep = {
@@ -83,7 +83,7 @@ export async function prepareTest(item: {
       httpServer,
       moduleRef,
       rpcService,
-      tabToEntService,
+      tabService,
       logger,
       cs
     };

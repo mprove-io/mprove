@@ -41,7 +41,7 @@ export async function prepareTestAndSeed(item: {
     httpServer: prep1.httpServer,
     moduleRef: prep1.moduleRef,
     rpcService: prep1.rpcService,
-    tabToEntService: prep1.tabToEntService,
+    tabService: prep1.tabService,
     logger: prep1.logger,
     cs: prep1.cs
   };

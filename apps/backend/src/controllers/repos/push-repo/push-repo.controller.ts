@@ -31,7 +31,6 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   EMPTY_STRUCT_ID,
@@ -51,7 +50,6 @@ import type { ToBackendPushRepoOutput } from '#common/types/backend/routes/repos
 @Controller()
 export class PushRepoController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private modelsService: ModelsService,
@@ -134,7 +132,7 @@ export class PushRepoController {
             operation: 'pushRepo',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               repoId: v.repoId,

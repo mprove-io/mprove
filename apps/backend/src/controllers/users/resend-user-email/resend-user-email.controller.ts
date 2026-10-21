@@ -11,7 +11,6 @@ import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guar
 import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -39,7 +38,6 @@ import type { ToBackendResendUserEmailOutput } from '#common/types/backend/route
 @Controller()
 export class ResendUserEmailController {
   constructor(
-    private tabService: TabService,
     private usersService: UsersService,
     private emailService: EmailService,
     private db: DbService

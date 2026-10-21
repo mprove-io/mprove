@@ -12,7 +12,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { LocalAuthGuard } from '#backend/guards/local-auth/local-auth.guard';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { UsersService } from '#backend/services/db/users/users.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/users/login-user/login-user-output';
@@ -23,7 +22,6 @@ import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/user
 @Controller()
 export class LoginUserController {
   constructor(
-    private tabService: TabService,
     private jwtService: JwtService,
     private usersService: UsersService
   ) {}

@@ -14,7 +14,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetEnvsOutput } from '#common/types/backend/routes/envs/get-envs/get-envs-output';
@@ -24,7 +23,6 @@ import type { ToBackendGetEnvsOutput } from '#common/types/backend/routes/envs/g
 @Controller()
 export class GetEnvsController {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
     private envsService: EnvsService,
     private db: DbService

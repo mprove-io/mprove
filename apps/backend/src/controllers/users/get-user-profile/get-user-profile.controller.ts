@@ -10,7 +10,6 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users/users.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -21,10 +20,7 @@ import type { ToBackendGetUserProfileOutput } from '#common/types/backend/routes
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetUserProfileController {
-  constructor(
-    private tabService: TabService,
-    private usersService: UsersService
-  ) {}
+  constructor(private usersService: UsersService) {}
 
   @Post('api/ToBackendGetUserProfile' satisfies ToBackendRoute)
   @ApiOperation({

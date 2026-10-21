@@ -26,7 +26,6 @@ import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { StoreService } from '#backend/services/store/store.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
@@ -41,7 +40,6 @@ import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes
 @Controller()
 export class TestConnectionController {
   constructor(
-    private tabService: TabService,
     private connectionsService: ConnectionsService,
     private mysqlService: MysqlService,
     private pgService: PgService,

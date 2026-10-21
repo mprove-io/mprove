@@ -10,10 +10,11 @@ import type { PgTransaction } from 'drizzle-orm/pg-core';
 import pIteration from 'p-iteration';
 import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { tabsPackToEntsPack } from '#backend/functions/tabs-pack-to-ents-pack/tabs-pack-to-ents-pack';
 import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import type { TabService } from '#backend/services/tab/tab.service';
-import type { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import type { DbTable } from '#backend/services/db/db-table';
+import type { DbTableRegistryLike } from '#backend/services/db/db-table-registry-like';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -81,10 +82,17 @@ export interface PackerOutput {
 }
 
 export class DrizzlePacker {
-  constructor(
-    private tabService: TabService,
-    private tabToEntService: TabToEntService
-  ) {}
+  private readonly tableRegistry: DbTableRegistryLike & {
+    dconfigs: DbTable<'dconfigs'>;
+  };
+
+  constructor(item: {
+    tableRegistry: DbTableRegistryLike & { dconfigs: DbTable<'dconfigs'> };
+  }) {
+    let { tableRegistry } = item;
+
+    this.tableRegistry = tableRegistry;
+  }
 
   private refreshServerTs<T extends { serverTs: number }>(item: {
     elements: T[];
@@ -154,7 +162,7 @@ export class DrizzlePacker {
         .then((x: DconfigEnt) =>
           isUndefined(x)
             ? Result.succeed(undefined)
-            : this.tabService.dconfigEntToTab({ dconfigEnt: x })
+            : this.tableRegistry.dconfigs.entToTab({ ent: x })
         );
 
     if (Result.isFailure(dconfigResult)) {
@@ -165,7 +173,8 @@ export class DrizzlePacker {
 
     let insertEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(insert) && Object.keys(insert).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? tabsPackToEntsPack({
+            tableRegistry: this.tableRegistry,
             tabsPack: insert,
             hashSecret: dconfig?.hashSecret
           })
@@ -179,7 +188,8 @@ export class DrizzlePacker {
 
     let updateEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(update) && Object.keys(update).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? tabsPackToEntsPack({
+            tableRegistry: this.tableRegistry,
             tabsPack: update,
             hashSecret: dconfig?.hashSecret
           })
@@ -193,7 +203,8 @@ export class DrizzlePacker {
 
     let insOrUpdEntsResult: Result.Result<DbEntsPack, TabsPackToEntsPackError> =
       isDefined(insertOrUpdate) && Object.keys(insertOrUpdate).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? tabsPackToEntsPack({
+            tableRegistry: this.tableRegistry,
             tabsPack: insertOrUpdate,
             hashSecret: dconfig?.hashSecret
           })
@@ -210,7 +221,8 @@ export class DrizzlePacker {
       TabsPackToEntsPackError
     > =
       isDefined(insertOrDoNothing) && Object.keys(insertOrDoNothing).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack({
+        ? tabsPackToEntsPack({
+            tableRegistry: this.tableRegistry,
             tabsPack: insertOrDoNothing,
             hashSecret: dconfig?.hashSecret
           })

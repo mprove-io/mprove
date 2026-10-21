@@ -13,18 +13,13 @@ const { Pool } = pg;
 
 import { BackendConfig } from '#backend/config/backend-config';
 import { getConfig } from '#backend/config/get.config';
-import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
-import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import { DrizzleLogWriter } from './drizzle-log-writer';
-import { DrizzlePacker } from './postgres/drizzle-packer';
 import { schemaPostgres } from './postgres/schema/_schema-postgres';
 
 export const DRIZZLE = 'DRIZZLE';
 
 export interface DbExtra {
   drizzle: NodePgDatabase<typeof schemaPostgres>;
-  packer: DrizzlePacker;
   pool: PoolType;
 }
 
@@ -38,18 +33,10 @@ export interface DbExtra {
   providers: [
     ConfigService,
     Logger,
-    HashService,
-    TabService,
-    TabToEntService,
     {
       provide: DRIZZLE,
-      inject: [ConfigService, Logger, TabService, TabToEntService],
-      useFactory: (
-        cs: ConfigService<BackendConfig>,
-        logger: Logger,
-        tabService: TabService,
-        tabToEntService: TabToEntService
-      ) => {
+      inject: [ConfigService, Logger],
+      useFactory: (cs: ConfigService<BackendConfig>, logger: Logger) => {
         let poolConfig: PoolConfig = {
           connectionString: cs.get<BackendConfig['backendPostgresDatabaseUrl']>(
             'backendPostgresDatabaseUrl'
@@ -95,11 +82,8 @@ export interface DbExtra {
           });
         }
 
-        let postgresPacker = new DrizzlePacker(tabService, tabToEntService);
-
         let dbExtra: DbExtra = {
           drizzle: postgresPoolDrizzle,
-          packer: postgresPacker,
           pool: postgresPool
         };
 

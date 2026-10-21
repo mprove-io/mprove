@@ -17,7 +17,6 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { ValidateFilesError } from '#common/types/backend/function-errors/validate-files-error';
@@ -26,7 +25,6 @@ import type { ToBackendValidateFilesOutput } from '#common/types/backend/routes/
 @Injectable()
 export class ValidateFilesService {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private modelsService: ModelsService,
@@ -96,7 +94,7 @@ export class ValidateFilesService {
             operation: 'getCatalogFiles',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               repoId: v.repoId,

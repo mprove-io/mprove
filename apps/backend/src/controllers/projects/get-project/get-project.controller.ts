@@ -14,7 +14,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProjectOutput } from '#common/types/backend/routes/projects/get-project/get-project-output';
@@ -24,7 +23,6 @@ import type { ToBackendGetProjectOutput } from '#common/types/backend/routes/pro
 @Controller()
 export class GetProjectController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private db: DbService

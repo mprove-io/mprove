@@ -29,7 +29,6 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { SpaceService } from '#backend/services/space/space.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { UnitsService } from '#backend/services/units/units.service';
 import {
   EMPTY_QUERY_ID,
@@ -99,7 +98,6 @@ export type DashboardsCatalog = {
 @Injectable()
 export class DashboardsService {
   constructor(
-    private tabService: TabService,
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
@@ -530,8 +528,8 @@ export class DashboardsService {
             Result.sequence(xs, x =>
               isUndefined(x as DashboardEnt)
                 ? Result.succeed(undefined)
-                : this.tabService.dashboardEntToTab({
-                    dashboardEnt: x as DashboardEnt
+                : this.db.dashboards.entToTab({
+                    ent: x as DashboardEnt
                   })
             )
           )

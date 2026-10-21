@@ -21,7 +21,6 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ParentService } from '#backend/services/parent/parent.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -49,7 +48,6 @@ import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queri
 @Controller()
 export class GetQueryController {
   constructor(
-    private tabService: TabService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
     private parentService: ParentService,

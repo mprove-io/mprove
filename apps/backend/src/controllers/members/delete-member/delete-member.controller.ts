@@ -21,7 +21,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -33,7 +32,6 @@ import type { ToBackendDeleteMemberOutput } from '#common/types/backend/routes/m
 @Controller()
 export class DeleteMemberController {
   constructor(
-    private tabService: TabService,
     private rpcService: RpcService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
@@ -90,7 +88,7 @@ export class DeleteMemberController {
             operation: 'deleteDevRepo',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               devRepoId: v.member.memberId

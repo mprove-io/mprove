@@ -11,12 +11,14 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { NoteTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import {
+  createGitKeyPair,
+  type GitKeyPair
+} from '#backend/functions/create-git-key-pair/create-git-key-pair';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GitKeyPair } from '#backend/types/git-key-pair';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -30,7 +32,6 @@ const { parseKey, parsePrivateKey } = sshpk;
 @Controller()
 export class GenerateProjectRemoteKeyController {
   constructor(
-    private tabService: TabService,
     private orgsService: OrgsService,
     private db: DbService
   ) {}
@@ -65,7 +66,7 @@ export class GenerateProjectRemoteKeyController {
         })
       ),
       Result.bind('note', v => {
-        let gitKeyPair: GitKeyPair = this.tabService.createGitKeyPair();
+        let gitKeyPair: GitKeyPair = createGitKeyPair();
 
         let publicKey: string = parseKey(gitKeyPair.publicKeyEncrypted, 'pem', {
           passphrase: gitKeyPair.passPhrase

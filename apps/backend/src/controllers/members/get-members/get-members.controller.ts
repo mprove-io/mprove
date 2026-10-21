@@ -23,7 +23,6 @@ import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -36,7 +35,6 @@ import type { ToBackendGetMembersOutput } from '#common/types/backend/routes/mem
 @Controller()
 export class GetMembersController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rolesService: RolesService,
@@ -117,8 +115,8 @@ export class GetMembersController {
               .where(inArray(avatarsTable.userId, v.memberIds))
               .then(xs =>
                 Result.sequence(xs, x =>
-                  this.tabService.avatarEntToTab({
-                    avatarEnt: x as AvatarEnt
+                  this.db.avatars.entToTab({
+                    ent: x as AvatarEnt
                   })
                 )
               )

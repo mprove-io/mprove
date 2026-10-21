@@ -18,7 +18,6 @@ import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -36,7 +35,6 @@ import type { StoreMethod } from '#common/types/blockml/parts/store/store-method
 @Injectable()
 export class QueriesService {
   constructor(
-    private tabService: TabService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -170,8 +168,8 @@ export class QueriesService {
           )
           .then(xs =>
             Result.sequence(xs, x =>
-              this.tabService.queryEntToTab({
-                queryEnt: x as QueryEnt
+              this.db.queries.entToTab({
+                ent: x as QueryEnt
               })
             )
           )
@@ -227,8 +225,8 @@ export class QueriesService {
           )
           .then(xs =>
             Result.sequence(xs, x =>
-              this.tabService.queryEntToTab({
-                queryEnt: x as QueryEnt
+              this.db.queries.entToTab({
+                ent: x as QueryEnt
               })
             )
           )

@@ -25,7 +25,6 @@ import {
 } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
@@ -67,7 +66,6 @@ type PrepareRebuildPayload = {
 @Controller()
 export class SpecialRebuildStructsController {
   constructor(
-    private tabService: TabService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
@@ -121,9 +119,7 @@ export class SpecialRebuildStructsController {
               .select()
               .from(projectsTable)
               .then(xs =>
-                Result.sequence(xs, x =>
-                  this.tabService.projectEntToTab({ projectEnt: x })
-                )
+                Result.sequence(xs, x => this.db.projects.entToTab({ ent: x }))
               )
       ),
       Result.bind('bridges', v =>
@@ -135,9 +131,7 @@ export class SpecialRebuildStructsController {
               .select()
               .from(bridgesTable)
               .then(xs =>
-                Result.sequence(xs, x =>
-                  this.tabService.bridgeEntToTab({ bridgeEnt: x })
-                )
+                Result.sequence(xs, x => this.db.bridges.entToTab({ ent: x }))
               )
       ),
       Result.bind('prepareRebuildPayload', v => {
@@ -184,7 +178,7 @@ export class SpecialRebuildStructsController {
                   operation: 'getCatalogFiles',
                   traceId: v.traceId,
                   input: {
-                    baseProject: this.tabService.projectTabToBaseProject({
+                    baseProject: this.db.projectTabToBaseProject({
                       project: project
                     }),
                     repoId: bridge.repoId,

@@ -5,7 +5,7 @@ import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CheckConnectionDoesNotExistError } from '#common/types/backend/function-errors/check-connection-does-not-exist-error';
@@ -20,7 +20,7 @@ import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connec
 export class ConnectionsService {
   constructor(
     private hashService: HashService,
-    private tabToEntService: TabToEntService,
+    private tabService: TabService,
     private db: DbService
   ) {}
 
@@ -333,8 +333,8 @@ export class ConnectionsService {
       projectId: connection.projectId,
       envId: connection.envId,
       type: connection.type,
-      st: this.tabToEntService.encrypt({ data: connectionSt }),
-      lt: this.tabToEntService.encrypt({ data: connectionLt })
+      st: this.tabService.encrypt({ data: connectionSt }),
+      lt: this.tabService.encrypt({ data: connectionLt })
     };
 
     return apiBaseConnection;

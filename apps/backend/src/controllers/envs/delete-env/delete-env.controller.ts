@@ -22,7 +22,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -35,7 +34,6 @@ import type { ToBackendDeleteEnvOutput } from '#common/types/backend/routes/envs
 @Controller()
 export class DeleteEnvController {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,

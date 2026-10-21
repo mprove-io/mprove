@@ -11,7 +11,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsOrgExistOutput } from '#common/types/backend/routes/orgs/is-org-exist/is-org-exist-output';
@@ -21,7 +20,6 @@ import type { ToBackendIsOrgExistOutput } from '#common/types/backend/routes/org
 @Controller()
 export class IsOrgExistController {
   constructor(
-    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private db: DbService

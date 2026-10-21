@@ -21,7 +21,6 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -33,7 +32,6 @@ import type { ToBackendSaveFileOutput } from '#common/types/backend/routes/files
 @Controller()
 export class SaveFileController {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
     private modelsService: ModelsService,
     private rpcService: RpcService,
@@ -108,7 +106,7 @@ export class SaveFileController {
             operation: 'saveFile',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               repoId: v.repoId,

@@ -22,7 +22,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -36,7 +35,6 @@ import type { ToBackendEditMemberOutput } from '#common/types/backend/routes/mem
 @Controller()
 export class EditMemberController {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
     private rolesService: RolesService,
     private db: DbService
@@ -123,8 +121,8 @@ export class EditMemberController {
           .where(eq(avatarsTable.userId, v.member.memberId))
           .then(xs =>
             Result.sequence(xs, x =>
-              this.tabService.avatarEntToTab({
-                avatarEnt: x as AvatarEnt
+              this.db.avatars.entToTab({
+                ent: x as AvatarEnt
               })
             )
           )

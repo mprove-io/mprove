@@ -23,7 +23,6 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { ReportRowService } from '#backend/services/report-row/report-row.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -46,7 +45,6 @@ type PrepareReportChangesPayload = {
 @Controller()
 export class EditDraftReportController {
   constructor(
-    private tabService: TabService,
     private modelsService: ModelsService,
     private membersService: MembersService,
     private reportsService: ReportsService,

@@ -24,7 +24,6 @@ import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { OrgUsersItem } from '#common/types/backend/parts/org-users/org-users-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -35,7 +34,6 @@ import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/or
 @Controller()
 export class GetOrgUsersController {
   constructor(
-    private tabService: TabService,
     private orgsService: OrgsService,
     private db: DbService
   ) {}
@@ -130,8 +128,8 @@ export class GetOrgUsersController {
               .where(inArray(avatarsTable.userId, v.userIds))
               .then(xs =>
                 Result.sequence(xs, x =>
-                  this.tabService.avatarEntToTab({
-                    avatarEnt: x as AvatarEnt
+                  this.db.avatars.entToTab({
+                    ent: x as AvatarEnt
                   })
                 )
               )

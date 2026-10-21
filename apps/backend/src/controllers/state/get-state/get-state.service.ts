@@ -24,7 +24,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
 import type { GetStateError } from '#common/types/backend/function-errors/get-state-error';
@@ -35,7 +34,6 @@ import type { TimeSpec } from '#common/types/shared/time/timespec';
 export class GetStateService {
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private tabService: TabService,
     private membersService: MembersService,
     private rpcService: RpcService,
     private sessionsService: SessionsService,
@@ -118,7 +116,7 @@ export class GetStateService {
                 operation: 'getCatalogNodes',
                 traceId: v.traceId,
                 input: {
-                  baseProject: this.tabService.projectTabToBaseProject({
+                  baseProject: this.db.projectTabToBaseProject({
                     project: v.project
                   }),
                   repoId: v.repoId,

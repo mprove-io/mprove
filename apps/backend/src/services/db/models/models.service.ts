@@ -12,7 +12,6 @@ import {
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
@@ -26,7 +25,6 @@ import type { Model } from '#common/types/blockml/parts/model/model';
 @Injectable()
 export class ModelsService {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
     private db: DbService
   ) {}
@@ -177,8 +175,8 @@ export class ModelsService {
           .where(and(eq(modelsTable.structId, v.structId)))
           .then(xs =>
             Result.sequence(xs, x =>
-              this.tabService.modelEntToTab({
-                modelEnt: x as ModelEnt
+              this.db.models.entToTab({
+                ent: x as ModelEnt
               })
             )
           )

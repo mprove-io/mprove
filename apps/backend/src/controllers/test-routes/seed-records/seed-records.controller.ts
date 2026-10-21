@@ -58,7 +58,6 @@ import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
@@ -129,7 +128,6 @@ type PrepareSeedPayload = {
 @Controller()
 export class SeedRecordsController {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -497,10 +495,9 @@ export class SeedRecordsController {
                 serverTs: undefined
               };
 
-              let baseProject: BaseProject =
-                this.tabService.projectTabToBaseProject({
-                  project: newProject
-                });
+              let baseProject: BaseProject = this.db.projectTabToBaseProject({
+                project: newProject
+              });
 
               let prodEnv: EnvTab = this.envsService.makeEnv({
                 projectId: baseProject.projectId,

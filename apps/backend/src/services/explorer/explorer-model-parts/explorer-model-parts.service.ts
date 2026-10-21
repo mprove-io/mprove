@@ -16,7 +16,6 @@ import type {
   GetExplorerModelsOutput
 } from '#backend/services/explorer/types/get-explorer-models-output';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
 import type { GetExplorerModelsError } from '#common/types/backend/function-errors/get-explorer-models-error';
@@ -29,7 +28,6 @@ export class ExplorerModelPartsService {
     private modelsService: ModelsService,
     private structsService: StructsService,
     private rpcService: RpcService,
-    private tabService: TabService,
     private db: DbService
   ) {}
 
@@ -149,7 +147,7 @@ export class ExplorerModelPartsService {
             operation: 'getCatalogFiles',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               repoId: v.repoId,

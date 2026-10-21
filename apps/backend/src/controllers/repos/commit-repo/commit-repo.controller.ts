@@ -19,7 +19,6 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { SessionArchiveService } from '#backend/services/session/session-archive/session-archive.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -32,7 +31,6 @@ import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/rep
 @Controller()
 export class CommitRepoController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
@@ -110,7 +108,7 @@ export class CommitRepoController {
             operation: 'commitRepo',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               repoId: v.repoId,

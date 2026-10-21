@@ -22,7 +22,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { BackendDefaultBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-default-branch-cannot-be-deleted-error';
@@ -36,7 +35,6 @@ import type { ToBackendDeleteBranchOutput } from '#common/types/backend/routes/b
 @Controller()
 export class DeleteBranchController {
   constructor(
-    private tabService: TabService,
     private projectsService: ProjectsService,
     private rpcService: RpcService,
     private sessionsService: SessionsService,
@@ -112,7 +110,7 @@ export class DeleteBranchController {
             operation: 'deleteBranch',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               repoId: v.repoId,

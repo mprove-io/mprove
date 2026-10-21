@@ -14,6 +14,7 @@ import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
+import { DbTableFactoryService } from '#backend/services/db/db-table-factory.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
@@ -85,7 +86,6 @@ import { SpaceService } from '#backend/services/space/space.service';
 import { StoreService } from '#backend/services/store/store.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { TabCheckerService } from '#backend/services/tab-checker/tab-checker.service';
-import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import { TasksService } from '#backend/services/tasks/tasks.service';
 import { ToolService } from '#backend/services/tool/tool.service';
 import { UnitsService } from '#backend/services/units/units.service';
@@ -168,8 +168,8 @@ export const appProviders = [
   ReportRowService,
   ReportTimeColumnsService,
   StoreService,
-  TabToEntService,
   TabService,
+  DbTableFactoryService,
   UnitsService,
   UrlService,
   LlmModelService,

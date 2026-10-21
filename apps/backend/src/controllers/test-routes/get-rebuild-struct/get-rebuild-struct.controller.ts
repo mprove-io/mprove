@@ -17,7 +17,6 @@ import { ConnectionsService } from '#backend/services/db/connections/connections
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -31,7 +30,6 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class GetRebuildStructController {
   constructor(
-    private tabService: TabService,
     private rpcService: RpcService,
     private envsService: EnvsService,
     private connectionsService: ConnectionsService,
@@ -71,9 +69,7 @@ export class GetRebuildStructController {
         })
       ),
       Result.bind('baseProject', v =>
-        Result.succeed(
-          this.tabService.projectTabToBaseProject({ project: v.project })
-        )
+        Result.succeed(this.db.projectTabToBaseProject({ project: v.project }))
       ),
       Result.bind('diskGetCatalogFilesOutput', v =>
         this.rpcService.sendToDisk({

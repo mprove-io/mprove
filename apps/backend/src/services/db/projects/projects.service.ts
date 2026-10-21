@@ -22,7 +22,6 @@ import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
@@ -43,7 +42,6 @@ import type { ToDiskCreateProjectOutput } from '#common/types/disk/routes/projec
 @Injectable()
 export class ProjectsService {
   constructor(
-    private tabService: TabService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
@@ -216,7 +214,7 @@ export class ProjectsService {
       serverTs: undefined
     };
 
-    let baseProject: BaseProject = this.tabService.projectTabToBaseProject({
+    let baseProject: BaseProject = this.db.projectTabToBaseProject({
       project: newProject
     });
 

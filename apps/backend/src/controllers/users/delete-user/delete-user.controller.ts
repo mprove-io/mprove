@@ -26,7 +26,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
@@ -39,7 +38,6 @@ import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom
 @Controller()
 export class DeleteUserController {
   constructor(
-    private tabService: TabService,
     private usersService: UsersService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
@@ -141,10 +139,9 @@ export class DeleteUserController {
               p => p.projectId === member.projectId
             );
 
-            let baseProject: BaseProject =
-              this.tabService.projectTabToBaseProject({
-                project: project
-              });
+            let baseProject: BaseProject = this.db.projectTabToBaseProject({
+              project: project
+            });
 
             return this.rpcService.sendToDisk({
               request: {

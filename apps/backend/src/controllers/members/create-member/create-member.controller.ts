@@ -33,7 +33,6 @@ import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   EMPTY_REPORT_ID,
@@ -88,7 +87,6 @@ import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/m
 @Controller()
 export class CreateMemberController {
   constructor(
-    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rpcService: RpcService,
@@ -219,7 +217,7 @@ export class CreateMemberController {
             operation: 'createDevRepo',
             traceId: v.traceId,
             input: {
-              baseProject: this.tabService.projectTabToBaseProject({
+              baseProject: this.db.projectTabToBaseProject({
                 project: v.project
               }),
               devRepoId: v.newMember.memberId
@@ -302,8 +300,8 @@ export class CreateMemberController {
           .where(eq(avatarsTable.userId, v.newMember.memberId))
           .then(xs =>
             Result.sequence(xs, x =>
-              this.tabService.avatarEntToTab({
-                avatarEnt: x as AvatarEnt
+              this.db.avatars.entToTab({
+                ent: x as AvatarEnt
               })
             )
           )

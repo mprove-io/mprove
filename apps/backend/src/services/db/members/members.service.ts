@@ -23,7 +23,6 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -43,7 +42,6 @@ const { forEachSeries } = pIteration;
 @Injectable()
 export class MembersService {
   constructor(
-    private tabService: TabService,
     private hashService: HashService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
@@ -137,9 +135,7 @@ export class MembersService {
           ? Result.succeed()
           : Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_ADMIN' })
       ),
-      Result.andThen(v =>
-        this.tabService.memberEntToTab({ memberEnt: v.memberEnt })
-      )
+      Result.andThen(v => this.db.members.entToTab({ ent: v.memberEnt }))
     );
   }
 
@@ -251,7 +247,7 @@ export class MembersService {
         Result.succeed(
           isUndefined(v.newMember)
             ? undefined
-            : this.tabService.projectTabToBaseProject({ project: v.project })
+            : this.db.projectTabToBaseProject({ project: v.project })
         )
       ),
       Result.bind('diskCreateDevRepoOutput', async v =>

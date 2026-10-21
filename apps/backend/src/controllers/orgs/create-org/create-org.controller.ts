@@ -18,7 +18,6 @@ import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service'
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -31,7 +30,6 @@ import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs
 @Controller()
 export class CreateOrgController {
   constructor(
-    private tabService: TabService,
     private usersService: UsersService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,

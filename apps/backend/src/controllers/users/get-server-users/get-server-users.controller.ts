@@ -26,7 +26,6 @@ import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';
 import type { ServerUsersMembershipItem } from '#common/types/backend/parts/users/server-users-membership-item';
@@ -38,7 +37,6 @@ import type { ToBackendGetServerUsersOutput } from '#common/types/backend/routes
 @Controller()
 export class GetServerUsersController {
   constructor(
-    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
   ) {}
@@ -84,9 +82,7 @@ export class GetServerUsersController {
           .limit(v.perPage)
           .offset(v.offset)
           .then(xs =>
-            Result.sequence(xs, x =>
-              this.tabService.userEntToTab({ userEnt: x })
-            )
+            Result.sequence(xs, x => this.db.users.entToTab({ ent: x }))
           )
       ),
       Result.bind('userIds', v =>
@@ -136,8 +132,8 @@ export class GetServerUsersController {
               .where(inArray(avatarsTable.userId, v.userIds))
               .then(xs =>
                 Result.sequence(xs, x =>
-                  this.tabService.avatarEntToTab({
-                    avatarEnt: x as AvatarEnt
+                  this.db.avatars.entToTab({
+                    ent: x as AvatarEnt
                   })
                 )
               )

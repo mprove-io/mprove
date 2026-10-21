@@ -8,6 +8,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import type { GetEntPropsOutput } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
 import { DbService } from '#backend/services/db/db.service';
@@ -22,7 +23,6 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
-import { TabToEntService } from '#backend/services/tab-to-ent/tab-to-ent.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -52,7 +52,6 @@ const { forEachSeries } = pIteration;
 export class GetConnectionSchemasService {
   constructor(
     private cachedColumnService: CachedColumnService,
-    private tabToEntService: TabToEntService,
     private structsService: StructsService,
     private envsService: EnvsService,
     private membersService: MembersService,
@@ -317,11 +316,12 @@ export class GetConnectionSchemasService {
         let connectionSt: ConnectionSt = { options: c.options };
         let connectionLt: ConnectionLt = { rawSchema: c.rawSchema };
 
-        let entProps = this.tabToEntService.getEntProps({
-          dataSt: connectionSt,
-          dataLt: connectionLt,
-          isMetadata: false
-        });
+        let entProps: GetEntPropsOutput<ConnectionSt, ConnectionLt> =
+          this.db.getEntProps({
+            dataSt: connectionSt,
+            dataLt: connectionLt,
+            isMetadata: false
+          });
 
         await this.db.drizzle.execute(
           sql`UPDATE connections SET lt = ${JSON.stringify(entProps.lt)}::json, server_ts = ${serverTs} WHERE connection_full_id = ${c.connectionFullId}`

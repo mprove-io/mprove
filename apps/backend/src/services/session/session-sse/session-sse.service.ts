@@ -9,7 +9,6 @@ import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -22,7 +21,6 @@ export class SessionSseService {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private tabService: TabService,
     private logger: Logger,
     private db: DbService
   ) {}
@@ -67,7 +65,7 @@ export class SessionSseService {
               let ocEventResult: Result.Result<
                 OcEventTab,
                 OcEventEntToTabError
-              > = this.tabService.ocEventEntToTab({ eventEnt: x });
+              > = this.db.ocEvents.entToTab({ ent: x });
 
               if (Result.isFailure(ocEventResult)) {
                 return ocEventResult;

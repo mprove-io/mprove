@@ -43,7 +43,6 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -95,7 +94,6 @@ type PrepareDashboardFileMovePayload = {
 @Controller()
 export class SaveModifyDashboardController {
   constructor(
-    private tabService: TabService,
     private usersService: UsersService,
     private structsService: StructsService,
     private rpcService: RpcService,
@@ -382,7 +380,7 @@ export class SaveModifyDashboardController {
       Result.bind('baseProject', async v => {
         let baseProjectResult: Result.Result<BaseProject, never> =
           Result.succeed(
-            this.tabService.projectTabToBaseProject({
+            this.db.projectTabToBaseProject({
               project: v.project
             })
           );

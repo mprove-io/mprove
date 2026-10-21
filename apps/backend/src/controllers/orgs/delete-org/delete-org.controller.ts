@@ -26,7 +26,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -38,7 +37,6 @@ import type { ToBackendDeleteOrgOutput } from '#common/types/backend/routes/orgs
 @Controller()
 export class DeleteOrgController {
   constructor(
-    private tabService: TabService,
     private orgsService: OrgsService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,

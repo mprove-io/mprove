@@ -1,65 +1,8 @@
-import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
-import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
-import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
-import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
-import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
-import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
-import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
-import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
-import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
-import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
-import { GivenEnt } from '#backend/drizzle/postgres/schema/givens';
-import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
-import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
-import { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
-import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
-import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
-import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
-import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
-import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
-import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
-import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
-import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
-import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
-import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
-import { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
-import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
-import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
-import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
-import { UserEnt } from '#backend/drizzle/postgres/schema/users';
+import type {
+  DbTableDefinitionMap,
+  DbTableEnt
+} from '#backend/services/db/db-table-definition-map';
 
-export class DbEntsPack {
-  avatars?: AvatarEnt[];
-  branches?: BranchEnt[];
-  bridges?: BridgeEnt[];
-  cachedColumns?: CachedColumnsEnt[];
-  cachedParts?: CachedPartsEnt[];
-  connections?: ConnectionEnt[];
-  dashboards?: DashboardEnt[];
-  dconfigs?: DconfigEnt[];
-  envs?: EnvEnt[];
-  givens?: GivenEnt[];
-  ocEvents?: OcEventEnt[];
-  kits?: KitEnt[];
-  mconfigs?: MconfigEnt[];
-  members?: MemberEnt[];
-  ocMessages?: OcMessageEnt[];
-  modelFieldLeafs?: ModelFieldLeafEnt[];
-  models?: ModelEnt[];
-  notes?: NoteEnt[];
-  ocSessions?: OcSessionEnt[];
-  orgs?: OrgEnt[];
-  ocParts?: OcPartEnt[];
-  projects?: ProjectEnt[];
-  providers?: ProviderEnt[];
-  queries?: QueryEnt[];
-  reports?: ReportEnt[];
-  roles?: RoleEnt[];
-  sessions?: SessionEnt[];
-  structs?: StructEnt[];
-  uconfigs?: UconfigEnt[];
-  users?: UserEnt[];
-  charts?: ChartEnt[];
-}
+export type DbEntsPack = {
+  [Key in keyof DbTableDefinitionMap]?: DbTableEnt<Key>[];
+};

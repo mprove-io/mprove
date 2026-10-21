@@ -12,7 +12,6 @@ import { prepareTestAndSeed } from '#backend/functions/top/prepare-test-and-seed
 import { sendToBackend } from '#backend/functions/top/send-to-backend/send-to-backend';
 import type { Prep } from '#backend/interfaces/prep';
 import { DbService } from '#backend/services/db/db.service';
-import { TabService } from '#backend/services/tab/tab.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -173,10 +172,8 @@ test('1', async t => {
 
       providerEnt = foundProviderEnt;
 
-      let tabService: TabService = prep.moduleRef.get<TabService>(TabService);
-
-      providerTab = tabService.providerEntToTabUnwrap({
-        providerEnt: providerEnt
+      providerTab = db.providers.entToTabUnwrap({
+        ent: providerEnt
       });
 
       await prep.app.close();
