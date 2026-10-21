@@ -7,12 +7,7 @@ import {
   ToBackendCheckLastNavResponseDto
 } from '#backend/controllers/nav/check-last-nav/check-last-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
@@ -27,9 +22,6 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCheckLastNavOutput } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-output';
 
@@ -72,17 +64,13 @@ export class CheckLastNavController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.sessionsService.checkRepoId({
@@ -92,18 +80,14 @@ export class CheckLastNavController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -112,67 +96,55 @@ export class CheckLastNavController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'isModelExist',
-        async (v): Result.ResultAsync<boolean, never> =>
-          isUndefined(v.modelId)
-            ? Result.succeed(false)
-            : this.db.models.isExist({
-                where: and(
-                  eq(modelsTable.structId, v.bridge.structId),
-                  eq(modelsTable.modelId, v.modelId)
-                )
-              })
+      Result.bind('isModelExist', async v =>
+        isUndefined(v.modelId)
+          ? Result.succeed(false)
+          : this.db.models.isExist({
+              where: and(
+                eq(modelsTable.structId, v.bridge.structId),
+                eq(modelsTable.modelId, v.modelId)
+              )
+            })
       ),
-      Result.bind(
-        'isChartExist',
-        async (v): Result.ResultAsync<boolean, never> =>
-          isUndefined(v.chartId)
-            ? Result.succeed(false)
-            : this.db.charts.isExist({
-                where: and(
-                  eq(chartsTable.structId, v.bridge.structId),
-                  eq(chartsTable.chartId, v.chartId)
-                )
-              })
+      Result.bind('isChartExist', async v =>
+        isUndefined(v.chartId)
+          ? Result.succeed(false)
+          : this.db.charts.isExist({
+              where: and(
+                eq(chartsTable.structId, v.bridge.structId),
+                eq(chartsTable.chartId, v.chartId)
+              )
+            })
       ),
-      Result.bind(
-        'isDashboardExist',
-        async (v): Result.ResultAsync<boolean, never> =>
-          isUndefined(v.dashboardId)
-            ? Result.succeed(false)
-            : this.db.dashboards.isExist({
-                where: and(
-                  eq(dashboardsTable.structId, v.bridge.structId),
-                  eq(dashboardsTable.dashboardId, v.dashboardId)
-                )
-              })
+      Result.bind('isDashboardExist', async v =>
+        isUndefined(v.dashboardId)
+          ? Result.succeed(false)
+          : this.db.dashboards.isExist({
+              where: and(
+                eq(dashboardsTable.structId, v.bridge.structId),
+                eq(dashboardsTable.dashboardId, v.dashboardId)
+              )
+            })
       ),
-      Result.bind(
-        'isReportExist',
-        async (v): Result.ResultAsync<boolean, never> =>
-          isUndefined(v.reportId)
-            ? Result.succeed(false)
-            : this.db.reports.isExist({
-                where: and(
-                  eq(reportsTable.structId, v.bridge.structId),
-                  eq(reportsTable.reportId, v.reportId)
-                )
-              })
+      Result.bind('isReportExist', async v =>
+        isUndefined(v.reportId)
+          ? Result.succeed(false)
+          : this.db.reports.isExist({
+              where: and(
+                eq(reportsTable.structId, v.bridge.structId),
+                eq(reportsTable.reportId, v.reportId)
+              )
+            })
       ),
       Result.map(
         (v): ToBackendCheckLastNavOutput => ({

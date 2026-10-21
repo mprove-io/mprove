@@ -8,12 +8,7 @@ import {
   ToBackendCreateBranchResponseDto
 } from '#backend/controllers/branches/create-branch/create-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -30,15 +25,8 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { EMPTY_STRUCT_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { BackendSessionBranchCannotBeCreatedError } from '#common/types/backend/errors/backend-session-branch-cannot-be-created-error';
-import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateBranchOutput } from '#common/types/backend/routes/branches/create-branch/create-branch-output';
-import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
-import type { ToDiskCreateBranchOutput } from '#common/types/disk/routes/branches/create-branch/create-branch-output';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)
@@ -77,15 +65,13 @@ export class CreateBranchController {
         traceId: body.traceId,
         userId: user.userId
       }),
-      Result.bind(
-        'repoType',
-        (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
-          this.sessionsService.checkRepoId({
-            repoId: v.repoId,
-            userId: v.userId,
-            projectId: v.projectId,
-            allowProdRepo: true
-          })
+      Result.bind('repoType', v =>
+        this.sessionsService.checkRepoId({
+          repoId: v.repoId,
+          userId: v.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
       ),
       Result.andThrough(v =>
         v.repoType === 'session'
@@ -94,17 +80,10 @@ export class CreateBranchController {
             } satisfies BackendSessionBranchCannotBeCreatedError)
           : Result.succeed()
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
       Result.andThrough(v =>
         this.membersService.getMemberCheckIsEditor({
@@ -112,18 +91,14 @@ export class CreateBranchController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'fromBranch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.fromBranchId)
-            )
-          })
+      Result.bind('fromBranch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.fromBranchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.branchesService.checkBranchDoesNotExist({
@@ -132,62 +107,54 @@ export class CreateBranchController {
           branchId: v.newBranchId
         })
       ),
-      Result.bind(
-        'diskCreateBranchOutput',
-        (v): Result.ResultAsync<ToDiskCreateBranchOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
-            request: {
-              operation: 'createBranch',
-              traceId: v.traceId,
-              input: {
-                baseProject: this.tabService.projectTabToBaseProject({
-                  project: v.project
-                }),
-                repoId: v.repoId,
-                newBranch: v.newBranchId,
-                fromBranch: v.fromBranchId,
-                isFromRemote: false
-              }
-            }
-          })
-      ),
-      Result.bind(
-        'newBranch',
-        (v): Result.Result<BranchTab, never> =>
-          Result.succeed(
-            this.branchesService.makeBranch({
-              projectId: v.projectId,
+      Result.bind('diskCreateBranchOutput', v =>
+        this.rpcService.sendToDisk({
+          request: {
+            operation: 'createBranch',
+            traceId: v.traceId,
+            input: {
+              baseProject: this.tabService.projectTabToBaseProject({
+                project: v.project
+              }),
               repoId: v.repoId,
-              branchId: v.newBranchId
+              newBranch: v.newBranchId,
+              fromBranch: v.fromBranchId,
+              isFromRemote: false
+            }
+          }
+        })
+      ),
+      Result.bind('newBranch', v =>
+        Result.succeed(
+          this.branchesService.makeBranch({
+            projectId: v.projectId,
+            repoId: v.repoId,
+            branchId: v.newBranchId
+          })
+        )
+      ),
+      Result.bind('fromBranchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.fromBranch.projectId),
+            eq(bridgesTable.repoId, v.fromBranch.repoId),
+            eq(bridgesTable.branchId, v.fromBranch.branchId)
+          )
+        })
+      ),
+      Result.bind('newBranchBridges', v =>
+        Result.succeed(
+          v.fromBranchBridges.map(bridge =>
+            this.bridgesService.makeBridge({
+              projectId: v.newBranch.projectId,
+              repoId: v.newBranch.repoId,
+              branchId: v.newBranch.branchId,
+              envId: bridge.envId,
+              structId: EMPTY_STRUCT_ID,
+              needValidate: true
             })
           )
-      ),
-      Result.bind(
-        'fromBranchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.fromBranch.projectId),
-              eq(bridgesTable.repoId, v.fromBranch.repoId),
-              eq(bridgesTable.branchId, v.fromBranch.branchId)
-            )
-          })
-      ),
-      Result.bind(
-        'newBranchBridges',
-        (v): Result.Result<BridgeTab[], never> =>
-          Result.succeed(
-            v.fromBranchBridges.map(bridge =>
-              this.bridgesService.makeBridge({
-                projectId: v.newBranch.projectId,
-                repoId: v.newBranch.repoId,
-                branchId: v.newBranch.branchId,
-                envId: bridge.envId,
-                structId: EMPTY_STRUCT_ID,
-                needValidate: true
-              })
-            )
-          )
+        )
       ),
       Result.andThrough(v =>
         this.blockmlService.rebuildBranchBridges({

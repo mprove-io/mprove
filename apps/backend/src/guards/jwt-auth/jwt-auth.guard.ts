@@ -4,10 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import type { Observable } from 'rxjs';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import {
@@ -21,14 +18,10 @@ import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-sessi
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { SKIP_JWT } from '#common/constants/top-backend';
-
 import type { BackendApiKeyNotFoundError } from '#common/types/backend/errors/backend-api-key-not-found-error';
 import type { AuthenticateApiKeyError } from '#common/types/backend/function-errors/authenticate-api-key-error';
 import type { AuthenticatePersonalApiKeyError } from '#common/types/backend/function-errors/authenticate-personal-api-key-error';
 import type { AuthenticateSessionApiKeyError } from '#common/types/backend/function-errors/authenticate-session-api-key-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
-import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
-import type { ParseApiKeyError } from '#common/types/backend/function-errors/parse-api-key-error';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 
@@ -117,11 +110,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }): Result.ResultAsync<boolean, AuthenticateApiKeyError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'parsed',
-        (v): Result.Result<ParseApiKeyOutput, ParseApiKeyError> =>
-          parseApiKey({ fullKey: v.fullKey })
-      ),
+      Result.bind('parsed', v => parseApiKey({ fullKey: v.fullKey })),
       Result.andThrough(v =>
         v.parsed.type !== 'PK' && v.parsed.type !== 'SK'
           ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
@@ -131,22 +120,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         v.request.apiKeyType = v.parsed.type;
         return v;
       }),
-      Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<
-          boolean,
-          AuthenticatePersonalApiKeyError | AuthenticateSessionApiKeyError
-        > =>
-          v.parsed.type === 'PK'
-            ? this.authenticatePersonalApiKey({
-                request: v.request,
-                parsed: v.parsed
-              })
-            : this.authenticateSessionApiKey({
-                request: v.request,
-                parsed: v.parsed
-              })
+      Result.andThen(v =>
+        v.parsed.type === 'PK'
+          ? this.authenticatePersonalApiKey({
+              request: v.request,
+              parsed: v.parsed
+            })
+          : this.authenticateSessionApiKey({
+              request: v.request,
+              parsed: v.parsed
+            })
       )
     );
   }
@@ -157,12 +140,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }): Result.ResultAsync<boolean, AuthenticatePersonalApiKeyError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
-          this.db.users.findFirstCheckExists({
-            where: eq(usersTable.apiKeyPrefix, v.parsed.prefix)
-          })
+      Result.bind('user', v =>
+        this.db.users.findFirstCheckExists({
+          where: eq(usersTable.apiKeyPrefix, v.parsed.prefix)
+        })
       ),
       Result.mapError(v =>
         v.code === 'BACKEND_USER_DOES_NOT_EXIST'
@@ -191,40 +172,29 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         v.request.user = v.user;
         return v;
       }),
-      Result.bind(
-        'path',
-        (v): Result.Result<string, never> =>
-          Result.succeed(v.request.url?.substring(1))
-      ),
-      Result.andThen(
-        (v): Result.Result<boolean, AuthenticatePersonalApiKeyError> => {
-          if (v.path === 'api/mcp' || v.path.startsWith('api/mcp/')) {
-            return Result.succeed(true);
-          }
-
-          if (
-            MCLI_USER_ALLOWED_REQUEST_NAMES.findIndex(
-              route => route === v.path
-            ) < 0
-          ) {
-            return Result.fail({
-              code: 'BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED'
-            });
-          }
-
-          let repoId: string = v.request.body?.input?.repoId;
-
-          if (
-            repoId &&
-            repoId !== v.parsed.entityId &&
-            repoId !== PROD_REPO_ID
-          ) {
-            return Result.fail({ code: 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER' });
-          }
-
+      Result.bind('path', v => Result.succeed(v.request.url?.substring(1))),
+      Result.andThen(v => {
+        if (v.path === 'api/mcp' || v.path.startsWith('api/mcp/')) {
           return Result.succeed(true);
         }
-      )
+
+        if (
+          MCLI_USER_ALLOWED_REQUEST_NAMES.findIndex(route => route === v.path) <
+          0
+        ) {
+          return Result.fail({
+            code: 'BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED'
+          });
+        }
+
+        let repoId: string = v.request.body?.input?.repoId;
+
+        if (repoId && repoId !== v.parsed.entityId && repoId !== PROD_REPO_ID) {
+          return Result.fail({ code: 'BACKEND_REPO_ID_DOES_NOT_MATCH_USER' });
+        }
+
+        return Result.succeed(true);
+      })
     );
   }
 
@@ -234,17 +204,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }): Result.ResultAsync<boolean, AuthenticateSessionApiKeyError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.apiKeyPrefix, v.parsed.prefix)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.apiKeyPrefix, v.parsed.prefix)
+        })
       ),
       Result.mapError(v =>
         v.code === 'BACKEND_SESSION_NOT_FOUND'
@@ -269,12 +232,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           ? Result.succeed()
           : Result.fail({ code: 'BACKEND_API_KEY_NOT_VALID' });
       }),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
-          this.db.users.findFirstCheckExists({
-            where: eq(usersTable.userId, v.session.userId)
-          })
+      Result.bind('user', v =>
+        this.db.users.findFirstCheckExists({
+          where: eq(usersTable.userId, v.session.userId)
+        })
       ),
       Result.mapError(v =>
         v.code === 'BACKEND_USER_DOES_NOT_EXIST'
@@ -287,70 +248,56 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         v.request.user = v.user;
         return v;
       }),
-      Result.bind(
-        'path',
-        (v): Result.Result<string, never> =>
-          Result.succeed(v.request.url?.substring(1))
-      ),
-      Result.andThen(
-        (v): Result.Result<boolean, AuthenticateSessionApiKeyError> => {
-          if (v.path === 'api/mcp' || v.path.startsWith('api/mcp/')) {
-            v.request.apiKeyToValidateSessionId = v.parsed.entityId;
+      Result.bind('path', v => Result.succeed(v.request.url?.substring(1))),
+      Result.andThen(v => {
+        if (v.path === 'api/mcp' || v.path.startsWith('api/mcp/')) {
+          v.request.apiKeyToValidateSessionId = v.parsed.entityId;
 
-            v.request.apiKeyToValidateProjectId = v.session.projectId;
+          v.request.apiKeyToValidateProjectId = v.session.projectId;
 
-            v.request.apiKeyToValidateEnvId = v.session.envId;
+          v.request.apiKeyToValidateEnvId = v.session.envId;
 
-            v.request.apiKeyToValidateBranchId = v.session.branchId;
-
-            return Result.succeed(true);
-          }
-
-          if (
-            MCLI_SESSION_ALLOWED_REQUEST_NAMES.findIndex(
-              route => route === v.path
-            ) < 0
-          ) {
-            return Result.fail({
-              code: 'BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED'
-            });
-          }
-
-          let repoId: string = v.request.body?.input?.repoId;
-
-          if (
-            repoId &&
-            repoId !== v.parsed.entityId &&
-            repoId !== PROD_REPO_ID
-          ) {
-            return Result.fail({
-              code: 'BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION'
-            });
-          }
-
-          let envId: string = v.request.body?.input?.envId;
-
-          if (envId && v.session.envId && envId !== v.session.envId) {
-            return Result.fail({
-              code: 'BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION'
-            });
-          }
-
-          let branchId: string = v.request.body?.input?.branchId;
-
-          if (
-            branchId &&
-            v.session.branchId &&
-            branchId !== v.session.branchId
-          ) {
-            return Result.fail({
-              code: 'BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION'
-            });
-          }
+          v.request.apiKeyToValidateBranchId = v.session.branchId;
 
           return Result.succeed(true);
         }
-      )
+
+        if (
+          MCLI_SESSION_ALLOWED_REQUEST_NAMES.findIndex(
+            route => route === v.path
+          ) < 0
+        ) {
+          return Result.fail({
+            code: 'BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED'
+          });
+        }
+
+        let repoId: string = v.request.body?.input?.repoId;
+
+        if (repoId && repoId !== v.parsed.entityId && repoId !== PROD_REPO_ID) {
+          return Result.fail({
+            code: 'BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION'
+          });
+        }
+
+        let envId: string = v.request.body?.input?.envId;
+
+        if (envId && v.session.envId && envId !== v.session.envId) {
+          return Result.fail({
+            code: 'BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION'
+          });
+        }
+
+        let branchId: string = v.request.body?.input?.branchId;
+
+        if (branchId && v.session.branchId && branchId !== v.session.branchId) {
+          return Result.fail({
+            code: 'BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION'
+          });
+        }
+
+        return Result.succeed(true);
+      })
     );
   }
 }

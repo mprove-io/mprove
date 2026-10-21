@@ -14,7 +14,6 @@ import {
   MCP_TOOL_GET_CONNECTIONS_LIST,
   MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import type { GetConnectionsListError } from '#common/types/backend/function-errors/get-connections-list-error';
 import {
   type McpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListInput
@@ -61,18 +60,12 @@ export class GetConnectionsListTool {
             })
           : Result.succeed()
       ),
-      Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<
-          ToBackendGetConnectionsListOutput,
-          GetConnectionsListError
-        > =>
-          this.getConnectionsListService.getConnectionsList({
-            projectId: v.projectId,
-            envId: v.envId,
-            userId: v.user.userId
-          })
+      Result.andThen(v =>
+        this.getConnectionsListService.getConnectionsList({
+          projectId: v.projectId,
+          envId: v.envId,
+          userId: v.user.userId
+        })
       )
     );
 

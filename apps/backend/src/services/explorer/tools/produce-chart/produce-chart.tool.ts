@@ -8,7 +8,6 @@ import {
   CHART_ID_PLACEHOLDER,
   ProduceExplorerChartService
 } from '#backend/services/explorer/tools/produce-chart/produce-explorer-chart/produce-explorer-chart.service';
-import type { ProduceExplorerChartError } from '#common/types/backend/function-errors/produce-explorer-chart-error';
 import type { ToBackendProduceExplorerChartOutput } from '#common/types/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-output';
 
 @Injectable()
@@ -45,21 +44,15 @@ The YAML is compiled immediately. If errors are returned, FIX the YAML and call 
             chartYaml: input.chartYaml,
             title: input.title
           }),
-          Result.andThen(
-            (
-              v
-            ): Result.ResultAsync<
-              ToBackendProduceExplorerChartOutput,
-              ProduceExplorerChartError
-            > =>
-              this.produceExplorerChartService.produceExplorerChart({
-                user: v.user,
-                traceId: v.traceId,
-                sessionId: v.sessionId,
-                modelId: v.modelId,
-                chartYaml: v.chartYaml,
-                title: v.title
-              })
+          Result.andThen(v =>
+            this.produceExplorerChartService.produceExplorerChart({
+              user: v.user,
+              traceId: v.traceId,
+              sessionId: v.sessionId,
+              modelId: v.modelId,
+              chartYaml: v.chartYaml,
+              title: v.title
+            })
           )
         );
 

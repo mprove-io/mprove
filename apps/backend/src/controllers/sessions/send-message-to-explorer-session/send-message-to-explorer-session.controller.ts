@@ -12,8 +12,6 @@ import {
 } from '#backend/controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  OcMessageTab,
-  OcSessionTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -25,7 +23,6 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
@@ -34,10 +31,6 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbOcMessagesFindFirstError } from '#common/types/backend/function-errors/db/oc-messages/db-oc-messages-find-first-error';
-import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
-import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { SendExplorerMessageError } from '#common/types/backend/function-errors/send-explorer-message-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-output';
@@ -81,17 +74,10 @@ export class SendMessageToExplorerSessionController {
         partId: body.input.partId,
         user: user
       }),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
       Result.andThrough(v =>
         this.db.projects.findFirstCheckExists({
@@ -123,21 +109,19 @@ export class SendMessageToExplorerSessionController {
           ? Result.fail({ code: 'BACKEND_SESSION_IS_IN_ERROR_STATE' })
           : Result.succeed()
       ),
-      Result.bind(
-        'updatedSession',
-        async (v): Result.ResultAsync<SessionTab, SendExplorerMessageError> =>
-          v.interactionType === 'Message'
-            ? this.sendExplorerMessage({
-                session: v.session,
-                user: v.user,
-                providerId: v.providerId,
-                modelId: v.modelId,
-                variant: v.variant,
-                message: v.message,
-                messageId: v.messageId,
-                partId: v.partId
-              })
-            : Result.succeed(v.session)
+      Result.bind('updatedSession', async v =>
+        v.interactionType === 'Message'
+          ? this.sendExplorerMessage({
+              session: v.session,
+              user: v.user,
+              providerId: v.providerId,
+              modelId: v.modelId,
+              variant: v.variant,
+              message: v.message,
+              messageId: v.messageId,
+              partId: v.partId
+            })
+          : Result.succeed(v.session)
       ),
       Result.andThrough(async v => {
         if (v.interactionType === 'Stop') {
@@ -155,12 +139,10 @@ export class SendMessageToExplorerSessionController {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'ocSession',
-        (v): Result.ResultAsync<OcSessionTab, DbOcSessionsFindFirstError> =>
-          this.db.ocSessions.findFirst({
-            where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
-          })
+      Result.bind('ocSession', v =>
+        this.db.ocSessions.findFirst({
+          where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
+        })
       ),
       Result.map(
         (v): ToBackendSendMessageToExplorerSessionOutput => ({
@@ -195,33 +177,24 @@ export class SendMessageToExplorerSessionController {
           ? Result.fail({ code: 'BACKEND_MESSAGE_MODEL_REQUIRED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'modelSelection',
-        (
-          v
-        ): Result.ResultAsync<
-          GetModelSelectionOutput,
-          GetModelSelectionError
-        > =>
-          this.providersService.getModelSelection({
-            projectId: v.session.projectId,
-            providerId: v.providerId,
-            modelId: v.modelId,
-            variant: v.variant,
-            isUserCodexAuthSet: isDefined(v.user.codexAuth),
-            isBuilder: false
-          })
+      Result.bind('modelSelection', v =>
+        this.providersService.getModelSelection({
+          projectId: v.session.projectId,
+          providerId: v.providerId,
+          modelId: v.modelId,
+          variant: v.variant,
+          isUserCodexAuthSet: isDefined(v.user.codexAuth),
+          isBuilder: false
+        })
       ),
-      Result.bind(
-        'latestAssistantMessage',
-        (v): Result.ResultAsync<OcMessageTab, DbOcMessagesFindFirstError> =>
-          this.db.ocMessages.findFirst({
-            where: and(
-              eq(ocMessagesTable.sessionId, v.session.sessionId),
-              eq(ocMessagesTable.role, 'assistant')
-            ),
-            orderBy: [desc(ocMessagesTable.createdTs)]
-          })
+      Result.bind('latestAssistantMessage', v =>
+        this.db.ocMessages.findFirst({
+          where: and(
+            eq(ocMessagesTable.sessionId, v.session.sessionId),
+            eq(ocMessagesTable.role, 'assistant')
+          ),
+          orderBy: [desc(ocMessagesTable.createdTs)]
+        })
       ),
       Result.andThrough(v => {
         if (isDefined(v.latestAssistantMessage)) {
@@ -260,21 +233,21 @@ export class SendMessageToExplorerSessionController {
           ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
           : Result.succeed()
       ),
-      Result.bind(
-        'updatedSession',
-        (v): Result.Result<SessionTab, never> =>
-          Result.succeed({
-            ...v.session,
-            providerId: v.providerId,
-            modelId: v.modelId,
-            lastMessageVariant: v.variant,
-            codexAuthUpdateTs:
-              v.modelSelection.provider.type === 'OpenAICodex'
-                ? v.user.codexAuthUpdateTs
-                : undefined,
-            lastActivityTs: Date.now()
-          })
-      ),
+      Result.bind('updatedSession', v => {
+        let updatedSession: SessionTab = {
+          ...v.session,
+          providerId: v.providerId,
+          modelId: v.modelId,
+          lastMessageVariant: v.variant,
+          codexAuthUpdateTs:
+            v.modelSelection.provider.type === 'OpenAICodex'
+              ? v.user.codexAuthUpdateTs
+              : undefined,
+          lastActivityTs: Date.now()
+        };
+
+        return Result.succeed(updatedSession);
+      }),
       Result.andThrough(v =>
         this.db.write({
           insertOrUpdate: { sessions: [v.updatedSession] }

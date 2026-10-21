@@ -7,12 +7,9 @@ import { JWT } from 'google-auth-library';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
-  BranchTab,
-  BridgeTab,
   ConnectionTab,
   EnvTab,
   MconfigTab,
-  MemberTab,
   ModelTab,
   QueryTab,
   UserTab
@@ -47,24 +44,13 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
 import type { CustomAsyncPoolError } from '#common/types/backend/function-errors/custom-async-pool-error';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbConnectionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/connections/db-connections-find-first-check-exists-error';
-import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
-import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
-import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
-import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
 import type { GetQueryExecutionContextError } from '#common/types/backend/function-errors/get-query-execution-context-error';
 import type { LaunchPooledQueryError } from '#common/types/backend/function-errors/launch-pooled-query-error';
 import type { RunPooledQueryError } from '#common/types/backend/function-errors/run-pooled-query-error';
 import type { RunQueriesError } from '#common/types/backend/function-errors/run-queries-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRunQueriesOutput } from '#common/types/backend/routes/queries/run-queries/run-queries-output';
 import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
 
@@ -114,13 +100,11 @@ export class RunQueriesService {
   > {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'query',
-        (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> =>
-          this.queriesService.getQueryCheckExistsSkipData({
-            projectId: v.projectId,
-            queryId: v.queryId
-          })
+      Result.bind('query', v =>
+        this.queriesService.getQueryCheckExistsSkipData({
+          projectId: v.projectId,
+          queryId: v.queryId
+        })
       ),
       Result.andThrough(v =>
         this.db.members.findFirstCheckExists({
@@ -130,41 +114,29 @@ export class RunQueriesService {
           )
         })
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
-      Result.bind(
-        'apiEnv',
-        (v): Result.Result<Env, never> =>
-          Result.succeed(v.apiEnvs.find(x => x.envId === v.query.envId))
+      Result.bind('apiEnv', v =>
+        Result.succeed(v.apiEnvs.find(x => x.envId === v.query.envId))
       ),
-      Result.bind(
-        'connection',
-        async (
-          v
-        ): Result.ResultAsync<
-          ConnectionTab,
-          DbConnectionsFindFirstCheckExistsError
-        > => {
-          let isFallbackConnection: boolean =
-            v.apiEnv.isFallbackToProdConnections === true
-              ? v.apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
-              : false;
+      Result.bind('connection', async v => {
+        let isFallbackConnection: boolean =
+          v.apiEnv.isFallbackToProdConnections === true
+            ? v.apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
+            : false;
 
-          return this.db.connections.findFirstCheckExists({
-            where: and(
-              eq(connectionsTable.connectionId, v.query.connectionId),
-              eq(
-                connectionsTable.envId,
-                isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId
-              ),
-              eq(connectionsTable.projectId, v.query.projectId)
-            )
-          });
-        }
-      ),
+        return this.db.connections.findFirstCheckExists({
+          where: and(
+            eq(connectionsTable.connectionId, v.query.connectionId),
+            eq(
+              connectionsTable.envId,
+              isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId
+            ),
+            eq(connectionsTable.projectId, v.query.projectId)
+          )
+        });
+      }),
       Result.map(
         (v): GetQueryExecutionContextOutput => ({
           query: v.query,
@@ -601,30 +573,22 @@ export class RunQueriesService {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(async v => {
         let envAccessResult: Result.Result<
@@ -642,19 +606,15 @@ export class RunQueriesService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.structsService.getStructCheckExists({
@@ -662,20 +622,16 @@ export class RunQueriesService {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'mconfigs',
-        (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
-          this.db.mconfigs.findMany({
-            where: and(
-              eq(mconfigsTable.structId, v.bridge.structId),
-              inArray(mconfigsTable.mconfigId, v.mconfigIds)
-            )
-          })
+      Result.bind('mconfigs', v =>
+        this.db.mconfigs.findMany({
+          where: and(
+            eq(mconfigsTable.structId, v.bridge.structId),
+            inArray(mconfigsTable.mconfigId, v.mconfigIds)
+          )
+        })
       ),
-      Result.bind(
-        'uniqueParentIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.mconfigs.map(x => x.parentId))])
+      Result.bind('uniqueParentIds', v =>
+        Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.parentId))])
       ),
       Result.andThrough(async v => {
         let parentAccessChecksResult: Result.Result<
@@ -717,76 +673,60 @@ export class RunQueriesService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'queryIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.mconfigs.map(x => x.queryId))])
+      Result.bind('queryIds', v =>
+        Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.queryId))])
       ),
-      Result.bind(
-        'queries',
-        (
-          v
-        ): Result.ResultAsync<
-          QueryTab[],
-          GetQueriesCheckExistSkipSqlDataError
-        > =>
-          this.queriesService.getQueriesCheckExistSkipSqlData({
-            queryIds: v.queryIds,
-            projectId: v.projectId
-          })
+      Result.bind('queries', v =>
+        this.queriesService.getQueriesCheckExistSkipSqlData({
+          queryIds: v.queryIds,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'modelIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.mconfigs.map(x => x.modelId))])
+      Result.bind('modelIds', v =>
+        Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.modelId))])
       ),
-      Result.bind(
-        'models',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: and(
-              eq(modelsTable.structId, v.bridge.structId),
-              inArray(modelsTable.modelId, v.modelIds)
+      Result.bind('models', v =>
+        this.db.models.findMany({
+          where: and(
+            eq(modelsTable.structId, v.bridge.structId),
+            inArray(modelsTable.modelId, v.modelIds)
+          )
+        })
+      ),
+      Result.bind('prepareQueryExecutionPayload', v => {
+        let runningQueries: QueryTab[] = [];
+
+        let startedQueryIds: string[] = [];
+
+        let googleApiConnectionIds: string[] = v.queries
+          .filter(query => query.connectionType === 'GoogleApi')
+          .map(query => query.connectionId);
+
+        let uniqueGoogleApiConnectionIdsWithAnyEnvId: string[] = [
+          ...new Set(googleApiConnectionIds)
+        ];
+
+        let prepareQueryExecutionPayload: PrepareQueryExecutionPayload = {
+          runningQueries: runningQueries,
+          startedQueryIds: startedQueryIds,
+          googleApiConnectionIds: googleApiConnectionIds,
+          uniqueGoogleApiConnectionIdsWithAnyEnvId:
+            uniqueGoogleApiConnectionIdsWithAnyEnvId
+        };
+
+        return Result.succeed(prepareQueryExecutionPayload);
+      }),
+      Result.bind('uniqueGoogleApiConnectionsWithAnyEnvId', v =>
+        this.db.connections.findMany({
+          where: and(
+            eq(connectionsTable.projectId, v.projectId),
+            inArray(
+              connectionsTable.connectionId,
+              v.prepareQueryExecutionPayload
+                .uniqueGoogleApiConnectionIdsWithAnyEnvId
             )
-          })
-      ),
-      Result.bind(
-        'prepareQueryExecutionPayload',
-        (v): Result.Result<PrepareQueryExecutionPayload, never> => {
-          let runningQueries: QueryTab[] = [];
-
-          let startedQueryIds: string[] = [];
-
-          let googleApiConnectionIds: string[] = v.queries
-            .filter(query => query.connectionType === 'GoogleApi')
-            .map(query => query.connectionId);
-
-          let uniqueGoogleApiConnectionIdsWithAnyEnvId: string[] = [
-            ...new Set(googleApiConnectionIds)
-          ];
-
-          return Result.succeed({
-            runningQueries: runningQueries,
-            startedQueryIds: startedQueryIds,
-            googleApiConnectionIds: googleApiConnectionIds,
-            uniqueGoogleApiConnectionIdsWithAnyEnvId:
-              uniqueGoogleApiConnectionIdsWithAnyEnvId
-          });
-        }
-      ),
-      Result.bind(
-        'uniqueGoogleApiConnectionsWithAnyEnvId',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: and(
-              eq(connectionsTable.projectId, v.projectId),
-              inArray(
-                connectionsTable.connectionId,
-                v.prepareQueryExecutionPayload
-                  .uniqueGoogleApiConnectionIdsWithAnyEnvId
-              )
-            )
-          })
+          )
+        })
       ),
       Result.andThrough(async v => {
         let connectionRefreshResult: Result.Result<void[], WriteError> =

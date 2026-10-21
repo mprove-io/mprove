@@ -15,7 +15,6 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
 import type { ArchiveSessionError } from '#common/types/backend/function-errors/archive-session-error';
 import type { ArchiveSessionWhileLockedError } from '#common/types/backend/function-errors/archive-session-while-locked-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { ArchiveReason } from '#common/types/backend/parts/session/archive-reason';
 import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
@@ -77,19 +76,12 @@ export class SessionArchiveService {
   }): Result.ResultAsync<SessionApi, ArchiveSessionWhileLockedError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'freshSession',
-        async (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          v.session.type === 'Editor'
-            ? this.db.sessions.findFirstCheckExists({
-                where: eq(sessionsTable.sessionId, v.session.sessionId)
-              })
-            : Result.succeed(v.session)
+      Result.bind('freshSession', async v =>
+        v.session.type === 'Editor'
+          ? this.db.sessions.findFirstCheckExists({
+              where: eq(sessionsTable.sessionId, v.session.sessionId)
+            })
+          : Result.succeed(v.session)
       ),
       Result.andThrough(v => {
         let isActiveOrPaused: boolean = (
@@ -104,15 +96,15 @@ export class SessionArchiveService {
             })
           : Result.succeed();
       }),
-      Result.bind(
-        'updatedSession',
-        (v): Result.Result<SessionTab, never> =>
-          Result.succeed({
-            ...v.freshSession,
-            status: 'Archived',
-            archiveReason: v.archiveReason
-          })
-      ),
+      Result.bind('updatedSession', v => {
+        let updatedSession: SessionTab = {
+          ...v.freshSession,
+          status: 'Archived',
+          archiveReason: v.archiveReason
+        };
+
+        return Result.succeed(updatedSession);
+      }),
       Result.andThrough(v =>
         this.db.write({
           insertOrUpdate: {

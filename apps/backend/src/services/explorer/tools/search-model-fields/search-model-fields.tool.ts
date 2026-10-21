@@ -15,7 +15,6 @@ import {
 } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
 import { SearchModelFieldsService } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.service';
 import type { SearchModelFieldsToolResult } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
-import type { SearchModelFieldsError } from '#common/types/backend/function-errors/search-model-fields-error';
 
 export const SEARCH_MODEL_FIELDS_INPUT_LIMIT = 10;
 
@@ -87,22 +86,16 @@ So searchFieldNames will be a list of individual words.`
             searchFieldValues: input.searchFieldValues ?? [],
             searchFieldNames: input.searchFieldNames ?? []
           }),
-          Result.andThen(
-            (
-              v
-            ): Result.ResultAsync<
-              SearchModelFieldsToolResult,
-              SearchModelFieldsError
-            > =>
-              this.searchModelFieldsService.searchModelFields({
-                userId: v.userId,
-                projectId: v.projectId,
-                repoId: v.repoId,
-                branchId: v.branchId,
-                envId: v.envId,
-                searchFieldValues: v.searchFieldValues,
-                searchFieldNames: v.searchFieldNames
-              })
+          Result.andThen(v =>
+            this.searchModelFieldsService.searchModelFields({
+              userId: v.userId,
+              projectId: v.projectId,
+              repoId: v.repoId,
+              branchId: v.branchId,
+              envId: v.envId,
+              searchFieldValues: v.searchFieldValues,
+              searchFieldNames: v.searchFieldNames
+            })
           )
         );
 

@@ -32,11 +32,7 @@ export class DeleteProjectService {
           orgPath: v.orgPath
         })
       ),
-      Result.bind(
-        'isProjectExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.projectDir })
-      ),
+      Result.bind('isProjectExist', v => isPathExist({ path: v.projectDir })),
       Result.andThrough(v =>
         v.isProjectExist === true
           ? removePath({ path: v.projectDir })

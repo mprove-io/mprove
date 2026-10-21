@@ -1,7 +1,5 @@
-import type { Stats } from 'node:fs';
 import { Result } from '@praha/byethrow';
 import type { ComposeInput } from '../../types/compose-input';
-import type { GetContentStatsError } from '../../types/function-errors/get-content-stats-error';
 import type { ValidateInputError } from '../../types/function-errors/validate-input-error';
 import { getContentStats } from './get-content-stats/get-content-stats';
 import { resolveInput } from './resolve-input/resolve-input';
@@ -17,9 +15,7 @@ export function validateInput(item: {
   return Result.pipe(
     Result.succeed(item),
     Result.andThrough(v => validateArgumentCount({ argv: v.argv })),
-    Result.andThen(
-      (v): Result.Result<ComposeInput, never> => resolveInput({ argv: v.argv })
-    ),
+    Result.andThen(v => resolveInput({ argv: v.argv })),
     Result.andThrough(v =>
       validateManifestAndOutputPathsDifferent({
         manifestPath: v.manifestPath,
@@ -38,10 +34,8 @@ export function validateInput(item: {
         outputPath: v.outputPath
       })
     ),
-    Result.bind(
-      'contentStats',
-      (v): Result.Result<Stats, GetContentStatsError> =>
-        getContentStats({ contentDirectory: v.contentDirectory })
+    Result.bind('contentStats', v =>
+      getContentStats({ contentDirectory: v.contentDirectory })
     ),
     Result.andThrough(v =>
       validateContentPathIsDirectory({

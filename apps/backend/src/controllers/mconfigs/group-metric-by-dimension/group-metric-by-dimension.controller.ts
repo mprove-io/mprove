@@ -8,17 +8,7 @@ import {
   ToBackendGroupMetricByDimensionResponseDto
 } from '#backend/controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  MconfigTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
-  QueryTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
@@ -30,7 +20,6 @@ import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymm
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
@@ -44,16 +33,6 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
-import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
-import type { GetStructCheckExistsAndNotChangedError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-error';
-import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { MconfigX } from '#common/types/backend/parts/mconfig/mconfig-x';
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
 import type { QueryOperationType } from '#common/types/backend/parts/query-operation/query-operation-type';
@@ -120,42 +99,27 @@ export class GroupMetricByDimensionController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -164,48 +128,30 @@ export class GroupMetricByDimensionController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'oldMconfig',
-        (
-          v
-        ): Result.ResultAsync<
-          MconfigTab,
-          DbMconfigsFindFirstCheckExistsError
-        > =>
-          this.db.mconfigs.findFirstCheckExists({
-            where: and(
-              eq(mconfigsTable.mconfigId, v.mconfigId),
-              eq(mconfigsTable.structId, v.bridge.structId)
-            )
-          })
+      Result.bind('oldMconfig', v =>
+        this.db.mconfigs.findFirstCheckExists({
+          where: and(
+            eq(mconfigsTable.mconfigId, v.mconfigId),
+            eq(mconfigsTable.structId, v.bridge.structId)
+          )
+        })
       ),
-      Result.bind(
-        'struct',
-        (
-          v
-        ): Result.ResultAsync<
-          StructTab,
-          GetStructCheckExistsAndNotChangedError
-        > =>
-          this.structsService.getStructCheckExistsAndNotChanged({
-            projectId: v.projectId,
-            bridgeStructId: v.bridge.structId,
-            structId: v.oldMconfig.structId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExistsAndNotChanged({
+          projectId: v.projectId,
+          bridgeStructId: v.bridge.structId,
+          structId: v.oldMconfig.structId
+        })
       ),
       Result.andThrough(v =>
         this.parentService.checkParentAccess({
@@ -219,115 +165,103 @@ export class GroupMetricByDimensionController {
         })
       ),
       // Grouping does not require additional model access.
-      Result.bind(
-        'model',
-        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
-          this.db.models.findFirstCheckExists({
-            where: and(
-              eq(modelsTable.structId, v.bridge.structId),
-              eq(modelsTable.modelId, v.oldMconfig.modelId)
-            )
-          })
+      Result.bind('model', v =>
+        this.db.models.findFirstCheckExists({
+          where: and(
+            eq(modelsTable.structId, v.bridge.structId),
+            eq(modelsTable.modelId, v.oldMconfig.modelId)
+          )
+        })
       ),
-      Result.bind(
-        'prepareMconfigPayload',
-        (v): Result.Result<PrepareMconfigPayload, never> => {
-          let apiMconfig: MconfigX = this.mconfigsService.tabToApi({
-            mconfig: v.oldMconfig,
-            modelFields: v.model.fields
+      Result.bind('prepareMconfigPayload', v => {
+        let apiMconfig: MconfigX = this.mconfigsService.tabToApi({
+          mconfig: v.oldMconfig,
+          modelFields: v.model.fields
+        });
+
+        apiMconfig.timezone = v.timezone;
+
+        let queryOperation: QueryOperation;
+
+        if (apiMconfig.modelType === 'Malloy') {
+          let selectSorting: SelectSorting = sortFieldsOnSelectChange({
+            mconfig: apiMconfig,
+            selectFieldId: v.groupByFieldId,
+            modelFields: v.model.fields,
+            mconfigFields: apiMconfig.fields
           });
 
-          apiMconfig.timezone = v.timezone;
+          queryOperation = {
+            type: selectSorting.queryOperationType,
+            fieldId: v.groupByFieldId,
+            sortFieldId: selectSorting.sortFieldId,
+            desc: selectSorting.desc,
+            timezone: apiMconfig.timezone
+          };
+        } else {
+          apiMconfig.select = [...apiMconfig.select, v.groupByFieldId];
 
-          let queryOperation: QueryOperation;
+          apiMconfig = setChartTitleOnSelectChange({
+            mconfig: apiMconfig,
+            fields: v.model.fields
+          });
 
-          if (apiMconfig.modelType === 'Malloy') {
-            let selectSorting: SelectSorting = sortFieldsOnSelectChange({
-              mconfig: apiMconfig,
-              selectFieldId: v.groupByFieldId,
-              modelFields: v.model.fields,
-              mconfigFields: apiMconfig.fields
-            });
+          apiMconfig = setChartFields({
+            mconfig: apiMconfig,
+            fields: v.model.fields
+          });
 
-            queryOperation = {
-              type: selectSorting.queryOperationType,
-              fieldId: v.groupByFieldId,
-              sortFieldId: selectSorting.sortFieldId,
-              desc: selectSorting.desc,
-              timezone: apiMconfig.timezone
-            };
-          } else {
-            apiMconfig.select = [...apiMconfig.select, v.groupByFieldId];
-
-            apiMconfig = setChartTitleOnSelectChange({
-              mconfig: apiMconfig,
-              fields: v.model.fields
-            });
-
-            apiMconfig = setChartFields({
-              mconfig: apiMconfig,
-              fields: v.model.fields
-            });
-
-            apiMconfig = sortChartFieldsOnSelectChange({
-              mconfig: apiMconfig,
-              fields: v.model.fields
-            });
-          }
-
-          return Result.succeed({
-            apiMconfig: apiMconfig,
-            queryOperation: queryOperation
+          apiMconfig = sortChartFieldsOnSelectChange({
+            mconfig: apiMconfig,
+            fields: v.model.fields
           });
         }
-      ),
-      Result.bind(
-        'mconfigQuery',
-        (
-          v
-        ): Result.ResultAsync<
-          PrepStoreMconfigQueryOutput,
-          PrepStoreMconfigQueryError | EditMalloyQueryError
-        > =>
-          v.model.type === 'Store'
-            ? this.mconfigsService.prepStoreMconfigQuery({
-                struct: v.struct,
-                project: v.project,
-                envId: v.envId,
-                model: v.model,
-                mconfigParentType:
-                  v.prepareMconfigPayload.apiMconfig.parentType,
-                mconfigParentId: v.prepareMconfigPayload.apiMconfig.parentId,
-                mconfig: this.mconfigsService.apiToTab({
-                  apiMconfig: v.prepareMconfigPayload.apiMconfig
-                }),
-                metricsStartDateYYYYMMDD: isDefined(v.cellMetricsStartDateMs)
-                  ? getYYYYMMDDFromEpochUtcByTimezone({
-                      timezone: v.prepareMconfigPayload.apiMconfig.timezone,
-                      secondsEpochUTC: v.cellMetricsStartDateMs / 1000
-                    })
-                  : undefined,
-                metricsEndDateYYYYMMDD: isDefined(v.cellMetricsEndDateMs)
-                  ? getYYYYMMDDFromEpochUtcByTimezone({
-                      timezone: v.prepareMconfigPayload.apiMconfig.timezone,
-                      secondsEpochUTC: v.cellMetricsEndDateMs / 1000
-                    })
-                  : undefined
-              })
-            : this.malloyService.editMalloyQuery({
-                projectId: v.projectId,
-                envId: v.envId,
-                structId: v.struct.structId,
-                mconfigParentType:
-                  v.prepareMconfigPayload.apiMconfig.parentType,
-                mconfigParentId: v.prepareMconfigPayload.apiMconfig.parentId,
-                user: v.user,
-                model: v.model,
-                mconfig: this.mconfigsService.apiToTab({
-                  apiMconfig: v.prepareMconfigPayload.apiMconfig
-                }),
-                queryOperations: [v.prepareMconfigPayload.queryOperation]
-              })
+
+        let prepareMconfigPayload: PrepareMconfigPayload = {
+          apiMconfig: apiMconfig,
+          queryOperation: queryOperation
+        };
+
+        return Result.succeed(prepareMconfigPayload);
+      }),
+      Result.bind('mconfigQuery', v =>
+        v.model.type === 'Store'
+          ? this.mconfigsService.prepStoreMconfigQuery({
+              struct: v.struct,
+              project: v.project,
+              envId: v.envId,
+              model: v.model,
+              mconfigParentType: v.prepareMconfigPayload.apiMconfig.parentType,
+              mconfigParentId: v.prepareMconfigPayload.apiMconfig.parentId,
+              mconfig: this.mconfigsService.apiToTab({
+                apiMconfig: v.prepareMconfigPayload.apiMconfig
+              }),
+              metricsStartDateYYYYMMDD: isDefined(v.cellMetricsStartDateMs)
+                ? getYYYYMMDDFromEpochUtcByTimezone({
+                    timezone: v.prepareMconfigPayload.apiMconfig.timezone,
+                    secondsEpochUTC: v.cellMetricsStartDateMs / 1000
+                  })
+                : undefined,
+              metricsEndDateYYYYMMDD: isDefined(v.cellMetricsEndDateMs)
+                ? getYYYYMMDDFromEpochUtcByTimezone({
+                    timezone: v.prepareMconfigPayload.apiMconfig.timezone,
+                    secondsEpochUTC: v.cellMetricsEndDateMs / 1000
+                  })
+                : undefined
+            })
+          : this.malloyService.editMalloyQuery({
+              projectId: v.projectId,
+              envId: v.envId,
+              structId: v.struct.structId,
+              mconfigParentType: v.prepareMconfigPayload.apiMconfig.parentType,
+              mconfigParentId: v.prepareMconfigPayload.apiMconfig.parentId,
+              user: v.user,
+              model: v.model,
+              mconfig: this.mconfigsService.apiToTab({
+                apiMconfig: v.prepareMconfigPayload.apiMconfig
+              }),
+              queryOperations: [v.prepareMconfigPayload.queryOperation]
+            })
       ),
       Result.andThrough(v =>
         this.db.write({
@@ -342,15 +276,13 @@ export class GroupMetricByDimensionController {
           }
         })
       ),
-      Result.bind(
-        'query',
-        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
-          this.db.queries.findFirst({
-            where: and(
-              eq(queriesTable.queryId, v.mconfigQuery.newQuery.queryId),
-              eq(queriesTable.projectId, v.mconfigQuery.newQuery.projectId)
-            )
-          })
+      Result.bind('query', v =>
+        this.db.queries.findFirst({
+          where: and(
+            eq(queriesTable.queryId, v.mconfigQuery.newQuery.queryId),
+            eq(queriesTable.projectId, v.mconfigQuery.newQuery.projectId)
+          )
+        })
       ),
       Result.map(
         (v): ToBackendGroupMetricByDimensionOutput => ({

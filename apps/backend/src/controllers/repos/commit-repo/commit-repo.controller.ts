@@ -8,12 +8,7 @@ import {
   ToBackendCommitRepoResponseDto
 } from '#backend/controllers/repos/commit-repo/commit-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  ProjectTab,
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
@@ -28,17 +23,8 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ArchiveSessionError } from '#common/types/backend/function-errors/archive-session-error';
-import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
-import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
-import type { SessionApi } from '#common/types/backend/parts/session/session-api';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/repos/commit-repo/commit-repo-output';
-import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
-import type { ToDiskCommitRepoOutput } from '#common/types/disk/routes/repos/commit-repo/commit-repo-output';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -76,15 +62,13 @@ export class CommitRepoController {
         traceId: body.traceId,
         user: user
       }),
-      Result.bind(
-        'repoType',
-        (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
-          this.sessionsService.checkRepoId({
-            repoId: v.repoId,
-            userId: v.user.userId,
-            projectId: v.projectId,
-            allowProdRepo: true
-          })
+      Result.bind('repoType', v =>
+        this.sessionsService.checkRepoId({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
       ),
       Result.andThrough(v =>
         v.repoType === 'production'
@@ -93,25 +77,16 @@ export class CommitRepoController {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditor({
-            projectId: v.projectId,
-            memberId: v.user.userId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditor({
+          projectId: v.projectId,
+          memberId: v.user.userId
+        })
       ),
       Result.andThrough(v =>
         this.projectsService.checkProjectIsNotRestricted({
@@ -129,49 +104,38 @@ export class CommitRepoController {
           )
         })
       ),
-      Result.bind(
-        'diskCommitRepoOutput',
-        (v): Result.ResultAsync<ToDiskCommitRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
-            request: {
-              operation: 'commitRepo',
-              traceId: v.traceId,
-              input: {
-                baseProject: this.tabService.projectTabToBaseProject({
-                  project: v.project
-                }),
-                repoId: v.repoId,
-                branch: v.branchId,
-                userAlias: v.user.alias,
-                commitMessage: v.commitMessage
-              }
+      Result.bind('diskCommitRepoOutput', v =>
+        this.rpcService.sendToDisk({
+          request: {
+            operation: 'commitRepo',
+            traceId: v.traceId,
+            input: {
+              baseProject: this.tabService.projectTabToBaseProject({
+                project: v.project
+              }),
+              repoId: v.repoId,
+              branch: v.branchId,
+              userAlias: v.user.alias,
+              commitMessage: v.commitMessage
             }
-          })
+          }
+        })
       ),
-      Result.bind(
-        'session',
-        async (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          v.repoType !== 'session'
-            ? Result.succeed(undefined)
-            : this.db.sessions.findFirstCheckExists({
-                where: eq(sessionsTable.sessionId, v.repoId)
-              })
+      Result.bind('session', async v =>
+        v.repoType !== 'session'
+          ? Result.succeed(undefined)
+          : this.db.sessions.findFirstCheckExists({
+              where: eq(sessionsTable.sessionId, v.repoId)
+            })
       ),
-      Result.bind(
-        'apiSession',
-        async (v): Result.ResultAsync<SessionApi, ArchiveSessionError> =>
-          isUndefined(v.session)
-            ? Result.succeed(undefined)
-            : this.sessionArchiveService.archiveSession({
-                session: v.session,
-                archiveReason: 'Commit',
-                e2bApiKey: v.project.e2bApiKey
-              })
+      Result.bind('apiSession', async v =>
+        isUndefined(v.session)
+          ? Result.succeed(undefined)
+          : this.sessionArchiveService.archiveSession({
+              session: v.session,
+              archiveReason: 'Commit',
+              e2bApiKey: v.project.e2bApiKey
+            })
       ),
       Result.map(
         (v): ToBackendCommitRepoOutput => ({

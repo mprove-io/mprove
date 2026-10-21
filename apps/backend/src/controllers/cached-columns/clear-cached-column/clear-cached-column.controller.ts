@@ -8,10 +8,7 @@ import {
   ToBackendClearCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/clear-cached-column/clear-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -24,8 +21,6 @@ import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
-import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendClearCachedColumnOutput } from '#common/types/backend/routes/connections/clear-cached-column/clear-cached-column-output';
 
@@ -67,15 +62,11 @@ export class ClearCachedColumnController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditorOrAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -84,13 +75,11 @@ export class ClearCachedColumnController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvId({
-            projectId: v.projectId,
-            envId: v.envId
-          })
+      Result.bind('cacheEnvId', v =>
+        this.cachedColumnService.getCacheEnvId({
+          projectId: v.projectId,
+          envId: v.envId
+        })
       ),
       Result.andThrough(v =>
         v.cacheEnvId === PROJECT_ENV_PROD

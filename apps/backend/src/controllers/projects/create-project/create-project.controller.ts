@@ -10,12 +10,7 @@ import {
   ToBackendCreateProjectResponseDto
 } from '#backend/controllers/projects/create-project/create-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  NoteTab,
-  OrgTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { notesTable } from '#backend/drizzle/postgres/schema/notes';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -29,12 +24,6 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { AddProjectError } from '#common/types/backend/function-errors/add-project-error';
-import type { DbNotesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/notes/db-notes-find-first-check-exists-error';
-import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
-import type { DbProjectsFindFirstError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/projects/create-project/create-project-output';
 
@@ -74,12 +63,10 @@ export class CreateProjectController {
         traceId: body.traceId,
         user: user
       }),
-      Result.bind(
-        'org',
-        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
-          this.db.orgs.findFirstCheckExists({
-            where: eq(orgsTable.orgId, v.orgId)
-          })
+      Result.bind('org', v =>
+        this.db.orgs.findFirstCheckExists({
+          where: eq(orgsTable.orgId, v.orgId)
+        })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -95,73 +82,60 @@ export class CreateProjectController {
           ? Result.fail({ code: 'BACKEND_RESTRICTED_ORGANIZATION' })
           : Result.succeed();
       }),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'nameHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.name,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('nameHash', v =>
+        this.hashService.makeHash({
+          input: v.name,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'existingProject',
-        (v): Result.ResultAsync<ProjectTab, DbProjectsFindFirstError> =>
-          this.db.projects.findFirst({
-            where: and(
-              eq(projectsTable.orgId, v.orgId),
-              eq(projectsTable.nameHash, v.nameHash)
-            )
-          })
+      Result.bind('existingProject', v =>
+        this.db.projects.findFirst({
+          where: and(
+            eq(projectsTable.orgId, v.orgId),
+            eq(projectsTable.nameHash, v.nameHash)
+          )
+        })
       ),
       Result.andThrough(v =>
         isDefined(v.existingProject)
           ? Result.fail({ code: 'BACKEND_PROJECT_ALREADY_EXISTS' })
           : Result.succeed()
       ),
-      Result.bind(
-        'note',
-        async (
-          v
-        ): Result.ResultAsync<NoteTab, DbNotesFindFirstCheckExistsError> =>
-          v.remoteType !== 'GitClone'
-            ? Result.succeed(undefined)
-            : this.db.notes.findFirstCheckExists({
-                where: eq(notesTable.noteId, v.noteId)
-              })
+      Result.bind('note', async v =>
+        v.remoteType !== 'GitClone'
+          ? Result.succeed(undefined)
+          : this.db.notes.findFirstCheckExists({
+              where: eq(notesTable.noteId, v.noteId)
+            })
       ),
-      Result.bind(
-        'newProject',
-        (v): Result.ResultAsync<ProjectTab, AddProjectError> =>
-          this.projectsService.addProject({
-            orgId: v.orgId,
-            name: v.name,
-            traceId: v.traceId,
-            user: v.user,
-            seedProjectId: undefined,
-            remoteType: v.remoteType,
-            projectId: makeId(),
-            gitUrl: v.gitUrl,
-            // Managed projects have no credential note.
-            publicKey: v.note?.publicKey,
-            privateKey: v.note?.privateKey,
-            publicKeyEncrypted: v.note?.publicKeyEncrypted,
-            privateKeyEncrypted: v.note?.privateKeyEncrypted,
-            passPhrase: v.note?.passPhrase,
-            evs: [],
-            connections: []
-          })
+      Result.bind('newProject', v =>
+        this.projectsService.addProject({
+          orgId: v.orgId,
+          name: v.name,
+          traceId: v.traceId,
+          user: v.user,
+          seedProjectId: undefined,
+          remoteType: v.remoteType,
+          projectId: makeId(),
+          gitUrl: v.gitUrl,
+          // Managed projects have no credential note.
+          publicKey: v.note?.publicKey,
+          privateKey: v.note?.privateKey,
+          publicKeyEncrypted: v.note?.publicKeyEncrypted,
+          privateKeyEncrypted: v.note?.privateKeyEncrypted,
+          passPhrase: v.note?.passPhrase,
+          evs: [],
+          connections: []
+        })
       ),
-      Result.andThrough(
-        (v): Result.ResultAsync<void, never> =>
-          this.db.drizzle
-            .delete(notesTable)
-            .where(eq(notesTable.noteId, v.noteId))
-            .then(() => Result.succeed())
+      Result.andThrough(v =>
+        this.db.drizzle
+          .delete(notesTable)
+          .where(eq(notesTable.noteId, v.noteId))
+          .then(() => Result.succeed())
       ),
       Result.map(
         (v): ToBackendCreateProjectOutput => ({

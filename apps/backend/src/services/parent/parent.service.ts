@@ -20,10 +20,6 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CheckParentAccessError } from '#common/types/backend/function-errors/check-parent-access-error';
-import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
-import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
-import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
-import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 
 @Injectable()
@@ -63,22 +59,15 @@ export class ParentService {
           item.parentType === 'ChartDialogReport' ||
           item.parentType === 'SuggestDimensionReport'
       }),
-      Result.bind(
-        'dashboard',
-        async (
-          v
-        ): Result.ResultAsync<
-          DashboardTab,
-          GetDashboardCheckExistsAndAccessError
-        > =>
-          v.isDashboard
-            ? this.dashboardsService.getDashboardCheckExistsAndAccess({
-                structId: v.structId,
-                dashboardId: v.parentId,
-                userMember: v.userMember,
-                user: v.user
-              })
-            : Result.succeed(undefined)
+      Result.bind('dashboard', async v =>
+        v.isDashboard
+          ? this.dashboardsService.getDashboardCheckExistsAndAccess({
+              structId: v.structId,
+              dashboardId: v.parentId,
+              userMember: v.userMember,
+              user: v.user
+            })
+          : Result.succeed<DashboardTab>(undefined)
       ),
       Result.andThrough(v => {
         if (v.isDashboard && v.isCheckSuggest === true) {
@@ -95,20 +84,16 @@ export class ParentService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'report',
-        async (
-          v
-        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          v.isReport
-            ? this.reportsService.getReportCheckExistsAndAccess({
-                projectId: v.projectId,
-                structId: v.structId,
-                reportId: v.parentId,
-                userMember: v.userMember,
-                user: v.user
-              })
-            : Result.succeed(undefined)
+      Result.bind('report', async v =>
+        v.isReport
+          ? this.reportsService.getReportCheckExistsAndAccess({
+              projectId: v.projectId,
+              structId: v.structId,
+              reportId: v.parentId,
+              userMember: v.userMember,
+              user: v.user
+            })
+          : Result.succeed<ReportTab>(undefined)
       ),
       Result.andThrough(v => {
         if (v.isReport && v.isCheckSuggest === true) {
@@ -144,31 +129,25 @@ export class ParentService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'chart',
-        async (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
-          v.parentType === 'Chart'
-            ? this.chartsService.getChartCheckExists({
-                structId: v.structId,
-                chartId: v.parentId,
-                userMember: v.userMember,
-                user: v.user
-              })
-            : Result.succeed(undefined)
+      Result.bind('chart', async v =>
+        v.parentType === 'Chart'
+          ? this.chartsService.getChartCheckExists({
+              structId: v.structId,
+              chartId: v.parentId,
+              userMember: v.userMember,
+              user: v.user
+            })
+          : Result.succeed<ChartTab>(undefined)
       ),
-      Result.bind(
-        'chartModel',
-        async (
-          v
-        ): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
-          v.parentType === 'Chart'
-            ? this.db.models.findFirstCheckExists({
-                where: and(
-                  eq(modelsTable.structId, v.structId),
-                  eq(modelsTable.modelId, v.chart.modelId)
-                )
-              })
-            : Result.succeed(undefined)
+      Result.bind('chartModel', async v =>
+        v.parentType === 'Chart'
+          ? this.db.models.findFirstCheckExists({
+              where: and(
+                eq(modelsTable.structId, v.structId),
+                eq(modelsTable.modelId, v.chart.modelId)
+              )
+            })
+          : Result.succeed(undefined)
       ),
       Result.andThrough(v =>
         v.parentType === 'Chart'

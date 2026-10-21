@@ -11,9 +11,6 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type {
   BranchTab,
   BridgeTab,
-  MemberTab,
-  ProjectTab,
-  StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
@@ -44,19 +41,9 @@ import {
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBranchesFindFirstError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-error';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
-import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
-import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPushRepoOutput } from '#common/types/backend/routes/repos/push-repo/push-repo-output';
-import type { ToDiskPushRepoOutput } from '#common/types/disk/routes/repos/push-repo/push-repo-output';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -107,25 +94,16 @@ export class PushRepoController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditor({
-            projectId: v.projectId,
-            memberId: v.user.userId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditor({
+          projectId: v.projectId,
+          memberId: v.user.userId
+        })
       ),
       Result.andThrough(v =>
         this.projectsService.checkProjectIsNotRestricted({
@@ -134,18 +112,14 @@ export class PushRepoController {
           repoId: undefined // no check for repoId
         })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -154,58 +128,50 @@ export class PushRepoController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'diskPushRepoOutput',
-        (v): Result.ResultAsync<ToDiskPushRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
-            request: {
-              operation: 'pushRepo',
-              traceId: v.traceId,
-              input: {
-                baseProject: this.tabService.projectTabToBaseProject({
-                  project: v.project
-                }),
-                repoId: v.repoId,
-                branch: v.branchId,
-                userAlias: v.user.alias
-              }
+      Result.bind('diskPushRepoOutput', v =>
+        this.rpcService.sendToDisk({
+          request: {
+            operation: 'pushRepo',
+            traceId: v.traceId,
+            input: {
+              baseProject: this.tabService.projectTabToBaseProject({
+                project: v.project
+              }),
+              repoId: v.repoId,
+              branch: v.branchId,
+              userAlias: v.user.alias
             }
-          })
+          }
+        })
       ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId)
-            )
-          })
+      Result.bind('branchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId)
+          )
+        })
       ),
-      Result.bind(
-        'prodBranch',
-        (v): Result.ResultAsync<BranchTab, DbBranchesFindFirstError> =>
-          this.db.branches.findFirst({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, PROD_REPO_ID),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('prodBranch', v =>
+        this.db.branches.findFirst({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, PROD_REPO_ID),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
-      Result.bind(
-        'prodBranchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, PROD_REPO_ID),
-              eq(bridgesTable.branchId, v.branch.branchId)
-            )
-          })
+      Result.bind('prodBranchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, PROD_REPO_ID),
+            eq(bridgesTable.branchId, v.branch.branchId)
+          )
+        })
       ),
-      Result.bind('productionBranch', (v): Result.Result<BranchTab, never> => {
+      Result.bind('productionBranch', v => {
         let productionBranch: BranchTab = v.prodBranch;
 
         if (isUndefined(productionBranch)) {
@@ -277,30 +243,22 @@ export class PushRepoController {
           }
         })
       ),
-      Result.bind(
-        'currentBridge',
-        (v): Result.Result<BridgeTab, never> =>
-          Result.succeed(
-            v.branchBridges.find(bridge => bridge.envId === v.envId)
-          )
+      Result.bind('currentBridge', v =>
+        Result.succeed(v.branchBridges.find(bridge => bridge.envId === v.envId))
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.currentBridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.currentBridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'modelPartXs',
-        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXs({
-            structId: v.struct.structId,
-            apiUserMember: this.membersService.tabToApi({
-              member: v.userMember
-            })
+      Result.bind('modelPartXs', v =>
+        this.modelsService.getModelPartXs({
+          structId: v.struct.structId,
+          apiUserMember: this.membersService.tabToApi({
+            member: v.userMember
           })
+        })
       ),
       Result.map(
         (v): ToBackendPushRepoOutput => ({

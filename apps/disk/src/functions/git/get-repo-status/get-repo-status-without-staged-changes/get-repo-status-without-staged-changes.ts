@@ -19,26 +19,26 @@ export async function getRepoStatusWithoutStagedChanges(item: {
 }): Result.ResultAsync<DiskItemStatus, never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'isBranchExistRemote',
-      (v): Result.ResultAsync<boolean, never> =>
-        isRemoteBranchExist({
-          repoDir: v.repoDir,
-          remoteBranch: v.currentBranchName,
-          git: v.git,
-          isFetch: v.isFetch
-        })
+    Result.bind('isBranchExistRemote', v =>
+      isRemoteBranchExist({
+        repoDir: v.repoDir,
+        remoteBranch: v.currentBranchName,
+        git: v.git,
+        isFetch: v.isFetch
+      })
     ),
-    Result.andThen(async (v): Result.ResultAsync<DiskItemStatus, never> => {
+    Result.andThen(async v => {
       // RETURN NeedPush
       if (v.isBranchExistRemote === false) {
-        return Result.succeed({
+        let diskItemStatus: DiskItemStatus = {
           repoStatus: 'NeedPush',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
           changesToCommit: v.changesToCommit,
           changesToPush: []
-        });
+        };
+
+        return Result.succeed(diskItemStatus);
       }
 
       let localCommitId: string = await v.git.revparse([
@@ -55,13 +55,15 @@ export async function getRepoStatusWithoutStagedChanges(item: {
 
       // RETURN Ok
       if (localCommitId === remoteOriginCommitId) {
-        return Result.succeed({
+        let diskItemStatus: DiskItemStatus = {
           repoStatus: 'Ok',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
           changesToCommit: v.changesToCommit,
           changesToPush: []
-        });
+        };
+
+        return Result.succeed(diskItemStatus);
       }
 
       let baseCommitResult: string = await v.git.raw([
@@ -74,14 +76,16 @@ export async function getRepoStatusWithoutStagedChanges(item: {
 
       // simple-git resolves merge-base exit 1 with empty stderr as ''.
       if (baseCommitId === '') {
-        return Result.succeed({
+        let diskItemStatus: DiskItemStatus = {
           repoStatus: 'NeedPull',
           repoError: 'NoCommonAncestor',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
           changesToCommit: v.changesToCommit,
           changesToPush: []
-        });
+        };
+
+        return Result.succeed(diskItemStatus);
       }
 
       let repoStatus: RepoStatus =
@@ -145,14 +149,16 @@ export async function getRepoStatusWithoutStagedChanges(item: {
         });
       }
 
-      return Result.succeed({
+      let diskItemStatus: DiskItemStatus = {
         repoStatus: repoStatus,
         repoError: repoError,
         conflicts: v.conflicts,
         currentBranch: v.currentBranchName,
         changesToCommit: v.changesToCommit,
         changesToPush: changesToPush
-      });
+      };
+
+      return Result.succeed(diskItemStatus);
     })
   );
 }

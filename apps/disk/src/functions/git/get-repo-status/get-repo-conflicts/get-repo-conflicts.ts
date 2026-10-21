@@ -1,8 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
-import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoConflictsError } from '#common/types/disk/function-errors/disk-get-repo-conflicts-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
 import type { DiskFileLine } from '#common/types/disk/parts/file/disk-file-line';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 
@@ -16,21 +14,16 @@ export function getRepoConflicts(item: {
     // Check conflicts manually instead of git because they are already committed.
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'itemDevRepoCatalog',
-        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
-          getNodesAndFiles({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            readFiles: true,
-            isRootMproveDir: true
-          })
+      Result.bind('itemDevRepoCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          readFiles: true,
+          isRootMproveDir: true
+        })
       ),
-      Result.bind(
-        'conflicts',
-        (v): Result.Result<DiskFileLine[], never> => Result.succeed([])
-      ),
+      Result.bind('conflicts', v => Result.succeed<DiskFileLine[]>([])),
       Result.map((v): DiskFileLine[] => {
         v.itemDevRepoCatalog.files.forEach(file => {
           let fileArray = file.content.split('\n');

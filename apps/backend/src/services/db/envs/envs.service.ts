@@ -304,30 +304,24 @@ export class EnvsService {
   > {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.getApiEnvs({
-            projectId: v.projectId
-          })
+      Result.bind('apiEnvs', v =>
+        this.getApiEnvs({
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'apiEnv',
-        (v): Result.Result<Env, never> =>
-          Result.succeed(v.apiEnvs.find(x => x.envId === v.envId))
+      Result.bind('apiEnv', v =>
+        Result.succeed(v.apiEnvs.find(x => x.envId === v.envId))
       ),
-      Result.bind(
-        'connectionsWithFallback',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: and(
-              eq(connectionsTable.projectId, v.projectId),
-              inArray(
-                connectionsTable.connectionId,
-                v.apiEnv.envConnectionIdsWithFallback
-              )
+      Result.bind('connectionsWithFallback', v =>
+        this.db.connections.findMany({
+          where: and(
+            eq(connectionsTable.projectId, v.projectId),
+            inArray(
+              connectionsTable.connectionId,
+              v.apiEnv.envConnectionIdsWithFallback
             )
-          })
+          )
+        })
       ),
       Result.map(
         (v): GetApiEnvConnectionsWithFallbackOutput => ({

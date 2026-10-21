@@ -20,9 +20,6 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateGivenOutput } from '#common/types/backend/routes/givens/create-given/create-given-output';
 
@@ -69,13 +66,11 @@ export class CreateGivenController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            memberId: v.user.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          memberId: v.user.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.givensService.checkGivenDoesNotExist({
@@ -90,8 +85,8 @@ export class CreateGivenController {
           values: v.values
         })
       ),
-      Result.map(
-        (v): CreateGivenWriteState => ({
+      Result.map(v => {
+        let givenWriteState: CreateGivenWriteState = {
           projectId: v.projectId,
           userMember: v.userMember,
           given: this.givensService.makeGiven({
@@ -101,13 +96,13 @@ export class CreateGivenController {
             isMultiple: v.isMultiple,
             values: v.values
           })
-        })
-      ),
+        };
+
+        return givenWriteState;
+      }),
       Result.andThrough(v => this.db.write({ insert: { givens: [v.given] } })),
-      Result.bind(
-        'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.givensService.getApiGivens({ projectId: v.projectId })
+      Result.bind('apiGivens', v =>
+        this.givensService.getApiGivens({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateGivenOutput => ({

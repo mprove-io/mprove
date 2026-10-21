@@ -22,11 +22,7 @@ export class IsOrgExistService {
         ...item,
         orgDir: `${orgPath}/${item.orgId}`
       }),
-      Result.bind(
-        'isOrgExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.orgDir })
-      ),
+      Result.bind('isOrgExist', v => isPathExist({ path: v.orgDir })),
       Result.map(
         (v): ToDiskIsOrgExistOutput => ({
           orgId: v.orgId,

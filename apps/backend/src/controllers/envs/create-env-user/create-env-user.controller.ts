@@ -8,11 +8,7 @@ import {
   ToBackendCreateEnvUserResponseDto
 } from '#backend/controllers/envs/create-env-user/create-env-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  EnvTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -22,10 +18,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
-import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateEnvUserOutput } from '#common/types/backend/routes/envs/create-env-user/create-env-user-output';
 
@@ -65,15 +57,11 @@ export class CreateEnvUserController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditorOrAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.projectsService.checkProjectIsNotRestricted({
@@ -82,14 +70,12 @@ export class CreateEnvUserController {
           repoId: undefined
         })
       ),
-      Result.bind(
-        'env',
-        (v): Result.ResultAsync<EnvTab, GetEnvCheckExistsAndAccessError> =>
-          this.envsService.getEnvCheckExistsAndAccess({
-            projectId: v.projectId,
-            envId: v.envId,
-            member: v.userMember
-          })
+      Result.bind('env', v =>
+        this.envsService.getEnvCheckExistsAndAccess({
+          projectId: v.projectId,
+          envId: v.envId,
+          member: v.userMember
+        })
       ),
       Result.andThrough(v =>
         v.env.memberIds.includes(v.envUserId)
@@ -111,10 +97,8 @@ export class CreateEnvUserController {
       Result.andThrough(v =>
         this.db.write({ insertOrUpdate: { envs: [v.env] } })
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateEnvUserOutput => ({

@@ -18,13 +18,11 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckLlmModelDoesNotExistError } from '#common/types/backend/function-errors/check-llm-model-does-not-exist-error';
 import type { CheckProviderDoesNotExistError } from '#common/types/backend/function-errors/check-provider-does-not-exist-error';
-import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
 import type { GetEnabledProviderCheckExistsError } from '#common/types/backend/function-errors/get-enabled-provider-check-exists-error';
 import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
 import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
-import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ProviderOptionsAnthropic } from '#common/types/backend/parts/provider/options/provider-options-anthropic';
 import type { ProviderOptionsCodex } from '#common/types/backend/parts/provider/options/provider-options-codex';
 import type { ProviderOptionsOpenAI } from '#common/types/backend/parts/provider/options/provider-options-openai';
@@ -242,20 +240,13 @@ export class ProvidersService {
   }): Result.ResultAsync<ProviderTab, GetEnabledProviderCheckExistsError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'provider',
-        (
-          v
-        ): Result.ResultAsync<
-          ProviderTab,
-          DbProvidersFindFirstCheckExistsError
-        > =>
-          this.db.providers.findFirstCheckExists({
-            where: and(
-              eq(providersTable.projectId, v.projectId),
-              eq(providersTable.providerId, v.providerId)
-            )
-          })
+      Result.bind('provider', v =>
+        this.db.providers.findFirstCheckExists({
+          where: and(
+            eq(providersTable.projectId, v.projectId),
+            eq(providersTable.providerId, v.providerId)
+          )
+        })
       ),
       Result.andThrough(v =>
         v.provider.isEnabled === false
@@ -276,26 +267,17 @@ export class ProvidersService {
   }): Result.ResultAsync<GetModelSelectionOutput, GetModelSelectionError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'provider',
-        (
-          v
-        ): Result.ResultAsync<
-          ProviderTab,
-          GetEnabledProviderCheckExistsError
-        > =>
-          this.getEnabledProviderCheckExists({
-            projectId: v.projectId,
-            providerId: v.providerId
-          })
+      Result.bind('provider', v =>
+        this.getEnabledProviderCheckExists({
+          projectId: v.projectId,
+          providerId: v.providerId
+        })
       ),
-      Result.bind(
-        'model',
-        (v): Result.Result<LlmModel, GetLlmModelCheckExistsError> =>
-          this.getLlmModelCheckExists({
-            provider: v.provider,
-            modelId: v.modelId
-          })
+      Result.bind('model', v =>
+        this.getLlmModelCheckExists({
+          provider: v.provider,
+          modelId: v.modelId
+        })
       ),
       Result.andThrough(v => {
         if (v.provider.type === 'OpenAICodex') {
@@ -336,12 +318,10 @@ export class ProvidersService {
           ? Result.fail({ code: 'BACKEND_MESSAGE_VARIANT_REQUIRED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'matchingModelVariants',
-        (v): Result.Result<LlmModelVariant[], never> =>
-          Result.succeed(
-            v.model.variants.filter(variant => variant.variant === v.variant)
-          )
+      Result.bind('matchingModelVariants', v =>
+        Result.succeed(
+          v.model.variants.filter(variant => variant.variant === v.variant)
+        )
       ),
       Result.andThrough(v => {
         let isVariantAvailable: boolean =

@@ -11,11 +11,7 @@ import {
   ToBackendDeleteMemberResponseDto
 } from '#backend/controllers/members/delete-member/delete-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
@@ -28,8 +24,6 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteMemberOutput } from '#common/types/backend/routes/members/delete-member/delete-member-output';
 
@@ -66,17 +60,10 @@ export class DeleteMemberController {
         memberId: body.input.memberId,
         userId: user.userId
       }),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
       Result.andThrough(v =>
         this.membersService.getMemberCheckIsAdmin({
@@ -89,17 +76,13 @@ export class DeleteMemberController {
           ? Result.fail({ code: 'BACKEND_ADMIN_CANNOT_DELETE_HIMSELF' })
           : Result.succeed()
       ),
-      Result.bind(
-        'member',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.memberId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('member', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.memberId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.rpcService.sendToDisk({

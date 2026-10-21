@@ -8,13 +8,7 @@ import {
   ToBackendGetStructResponseDto
 } from '#backend/controllers/structs/get-struct/get-struct.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  MemberTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
@@ -28,12 +22,6 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetStructOutput } from '#common/types/backend/routes/structs/get-struct/get-struct-output';
 
@@ -84,30 +72,22 @@ export class GetStructController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -116,37 +96,29 @@ export class GetStructController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.bridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'modelPartXs',
-        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXs({
-            structId: v.struct.structId,
-            apiUserMember: this.membersService.tabToApi({
-              member: v.userMember
-            })
+      Result.bind('modelPartXs', v =>
+        this.modelsService.getModelPartXs({
+          structId: v.struct.structId,
+          apiUserMember: this.membersService.tabToApi({
+            member: v.userMember
           })
+        })
       ),
       Result.map(
         (v): ToBackendGetStructOutput => ({

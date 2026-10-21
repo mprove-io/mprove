@@ -7,15 +7,11 @@ import {
   ToBackendGetAvatarBigResponseDto
 } from '#backend/controllers/avatars/get-avatar-big/get-avatar-big.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  AvatarTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { DbAvatarsFindFirstError } from '#common/types/backend/function-errors/db/avatars/db-avatars-find-first-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetAvatarBigOutput } from '#common/types/backend/routes/avatars/get-avatar-big/get-avatar-big-output';
 
@@ -41,12 +37,10 @@ export class GetAvatarBigController {
       Result.succeed({
         avatarUserId: body.input.avatarUserId
       }),
-      Result.bind(
-        'avatar',
-        (v): Result.ResultAsync<AvatarTab, DbAvatarsFindFirstError> =>
-          this.db.avatars.findFirst({
-            where: eq(avatarsTable.userId, v.avatarUserId)
-          })
+      Result.bind('avatar', v =>
+        this.db.avatars.findFirst({
+          where: eq(avatarsTable.userId, v.avatarUserId)
+        })
       ),
       Result.map(
         (v): ToBackendGetAvatarBigOutput => ({

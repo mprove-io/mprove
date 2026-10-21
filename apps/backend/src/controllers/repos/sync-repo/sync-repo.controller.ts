@@ -8,14 +8,7 @@ import {
   ToBackendSyncRepoResponseDto
 } from '#backend/controllers/repos/sync-repo/sync-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  MemberTab,
-  ProjectTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -30,15 +23,8 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSyncRepoOutput } from '#common/types/backend/routes/repos/sync-repo/sync-repo-output';
-import type { ToDiskSyncRepoOutput } from '#common/types/disk/routes/repos/sync-repo/sync-repo-output';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -91,38 +77,25 @@ export class SyncRepoController {
           allowProdRepo: false
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditor({
-            projectId: v.projectId,
-            memberId: v.user.userId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditor({
+          projectId: v.projectId,
+          memberId: v.user.userId
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -141,56 +114,52 @@ export class SyncRepoController {
           )
         })
       ),
-      Result.bind(
-        'diskSyncRepoOutput',
-        (v): Result.ResultAsync<ToDiskSyncRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
-            request:
-              v.input.direction === 'to-server'
-                ? {
-                    operation: 'syncRepo',
-                    traceId: v.traceId,
-                    input: {
-                      direction: 'to-server',
-                      baseProject: this.tabService.projectTabToBaseProject({
-                        project: v.project
-                      }),
-                      repoId: v.repoId,
-                      branch: v.branchId,
-                      lastCommit: v.lastCommit,
-                      getRepo: v.getRepo,
-                      getRepoNodes: v.getRepoNodes,
-                      changedFiles: v.input.changedFiles,
-                      deletedFiles: v.input.deletedFiles
-                    }
+      Result.bind('diskSyncRepoOutput', v =>
+        this.rpcService.sendToDisk({
+          request:
+            v.input.direction === 'to-server'
+              ? {
+                  operation: 'syncRepo',
+                  traceId: v.traceId,
+                  input: {
+                    direction: 'to-server',
+                    baseProject: this.tabService.projectTabToBaseProject({
+                      project: v.project
+                    }),
+                    repoId: v.repoId,
+                    branch: v.branchId,
+                    lastCommit: v.lastCommit,
+                    getRepo: v.getRepo,
+                    getRepoNodes: v.getRepoNodes,
+                    changedFiles: v.input.changedFiles,
+                    deletedFiles: v.input.deletedFiles
                   }
-                : {
-                    operation: 'syncRepo',
-                    traceId: v.traceId,
-                    input: {
-                      direction: 'from-server',
-                      baseProject: this.tabService.projectTabToBaseProject({
-                        project: v.project
-                      }),
-                      repoId: v.repoId,
-                      branch: v.branchId,
-                      lastCommit: v.lastCommit,
-                      getRepo: v.getRepo,
-                      getRepoNodes: v.getRepoNodes
-                    }
+                }
+              : {
+                  operation: 'syncRepo',
+                  traceId: v.traceId,
+                  input: {
+                    direction: 'from-server',
+                    baseProject: this.tabService.projectTabToBaseProject({
+                      project: v.project
+                    }),
+                    repoId: v.repoId,
+                    branch: v.branchId,
+                    lastCommit: v.lastCommit,
+                    getRepo: v.getRepo,
+                    getRepoNodes: v.getRepoNodes
                   }
-          })
+                }
+        })
       ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId)
-            )
-          })
+      Result.bind('branchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.blockmlService.rebuildBranchBridges({
@@ -211,20 +180,14 @@ export class SyncRepoController {
           }
         })
       ),
-      Result.bind(
-        'currentBridge',
-        (v): Result.Result<BridgeTab, never> =>
-          Result.succeed(
-            v.branchBridges.find(bridge => bridge.envId === v.envId)
-          )
+      Result.bind('currentBridge', v =>
+        Result.succeed(v.branchBridges.find(bridge => bridge.envId === v.envId))
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.currentBridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.currentBridge.structId,
+          projectId: v.projectId
+        })
       ),
       Result.map((v): ToBackendSyncRepoOutput => {
         let basePayload = {

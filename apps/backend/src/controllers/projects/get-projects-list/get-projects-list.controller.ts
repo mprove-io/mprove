@@ -8,7 +8,6 @@ import {
 } from '#backend/controllers/projects/get-projects-list/get-projects-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  MemberTab,
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -18,8 +17,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';
 
@@ -49,29 +46,23 @@ export class GetProjectsListController {
         orgId: body.input.orgId,
         userId: user.userId
       }),
-      Result.bind(
-        'userMembers',
-        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          this.db.members.findMany({
-            where: eq(membersTable.memberId, v.userId)
-          })
+      Result.bind('userMembers', v =>
+        this.db.members.findMany({
+          where: eq(membersTable.memberId, v.userId)
+        })
       ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.userMembers.map(userMember => userMember.projectId))
+      Result.bind('projectIds', v =>
+        Result.succeed(v.userMembers.map(userMember => userMember.projectId))
       ),
-      Result.bind(
-        'projects',
-        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          v.projectIds.length === 0
-            ? Result.succeed([])
-            : this.db.projects.findMany({
-                where: and(
-                  inArray(projectsTable.projectId, v.projectIds),
-                  eq(projectsTable.orgId, v.orgId)
-                )
-              })
+      Result.bind('projects', async v =>
+        v.projectIds.length === 0
+          ? Result.succeed<ProjectTab[]>([])
+          : this.db.projects.findMany({
+              where: and(
+                inArray(projectsTable.projectId, v.projectIds),
+                eq(projectsTable.orgId, v.orgId)
+              )
+            })
       ),
       Result.map(
         (v): ToBackendGetProjectsListOutput => ({

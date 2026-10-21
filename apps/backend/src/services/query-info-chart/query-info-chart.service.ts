@@ -3,19 +3,15 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
-  ChartTab,
   MconfigTab,
   MemberTab,
-  ModelTab,
   ProjectTab,
   QueryTab,
-  StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import type { ChartOrModelAccess } from '#backend/services/db/charts/charts.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
 import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
@@ -28,17 +24,10 @@ import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.serv
 import { MalloyService } from '#backend/services/malloy/malloy.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { CheckChartOrModelAccessError } from '#common/types/backend/function-errors/check-chart-or-model-access-error';
-import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
-import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
-import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
-import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
 import type { GetChartDataError } from '#common/types/backend/function-errors/get-chart-data-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
-import type { Member } from '#common/types/backend/parts/member';
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
 import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
 
@@ -82,74 +71,58 @@ export class QueryInfoChartService {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'chart',
-        (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
-          this.chartsService.getChartCheckExists({
-            structId: v.structId,
-            chartId: v.chartId,
-            userMember: v.userMember,
-            user: v.user
-          })
+      Result.bind('chart', v =>
+        this.chartsService.getChartCheckExists({
+          structId: v.structId,
+          chartId: v.chartId,
+          userMember: v.userMember,
+          user: v.user
+        })
       ),
-      Result.bind(
-        'chartMconfig',
-        (
-          v
-        ): Result.ResultAsync<
-          MconfigTab,
-          DbMconfigsFindFirstCheckExistsError
-        > =>
-          this.db.mconfigs.findFirstCheckExists({
-            where: and(
-              eq(mconfigsTable.mconfigId, v.chart.tiles[0].mconfigId),
-              eq(mconfigsTable.structId, v.structId)
-            )
-          })
+      Result.bind('chartMconfig', v =>
+        this.db.mconfigs.findFirstCheckExists({
+          where: and(
+            eq(mconfigsTable.mconfigId, v.chart.tiles[0].mconfigId),
+            eq(mconfigsTable.structId, v.structId)
+          )
+        })
       ),
-      Result.bind(
-        'model',
-        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
-          this.db.models.findFirstCheckExists({
-            where: and(
-              eq(modelsTable.structId, v.structId),
-              eq(modelsTable.modelId, v.chartMconfig.modelId)
-            )
-          })
+      Result.bind('model', v =>
+        this.db.models.findFirstCheckExists({
+          where: and(
+            eq(modelsTable.structId, v.structId),
+            eq(modelsTable.modelId, v.chartMconfig.modelId)
+          )
+        })
       ),
-      Result.bind(
-        'chartOrModelAccess',
-        (v): Result.Result<ChartOrModelAccess, CheckChartOrModelAccessError> =>
-          this.chartsService.checkChartOrModelAccess({
-            chart: v.chart,
-            model: v.model,
-            userMember: v.userMember
-          })
+      Result.bind('chartOrModelAccess', v =>
+        this.chartsService.checkChartOrModelAccess({
+          chart: v.chart,
+          model: v.model,
+          userMember: v.userMember
+        })
       ),
-      Result.bind(
-        'prepareQueryPayload',
-        (v): Result.Result<PrepareQueryPayload, never> => {
-          let newMconfig: MconfigTab;
+      Result.bind('prepareQueryPayload', v => {
+        let newMconfig: MconfigTab;
 
-          let newQuery: QueryTab;
+        let newQuery: QueryTab;
 
-          let isError: boolean = false;
+        let isError: boolean = false;
 
-          return Result.succeed({
-            newMconfig: newMconfig,
-            newQuery: newQuery,
-            isError: isError
-          });
-        }
-      ),
+        let prepareQueryPayload: PrepareQueryPayload = {
+          newMconfig: newMconfig,
+          newQuery: newQuery,
+          isError: isError
+        };
+
+        return Result.succeed(prepareQueryPayload);
+      }),
       Result.andThrough(async v => {
         if (v.model.type === 'Store') {
           v.chartMconfig.timezone = v.timezone;
@@ -248,24 +221,19 @@ export class QueryInfoChartService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'query',
-        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
-          this.db.queries.findFirst({
-            where: and(
-              eq(queriesTable.queryId, v.prepareQueryPayload.newQuery.queryId),
-              eq(
-                queriesTable.projectId,
-                v.prepareQueryPayload.newQuery.projectId
-              )
-            )
-          })
+      Result.bind('query', v =>
+        this.db.queries.findFirst({
+          where: and(
+            eq(queriesTable.queryId, v.prepareQueryPayload.newQuery.queryId),
+            eq(queriesTable.projectId, v.prepareQueryPayload.newQuery.projectId)
+          )
+        })
       ),
       Result.andThrough(v => {
         v.chart.tiles[0].mconfigId = v.prepareQueryPayload.newMconfig.mconfigId;
         v.chart.tiles[0].queryId = v.prepareQueryPayload.newMconfig.queryId;
 
-        return Result.succeed({});
+        return Result.succeed();
       }),
       Result.andThrough(async v => {
         if (v.skipUi === false) {
@@ -287,10 +255,8 @@ export class QueryInfoChartService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
       Result.map(
         (v): ToBackendGetChartOutput => ({

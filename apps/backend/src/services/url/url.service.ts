@@ -5,7 +5,6 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { checkApiHostname } from '#backend/services/url/check-api-hostname/check-api-hostname';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { BackendApiInvalidUrlError } from '#common/types/backend/errors/backend-api-invalid-url-error';
 import type { CheckApiUrlError } from '#common/types/backend/function-errors/check-api-url-error';
 import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
@@ -41,12 +40,11 @@ export class UrlService {
   }): Result.ResultAsync<void, CheckApiUrlError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'parsedUrl',
-        (v): Result.Result<URL, BackendApiInvalidUrlError> =>
-          Result.try({
-            try: () => new URL(v.urlStr),
-            catch: error => ({
+      Result.bind('parsedUrl', v =>
+        Result.try({
+          try: () => new URL(v.urlStr),
+          catch: error =>
+            ({
               code: 'BACKEND_API_INVALID_URL',
               displayData: { url: v.urlStr },
               customData: isDefined(error)
@@ -55,8 +53,8 @@ export class UrlService {
                       error instanceof Error ? wrapError(error) : error
                   }
                 : undefined
-            })
-          })
+            }) satisfies CheckApiUrlError
+        })
       ),
       Result.andThrough(v =>
         v.parsedUrl.protocol !== 'https:' && v.parsedUrl.protocol !== 'http:'
@@ -66,10 +64,8 @@ export class UrlService {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'hostnameLowerCase',
-        (v): Result.Result<string, never> =>
-          Result.succeed(v.parsedUrl.hostname.toLowerCase())
+      Result.bind('hostnameLowerCase', v =>
+        Result.succeed(v.parsedUrl.hostname.toLowerCase())
       ),
       Result.andThrough(v =>
         this.blockHostsLowerCase.some(

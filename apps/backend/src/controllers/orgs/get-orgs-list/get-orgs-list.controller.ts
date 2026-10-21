@@ -7,12 +7,7 @@ import {
   ToBackendGetOrgsListResponseDto
 } from '#backend/controllers/orgs/get-orgs-list/get-orgs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  OrgTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -20,9 +15,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgsListOutput } from '#common/types/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
 
@@ -51,49 +43,37 @@ export class GetOrgsListController {
       Result.succeed({
         userId: user.userId
       }),
-      Result.bind(
-        'userMembers',
-        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          this.db.members.findMany({
-            where: eq(membersTable.memberId, v.userId)
-          })
+      Result.bind('userMembers', v =>
+        this.db.members.findMany({
+          where: eq(membersTable.memberId, v.userId)
+        })
       ),
-      Result.bind(
-        'userProjectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.userMembers.map(userMember => userMember.projectId))
+      Result.bind('userProjectIds', v =>
+        Result.succeed(v.userMembers.map(userMember => userMember.projectId))
       ),
-      Result.bind(
-        'userProjects',
-        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          v.userProjectIds.length === 0
-            ? Result.succeed([])
-            : this.db.projects.findMany({
-                where: inArray(projectsTable.projectId, v.userProjectIds)
-              })
+      Result.bind('userProjects', async v =>
+        v.userProjectIds.length === 0
+          ? Result.succeed([])
+          : this.db.projects.findMany({
+              where: inArray(projectsTable.projectId, v.userProjectIds)
+            })
       ),
-      Result.bind(
-        'userOrgIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.userProjects.map(userProject => userProject.orgId))
+      Result.bind('userOrgIds', v =>
+        Result.succeed(v.userProjects.map(userProject => userProject.orgId))
       ),
-      Result.bind(
-        'userOrgs',
-        async (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
-          v.userOrgIds.length === 0
-            ? Result.succeed([])
-            : this.db.orgs.findMany({
-                where: inArray(orgsTable.orgId, v.userOrgIds)
-              })
+      Result.bind('userOrgs', async v =>
+        v.userOrgIds.length === 0
+          ? Result.succeed([])
+          : this.db.orgs.findMany({
+              where: inArray(orgsTable.orgId, v.userOrgIds)
+            })
       ),
-      Result.bind(
-        'ownerOrgs',
-        (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
-          this.db.orgs.findMany({
-            where: eq(orgsTable.ownerId, v.userId)
-          })
+      Result.bind('ownerOrgs', v =>
+        this.db.orgs.findMany({
+          where: eq(orgsTable.ownerId, v.userId)
+        })
       ),
-      Result.bind('orgs', (v): Result.Result<OrgTab[], never> => {
+      Result.bind('orgs', v => {
         let orgs: OrgTab[] = [...v.userOrgs];
 
         v.ownerOrgs.forEach(ownerOrg => {

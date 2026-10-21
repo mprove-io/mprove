@@ -12,11 +12,8 @@ import {
 } from '#backend/controllers/queries/cancel-queries/cancel-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  BranchTab,
-  BridgeTab,
   ConnectionTab,
   MconfigTab,
-  MemberTab,
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -40,15 +37,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendConnectionDoesNotExistError } from '#common/types/backend/errors/backend-connection-does-not-exist-error';
 import type { CancelQueryError } from '#common/types/backend/function-errors/cancel-query-error';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
-import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCancelQueriesOutput } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-output';
@@ -102,30 +91,22 @@ export class CancelQueriesController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -134,19 +115,15 @@ export class CancelQueriesController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.structsService.getStructCheckExists({
@@ -154,20 +131,16 @@ export class CancelQueriesController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'mconfigs',
-        (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
-          this.db.mconfigs.findMany({
-            where: and(
-              eq(mconfigsTable.structId, v.bridge.structId),
-              inArray(mconfigsTable.mconfigId, v.mconfigIds)
-            )
-          })
+      Result.bind('mconfigs', v =>
+        this.db.mconfigs.findMany({
+          where: and(
+            eq(mconfigsTable.structId, v.bridge.structId),
+            inArray(mconfigsTable.mconfigId, v.mconfigIds)
+          )
+        })
       ),
-      Result.bind(
-        'uniqueParentIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.mconfigs.map(x => x.parentId))])
+      Result.bind('uniqueParentIds', v =>
+        Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.parentId))])
       ),
       Result.andThrough(v =>
         Result.sequence(v.uniqueParentIds, parentId => {
@@ -186,36 +159,25 @@ export class CancelQueriesController {
           });
         })
       ),
-      Result.bind(
-        'queryIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.mconfigs.map(x => x.queryId))])
+      Result.bind('queryIds', v =>
+        Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.queryId))])
       ),
-      Result.bind(
-        'queries',
-        (
-          v
-        ): Result.ResultAsync<
-          QueryTab[],
-          GetQueriesCheckExistSkipSqlDataError
-        > =>
-          this.queriesService.getQueriesCheckExistSkipSqlData({
-            queryIds: v.queryIds,
-            projectId: v.projectId
-          })
+      Result.bind('queries', v =>
+        this.queriesService.getQueriesCheckExistSkipSqlData({
+          queryIds: v.queryIds,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'connectionsWithAnyEnvId',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: and(
-              eq(connectionsTable.projectId, v.projectId),
-              inArray(
-                connectionsTable.connectionId,
-                v.queries.map(q => q.connectionId)
-              )
+      Result.bind('connectionsWithAnyEnvId', v =>
+        this.db.connections.findMany({
+          where: and(
+            eq(connectionsTable.projectId, v.projectId),
+            inArray(
+              connectionsTable.connectionId,
+              v.queries.map(q => q.connectionId)
             )
-          })
+          )
+        })
       ),
       Result.andThrough(v =>
         customAsyncPool({
@@ -228,10 +190,8 @@ export class CancelQueriesController {
             })
         })
       ),
-      Result.bind(
-        'canceledQueries',
-        (v): Result.Result<QueryTab[], never> =>
-          Result.succeed(v.queries.filter(x => x.status === 'Canceled'))
+      Result.bind('canceledQueries', v =>
+        Result.succeed(v.queries.filter(x => x.status === 'Canceled'))
       ),
       Result.andThrough(v =>
         v.canceledQueries.length === 0
@@ -256,32 +216,25 @@ export class CancelQueriesController {
   }): Result.ResultAsync<void, CancelQueryError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.query.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.query.projectId })
       ),
-      Result.bind(
-        'connection',
-        (
-          v
-        ): Result.Result<ConnectionTab, BackendConnectionDoesNotExistError> => {
-          let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);
+      Result.bind('connection', v => {
+        let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);
 
-          let connection: ConnectionTab = v.connectionsWithAnyEnvId.find(
-            x =>
-              x.connectionId === v.query.connectionId &&
-              x.envId ===
-                (apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
-                  ? PROJECT_ENV_PROD
-                  : v.query.envId)
-          );
+        let connection: ConnectionTab = v.connectionsWithAnyEnvId.find(
+          x =>
+            x.connectionId === v.query.connectionId &&
+            x.envId ===
+              (apiEnv.fallbackConnectionIds.includes(v.query.connectionId)
+                ? PROJECT_ENV_PROD
+                : v.query.envId)
+        );
 
-          return isUndefined(connection)
-            ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
-            : Result.succeed(connection);
-        }
-      ),
+        return isUndefined(connection)
+          ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
+          : Result.succeed(connection);
+      }),
       Result.andThrough(v => {
         if (v.connection.type === 'BigQuery') {
           let bigquery: BigQuery = new BigQuery({

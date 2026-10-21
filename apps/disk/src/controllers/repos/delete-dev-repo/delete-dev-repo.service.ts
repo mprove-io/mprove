@@ -58,11 +58,7 @@ export class DeleteDevRepoService {
           projectLt: v.projectLt
         })
       ),
-      Result.bind(
-        'isDevRepoExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.devRepoDir })
-      ),
+      Result.bind('isDevRepoExist', v => isPathExist({ path: v.devRepoDir })),
       Result.andThrough(v =>
         v.isDevRepoExist === true
           ? removePath({ path: v.devRepoDir })

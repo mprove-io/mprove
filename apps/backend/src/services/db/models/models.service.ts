@@ -15,10 +15,8 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
 import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
 import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
-import type { ModelEntToTabError } from '#common/types/backend/function-errors/model-ent-to-tab-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ModelPart } from '#common/types/backend/parts/model/model-part';
 import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
@@ -142,15 +140,13 @@ export class ModelsService {
           ? Result.fail({ code: 'BACKEND_MODEL_ID_IS_NOT_DEFINED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'model',
-        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
-          this.db.models.findFirstCheckExists({
-            where: and(
-              eq(modelsTable.structId, v.structId),
-              eq(modelsTable.modelId, v.modelId)
-            )
-          })
+      Result.bind('model', v =>
+        this.db.models.findFirstCheckExists({
+          where: and(
+            eq(modelsTable.structId, v.structId),
+            eq(modelsTable.modelId, v.modelId)
+          )
+        })
       ),
       Result.andThrough(v =>
         checkModelAccess({
@@ -170,24 +166,22 @@ export class ModelsService {
   }): Result.ResultAsync<ModelPartX[], GetModelPartXsError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'models',
-        (v): Result.ResultAsync<ModelTab[], ModelEntToTabError> =>
-          this.db.drizzle
-            .select({
-              keyTag: modelsTable.keyTag,
-              modelId: modelsTable.modelId,
-              st: modelsTable.st
-            })
-            .from(modelsTable)
-            .where(and(eq(modelsTable.structId, v.structId)))
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.modelEntToTab({
-                  modelEnt: x as ModelEnt
-                })
-              )
+      Result.bind('models', v =>
+        this.db.drizzle
+          .select({
+            keyTag: modelsTable.keyTag,
+            modelId: modelsTable.modelId,
+            st: modelsTable.st
+          })
+          .from(modelsTable)
+          .where(and(eq(modelsTable.structId, v.structId)))
+          .then(xs =>
+            Result.sequence(xs, x =>
+              this.tabService.modelEntToTab({
+                modelEnt: x as ModelEnt
+              })
             )
+          )
       ),
       Result.map((v): ModelPartX[] =>
         v.models.map(model => {

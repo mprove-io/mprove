@@ -24,8 +24,6 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { DbReportsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/reports/db-reports-find-first-check-exists-error';
-import type { DbReportsFindManyError } from '#common/types/backend/function-errors/db/reports/db-reports-find-many-error';
 import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
 import type { GetReportsCatalogError } from '#common/types/backend/function-errors/get-reports-catalog-error';
 import type { Member } from '#common/types/backend/parts/member';
@@ -33,7 +31,6 @@ import type { ModelX } from '#common/types/backend/parts/model/model-x';
 import type { ReportUnit } from '#common/types/backend/parts/report/report-unit';
 import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { SpaceNode } from '#common/types/backend/parts/space-node';
-import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 import type { Fraction } from '#common/types/blockml/parts/fraction/fraction';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
 import type { Column } from '#common/types/blockml/parts/report/column';
@@ -68,116 +65,96 @@ export class ReportsService {
   }): Result.ResultAsync<ReportsCatalog, GetReportsCatalogError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'reports',
-        (v): Result.ResultAsync<ReportTab[], DbReportsFindManyError> =>
-          this.db.reports.findMany({
-            where: and(
-              eq(reportsTable.structId, v.structId),
-              or(
-                eq(reportsTable.draft, false),
-                and(
-                  eq(reportsTable.draft, true),
-                  eq(reportsTable.creatorId, v.user.userId)
-                )
+      Result.bind('reports', v =>
+        this.db.reports.findMany({
+          where: and(
+            eq(reportsTable.structId, v.structId),
+            or(
+              eq(reportsTable.draft, false),
+              and(
+                eq(reportsTable.draft, true),
+                eq(reportsTable.creatorId, v.user.userId)
               )
             )
+          )
+        })
+      ),
+      Result.bind('draftReports', v =>
+        Result.succeed(v.reports.filter(report => report.draft === true))
+      ),
+      Result.bind('savedReports', v =>
+        Result.succeed(v.reports.filter(report => report.draft === false))
+      ),
+      Result.bind('reportsGrantedAccess', v =>
+        Result.succeed(
+          v.savedReports.filter(report =>
+            checkAccess({
+              member: v.userMember,
+              accessRoles: report.accessRolesCombined,
+              filePath: report.filePath
+            })
+          )
+        )
+      ),
+      Result.bind('sortedDraftReports', v =>
+        Result.succeed(
+          v.draftReports
+            .sort((a, b) =>
+              a.draftCreatedTs > b.draftCreatedTs
+                ? 1
+                : b.draftCreatedTs > a.draftCreatedTs
+                  ? -1
+                  : 0
+            )
+            .reverse()
+        )
+      ),
+      Result.bind('sortedNonDraftReports', v =>
+        Result.succeed(
+          v.reportsGrantedAccess.sort((a, b) => {
+            let aTitle: string =
+              a.title.toLowerCase() || a.reportId.toLowerCase();
+
+            let bTitle: string =
+              b.title.toLowerCase() || b.reportId.toLowerCase();
+
+            return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
           })
+        )
       ),
-      Result.bind(
-        'draftReports',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed(v.reports.filter(report => report.draft === true))
+      Result.bind('reportTargetIds', v =>
+        Result.succeed(v.sortedNonDraftReports.map(report => report.reportId))
       ),
-      Result.bind(
-        'savedReports',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed(v.reports.filter(report => report.draft === false))
+      Result.bind('favoriteReportIds', v =>
+        this.favoritesService
+          .getFavoriteTargetIds({
+            projectId: v.projectId,
+            userId: v.user.userId,
+            type: 'Report',
+            targetIds: v.reportTargetIds
+          })
+          .then(ids => Result.succeed(ids))
       ),
-      Result.bind(
-        'reportsGrantedAccess',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed(
-            v.savedReports.filter(report =>
-              checkAccess({
-                member: v.userMember,
-                accessRoles: report.accessRolesCombined,
-                filePath: report.filePath
-              })
-            )
-          )
-      ),
-      Result.bind(
-        'sortedDraftReports',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed(
-            v.draftReports
-              .sort((a, b) =>
-                a.draftCreatedTs > b.draftCreatedTs
-                  ? 1
-                  : b.draftCreatedTs > a.draftCreatedTs
-                    ? -1
-                    : 0
-              )
-              .reverse()
-          )
-      ),
-      Result.bind(
-        'sortedNonDraftReports',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed(
-            v.reportsGrantedAccess.sort((a, b) => {
-              let aTitle: string =
-                a.title.toLowerCase() || a.reportId.toLowerCase();
-
-              let bTitle: string =
-                b.title.toLowerCase() || b.reportId.toLowerCase();
-
-              return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-            })
-          )
-      ),
-      Result.bind(
-        'reportTargetIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.sortedNonDraftReports.map(report => report.reportId))
-      ),
-      Result.bind(
-        'favoriteReportIds',
-        (v): Result.ResultAsync<string[], never> =>
-          this.favoritesService
-            .getFavoriteTargetIds({
-              projectId: v.projectId,
-              userId: v.user.userId,
-              type: 'Report',
-              targetIds: v.reportTargetIds
-            })
-            .then(ids => Result.succeed(ids))
-      ),
-      Result.bind(
-        'reportSpaceUnits',
-        (v): Result.Result<SpaceUnit[], never> =>
-          Result.succeed(
-            v.sortedNonDraftReports.map(report =>
-              this.unitsService.makeReportSpaceUnit({
-                report: report,
-                member: v.apiUserMember,
-                favoriteReportIds: v.favoriteReportIds
-              })
-            )
-          )
-      ),
-      Result.bind(
-        'reportSpaceNodes',
-        (v): Result.Result<SpaceNode[], never> =>
-          Result.succeed(
-            this.spaceService.makeSpaceNodes({
-              spaces: v.spaces ?? [],
-              units: v.reportSpaceUnits,
+      Result.bind('reportSpaceUnits', v =>
+        Result.succeed(
+          v.sortedNonDraftReports.map(report =>
+            this.unitsService.makeReportSpaceUnit({
+              report: report,
               member: v.apiUserMember,
-              mySpaceTitle: MY_REPORTS_SPACE_TITLE
+              favoriteReportIds: v.favoriteReportIds
             })
           )
+        )
+      ),
+      Result.bind('reportSpaceNodes', v =>
+        Result.succeed(
+          this.spaceService.makeSpaceNodes({
+            spaces: v.spaces ?? [],
+            units: v.reportSpaceUnits,
+            member: v.apiUserMember,
+            mySpaceTitle: MY_REPORTS_SPACE_TITLE
+          })
+        )
       ),
       Result.map(
         (v): ReportsCatalog => ({
@@ -405,46 +382,38 @@ export class ReportsService {
   }): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'report',
-        async (
-          v
-        ): Result.ResultAsync<
-          ReportTab,
-          DbReportsFindFirstCheckExistsError
-        > => {
-          let chart: MconfigChart = makeCopy(DEFAULT_CHART);
+      Result.bind('report', async v => {
+        let chart: MconfigChart = makeCopy(DEFAULT_CHART);
 
-          chart.type = 'line';
+        chart.type = 'line';
 
-          let emptyReport: ReportTab = this.makeReport({
-            structId: undefined,
-            reportId: v.reportId,
-            projectId: v.projectId,
-            creatorId: undefined,
-            filePath: undefined,
-            space: undefined,
-            accessRoles: [],
-            title: v.reportId,
-            fields: [],
-            rows: [],
-            chart: chart,
-            draft: false
-          });
+        let emptyReport: ReportTab = this.makeReport({
+          structId: undefined,
+          reportId: v.reportId,
+          projectId: v.projectId,
+          creatorId: undefined,
+          filePath: undefined,
+          space: undefined,
+          accessRoles: [],
+          title: v.reportId,
+          fields: [],
+          rows: [],
+          chart: chart,
+          draft: false
+        });
 
-          if (v.reportId === EMPTY_REPORT_ID) {
-            return Result.succeed(emptyReport);
-          }
-
-          return this.db.reports.findFirstCheckExists({
-            where: and(
-              eq(reportsTable.projectId, v.projectId),
-              eq(reportsTable.structId, v.structId),
-              eq(reportsTable.reportId, v.reportId)
-            )
-          });
+        if (v.reportId === EMPTY_REPORT_ID) {
+          return Result.succeed(emptyReport);
         }
-      ),
+
+        return this.db.reports.findFirstCheckExists({
+          where: and(
+            eq(reportsTable.projectId, v.projectId),
+            eq(reportsTable.structId, v.structId),
+            eq(reportsTable.reportId, v.reportId)
+          )
+        });
+      }),
       Result.andThrough(v =>
         v.reportId !== EMPTY_REPORT_ID &&
         v.report.draft === true &&

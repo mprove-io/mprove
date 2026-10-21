@@ -8,9 +8,7 @@ import {
 } from '#backend/controllers/users/get-org-users/get-org-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  AvatarTab,
   MemberTab,
-  OrgTab,
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -28,16 +26,9 @@ import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
-import type { DbUsersFindManyError } from '#common/types/backend/function-errors/db/users/db-users-find-many-error';
 import type { OrgUsersItem } from '#common/types/backend/parts/org-users/org-users-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-output';
-
-type MemberPart = { memberId: string };
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -68,12 +59,10 @@ export class GetOrgUsersController {
         perPage: body.input.perPage,
         pageNum: body.input.pageNum
       }),
-      Result.bind(
-        'org',
-        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
-          this.db.orgs.findFirstCheckExists({
-            where: eq(orgsTable.orgId, v.orgId)
-          })
+      Result.bind('org', v =>
+        this.db.orgs.findFirstCheckExists({
+          where: eq(orgsTable.orgId, v.orgId)
+        })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -81,40 +70,30 @@ export class GetOrgUsersController {
           userId: v.user.userId
         })
       ),
-      Result.bind(
-        'projects',
-        (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          this.db.projects.findMany({
-            where: eq(projectsTable.orgId, v.orgId)
+      Result.bind('projects', v =>
+        this.db.projects.findMany({
+          where: eq(projectsTable.orgId, v.orgId)
+        })
+      ),
+      Result.bind('projectIds', v =>
+        Result.succeed(v.projects.map(project => project.projectId))
+      ),
+      Result.bind('memberParts', v =>
+        this.db.drizzle
+          .select({
+            memberId: sql<string>`DISTINCT ${membersTable.memberId}`
           })
+          .from(membersTable)
+          .where(inArray(membersTable.projectId, v.projectIds))
+          .then(xs => Result.succeed(xs))
       ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.projects.map(project => project.projectId))
+      Result.bind('userIds', v =>
+        Result.succeed(v.memberParts.map(memberPart => memberPart.memberId))
       ),
-      Result.bind(
-        'memberParts',
-        (v): Result.ResultAsync<MemberPart[], never> =>
-          this.db.drizzle
-            .select({
-              memberId: sql<string>`DISTINCT ${membersTable.memberId}`
-            })
-            .from(membersTable)
-            .where(inArray(membersTable.projectId, v.projectIds))
-            .then(xs => Result.succeed(xs))
-      ),
-      Result.bind(
-        'userIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.memberParts.map(memberPart => memberPart.memberId))
-      ),
-      Result.bind(
-        'sortedUsers',
-        (v): Result.ResultAsync<UserTab[], DbUsersFindManyError> =>
-          this.db.users.findMany({
-            where: and(inArray(usersTable.userId, v.userIds))
-          })
+      Result.bind('sortedUsers', v =>
+        this.db.users.findMany({
+          where: and(inArray(usersTable.userId, v.userIds))
+        })
       ),
       Result.map(v => {
         v.sortedUsers.sort((a, b) =>
@@ -123,43 +102,39 @@ export class GetOrgUsersController {
 
         return v;
       }),
-      Result.bind('users', (v): Result.Result<UserTab[], never> => {
+      Result.bind('users', v => {
         let offset: number = (v.pageNum - 1) * v.perPage;
 
         return Result.succeed(v.sortedUsers.slice(offset, offset + v.perPage));
       }),
-      Result.bind(
-        'members',
-        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          v.userIds.length === 0
-            ? Result.succeed([])
-            : this.db.members.findMany({
-                where: and(
-                  inArray(membersTable.memberId, v.userIds),
-                  inArray(membersTable.projectId, v.projectIds)
-                )
-              })
+      Result.bind('members', async v =>
+        v.userIds.length === 0
+          ? Result.succeed([])
+          : this.db.members.findMany({
+              where: and(
+                inArray(membersTable.memberId, v.userIds),
+                inArray(membersTable.projectId, v.projectIds)
+              )
+            })
       ),
-      Result.bind(
-        'avatars',
-        async (v): Result.ResultAsync<AvatarTab[], AvatarEntToTabError> =>
-          v.userIds.length === 0
-            ? Result.succeed([])
-            : this.db.drizzle
-                .select({
-                  keyTag: avatarsTable.keyTag,
-                  userId: avatarsTable.userId,
-                  st: avatarsTable.st
-                })
-                .from(avatarsTable)
-                .where(inArray(avatarsTable.userId, v.userIds))
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.avatarEntToTab({
-                      avatarEnt: x as AvatarEnt
-                    })
-                  )
+      Result.bind('avatars', async v =>
+        v.userIds.length === 0
+          ? Result.succeed([])
+          : this.db.drizzle
+              .select({
+                keyTag: avatarsTable.keyTag,
+                userId: avatarsTable.userId,
+                st: avatarsTable.st
+              })
+              .from(avatarsTable)
+              .where(inArray(avatarsTable.userId, v.userIds))
+              .then(xs =>
+                Result.sequence(xs, x =>
+                  this.tabService.avatarEntToTab({
+                    avatarEnt: x as AvatarEnt
+                  })
                 )
+              )
       ),
       Result.map((v): ToBackendGetOrgUsersOutput => {
         let orgUserItems: OrgUsersItem[] = v.users.map(user => {

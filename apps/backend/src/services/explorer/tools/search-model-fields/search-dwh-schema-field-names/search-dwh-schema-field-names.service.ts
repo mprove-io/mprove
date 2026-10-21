@@ -9,10 +9,8 @@ import {
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import { DbService } from '#backend/services/db/db.service';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
-import type { GetConnectionSchemasError } from '#common/types/backend/function-errors/get-connection-schemas-error';
 import type { SearchDwhSchemaFieldNamesError } from '#common/types/backend/function-errors/search-dwh-schema-field-names-error';
 import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
-import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 
 type DwhFieldNameMatch = {
   searchFieldName: string;
@@ -92,47 +90,36 @@ export class SearchDwhSchemaFieldNamesService {
 
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'schemaOutput',
-        (
-          v
-        ): Result.ResultAsync<
-          ToBackendGetConnectionSchemasOutput,
-          GetConnectionSchemasError
-        > =>
-          this.getConnectionSchemasService.getConnectionSchemas({
-            userId: v.userId,
-            projectId: v.projectId,
-            envId: v.envId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            isRefreshExistingCache: false
+      Result.bind('schemaOutput', v =>
+        this.getConnectionSchemasService.getConnectionSchemas({
+          userId: v.userId,
+          projectId: v.projectId,
+          envId: v.envId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          isRefreshExistingCache: false
+        })
+      ),
+      Result.bind('dwhMatches', v =>
+        Result.succeed(
+          this.findDwhMatches({
+            combinedSchemaItems: v.schemaOutput.combinedSchemaItems,
+            searchFieldNames: v.searchFieldNames
           })
+        )
       ),
-      Result.bind(
-        'dwhMatches',
-        (v): Result.Result<DwhFieldNameMatch[], never> =>
-          Result.succeed(
-            this.findDwhMatches({
-              combinedSchemaItems: v.schemaOutput.combinedSchemaItems,
-              searchFieldNames: v.searchFieldNames
-            })
-          )
-      ),
-      Result.bind(
-        'leafEnts',
-        async (v): Result.ResultAsync<ModelFieldLeafEnt[], never> =>
-          v.dwhMatches.length === 0
-            ? Result.succeed([])
-            : this.db.drizzle.query.modelFieldLeafsTable
-                .findMany({
-                  where: and(
-                    eq(modelFieldLeafsTable.structId, v.structId),
-                    eq(modelFieldLeafsTable.modelType, 'Malloy'),
-                    inArray(modelFieldLeafsTable.modelId, v.modelIds)
-                  )
-                })
-                .then(xs => Result.succeed(xs))
+      Result.bind('leafEnts', async v =>
+        v.dwhMatches.length === 0
+          ? Result.succeed<ModelFieldLeafEnt[]>([])
+          : this.db.drizzle.query.modelFieldLeafsTable
+              .findMany({
+                where: and(
+                  eq(modelFieldLeafsTable.structId, v.structId),
+                  eq(modelFieldLeafsTable.modelType, 'Malloy'),
+                  inArray(modelFieldLeafsTable.modelId, v.modelIds)
+                )
+              })
+              .then(xs => Result.succeed(xs))
       ),
       Result.map((v): SearchFieldMatch[] =>
         this.mapDwhMatchesToLeafs({

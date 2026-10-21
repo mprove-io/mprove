@@ -8,8 +8,6 @@ import type { ProjectConnection } from '#common/types/backend/parts/project-conn
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
-import type { File2 } from '#common/types/blockml/parts/internal/file/file-2';
-import type { File3 } from '#common/types/blockml/parts/internal/file/file-3';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
@@ -25,7 +23,7 @@ import { checkTopUnknownParameters } from './check-top-unknown-parameters/check-
 import { checkTopValues } from './check-top-values/check-top-values';
 import { deduplicateFileNames } from './deduplicate-file-names/deduplicate-file-names';
 import { removeWrongExt } from './remove-wrong-ext/remove-wrong-ext';
-import { type SplitFilesOutput, splitFiles } from './split-files/split-files';
+import { splitFiles } from './split-files/split-files';
 
 export type BuildYamlOutput = {
   mods: FileMod[];
@@ -50,121 +48,103 @@ export function buildYaml(item: {
 }): Result.Result<BuildYamlOutput, never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'file2s',
-      (v): Result.Result<File2[], never> =>
-        removeWrongExt({
-          files: v.files,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('file2s', v =>
+      removeWrongExt({
+        files: v.files,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'file3s',
-      (v): Result.Result<File3[], never> =>
-        deduplicateFileNames({
-          file2s: v.file2s,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('file3s', v =>
+      deduplicateFileNames({
+        file2s: v.file2s,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'filesAny',
-      (v): Result.Result<any[], never> =>
-        yamlToObjects({
-          file3s: v.file3s.filter(
-            x =>
-              (
-                [
-                  '.store',
-                  '.schema',
-                  '.report',
-                  '.dashboard',
-                  '.chart',
-                  '.space',
-                  '.yml'
-                ] satisfies FileExtension[]
-              ).findIndex(candidate => candidate === x.ext) > -1
-          ),
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('filesAny', v =>
+      yamlToObjects({
+        file3s: v.file3s.filter(
+          x =>
+            (
+              [
+                '.store',
+                '.schema',
+                '.report',
+                '.dashboard',
+                '.chart',
+                '.space',
+                '.yml'
+              ] satisfies FileExtension[]
+            ).findIndex(candidate => candidate === x.ext) > -1
+        ),
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'numberedFiles',
-      (v): Result.Result<any[], never> =>
-        makeLineNumbers({
-          filesAny: v.filesAny,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('numberedFiles', v =>
+      makeLineNumbers({
+        filesAny: v.filesAny,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'knownFiles',
-      (v): Result.Result<any[], never> =>
-        checkTopUnknownParameters({
-          filesAny: v.numberedFiles,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('knownFiles', v =>
+      checkTopUnknownParameters({
+        filesAny: v.numberedFiles,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'validFiles',
-      (v): Result.Result<any[], never> =>
-        checkTopValues({
-          filesAny: v.knownFiles,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('validFiles', v =>
+      checkTopValues({
+        filesAny: v.knownFiles,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'connectedFiles',
-      (v): Result.Result<any[], never> =>
-        checkConnections({
-          filesAny: v.validFiles,
-          connections: v.connections,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('connectedFiles', v =>
+      checkConnections({
+        filesAny: v.validFiles,
+        connections: v.connections,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'split',
-      (v): Result.Result<SplitFilesOutput, never> =>
-        splitFiles({
-          filesAny: v.connectedFiles,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('split', v =>
+      splitFiles({
+        filesAny: v.connectedFiles,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'projectConfig',
-      (v): Result.Result<FileProjectConf | undefined, never> =>
-        v.isUseCache
-          ? Result.succeed(undefined)
-          : checkProjectConfig({
-              confs: v.split.confs,
-              structId: v.structId,
-              mproveDir: v.mproveDir,
-              errors: v.errors,
-              caller: v.caller,
-              cs: v.cs
-            })
+    Result.bind('projectConfig', v =>
+      v.isUseCache
+        ? Result.succeed(undefined)
+        : checkProjectConfig({
+            confs: v.split.confs,
+            structId: v.structId,
+            mproveDir: v.mproveDir,
+            errors: v.errors,
+            caller: v.caller,
+            cs: v.cs
+          })
     ),
     Result.andThrough(v =>
       v.isUseCache

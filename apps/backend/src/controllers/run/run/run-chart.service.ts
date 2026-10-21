@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import type {
-  ChartTab,
   MemberTab,
   ModelTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -12,8 +11,6 @@ import { checkModelAccess } from '#backend/functions/check-model-access/check-mo
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { DbService } from '#backend/services/db/db.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbChartsFindManyError } from '#common/types/backend/function-errors/db/charts/db-charts-find-many-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import type { PrepareRunChartError } from '#common/types/backend/function-errors/prepare-run-chart-error';
 import type { RunChart } from '#common/types/backend/parts/run/run-chart';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
@@ -53,39 +50,29 @@ export class RunChartService {
   }): Result.ResultAsync<PrepareRunChartOutput, PrepareRunChartError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'charts',
-        (v): Result.ResultAsync<ChartTab[], DbChartsFindManyError> =>
-          this.db.charts.findMany({
-            where: eq(chartsTable.structId, v.structId)
-          })
+      Result.bind('charts', v =>
+        this.db.charts.findMany({
+          where: eq(chartsTable.structId, v.structId)
+        })
       ),
-      Result.bind(
-        'models',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: eq(modelsTable.structId, v.structId)
-          })
+      Result.bind('models', v =>
+        this.db.models.findMany({
+          where: eq(modelsTable.structId, v.structId)
+        })
       ),
-      Result.bind(
-        'chartsGrantedAccess',
-        (v): Result.Result<ChartTab[], never> =>
-          Result.succeed(
-            v.charts.filter(x => {
-              let model: ModelTab = v.models.find(y => y.modelId === x.modelId);
+      Result.bind('chartsGrantedAccess', v =>
+        Result.succeed(
+          v.charts.filter(x => {
+            let model: ModelTab = v.models.find(y => y.modelId === x.modelId);
 
-              return checkModelAccess({
-                member: v.userMember,
-                modelAccessRoles: model.accessRolesCombined
-              });
-            })
-          )
+            return checkModelAccess({
+              member: v.userMember,
+              modelAccessRoles: model.accessRolesCombined
+            });
+          })
+        )
       ),
-      Result.bind(
-        'chartIdsList',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.chartIds?.split(','))
-      ),
+      Result.bind('chartIdsList', v => Result.succeed(v.chartIds?.split(','))),
       Result.andThrough(v =>
         isUndefined(v.chartIdsList)
           ? Result.succeed()

@@ -9,9 +9,7 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CheckGivenDoesNotExistError } from '#common/types/backend/function-errors/check-given-does-not-exist-error';
-import type { DbGivensFindManyError } from '#common/types/backend/function-errors/db/givens/db-givens-find-many-error';
 import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
-import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
 import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
 import type { ValidateGivenValuesError } from '#common/types/backend/function-errors/validate-given-values-error';
 import type { Given } from '#common/types/backend/parts/given/given';
@@ -116,12 +114,10 @@ export class GivensService {
   }): Result.ResultAsync<Given[], GetApiGivensError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'givens',
-        (v): Result.ResultAsync<GivenTab[], DbGivensFindManyError> =>
-          this.db.givens.findMany({
-            where: eq(givensTable.projectId, v.projectId)
-          })
+      Result.bind('givens', v =>
+        this.db.givens.findMany({
+          where: eq(givensTable.projectId, v.projectId)
+        })
       ),
       Result.map((v): Given[] =>
         v.givens
@@ -139,15 +135,11 @@ export class GivensService {
   }): Result.ResultAsync<MemberGiven[], GetMemberGivensForSelectionError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.getApiGivens({ projectId: v.projectId })
+      Result.bind('apiGivens', v =>
+        this.getApiGivens({ projectId: v.projectId })
       ),
-      Result.bind(
-        'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRoles({ projectId: v.projectId })
+      Result.bind('apiRoles', v =>
+        this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.map((v): MemberGiven[] => {
         let memberRoles: Role[] = v.apiRoles.filter(role =>

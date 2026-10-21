@@ -7,10 +7,7 @@ import {
   ToBackendGetRolesResponseDto
 } from '#backend/controllers/roles/get-roles/get-roles.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -19,11 +16,6 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
-import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { Given } from '#common/types/backend/parts/given/given';
-import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
 
@@ -60,27 +52,19 @@ export class GetRolesController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRoles({ projectId: v.projectId })
+      Result.bind('apiRoles', v =>
+        this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
-      Result.bind(
-        'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.givensService.getApiGivens({ projectId: v.projectId })
+      Result.bind('apiGivens', v =>
+        this.givensService.getApiGivens({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetRolesOutput => ({

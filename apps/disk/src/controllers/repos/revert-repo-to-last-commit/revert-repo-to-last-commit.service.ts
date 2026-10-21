@@ -1,13 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
-import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
-import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
-import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import type { ToDiskRevertRepoToLastCommitOutput } from '#common/types/disk/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-output';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -66,36 +60,27 @@ export class RevertRepoToLastCommitService {
         orgPath: orgPath,
         remoteType: remoteType
       }),
-      Result.bind(
-        'keyDir',
-        (
-          v
-        ): Result.ResultAsync<
-          string,
-          DiskCheckRestoreOrgProjectRepoBranchError
-        > =>
-          checkRestoreOrgProjectRepoBranch({
-            remoteType: v.remoteType,
-            orgId: v.orgId,
-            orgPath: v.orgPath,
-            projectId: v.projectId,
-            projectLt: v.projectLt,
-            repoId: v.repoId,
-            branchId: v.branch
-          })
+      Result.bind('keyDir', v =>
+        checkRestoreOrgProjectRepoBranch({
+          remoteType: v.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          projectId: v.projectId,
+          projectLt: v.projectLt,
+          repoId: v.repoId,
+          branchId: v.branch
+        })
       ),
-      Result.bind(
-        'git',
-        (v): Result.ResultAsync<SimpleGit, never> =>
-          createGit({
-            repoDir: v.repoDir,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.gitUrl,
-            privateKeyEncrypted: v.privateKeyEncrypted,
-            publicKey: v.publicKey,
-            passPhrase: v.passPhrase
-          })
+      Result.bind('git', v =>
+        createGit({
+          repoDir: v.repoDir,
+          remoteType: v.remoteType,
+          keyDir: v.keyDir,
+          gitUrl: v.gitUrl,
+          privateKeyEncrypted: v.privateKeyEncrypted,
+          publicKey: v.publicKey,
+          passPhrase: v.passPhrase
+        })
       ),
       Result.andThrough(v =>
         checkoutBranch({
@@ -113,29 +98,25 @@ export class RevertRepoToLastCommitService {
           repoDir: v.repoDir
         })
       ),
-      Result.bind(
-        'repoStatus',
-        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
-          getRepoStatus({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            repoDir: v.repoDir,
-            git: v.git,
-            isFetch: true,
-            isCheckConflicts: true
-          })
+      Result.bind('repoStatus', v =>
+        getRepoStatus({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          git: v.git,
+          isFetch: true,
+          isCheckConflicts: true
+        })
       ),
-      Result.bind(
-        'itemCatalog',
-        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
-          getNodesAndFiles({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            readFiles: true,
-            isRootMproveDir: false
-          })
+      Result.bind('itemCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        })
       ),
       Result.map(
         (v): ToDiskRevertRepoToLastCommitOutput => ({

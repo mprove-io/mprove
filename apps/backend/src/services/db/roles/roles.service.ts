@@ -151,12 +151,10 @@ export class RolesService {
   }): Result.ResultAsync<Role[], GetApiRolesError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'roles',
-        (v): Result.ResultAsync<RoleTab[], DbRolesFindManyError> =>
-          this.db.roles.findMany({
-            where: eq(rolesTable.projectId, v.projectId)
-          })
+      Result.bind('roles', v =>
+        this.db.roles.findMany({
+          where: eq(rolesTable.projectId, v.projectId)
+        })
       ),
       Result.map((v): Role[] =>
         v.roles

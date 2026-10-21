@@ -11,11 +11,7 @@ import {
   ToBackendDeleteOrgResponseDto
 } from '#backend/controllers/orgs/delete-org/delete-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  OrgTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
@@ -33,8 +29,6 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteOrgOutput } from '#common/types/backend/routes/orgs/delete-org/delete-org-output';
 
@@ -70,12 +64,10 @@ export class DeleteOrgController {
         userId: user.userId,
         traceId: body.traceId
       }),
-      Result.bind(
-        'org',
-        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
-          this.db.orgs.findFirstCheckExists({
-            where: eq(orgsTable.orgId, v.orgId)
-          })
+      Result.bind('org', v =>
+        this.db.orgs.findFirstCheckExists({
+          where: eq(orgsTable.orgId, v.orgId)
+        })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -92,17 +84,13 @@ export class DeleteOrgController {
           }
         })
       ),
-      Result.bind(
-        'projects',
-        (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          this.db.projects.findMany({
-            where: eq(projectsTable.orgId, v.orgId)
-          })
+      Result.bind('projects', v =>
+        this.db.projects.findMany({
+          where: eq(projectsTable.orgId, v.orgId)
+        })
       ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.projects.map(project => project.projectId))
+      Result.bind('projectIds', v =>
+        Result.succeed(v.projects.map(project => project.projectId))
       ),
       Result.andThrough(async v => {
         await retry(

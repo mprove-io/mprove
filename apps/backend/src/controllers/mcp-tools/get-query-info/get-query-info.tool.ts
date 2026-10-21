@@ -15,7 +15,6 @@ import {
   MCP_TOOL_GET_QUERY_INFO_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetQueryInfoError } from '#common/types/backend/function-errors/get-query-info-error';
 import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput
@@ -106,30 +105,27 @@ export class GetQueryInfoTool {
             })
           : Result.succeed()
       ),
-      Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<ToBackendGetQueryInfoOutput, GetQueryInfoError> =>
-          this.getQueryInfoService.getQueryInfo({
-            traceId: makeId(),
-            user: v.user,
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId,
-            chartId: v.chartId,
-            dashboardId: v.dashboardId,
-            tileIndex: v.tileIndex,
-            reportId: v.reportId,
-            rowId: v.rowId,
-            timezone: v.timezone,
-            timeSpec: v.timeSpec as any,
-            timeRangeFractionBrick: v.timeRangeFractionBrick,
-            getMalloy: v.getMalloy,
-            getSql: v.getSql,
-            getData: v.getData,
-            isFetch: v.isFetch
-          })
+      Result.andThen(v =>
+        this.getQueryInfoService.getQueryInfo({
+          traceId: makeId(),
+          user: v.user,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          chartId: v.chartId,
+          dashboardId: v.dashboardId,
+          tileIndex: v.tileIndex,
+          reportId: v.reportId,
+          rowId: v.rowId,
+          timezone: v.timezone,
+          timeSpec: v.timeSpec as any,
+          timeRangeFractionBrick: v.timeRangeFractionBrick,
+          getMalloy: v.getMalloy,
+          getSql: v.getSql,
+          getData: v.getData,
+          isFetch: v.isFetch
+        })
       )
     );
 

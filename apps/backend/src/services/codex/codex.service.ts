@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { z } from 'zod';
 import { backendPackageJson } from '#backend/backend-package-json';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { isCodexModelAvailable } from '#backend/services/codex/is-codex-model-available/is-codex-model-available';
 import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -11,10 +10,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendUserProfileCodexAuthNotSetError } from '#common/types/backend/errors/backend-user-profile-codex-auth-not-set-error';
 import type { BuildCodexFetchError } from '#common/types/backend/function-errors/build-codex-fetch-error';
 import type { ExchangeDeviceAuthCodeError } from '#common/types/backend/function-errors/exchange-device-auth-code-error';
-import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { LoadAuthError } from '#common/types/backend/function-errors/load-auth-error';
 import type { PersistRefreshedTokensError } from '#common/types/backend/function-errors/persist-refreshed-tokens-error';
 import type { PollDeviceAuthError } from '#common/types/backend/function-errors/poll-device-auth-error';
@@ -92,36 +89,24 @@ export class CodexService {
   }): Result.ResultAsync<void, PrewarmCodexAuthError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'auth',
-        (v): Result.ResultAsync<CodexAuthOpenai, LoadAuthError> =>
-          this.loadAuth({ userId: v.userId })
+      Result.bind('auth', v => this.loadAuth({ userId: v.userId })),
+      Result.bind('tokens', async v =>
+        v.auth.access &&
+        v.auth.expires > Date.now() + CODEX_AUTH_REFRESH_BUFFER_MS
+          ? Result.succeed(undefined)
+          : this.refreshAccessToken({ refreshToken: v.auth.refresh })
       ),
-      Result.bind(
-        'tokens',
-        async (
-          v
-        ): Result.ResultAsync<CodexTokenResponse, RefreshAccessTokenError> =>
-          v.auth.access &&
-          v.auth.expires > Date.now() + CODEX_AUTH_REFRESH_BUFFER_MS
-            ? Result.succeed(undefined)
-            : this.refreshAccessToken({ refreshToken: v.auth.refresh })
+      Result.bind('expiresIn', v =>
+        isUndefined(v.tokens)
+          ? Result.succeed(undefined)
+          : this.validateExpiresIn({ expiresIn: v.tokens.expires_in })
       ),
-      Result.bind(
-        'expiresIn',
-        (v): Result.Result<number, ValidateExpiresInError> =>
+      Result.bind('accountId', v =>
+        Result.succeed(
           isUndefined(v.tokens)
-            ? Result.succeed(undefined)
-            : this.validateExpiresIn({ expiresIn: v.tokens.expires_in })
-      ),
-      Result.bind(
-        'accountId',
-        (v): Result.Result<string, never> =>
-          Result.succeed(
-            isUndefined(v.tokens)
-              ? undefined
-              : this.extractAccountId({ tokens: v.tokens }) || v.auth.accountId
-          )
+            ? undefined
+            : this.extractAccountId({ tokens: v.tokens }) || v.auth.accountId
+        )
       ),
       Result.andThrough(v =>
         isUndefined(v.tokens)
@@ -333,21 +318,13 @@ export class CodexService {
     return Result.pipe(
       Result.succeed(item),
       // Always read fresh user data from DB (multi-pod safe)
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          this.usersService.getUserCheckExists({ userId: v.userId })
+      Result.bind('user', v =>
+        this.usersService.getUserCheckExists({ userId: v.userId })
       ),
-      Result.andThen(
-        (
-          v
-        ): Result.Result<
-          CodexAuthOpenai,
-          BackendUserProfileCodexAuthNotSetError
-        > =>
-          isUndefined(v.user.codexAuth)
-            ? Result.fail({ code: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET' })
-            : Result.succeed(v.user.codexAuth.openai)
+      Result.andThen(v =>
+        isUndefined(v.user.codexAuth)
+          ? Result.fail({ code: 'BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET' })
+          : Result.succeed(v.user.codexAuth.openai)
       )
     );
   }
@@ -431,34 +408,25 @@ export class CodexService {
         authorizationCode: parsed.authorization_code,
         codeVerifier: parsed.code_verifier
       }),
-      Result.bind(
-        'tokens',
-        (
-          v
-        ): Result.ResultAsync<
-          CodexTokenResponse,
-          ExchangeDeviceAuthCodeError
-        > =>
-          this.exchangeDeviceAuthCode({
-            authorizationCode: v.authorizationCode,
-            codeVerifier: v.codeVerifier
-          })
+      Result.bind('tokens', v =>
+        this.exchangeDeviceAuthCode({
+          authorizationCode: v.authorizationCode,
+          codeVerifier: v.codeVerifier
+        })
       ),
-      Result.bind(
-        'expiresIn',
-        (v): Result.Result<number, ValidateExpiresInError> =>
-          this.validateExpiresIn({ expiresIn: v.tokens.expires_in })
+      Result.bind('expiresIn', v =>
+        this.validateExpiresIn({ expiresIn: v.tokens.expires_in })
       ),
-      Result.bind(
-        'newState',
-        (v): Result.Result<CodexTokenState, never> =>
-          Result.succeed({
-            access: v.tokens.access_token,
-            refresh: v.tokens.refresh_token,
-            expires: Date.now() + v.expiresIn * 1000,
-            accountId: this.extractAccountId({ tokens: v.tokens })
-          })
-      ),
+      Result.bind('newState', v => {
+        let newState: CodexTokenState = {
+          access: v.tokens.access_token,
+          refresh: v.tokens.refresh_token,
+          expires: Date.now() + v.expiresIn * 1000,
+          accountId: this.extractAccountId({ tokens: v.tokens })
+        };
+
+        return Result.succeed(newState);
+      }),
       Result.andThrough(v =>
         this.persistRefreshedTokens({
           userId: v.userId,
@@ -596,10 +564,8 @@ export class CodexService {
   }): Result.ResultAsync<void, PersistRefreshedTokensError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          this.usersService.getUserCheckExists({ userId: v.userId })
+      Result.bind('user', v =>
+        this.usersService.getUserCheckExists({ userId: v.userId })
       ),
       Result.map(v => {
         v.user.codexAuth = {

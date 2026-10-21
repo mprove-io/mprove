@@ -38,6 +38,6 @@ export async function resetWorkingTreeToHead(item: {
         })
       )
     ),
-    Result.map((): void => undefined)
+    Result.map((v): void => undefined)
   );
 }

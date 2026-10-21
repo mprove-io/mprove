@@ -11,11 +11,7 @@ import {
   ToBackendDeleteBranchResponseDto
 } from '#backend/controllers/branches/delete-branch/delete-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -31,12 +27,8 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { BackendDefaultBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-default-branch-cannot-be-deleted-error';
 import type { BackendSessionBranchCannotBeDeletedError } from '#common/types/backend/errors/backend-session-branch-cannot-be-deleted-error';
-import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteBranchOutput } from '#common/types/backend/routes/branches/delete-branch/delete-branch-output';
-import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)
@@ -74,15 +66,13 @@ export class DeleteBranchController {
         traceId: body.traceId,
         userId: user.userId
       }),
-      Result.bind(
-        'repoType',
-        (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
-          this.sessionsService.checkRepoId({
-            repoId: v.repoId,
-            userId: v.userId,
-            projectId: v.projectId,
-            allowProdRepo: true
-          })
+      Result.bind('repoType', v =>
+        this.sessionsService.checkRepoId({
+          repoId: v.repoId,
+          userId: v.userId,
+          projectId: v.projectId,
+          allowProdRepo: true
+        })
       ),
       Result.andThrough(v =>
         v.repoType === 'session'
@@ -91,25 +81,16 @@ export class DeleteBranchController {
             } satisfies BackendSessionBranchCannotBeDeletedError)
           : Result.succeed()
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditor({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditor({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.projectsService.checkProjectIsNotRestricted({

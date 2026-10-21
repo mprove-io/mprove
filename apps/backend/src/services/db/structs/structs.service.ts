@@ -122,13 +122,11 @@ export class StructsService {
   }): Result.ResultAsync<StructTab, GetStructCheckExistsAndNotChangedError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.getStructCheckExists({
-            structId: v.bridgeStructId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.getStructCheckExists({
+          structId: v.bridgeStructId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         v.structId !== v.bridgeStructId

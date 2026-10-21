@@ -8,10 +8,7 @@ import {
   ToBackendPauseEditorSessionResponseDto
 } from '#backend/controllers/sessions/pause-editor-session/pause-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -21,8 +18,6 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { PauseWhileLockedError } from '#common/types/backend/function-errors/pause-while-locked-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPauseEditorSessionOutput } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-output';
@@ -54,17 +49,10 @@ export class PauseEditorSessionController {
   ): Promise<BackendResultForOperation<'pauseEditorSession'>> {
     return Result.pipe(
       Result.succeed({ sessionId: body.input.sessionId, userId: user.userId }),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
       Result.andThrough(v =>
         v.session.userId !== v.userId
@@ -76,24 +64,16 @@ export class PauseEditorSessionController {
           ? Result.fail({ code: 'BACKEND_SESSION_TYPE_IS_NOT_EDITOR' })
           : Result.succeed()
       ),
-      Result.bind(
-        'sessionLockToken',
-        (v): Result.ResultAsync<string, AcquireSessionLockError> =>
-          this.editorSessionLockService.acquireSessionLock({
-            sessionId: v.sessionId
-          })
+      Result.bind('sessionLockToken', v =>
+        this.editorSessionLockService.acquireSessionLock({
+          sessionId: v.sessionId
+        })
       ),
-      Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<
-          ToBackendPauseEditorSessionOutput,
-          PauseWhileLockedError
-        > =>
-          this.pauseWhileLocked({
-            sessionId: v.sessionId,
-            sessionLockToken: v.sessionLockToken
-          })
+      Result.andThen(v =>
+        this.pauseWhileLocked({
+          sessionId: v.sessionId,
+          sessionLockToken: v.sessionLockToken
+        })
       )
     );
   }
@@ -122,17 +102,10 @@ export class PauseEditorSessionController {
             pauseReason: 'User'
           })
         ),
-        Result.bind(
-          'freshSession',
-          (
-            v
-          ): Result.ResultAsync<
-            SessionTab,
-            DbSessionsFindFirstCheckExistsError
-          > =>
-            this.db.sessions.findFirstCheckExists({
-              where: eq(sessionsTable.sessionId, v.sessionId)
-            })
+        Result.bind('freshSession', v =>
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.sessionId)
+          })
         ),
         Result.map(
           (v): ToBackendPauseEditorSessionOutput => ({

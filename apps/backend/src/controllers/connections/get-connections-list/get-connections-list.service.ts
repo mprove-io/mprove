@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { DbService } from '#backend/services/db/db.service';
@@ -9,11 +8,8 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetConnectionsListError } from '#common/types/backend/function-errors/get-connections-list-error';
 import type { ConnectionItem } from '#common/types/backend/parts/connections/connection-item';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
 
 @Injectable()
@@ -45,83 +41,74 @@ export class GetConnectionsListService {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
-      Result.bind(
-        'apiEnv',
-        (v): Result.Result<Env, never> =>
-          Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
+      Result.bind('apiEnv', v =>
+        Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
       ),
-      Result.bind(
-        'connections',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: and(
-              eq(connectionsTable.projectId, v.projectId),
-              or(
-                eq(connectionsTable.envId, v.envId),
-                and(
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  inArray(
-                    connectionsTable.connectionId,
-                    v.apiEnv.fallbackConnectionIds
-                  )
+      Result.bind('connections', v =>
+        this.db.connections.findMany({
+          where: and(
+            eq(connectionsTable.projectId, v.projectId),
+            or(
+              eq(connectionsTable.envId, v.envId),
+              and(
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                inArray(
+                  connectionsTable.connectionId,
+                  v.apiEnv.fallbackConnectionIds
                 )
               )
             )
-          })
+          )
+        })
       ),
-      Result.bind(
-        'connectionItems',
-        (v): Result.Result<ConnectionItem[], never> => {
-          let connectionItems: ConnectionItem[] = [];
+      Result.bind('connectionItems', v => {
+        let connectionItems: ConnectionItem[] = [];
 
-          v.connections.forEach(connection => {
-            if (connection.type === 'Api') {
-              let storeApi = connection.options.storeApi;
+        v.connections.forEach(connection => {
+          if (connection.type === 'Api') {
+            let storeApi = connection.options.storeApi;
 
-              if (isDefined(storeApi)) {
-                let headerKeys: string[] = isDefined(storeApi.headers)
-                  ? storeApi.headers.map(h => h.key)
-                  : [];
+            if (isDefined(storeApi)) {
+              let headerKeys: string[] = isDefined(storeApi.headers)
+                ? storeApi.headers.map(h => h.key)
+                : [];
 
-                connectionItems.push({
-                  connectionId: connection.connectionId,
-                  type: connection.type,
-                  baseUrl: storeApi.baseUrl,
-                  headerKeys: headerKeys
-                });
-              }
-            } else if (connection.type === 'GoogleApi') {
-              let storeGoogleApi = connection.options.storeGoogleApi;
-
-              if (isDefined(storeGoogleApi)) {
-                let headerKeys: string[] = isDefined(storeGoogleApi.headers)
-                  ? storeGoogleApi.headers.map(h => h.key)
-                  : [];
-
-                connectionItems.push({
-                  connectionId: connection.connectionId,
-                  type: connection.type,
-                  baseUrl: storeGoogleApi.baseUrl,
-                  headerKeys: headerKeys,
-                  googleAuthScopes: storeGoogleApi.googleAuthScopes
-                });
-              }
-            } else {
               connectionItems.push({
                 connectionId: connection.connectionId,
-                type: connection.type
+                type: connection.type,
+                baseUrl: storeApi.baseUrl,
+                headerKeys: headerKeys
               });
             }
-          });
+          } else if (connection.type === 'GoogleApi') {
+            let storeGoogleApi = connection.options.storeGoogleApi;
 
-          return Result.succeed(connectionItems);
-        }
-      ),
+            if (isDefined(storeGoogleApi)) {
+              let headerKeys: string[] = isDefined(storeGoogleApi.headers)
+                ? storeGoogleApi.headers.map(h => h.key)
+                : [];
+
+              connectionItems.push({
+                connectionId: connection.connectionId,
+                type: connection.type,
+                baseUrl: storeGoogleApi.baseUrl,
+                headerKeys: headerKeys,
+                googleAuthScopes: storeGoogleApi.googleAuthScopes
+              });
+            }
+          } else {
+            connectionItems.push({
+              connectionId: connection.connectionId,
+              type: connection.type
+            });
+          }
+        });
+
+        return Result.succeed(connectionItems);
+      }),
       Result.map(
         (v): ToBackendGetConnectionsListOutput => ({
           connectionItems: v.connectionItems

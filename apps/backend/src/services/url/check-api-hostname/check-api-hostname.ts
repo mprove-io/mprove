@@ -1,10 +1,9 @@
-import { promises as dnsPromises, type LookupAddress } from 'node:dns';
+import { promises as dnsPromises } from 'node:dns';
 import { Result } from '@praha/byethrow';
 import ipaddr from 'ipaddr.js';
 import { isPrivateIp } from '#backend/services/url/check-api-hostname/is-private-ip/is-private-ip';
 import type { ApiHostnameCheckPhase } from '#backend/types/api-hostname-check-phase';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { BackendApiHostDnsLookupFailedError } from '#common/types/backend/errors/backend-api-host-dns-lookup-failed-error';
 import type { CheckApiHostnameError } from '#common/types/backend/function-errors/check-api-hostname-error';
 import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
@@ -57,21 +56,22 @@ export async function checkApiHostname(item: {
           })
         : Result.succeed()
     ),
-    Result.bind(
-      'parseHostnamePayload',
-      (v): Result.Result<ParseHostnamePayload, never> => {
-        let parsedIp: ipaddr.IPv4 | ipaddr.IPv6;
+    Result.bind('parseHostnamePayload', v => {
+      let parsedIp: ipaddr.IPv4 | ipaddr.IPv6;
 
-        try {
-          parsedIp = ipaddr.parse(v.hostname);
-        } catch {
-          // Not a valid IP: treat it as a hostname, retaining DNS validation.
-          return Result.succeed({});
-        }
+      try {
+        parsedIp = ipaddr.parse(v.hostname);
+      } catch {
+        // Not a valid IP: treat it as a hostname, retaining DNS validation.
+        let parseHostnamePayload: ParseHostnamePayload = {};
 
-        return Result.succeed({ parsedIp: parsedIp });
+        return Result.succeed(parseHostnamePayload);
       }
-    ),
+
+      let parseHostnamePayload: ParseHostnamePayload = { parsedIp: parsedIp };
+
+      return Result.succeed(parseHostnamePayload);
+    }),
     Result.andThrough(v =>
       isDefined(v.parseHostnamePayload.parsedIp)
         ? isPrivateIp({
@@ -82,19 +82,13 @@ export async function checkApiHostname(item: {
           })
         : Result.succeed()
     ),
-    Result.bind(
-      'records',
-      async (
-        v
-      ): Result.ResultAsync<
-        LookupAddress[],
-        BackendApiHostDnsLookupFailedError
-      > =>
-        isDefined(v.parseHostnamePayload.parsedIp)
-          ? Result.succeed([])
-          : Result.try({
-              try: () => dnsPromises.lookup(v.hostname, { all: true }),
-              catch: error => ({
+    Result.bind('records', async v =>
+      isDefined(v.parseHostnamePayload.parsedIp)
+        ? Result.succeed([])
+        : Result.try({
+            try: () => dnsPromises.lookup(v.hostname, { all: true }),
+            catch: error =>
+              ({
                 code: 'BACKEND_API_HOST_DNS_LOOKUP_FAILED',
                 displayData: { hostname: v.hostname },
                 customData: isDefined(error)
@@ -103,8 +97,8 @@ export async function checkApiHostname(item: {
                         error instanceof Error ? wrapError(error) : error
                     }
                   : undefined
-              })
-            })
+              }) satisfies CheckApiHostnameError
+          })
     ),
     Result.andThrough(v =>
       Result.sequence(v.records, record => {

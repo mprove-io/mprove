@@ -10,15 +10,9 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
-  BranchTab,
-  BridgeTab,
   ChartTab,
   MconfigTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
   QueryTab,
-  StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
@@ -29,7 +23,6 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import type { ChartsCatalog } from '#backend/services/db/charts/charts.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
@@ -47,33 +40,22 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
-import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
-import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
-import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
-import type { GetStructCheckExistsAndNotChangedError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
-import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditDraftChartOutput } from '#common/types/backend/routes/charts/edit-draft-chart/edit-draft-chart-output';
 import type { Tile } from '#common/types/blockml/parts/tile/tile';
+
+type PrepareDraftChartPayload = {
+  tile: Tile;
+  newChart: ChartTab;
+};
 
 type PrepareQueryPayload = {
   newMconfig: MconfigTab;
   newQuery: QueryTab;
   isError: boolean;
-};
-
-type PrepareDraftChartPayload = {
-  tile: Tile;
-  newChart: ChartTab;
 };
 
 @ApiTags('Charts')
@@ -127,29 +109,18 @@ export class EditDraftChartController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         v.userMember.isExplorer === false
@@ -158,18 +129,14 @@ export class EditDraftChartController {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -178,52 +145,37 @@ export class EditDraftChartController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'struct',
-        (
-          v
-        ): Result.ResultAsync<
-          StructTab,
-          GetStructCheckExistsAndNotChangedError
-        > =>
-          this.structsService.getStructCheckExistsAndNotChanged({
-            projectId: v.projectId,
-            bridgeStructId: v.bridge.structId,
-            structId: v.apiMconfig.structId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExistsAndNotChanged({
+          projectId: v.projectId,
+          bridgeStructId: v.bridge.structId,
+          structId: v.apiMconfig.structId
+        })
       ),
-      Result.bind(
-        'model',
-        (v): Result.ResultAsync<ModelTab, GetModelCheckExistsAndAccessError> =>
-          this.modelsService.getModelCheckExistsAndAccess({
-            structId: v.bridge.structId,
-            modelId: v.apiMconfig.modelId,
-            userMember: v.userMember
-          })
+      Result.bind('model', v =>
+        this.modelsService.getModelCheckExistsAndAccess({
+          structId: v.bridge.structId,
+          modelId: v.apiMconfig.modelId,
+          userMember: v.userMember
+        })
       ),
-      Result.bind(
-        'chart',
-        (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
-          this.chartsService.getChartCheckExists({
-            structId: v.bridge.structId,
-            chartId: v.chartId,
-            userMember: v.userMember,
-            user: v.user
-          })
+      Result.bind('chart', v =>
+        this.chartsService.getChartCheckExists({
+          structId: v.bridge.structId,
+          chartId: v.chartId,
+          userMember: v.userMember,
+          user: v.user
+        })
       ),
       Result.andThrough(v =>
         v.chart.draft === false
@@ -232,22 +184,21 @@ export class EditDraftChartController {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'prepareQueryPayload',
-        (v): Result.Result<PrepareQueryPayload, never> => {
-          let newMconfig: MconfigTab;
+      Result.bind('prepareQueryPayload', v => {
+        let newMconfig: MconfigTab;
 
-          let newQuery: QueryTab;
+        let newQuery: QueryTab;
 
-          let isError: boolean = false;
+        let isError: boolean = false;
 
-          return Result.succeed({
-            newMconfig: newMconfig,
-            newQuery: newQuery,
-            isError: isError
-          });
-        }
-      ),
+        let prepareQueryPayload: PrepareQueryPayload = {
+          newMconfig: newMconfig,
+          newQuery: newQuery,
+          isError: isError
+        };
+
+        return Result.succeed(prepareQueryPayload);
+      }),
       Result.andThrough(async v => {
         if (v.model.type === 'Store') {
           let prepStoreMconfigQueryOutput: Result.Result<
@@ -315,53 +266,55 @@ export class EditDraftChartController {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'prepareDraftChartPayload',
-        (v): Result.Result<PrepareDraftChartPayload, never> => {
-          let tile: Tile = {
-            modelId: v.prepareQueryPayload.newMconfig.modelId,
-            modelLabel: v.prepareQueryPayload.newMconfig.modelLabel,
-            modelFilePath: v.prepareQueryPayload.newMconfig.modelFilePath,
-            mconfigId: v.prepareQueryPayload.newMconfig.mconfigId,
-            queryId: v.prepareQueryPayload.newQuery.queryId,
-            trackChangeId: makeId(),
-            listen: undefined,
-            deletedFilterFieldIds: undefined,
-            title: undefined,
-            plateWidth: undefined,
-            plateHeight: undefined,
-            plateX: undefined,
-            plateY: undefined
-          };
+      Result.bind('prepareDraftChartPayload', v => {
+        let tile: Tile = {
+          modelId: v.prepareQueryPayload.newMconfig.modelId,
+          modelLabel: v.prepareQueryPayload.newMconfig.modelLabel,
+          modelFilePath: v.prepareQueryPayload.newMconfig.modelFilePath,
+          mconfigId: v.prepareQueryPayload.newMconfig.mconfigId,
+          queryId: v.prepareQueryPayload.newQuery.queryId,
+          trackChangeId: makeId(),
+          listen: undefined,
+          deletedFilterFieldIds: undefined,
+          title: undefined,
+          plateWidth: undefined,
+          plateHeight: undefined,
+          plateX: undefined,
+          plateY: undefined
+        };
 
-          let newChart: ChartTab = {
-            chartFullId: this.hashService.makeChartFullId({
-              structId: v.bridge.structId,
-              chartId: v.chartId
-            }),
+        let newChart: ChartTab = {
+          chartFullId: this.hashService.makeChartFullId({
             structId: v.bridge.structId,
-            chartId: v.chartId,
-            chartType: v.prepareQueryPayload.newMconfig.chart.type,
-            draft: true,
-            isExplorer: undefined,
-            sessionId: undefined,
-            chartYaml: undefined,
-            creatorId: v.user.userId,
-            title: v.chart.chartId,
-            modelId: tile.modelId,
-            modelLabel: tile.modelLabel,
-            filePath: undefined,
-            space: undefined,
-            accessRoles: [],
-            accessRolesCombined: [],
-            tiles: [tile],
-            keyTag: undefined,
-            serverTs: undefined
-          };
+            chartId: v.chartId
+          }),
+          structId: v.bridge.structId,
+          chartId: v.chartId,
+          chartType: v.prepareQueryPayload.newMconfig.chart.type,
+          draft: true,
+          isExplorer: undefined,
+          sessionId: undefined,
+          chartYaml: undefined,
+          creatorId: v.user.userId,
+          title: v.chart.chartId,
+          modelId: tile.modelId,
+          modelLabel: tile.modelLabel,
+          filePath: undefined,
+          space: undefined,
+          accessRoles: [],
+          accessRolesCombined: [],
+          tiles: [tile],
+          keyTag: undefined,
+          serverTs: undefined
+        };
 
-          return Result.succeed({ tile: tile, newChart: newChart });
-        }
-      ),
+        let prepareDraftChartPayload: PrepareDraftChartPayload = {
+          tile: tile,
+          newChart: newChart
+        };
+
+        return Result.succeed(prepareDraftChartPayload);
+      }),
       Result.andThrough(async v => {
         let persistenceResult: Result.Result<PackerOutput, WriteError> =
           await this.db.write({
@@ -389,42 +342,31 @@ export class EditDraftChartController {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'query',
-        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
-          this.db.queries.findFirst({
-            where: and(
-              eq(queriesTable.queryId, v.prepareQueryPayload.newQuery.queryId),
-              eq(
-                queriesTable.projectId,
-                v.prepareQueryPayload.newQuery.projectId
-              )
-            )
-          })
+      Result.bind('query', v =>
+        this.db.queries.findFirst({
+          where: and(
+            eq(queriesTable.queryId, v.prepareQueryPayload.newQuery.queryId),
+            eq(queriesTable.projectId, v.prepareQueryPayload.newQuery.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
-      Result.bind(
-        'models',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: eq(modelsTable.structId, v.bridge.structId)
-          })
+      Result.bind('models', v =>
+        this.db.models.findMany({
+          where: eq(modelsTable.structId, v.bridge.structId)
+        })
       ),
-      Result.bind(
-        'chartsCatalog',
-        (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
-          this.chartsService.getChartsCatalog({
-            projectId: v.projectId,
-            structId: v.bridge.structId,
-            user: v.user,
-            apiUserMember: v.apiUserMember,
-            models: v.models,
-            spaces: v.struct.spaces
-          })
+      Result.bind('chartsCatalog', v =>
+        this.chartsService.getChartsCatalog({
+          projectId: v.projectId,
+          structId: v.bridge.structId,
+          user: v.user,
+          apiUserMember: v.apiUserMember,
+          models: v.models,
+          spaces: v.struct.spaces
+        })
       ),
       Result.map(
         (v): ToBackendEditDraftChartOutput => ({

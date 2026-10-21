@@ -8,10 +8,7 @@ import {
   ToBackendGetLlmModelsWithProviderResponseDto
 } from '#backend/controllers/llm-models/get-llm-models-with-provider/get-llm-models-with-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ProviderTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
@@ -20,8 +17,6 @@ import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbProvidersFindManyError } from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
-import type { LlmModelWithProvider } from '#common/types/backend/parts/llm-models/llm-model-with-provider';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
 
@@ -64,38 +59,31 @@ export class GetLlmModelsWithProviderController {
           )
         })
       ),
-      Result.bind(
-        'providers',
-        (v): Result.ResultAsync<ProviderTab[], DbProvidersFindManyError> =>
-          this.db.providers.findMany({
-            where: and(
-              eq(providersTable.projectId, v.projectId),
-              eq(providersTable.isEnabled, true)
-            )
-          })
-      ),
-      Result.bind(
-        'visibleProviders',
-        (v): Result.Result<ProviderTab[], never> =>
-          Result.succeed(
-            v.providers.filter(
-              provider =>
-                provider.type !== 'OpenAICodex' || v.isUserCodexAuthSet
-            )
+      Result.bind('providers', v =>
+        this.db.providers.findMany({
+          where: and(
+            eq(providersTable.projectId, v.projectId),
+            eq(providersTable.isEnabled, true)
           )
+        })
       ),
-      Result.bind(
-        'allModels',
-        (v): Result.Result<LlmModelWithProvider[], never> =>
-          Result.succeed(
-            v.visibleProviders.flatMap(provider =>
-              provider.models.map(model => ({
-                ...model,
-                providerId: provider.providerId,
-                providerName: provider.name
-              }))
-            )
+      Result.bind('visibleProviders', v =>
+        Result.succeed(
+          v.providers.filter(
+            provider => provider.type !== 'OpenAICodex' || v.isUserCodexAuthSet
           )
+        )
+      ),
+      Result.bind('allModels', v =>
+        Result.succeed(
+          v.visibleProviders.flatMap(provider =>
+            provider.models.map(model => ({
+              ...model,
+              providerId: provider.providerId,
+              providerName: provider.name
+            }))
+          )
+        )
       ),
       Result.map(
         (v): ToBackendGetLlmModelsWithProviderOutput => ({

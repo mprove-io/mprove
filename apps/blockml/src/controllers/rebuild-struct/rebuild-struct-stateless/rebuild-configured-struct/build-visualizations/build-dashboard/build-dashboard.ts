@@ -3,7 +3,6 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
-
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
@@ -25,62 +24,53 @@ export function buildDashboard(item: {
 }): Result.Result<FileDashboard[], never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'accessCheckedDashboards',
-      (v): Result.Result<FileDashboard[], never> =>
-        checkDashboardAccess({
-          dashboards: v.dashboards,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('accessCheckedDashboards', v =>
+      checkDashboardAccess({
+        dashboards: v.dashboards,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'topParametersCheckedDashboards',
-      (v): Result.Result<FileDashboard[], never> =>
-        checkDashboardTopParameters({
-          dashboards: v.accessCheckedDashboards,
-          stores: v.stores,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('topParametersCheckedDashboards', v =>
+      checkDashboardTopParameters({
+        dashboards: v.accessCheckedDashboards,
+        stores: v.stores,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'filterConditionsCheckedDashboards',
-      (v): Result.Result<FileDashboard[], never> =>
-        checkDashboardFilterConditions({
-          dashboards: v.topParametersCheckedDashboards,
-          structId: v.structId,
-          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('filterConditionsCheckedDashboards', v =>
+      checkDashboardFilterConditions({
+        dashboards: v.topParametersCheckedDashboards,
+        structId: v.structId,
+        caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'tilesCheckedDashboards',
-      (v): Result.Result<FileDashboard[], never> =>
-        checkDashboardTilesExist({
-          dashboards: v.filterConditionsCheckedDashboards,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('tilesCheckedDashboards', v =>
+      checkDashboardTilesExist({
+        dashboards: v.filterConditionsCheckedDashboards,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.andThen(
-      (v): Result.Result<FileDashboard[], never> =>
-        makeDashboardAccessRolesCombined({
-          dashboards: v.tilesCheckedDashboards,
-          spaces: v.spaces,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.andThen(v =>
+      makeDashboardAccessRolesCombined({
+        dashboards: v.tilesCheckedDashboards,
+        spaces: v.spaces,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     )
   );
 }

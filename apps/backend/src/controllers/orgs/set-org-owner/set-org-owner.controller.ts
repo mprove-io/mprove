@@ -8,7 +8,7 @@ import {
   ToBackendSetOrgOwnerResponseDto
 } from '#backend/controllers/orgs/set-org-owner/set-org-owner.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -19,10 +19,6 @@ import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { BackendNewOwnerNotFoundError } from '#common/types/backend/errors/backend-new-owner-not-found-error';
-import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
-import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetOrgOwnerOutput } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-output';
 
@@ -56,12 +52,10 @@ export class SetOrgOwnerController {
         ownerEmail: body.input.ownerEmail,
         userId: user.userId
       }),
-      Result.bind(
-        'org',
-        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
-          this.db.orgs.findFirstCheckExists({
-            where: eq(orgsTable.orgId, v.orgId)
-          })
+      Result.bind('org', v =>
+        this.db.orgs.findFirstCheckExists({
+          where: eq(orgsTable.orgId, v.orgId)
+        })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -69,28 +63,22 @@ export class SetOrgOwnerController {
           userId: v.userId
         })
       ),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'ownerEmailHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.ownerEmail,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('ownerEmailHash', v =>
+        this.hashService.makeHash({
+          input: v.ownerEmail,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'newOwner',
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
-          this.db.users.findFirstCheckExists({
-            where: and(
-              eq(usersTable.emailHash, v.ownerEmailHash),
-              eq(usersTable.isEmailVerified, true)
-            )
-          })
+      Result.bind('newOwner', v =>
+        this.db.users.findFirstCheckExists({
+          where: and(
+            eq(usersTable.emailHash, v.ownerEmailHash),
+            eq(usersTable.isEmailVerified, true)
+          )
+        })
       ),
       Result.mapError(v =>
         v.code === 'BACKEND_USER_DOES_NOT_EXIST'

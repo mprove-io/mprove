@@ -11,11 +11,7 @@ import {
   ToBackendDeleteGivenResponseDto
 } from '#backend/controllers/givens/delete-given/delete-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  RoleTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
@@ -27,10 +23,6 @@ import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbRolesFindManyError } from '#common/types/backend/function-errors/db/roles/db-roles-find-many-error';
-import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteGivenOutput } from '#common/types/backend/routes/givens/delete-given/delete-given-output';
 
@@ -70,13 +62,11 @@ export class DeleteGivenController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            memberId: v.user.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          memberId: v.user.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.db.givens.findFirstCheckExists({
@@ -86,21 +76,15 @@ export class DeleteGivenController {
           )
         })
       ),
-      Result.bind(
-        'roles',
-        (v): Result.ResultAsync<RoleTab[], DbRolesFindManyError> =>
-          this.db.roles.findMany({
-            where: eq(rolesTable.projectId, v.projectId)
-          })
+      Result.bind('roles', v =>
+        this.db.roles.findMany({
+          where: eq(rolesTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'rolesToUpdate',
-        (v): Result.Result<RoleTab[], never> =>
-          Result.succeed(
-            v.roles.filter(role =>
-              role.gvs.some(gv => gv.givenId === v.givenId)
-            )
-          )
+      Result.bind('rolesToUpdate', v =>
+        Result.succeed(
+          v.roles.filter(role => role.gvs.some(gv => gv.givenId === v.givenId))
+        )
       ),
       Result.map(v => {
         v.rolesToUpdate.forEach(role => {
@@ -133,10 +117,8 @@ export class DeleteGivenController {
           }
         })
       ),
-      Result.bind(
-        'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.givensService.getApiGivens({ projectId: v.projectId })
+      Result.bind('apiGivens', v =>
+        this.givensService.getApiGivens({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteGivenOutput => ({

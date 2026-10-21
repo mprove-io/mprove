@@ -15,7 +15,6 @@ import {
   MCP_TOOL_RUN_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { RunError } from '#common/types/backend/function-errors/run-error';
 import {
   type McpToolRunInput,
   zMcpToolRunInput
@@ -106,28 +105,27 @@ export class RunTool {
             })
           : Result.succeed()
       ),
-      Result.andThen(
-        (v): Result.ResultAsync<ToBackendRunOutput, RunError> =>
-          this.runService.run({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId,
-            concurrency: v.concurrency,
-            wait: v.wait,
-            sleep: v.sleep,
-            dashboardIds: v.dashboardIds,
-            chartIds: v.chartIds,
-            noDashboards: v.noDashboards,
-            noCharts: v.noCharts,
-            getDashboards: v.getDashboards,
-            getCharts: v.getCharts,
-            reportIds: v.reportIds,
-            noReports: v.noReports,
-            getReports: v.getReports,
-            traceId: makeId(),
-            user: v.user
-          })
+      Result.andThen(v =>
+        this.runService.run({
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          concurrency: v.concurrency,
+          wait: v.wait,
+          sleep: v.sleep,
+          dashboardIds: v.dashboardIds,
+          chartIds: v.chartIds,
+          noDashboards: v.noDashboards,
+          noCharts: v.noCharts,
+          getDashboards: v.getDashboards,
+          getCharts: v.getCharts,
+          reportIds: v.reportIds,
+          noReports: v.noReports,
+          getReports: v.getReports,
+          traceId: makeId(),
+          user: v.user
+        })
       )
     );
 

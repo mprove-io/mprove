@@ -8,10 +8,7 @@ import {
   ToBackendCreateSessionSseTicketResponseDto
 } from '#backend/controllers/sessions/create-session-sse-ticket/create-session-sse-ticket.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -19,7 +16,6 @@ import { RedisService } from '#backend/services/redis/redis.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateSessionSseTicketOutput } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-output';
 
@@ -47,27 +43,17 @@ export class CreateSessionSseTicketController {
   ): Promise<BackendResultForOperation<'createSessionSseTicket'>> {
     return Result.pipe(
       Result.succeed({ sessionId: body.input.sessionId, userId: user.userId }),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
       Result.andThrough(v =>
         v.session.userId !== v.userId
           ? Result.fail({ code: 'BACKEND_UNAUTHORIZED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'sseTicket',
-        (v): Result.Result<string, never> => Result.succeed(makeId())
-      ),
+      Result.bind('sseTicket', v => Result.succeed(makeId())),
       Result.andThrough(async v => {
         await this.redisService.writeTicket({
           ticket: v.sseTicket,

@@ -7,7 +7,6 @@ import {
   ToBackendResendUserEmailResponseDto
 } from '#backend/controllers/users/resend-user-email/resend-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -15,8 +14,6 @@ import { EmailService } from '#backend/services/email/email.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
-
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendResendUserEmailOutput } from '#common/types/backend/routes/users/resend-user-email/resend-user-email-output';
 
@@ -61,10 +58,8 @@ export class ResendUserEmailController {
   ): Promise<BackendResultForOperation<'resendUserEmail'>> {
     return Result.pipe(
       Result.succeed({ userId: body.input.userId }),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          this.usersService.getUserCheckExists({ userId: v.userId })
+      Result.bind('user', v =>
+        this.usersService.getUserCheckExists({ userId: v.userId })
       ),
       Result.andThrough(v =>
         this.usersService.checkUserIsNotRestricted({ user: v.user })

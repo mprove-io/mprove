@@ -2,7 +2,6 @@ import { Result } from '@praha/byethrow';
 import type { StatusResult } from 'simple-git';
 import type { DiskGetToServerSyncDataError } from '#common/types/disk/function-errors/disk-get-to-server-sync-data-error';
 import type { DiskSyncFile } from '#common/types/disk/parts/file/disk-sync-file';
-import type { GetSyncAppliedChangesError } from '#common/types/node-common/function-errors/get-sync-applied-changes-error';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage/add-changes-to-stage';
 import { applySyncPayload } from '#node-common/functions/apply-sync-payload/apply-sync-payload';
 import { getSyncAppliedChanges } from '#node-common/functions/get-sync-applied-changes/get-sync-applied-changes';
@@ -17,15 +16,13 @@ export async function getToServerSyncData(item: {
 }): Result.ResultAsync<SyncData, DiskGetToServerSyncDataError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'appliedChangesOnServer',
-      (v): Result.ResultAsync<string[], GetSyncAppliedChangesError> =>
-        getSyncAppliedChanges({
-          repoDir: v.repoDir,
-          changedFiles: v.changedFiles,
-          deletedFiles: v.deletedFiles,
-          statusResult: v.statusResult
-        })
+    Result.bind('appliedChangesOnServer', v =>
+      getSyncAppliedChanges({
+        repoDir: v.repoDir,
+        changedFiles: v.changedFiles,
+        deletedFiles: v.deletedFiles,
+        statusResult: v.statusResult
+      })
     ),
     Result.andThrough(v =>
       resetWorkingTreeToHead({

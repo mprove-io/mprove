@@ -7,7 +7,6 @@ import type { ProjectWeekStart } from '#common/types/backend/parts/project/proje
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { BuildTileError } from '#common/types/blockml/function-errors/build-tile-error';
-import type { FetchSqlError } from '#common/types/blockml/function-errors/fetch-sql-error';
 import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
@@ -42,110 +41,95 @@ export async function buildTile<T extends dcType>(item: {
 }): Result.ResultAsync<T[], BuildTileError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'objectCheckedEntities',
-      (v): Result.Result<T[], never> =>
-        checkTileIsObject({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('objectCheckedEntities', v =>
+      checkTileIsObject({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'unknownParametersCheckedEntities',
-      (v): Result.Result<T[], never> =>
-        checkTileUnknownParameters({
-          entities: v.objectCheckedEntities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('unknownParametersCheckedEntities', v =>
+      checkTileUnknownParameters({
+        entities: v.objectCheckedEntities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'titleModelSelectCheckedEntities',
-      (v): Result.Result<T[], never> =>
-        checkTileTitleModelSelect({
-          entities: v.unknownParametersCheckedEntities,
-          apiModels: v.apiModels,
-          stores: v.stores,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('titleModelSelectCheckedEntities', v =>
+      checkTileTitleModelSelect({
+        entities: v.unknownParametersCheckedEntities,
+        apiModels: v.apiModels,
+        stores: v.stores,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'selectElementsCheckedEntities',
-      (v): Result.Result<T[], never> =>
-        checkSelectElements({
-          entities: v.titleModelSelectCheckedEntities,
-          apiModels: v.apiModels,
-          stores: v.stores,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('selectElementsCheckedEntities', v =>
+      checkSelectElements({
+        entities: v.titleModelSelectCheckedEntities,
+        apiModels: v.apiModels,
+        stores: v.stores,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'sortsCheckedEntities',
-      (v): Result.Result<T[], never> =>
-        checkSorts({
-          entities: v.selectElementsCheckedEntities,
-          apiModels: v.apiModels,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('sortsCheckedEntities', v =>
+      checkSorts({
+        entities: v.selectElementsCheckedEntities,
+        apiModels: v.apiModels,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'limitCheckedEntities',
-      (v): Result.Result<T[], never> =>
-        checkLimit({
-          entities: v.sortsCheckedEntities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('limitCheckedEntities', v =>
+      checkLimit({
+        entities: v.sortsCheckedEntities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'parametersCheckedEntities',
-      (v): Result.Result<T[], never> =>
-        checkTileParameters({
-          entities: v.limitCheckedEntities,
-          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
-          apiModels: v.apiModels,
-          stores: v.stores,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('parametersCheckedEntities', v =>
+      checkTileParameters({
+        entities: v.limitCheckedEntities,
+        caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+        apiModels: v.apiModels,
+        stores: v.stores,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.andThen(
-      (v): Result.ResultAsync<T[], FetchSqlError> =>
-        fetchSql({
-          entities: v.parametersCheckedEntities,
-          mconfigParentType: v.mconfigParentType,
-          apiModels: v.apiModels,
-          malloyConnections: v.malloyConnections,
-          projectConnections: v.projectConnections,
-          weekStart: v.weekStart,
-          timezone: v.timezone,
-          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
-          selectedGivens: v.selectedGivens,
-          envId: v.envId,
-          projectId: v.projectId,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.andThen(v =>
+      fetchSql({
+        entities: v.parametersCheckedEntities,
+        mconfigParentType: v.mconfigParentType,
+        apiModels: v.apiModels,
+        malloyConnections: v.malloyConnections,
+        projectConnections: v.projectConnections,
+        weekStart: v.weekStart,
+        timezone: v.timezone,
+        caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+        selectedGivens: v.selectedGivens,
+        envId: v.envId,
+        projectId: v.projectId,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     )
   );
 }

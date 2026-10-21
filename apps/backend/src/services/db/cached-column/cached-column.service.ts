@@ -3,10 +3,8 @@ import { Result } from '@praha/byethrow';
 import type { CachedColumnTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
-import type { Env } from '#common/types/backend/parts/env';
 
 @Injectable()
 export class CachedColumnService {
@@ -18,10 +16,8 @@ export class CachedColumnService {
   }): Result.ResultAsync<string, GetCacheEnvIdError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map((v): string =>
         v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId)?.useProdCache ===

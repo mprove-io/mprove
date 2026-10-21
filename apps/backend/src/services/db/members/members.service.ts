@@ -5,8 +5,6 @@ import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type {
-  BranchTab,
-  BridgeTab,
   MemberTab,
   ProjectTab,
   UserTab
@@ -33,22 +31,12 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
 import type { AddMemberToDemoProjectError } from '#common/types/backend/function-errors/add-member-to-demo-project-error';
 import type { CheckMemberDoesNotExistError } from '#common/types/backend/function-errors/check-member-does-not-exist-error';
-import type { DbBranchesFindFirstError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-error';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbMembersFindFirstError } from '#common/types/backend/function-errors/db/members/db-members-find-first-error';
-import type { DbProjectsFindFirstError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-error';
 import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
 import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import type { MemberEntToTabError } from '#common/types/backend/function-errors/member-ent-to-tab-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { Member } from '#common/types/backend/parts/member';
-import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 
 const { forEachSeries } = pIteration;
 
@@ -130,30 +118,27 @@ export class MembersService {
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'memberEnt',
-        (v): Result.ResultAsync<MemberEnt, BackendMemberDoesNotExistError> =>
-          this.db.drizzle.query.membersTable
-            .findFirst({
-              where: and(
-                eq(membersTable.memberId, v.memberId),
-                eq(membersTable.projectId, v.projectId)
-              )
-            })
-            .then((memberEnt: MemberEnt) =>
-              isUndefined(memberEnt)
-                ? Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' })
-                : Result.succeed(memberEnt)
+      Result.bind('memberEnt', v =>
+        this.db.drizzle.query.membersTable
+          .findFirst({
+            where: and(
+              eq(membersTable.memberId, v.memberId),
+              eq(membersTable.projectId, v.projectId)
             )
+          })
+          .then((memberEnt: MemberEnt) =>
+            isUndefined(memberEnt)
+              ? Result.fail({ code: 'BACKEND_MEMBER_DOES_NOT_EXIST' })
+              : Result.succeed(memberEnt)
+          )
       ),
       Result.andThrough(v =>
         v.memberEnt.isAdmin === true
           ? Result.succeed()
           : Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_ADMIN' })
       ),
-      Result.andThen(
-        (v): Result.Result<MemberTab, MemberEntToTabError> =>
-          this.tabService.memberEntToTab({ memberEnt: v.memberEnt })
+      Result.andThen(v =>
+        this.tabService.memberEntToTab({ memberEnt: v.memberEnt })
       )
     );
   }
@@ -164,17 +149,13 @@ export class MembersService {
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'member',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.memberId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('member', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.memberId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         v.member.isEditor !== true && v.member.isAdmin !== true
@@ -191,17 +172,13 @@ export class MembersService {
   }): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'member',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.memberId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('member', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.memberId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         v.member.isEditor !== true
@@ -240,123 +217,103 @@ export class MembersService {
         demoProjectId:
           this.cs.get<BackendConfig['demoProjectId']>('demoProjectId')
       }),
-      Result.bind(
-        'project',
-        async (v): Result.ResultAsync<ProjectTab, DbProjectsFindFirstError> =>
-          isUndefined(v.demoProjectId)
-            ? Result.succeed(undefined)
-            : this.db.projects.findFirst({
-                where: eq(projectsTable.projectId, v.demoProjectId)
+      Result.bind('project', async v =>
+        isUndefined(v.demoProjectId)
+          ? Result.succeed(undefined)
+          : this.db.projects.findFirst({
+              where: eq(projectsTable.projectId, v.demoProjectId)
+            })
+      ),
+      Result.bind('member', async v =>
+        isUndefined(v.project)
+          ? Result.succeed(undefined)
+          : this.db.members.findFirst({
+              where: and(
+                eq(membersTable.memberId, v.user.userId),
+                eq(membersTable.projectId, v.demoProjectId)
+              )
+            })
+      ),
+      Result.bind('newMember', v =>
+        Result.succeed(
+          isUndefined(v.project) || isDefined(v.member)
+            ? undefined
+            : this.makeMember({
+                projectId: v.demoProjectId,
+                user: v.user,
+                isAdmin: false,
+                isEditor: true,
+                isExplorer: true
               })
+        )
       ),
-      Result.bind(
-        'member',
-        async (v): Result.ResultAsync<MemberTab, DbMembersFindFirstError> =>
-          isUndefined(v.project)
-            ? Result.succeed(undefined)
-            : this.db.members.findFirst({
-                where: and(
-                  eq(membersTable.memberId, v.user.userId),
-                  eq(membersTable.projectId, v.demoProjectId)
-                )
-              })
-      ),
-      Result.bind(
-        'newMember',
-        (v): Result.Result<MemberTab, never> =>
-          Result.succeed(
-            isUndefined(v.project) || isDefined(v.member)
-              ? undefined
-              : this.makeMember({
-                  projectId: v.demoProjectId,
-                  user: v.user,
-                  isAdmin: false,
-                  isEditor: true,
-                  isExplorer: true
-                })
-          )
-      ),
-      Result.bind(
-        'baseProject',
-        (v): Result.Result<BaseProject, never> =>
-          Result.succeed(
-            isUndefined(v.newMember)
-              ? undefined
-              : this.tabService.projectTabToBaseProject({ project: v.project })
-          )
-      ),
-      Result.bind(
-        'diskCreateDevRepoOutput',
-        async (
-          v
-        ): Result.ResultAsync<ToDiskCreateDevRepoOutput, SendToDiskError> =>
+      Result.bind('baseProject', v =>
+        Result.succeed(
           isUndefined(v.newMember)
-            ? Result.succeed(undefined)
-            : this.rpcService.sendToDisk({
-                request: {
-                  operation: 'createDevRepo',
-                  traceId: v.traceId,
-                  input: {
-                    baseProject: v.baseProject,
-                    devRepoId: v.newMember.memberId
-                  }
+            ? undefined
+            : this.tabService.projectTabToBaseProject({ project: v.project })
+        )
+      ),
+      Result.bind('diskCreateDevRepoOutput', async v =>
+        isUndefined(v.newMember)
+          ? Result.succeed(undefined)
+          : this.rpcService.sendToDisk({
+              request: {
+                operation: 'createDevRepo',
+                traceId: v.traceId,
+                input: {
+                  baseProject: v.baseProject,
+                  devRepoId: v.newMember.memberId
                 }
-              })
+              }
+            })
       ),
-      Result.bind(
-        'prodBranch',
-        async (v): Result.ResultAsync<BranchTab, DbBranchesFindFirstError> =>
+      Result.bind('prodBranch', async v =>
+        isUndefined(v.newMember)
+          ? Result.succeed(undefined)
+          : this.db.branches.findFirst({
+              where: and(
+                eq(branchesTable.projectId, v.demoProjectId),
+                eq(branchesTable.repoId, PROD_REPO_ID),
+                eq(branchesTable.branchId, v.project.defaultBranch)
+              )
+            })
+      ),
+      Result.bind('devBranch', v =>
+        Result.succeed(
           isUndefined(v.newMember)
-            ? Result.succeed(undefined)
-            : this.db.branches.findFirst({
-                where: and(
-                  eq(branchesTable.projectId, v.demoProjectId),
-                  eq(branchesTable.repoId, PROD_REPO_ID),
-                  eq(branchesTable.branchId, v.project.defaultBranch)
-                )
+            ? undefined
+            : this.branchesService.makeBranch({
+                projectId: v.demoProjectId,
+                repoId: v.newMember.memberId,
+                branchId: v.project.defaultBranch
               })
+        )
       ),
-      Result.bind(
-        'devBranch',
-        (v): Result.Result<BranchTab, never> =>
-          Result.succeed(
-            isUndefined(v.newMember)
-              ? undefined
-              : this.branchesService.makeBranch({
-                  projectId: v.demoProjectId,
-                  repoId: v.newMember.memberId,
-                  branchId: v.project.defaultBranch
-                })
+      Result.bind('prodBranchBridges', async v =>
+        isUndefined(v.newMember)
+          ? Result.succeed([])
+          : this.db.bridges.findMany({
+              where: and(
+                eq(bridgesTable.projectId, v.prodBranch.projectId),
+                eq(bridgesTable.repoId, v.prodBranch.repoId),
+                eq(bridgesTable.branchId, v.prodBranch.branchId)
+              )
+            })
+      ),
+      Result.bind('devBranchBridges', v =>
+        Result.succeed(
+          v.prodBranchBridges.map(bridge =>
+            this.bridgesService.makeBridge({
+              projectId: v.devBranch.projectId,
+              repoId: v.devBranch.repoId,
+              branchId: v.devBranch.branchId,
+              envId: bridge.envId,
+              structId: EMPTY_STRUCT_ID,
+              needValidate: true
+            })
           )
-      ),
-      Result.bind(
-        'prodBranchBridges',
-        async (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          isUndefined(v.newMember)
-            ? Result.succeed([])
-            : this.db.bridges.findMany({
-                where: and(
-                  eq(bridgesTable.projectId, v.prodBranch.projectId),
-                  eq(bridgesTable.repoId, v.prodBranch.repoId),
-                  eq(bridgesTable.branchId, v.prodBranch.branchId)
-                )
-              })
-      ),
-      Result.bind(
-        'devBranchBridges',
-        (v): Result.Result<BridgeTab[], never> =>
-          Result.succeed(
-            v.prodBranchBridges.map(bridge =>
-              this.bridgesService.makeBridge({
-                projectId: v.devBranch.projectId,
-                repoId: v.devBranch.repoId,
-                branchId: v.devBranch.branchId,
-                envId: bridge.envId,
-                structId: EMPTY_STRUCT_ID,
-                needValidate: true
-              })
-            )
-          )
+        )
       ),
       Result.andThrough(v =>
         isUndefined(v.newMember)

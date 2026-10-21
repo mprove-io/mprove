@@ -14,7 +14,6 @@ import type {
   CachedColumnTab,
   CachedPartTab,
   ConnectionTab,
-  MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
@@ -42,30 +41,22 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendConnectionDoesNotExistError } from '#common/types/backend/errors/backend-connection-does-not-exist-error';
 import type { BackendConnectionSchemaIsNotFoundError } from '#common/types/backend/errors/backend-connection-schema-is-not-found-error';
 import type { BackendWrongColumnNameError } from '#common/types/backend/errors/backend-wrong-column-name-error';
 import type { BackendWrongSchemaNameError } from '#common/types/backend/errors/backend-wrong-schema-name-error';
 import type { BackendWrongTableNameError } from '#common/types/backend/errors/backend-wrong-table-name-error';
 import type { CompleteRefreshCachedColumnError } from '#common/types/backend/function-errors/complete-refresh-cached-column-error';
-import type { DbCachedColumnsFindFirstError } from '#common/types/backend/function-errors/db/cached-columns/db-cached-columns-find-first-error';
-import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
 import type { FetchCachedPartsError } from '#common/types/backend/function-errors/fetch-cached-parts-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
-import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import type { RawSchemaTable } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-table';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRefreshCachedColumnOutput } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
-
-const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 
 type PrepareRefreshPayload = {
   cacheLimit: number;
   sourceSampleSize?: number;
   startedTs: number;
 };
+
+const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)
@@ -116,15 +107,11 @@ export class RefreshCachedColumnController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditorOrAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -133,13 +120,11 @@ export class RefreshCachedColumnController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvId({
-            projectId: v.projectId,
-            envId: v.envId
-          })
+      Result.bind('cacheEnvId', v =>
+        this.cachedColumnService.getCacheEnvId({
+          projectId: v.projectId,
+          envId: v.envId
+        })
       ),
       Result.andThrough(v =>
         v.cacheEnvId === PROJECT_ENV_PROD
@@ -149,51 +134,38 @@ export class RefreshCachedColumnController {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
-      Result.bind(
-        'apiEnv',
-        (v): Result.Result<Env, never> =>
-          Result.succeed(
-            v.apiEnvs.find(apiEnv => apiEnv.envId === v.cacheEnvId)
-          )
+      Result.bind('apiEnv', v =>
+        Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.cacheEnvId))
       ),
-      Result.bind(
-        'connections',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: and(
-              eq(connectionsTable.projectId, v.projectId),
-              or(
-                eq(connectionsTable.envId, v.cacheEnvId),
-                and(
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  inArray(
-                    connectionsTable.connectionId,
-                    v.apiEnv?.fallbackConnectionIds ?? []
-                  )
+      Result.bind('connections', v =>
+        this.db.connections.findMany({
+          where: and(
+            eq(connectionsTable.projectId, v.projectId),
+            or(
+              eq(connectionsTable.envId, v.cacheEnvId),
+              and(
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                inArray(
+                  connectionsTable.connectionId,
+                  v.apiEnv?.fallbackConnectionIds ?? []
                 )
               )
             )
-          })
+          )
+        })
       ),
-      Result.bind(
-        'connection',
-        (
-          v
-        ): Result.Result<ConnectionTab, BackendConnectionDoesNotExistError> => {
-          let connection: ConnectionTab = v.connections.find(
-            connection => connection.connectionId === v.connectionId
-          );
+      Result.bind('connection', v => {
+        let connection: ConnectionTab = v.connections.find(
+          connection => connection.connectionId === v.connectionId
+        );
 
-          return isUndefined(connection)
-            ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
-            : Result.succeed(connection);
-        }
-      ),
+        return isUndefined(connection)
+          ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
+          : Result.succeed(connection);
+      }),
       Result.andThrough(v =>
         isUndefined(v.connection.rawSchema)
           ? Result.fail({
@@ -201,16 +173,14 @@ export class RefreshCachedColumnController {
             } satisfies BackendConnectionSchemaIsNotFoundError)
           : Result.succeed()
       ),
-      Result.bind(
-        'schemaTable',
-        (v): Result.Result<RawSchemaTable, never> =>
-          Result.succeed(
-            v.connection.rawSchema.tables.find(
-              table =>
-                table.schemaName === v.schemaName &&
-                table.tableName === v.tableName
-            )
+      Result.bind('schemaTable', v =>
+        Result.succeed(
+          v.connection.rawSchema.tables.find(
+            table =>
+              table.schemaName === v.schemaName &&
+              table.tableName === v.tableName
           )
+        )
       ),
       Result.andThrough(v =>
         v.connection.rawSchema.tables.some(
@@ -235,79 +205,74 @@ export class RefreshCachedColumnController {
               code: 'BACKEND_WRONG_COLUMN_NAME'
             } satisfies BackendWrongColumnNameError)
       ),
-      Result.bind(
-        'prepareRefreshPayload',
-        (v): Result.Result<PrepareRefreshPayload, never> =>
-          Result.succeed({
-            cacheLimit: this.cs.get<
-              BackendConfig['dwhColumnUniqueValuesCacheLimit']
-            >('dwhColumnUniqueValuesCacheLimit'),
-            sourceSampleSize:
-              v.refreshType === 'sample' ? (v.sampleSize ?? 10000) : undefined,
-            startedTs: makeTsNumber()
-          })
-      ),
-      Result.bind(
-        'currentCachedColumn',
-        (
-          v
-        ): Result.ResultAsync<CachedColumnTab, DbCachedColumnsFindFirstError> =>
-          this.db.cachedColumns.findFirst({
-            where: eq(
-              cachedColumnsTable.cachedColumnFullId,
-              this.hashService.makeCachedColumnFullId({
-                projectId: v.projectId,
-                connectionId: v.connectionId,
-                envId: v.cacheEnvId,
-                schemaName: v.schemaName,
-                tableName: v.tableName,
-                columnName: v.columnName
-              })
-            )
-          })
-      ),
-      Result.bind(
-        'runningCachedColumn',
-        (v): Result.Result<CachedColumnTab, never> => {
-          if (isUndefined(v.currentCachedColumn)) {
-            return Result.succeed({
-              cachedColumnFullId: this.hashService.makeCachedColumnFullId({
-                projectId: v.projectId,
-                connectionId: v.connectionId,
-                envId: v.cacheEnvId,
-                schemaName: v.schemaName,
-                tableName: v.tableName,
-                columnName: v.columnName
-              }),
+      Result.bind('prepareRefreshPayload', v => {
+        let prepareRefreshPayload: PrepareRefreshPayload = {
+          cacheLimit: this.cs.get<
+            BackendConfig['dwhColumnUniqueValuesCacheLimit']
+          >('dwhColumnUniqueValuesCacheLimit'),
+          sourceSampleSize:
+            v.refreshType === 'sample' ? (v.sampleSize ?? 10000) : undefined,
+          startedTs: makeTsNumber()
+        };
+
+        return Result.succeed(prepareRefreshPayload);
+      }),
+      Result.bind('currentCachedColumn', v =>
+        this.db.cachedColumns.findFirst({
+          where: eq(
+            cachedColumnsTable.cachedColumnFullId,
+            this.hashService.makeCachedColumnFullId({
               projectId: v.projectId,
               connectionId: v.connectionId,
               envId: v.cacheEnvId,
-              schemaNameLc: v.schemaName.toLowerCase(),
-              tableNameLc: v.tableName.toLowerCase(),
-              columnNameLc: v.columnName.toLowerCase(),
-              requestedByUserId: v.userId,
-              status: 'running',
-              errorMessage: undefined,
-              keyTag: undefined,
-              startedTs: v.prepareRefreshPayload.startedTs,
-              completedTs: undefined,
-              completedDurationMs: undefined,
-              uniqueValuesCount: 0,
-              limit: v.prepareRefreshPayload.cacheLimit,
-              sampleSize: undefined,
-              isLimitReached: undefined,
-              serverTs: undefined
-            });
-          }
-
-          v.currentCachedColumn.requestedByUserId = v.userId;
-          v.currentCachedColumn.status = 'running';
-          v.currentCachedColumn.errorMessage = undefined;
-          v.currentCachedColumn.startedTs = v.prepareRefreshPayload.startedTs;
-
-          return Result.succeed(v.currentCachedColumn);
-        }
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName
+            })
+          )
+        })
       ),
+      Result.bind('runningCachedColumn', v => {
+        if (isUndefined(v.currentCachedColumn)) {
+          let runningCachedColumn: CachedColumnTab = {
+            cachedColumnFullId: this.hashService.makeCachedColumnFullId({
+              projectId: v.projectId,
+              connectionId: v.connectionId,
+              envId: v.cacheEnvId,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName
+            }),
+            projectId: v.projectId,
+            connectionId: v.connectionId,
+            envId: v.cacheEnvId,
+            schemaNameLc: v.schemaName.toLowerCase(),
+            tableNameLc: v.tableName.toLowerCase(),
+            columnNameLc: v.columnName.toLowerCase(),
+            requestedByUserId: v.userId,
+            status: 'running',
+            errorMessage: undefined,
+            keyTag: undefined,
+            startedTs: v.prepareRefreshPayload.startedTs,
+            completedTs: undefined,
+            completedDurationMs: undefined,
+            uniqueValuesCount: 0,
+            limit: v.prepareRefreshPayload.cacheLimit,
+            sampleSize: undefined,
+            isLimitReached: undefined,
+            serverTs: undefined
+          };
+
+          return Result.succeed(runningCachedColumn);
+        }
+
+        v.currentCachedColumn.requestedByUserId = v.userId;
+        v.currentCachedColumn.status = 'running';
+        v.currentCachedColumn.errorMessage = undefined;
+        v.currentCachedColumn.startedTs = v.prepareRefreshPayload.startedTs;
+
+        return Result.succeed(v.currentCachedColumn);
+      }),
       Result.andThrough(v =>
         dbErrorToResult({
           action: async () => {
@@ -452,17 +417,15 @@ export class RefreshCachedColumnController {
   }): Result.ResultAsync<void, CompleteRefreshCachedColumnError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'cachedPartOutput',
-        (v): Result.ResultAsync<CachedPartsResult, FetchCachedPartsError> =>
-          this.fetchCachedParts({
-            connection: v.connection,
-            schemaName: v.schemaName,
-            tableName: v.tableName,
-            columnName: v.columnName,
-            sampleSize: v.sampleSize,
-            cacheLimit: v.cacheLimit
-          })
+      Result.bind('cachedPartOutput', v =>
+        this.fetchCachedParts({
+          connection: v.connection,
+          schemaName: v.schemaName,
+          tableName: v.tableName,
+          columnName: v.columnName,
+          sampleSize: v.sampleSize,
+          cacheLimit: v.cacheLimit
+        })
       ),
       Result.andThrough(v =>
         dbErrorToResult({

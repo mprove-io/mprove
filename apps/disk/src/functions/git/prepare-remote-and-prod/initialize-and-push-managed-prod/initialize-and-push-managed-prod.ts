@@ -2,7 +2,6 @@ import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import type { DiskInitializeAndPushManagedProdError } from '#common/types/disk/function-errors/disk-initialize-and-push-managed-prod-error';
-import type { DiskPushToRemoteError } from '#common/types/disk/function-errors/disk-push-to-remote-error';
 import { createInitialCommitToProd } from '#disk/functions/git/prepare-remote-and-prod/initialize-and-push-managed-prod/create-initial-commit-to-prod/create-initial-commit-to-prod';
 import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
@@ -26,20 +25,18 @@ export async function initializeAndPushManagedProd(item: {
         projectName: v.projectName
       })
     ),
-    Result.andThen(
-      async (v): Result.ResultAsync<void, DiskPushToRemoteError> => {
-        let prodGit: SimpleGit = createSimpleGit({ baseDir: v.prodDir });
+    Result.andThen(async v => {
+      let prodGit: SimpleGit = createSimpleGit({ baseDir: v.prodDir });
 
-        return pushToRemote({
-          projectId: v.projectId,
-          projectDir: v.projectDir,
-          repoId: PROD_REPO_ID,
-          repoDir: v.prodDir,
-          branch: BRANCH_MAIN,
-          git: prodGit,
-          isFetch: true
-        });
-      }
-    )
+      return pushToRemote({
+        projectId: v.projectId,
+        projectDir: v.projectDir,
+        repoId: PROD_REPO_ID,
+        repoDir: v.prodDir,
+        branch: BRANCH_MAIN,
+        git: prodGit,
+        isFetch: true
+      });
+    })
   );
 }

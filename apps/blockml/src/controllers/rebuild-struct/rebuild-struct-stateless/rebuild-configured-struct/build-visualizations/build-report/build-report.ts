@@ -3,7 +3,6 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
-
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
@@ -35,135 +34,114 @@ export function buildReport(item: {
 }): Result.Result<FileReport[], never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'checkedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReport({
-          reports: v.reports,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('checkedReports', v =>
+      checkReport({
+        reports: v.reports,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'accessCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportAccess({
-          reports: v.checkedReports,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('accessCheckedReports', v =>
+      checkReportAccess({
+        reports: v.checkedReports,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'topParametersCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportTopParameters({
-          reports: v.accessCheckedReports,
-          stores: v.stores,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('topParametersCheckedReports', v =>
+      checkReportTopParameters({
+        reports: v.accessCheckedReports,
+        stores: v.stores,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'filterConditionsCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportFilterConditions({
-          reports: v.topParametersCheckedReports,
-          structId: v.structId,
-          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('filterConditionsCheckedReports', v =>
+      checkReportFilterConditions({
+        reports: v.topParametersCheckedReports,
+        structId: v.structId,
+        caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'rowUnknownParametersCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportRowUnknownParameters({
-          reports: v.filterConditionsCheckedReports,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('rowUnknownParametersCheckedReports', v =>
+      checkReportRowUnknownParameters({
+        reports: v.filterConditionsCheckedReports,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'rowUnknownParamsCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportRowUnknownParams({
-          reports: v.rowUnknownParametersCheckedReports,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('rowUnknownParamsCheckedReports', v =>
+      checkReportRowUnknownParams({
+        reports: v.rowUnknownParametersCheckedReports,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'rowCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportRow({
-          reports: v.rowUnknownParamsCheckedReports,
-          metrics: v.metrics,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('rowCheckedReports', v =>
+      checkReportRow({
+        reports: v.rowUnknownParamsCheckedReports,
+        metrics: v.metrics,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'rowIdsCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportRowIds({
-          reports: v.rowCheckedReports,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('rowIdsCheckedReports', v =>
+      checkReportRowIds({
+        reports: v.rowCheckedReports,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'rowParametersCheckedReports',
-      (v): Result.Result<FileReport[], never> =>
-        checkReportRowParameters({
-          reports: v.rowIdsCheckedReports,
-          metrics: v.metrics,
-          apiModels: v.apiModels,
-          stores: v.stores,
-          structId: v.structId,
-          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('rowParametersCheckedReports', v =>
+      checkReportRowParameters({
+        reports: v.rowIdsCheckedReports,
+        metrics: v.metrics,
+        apiModels: v.apiModels,
+        stores: v.stores,
+        structId: v.structId,
+        caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'rowParameterFractionsBuiltReports',
-      (v): Result.Result<FileReport[], never> =>
-        buildReportRowParameterFractions({
-          reports: v.rowParametersCheckedReports,
-          metrics: v.metrics,
-          structId: v.structId,
-          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('rowParameterFractionsBuiltReports', v =>
+      buildReportRowParameterFractions({
+        reports: v.rowParametersCheckedReports,
+        metrics: v.metrics,
+        structId: v.structId,
+        caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.andThen(
-      (v): Result.Result<FileReport[], never> =>
-        makeReportAccessRolesCombined({
-          reports: v.rowParameterFractionsBuiltReports,
-          spaces: v.spaces,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.andThen(v =>
+      makeReportAccessRolesCombined({
+        reports: v.rowParameterFractionsBuiltReports,
+        spaces: v.spaces,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     )
   );
 }

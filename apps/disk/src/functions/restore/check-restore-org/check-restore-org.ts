@@ -11,13 +11,9 @@ export async function checkRestoreOrg(item: {
       ...item,
       orgDir: `${item.orgPath}/${item.orgId}`
     }),
-    Result.bind(
-      'isOrgExist',
-      (v): Result.ResultAsync<boolean, never> => isPathExist({ path: v.orgDir })
-    ),
-    Result.andThen(
-      async (v): Result.ResultAsync<void, never> =>
-        v.isOrgExist === false ? ensureDir({ dir: v.orgDir }) : Result.succeed()
+    Result.bind('isOrgExist', v => isPathExist({ path: v.orgDir })),
+    Result.andThen(async v =>
+      v.isOrgExist === false ? ensureDir({ dir: v.orgDir }) : Result.succeed()
     )
   );
 }

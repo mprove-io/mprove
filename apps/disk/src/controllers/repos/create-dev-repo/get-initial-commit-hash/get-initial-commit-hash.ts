@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
 import type { LogResult, SimpleGit } from 'simple-git';
-import type { DiskCheckoutBranchError } from '#common/types/disk/function-errors/disk-checkout-branch-error';
 import type { DiskGetInitialCommitHashError } from '#common/types/disk/function-errors/disk-get-initial-commit-hash-error';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 
@@ -19,19 +18,18 @@ export async function getInitialCommitHash(item: {
 
   return Result.pipe(
     Result.succeed(item),
-    Result.andThrough(
-      (v): Result.ResultAsync<void, DiskCheckoutBranchError> =>
-        checkoutBranch({
-          projectId: v.projectId,
-          projectDir: v.projectDir,
-          repoId: v.devRepoId,
-          repoDir: v.devRepoDir,
-          branchName: v.initialBranch,
-          git: v.devGit,
-          isFetch: false
-        })
+    Result.andThrough(v =>
+      checkoutBranch({
+        projectId: v.projectId,
+        projectDir: v.projectDir,
+        repoId: v.devRepoId,
+        repoDir: v.devRepoDir,
+        branchName: v.initialBranch,
+        git: v.devGit,
+        isFetch: false
+      })
     ),
-    Result.andThen(async (v): Result.ResultAsync<string | undefined, never> => {
+    Result.andThen(async v => {
       let logResult: LogResult = await v.devGit.log({ n: 1 });
 
       let initialCommitHash: string | undefined =

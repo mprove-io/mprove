@@ -13,10 +13,6 @@ import { CodexService } from '#backend/services/codex/codex.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
-import type { PollDeviceAuthError } from '#common/types/backend/function-errors/poll-device-auth-error';
-import type { CodexDeviceAuthStatus } from '#common/types/backend/parts/codex/codex-device-auth-status';
-
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPollUserCodexAuthOutput } from '#common/types/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-output';
 
@@ -52,23 +48,19 @@ export class PollUserCodexAuthController {
       Result.andThrough(v =>
         this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
-      Result.bind(
-        'status',
-        (v): Result.ResultAsync<CodexDeviceAuthStatus, PollDeviceAuthError> =>
-          this.codexService.pollDeviceAuth({
-            userId: v.user.userId,
-            deviceAuthId: v.deviceAuthId,
-            userCode: v.userCode
-          })
+      Result.bind('status', v =>
+        this.codexService.pollDeviceAuth({
+          userId: v.user.userId,
+          deviceAuthId: v.deviceAuthId,
+          userCode: v.userCode
+        })
       ),
-      Result.bind(
-        'freshUser',
-        async (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          v.status === 'Authorized'
-            ? this.usersService.getUserCheckExists({
-                userId: v.user.userId
-              })
-            : Result.succeed(undefined)
+      Result.bind('freshUser', async v =>
+        v.status === 'Authorized'
+          ? this.usersService.getUserCheckExists({
+              userId: v.user.userId
+            })
+          : Result.succeed(undefined)
       ),
       Result.map(
         (v): ToBackendPollUserCodexAuthOutput =>

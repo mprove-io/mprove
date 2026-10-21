@@ -3,7 +3,6 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
-
 import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
 import { buildSpaceAccessRoles } from './build-space-access-roles/build-space-access-roles';
@@ -21,58 +20,49 @@ export function buildSpace(item: {
 }): Result.Result<FilePartSpace[], never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'fileSpaces',
-      (v): Result.Result<FileSpace[], never> =>
-        checkSpaceFolders({
-          spaces: v.spaces,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('fileSpaces', v =>
+      checkSpaceFolders({
+        spaces: v.spaces,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'filePartSpaces',
-      (v): Result.Result<FilePartSpace[], never> =>
-        makeFilePartSpaces({
-          spaces: v.fileSpaces,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('filePartSpaces', v =>
+      makeFilePartSpaces({
+        spaces: v.fileSpaces,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'parentCheckedSpaces',
-      (v): Result.Result<FilePartSpace[], never> =>
-        checkSpaceParents({
-          spaces: v.filePartSpaces,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('parentCheckedSpaces', v =>
+      checkSpaceParents({
+        spaces: v.filePartSpaces,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'fullTitleSpaces',
-      (v): Result.Result<FilePartSpace[], never> =>
-        buildSpaceFullTitles({
-          spaces: v.parentCheckedSpaces,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('fullTitleSpaces', v =>
+      buildSpaceFullTitles({
+        spaces: v.parentCheckedSpaces,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.andThen(
-      (v): Result.Result<FilePartSpace[], never> =>
-        buildSpaceAccessRoles({
-          spaces: v.fullTitleSpaces,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.andThen(v =>
+      buildSpaceAccessRoles({
+        spaces: v.fullTitleSpaces,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     )
   );
 }

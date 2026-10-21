@@ -2,12 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { emptyDir, ensureDir } from 'fs-extra';
-import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
-import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
-import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import type { ToDiskSeedProjectOutput } from '#common/types/disk/routes/seed/seed-project/seed-project-output';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
@@ -117,42 +112,36 @@ export class SeedProjectService {
           passPhrase: v.passPhrase
         })
       ),
-      Result.bind(
-        'itemCatalog',
-        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
-          getNodesAndFiles({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.devRepoId,
-            readFiles: true,
-            isRootMproveDir: false
-          })
+      Result.bind('itemCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.devRepoId,
+          readFiles: true,
+          isRootMproveDir: false
+        })
       ),
-      Result.bind(
-        'devGit',
-        (v): Result.ResultAsync<SimpleGit, never> =>
-          createGit({
-            repoDir: v.devRepoDir,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.gitUrl,
-            privateKeyEncrypted: v.privateKeyEncrypted,
-            publicKey: v.publicKey,
-            passPhrase: v.passPhrase
-          })
+      Result.bind('devGit', v =>
+        createGit({
+          repoDir: v.devRepoDir,
+          remoteType: v.remoteType,
+          keyDir: v.keyDir,
+          gitUrl: v.gitUrl,
+          privateKeyEncrypted: v.privateKeyEncrypted,
+          publicKey: v.publicKey,
+          passPhrase: v.passPhrase
+        })
       ),
-      Result.bind(
-        'devItemStatus',
-        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
-          getRepoStatus({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.devRepoId,
-            repoDir: v.devRepoDir,
-            git: v.devGit,
-            isFetch: true,
-            isCheckConflicts: true
-          })
+      Result.bind('devItemStatus', v =>
+        getRepoStatus({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.devRepoId,
+          repoDir: v.devRepoDir,
+          git: v.devGit,
+          isFetch: true,
+          isCheckConflicts: true
+        })
       ),
       Result.map(
         (v): ToDiskSeedProjectOutput => ({

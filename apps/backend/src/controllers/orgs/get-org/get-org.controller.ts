@@ -7,11 +7,7 @@ import {
   ToBackendGetOrgResponseDto
 } from '#backend/controllers/orgs/get-org/get-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  OrgTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -19,8 +15,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgOutput } from '#common/types/backend/routes/orgs/get-org/get-org-output';
 
@@ -50,40 +44,32 @@ export class GetOrgController {
         orgId: body.input.orgId,
         userId: user.userId
       }),
-      Result.bind(
-        'org',
-        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
-          this.db.orgs.findFirstCheckExists({
-            where: eq(orgsTable.orgId, v.orgId)
-          })
+      Result.bind('org', v =>
+        this.db.orgs.findFirstCheckExists({
+          where: eq(orgsTable.orgId, v.orgId)
+        })
       ),
-      Result.bind(
-        'userMembers',
-        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          v.org.ownerId === v.userId
-            ? Result.succeed([])
-            : this.db.members.findMany({
-                where: eq(membersTable.memberId, v.userId)
+      Result.bind('userMembers', async v =>
+        v.org.ownerId === v.userId
+          ? Result.succeed([])
+          : this.db.members.findMany({
+              where: eq(membersTable.memberId, v.userId)
+            })
+      ),
+      Result.bind('projectIds', v =>
+        Result.succeed(v.userMembers.map(userMember => userMember.projectId))
+      ),
+      Result.bind('isOrgAccessible', async v =>
+        v.org.ownerId === v.userId
+          ? Result.succeed(true)
+          : v.projectIds.length === 0
+            ? Result.succeed(false)
+            : this.db.projects.isExist({
+                where: and(
+                  inArray(projectsTable.projectId, v.projectIds),
+                  eq(projectsTable.orgId, v.orgId)
+                )
               })
-      ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.userMembers.map(userMember => userMember.projectId))
-      ),
-      Result.bind(
-        'isOrgAccessible',
-        async (v): Result.ResultAsync<boolean, never> =>
-          v.org.ownerId === v.userId
-            ? Result.succeed(true)
-            : v.projectIds.length === 0
-              ? Result.succeed(false)
-              : this.db.projects.isExist({
-                  where: and(
-                    inArray(projectsTable.projectId, v.projectIds),
-                    eq(projectsTable.orgId, v.orgId)
-                  )
-                })
       ),
       Result.andThrough(v =>
         v.isOrgAccessible === false

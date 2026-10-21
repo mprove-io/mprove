@@ -1,11 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { BranchSummary, DiffResult, SimpleGit } from 'simple-git';
-import type { DiskGetRepoConflictsError } from '#common/types/disk/function-errors/disk-get-repo-conflicts-error';
 import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskFileChange } from '#common/types/disk/parts/file/disk-file-change';
-import type { DiskFileLine } from '#common/types/disk/parts/file/disk-file-line';
 import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
-import type { GetChangesToCommitError } from '#common/types/node-common/function-errors/get-changes-to-commit-error';
 import { getRepoConflicts } from '#disk/functions/git/get-repo-status/get-repo-conflicts/get-repo-conflicts';
 import { getRepoStatusWithoutStagedChanges } from '#disk/functions/git/get-repo-status/get-repo-status-without-staged-changes/get-repo-status-without-staged-changes';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
@@ -35,62 +31,53 @@ export async function getRepoStatus(item: {
 
       return Result.pipe(
         Result.succeed(item),
-        Result.bind(
-          'changesToCommit',
-          (v): Result.ResultAsync<DiskFileChange[], GetChangesToCommitError> =>
-            getChangesToCommit({
-              repoDir: v.repoDir,
-              addContent: v.addContent,
-              expandRenamed: v.expandRenamed
-            })
+        Result.bind('changesToCommit', v =>
+          getChangesToCommit({
+            repoDir: v.repoDir,
+            addContent: v.addContent,
+            expandRenamed: v.expandRenamed
+          })
         ),
-        Result.bind(
-          'currentBranchName',
-          async (v): Result.ResultAsync<string, never> => {
-            let branchSummary: BranchSummary = await v.git.branch();
-            return Result.succeed(branchSummary.current);
+        Result.bind('currentBranchName', async v => {
+          let branchSummary: BranchSummary = await v.git.branch();
+          return Result.succeed(branchSummary.current);
+        }),
+        Result.bind('stagedFilesCount', async v => {
+          // Use git diff --cached to detect ALL staged changes including deletions
+          // (statusResult.staged doesn't reliably include staged deletions)
+          let stagedDiff: DiffResult = await v.git.diffSummary(['--cached']);
+          return Result.succeed(stagedDiff.files.length);
+        }),
+        Result.bind('conflicts', async v =>
+          getRepoConflicts({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            isCheckConflicts: v.isCheckConflicts
+          })
+        ),
+        Result.andThen(async v => {
+          if (v.stagedFilesCount > 0) {
+            let diskItemStatus: DiskItemStatus = {
+              repoStatus: 'NeedCommit',
+              conflicts: v.conflicts,
+              currentBranch: v.currentBranchName,
+              changesToCommit: v.changesToCommit,
+              changesToPush: []
+            };
+
+            return Result.succeed(diskItemStatus);
           }
-        ),
-        Result.bind(
-          'stagedFilesCount',
-          async (v): Result.ResultAsync<number, never> => {
-            // Use git diff --cached to detect ALL staged changes including deletions
-            // (statusResult.staged doesn't reliably include staged deletions)
-            let stagedDiff: DiffResult = await v.git.diffSummary(['--cached']);
-            return Result.succeed(stagedDiff.files.length);
-          }
-        ),
-        Result.bind(
-          'conflicts',
-          async (
-            v
-          ): Result.ResultAsync<DiskFileLine[], DiskGetRepoConflictsError> =>
-            getRepoConflicts({
-              projectId: v.projectId,
-              projectDir: v.projectDir,
-              repoId: v.repoId,
-              isCheckConflicts: v.isCheckConflicts
-            })
-        ),
-        Result.andThen(
-          async (v): Result.ResultAsync<DiskItemStatus, never> =>
-            v.stagedFilesCount > 0
-              ? Result.succeed({
-                  repoStatus: 'NeedCommit',
-                  conflicts: v.conflicts,
-                  currentBranch: v.currentBranchName,
-                  changesToCommit: v.changesToCommit,
-                  changesToPush: []
-                })
-              : getRepoStatusWithoutStagedChanges({
-                  git: v.git,
-                  currentBranchName: v.currentBranchName,
-                  changesToCommit: v.changesToCommit,
-                  conflicts: v.conflicts,
-                  repoDir: v.repoDir,
-                  isFetch: v.isFetch
-                })
-        )
+
+          return getRepoStatusWithoutStagedChanges({
+            git: v.git,
+            currentBranchName: v.currentBranchName,
+            changesToCommit: v.changesToCommit,
+            conflicts: v.conflicts,
+            repoDir: v.repoDir,
+            isFetch: v.isFetch
+          });
+        })
       );
     }
   });

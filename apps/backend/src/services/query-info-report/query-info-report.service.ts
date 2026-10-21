@@ -5,8 +5,6 @@ import type {
   BridgeTab,
   MemberTab,
   ProjectTab,
-  ReportTab,
-  StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { DbService } from '#backend/services/db/db.service';
@@ -17,15 +15,8 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
 import type { GetQueryInfoReportDataError } from '#common/types/backend/function-errors/get-query-info-report-data-error';
-import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
-import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
-import type { Member } from '#common/types/backend/parts/member';
-import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
-import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { ToBackendGetReportOutput } from '#common/types/backend/routes/reports/get-report/get-report-output';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 
@@ -59,49 +50,39 @@ export class QueryInfoReportService {
   > {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.bridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'report',
-        (
-          v
-        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccess({
-            projectId: v.projectId,
-            reportId: v.reportId,
-            structId: v.bridge.structId,
-            user: v.user,
-            userMember: v.userMember
-          })
+      Result.bind('report', v =>
+        this.reportsService.getReportCheckExistsAndAccess({
+          projectId: v.projectId,
+          reportId: v.reportId,
+          structId: v.bridge.structId,
+          user: v.user,
+          userMember: v.userMember
+        })
       ),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
-      Result.bind(
-        'apiReport',
-        (v): Result.ResultAsync<ReportX, GetReportDataError> =>
-          this.reportDataService.getReportData({
-            report: v.report,
-            traceId: v.traceId,
-            project: v.project,
-            apiUserMember: v.apiUserMember,
-            userMember: v.userMember,
-            user: v.user,
-            envId: v.envId,
-            struct: v.struct,
-            metrics: v.struct.metrics,
-            timeSpec: v.timeSpec,
-            timeRangeFractionBrick: v.timeRangeFractionBrick,
-            timezone: v.timezone
-          })
+      Result.bind('apiReport', v =>
+        this.reportDataService.getReportData({
+          report: v.report,
+          traceId: v.traceId,
+          project: v.project,
+          apiUserMember: v.apiUserMember,
+          userMember: v.userMember,
+          user: v.user,
+          envId: v.envId,
+          struct: v.struct,
+          metrics: v.struct.metrics,
+          timeSpec: v.timeSpec,
+          timeRangeFractionBrick: v.timeRangeFractionBrick,
+          timezone: v.timezone
+        })
       ),
       Result.andThrough(async v => {
         if (v.skipUi === false) {
@@ -127,13 +108,11 @@ export class QueryInfoReportService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'modelPartXs',
-        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXs({
-            structId: v.struct.structId,
-            apiUserMember: v.apiUserMember
-          })
+      Result.bind('modelPartXs', v =>
+        this.modelsService.getModelPartXs({
+          structId: v.struct.structId,
+          apiUserMember: v.apiUserMember
+        })
       ),
       Result.map(
         (v): ToBackendGetReportOutput => ({

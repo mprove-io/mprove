@@ -1,24 +1,17 @@
 import { Result } from '@praha/byethrow';
 import type { DiskGetFileContentError } from '#common/types/disk/function-errors/disk-get-file-content-error';
-import type { ReadFileCheckSizeError } from '#common/types/node-common/function-errors/read-file-check-size-error';
-import {
-  type ReadFileCheckSizeOutput,
-  readFileCheckSize
-} from '#node-common/functions/read-file-check-size/read-file-check-size';
+import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 
 export async function getFileContent(item: {
   filePath: string;
 }): Result.ResultAsync<string, DiskGetFileContentError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.andThen(
-      (
-        v
-      ): Result.ResultAsync<ReadFileCheckSizeOutput, ReadFileCheckSizeError> =>
-        readFileCheckSize({
-          filePath: v.filePath,
-          getStat: false
-        })
+    Result.andThen(v =>
+      readFileCheckSize({
+        filePath: v.filePath,
+        getStat: false
+      })
     ),
     Result.map((v): string => v.content)
   );

@@ -10,7 +10,7 @@ import {
   ToBackendCreateOrgResponseDto
 } from '#backend/controllers/orgs/create-org/create-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -22,10 +22,6 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-
-import type { AddOrgError } from '#common/types/backend/function-errors/add-org-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs/create-org/create-org-output';
 
@@ -80,25 +76,19 @@ export class CreateOrgController {
             })
           : Result.succeed();
       }),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'nameHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.name,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('nameHash', v =>
+        this.hashService.makeHash({
+          input: v.name,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'isOrgExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          this.db.orgs.isExist({
-            where: eq(orgsTable.nameHash, v.nameHash)
-          })
+      Result.bind('isOrgExist', v =>
+        this.db.orgs.isExist({
+          where: eq(orgsTable.nameHash, v.nameHash)
+        })
       ),
       Result.andThrough(v =>
         v.name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()
@@ -110,15 +100,13 @@ export class CreateOrgController {
           ? Result.fail({ code: 'BACKEND_ORG_ALREADY_EXISTS' })
           : Result.succeed()
       ),
-      Result.bind(
-        'org',
-        (v): Result.ResultAsync<OrgTab, AddOrgError> =>
-          this.orgsService.addOrg({
-            name: v.name,
-            ownerId: v.user.userId,
-            ownerEmail: v.user.email,
-            traceId: v.traceId
-          })
+      Result.bind('org', v =>
+        this.orgsService.addOrg({
+          name: v.name,
+          ownerId: v.user.userId,
+          ownerEmail: v.user.email,
+          traceId: v.traceId
+        })
       ),
       Result.map(
         (v): ToBackendCreateOrgOutput => ({

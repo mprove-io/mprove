@@ -17,7 +17,6 @@ import {
   MCP_TOOL_VALIDATE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ValidateFilesError } from '#common/types/backend/function-errors/validate-files-error';
 import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput
@@ -27,7 +26,6 @@ import {
   zMcpToolValidateFilesOutput
 } from '#common/types/backend/mcp-tools/mcp-tool-validate-files/mcp-tool-validate-files-output';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
-import type { ToBackendValidateFilesOutput } from '#common/types/backend/routes/files/validate-files/validate-files-output';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
 @McpController()
@@ -93,22 +91,15 @@ export class ValidateFilesTool {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'validation',
-        (
-          v
-        ): Result.ResultAsync<
-          ToBackendValidateFilesOutput,
-          ValidateFilesError
-        > =>
-          this.validateFilesService.validateFiles({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId,
-            traceId: makeId(),
-            userId: v.user.userId
-          })
+      Result.bind('validation', v =>
+        this.validateFilesService.validateFiles({
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          traceId: makeId(),
+          userId: v.user.userId
+        })
       ),
       Result.map((v): McpToolValidateFilesOutput => {
         let hostUrl: string = this.cs

@@ -13,7 +13,6 @@ import {
 } from '#backend/controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  OcSessionTab,
   ProjectTab,
   ProviderTab,
   SessionTab,
@@ -30,7 +29,6 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -48,16 +46,11 @@ import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
-import type { DbOcSessionsFindFirstError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-first-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
 import type { DbProvidersFindManyError } from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
 import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { DispatchEditorInteractionError } from '#common/types/backend/function-errors/dispatch-editor-interaction-error';
 import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
-import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
-import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
 import type { HealthCheckOpenCodeError } from '#common/types/backend/function-errors/health-check-open-code-error';
 import type { PrepareEditorSandboxError } from '#common/types/backend/function-errors/prepare-editor-sandbox-error';
 import type { PublishInteractCommandError } from '#common/types/backend/function-errors/publish-interact-command-error';
@@ -125,29 +118,15 @@ export class SendMessageToEditorSessionController {
         partId: body.input.partId,
         user: user
       }),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.session.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.session.projectId)
+        })
       ),
       Result.andThrough(v =>
         v.session.userId !== v.user.userId
@@ -172,67 +151,48 @@ export class SendMessageToEditorSessionController {
           ? Result.fail({ code: 'BACKEND_MESSAGE_MODEL_REQUIRED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'modelSelection',
-        async (
-          v
-        ): Result.ResultAsync<
-          GetModelSelectionOutput,
-          GetModelSelectionError
-        > =>
-          v.interactionType === 'Message'
-            ? this.providersService.getModelSelection({
-                projectId: v.session.projectId,
-                providerId: v.providerId,
-                modelId: v.modelId,
-                variant: v.variant,
-                isUserCodexAuthSet: isDefined(v.user.codexAuth),
-                isBuilder: true
-              })
-            : Result.succeed(undefined)
+      Result.bind('modelSelection', async v =>
+        v.interactionType === 'Message'
+          ? this.providersService.getModelSelection({
+              projectId: v.session.projectId,
+              providerId: v.providerId,
+              modelId: v.modelId,
+              variant: v.variant,
+              isUserCodexAuthSet: isDefined(v.user.codexAuth),
+              isBuilder: true
+            })
+          : Result.succeed(undefined)
       ),
-      Result.bind(
-        'sessionLockToken',
-        (v): Result.ResultAsync<string, AcquireSessionLockError> =>
-          this.editorSessionLockService.acquireSessionLock({
-            sessionId: v.session.sessionId
-          })
+      Result.bind('sessionLockToken', v =>
+        this.editorSessionLockService.acquireSessionLock({
+          sessionId: v.session.sessionId
+        })
       ),
-      Result.bind(
-        'updatedSession',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          SendEditorInteractionWhileLockedError
-        > =>
-          this.sendEditorInteractionWhileLocked({
-            session: v.session,
-            project: v.project,
-            sessionLockToken: v.sessionLockToken,
-            user: v.user,
-            isMessageUsesCodex:
-              v.modelSelection?.provider.type === 'OpenAICodex',
-            interactionType: v.interactionType,
-            message: v.message,
-            agent: v.agent,
-            providerId: v.providerId,
-            modelId: v.modelId,
-            variant: v.variant,
-            permissionId: v.permissionId,
-            reply: v.reply,
-            questionId: v.questionId,
-            answers: v.answers,
-            messageId: v.messageId,
-            partId: v.partId
-          })
+      Result.bind('updatedSession', v =>
+        this.sendEditorInteractionWhileLocked({
+          session: v.session,
+          project: v.project,
+          sessionLockToken: v.sessionLockToken,
+          user: v.user,
+          isMessageUsesCodex: v.modelSelection?.provider.type === 'OpenAICodex',
+          interactionType: v.interactionType,
+          message: v.message,
+          agent: v.agent,
+          providerId: v.providerId,
+          modelId: v.modelId,
+          variant: v.variant,
+          permissionId: v.permissionId,
+          reply: v.reply,
+          questionId: v.questionId,
+          answers: v.answers,
+          messageId: v.messageId,
+          partId: v.partId
+        })
       ),
-      Result.bind(
-        'ocSession',
-        (v): Result.ResultAsync<OcSessionTab, DbOcSessionsFindFirstError> =>
-          this.db.ocSessions.findFirst({
-            where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
-          })
+      Result.bind('ocSession', v =>
+        this.db.ocSessions.findFirst({
+          where: eq(ocSessionsTable.sessionId, v.updatedSession.sessionId)
+        })
       ),
       Result.map(
         (v): ToBackendSendMessageToEditorSessionOutput => ({
@@ -269,29 +229,20 @@ export class SendMessageToEditorSessionController {
     try {
       let result = await Result.pipe(
         Result.succeed(item),
-        Result.bind(
-          'lockedSession',
-          (
-            v
-          ): Result.ResultAsync<
-            SessionTab,
-            DbSessionsFindFirstCheckExistsError
-          > =>
-            this.db.sessions.findFirstCheckExists({
-              where: eq(sessionsTable.sessionId, v.session.sessionId)
-            })
+        Result.bind('lockedSession', v =>
+          this.db.sessions.findFirstCheckExists({
+            where: eq(sessionsTable.sessionId, v.session.sessionId)
+          })
         ),
         Result.andThrough(v =>
           this.validateSessionStatus({ session: v.lockedSession })
         ),
-        Result.bind(
-          'isCodex',
-          (v): Result.Result<boolean, never> =>
-            Result.succeed(
-              v.interactionType === 'Message'
-                ? v.isMessageUsesCodex
-                : v.lockedSession.providerId === CODEX_PROVIDER_ID
-            )
+        Result.bind('isCodex', v =>
+          Result.succeed(
+            v.interactionType === 'Message'
+              ? v.isMessageUsesCodex
+              : v.lockedSession.providerId === CODEX_PROVIDER_ID
+          )
         ),
         Result.andThrough(async v =>
           v.isCodex
@@ -300,44 +251,38 @@ export class SendMessageToEditorSessionController {
               })
             : Result.succeed()
         ),
-        Result.bind(
-          'freshUser',
-          async (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-            v.isCodex
-              ? this.usersService.getUserCheckExists({
-                  userId: v.user.userId
-                })
-              : Result.succeed(v.user)
+        Result.bind('freshUser', async v =>
+          v.isCodex
+            ? this.usersService.getUserCheckExists({
+                userId: v.user.userId
+              })
+            : Result.succeed(v.user)
         ),
-        Result.bind(
-          'preparedSession',
-          (v): Result.ResultAsync<SessionTab, PrepareEditorSandboxError> =>
-            this.prepareEditorSandbox({
-              session: v.lockedSession,
-              project: v.project,
-              user: v.freshUser,
-              isCodex: v.isCodex,
-              interactionType: v.interactionType
-            })
+        Result.bind('preparedSession', v =>
+          this.prepareEditorSandbox({
+            session: v.lockedSession,
+            project: v.project,
+            user: v.freshUser,
+            isCodex: v.isCodex,
+            interactionType: v.interactionType
+          })
         ),
-        Result.bind(
-          'updatedSession',
-          (v): Result.ResultAsync<SessionTab, DispatchEditorInteractionError> =>
-            this.dispatchEditorInteraction({
-              session: v.preparedSession,
-              interactionType: v.interactionType,
-              message: v.message,
-              agent: v.agent,
-              providerId: v.providerId,
-              modelId: v.modelId,
-              variant: v.variant,
-              permissionId: v.permissionId,
-              reply: v.reply,
-              questionId: v.questionId,
-              answers: v.answers,
-              messageId: v.messageId,
-              partId: v.partId
-            })
+        Result.bind('updatedSession', v =>
+          this.dispatchEditorInteraction({
+            session: v.preparedSession,
+            interactionType: v.interactionType,
+            message: v.message,
+            agent: v.agent,
+            providerId: v.providerId,
+            modelId: v.modelId,
+            variant: v.variant,
+            permissionId: v.permissionId,
+            reply: v.reply,
+            questionId: v.questionId,
+            answers: v.answers,
+            messageId: v.messageId,
+            partId: v.partId
+          })
         ),
         Result.andThrough(v => this.saveSession({ session: v.updatedSession })),
         Result.map((v): SessionTab => v.updatedSession)

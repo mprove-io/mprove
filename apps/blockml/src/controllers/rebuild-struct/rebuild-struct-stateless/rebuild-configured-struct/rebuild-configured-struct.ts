@@ -7,7 +7,6 @@ import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { BuildVisualizationsError } from '#common/types/blockml/function-errors/build-visualizations-error';
 import type { RebuildConfiguredStructError } from '#common/types/blockml/function-errors/rebuild-configured-struct-error';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
@@ -20,16 +19,11 @@ import type { FileStore } from '#common/types/blockml/parts/internal/file-store'
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
-import type { BuildCompiledModelsOutput } from './build-compiled-models/build-compiled-models';
 import { buildCompiledModels } from './build-compiled-models/build-compiled-models';
 import { buildExplorer } from './build-explorer/build-explorer';
-import type { BuildVisualizationsOutput } from './build-visualizations/build-visualizations';
 import { buildVisualizations } from './build-visualizations/build-visualizations';
 import { finalizeRebuildStruct } from './finalize-rebuild-struct/finalize-rebuild-struct';
-import {
-  type MalloyPreparation,
-  prepareMalloy
-} from './prepare-malloy/prepare-malloy';
+import { prepareMalloy } from './prepare-malloy/prepare-malloy';
 
 export async function rebuildConfiguredStruct(item: {
   files: BmlFile[];
@@ -57,16 +51,14 @@ export async function rebuildConfiguredStruct(item: {
 }): Result.ResultAsync<RebuildStructPrep, RebuildConfiguredStructError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'mproveExplorer',
-      (v): Result.Result<string, never> =>
-        buildExplorer({
-          files: v.files,
-          errors: v.errors,
-          structId: v.structId,
-          caller: 'RebuildStruct',
-          cs: v.cs
-        })
+    Result.bind('mproveExplorer', v =>
+      buildExplorer({
+        files: v.files,
+        errors: v.errors,
+        structId: v.structId,
+        caller: 'RebuildStruct',
+        cs: v.cs
+      })
     ),
     Result.andThrough(v => {
       if (isDefined(v.overrideTimezone)) {
@@ -75,87 +67,75 @@ export async function rebuildConfiguredStruct(item: {
 
       return Result.succeed();
     }),
-    Result.bind(
-      'malloyPreparation',
-      (v): Result.ResultAsync<MalloyPreparation, never> =>
-        prepareMalloy({
-          files: v.files,
-          isUseCache: v.isUseCache,
-          projectConnections: v.projectConnections,
-          cs: v.cs
-        })
+    Result.bind('malloyPreparation', v =>
+      prepareMalloy({
+        files: v.files,
+        isUseCache: v.isUseCache,
+        projectConnections: v.projectConnections,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'compiledModels',
-      (v): Result.ResultAsync<BuildCompiledModelsOutput, never> =>
-        buildCompiledModels({
-          files: v.files,
-          malloyConnections: v.malloyPreparation.malloyConnections,
-          projectConnections: v.projectConnections,
-          mods: v.malloyPreparation.mods,
-          spaces: v.spaces,
-          tempDir: v.malloyPreparation.tempDir,
-          projectId: v.projectId,
-          errors: v.errors,
-          structId: v.structId,
-          cs: v.cs,
-          isUseCache: v.isUseCache,
-          stores: v.stores,
-          presets: v.presets,
-          projectConfig: v.projectConfig,
-          cachedModels: v.cachedModels,
-          cachedMetrics: v.cachedMetrics
-        })
+    Result.bind('compiledModels', v =>
+      buildCompiledModels({
+        files: v.files,
+        malloyConnections: v.malloyPreparation.malloyConnections,
+        projectConnections: v.projectConnections,
+        mods: v.malloyPreparation.mods,
+        spaces: v.spaces,
+        tempDir: v.malloyPreparation.tempDir,
+        projectId: v.projectId,
+        errors: v.errors,
+        structId: v.structId,
+        cs: v.cs,
+        isUseCache: v.isUseCache,
+        stores: v.stores,
+        presets: v.presets,
+        projectConfig: v.projectConfig,
+        cachedModels: v.cachedModels,
+        cachedMetrics: v.cachedMetrics
+      })
     ),
-    Result.bind(
-      'visualizations',
-      (
-        v
-      ): Result.ResultAsync<
-        BuildVisualizationsOutput,
-        BuildVisualizationsError
-      > =>
-        buildVisualizations({
-          projectConfig: v.projectConfig,
-          dashboards: v.dashboards,
-          charts: v.charts,
-          reports: v.reports,
-          spaces: v.spaces,
-          stores: v.compiledModels.stores,
-          structId: v.structId,
-          errors: v.errors,
-          cs: v.cs,
-          projectId: v.projectId,
-          envId: v.envId,
-          apiModels: v.compiledModels.apiModels,
-          malloyConnections: v.malloyPreparation.malloyConnections,
-          projectConnections: v.projectConnections,
-          selectedGivens: v.selectedGivens,
-          metrics: v.compiledModels.metrics
-        })
+    Result.bind('visualizations', v =>
+      buildVisualizations({
+        projectConfig: v.projectConfig,
+        dashboards: v.dashboards,
+        charts: v.charts,
+        reports: v.reports,
+        spaces: v.spaces,
+        stores: v.compiledModels.stores,
+        structId: v.structId,
+        errors: v.errors,
+        cs: v.cs,
+        projectId: v.projectId,
+        envId: v.envId,
+        apiModels: v.compiledModels.apiModels,
+        malloyConnections: v.malloyPreparation.malloyConnections,
+        projectConnections: v.projectConnections,
+        selectedGivens: v.selectedGivens,
+        metrics: v.compiledModels.metrics
+      })
     ),
-    Result.andThen(
-      (v): Result.ResultAsync<RebuildStructPrep, never> =>
-        finalizeRebuildStruct({
-          errors: v.errors,
-          stores: v.compiledModels.stores,
-          metrics: v.compiledModels.metrics,
-          dashboards: v.visualizations.dashboards,
-          reports: v.visualizations.reports,
-          charts: v.visualizations.charts,
-          structId: v.structId,
-          cs: v.cs,
-          isTest: v.isTest,
-          tempDir: v.malloyPreparation.tempDir,
-          malloyConnections: v.malloyPreparation.malloyConnections,
-          logger: v.logger,
-          presets: v.presets,
-          spaces: v.spaces,
-          schemas: v.schemas,
-          projectConfig: v.projectConfig,
-          mproveExplorer: v.mproveExplorer,
-          apiModels: v.compiledModels.apiModels
-        })
+    Result.andThen(v =>
+      finalizeRebuildStruct({
+        errors: v.errors,
+        stores: v.compiledModels.stores,
+        metrics: v.compiledModels.metrics,
+        dashboards: v.visualizations.dashboards,
+        reports: v.visualizations.reports,
+        charts: v.visualizations.charts,
+        structId: v.structId,
+        cs: v.cs,
+        isTest: v.isTest,
+        tempDir: v.malloyPreparation.tempDir,
+        malloyConnections: v.malloyPreparation.malloyConnections,
+        logger: v.logger,
+        presets: v.presets,
+        spaces: v.spaces,
+        schemas: v.schemas,
+        projectConfig: v.projectConfig,
+        mproveExplorer: v.mproveExplorer,
+        apiModels: v.compiledModels.apiModels
+      })
     )
   );
 }

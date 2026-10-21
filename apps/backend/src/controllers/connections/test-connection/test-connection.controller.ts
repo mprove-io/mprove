@@ -10,10 +10,7 @@ import {
   ToBackendTestConnectionResponseDto
 } from '#backend/controllers/connections/test-connection/test-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ConnectionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -116,59 +113,54 @@ export class TestConnectionController {
           )
         })
       ),
-      Result.bind(
-        'connection',
-        (v): Result.Result<ConnectionTab, never> =>
-          Result.succeed(
-            this.connectionsService.makeConnection({
-              projectId: v.projectId,
-              envId: v.envId,
-              connectionId: v.connectionId,
-              type: v.type,
-              options: v.options
-            })
-          )
+      Result.bind('connection', v =>
+        Result.succeed(
+          this.connectionsService.makeConnection({
+            projectId: v.projectId,
+            envId: v.envId,
+            connectionId: v.connectionId,
+            type: v.type,
+            options: v.options
+          })
+        )
       ),
-      Result.bind(
-        'testConnectionResult',
-        async (v): Result.ResultAsync<TestConnectionResult, never> => {
-          let testConnectionResult: TestConnectionResult =
-            v.connection.type === 'MySQL'
-              ? await this.mysqlService.testConnection({
+      Result.bind('testConnectionResult', async v => {
+        let testConnectionResult: TestConnectionResult =
+          v.connection.type === 'MySQL'
+            ? await this.mysqlService.testConnection({
+                connection: v.connection
+              })
+            : v.connection.type === 'PostgreSQL'
+              ? await this.pgService.testConnection({
                   connection: v.connection
                 })
-              : v.connection.type === 'PostgreSQL'
-                ? await this.pgService.testConnection({
+              : v.connection.type === 'MotherDuck'
+                ? await this.duckDbService.testConnection({
                     connection: v.connection
                   })
-                : v.connection.type === 'MotherDuck'
-                  ? await this.duckDbService.testConnection({
+                : v.connection.type === 'Trino'
+                  ? await this.trinoService.testConnection({
                       connection: v.connection
                     })
-                  : v.connection.type === 'Trino'
-                    ? await this.trinoService.testConnection({
+                  : v.connection.type === 'Presto'
+                    ? await this.prestoService.testConnection({
                         connection: v.connection
                       })
-                    : v.connection.type === 'Presto'
-                      ? await this.prestoService.testConnection({
+                    : v.connection.type === 'BigQuery'
+                      ? await this.bigQueryService.testConnection({
                           connection: v.connection
                         })
-                      : v.connection.type === 'BigQuery'
-                        ? await this.bigQueryService.testConnection({
+                      : v.connection.type === 'SnowFlake'
+                        ? await this.snowFlakeService.testConnection({
                             connection: v.connection
                           })
-                        : v.connection.type === 'SnowFlake'
-                          ? await this.snowFlakeService.testConnection({
+                        : v.connection.type === 'Databricks'
+                          ? await this.databricksService.testConnection({
                               connection: v.connection
                             })
-                          : v.connection.type === 'Databricks'
-                            ? await this.databricksService.testConnection({
-                                connection: v.connection
-                              })
-                            : undefined;
-          return Result.succeed(testConnectionResult);
-        }
-      ),
+                          : undefined;
+        return Result.succeed(testConnectionResult);
+      }),
       Result.andThrough(v =>
         isUndefined(v.testConnectionResult)
           ? Result.fail({

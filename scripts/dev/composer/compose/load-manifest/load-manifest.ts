@@ -1,13 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { readTextFile } from '../../shared/read-text-file/read-text-file';
-import type { DiscoverPathsPayload } from '../../types/discover-paths-payload';
-import type { DiscoverPathsError } from '../../types/function-errors/discover-paths-error';
 import type { LoadManifestError } from '../../types/function-errors/load-manifest-error';
-import type { ParseListedPathError } from '../../types/function-errors/parse-listed-path-error';
-import type { ReadTextFileError } from '../../types/function-errors/read-text-file-error';
-import type { ValidateDiscoveredFilesAreListedError } from '../../types/function-errors/validate-discovered-files-are-listed-error';
-import type { ValidateListedFileNamesError } from '../../types/function-errors/validate-listed-file-names-error';
-import type { ValidateListedPathsAreDiscoveredError } from '../../types/function-errors/validate-listed-paths-are-discovered-error';
 import type { Manifest } from '../../types/manifest';
 import type { ManifestLine } from '../../types/manifest-line';
 import { discoverPaths } from './discover-paths/discover-paths';
@@ -31,12 +24,10 @@ export function loadManifest(item: {
 }): Result.Result<Manifest, LoadManifestError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'manifestText',
-      (v): Result.Result<string, ReadTextFileError> =>
-        readTextFile({ filePath: v.manifestPath })
+    Result.bind('manifestText', v =>
+      readTextFile({ filePath: v.manifestPath })
     ),
-    Result.bind('manifestLines', (v): Result.Result<ManifestLine[], never> => {
+    Result.bind('manifestLines', v => {
       let manifestLines: ManifestLine[] = v.manifestText
         .split(/\r?\n/u)
         .map((line, index) => ({
@@ -47,29 +38,24 @@ export function loadManifest(item: {
 
       return Result.succeed(manifestLines);
     }),
-    Result.bind(
-      'listedPaths',
-      (v): Result.Result<string[], ParseListedPathError> =>
-        Result.sequence(v.manifestLines, manifestLine =>
-          parseListedPath({
-            manifestLine: manifestLine,
-            manifestPath: v.manifestPath
-          })
-        )
+    Result.bind('listedPaths', v =>
+      Result.sequence(v.manifestLines, manifestLine =>
+        parseListedPath({
+          manifestLine: manifestLine,
+          manifestPath: v.manifestPath
+        })
+      )
     ),
-    Result.bind(
-      'manifestParsedLines',
-      (v): Result.Result<ManifestParsedLine[], never> => {
-        let manifestParsedLines: ManifestParsedLine[] = v.manifestLines.map(
-          (manifestLine, index) => ({
-            listedPath: v.listedPaths[index],
-            manifestLine: manifestLine
-          })
-        );
+    Result.bind('manifestParsedLines', v => {
+      let manifestParsedLines: ManifestParsedLine[] = v.manifestLines.map(
+        (manifestLine, index) => ({
+          listedPath: v.listedPaths[index],
+          manifestLine: manifestLine
+        })
+      );
 
-        return Result.succeed(manifestParsedLines);
-      }
-    ),
+      return Result.succeed(manifestParsedLines);
+    }),
     Result.andThrough(v =>
       Result.sequence(v.manifestParsedLines, manifestParsedLine =>
         validateListedPath({
@@ -79,12 +65,11 @@ export function loadManifest(item: {
         })
       )
     ),
-    Result.andThrough(
-      (v): Result.Result<void, ValidateListedFileNamesError> =>
-        validateListedFileNames({
-          contentDirectory: v.contentDirectory,
-          listedPaths: v.listedPaths
-        })
+    Result.andThrough(v =>
+      validateListedFileNames({
+        contentDirectory: v.contentDirectory,
+        listedPaths: v.listedPaths
+      })
     ),
     Result.andThrough(v =>
       validateManifestPathsUnique({
@@ -93,10 +78,8 @@ export function loadManifest(item: {
         manifestPath: v.manifestPath
       })
     ),
-    Result.bind(
-      'discoverPathsPayload',
-      (v): Result.Result<DiscoverPathsPayload, DiscoverPathsError> =>
-        discoverPaths({ contentDirectory: v.contentDirectory })
+    Result.bind('discoverPathsPayload', v =>
+      discoverPaths({ contentDirectory: v.contentDirectory })
     ),
     Result.andThrough(v =>
       validateNoEmptyDirectories({
@@ -110,19 +93,17 @@ export function loadManifest(item: {
         discoverPathsPayload: v.discoverPathsPayload
       })
     ),
-    Result.andThrough(
-      (v): Result.Result<void, ValidateListedPathsAreDiscoveredError> =>
-        validateListedPathsAreDiscovered({
-          discoverPathsPayload: v.discoverPathsPayload,
-          listedPaths: v.listedPaths
-        })
+    Result.andThrough(v =>
+      validateListedPathsAreDiscovered({
+        discoverPathsPayload: v.discoverPathsPayload,
+        listedPaths: v.listedPaths
+      })
     ),
-    Result.andThrough(
-      (v): Result.Result<void, ValidateDiscoveredFilesAreListedError> =>
-        validateDiscoveredFilesAreListed({
-          discoverPathsPayload: v.discoverPathsPayload,
-          listedPaths: v.listedPaths
-        })
+    Result.andThrough(v =>
+      validateDiscoveredFilesAreListed({
+        discoverPathsPayload: v.discoverPathsPayload,
+        listedPaths: v.listedPaths
+      })
     ),
     Result.map(
       (v): Manifest => ({

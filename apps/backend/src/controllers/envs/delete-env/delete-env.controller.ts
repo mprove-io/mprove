@@ -11,10 +11,7 @@ import {
   ToBackendDeleteEnvResponseDto
 } from '#backend/controllers/envs/delete-env/delete-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
@@ -29,9 +26,6 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteEnvOutput } from '#common/types/backend/routes/envs/delete-env/delete-env-output';
 
@@ -72,13 +66,11 @@ export class DeleteEnvController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         v.envId === PROJECT_ENV_PROD
@@ -129,10 +121,8 @@ export class DeleteEnvController {
         );
         return Result.succeed();
       }),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteEnvOutput => ({

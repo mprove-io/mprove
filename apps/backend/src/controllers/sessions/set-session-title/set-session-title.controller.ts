@@ -9,10 +9,7 @@ import {
   ToBackendSetSessionTitleResponseDto
 } from '#backend/controllers/sessions/set-session-title/set-session-title.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -20,7 +17,6 @@ import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetSessionTitleOutput } from '#common/types/backend/routes/sessions/set-session-title/set-session-title-output';
@@ -54,17 +50,10 @@ export class SetSessionTitleController {
         title: body.input.title,
         userId: user.userId
       }),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
       Result.andThrough(v =>
         v.session.userId !== v.userId

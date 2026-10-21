@@ -13,7 +13,6 @@ import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BridgeTab,
-  MemberTab,
   ProjectTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -33,10 +32,7 @@ import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
@@ -106,61 +102,53 @@ export class SpecialRebuildStructsController {
           ? Result.fail({ code: 'BACKEND_WRONG_SPECIAL_KEY' })
           : Result.succeed();
       }),
-      Result.bind(
-        'members',
-        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          v.userIds.length === 0
-            ? Result.succeed([])
-            : this.db.members.findMany({
-                where: inArray(membersTable.memberId, v.userIds)
-              })
+      Result.bind('members', async v =>
+        v.userIds.length === 0
+          ? Result.succeed([])
+          : this.db.members.findMany({
+              where: inArray(membersTable.memberId, v.userIds)
+            })
       ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.members.map(member => member.projectId))
+      Result.bind('projectIds', v =>
+        Result.succeed(v.members.map(member => member.projectId))
       ),
-      Result.bind(
-        'projects',
-        (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          v.projectIds.length > 0
-            ? this.db.projects.findMany({
-                where: inArray(projectsTable.projectId, v.projectIds)
-              })
-            : this.db.drizzle
-                .select()
-                .from(projectsTable)
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.projectEntToTab({ projectEnt: x })
-                  )
+      Result.bind('projects', v =>
+        v.projectIds.length > 0
+          ? this.db.projects.findMany({
+              where: inArray(projectsTable.projectId, v.projectIds)
+            })
+          : this.db.drizzle
+              .select()
+              .from(projectsTable)
+              .then(xs =>
+                Result.sequence(xs, x =>
+                  this.tabService.projectEntToTab({ projectEnt: x })
                 )
+              )
       ),
-      Result.bind(
-        'bridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          v.userIds.length > 0
-            ? this.db.bridges.findMany({
-                where: inArray(bridgesTable.repoId, v.userIds)
-              })
-            : this.db.drizzle
-                .select()
-                .from(bridgesTable)
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.bridgeEntToTab({ bridgeEnt: x })
-                  )
+      Result.bind('bridges', v =>
+        v.userIds.length > 0
+          ? this.db.bridges.findMany({
+              where: inArray(bridgesTable.repoId, v.userIds)
+            })
+          : this.db.drizzle
+              .select()
+              .from(bridgesTable)
+              .then(xs =>
+                Result.sequence(xs, x =>
+                  this.tabService.bridgeEntToTab({ bridgeEnt: x })
                 )
+              )
       ),
-      Result.bind(
-        'prepareRebuildPayload',
-        (v): Result.Result<PrepareRebuildPayload, never> =>
-          Result.succeed({
-            notFoundProjectIds: [],
-            errorGetCatalogBridgeItems: [],
-            successBridgeItems: []
-          })
-      ),
+      Result.bind('prepareRebuildPayload', v => {
+        let prepareRebuildPayload: PrepareRebuildPayload = {
+          notFoundProjectIds: [],
+          errorGetCatalogBridgeItems: [],
+          successBridgeItems: []
+        };
+
+        return Result.succeed(prepareRebuildPayload);
+      }),
       Result.andThrough(v =>
         Result.sequence(
           v.bridges,

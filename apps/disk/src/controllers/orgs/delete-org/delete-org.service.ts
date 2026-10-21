@@ -23,11 +23,7 @@ export class DeleteOrgService {
         ...item,
         orgDir: `${orgPath}/${item.orgId}`
       }),
-      Result.bind(
-        'isOrgExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.orgDir })
-      ),
+      Result.bind('isOrgExist', v => isPathExist({ path: v.orgDir })),
       Result.andThrough(v =>
         v.isOrgExist === true
           ? removePath({ path: v.orgDir })

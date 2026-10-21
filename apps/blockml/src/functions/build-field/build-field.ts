@@ -13,7 +13,6 @@ import { checkStoreFieldDetail } from '#blockml/functions/build-field/check-stor
 import { checkStoreFieldGroup } from '#blockml/functions/build-field/check-store-field-group/check-store-field-group';
 import { setImplicitLabel } from '#blockml/functions/build-field/set-implicit-label/set-implicit-label';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
-
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
@@ -28,120 +27,101 @@ export function buildField<T extends sdrType>(item: {
 }): Result.Result<T[], never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        checkFieldsExist({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('entities', v =>
+      checkFieldsExist({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        checkFieldIsObject({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('entities', v =>
+      checkFieldIsObject({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        checkFieldDeclaration({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('entities', v =>
+      checkFieldDeclaration({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
     // parameters added to fields
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        checkFieldNameDuplicates({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('entities', v =>
+      checkFieldNameDuplicates({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        checkFieldUnknownParameters({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('entities', v =>
+      checkFieldUnknownParameters({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        setImplicitLabel({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('entities', v =>
+      setImplicitLabel({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        checkAndSetImplicitResult({
-          entities: v.entities,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('entities', v =>
+      checkAndSetImplicitResult({
+        entities: v.entities,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        v.caller === 'BuildStoreField'
-          ? (checkStoreFieldGroup({
-              stores: v.entities as FileStore[],
-              structId: v.structId,
-              errors: v.errors,
-              caller: v.caller,
-              cs: v.cs
-            }) as Result.Result<T[], never>)
-          : Result.succeed(v.entities)
+    Result.bind('entities', v =>
+      v.caller === 'BuildStoreField'
+        ? (checkStoreFieldGroup({
+            stores: v.entities as FileStore[],
+            structId: v.structId,
+            errors: v.errors,
+            caller: v.caller,
+            cs: v.cs
+          }) as Result.Result<T[], never>)
+        : Result.succeed(v.entities)
     ),
-    Result.bind(
-      'entities',
-      (v): Result.Result<T[], never> =>
-        v.caller === 'BuildStoreField'
-          ? (checkStoreFieldDetail({
-              stores: v.entities as FileStore[],
-              structId: v.structId,
-              errors: v.errors,
-              caller: v.caller,
-              cs: v.cs
-            }) as Result.Result<T[], never>)
-          : Result.succeed(v.entities)
+    Result.bind('entities', v =>
+      v.caller === 'BuildStoreField'
+        ? (checkStoreFieldDetail({
+            stores: v.entities as FileStore[],
+            structId: v.structId,
+            errors: v.errors,
+            caller: v.caller,
+            cs: v.cs
+          }) as Result.Result<T[], never>)
+        : Result.succeed(v.entities)
     ),
-    Result.andThen(
-      (v): Result.Result<T[], never> =>
-        checkAndSetImplicitFormatNumber({
-          entities: v.entities,
-          projectConfig: v.projectConfig,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.andThen(v =>
+      checkAndSetImplicitFormatNumber({
+        entities: v.entities,
+        projectConfig: v.projectConfig,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     )
   );
 }

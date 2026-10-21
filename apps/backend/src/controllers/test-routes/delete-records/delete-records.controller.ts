@@ -11,12 +11,7 @@ import {
   ToBackendDeleteRecordsResponseDto
 } from '#backend/controllers/test-routes/delete-records/delete-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type {
-  OrgTab,
-  ProjectTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -48,11 +43,7 @@ import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
-import type { DbStructsFindManyError } from '#common/types/backend/function-errors/db/structs/db-structs-find-many-error';
 import type { DbUsersFindFirstError } from '#common/types/backend/function-errors/db/users/db-users-find-first-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRecordsOutput } from '#common/types/backend/routes/test-routes/delete-records/delete-records-output';
@@ -96,67 +87,53 @@ export class DeleteRecordsController {
           : [],
         traceId: body.traceId
       }),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'projectNameHashes',
-        (v): Result.Result<string[], MakeHashError> =>
-          Result.sequence(v.projectNames || [], projectName =>
-            this.hashService.makeHash({
-              input: projectName,
-              hashSecret: v.hashSecret
+      Result.bind('projectNameHashes', v =>
+        Result.sequence(v.projectNames || [], projectName =>
+          this.hashService.makeHash({
+            input: projectName,
+            hashSecret: v.hashSecret
+          })
+        )
+      ),
+      Result.bind('matchingProjects', async v =>
+        v.projectNameHashes.length === 0
+          ? Result.succeed([])
+          : this.db.projects.findMany({
+              where: and(
+                inArray(projectsTable.orgId, v.requestedOrgIds),
+                inArray(projectsTable.nameHash, v.projectNameHashes)
+              )
             })
-          )
       ),
-      Result.bind(
-        'matchingProjects',
-        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          v.projectNameHashes.length === 0
-            ? Result.succeed([])
-            : this.db.projects.findMany({
-                where: and(
-                  inArray(projectsTable.orgId, v.requestedOrgIds),
-                  inArray(projectsTable.nameHash, v.projectNameHashes)
-                )
-              })
+      Result.bind('projectIds', v =>
+        Result.succeed<string[]>([
+          ...v.requestedProjectIds,
+          ...v.matchingProjects.map(project => project.projectId)
+        ])
       ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([
-            ...v.requestedProjectIds,
-            ...v.matchingProjects.map(project => project.projectId)
-          ])
+      Result.bind('orgNameHashes', v =>
+        Result.sequence(v.orgNames || [], orgName =>
+          this.hashService.makeHash({
+            input: orgName,
+            hashSecret: v.hashSecret
+          })
+        )
       ),
-      Result.bind(
-        'orgNameHashes',
-        (v): Result.Result<string[], MakeHashError> =>
-          Result.sequence(v.orgNames || [], orgName =>
-            this.hashService.makeHash({
-              input: orgName,
-              hashSecret: v.hashSecret
+      Result.bind('matchingOrgs', async v =>
+        v.orgNameHashes.length === 0
+          ? Result.succeed([])
+          : this.db.orgs.findMany({
+              where: inArray(orgsTable.nameHash, v.orgNameHashes)
             })
-          )
       ),
-      Result.bind(
-        'matchingOrgs',
-        async (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
-          v.orgNameHashes.length === 0
-            ? Result.succeed([])
-            : this.db.orgs.findMany({
-                where: inArray(orgsTable.nameHash, v.orgNameHashes)
-              })
-      ),
-      Result.bind(
-        'orgIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([
-            ...v.requestedOrgIds,
-            ...v.matchingOrgs.map(org => org.orgId)
-          ])
+      Result.bind('orgIds', v =>
+        Result.succeed<string[]>([
+          ...v.requestedOrgIds,
+          ...v.matchingOrgs.map(org => org.orgId)
+        ])
       ),
       Result.andThrough(v =>
         v.orgIds.length === 0
@@ -174,71 +151,58 @@ export class DeleteRecordsController {
                 })
             })
       ),
-      Result.bind(
-        'matchingUserIds',
-        async (
-          v
-        ): Result.ResultAsync<
-          string[],
-          MakeHashError | DbUsersFindFirstError
-        > =>
-          v.emails.length === 0
-            ? Result.succeed([])
-            : customAsyncPool({
-                poolSize: 1,
-                inputs: v.emails,
-                callback: async (
-                  email: string
-                ): Result.ResultAsync<
-                  string,
-                  MakeHashError | DbUsersFindFirstError
-                > => {
-                  let emailHashResult: Result.Result<string, MakeHashError> =
-                    this.hashService.makeHash({
-                      input: email,
-                      hashSecret: v.hashSecret
-                    });
+      Result.bind('matchingUserIds', async v =>
+        v.emails.length === 0
+          ? Result.succeed([])
+          : customAsyncPool({
+              poolSize: 1,
+              inputs: v.emails,
+              callback: async (
+                email: string
+              ): Result.ResultAsync<
+                string,
+                MakeHashError | DbUsersFindFirstError
+              > => {
+                let emailHashResult: Result.Result<string, MakeHashError> =
+                  this.hashService.makeHash({
+                    input: email,
+                    hashSecret: v.hashSecret
+                  });
 
-                  if (Result.isFailure(emailHashResult)) {
-                    return emailHashResult;
-                  }
+                if (Result.isFailure(emailHashResult)) {
+                  return emailHashResult;
+                }
 
-                  let userResult: Result.Result<
-                    UserTab,
-                    DbUsersFindFirstError
-                  > = await this.db.users.findFirst({
+                let userResult: Result.Result<UserTab, DbUsersFindFirstError> =
+                  await this.db.users.findFirst({
                     where: eq(usersTable.emailHash, emailHashResult.value)
                   });
 
-                  if (Result.isFailure(userResult)) {
-                    return userResult;
-                  }
-
-                  return Result.succeed(userResult.value?.userId);
+                if (Result.isFailure(userResult)) {
+                  return userResult;
                 }
-              })
+
+                return Result.succeed(userResult.value?.userId);
+              }
+            })
       ),
-      Result.bind(
-        'userIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.matchingUserIds.filter(userId => isDefined(userId)))
+      Result.bind('userIds', v =>
+        Result.succeed<string[]>(
+          v.matchingUserIds.filter(userId => isDefined(userId))
+        )
       ),
-      Result.bind(
-        'structs',
-        async (v): Result.ResultAsync<StructTab[], DbStructsFindManyError> =>
-          v.projectIds.length === 0
-            ? Result.succeed([])
-            : this.db.structs.findMany({
-                where: inArray(structsTable.projectId, v.projectIds)
-              })
+      Result.bind('structs', async v =>
+        v.projectIds.length === 0
+          ? Result.succeed([])
+          : this.db.structs.findMany({
+              where: inArray(structsTable.projectId, v.projectIds)
+            })
       ),
-      Result.bind(
-        'structIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([
-            ...v.requestedStructIds,
-            ...v.structs.map(struct => struct.structId)
-          ])
+      Result.bind('structIds', v =>
+        Result.succeed<string[]>([
+          ...v.requestedStructIds,
+          ...v.structs.map(struct => struct.structId)
+        ])
       ),
       Result.andThrough(async v => {
         await retry(

@@ -15,7 +15,6 @@ import {
   MCP_TOOL_GET_STATE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetStateError } from '#common/types/backend/function-errors/get-state-error';
 import {
   type McpToolGetStateInput,
   zMcpToolGetStateInput
@@ -105,25 +104,24 @@ export class GetStateTool {
             })
           : Result.succeed()
       ),
-      Result.andThen(
-        (v): Result.ResultAsync<McpToolGetStateOutput, GetStateError> =>
-          this.getStateService.getState({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId,
-            isFetch: v.isFetch,
-            getErrors: v.getErrors,
-            getRepo: v.getRepo,
-            getRepoNodes: v.getRepoNodes,
-            getModels: v.getModels,
-            getDashboards: v.getDashboards,
-            getCharts: v.getCharts,
-            getMetrics: v.getMetrics,
-            getReports: v.getReports,
-            traceId: makeId(),
-            user: v.user
-          })
+      Result.andThen(v =>
+        this.getStateService.getState({
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          isFetch: v.isFetch,
+          getErrors: v.getErrors,
+          getRepo: v.getRepo,
+          getRepoNodes: v.getRepoNodes,
+          getModels: v.getModels,
+          getDashboards: v.getDashboards,
+          getCharts: v.getCharts,
+          getMetrics: v.getMetrics,
+          getReports: v.getReports,
+          traceId: makeId(),
+          user: v.user
+        })
       )
     );
 

@@ -9,11 +9,7 @@ import {
 } from '#backend/controllers/queries/run-queries-dry/run-queries-dry.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  BranchTab,
-  BridgeTab,
-  ConnectionTab,
   MconfigTab,
-  MemberTab,
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -34,13 +30,6 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbConnectionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/connections/db-connections-find-first-check-exists-error';
-import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
 import type { RunQueryDryError } from '#common/types/backend/function-errors/run-query-dry-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
@@ -93,30 +82,22 @@ export class RunQueriesDryController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -125,19 +106,15 @@ export class RunQueriesDryController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.structsService.getStructCheckExists({
@@ -145,20 +122,16 @@ export class RunQueriesDryController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'mconfigs',
-        (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
-          this.db.mconfigs.findMany({
-            where: and(
-              eq(mconfigsTable.structId, v.bridge.structId),
-              inArray(mconfigsTable.mconfigId, v.mconfigIds)
-            )
-          })
+      Result.bind('mconfigs', v =>
+        this.db.mconfigs.findMany({
+          where: and(
+            eq(mconfigsTable.structId, v.bridge.structId),
+            inArray(mconfigsTable.mconfigId, v.mconfigIds)
+          )
+        })
       ),
-      Result.bind(
-        'uniqueParentIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.mconfigs.map(x => x.parentId))])
+      Result.bind('uniqueParentIds', v =>
+        Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.parentId))])
       ),
       Result.andThrough(v =>
         Result.sequence(v.uniqueParentIds, parentId => {
@@ -177,41 +150,33 @@ export class RunQueriesDryController {
           });
         })
       ),
-      Result.bind(
-        'queryIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.mconfigs.map(x => x.queryId))])
+      Result.bind('queryIds', v =>
+        Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.queryId))])
       ),
-      Result.bind(
-        'runQueryDryOutputs',
-        (v): Result.ResultAsync<RunQueryDryOutput[], RunQueryDryError> =>
-          customAsyncPool({
-            poolSize: 8,
-            inputs: v.queryIds,
-            callback: queryId =>
-              this.runQueryDry({
-                projectId: v.projectId,
-                queryId: queryId
-              })
-          })
+      Result.bind('runQueryDryOutputs', v =>
+        customAsyncPool({
+          poolSize: 8,
+          inputs: v.queryIds,
+          callback: queryId =>
+            this.runQueryDry({
+              projectId: v.projectId,
+              queryId: queryId
+            })
+        })
       ),
-      Result.bind(
-        'validEstimates',
-        (v): Result.Result<QueryEstimate[], never> =>
-          Result.succeed(
-            v.runQueryDryOutputs
-              .filter(x => isDefined(x.validEstimate))
-              .map(x => x.validEstimate)
-          )
+      Result.bind('validEstimates', v =>
+        Result.succeed(
+          v.runQueryDryOutputs
+            .filter(x => isDefined(x.validEstimate))
+            .map(x => x.validEstimate)
+        )
       ),
-      Result.bind(
-        'errorQueries',
-        (v): Result.Result<QueryTab[], never> =>
-          Result.succeed(
-            v.runQueryDryOutputs
-              .filter(x => isDefined(x.errorQuery))
-              .map(x => x.errorQuery)
-          )
+      Result.bind('errorQueries', v =>
+        Result.succeed(
+          v.runQueryDryOutputs
+            .filter(x => isDefined(x.errorQuery))
+            .map(x => x.errorQuery)
+        )
       ),
       Result.andThrough(v =>
         this.db.write({ insertOrUpdate: { queries: v.errorQueries } })
@@ -234,50 +199,37 @@ export class RunQueriesDryController {
   }): Result.ResultAsync<RunQueryDryOutput, RunQueryDryError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'query',
-        (v): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> =>
-          this.queriesService.getQueryCheckExistsSkipData({
-            projectId: v.projectId,
-            queryId: v.queryId
-          })
+      Result.bind('query', v =>
+        this.queriesService.getQueryCheckExistsSkipData({
+          projectId: v.projectId,
+          queryId: v.queryId
+        })
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
-      Result.bind(
-        'connection',
-        async (
-          v
-        ): Result.ResultAsync<
-          ConnectionTab,
-          DbConnectionsFindFirstCheckExistsError
-        > => {
-          let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);
+      Result.bind('connection', async v => {
+        let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);
 
-          let isFallbackConnection: boolean =
-            apiEnv.isFallbackToProdConnections === true &&
-            apiEnv.fallbackConnectionIds.includes(v.query.connectionId);
+        let isFallbackConnection: boolean =
+          apiEnv.isFallbackToProdConnections === true &&
+          apiEnv.fallbackConnectionIds.includes(v.query.connectionId);
 
-          return this.db.connections.findFirstCheckExists({
-            where: and(
-              eq(connectionsTable.connectionId, v.query.connectionId),
-              eq(
-                connectionsTable.envId,
-                isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId
-              ),
-              eq(connectionsTable.projectId, v.query.projectId)
-            )
-          });
-        }
-      ),
-      Result.andThen(
-        (v): Result.ResultAsync<RunQueryDryOutput, never> =>
-          this.bigqueryService
-            .runQueryDry({ query: v.query, connection: v.connection })
-            .then(x => Result.succeed(x))
+        return this.db.connections.findFirstCheckExists({
+          where: and(
+            eq(connectionsTable.connectionId, v.query.connectionId),
+            eq(
+              connectionsTable.envId,
+              isFallbackConnection ? PROJECT_ENV_PROD : v.query.envId
+            ),
+            eq(connectionsTable.projectId, v.query.projectId)
+          )
+        });
+      }),
+      Result.andThen(v =>
+        this.bigqueryService
+          .runQueryDry({ query: v.query, connection: v.connection })
+          .then(x => Result.succeed(x))
       )
     );
   }

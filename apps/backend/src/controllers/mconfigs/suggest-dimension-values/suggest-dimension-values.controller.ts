@@ -9,16 +9,7 @@ import {
 } from '#backend/controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.dto';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
-  QueryTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
@@ -32,10 +23,7 @@ import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymm
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
-import {
-  MconfigsService,
-  type PrepStoreMconfigQueryOutput
-} from '#backend/services/db/mconfigs/mconfigs.service';
+import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ParentService } from '#backend/services/parent/parent.service';
@@ -47,14 +35,6 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbQueriesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-check-exists-error';
-import type { GetStructCheckExistsAndNotChangedError } from '#common/types/backend/function-errors/get-struct-check-exists-and-not-changed-error';
-import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { CachedColumnStatus } from '#common/types/backend/parts/connections/cached-column-status';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSuggestDimensionValuesOutput } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
@@ -62,14 +42,14 @@ import type { Mconfig } from '#common/types/blockml/parts/mconfig/mconfig';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import type { ModelType } from '#common/types/blockml/parts/model/model-type';
 
-type CachedMatchedValueRow = { value?: string; count: number };
-
-type CachedColumnRow = { cachedColumnFullId: string };
-
 type PrepareParentPayload = {
   parentId?: string;
   parentType: MconfigParentType;
 };
+
+type CachedMatchedValueRow = { value?: string; count: number };
+
+type CachedColumnRow = { cachedColumnFullId: string };
 
 @ApiTags('Mconfigs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -122,42 +102,27 @@ export class SuggestDimensionValuesController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -166,63 +131,50 @@ export class SuggestDimensionValuesController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'struct',
-        (
-          v
-        ): Result.ResultAsync<
-          StructTab,
-          GetStructCheckExistsAndNotChangedError
-        > =>
-          this.structsService.getStructCheckExistsAndNotChanged({
-            projectId: v.projectId,
-            bridgeStructId: v.bridge.structId,
-            structId: v.structId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExistsAndNotChanged({
+          projectId: v.projectId,
+          bridgeStructId: v.bridge.structId,
+          structId: v.structId
+        })
       ),
-      Result.bind(
-        'prepareParentPayload',
-        (v): Result.Result<PrepareParentPayload, never> =>
-          Result.succeed({
-            parentId: isDefined(v.dashboardId)
-              ? v.dashboardId
-              : isDefined(v.reportId)
-                ? v.reportId
-                : isDefined(v.chartId)
-                  ? v.chartId
-                  : undefined,
-            parentType: isDefined(v.dashboardId)
-              ? 'SuggestDimensionDashboard'
-              : isDefined(v.reportId)
-                ? 'SuggestDimensionReport'
-                : isDefined(v.chartId)
-                  ? 'SuggestDimensionChart'
-                  : 'SuggestDimensionModel'
-          })
-      ),
-      Result.bind(
-        'model',
-        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
-          this.db.models.findFirstCheckExists({
-            where: and(
-              eq(modelsTable.structId, v.bridge.structId),
-              eq(modelsTable.modelId, v.modelId)
-            )
-          })
+      Result.bind('prepareParentPayload', v => {
+        let prepareParentPayload: PrepareParentPayload = {
+          parentId: isDefined(v.dashboardId)
+            ? v.dashboardId
+            : isDefined(v.reportId)
+              ? v.reportId
+              : isDefined(v.chartId)
+                ? v.chartId
+                : undefined,
+          parentType: isDefined(v.dashboardId)
+            ? 'SuggestDimensionDashboard'
+            : isDefined(v.reportId)
+              ? 'SuggestDimensionReport'
+              : isDefined(v.chartId)
+                ? 'SuggestDimensionChart'
+                : 'SuggestDimensionModel'
+        };
+
+        return Result.succeed(prepareParentPayload);
+      }),
+      Result.bind('model', v =>
+        this.db.models.findFirstCheckExists({
+          where: and(
+            eq(modelsTable.structId, v.bridge.structId),
+            eq(modelsTable.modelId, v.modelId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.parentService.checkParentAccess({
@@ -239,100 +191,91 @@ export class SuggestDimensionValuesController {
           suggestModel: v.model
         })
       ),
-      Result.bind(
-        'cachedValuesOutput',
-        async (
-          v
-        ): Result.ResultAsync<ToBackendSuggestDimensionValuesOutput, never> =>
-          v.model.type === 'Malloy'
-            ? this.getCachedValues({
-                structId: v.struct.structId,
-                modelId: v.modelId,
-                fieldId: v.fieldId,
-                projectId: v.projectId,
-                envId: v.envId,
-                term: v.term
-              }).then(x => Result.succeed(x))
-            : Result.succeed(undefined)
+      Result.bind('cachedValuesOutput', async v =>
+        v.model.type === 'Malloy'
+          ? this.getCachedValues({
+              structId: v.struct.structId,
+              modelId: v.modelId,
+              fieldId: v.fieldId,
+              projectId: v.projectId,
+              envId: v.envId,
+              term: v.term
+            }).then(x => Result.succeed(x))
+          : Result.succeed(undefined)
       ),
-      Result.bind(
-        'apiMconfig',
-        (v): Result.Result<Mconfig, never> =>
-          v.model.type !== 'Store'
-            ? Result.succeed(undefined)
-            : Result.succeed({
-                structId: v.bridge.structId,
-                mconfigId: makeId(),
-                queryId: makeId(),
-                modelId: v.modelId,
-                modelType: 'Store',
-                parentType: v.prepareParentPayload.parentType,
-                parentId: v.prepareParentPayload.parentId,
-                dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
-                storePart: undefined,
-                modelLabel: v.model.label,
-                modelFilePath: v.model.filePath,
-                malloyQueryStable: undefined,
-                malloyQueryExtra: undefined,
-                compiledQuery: undefined,
-                select: [v.fieldId],
-                sortings: [],
-                sorts: `${v.fieldId}`,
-                timezone: UTC,
-                limit: 500,
-                filters: isDefinedAndNotEmpty(v.term)
-                  ? [
-                      {
-                        fieldId: v.fieldId,
-                        fractions: [
-                          {
-                            brick: `%${v.term}%`,
-                            parentBrick: `%${v.term}%`,
-                            type: 'StringContains',
-                            operator: 'Or'
-                          }
-                        ]
-                      }
-                    ]
-                  : [],
-                appliedGivens: undefined,
-                chart: makeCopy(DEFAULT_CHART),
-                serverTs: 1
-              })
-      ),
-      Result.bind(
-        'prepStoreMconfigQueryOutput',
-        async (
-          v
-        ): Result.ResultAsync<
-          PrepStoreMconfigQueryOutput,
-          PrepStoreMconfigQueryError
-        > =>
-          v.model.type !== 'Store'
-            ? Result.succeed(undefined)
-            : this.mconfigsService.prepStoreMconfigQuery({
-                struct: v.struct,
-                project: v.project,
-                envId: v.envId,
-                model: v.model,
-                mconfigParentType: v.apiMconfig.parentType,
-                mconfigParentId: v.apiMconfig.parentId,
-                mconfig: this.mconfigsService.apiToTab({
-                  apiMconfig: v.apiMconfig
-                }),
-                metricsStartDateYYYYMMDD: isDefined(v.cellMetricsStartDateMs)
-                  ? getYYYYMMDDFromEpochUtcByTimezone({
-                      timezone: v.apiMconfig.timezone,
-                      secondsEpochUTC: v.cellMetricsStartDateMs / 1000
-                    })
-                  : undefined,
-                metricsEndDateYYYYMMDD: isDefined(v.cellMetricsEndDateMs)
-                  ? getYYYYMMDDFromEpochUtcByTimezone({
-                      timezone: v.apiMconfig.timezone,
-                      secondsEpochUTC: v.cellMetricsEndDateMs / 1000
-                    })
-                  : undefined
-              })
+      Result.bind('apiMconfig', v => {
+        if (v.model.type !== 'Store') {
+          return Result.succeed(undefined);
+        }
+
+        let apiMconfig: Mconfig = {
+          structId: v.bridge.structId,
+          mconfigId: makeId(),
+          queryId: makeId(),
+          modelId: v.modelId,
+          modelType: 'Store',
+          parentType: v.prepareParentPayload.parentType,
+          parentId: v.prepareParentPayload.parentId,
+          dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
+          storePart: undefined,
+          modelLabel: v.model.label,
+          modelFilePath: v.model.filePath,
+          malloyQueryStable: undefined,
+          malloyQueryExtra: undefined,
+          compiledQuery: undefined,
+          select: [v.fieldId],
+          sortings: [],
+          sorts: `${v.fieldId}`,
+          timezone: UTC,
+          limit: 500,
+          filters: isDefinedAndNotEmpty(v.term)
+            ? [
+                {
+                  fieldId: v.fieldId,
+                  fractions: [
+                    {
+                      brick: `%${v.term}%`,
+                      parentBrick: `%${v.term}%`,
+                      type: 'StringContains',
+                      operator: 'Or'
+                    }
+                  ]
+                }
+              ]
+            : [],
+          appliedGivens: undefined,
+          chart: makeCopy(DEFAULT_CHART),
+          serverTs: 1
+        };
+
+        return Result.succeed(apiMconfig);
+      }),
+      Result.bind('prepStoreMconfigQueryOutput', async v =>
+        v.model.type !== 'Store'
+          ? Result.succeed(undefined)
+          : this.mconfigsService.prepStoreMconfigQuery({
+              struct: v.struct,
+              project: v.project,
+              envId: v.envId,
+              model: v.model,
+              mconfigParentType: v.apiMconfig.parentType,
+              mconfigParentId: v.apiMconfig.parentId,
+              mconfig: this.mconfigsService.apiToTab({
+                apiMconfig: v.apiMconfig
+              }),
+              metricsStartDateYYYYMMDD: isDefined(v.cellMetricsStartDateMs)
+                ? getYYYYMMDDFromEpochUtcByTimezone({
+                    timezone: v.apiMconfig.timezone,
+                    secondsEpochUTC: v.cellMetricsStartDateMs / 1000
+                  })
+                : undefined,
+              metricsEndDateYYYYMMDD: isDefined(v.cellMetricsEndDateMs)
+                ? getYYYYMMDDFromEpochUtcByTimezone({
+                    timezone: v.apiMconfig.timezone,
+                    secondsEpochUTC: v.cellMetricsEndDateMs / 1000
+                  })
+                : undefined
+            })
       ),
       Result.andThrough(v =>
         v.model.type !== 'Store'
@@ -369,24 +312,20 @@ export class SuggestDimensionValuesController {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'query',
-        async (
-          v
-        ): Result.ResultAsync<QueryTab, DbQueriesFindFirstCheckExistsError> =>
-          v.model.type !== 'Store'
-            ? Result.succeed(undefined)
-            : v.prepStoreMconfigQueryOutput.isError === false
-              ? this.db.queries.findFirstCheckExists({
-                  where: and(
-                    eq(
-                      queriesTable.queryId,
-                      v.prepStoreMconfigQueryOutput.newQuery.queryId
-                    ),
-                    eq(queriesTable.projectId, v.projectId)
-                  )
-                })
-              : Result.succeed(v.prepStoreMconfigQueryOutput.newQuery)
+      Result.bind('query', async v =>
+        v.model.type !== 'Store'
+          ? Result.succeed(undefined)
+          : v.prepStoreMconfigQueryOutput.isError === false
+            ? this.db.queries.findFirstCheckExists({
+                where: and(
+                  eq(
+                    queriesTable.queryId,
+                    v.prepStoreMconfigQueryOutput.newQuery.queryId
+                  ),
+                  eq(queriesTable.projectId, v.projectId)
+                )
+              })
+            : Result.succeed(v.prepStoreMconfigQueryOutput.newQuery)
       ),
       Result.map(
         (v): ToBackendSuggestDimensionValuesOutput =>

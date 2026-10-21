@@ -18,8 +18,6 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { GetEditorSessionsToPauseError } from '#common/types/backend/function-errors/get-editor-sessions-to-pause-error';
 import type { PauseSandboxError } from '#common/types/backend/function-errors/pause-sandbox-error';
@@ -189,33 +187,19 @@ export class EditorSandboxService {
   }): Result.ResultAsync<void, PauseSessionByIdError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
-      Result.bind(
-        'project',
-        async (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          v.session.type !== 'Editor' ||
-          v.session.status !== 'Active' ||
-          !v.session.sandboxId
-            ? Result.succeed(undefined)
-            : this.db.projects.findFirstCheckExists({
-                where: eq(projectsTable.projectId, v.session.projectId)
-              })
+      Result.bind('project', async v =>
+        v.session.type !== 'Editor' ||
+        v.session.status !== 'Active' ||
+        !v.session.sandboxId
+          ? Result.succeed(undefined)
+          : this.db.projects.findFirstCheckExists({
+              where: eq(projectsTable.projectId, v.session.projectId)
+            })
       ),
       Result.andThrough(v =>
         !v.project?.e2bApiKey

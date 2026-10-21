@@ -8,27 +8,18 @@ import {
   ToBackendGetLlmModelPartsResponseDto
 } from '#backend/controllers/llm-models/get-llm-model-parts/get-llm-model-parts.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ProviderTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import {
-  type LlmModelPartsResult,
-  LlmModelService
-} from '#backend/services/llm-model/llm-model.service';
+import { LlmModelService } from '#backend/services/llm-model/llm-model.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendProviderTypeMismatchError } from '#common/types/backend/errors/backend-provider-type-mismatch-error';
-import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
-import type { GetModelPartsError } from '#common/types/backend/function-errors/get-model-parts-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
@@ -74,55 +65,39 @@ export class GetLlmModelPartsController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'provider',
-        (
-          v
-        ): Result.ResultAsync<
-          ProviderTab,
-          DbProvidersFindFirstCheckExistsError
-        > =>
-          this.db.providers.findFirstCheckExists({
-            where: and(
-              eq(providersTable.projectId, v.projectId),
-              eq(providersTable.providerId, v.providerId)
-            )
-          })
-      ),
-      Result.bind(
-        'modelPartsResult',
-        async (
-          v
-        ): Result.ResultAsync<
-          LlmModelPartsResult,
-          GetModelPartsError | BackendProviderTypeMismatchError
-        > =>
-          v.provider.type === 'OpenAICompatible'
-            ? Result.fail({ code: 'BACKEND_PROVIDER_TYPE_MISMATCH' })
-            : this.llmModelService.getModelParts({
-                providerType: v.provider.type,
-                apiKey:
-                  v.provider.type === 'OpenAICodex'
-                    ? undefined
-                    : v.provider.options.apiKey,
-                userId: v.userId,
-                isCodexAuthSet: v.isCodexAuthSet,
-                isForceRefresh: true
-              })
-      ),
-      Result.bind(
-        'modelPartsById',
-        (v): Result.Result<Map<string, LlmModelPart>, never> =>
-          Result.succeed(
-            new Map(
-              v.modelPartsResult.modelParts.map(modelPart => [
-                modelPart.modelId,
-                modelPart
-              ])
-            )
+      Result.bind('provider', v =>
+        this.db.providers.findFirstCheckExists({
+          where: and(
+            eq(providersTable.projectId, v.projectId),
+            eq(providersTable.providerId, v.providerId)
           )
+        })
       ),
-      Result.bind('isProviderChanged', (v): Result.Result<boolean, never> => {
+      Result.bind('modelPartsResult', async v =>
+        v.provider.type === 'OpenAICompatible'
+          ? Result.fail({ code: 'BACKEND_PROVIDER_TYPE_MISMATCH' })
+          : this.llmModelService.getModelParts({
+              providerType: v.provider.type,
+              apiKey:
+                v.provider.type === 'OpenAICodex'
+                  ? undefined
+                  : v.provider.options.apiKey,
+              userId: v.userId,
+              isCodexAuthSet: v.isCodexAuthSet,
+              isForceRefresh: true
+            })
+      ),
+      Result.bind('modelPartsById', v =>
+        Result.succeed(
+          new Map(
+            v.modelPartsResult.modelParts.map(modelPart => [
+              modelPart.modelId,
+              modelPart
+            ])
+          )
+        )
+      ),
+      Result.bind('isProviderChanged', v => {
         let isProviderChanged: boolean = false;
 
         v.provider.models.forEach((model, modelIndex) => {

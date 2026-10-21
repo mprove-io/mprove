@@ -10,9 +10,7 @@ import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-
 import type { AuthenticateJwtError } from '#common/types/backend/function-errors/authenticate-jwt-error';
-import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -52,12 +50,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }): Result.ResultAsync<UserTab, AuthenticateJwtError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
-          this.db.users.findFirstCheckExists({
-            where: eq(usersTable.userId, v.userId)
-          })
+      Result.bind('user', v =>
+        this.db.users.findFirstCheckExists({
+          where: eq(usersTable.userId, v.userId)
+        })
       ),
       Result.andThrough(v =>
         isDefined(v.user.jwtMinIat) && Number(v.user.jwtMinIat) > v.iat * 1000

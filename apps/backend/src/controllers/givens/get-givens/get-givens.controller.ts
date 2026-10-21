@@ -7,19 +7,13 @@ import {
   ToBackendGetGivensResponseDto
 } from '#backend/controllers/givens/get-givens/get-givens.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetApiGivensError } from '#common/types/backend/function-errors/get-api-givens-error';
-import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import type { Given } from '#common/types/backend/parts/given/given';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetGivensOutput } from '#common/types/backend/routes/givens/get-givens/get-givens-output';
 
@@ -55,20 +49,14 @@ export class GetGivensController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdmin({
-            projectId: v.projectId,
-            memberId: v.user.userId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditorOrAdmin({
+          projectId: v.projectId,
+          memberId: v.user.userId
+        })
       ),
-      Result.bind(
-        'apiGivens',
-        (v): Result.ResultAsync<Given[], GetApiGivensError> =>
-          this.givensService.getApiGivens({ projectId: v.projectId })
+      Result.bind('apiGivens', v =>
+        this.givensService.getApiGivens({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetGivensOutput => ({

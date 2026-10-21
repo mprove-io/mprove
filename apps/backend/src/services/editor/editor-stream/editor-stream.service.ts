@@ -581,12 +581,10 @@ export class EditorStreamService implements OnModuleDestroy {
   }): Result.ResultAsync<void, RespondToPermissionError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'client',
-        (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
-          this.editorOpencodeService.getOpenCodeClient({
-            sessionId: v.sessionId
-          })
+      Result.bind('client', v =>
+        this.editorOpencodeService.getOpenCodeClient({
+          sessionId: v.sessionId
+        })
       ),
       Result.andThrough(async v => {
         await v.client.permission.reply({
@@ -607,12 +605,10 @@ export class EditorStreamService implements OnModuleDestroy {
   }): Result.ResultAsync<void, RespondToQuestionError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'client',
-        (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
-          this.editorOpencodeService.getOpenCodeClient({
-            sessionId: v.sessionId
-          })
+      Result.bind('client', v =>
+        this.editorOpencodeService.getOpenCodeClient({
+          sessionId: v.sessionId
+        })
       ),
       Result.andThrough(async v => {
         await v.client.question.reply({
@@ -632,12 +628,10 @@ export class EditorStreamService implements OnModuleDestroy {
   }): Result.ResultAsync<void, RejectQuestionError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'client',
-        (v): Result.ResultAsync<OpencodeClient, GetOpenCodeClientError> =>
-          this.editorOpencodeService.getOpenCodeClient({
-            sessionId: v.sessionId
-          })
+      Result.bind('client', v =>
+        this.editorOpencodeService.getOpenCodeClient({
+          sessionId: v.sessionId
+        })
       ),
       Result.andThrough(async v => {
         await v.client.question.reject({ requestID: v.questionId });

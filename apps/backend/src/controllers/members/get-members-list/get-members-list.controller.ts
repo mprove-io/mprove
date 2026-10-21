@@ -7,10 +7,7 @@ import {
   ToBackendGetMembersListResponseDto
 } from '#backend/controllers/members/get-members-list/get-members-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -18,8 +15,6 @@ import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMembersListOutput } from '#common/types/backend/routes/members/get-members-list/get-members-list-output';
 
@@ -52,20 +47,16 @@ export class GetMembersListController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'members',
-        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          this.db.members.findMany({
-            where: eq(membersTable.projectId, v.projectId)
-          })
+      Result.bind('members', v =>
+        this.db.members.findMany({
+          where: eq(membersTable.projectId, v.projectId)
+        })
       ),
       Result.map(
         (v): ToBackendGetMembersListOutput => ({

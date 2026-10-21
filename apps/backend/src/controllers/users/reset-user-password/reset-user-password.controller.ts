@@ -9,7 +9,6 @@ import {
   ToBackendResetUserPasswordResponseDto
 } from '#backend/controllers/users/reset-user-password/reset-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -22,7 +21,6 @@ import {
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { GetUserByEmailCheckExistsError } from '#common/types/backend/function-errors/get-user-by-email-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Users')
@@ -66,10 +64,8 @@ export class ResetUserPasswordController {
   ): Promise<BackendResultForOperation<'resetUserPassword'>> {
     return Result.pipe(
       Result.succeed({ email: body.input.email }),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, GetUserByEmailCheckExistsError> =>
-          this.usersService.getUserByEmailCheckExists({ email: v.email })
+      Result.bind('user', v =>
+        this.usersService.getUserByEmailCheckExists({ email: v.email })
       ),
       Result.andThrough(v =>
         this.usersService.checkUserIsNotRestricted({ user: v.user })

@@ -29,7 +29,6 @@ import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-
 import type { GetQueriesCheckExistError } from '#common/types/backend/function-errors/get-queries-check-exist-error';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
 import type { GetQueryCheckExistsSkipDataError } from '#common/types/backend/function-errors/get-query-check-exists-skip-data-error';
-import type { QueryEntToTabError } from '#common/types/backend/function-errors/query-ent-to-tab-error';
 import type { Env } from '#common/types/backend/parts/env';
 import type { Query } from '#common/types/blockml/parts/query/query';
 import type { StoreMethod } from '#common/types/blockml/parts/store/store-method';
@@ -134,56 +133,53 @@ export class QueriesService {
   }): Result.ResultAsync<QueryTab, GetQueryCheckExistsSkipDataError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'queries',
-        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
-          this.db.drizzle
-            .select({
-              keyTag: queriesTable.keyTag,
-              projectId: queriesTable.projectId,
-              envId: queriesTable.envId,
-              connectionId: queriesTable.connectionId,
-              connectionType: queriesTable.connectionType,
-              queryId: queriesTable.queryId,
-              reportId: queriesTable.reportId,
-              reportStructId: queriesTable.reportStructId,
-              status: queriesTable.status,
-              lastRunBy: queriesTable.lastRunBy,
-              lastRunTs: queriesTable.lastRunTs,
-              lastCancelTs: queriesTable.lastCancelTs,
-              lastCompleteTs: queriesTable.lastCompleteTs,
-              lastCompleteDuration: queriesTable.lastCompleteDuration,
-              lastErrorTs: queriesTable.lastErrorTs,
-              queryJobId: queriesTable.queryJobId,
-              bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
-              bigqueryConsecutiveErrorsGetJob:
-                queriesTable.bigqueryConsecutiveErrorsGetJob,
-              bigqueryConsecutiveErrorsGetResults:
-                queriesTable.bigqueryConsecutiveErrorsGetResults,
-              st: queriesTable.st,
-              // lt: {},
-              serverTs: queriesTable.serverTs
-            })
-            .from(queriesTable)
-            .where(
-              and(
-                eq(queriesTable.queryId, v.queryId),
-                eq(queriesTable.projectId, v.projectId)
-              )
+      Result.bind('queries', v =>
+        this.db.drizzle
+          .select({
+            keyTag: queriesTable.keyTag,
+            projectId: queriesTable.projectId,
+            envId: queriesTable.envId,
+            connectionId: queriesTable.connectionId,
+            connectionType: queriesTable.connectionType,
+            queryId: queriesTable.queryId,
+            reportId: queriesTable.reportId,
+            reportStructId: queriesTable.reportStructId,
+            status: queriesTable.status,
+            lastRunBy: queriesTable.lastRunBy,
+            lastRunTs: queriesTable.lastRunTs,
+            lastCancelTs: queriesTable.lastCancelTs,
+            lastCompleteTs: queriesTable.lastCompleteTs,
+            lastCompleteDuration: queriesTable.lastCompleteDuration,
+            lastErrorTs: queriesTable.lastErrorTs,
+            queryJobId: queriesTable.queryJobId,
+            bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
+            bigqueryConsecutiveErrorsGetJob:
+              queriesTable.bigqueryConsecutiveErrorsGetJob,
+            bigqueryConsecutiveErrorsGetResults:
+              queriesTable.bigqueryConsecutiveErrorsGetResults,
+            st: queriesTable.st,
+            // lt: {},
+            serverTs: queriesTable.serverTs
+          })
+          .from(queriesTable)
+          .where(
+            and(
+              eq(queriesTable.queryId, v.queryId),
+              eq(queriesTable.projectId, v.projectId)
             )
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.queryEntToTab({
-                  queryEnt: x as QueryEnt
-                })
-              )
+          )
+          .then(xs =>
+            Result.sequence(xs, x =>
+              this.tabService.queryEntToTab({
+                queryEnt: x as QueryEnt
+              })
             )
+          )
       ),
-      Result.andThen(
-        (v): Result.Result<QueryTab, GetQueryCheckExistsSkipDataError> =>
-          isUndefined(v.queries[0])
-            ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
-            : Result.succeed(v.queries[0])
+      Result.andThen(v =>
+        isUndefined(v.queries[0])
+          ? Result.fail({ code: 'BACKEND_QUERY_DOES_NOT_EXIST' })
+          : Result.succeed(v.queries[0])
       )
     );
   }
@@ -194,50 +190,48 @@ export class QueriesService {
   }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistSkipSqlDataError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'queries',
-        (v): Result.ResultAsync<QueryTab[], QueryEntToTabError> =>
-          this.db.drizzle
-            .select({
-              keyTag: queriesTable.keyTag,
-              projectId: queriesTable.projectId,
-              envId: queriesTable.envId,
-              connectionId: queriesTable.connectionId,
-              connectionType: queriesTable.connectionType,
-              queryId: queriesTable.queryId,
-              reportId: queriesTable.reportId,
-              reportStructId: queriesTable.reportStructId,
-              status: queriesTable.status,
-              lastRunBy: queriesTable.lastRunBy,
-              lastRunTs: queriesTable.lastRunTs,
-              lastCancelTs: queriesTable.lastCancelTs,
-              lastCompleteTs: queriesTable.lastCompleteTs,
-              lastCompleteDuration: queriesTable.lastCompleteDuration,
-              lastErrorTs: queriesTable.lastErrorTs,
-              queryJobId: queriesTable.queryJobId,
-              bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
-              bigqueryConsecutiveErrorsGetJob:
-                queriesTable.bigqueryConsecutiveErrorsGetJob,
-              bigqueryConsecutiveErrorsGetResults:
-                queriesTable.bigqueryConsecutiveErrorsGetResults,
-              st: queriesTable.st,
-              // lt: {},
-              serverTs: queriesTable.serverTs
-            })
-            .from(queriesTable)
-            .where(
-              and(
-                inArray(queriesTable.queryId, v.queryIds),
-                eq(queriesTable.projectId, v.projectId)
-              )
+      Result.bind('queries', v =>
+        this.db.drizzle
+          .select({
+            keyTag: queriesTable.keyTag,
+            projectId: queriesTable.projectId,
+            envId: queriesTable.envId,
+            connectionId: queriesTable.connectionId,
+            connectionType: queriesTable.connectionType,
+            queryId: queriesTable.queryId,
+            reportId: queriesTable.reportId,
+            reportStructId: queriesTable.reportStructId,
+            status: queriesTable.status,
+            lastRunBy: queriesTable.lastRunBy,
+            lastRunTs: queriesTable.lastRunTs,
+            lastCancelTs: queriesTable.lastCancelTs,
+            lastCompleteTs: queriesTable.lastCompleteTs,
+            lastCompleteDuration: queriesTable.lastCompleteDuration,
+            lastErrorTs: queriesTable.lastErrorTs,
+            queryJobId: queriesTable.queryJobId,
+            bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
+            bigqueryConsecutiveErrorsGetJob:
+              queriesTable.bigqueryConsecutiveErrorsGetJob,
+            bigqueryConsecutiveErrorsGetResults:
+              queriesTable.bigqueryConsecutiveErrorsGetResults,
+            st: queriesTable.st,
+            // lt: {},
+            serverTs: queriesTable.serverTs
+          })
+          .from(queriesTable)
+          .where(
+            and(
+              inArray(queriesTable.queryId, v.queryIds),
+              eq(queriesTable.projectId, v.projectId)
             )
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.queryEntToTab({
-                  queryEnt: x as QueryEnt
-                })
-              )
+          )
+          .then(xs =>
+            Result.sequence(xs, x =>
+              this.tabService.queryEntToTab({
+                queryEnt: x as QueryEnt
+              })
             )
+          )
       ),
       Result.andThrough(v => {
         // Preserve the existing missing-ID predicate during signature migration.
@@ -262,15 +256,13 @@ export class QueriesService {
   }): Result.ResultAsync<QueryTab[], GetQueriesCheckExistError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'queries',
-        (v): Result.ResultAsync<QueryTab[], DbQueriesFindManyError> =>
-          this.db.queries.findMany({
-            where: and(
-              inArray(queriesTable.queryId, v.queryIds),
-              eq(queriesTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('queries', v =>
+        this.db.queries.findMany({
+          where: and(
+            inArray(queriesTable.queryId, v.queryIds),
+            eq(queriesTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v => {
         // Preserve the existing missing-ID predicate during signature migration.

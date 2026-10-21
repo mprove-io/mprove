@@ -31,10 +31,6 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbUsersFindFirstError } from '#common/types/backend/function-errors/db/users/db-users-find-first-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { MakeAliasError } from '#common/types/backend/function-errors/make-alias-error';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/users/register-user/register-user-output';
 
@@ -84,34 +80,25 @@ export class RegisterUserController {
         email: body.input.email,
         password: body.input.password
       }),
-      Result.bind(
-        'passwordHS',
-        async (v): Result.ResultAsync<CreateSaltAndHashOutput, never> => {
-          let passwordHS: CreateSaltAndHashOutput =
-            await this.hashService.createSaltAndHash({ input: v.password });
+      Result.bind('passwordHS', async v => {
+        let passwordHS: CreateSaltAndHashOutput =
+          await this.hashService.createSaltAndHash({ input: v.password });
 
-          return Result.succeed(passwordHS);
-        }
+        return Result.succeed(passwordHS);
+      }),
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('emailHash', v =>
+        this.hashService.makeHash({
+          input: v.email,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'emailHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.email,
-            hashSecret: v.hashSecret
-          })
-      ),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstError> =>
-          this.db.users.findFirst({
-            where: eq(usersTable.emailHash, v.emailHash)
-          })
+      Result.bind('user', v =>
+        this.db.users.findFirst({
+          where: eq(usersTable.emailHash, v.emailHash)
+        })
       ),
       Result.andThrough(v =>
         isDefined(v.user?.passwordHash) && v.user.isEmailVerified === true
@@ -126,19 +113,17 @@ export class RegisterUserController {
           ? Result.fail({ code: 'BACKEND_USER_IS_NOT_INVITED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'alias',
-        async (v): Result.ResultAsync<string, MakeAliasError> =>
-          isDefined(v.user)
-            ? Result.succeed(undefined)
-            : this.usersService.makeAlias({ email: v.email })
+      Result.bind('alias', async v =>
+        isDefined(v.user)
+          ? Result.succeed(undefined)
+          : this.usersService.makeAlias({ email: v.email })
       ),
       Result.andThrough(v =>
         isUndefined(v.user) && v.alias === RESTRICTED_USER_ALIAS
           ? Result.fail({ code: 'BACKEND_RESTRICTED_USER' })
           : Result.succeed()
       ),
-      Result.bind('newUser', (v): Result.Result<UserTab, never> => {
+      Result.bind('newUser', v => {
         if (isDefined(v.user)) {
           v.user.passwordHash = v.passwordHS.hash;
 
@@ -147,7 +132,7 @@ export class RegisterUserController {
           return Result.succeed(v.user);
         }
 
-        return Result.succeed({
+        let newUser: UserTab = {
           userId: makeId(),
           email: v.email,
           passwordResetToken: undefined,
@@ -171,7 +156,9 @@ export class RegisterUserController {
           keyTag: undefined,
           serverTs: undefined,
           createdTs: Date.now()
-        });
+        };
+
+        return Result.succeed(newUser);
       }),
       Result.andThrough(v =>
         this.db.write({

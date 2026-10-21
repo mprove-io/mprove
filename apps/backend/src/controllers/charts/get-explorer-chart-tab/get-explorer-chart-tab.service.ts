@@ -4,13 +4,10 @@ import { and, eq } from 'drizzle-orm';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
-  BridgeTab,
   ChartTab,
   MconfigTab,
-  MemberTab,
   ModelTab,
   QueryTab,
-  SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -32,13 +29,9 @@ import {
   type ExplorerRebuildResult
 } from '#backend/services/explorer/explorer-chart-rebuild/explorer-chart-rebuild.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbBridgesFindFirstError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-error';
-import type { DbChartsFindFirstError } from '#common/types/backend/function-errors/db/charts/db-charts-find-first-error';
 import type { DbMconfigsFindFirstError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { GetExplorerChartTabError } from '#common/types/backend/function-errors/get-explorer-chart-tab-error';
 import type { RebuildFromYamlError } from '#common/types/backend/function-errors/rebuild-from-yaml-error';
 import type { RunQueriesError } from '#common/types/backend/function-errors/run-queries-error';
@@ -99,17 +92,10 @@ export class GetExplorerChartTabService {
   > {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
       Result.andThrough(v =>
         v.session.userId !== v.user.userId
@@ -125,29 +111,23 @@ export class GetExplorerChartTabService {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.session.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.session.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'bridge',
-        (v): Result.ResultAsync<BridgeTab, DbBridgesFindFirstError> =>
-          this.db.bridges.findFirst({
-            where: and(
-              eq(bridgesTable.projectId, v.session.projectId),
-              eq(bridgesTable.repoId, v.session.repoId),
-              eq(bridgesTable.branchId, v.session.branchId),
-              eq(bridgesTable.envId, v.session.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirst({
+          where: and(
+            eq(bridgesTable.projectId, v.session.projectId),
+            eq(bridgesTable.repoId, v.session.repoId),
+            eq(bridgesTable.branchId, v.session.branchId),
+            eq(bridgesTable.envId, v.session.envId)
+          )
+        })
       ),
       Result.andThrough(v =>
         isUndefined(v.bridge)
@@ -156,15 +136,13 @@ export class GetExplorerChartTabService {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'originalChart',
-        (v): Result.ResultAsync<ChartTab, DbChartsFindFirstError> =>
-          this.db.charts.findFirst({
-            where: and(
-              eq(chartsTable.sessionId, v.sessionId),
-              eq(chartsTable.chartId, v.chartId)
-            )
-          })
+      Result.bind('originalChart', v =>
+        this.db.charts.findFirst({
+          where: and(
+            eq(chartsTable.sessionId, v.sessionId),
+            eq(chartsTable.chartId, v.chartId)
+          )
+        })
       ),
       Result.andThrough(v =>
         isUndefined(v.originalChart)
@@ -173,41 +151,38 @@ export class GetExplorerChartTabService {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'resolveChartPayload',
-        (v): Result.Result<ResolveChartPayload, never> => {
-          let chartYaml: string = v.originalChart.chartYaml;
+      Result.bind('resolveChartPayload', v => {
+        let chartYaml: string = v.originalChart.chartYaml;
 
-          let modelId: string = v.originalChart.modelId;
+        let modelId: string = v.originalChart.modelId;
 
-          let chart: ChartTab;
+        let chart: ChartTab;
 
-          let mconfig: MconfigTab;
+        let mconfig: MconfigTab;
 
-          let query: QueryTab;
+        let query: QueryTab;
 
-          let rebuildErrors: BmlError[];
+        let rebuildErrors: BmlError[];
 
-          return Result.succeed({
-            chartYaml: chartYaml,
-            modelId: modelId,
-            chart: chart,
-            mconfig: mconfig,
-            query: query,
-            rebuildErrors: rebuildErrors
-          });
-        }
-      ),
-      Result.bind(
-        'chartAtCurrent',
-        (v): Result.ResultAsync<ChartTab, DbChartsFindFirstError> =>
-          this.db.charts.findFirst({
-            where: and(
-              eq(chartsTable.sessionId, v.sessionId),
-              eq(chartsTable.chartId, v.chartId),
-              eq(chartsTable.structId, v.bridge.structId)
-            )
-          })
+        let resolveChartPayload: ResolveChartPayload = {
+          chartYaml: chartYaml,
+          modelId: modelId,
+          chart: chart,
+          mconfig: mconfig,
+          query: query,
+          rebuildErrors: rebuildErrors
+        };
+
+        return Result.succeed(resolveChartPayload);
+      }),
+      Result.bind('chartAtCurrent', v =>
+        this.db.charts.findFirst({
+          where: and(
+            eq(chartsTable.sessionId, v.sessionId),
+            eq(chartsTable.chartId, v.chartId),
+            eq(chartsTable.structId, v.bridge.structId)
+          )
+        })
       ),
       Result.andThrough(async v => {
         if (v.chartAtCurrent) {
@@ -351,21 +326,20 @@ export class GetExplorerChartTabService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'assembleChartResponsePayload',
-        (v): Result.Result<AssembleChartResponsePayload, never> => {
-          let isRebuildError: boolean = !isUndefined(
-            v.resolveChartPayload.rebuildErrors
-          );
+      Result.bind('assembleChartResponsePayload', v => {
+        let isRebuildError: boolean = !isUndefined(
+          v.resolveChartPayload.rebuildErrors
+        );
 
-          let apiPayload: ToBackendGetExplorerChartTabOutput;
+        let apiPayload: ToBackendGetExplorerChartTabOutput;
 
-          return Result.succeed({
-            isRebuildError: isRebuildError,
-            apiPayload: apiPayload
-          });
-        }
-      ),
+        let assembleChartResponsePayload: AssembleChartResponsePayload = {
+          isRebuildError: isRebuildError,
+          apiPayload: apiPayload
+        };
+
+        return Result.succeed(assembleChartResponsePayload);
+      }),
       Result.andThrough(async v => {
         if (v.assembleChartResponsePayload.isRebuildError) {
           v.assembleChartResponsePayload.apiPayload = {

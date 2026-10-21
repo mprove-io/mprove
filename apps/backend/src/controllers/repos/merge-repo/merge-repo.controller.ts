@@ -8,14 +8,7 @@ import {
   ToBackendMergeRepoResponseDto
 } from '#backend/controllers/repos/merge-repo/merge-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  MemberTab,
-  ProjectTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -32,19 +25,8 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetMemberCheckIsEditorError } from '#common/types/backend/function-errors/get-member-check-is-editor-error';
-import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
-import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repos/merge-repo/merge-repo-output';
-import type { RepoType } from '#common/types/disk/parts/repo/repo-type';
-import type { ToDiskMergeRepoOutput } from '#common/types/disk/routes/repos/merge-repo/merge-repo-output';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -86,60 +68,41 @@ export class MergeRepoController {
         traceId: body.traceId,
         user: user
       }),
-      Result.bind(
-        'repoType',
-        (v): Result.ResultAsync<RepoType, CheckRepoIdError> =>
-          this.sessionsService.checkRepoId({
-            repoId: v.repoId,
-            userId: v.user.userId,
-            projectId: v.projectId,
-            allowProdRepo: false
-          })
+      Result.bind('repoType', v =>
+        this.sessionsService.checkRepoId({
+          repoId: v.repoId,
+          userId: v.user.userId,
+          projectId: v.projectId,
+          allowProdRepo: false
+        })
       ),
       Result.andThrough(v =>
         v.repoType === 'session'
           ? Result.fail({ code: 'BACKEND_SESSION_BRANCH_CANNOT_BE_MERGED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorError> =>
-          this.membersService.getMemberCheckIsEditor({
-            projectId: v.projectId,
-            memberId: v.user.userId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditor({
+          projectId: v.projectId,
+          memberId: v.user.userId
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
-      ),
-      Result.bind(
-        'theirBranchRepoId',
-        (v): Result.Result<string, never> =>
-          Result.succeed(
-            v.isTheirBranchRemote === true ? PROD_REPO_ID : v.repoId
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
           )
+        })
+      ),
+      Result.bind('theirBranchRepoId', v =>
+        Result.succeed(v.isTheirBranchRemote === true ? PROD_REPO_ID : v.repoId)
       ),
       Result.andThrough(v =>
         this.db.branches.findFirstCheckExists({
@@ -157,36 +120,32 @@ export class MergeRepoController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'diskMergeRepoOutput',
-        (v): Result.ResultAsync<ToDiskMergeRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
-            request: {
-              operation: 'mergeRepo',
-              traceId: v.traceId,
-              input: {
-                baseProject: this.tabService.projectTabToBaseProject({
-                  project: v.project
-                }),
-                repoId: v.repoId,
-                branch: v.branchId,
-                theirBranch: v.theirBranchId,
-                isTheirBranchRemote: v.isTheirBranchRemote,
-                userAlias: v.user.alias
-              }
+      Result.bind('diskMergeRepoOutput', v =>
+        this.rpcService.sendToDisk({
+          request: {
+            operation: 'mergeRepo',
+            traceId: v.traceId,
+            input: {
+              baseProject: this.tabService.projectTabToBaseProject({
+                project: v.project
+              }),
+              repoId: v.repoId,
+              branch: v.branchId,
+              theirBranch: v.theirBranchId,
+              isTheirBranchRemote: v.isTheirBranchRemote,
+              userAlias: v.user.alias
             }
-          })
+          }
+        })
       ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId)
-            )
-          })
+      Result.bind('branchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.blockmlService.rebuildBranchBridges({
@@ -207,30 +166,22 @@ export class MergeRepoController {
           }
         })
       ),
-      Result.bind(
-        'currentBridge',
-        (v): Result.Result<BridgeTab, never> =>
-          Result.succeed(
-            v.branchBridges.find(bridge => bridge.envId === v.envId)
-          )
+      Result.bind('currentBridge', v =>
+        Result.succeed(v.branchBridges.find(bridge => bridge.envId === v.envId))
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.currentBridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.currentBridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'modelPartXs',
-        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXs({
-            structId: v.struct.structId,
-            apiUserMember: this.membersService.tabToApi({
-              member: v.userMember
-            })
+      Result.bind('modelPartXs', v =>
+        this.modelsService.getModelPartXs({
+          structId: v.struct.structId,
+          apiUserMember: this.membersService.tabToApi({
+            member: v.userMember
           })
+        })
       ),
       Result.map(
         (v): ToBackendMergeRepoOutput => ({

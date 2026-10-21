@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type {
-  BridgeTab,
-  MemberTab,
-  ModelTab
-} from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
@@ -18,10 +13,6 @@ import { SearchCachedFieldValuesService } from '#backend/services/explorer/tools
 import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names/search-dwh-schema-field-names.service';
 import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
-import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
 import type { SearchDwhSchemaFieldNamesError } from '#common/types/backend/function-errors/search-dwh-schema-field-names-error';
 import type { SearchModelFieldsError } from '#common/types/backend/function-errors/search-model-fields-error';
 import type {
@@ -66,17 +57,13 @@ export class SearchModelFieldsService {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -85,140 +72,118 @@ export class SearchModelFieldsService {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.projectId),
-              eq(bridgesTable.repoId, v.repoId),
-              eq(bridgesTable.branchId, v.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
-      ),
-      Result.bind(
-        'models',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: eq(modelsTable.structId, v.bridge.structId)
-          })
-      ),
-      Result.bind(
-        'accessibleMalloyModels',
-        (v): Result.Result<ModelTab[], never> =>
-          Result.succeed(
-            v.models
-              .filter(model =>
-                checkModelAccess({
-                  member: v.userMember,
-                  modelAccessRoles: model.accessRolesCombined
-                })
-              )
-              .filter(model => model.type === 'Malloy')
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.projectId),
+            eq(bridgesTable.repoId, v.repoId),
+            eq(bridgesTable.branchId, v.branchId),
+            eq(bridgesTable.envId, v.envId)
           )
+        })
       ),
-      Result.bind(
-        'modelIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.accessibleMalloyModels.map(model => model.modelId))
+      Result.bind('models', v =>
+        this.db.models.findMany({
+          where: eq(modelsTable.structId, v.bridge.structId)
+        })
       ),
-      Result.bind(
-        'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvId({
-            projectId: v.projectId,
-            envId: v.envId
-          })
+      Result.bind('accessibleMalloyModels', v =>
+        Result.succeed(
+          v.models
+            .filter(model =>
+              checkModelAccess({
+                member: v.userMember,
+                modelAccessRoles: model.accessRolesCombined
+              })
+            )
+            .filter(model => model.type === 'Malloy')
+        )
       ),
-      Result.bind(
-        'matches',
-        async (
-          v
-        ): Result.ResultAsync<
+      Result.bind('modelIds', v =>
+        Result.succeed(v.accessibleMalloyModels.map(model => model.modelId))
+      ),
+      Result.bind('cacheEnvId', v =>
+        this.cachedColumnService.getCacheEnvId({
+          projectId: v.projectId,
+          envId: v.envId
+        })
+      ),
+      Result.bind('matches', async v => {
+        // Launch all three searches in their original order. Promise.all must
+        // still stop on the first rejection without waiting for other work.
+        let valueMatchesPromise: Promise<SearchFieldMatch[]> =
+          v.searchFieldValues.length > 0
+            ? this.searchCachedFieldValuesService.search({
+                projectId: v.projectId,
+                structId: v.bridge.structId,
+                cacheEnvId: v.cacheEnvId,
+                searchFieldValues: v.searchFieldValues,
+                modelIds: v.modelIds
+              })
+            : Promise.resolve([]);
+
+        let leafNameMatchesPromise: Promise<SearchFieldMatch[]> =
+          v.searchFieldNames.length > 0
+            ? this.searchModelFieldLeafNamesService.search({
+                structId: v.bridge.structId,
+                searchFieldNames: v.searchFieldNames,
+                modelIds: v.modelIds
+              })
+            : Promise.resolve([]);
+
+        let dwhNameMatchesResult: Result.ResultAsync<
           SearchFieldMatch[],
           SearchDwhSchemaFieldNamesError
-        > => {
-          // Launch all three searches in their original order. Promise.all must
-          // still stop on the first rejection without waiting for other work.
-          let valueMatchesPromise: Promise<SearchFieldMatch[]> =
-            v.searchFieldValues.length > 0
-              ? this.searchCachedFieldValuesService.search({
-                  projectId: v.projectId,
-                  structId: v.bridge.structId,
-                  cacheEnvId: v.cacheEnvId,
-                  searchFieldValues: v.searchFieldValues,
-                  modelIds: v.modelIds
-                })
-              : Promise.resolve([]);
+        > =
+          v.searchFieldNames.length > 0
+            ? this.searchDwhSchemaFieldNamesService.searchDwhSchemaFieldNames({
+                userId: v.userId,
+                projectId: v.projectId,
+                repoId: v.repoId,
+                branchId: v.branchId,
+                envId: v.envId,
+                structId: v.bridge.structId,
+                searchFieldNames: v.searchFieldNames,
+                modelIds: v.modelIds
+              })
+            : Promise.resolve(Result.succeed([]));
 
-          let leafNameMatchesPromise: Promise<SearchFieldMatch[]> =
-            v.searchFieldNames.length > 0
-              ? this.searchModelFieldLeafNamesService.search({
-                  structId: v.bridge.structId,
-                  searchFieldNames: v.searchFieldNames,
-                  modelIds: v.modelIds
-                })
-              : Promise.resolve([]);
+        let failure: Result.Failure<SearchDwhSchemaFieldNamesError>;
 
-          let dwhNameMatchesResult: Result.ResultAsync<
-            SearchFieldMatch[],
-            SearchDwhSchemaFieldNamesError
-          > =
-            v.searchFieldNames.length > 0
-              ? this.searchDwhSchemaFieldNamesService.searchDwhSchemaFieldNames(
-                  {
-                    userId: v.userId,
-                    projectId: v.projectId,
-                    repoId: v.repoId,
-                    branchId: v.branchId,
-                    envId: v.envId,
-                    structId: v.bridge.structId,
-                    searchFieldNames: v.searchFieldNames,
-                    modelIds: v.modelIds
-                  }
-                )
-              : Promise.resolve(Result.succeed([]));
+        let dwhNameMatchesPromise: Promise<SearchFieldMatch[]> =
+          dwhNameMatchesResult.then(result => {
+            if (Result.isFailure(result)) {
+              failure = result;
 
-          let failure: Result.Failure<SearchDwhSchemaFieldNamesError>;
-
-          let dwhNameMatchesPromise: Promise<SearchFieldMatch[]> =
-            dwhNameMatchesResult.then(result => {
-              if (Result.isFailure(result)) {
-                failure = result;
-
-                // The exact failure is recovered below, never by message/code.
-                throw result;
-              }
-
-              return result.value;
-            });
-
-          try {
-            let [
-              valueMatches,
-              leafNameMatches,
-              dwhNameMatches
-            ]: SearchFieldMatch[][] = await Promise.all([
-              valueMatchesPromise,
-              leafNameMatchesPromise,
-              dwhNameMatchesPromise
-            ]);
-
-            return Result.succeed(
-              valueMatches.concat(leafNameMatches).concat(dwhNameMatches)
-            );
-          } catch (error) {
-            if (isDefined(failure) && error === failure) {
-              return failure;
+              // The exact failure is recovered below, never by message/code.
+              throw result;
             }
 
-            throw error;
+            return result.value;
+          });
+
+        try {
+          let [
+            valueMatches,
+            leafNameMatches,
+            dwhNameMatches
+          ]: SearchFieldMatch[][] = await Promise.all([
+            valueMatchesPromise,
+            leafNameMatchesPromise,
+            dwhNameMatchesPromise
+          ]);
+
+          return Result.succeed(
+            valueMatches.concat(leafNameMatches).concat(dwhNameMatches)
+          );
+        } catch (error) {
+          if (isDefined(failure) && error === failure) {
+            return failure;
           }
+
+          throw error;
         }
-      ),
+      }),
       Result.map(
         (v): SearchModelFieldsToolResult =>
           this.mergeMatches({ matches: v.matches })

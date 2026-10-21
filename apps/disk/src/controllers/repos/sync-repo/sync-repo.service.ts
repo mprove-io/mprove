@@ -1,24 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { LogResult, SimpleGit, StatusResult } from 'simple-git';
+import type { LogResult, StatusResult } from 'simple-git';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { DiskDevRepoCommitDoesNotMatchLocalCommitError } from '#common/types/disk/errors/disk-dev-repo-commit-does-not-match-local-commit-error';
-import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
-import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
-import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskGetSyncDataError } from '#common/types/disk/function-errors/disk-get-sync-data-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
 import type { DiskSyncFile } from '#common/types/disk/parts/file/disk-sync-file';
-import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import type { ToDiskSyncRepoOutput } from '#common/types/disk/routes/repos/sync-repo/sync-repo-output';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import type { DiskConfig } from '#disk/config/disk-config';
-import {
-  getSyncData,
-  type SyncData
-} from '#disk/controllers/repos/sync-repo/get-sync-data/get-sync-data';
+import { getSyncData } from '#disk/controllers/repos/sync-repo/get-sync-data/get-sync-data';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git/create-git';
@@ -107,36 +97,27 @@ export class SyncRepoService {
         orgPath: orgPath,
         remoteType: remoteType
       }),
-      Result.bind(
-        'keyDir',
-        (
-          v
-        ): Result.ResultAsync<
-          string,
-          DiskCheckRestoreOrgProjectRepoBranchError
-        > =>
-          checkRestoreOrgProjectRepoBranch({
-            remoteType: v.remoteType,
-            orgId: v.orgId,
-            orgPath: v.orgPath,
-            projectId: v.projectId,
-            projectLt: v.projectLt,
-            repoId: v.repoId,
-            branchId: v.branch
-          })
+      Result.bind('keyDir', v =>
+        checkRestoreOrgProjectRepoBranch({
+          remoteType: v.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          projectId: v.projectId,
+          projectLt: v.projectLt,
+          repoId: v.repoId,
+          branchId: v.branch
+        })
       ),
-      Result.bind(
-        'git',
-        (v): Result.ResultAsync<SimpleGit, never> =>
-          createGit({
-            repoDir: v.repoDir,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.gitUrl,
-            privateKeyEncrypted: v.privateKeyEncrypted,
-            publicKey: v.publicKey,
-            passPhrase: v.passPhrase
-          })
+      Result.bind('git', v =>
+        createGit({
+          repoDir: v.repoDir,
+          remoteType: v.remoteType,
+          keyDir: v.keyDir,
+          gitUrl: v.gitUrl,
+          privateKeyEncrypted: v.privateKeyEncrypted,
+          publicKey: v.publicKey,
+          passPhrase: v.passPhrase
+        })
       ),
       Result.andThrough(v =>
         checkoutBranch({
@@ -149,73 +130,57 @@ export class SyncRepoService {
           isFetch: false
         })
       ),
-      Result.andThrough(
-        async (
-          v
-        ): Result.ResultAsync<
-          void,
-          DiskDevRepoCommitDoesNotMatchLocalCommitError
-        > => {
-          let logResult: LogResult = await v.git.log(['-1']);
-          let diskLastCommit = logResult.latest?.hash;
+      Result.andThrough(async v => {
+        let logResult: LogResult = await v.git.log(['-1']);
+        let diskLastCommit = logResult.latest?.hash;
 
-          if (v.lastCommit !== diskLastCommit) {
-            return Result.fail({
-              code: 'DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT',
-              displayData: {
-                branch: v.branch,
-                devLastCommit: diskLastCommit,
-                localLastCommit: v.lastCommit
-              }
-            });
-          }
+        if (v.lastCommit !== diskLastCommit) {
+          return Result.fail({
+            code: 'DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT',
+            displayData: {
+              branch: v.branch,
+              devLastCommit: diskLastCommit,
+              localLastCommit: v.lastCommit
+            }
+          });
+        }
 
-          return Result.succeed();
-        }
+        return Result.succeed();
+      }),
+      Result.bind('statusResult', async v => {
+        let statusResult: StatusResult = await v.git.status();
+        return Result.succeed(statusResult);
+      }),
+      Result.bind('syncFilesOutput', v =>
+        getSyncData({
+          direction: v.direction,
+          repoDir: v.repoDir,
+          changedFiles: v.changedFiles,
+          deletedFiles: v.deletedFiles,
+          statusResult: v.statusResult
+        })
       ),
-      Result.bind(
-        'statusResult',
-        async (v): Result.ResultAsync<StatusResult, never> => {
-          let statusResult: StatusResult = await v.git.status();
-          return Result.succeed(statusResult);
-        }
+      Result.bind('repoStatus', v =>
+        getRepoStatus({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          git: v.git,
+          isFetch: true,
+          isCheckConflicts: v.getRepo === true,
+          addContent: true,
+          expandRenamed: true
+        })
       ),
-      Result.bind(
-        'syncFilesOutput',
-        (v): Result.ResultAsync<SyncData, DiskGetSyncDataError> =>
-          getSyncData({
-            direction: v.direction,
-            repoDir: v.repoDir,
-            changedFiles: v.changedFiles,
-            deletedFiles: v.deletedFiles,
-            statusResult: v.statusResult
-          })
-      ),
-      Result.bind(
-        'repoStatus',
-        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
-          getRepoStatus({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            repoDir: v.repoDir,
-            git: v.git,
-            isFetch: true,
-            isCheckConflicts: v.getRepo === true,
-            addContent: true,
-            expandRenamed: true
-          })
-      ),
-      Result.bind(
-        'itemCatalog',
-        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
-          getNodesAndFiles({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            readFiles: true,
-            isRootMproveDir: false
-          })
+      Result.bind('itemCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        })
       ),
       Result.map((v): ToDiskSyncRepoOutput => {
         let baseOutput = {

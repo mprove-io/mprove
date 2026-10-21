@@ -8,12 +8,7 @@ import {
   ToBackendCreateConnectionResponseDto
 } from '#backend/controllers/connections/create-connection/create-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BridgeTab,
-  ConnectionTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -28,8 +23,6 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateConnectionOutput } from '#common/types/backend/routes/connections/create-connection/create-connection-output';
 
@@ -107,17 +100,13 @@ export class CreateConnectionController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'member',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('member', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.connectionsService.checkConnectionDoesNotExist({
@@ -133,28 +122,24 @@ export class CreateConnectionController {
           member: v.member
         })
       ),
-      Result.bind(
-        'connection',
-        (v): Result.Result<ConnectionTab, never> =>
-          Result.succeed(
-            this.connectionsService.makeConnection({
-              projectId: v.projectId,
-              envId: v.envId,
-              connectionId: v.connectionId,
-              type: v.type,
-              options: v.options
-            })
-          )
-      ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.projectId),
-              eq(bridgesTable.envId, v.envId)
-            )
+      Result.bind('connection', v =>
+        Result.succeed(
+          this.connectionsService.makeConnection({
+            projectId: v.projectId,
+            envId: v.envId,
+            connectionId: v.connectionId,
+            type: v.type,
+            options: v.options
           })
+        )
+      ),
+      Result.bind('branchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.projectId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
       Result.map(v => {
         v.branchBridges.forEach(bridge => {

@@ -11,9 +11,6 @@ import { DbService } from '#backend/services/db/db.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { CheckRepoIdError } from '#common/types/backend/function-errors/check-repo-id-error';
-import type { DbOcSessionsFindManyError } from '#common/types/backend/function-errors/db/oc-sessions/db-oc-sessions-find-many-error';
-import type { DbSessionsFindFirstError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-error';
-import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { GetBasicSessionsListError } from '#common/types/backend/function-errors/get-basic-sessions-list-error';
 import type { TabsToSessionApisError } from '#common/types/backend/function-errors/tabs-to-session-apis-error';
 import type { OcSessionApi } from '#common/types/backend/parts/session/oc-session-api';
@@ -207,55 +204,46 @@ export class SessionsService {
   > {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'sessions',
-        (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
-          this.db.sessions.findMany({
-            where: and(
-              eq(sessionsTable.projectId, v.projectId),
-              eq(sessionsTable.userId, v.userId),
-              notInArray(sessionsTable.status, ['Deleted', 'Archived'])
-            ),
-            orderBy: [desc(sessionsTable.createdTs)]
-          })
+      Result.bind('sessions', v =>
+        this.db.sessions.findMany({
+          where: and(
+            eq(sessionsTable.projectId, v.projectId),
+            eq(sessionsTable.userId, v.userId),
+            notInArray(sessionsTable.status, ['Deleted', 'Archived'])
+          ),
+          orderBy: [desc(sessionsTable.createdTs)]
+        })
       ),
-      Result.bind(
-        'currentSession',
-        async (v): Result.ResultAsync<SessionTab, DbSessionsFindFirstError> => {
-          let isCurrentSessionIncluded: boolean = v.sessions.some(
-            session => session.sessionId === v.currentSessionId
-          );
+      Result.bind('currentSession', async v => {
+        let isCurrentSessionIncluded: boolean = v.sessions.some(
+          session => session.sessionId === v.currentSessionId
+        );
 
-          return v.currentSessionId && isCurrentSessionIncluded === false
-            ? this.db.sessions.findFirst({
-                where: and(
-                  eq(sessionsTable.sessionId, v.currentSessionId),
-                  eq(sessionsTable.projectId, v.projectId),
-                  eq(sessionsTable.userId, v.userId)
-                )
-              })
-            : Result.succeed(undefined);
-        }
+        return v.currentSessionId && isCurrentSessionIncluded === false
+          ? this.db.sessions.findFirst({
+              where: and(
+                eq(sessionsTable.sessionId, v.currentSessionId),
+                eq(sessionsTable.projectId, v.projectId),
+                eq(sessionsTable.userId, v.userId)
+              )
+            })
+          : Result.succeed(undefined);
+      }),
+      Result.bind('hasMoreArchived', v =>
+        this.db.sessions.isExist({
+          where: and(
+            eq(sessionsTable.projectId, v.projectId),
+            eq(sessionsTable.userId, v.userId),
+            eq(sessionsTable.status, 'Archived')
+          )
+        })
       ),
-      Result.bind(
-        'hasMoreArchived',
-        (v): Result.ResultAsync<boolean, never> =>
-          this.db.sessions.isExist({
-            where: and(
-              eq(sessionsTable.projectId, v.projectId),
-              eq(sessionsTable.userId, v.userId),
-              eq(sessionsTable.status, 'Archived')
-            )
-          })
-      ),
-      Result.bind(
-        'apiSessions',
-        (v): Result.ResultAsync<SessionApi[], TabsToSessionApisError> =>
-          this.tabsToSessionApis({
-            sessions: isUndefined(v.currentSession)
-              ? [...v.sessions]
-              : [...v.sessions, v.currentSession]
-          })
+      Result.bind('apiSessions', v =>
+        this.tabsToSessionApis({
+          sessions: isUndefined(v.currentSession)
+            ? [...v.sessions]
+            : [...v.sessions, v.currentSession]
+        })
       ),
       Result.map(
         (v): GetBasicSessionsListOutput => ({
@@ -292,16 +280,12 @@ export class SessionsService {
 
     return Result.pipe(
       Result.succeed({ sessions: sessions, sessionIds: sessionIds }),
-      Result.bind(
-        'ocSessions',
-        async (
-          v
-        ): Result.ResultAsync<OcSessionTab[], DbOcSessionsFindManyError> =>
-          v.sessionIds.length > 0
-            ? this.db.ocSessions.findMany({
-                where: inArray(ocSessionsTable.sessionId, v.sessionIds)
-              })
-            : Result.succeed([])
+      Result.bind('ocSessions', async v =>
+        v.sessionIds.length > 0
+          ? this.db.ocSessions.findMany({
+              where: inArray(ocSessionsTable.sessionId, v.sessionIds)
+            })
+          : Result.succeed([])
       ),
       Result.map((v): SessionApi[] =>
         v.sessions.map(session =>

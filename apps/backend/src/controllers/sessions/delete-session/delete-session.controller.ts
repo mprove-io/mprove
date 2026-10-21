@@ -41,9 +41,6 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { AcquireSessionLockError } from '#common/types/backend/function-errors/acquire-session-lock-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { DeleteWhileLockedError } from '#common/types/backend/function-errors/delete-while-locked-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
@@ -85,58 +82,36 @@ export class DeleteSessionController {
         sessionId: body.input.sessionId,
         userId: user.userId
       }),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
       Result.andThrough(v =>
         v.session.userId !== v.userId
           ? Result.fail({ code: 'BACKEND_UNAUTHORIZED' })
           : Result.succeed()
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.session.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.session.projectId)
+        })
       ),
-      Result.bind(
-        'sessionLockToken',
-        async (v): Result.ResultAsync<string, AcquireSessionLockError> =>
-          v.session.type === 'Editor'
-            ? this.editorSessionLockService.acquireSessionLock({
-                sessionId: v.session.sessionId
-              })
-            : Result.succeed(undefined)
+      Result.bind('sessionLockToken', async v =>
+        v.session.type === 'Editor'
+          ? this.editorSessionLockService.acquireSessionLock({
+              sessionId: v.session.sessionId
+            })
+          : Result.succeed(undefined)
       ),
-      Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<
-          ToBackendDeleteSessionOutput,
-          DeleteWhileLockedError
-        > =>
-          this.deleteWhileLocked({
-            traceId: v.traceId,
-            sessionId: v.sessionId,
-            session: v.session,
-            project: v.project,
-            sessionLockToken: v.sessionLockToken
-          })
+      Result.andThen(v =>
+        this.deleteWhileLocked({
+          traceId: v.traceId,
+          sessionId: v.sessionId,
+          session: v.session,
+          project: v.project,
+          sessionLockToken: v.sessionLockToken
+        })
       )
     );
   }
@@ -153,19 +128,12 @@ export class DeleteSessionController {
     try {
       let result = await Result.pipe(
         Result.succeed(item),
-        Result.bind(
-          'freshSession',
-          async (
-            v
-          ): Result.ResultAsync<
-            SessionTab,
-            DbSessionsFindFirstCheckExistsError
-          > =>
-            v.session.type === 'Editor'
-              ? this.db.sessions.findFirstCheckExists({
-                  where: eq(sessionsTable.sessionId, v.session.sessionId)
-                })
-              : Result.succeed(v.session)
+        Result.bind('freshSession', async v =>
+          v.session.type === 'Editor'
+            ? this.db.sessions.findFirstCheckExists({
+                where: eq(sessionsTable.sessionId, v.session.sessionId)
+              })
+            : Result.succeed(v.session)
         ),
         Result.andThrough(v => {
           let isActiveOrPaused: boolean = (
@@ -199,11 +167,14 @@ export class DeleteSessionController {
             }
           });
         }),
-        Result.bind(
-          'updatedSession',
-          (v): Result.Result<SessionTab, never> =>
-            Result.succeed({ ...v.freshSession, status: 'Deleted' })
-        ),
+        Result.bind('updatedSession', v => {
+          let updatedSession: SessionTab = {
+            ...v.freshSession,
+            status: 'Deleted'
+          };
+
+          return Result.succeed(updatedSession);
+        }),
         Result.andThrough(v =>
           dbErrorToResult({
             action: async () => {

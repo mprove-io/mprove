@@ -8,10 +8,7 @@ import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashbo
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { GetDashboardPartsError } from '#common/types/backend/function-errors/get-dashboard-parts-error';
 import type { PrepareRunDashboardError } from '#common/types/backend/function-errors/prepare-run-dashboard-error';
-import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
-import type { Member } from '#common/types/backend/parts/member';
 import type { RunDashboard } from '#common/types/backend/parts/run/run-dashboard';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 
@@ -59,24 +56,18 @@ export class RunDashboardService {
   }): Result.ResultAsync<PrepareRunDashboardOutput, PrepareRunDashboardError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
-      Result.bind(
-        'dashboards',
-        (v): Result.ResultAsync<DashboardPart[], GetDashboardPartsError> =>
-          this.dashboardsService.getDashboardParts({
-            structId: v.structId,
-            user: v.user,
-            apiUserMember: v.apiUserMember
-          })
+      Result.bind('dashboards', v =>
+        this.dashboardsService.getDashboardParts({
+          structId: v.structId,
+          user: v.user,
+          apiUserMember: v.apiUserMember
+        })
       ),
-      Result.bind(
-        'dashboardIdsList',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.dashboardIds?.split(','))
+      Result.bind('dashboardIdsList', v =>
+        Result.succeed(v.dashboardIds?.split(','))
       ),
       Result.andThrough(v =>
         isUndefined(v.dashboardIdsList)

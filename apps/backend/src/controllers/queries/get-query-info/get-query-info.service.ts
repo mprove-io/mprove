@@ -3,13 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type {
-  BranchTab,
-  BridgeTab,
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
@@ -25,21 +19,13 @@ import { QueryInfoDashboardService } from '#backend/services/query-info-dashboar
 import { QueryInfoReportService } from '#backend/services/query-info-report/query-info-report.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetChartDataError } from '#common/types/backend/function-errors/get-chart-data-error';
-import type { GetDashboardDataError } from '#common/types/backend/function-errors/get-dashboard-data-error';
 import type { GetQueryInfoError } from '#common/types/backend/function-errors/get-query-info-error';
-import type { GetQueryInfoReportDataError } from '#common/types/backend/function-errors/get-query-info-report-data-error';
 import type { QueryInfoChart } from '#common/types/backend/parts/query-info/query-info-chart';
 import type { QueryInfoDashboard } from '#common/types/backend/parts/query-info/query-info-dashboard';
 import type { QueryInfoQuery } from '#common/types/backend/parts/query-info/query-info-query';
 import type { QueryInfoReport } from '#common/types/backend/parts/query-info/query-info-report';
 import type { QueryInfoRow } from '#common/types/backend/parts/query-info/query-info-row';
 import type { QueryInfoTile } from '#common/types/backend/parts/query-info/query-info-tile';
-import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
 import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-output';
 import type { ToBackendGetReportOutput } from '#common/types/backend/routes/reports/get-report/get-report-output';
@@ -122,42 +108,27 @@ export class GetQueryInfoService {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -166,48 +137,38 @@ export class GetQueryInfoService {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
-      ),
-      Result.bind(
-        'hostUrl',
-        (v): Result.Result<string, never> =>
-          Result.succeed(
-            this.cs.get<BackendConfig['hostUrl']>('hostUrl').split(',')[0]
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
           )
+        })
       ),
-      Result.bind(
-        'chartOutput',
-        async (
-          v
-        ): Result.ResultAsync<ToBackendGetChartOutput, GetChartDataError> =>
-          isUndefined(v.chartId)
-            ? Result.succeed(undefined)
-            : this.queryInfoChartService.getChartData({
-                traceId: v.traceId,
-                user: v.user,
-                userMember: v.userMember,
-                project: v.project,
-                projectId: v.projectId,
-                envId: v.envId,
-                structId: v.bridge.structId,
-                chartId: v.chartId,
-                timezone: v.timezone,
-                skipUi: true
-              })
+      Result.bind('hostUrl', v =>
+        Result.succeed(
+          this.cs.get<BackendConfig['hostUrl']>('hostUrl').split(',')[0]
+        )
       ),
-      Result.bind('chart', (v): Result.Result<QueryInfoChart, never> => {
+      Result.bind('chartOutput', async v =>
+        isUndefined(v.chartId)
+          ? Result.succeed(undefined)
+          : this.queryInfoChartService.getChartData({
+              traceId: v.traceId,
+              user: v.user,
+              userMember: v.userMember,
+              project: v.project,
+              projectId: v.projectId,
+              envId: v.envId,
+              structId: v.bridge.structId,
+              chartId: v.chartId,
+              timezone: v.timezone,
+              skipUi: true
+            })
+      ),
+      Result.bind('chart', v => {
         if (isUndefined(v.chartId)) {
           return Result.succeed(undefined);
         }
@@ -236,104 +197,91 @@ export class GetQueryInfoService {
           timezone: v.timezone
         });
 
-        return Result.succeed({
+        let queryInfoChart: QueryInfoChart = {
           title: tile.mconfig.chart.title,
           chartId: chart.chartId,
           url: url,
           query: query
-        });
+        };
+
+        return Result.succeed(queryInfoChart);
       }),
-      Result.bind(
-        'dashboardOutput',
-        async (
-          v
-        ): Result.ResultAsync<
-          ToBackendGetDashboardOutput,
-          GetDashboardDataError
-        > =>
-          isUndefined(v.dashboardId)
-            ? Result.succeed(undefined)
-            : this.queryInfoDashboardService.getDashboardData({
-                traceId: v.traceId,
-                user: v.user,
-                userMember: v.userMember,
-                project: v.project,
-                bridge: v.bridge,
-                projectId: v.projectId,
-                repoId: v.repoId,
-                envId: v.envId,
-                dashboardId: v.dashboardId,
-                timezone: v.timezone,
-                skipUi: true
-              })
+      Result.bind('dashboardOutput', async v =>
+        isUndefined(v.dashboardId)
+          ? Result.succeed<ToBackendGetDashboardOutput>(undefined)
+          : this.queryInfoDashboardService.getDashboardData({
+              traceId: v.traceId,
+              user: v.user,
+              userMember: v.userMember,
+              project: v.project,
+              bridge: v.bridge,
+              projectId: v.projectId,
+              repoId: v.repoId,
+              envId: v.envId,
+              dashboardId: v.dashboardId,
+              timezone: v.timezone,
+              skipUi: true
+            })
       ),
-      Result.bind(
-        'dashboard',
-        (v): Result.Result<QueryInfoDashboard, never> => {
-          if (isUndefined(v.dashboardId)) {
-            return Result.succeed(undefined);
-          }
-
-          let dashboard = v.dashboardOutput.dashboard;
-
-          let tiles: QueryInfoTile[] = dashboard.tiles
-            .filter((tile, i) => isUndefined(v.tileIndex) || i === v.tileIndex)
-            .map(tile => ({
-              title: tile.mconfig.chart.title,
-              query: this.buildQueryInfoQuery({
-                mconfig: tile.mconfig,
-                query: tile.query,
-                getMalloy: v.getMalloy,
-                getSql: v.getSql,
-                getData: v.getData
-              })
-            }));
-
-          let url: string = getDashboardUrl({
-            host: v.hostUrl,
-            orgId: v.project.orgId,
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branch: v.branchId,
-            env: v.envId,
-            dashboardId: dashboard.dashboardId,
-            timezone: v.timezone
-          });
-
-          return Result.succeed({
-            title: dashboard.title,
-            dashboardId: dashboard.dashboardId,
-            url: url,
-            tiles: tiles
-          });
+      Result.bind('dashboard', v => {
+        if (isUndefined(v.dashboardId)) {
+          return Result.succeed(undefined);
         }
+
+        let dashboard = v.dashboardOutput.dashboard;
+
+        let tiles: QueryInfoTile[] = dashboard.tiles
+          .filter((tile, i) => isUndefined(v.tileIndex) || i === v.tileIndex)
+          .map(tile => ({
+            title: tile.mconfig.chart.title,
+            query: this.buildQueryInfoQuery({
+              mconfig: tile.mconfig,
+              query: tile.query,
+              getMalloy: v.getMalloy,
+              getSql: v.getSql,
+              getData: v.getData
+            })
+          }));
+
+        let url: string = getDashboardUrl({
+          host: v.hostUrl,
+          orgId: v.project.orgId,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branch: v.branchId,
+          env: v.envId,
+          dashboardId: dashboard.dashboardId,
+          timezone: v.timezone
+        });
+
+        let queryInfoDashboard: QueryInfoDashboard = {
+          title: dashboard.title,
+          dashboardId: dashboard.dashboardId,
+          url: url,
+          tiles: tiles
+        };
+
+        return Result.succeed(queryInfoDashboard);
+      }),
+      Result.bind('reportOutput', async v =>
+        isUndefined(v.reportId)
+          ? Result.succeed<ToBackendGetReportOutput>(undefined)
+          : this.queryInfoReportService.getQueryInfoReportData({
+              traceId: v.traceId,
+              user: v.user,
+              userMember: v.userMember,
+              project: v.project,
+              bridge: v.bridge,
+              projectId: v.projectId,
+              envId: v.envId,
+              reportId: v.reportId,
+              timezone: v.timezone,
+              timeSpec: v.timeSpec,
+              timeRangeFractionBrick: v.timeRangeFractionBrick,
+              skipUi: true
+            })
       ),
-      Result.bind(
-        'reportOutput',
-        async (
-          v
-        ): Result.ResultAsync<
-          ToBackendGetReportOutput,
-          GetQueryInfoReportDataError
-        > =>
-          isUndefined(v.reportId)
-            ? Result.succeed(undefined)
-            : this.queryInfoReportService.getQueryInfoReportData({
-                traceId: v.traceId,
-                user: v.user,
-                userMember: v.userMember,
-                project: v.project,
-                bridge: v.bridge,
-                projectId: v.projectId,
-                envId: v.envId,
-                reportId: v.reportId,
-                timezone: v.timezone,
-                timeSpec: v.timeSpec,
-                timeRangeFractionBrick: v.timeRangeFractionBrick,
-                skipUi: true
-              })
-      ),
-      Result.bind('report', (v): Result.Result<QueryInfoReport, never> => {
+      Result.bind('report', v => {
         if (isUndefined(v.reportId)) {
           return Result.succeed(undefined);
         }
@@ -378,12 +326,14 @@ export class GetQueryInfoService {
           timeRange: v.timeRangeFractionBrick
         });
 
-        return Result.succeed({
+        let queryInfoReport: QueryInfoReport = {
           title: report.title,
           reportId: report.reportId,
           url: url,
           rows: rows
-        });
+        };
+
+        return Result.succeed(queryInfoReport);
       }),
       Result.map(
         (v): ToBackendGetQueryInfoOutput => ({

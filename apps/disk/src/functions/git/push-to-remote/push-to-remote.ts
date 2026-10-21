@@ -1,9 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import type { DiskRepoStatusIsNotNeedPushError } from '#common/types/disk/errors/disk-repo-status-is-not-need-push-error';
-import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
 import type { DiskPushToRemoteError } from '#common/types/disk/function-errors/disk-push-to-remote-error';
-import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
@@ -21,34 +18,28 @@ export async function pushToRemote(item: {
     fn: () =>
       Result.pipe(
         Result.succeed(item),
-        Result.bind(
-          'diskItemStatus',
-          (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
-            getRepoStatus({
-              projectId: v.projectId,
-              projectDir: v.projectDir,
-              repoId: v.repoId,
-              repoDir: v.repoDir,
-              git: v.git,
-              isFetch: v.isFetch,
-              isCheckConflicts: false
-            })
+        Result.bind('diskItemStatus', v =>
+          getRepoStatus({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            repoDir: v.repoDir,
+            git: v.git,
+            isFetch: v.isFetch,
+            isCheckConflicts: false
+          })
         ),
-        Result.andThen(
-          async (
-            v
-          ): Result.ResultAsync<void, DiskRepoStatusIsNotNeedPushError> => {
-            let { repoStatus } = v.diskItemStatus;
+        Result.andThen(async v => {
+          let { repoStatus } = v.diskItemStatus;
 
-            if (repoStatus !== 'NeedPush') {
-              return Result.fail({ code: 'DISK_REPO_STATUS_IS_NOT_NEED_PUSH' });
-            }
-
-            await v.git.push('origin', v.branch);
-
-            return Result.succeed();
+          if (repoStatus !== 'NeedPush') {
+            return Result.fail({ code: 'DISK_REPO_STATUS_IS_NOT_NEED_PUSH' });
           }
-        )
+
+          await v.git.push('origin', v.branch);
+
+          return Result.succeed();
+        })
       )
   });
 }

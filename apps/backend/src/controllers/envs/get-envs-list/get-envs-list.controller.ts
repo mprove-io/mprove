@@ -7,7 +7,7 @@ import {
   ToBackendGetEnvsListResponseDto
 } from '#backend/controllers/envs/get-envs-list/get-envs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { EnvTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -16,7 +16,6 @@ import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { DbEnvsFindManyError } from '#common/types/backend/function-errors/db/envs/db-envs-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-output';
 
@@ -60,34 +59,28 @@ export class GetEnvsListController {
           )
         })
       ),
-      Result.bind(
-        'envs',
-        (v): Result.ResultAsync<EnvTab[], DbEnvsFindManyError> =>
-          this.db.envs.findMany({
-            where: eq(envsTable.projectId, v.projectId)
-          })
+      Result.bind('envs', v =>
+        this.db.envs.findMany({
+          where: eq(envsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'visibleEnvs',
-        (v): Result.Result<EnvTab[], never> =>
-          Result.succeed(
-            v.isFilter === true
-              ? v.envs.filter(env => {
-                  let isEnvMember: boolean = env.memberIds.includes(v.userId);
+      Result.bind('visibleEnvs', v =>
+        Result.succeed(
+          v.isFilter === true
+            ? v.envs.filter(env => {
+                let isEnvMember: boolean = env.memberIds.includes(v.userId);
 
-                  return isEnvMember || env.envId === PROJECT_ENV_PROD;
-                })
-              : v.envs
-          )
+                return isEnvMember || env.envId === PROJECT_ENV_PROD;
+              })
+            : v.envs
+        )
       ),
-      Result.bind(
-        'sortedEnvs',
-        (v): Result.Result<EnvTab[], never> =>
-          Result.succeed(
-            v.visibleEnvs.sort((a, b) =>
-              a.envId > b.envId ? 1 : b.envId > a.envId ? -1 : 0
-            )
+      Result.bind('sortedEnvs', v =>
+        Result.succeed(
+          v.visibleEnvs.sort((a, b) =>
+            a.envId > b.envId ? 1 : b.envId > a.envId ? -1 : 0
           )
+        )
       ),
       Result.map(
         (v): ToBackendGetEnvsListOutput => ({

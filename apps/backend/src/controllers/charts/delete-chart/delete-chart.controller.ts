@@ -11,16 +11,7 @@ import {
   ToBackendDeleteChartResponseDto
 } from '#backend/controllers/charts/delete-chart/delete-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  ChartTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
@@ -31,10 +22,7 @@ import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
-import {
-  type ChartsCatalog,
-  ChartsService
-} from '#backend/services/db/charts/charts.service';
+import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -46,16 +34,6 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
-import type { GetChartCheckExistsError } from '#common/types/backend/function-errors/get-chart-check-exists-error';
-import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteChartOutput } from '#common/types/backend/routes/charts/delete-chart/delete-chart-output';
 
@@ -113,29 +91,18 @@ export class DeleteChartController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.projectsService.checkProjectIsNotRestricted({
@@ -149,18 +116,14 @@ export class DeleteChartController {
           ? Result.fail({ code: 'BACKEND_MEMBER_IS_NOT_EXPLORER' })
           : Result.succeed()
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -169,37 +132,29 @@ export class DeleteChartController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.bridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'existingChart',
-        (v): Result.ResultAsync<ChartTab, GetChartCheckExistsError> =>
-          this.chartsService.getChartCheckExists({
-            structId: v.bridge.structId,
-            chartId: v.chartId,
-            userMember: v.userMember,
-            user: v.user
-          })
+      Result.bind('existingChart', v =>
+        this.chartsService.getChartCheckExists({
+          structId: v.bridge.structId,
+          chartId: v.chartId,
+          userMember: v.userMember,
+          user: v.user
+        })
       ),
       Result.andThrough(v =>
         v.userMember.isAdmin === false && v.userMember.isEditor === false
@@ -226,15 +181,13 @@ export class DeleteChartController {
           }
         })
       ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> =>
-          this.bridgesService.getBranchBridgesForRebuild({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
-          })
+      Result.bind('branchBridges', v =>
+        this.bridgesService.getBranchBridgesForRebuild({
+          projectId: v.branch.projectId,
+          repoId: v.branch.repoId,
+          branchId: v.branch.branchId,
+          envId: v.envId
+        })
       ),
       Result.andThrough(v =>
         dbErrorToResult({
@@ -261,29 +214,23 @@ export class DeleteChartController {
           }
         })
       ),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
-      Result.bind(
-        'models',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: eq(modelsTable.structId, v.bridge.structId)
-          })
+      Result.bind('models', v =>
+        this.db.models.findMany({
+          where: eq(modelsTable.structId, v.bridge.structId)
+        })
       ),
-      Result.bind(
-        'chartsCatalog',
-        (v): Result.ResultAsync<ChartsCatalog, GetChartsCatalogError> =>
-          this.chartsService.getChartsCatalog({
-            projectId: v.projectId,
-            structId: v.bridge.structId,
-            user: v.user,
-            apiUserMember: v.apiUserMember,
-            models: v.models,
-            spaces: v.struct.spaces
-          })
+      Result.bind('chartsCatalog', v =>
+        this.chartsService.getChartsCatalog({
+          projectId: v.projectId,
+          structId: v.bridge.structId,
+          user: v.user,
+          apiUserMember: v.apiUserMember,
+          models: v.models,
+          spaces: v.struct.spaces
+        })
       ),
       Result.map(
         (v): ToBackendDeleteChartOutput => ({

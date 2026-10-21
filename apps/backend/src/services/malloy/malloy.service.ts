@@ -11,27 +11,19 @@ import type {
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DbService } from '#backend/services/db/db.service';
-import {
-  EnvsService,
-  type GetApiEnvConnectionsWithFallbackOutput
-} from '#backend/services/db/envs/envs.service';
+import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
-import type { GetApiEnvConnectionsWithFallbackError } from '#common/types/backend/function-errors/get-api-env-connections-with-fallback-error';
-import type { GetSelectedGivensError } from '#common/types/backend/function-errors/get-selected-givens-error';
-import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { QueryOperation } from '#common/types/backend/parts/query-operation/query-operation';
 import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mconfig-parent-type';
 import type { Model } from '#common/types/blockml/parts/model/model';
-import type { MakeMalloyQueryError } from '#common/types/node-common/function-errors/make-malloy-query-error';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { makeMalloyConnections } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
-import type { MalloyQueryResult } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
 import { makeMalloyQuery } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
 
 type ResolveQueryConnectionsPayload = {
@@ -82,105 +74,95 @@ export class MalloyService {
 
         v.mconfig.parentId = v.mconfigParentId;
 
-        return Result.succeed({});
+        return Result.succeed();
       }),
-      Result.bind(
-        'getApiEnvConnectionsWithFallbackOutput',
-        (
-          v
-        ): Result.ResultAsync<
-          GetApiEnvConnectionsWithFallbackOutput,
-          GetApiEnvConnectionsWithFallbackError
-        > =>
-          this.envsService.getApiEnvConnectionsWithFallback({
-            projectId: v.projectId,
-            envId: v.envId
-          })
+      Result.bind('getApiEnvConnectionsWithFallbackOutput', v =>
+        this.envsService.getApiEnvConnectionsWithFallback({
+          projectId: v.projectId,
+          envId: v.envId
+        })
       ),
-      Result.bind(
-        'resolveQueryConnectionsPayload',
-        (v): Result.Result<ResolveQueryConnectionsPayload, never> => {
-          let connection: ConnectionTab =
-            v.getApiEnvConnectionsWithFallbackOutput.connectionsWithFallback.find(
-              x => x.connectionId === v.model.connectionId
-            );
-
-          let projectConnection: ProjectConnection =
-            this.connectionsService.tabToApiProjectConnection({
-              connection: connection,
-              isIncludePasswords: true
-            });
-
-          let malloyConnections: MalloyConnection[] = makeMalloyConnections({
-            connections: [projectConnection]
-          });
-
-          return Result.succeed({
-            connection: connection,
-            projectConnection: projectConnection,
-            malloyConnections: malloyConnections
-          });
-        }
-      ),
-      Result.bind(
-        'selectedGivens',
-        (v): Result.ResultAsync<SelectedGiven[], GetSelectedGivensError> =>
-          this.usersService.getSelectedGivens({
-            user: v.user,
-            projectId: v.projectId
-          })
-      ),
-      Result.bind(
-        'makeMalloyQueryOutput',
-        (v): Result.ResultAsync<MalloyQueryResult, MakeMalloyQueryError> =>
-          addTraceSpan({
-            spanName: 'backend.makeMalloyQuery',
-            fn: () =>
-              makeMalloyQuery({
-                projectId: v.projectId,
-                envId: v.envId,
-                structId: v.structId,
-                mconfigParentType: v.mconfigParentType,
-                mconfigParentId: v.mconfigParentId,
-                model: v.model,
-                mconfig: v.mconfig,
-                queryOperations: v.queryOperations,
-                malloyConnections:
-                  v.resolveQueryConnectionsPayload.malloyConnections,
-                selectedGivens: v.selectedGivens
-              })
-          })
-      ),
-      Result.bind(
-        'prepareQueryPayload',
-        (v): Result.Result<PrepareQueryPayload, never> => {
-          let newMconfig: MconfigTab = this.mconfigsService.apiToTab({
-            apiMconfig: v.makeMalloyQueryOutput.apiNewMconfig
-          });
-
-          let newQuery: QueryTab = this.queriesService.apiToTab({
-            apiQuery: v.makeMalloyQueryOutput.apiNewQuery
-          });
-
-          v.resolveQueryConnectionsPayload.malloyConnections.forEach(
-            connection => {
-              void connection.close().catch(er => {
-                logToConsoleBackend({
-                  log: new ServerError({
-                    message: 'BACKEND_MALLOY_CONNECTION_CLOSE_ERROR',
-                    originalError: er
-                  }),
-                  logLevel: 'Error',
-                  logger: this.logger,
-                  cs: this.cs
-                });
-              });
-            }
+      Result.bind('resolveQueryConnectionsPayload', v => {
+        let connection: ConnectionTab =
+          v.getApiEnvConnectionsWithFallbackOutput.connectionsWithFallback.find(
+            x => x.connectionId === v.model.connectionId
           );
 
-          return Result.succeed({ newMconfig: newMconfig, newQuery: newQuery });
-        }
+        let projectConnection: ProjectConnection =
+          this.connectionsService.tabToApiProjectConnection({
+            connection: connection,
+            isIncludePasswords: true
+          });
+
+        let malloyConnections: MalloyConnection[] = makeMalloyConnections({
+          connections: [projectConnection]
+        });
+
+        let resolveQueryConnectionsPayload: ResolveQueryConnectionsPayload = {
+          connection: connection,
+          projectConnection: projectConnection,
+          malloyConnections: malloyConnections
+        };
+
+        return Result.succeed(resolveQueryConnectionsPayload);
+      }),
+      Result.bind('selectedGivens', v =>
+        this.usersService.getSelectedGivens({
+          user: v.user,
+          projectId: v.projectId
+        })
       ),
+      Result.bind('makeMalloyQueryOutput', v =>
+        addTraceSpan({
+          spanName: 'backend.makeMalloyQuery',
+          fn: () =>
+            makeMalloyQuery({
+              projectId: v.projectId,
+              envId: v.envId,
+              structId: v.structId,
+              mconfigParentType: v.mconfigParentType,
+              mconfigParentId: v.mconfigParentId,
+              model: v.model,
+              mconfig: v.mconfig,
+              queryOperations: v.queryOperations,
+              malloyConnections:
+                v.resolveQueryConnectionsPayload.malloyConnections,
+              selectedGivens: v.selectedGivens
+            })
+        })
+      ),
+      Result.bind('prepareQueryPayload', v => {
+        let newMconfig: MconfigTab = this.mconfigsService.apiToTab({
+          apiMconfig: v.makeMalloyQueryOutput.apiNewMconfig
+        });
+
+        let newQuery: QueryTab = this.queriesService.apiToTab({
+          apiQuery: v.makeMalloyQueryOutput.apiNewQuery
+        });
+
+        v.resolveQueryConnectionsPayload.malloyConnections.forEach(
+          connection => {
+            void connection.close().catch(er => {
+              logToConsoleBackend({
+                log: new ServerError({
+                  message: 'BACKEND_MALLOY_CONNECTION_CLOSE_ERROR',
+                  originalError: er
+                }),
+                logLevel: 'Error',
+                logger: this.logger,
+                cs: this.cs
+              });
+            });
+          }
+        );
+
+        let prepareQueryPayload: PrepareQueryPayload = {
+          newMconfig: newMconfig,
+          newQuery: newQuery
+        };
+
+        return Result.succeed(prepareQueryPayload);
+      }),
       Result.map(
         (v): EditMalloyQueryOutput => ({
           isError: v.makeMalloyQueryOutput.isError,

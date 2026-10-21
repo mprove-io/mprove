@@ -7,11 +7,7 @@ import {
   ToBackendGetConnectionsResponseDto
 } from '#backend/controllers/connections/get-connections/get-connections.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ConnectionTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -22,10 +18,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetConnectionsOutput } from '#common/types/backend/routes/connections/get-connections/get-connections-output';
 
@@ -63,48 +55,38 @@ export class GetConnectionsController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditorOrAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'apiEnvs',
-        async (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          isDefined(v.envId)
-            ? this.envsService.getApiEnvs({ projectId: v.projectId })
-            : Result.succeed([])
+      Result.bind('apiEnvs', async v =>
+        isDefined(v.envId)
+          ? this.envsService.getApiEnvs({ projectId: v.projectId })
+          : Result.succeed([])
       ),
-      Result.bind(
-        'apiEnv',
-        (v): Result.Result<Env, never> =>
-          Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
+      Result.bind('apiEnv', v =>
+        Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
       ),
-      Result.bind(
-        'connections',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: isDefined(v.envId)
-              ? and(
-                  eq(connectionsTable.projectId, v.projectId),
-                  or(
-                    eq(connectionsTable.envId, v.envId),
-                    and(
-                      eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                      inArray(
-                        connectionsTable.connectionId,
-                        v.apiEnv.fallbackConnectionIds
-                      )
+      Result.bind('connections', v =>
+        this.db.connections.findMany({
+          where: isDefined(v.envId)
+            ? and(
+                eq(connectionsTable.projectId, v.projectId),
+                or(
+                  eq(connectionsTable.envId, v.envId),
+                  and(
+                    eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                    inArray(
+                      connectionsTable.connectionId,
+                      v.apiEnv.fallbackConnectionIds
                     )
                   )
                 )
-              : eq(connectionsTable.projectId, v.projectId)
-          })
+              )
+            : eq(connectionsTable.projectId, v.projectId)
+        })
       ),
       Result.map(
         (v): ToBackendGetConnectionsOutput => ({

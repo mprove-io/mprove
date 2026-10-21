@@ -11,15 +11,7 @@ import {
   ToBackendDeleteDashboardResponseDto
 } from '#backend/controllers/dashboards/delete-dashboard/delete-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  DashboardTab,
-  MemberTab,
-  ProjectTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
@@ -29,10 +21,7 @@ import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
-import {
-  type DashboardsCatalog,
-  DashboardsService
-} from '#backend/services/db/dashboards/dashboards.service';
+import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -44,15 +33,6 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
-import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
-import type { GetDashboardsCatalogError } from '#common/types/backend/function-errors/get-dashboards-catalog-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteDashboardOutput } from '#common/types/backend/routes/dashboards/delete-dashboard/delete-dashboard-output';
 
@@ -110,29 +90,18 @@ export class DeleteDashboardController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.projectsService.checkProjectIsNotRestricted({
@@ -141,18 +110,14 @@ export class DeleteDashboardController {
           repoId: v.repoId
         })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -161,42 +126,29 @@ export class DeleteDashboardController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.bridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'existingDashboard',
-        (
-          v
-        ): Result.ResultAsync<
-          DashboardTab,
-          GetDashboardCheckExistsAndAccessError
-        > =>
-          this.dashboardsService.getDashboardCheckExistsAndAccess({
-            structId: v.bridge.structId,
-            dashboardId: v.dashboardId,
-            userMember: v.userMember,
-            user: v.user
-          })
+      Result.bind('existingDashboard', v =>
+        this.dashboardsService.getDashboardCheckExistsAndAccess({
+          structId: v.bridge.structId,
+          dashboardId: v.dashboardId,
+          userMember: v.userMember,
+          user: v.user
+        })
       ),
       Result.andThrough(v =>
         this.rpcService.sendToDisk({
@@ -215,15 +167,13 @@ export class DeleteDashboardController {
           }
         })
       ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> =>
-          this.bridgesService.getBranchBridgesForRebuild({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
-          })
+      Result.bind('branchBridges', v =>
+        this.bridgesService.getBranchBridgesForRebuild({
+          projectId: v.branch.projectId,
+          repoId: v.branch.repoId,
+          branchId: v.branch.branchId,
+          envId: v.envId
+        })
       ),
       Result.andThrough(v =>
         dbErrorToResult({
@@ -250,21 +200,17 @@ export class DeleteDashboardController {
           }
         })
       ),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
-      Result.bind(
-        'dashboardsCatalog',
-        (v): Result.ResultAsync<DashboardsCatalog, GetDashboardsCatalogError> =>
-          this.dashboardsService.getDashboardsCatalog({
-            projectId: v.projectId,
-            structId: v.bridge.structId,
-            user: v.user,
-            apiUserMember: v.apiUserMember,
-            spaces: v.struct.spaces
-          })
+      Result.bind('dashboardsCatalog', v =>
+        this.dashboardsService.getDashboardsCatalog({
+          projectId: v.projectId,
+          structId: v.bridge.structId,
+          user: v.user,
+          apiUserMember: v.apiUserMember,
+          spaces: v.struct.spaces
+        })
       ),
       Result.map(
         (v): ToBackendDeleteDashboardOutput => ({

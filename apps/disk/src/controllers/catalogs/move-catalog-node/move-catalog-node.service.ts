@@ -2,15 +2,7 @@ import { dirname } from 'node:path';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { DiskFromPathIsNotExistError } from '#common/types/disk/errors/disk-from-path-is-not-exist-error';
-import type { DiskToPathAlreadyExistError } from '#common/types/disk/errors/disk-to-path-already-exist-error';
-import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
-import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
-import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
-import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import type { ToDiskMoveCatalogNodeOutput } from '#common/types/disk/routes/catalogs/move-catalog-node/move-catalog-node-output';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -94,36 +86,27 @@ export class MoveCatalogNodeService {
           allowedDir: v.repoDir
         })
       ),
-      Result.bind(
-        'keyDir',
-        (
-          v
-        ): Result.ResultAsync<
-          string,
-          DiskCheckRestoreOrgProjectRepoBranchError
-        > =>
-          checkRestoreOrgProjectRepoBranch({
-            remoteType: v.remoteType,
-            orgId: v.orgId,
-            orgPath: v.orgPath,
-            projectId: v.projectId,
-            projectLt: v.projectLt,
-            repoId: v.repoId,
-            branchId: v.branch
-          })
+      Result.bind('keyDir', v =>
+        checkRestoreOrgProjectRepoBranch({
+          remoteType: v.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          projectId: v.projectId,
+          projectLt: v.projectLt,
+          repoId: v.repoId,
+          branchId: v.branch
+        })
       ),
-      Result.bind(
-        'git',
-        (v): Result.ResultAsync<SimpleGit, never> =>
-          createGit({
-            repoDir: v.repoDir,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.projectLt.gitUrl,
-            privateKeyEncrypted: v.projectLt.privateKeyEncrypted,
-            publicKey: v.projectLt.publicKey,
-            passPhrase: v.projectLt.passPhrase
-          })
+      Result.bind('git', v =>
+        createGit({
+          repoDir: v.repoDir,
+          remoteType: v.remoteType,
+          keyDir: v.keyDir,
+          gitUrl: v.projectLt.gitUrl,
+          privateKeyEncrypted: v.projectLt.privateKeyEncrypted,
+          publicKey: v.projectLt.publicKey,
+          passPhrase: v.projectLt.passPhrase
+        })
       ),
       Result.andThrough(v =>
         checkoutBranch({
@@ -136,27 +119,17 @@ export class MoveCatalogNodeService {
           isFetch: false
         })
       ),
-      Result.bind(
-        'isFromPathExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.fromPath })
+      Result.bind('isFromPathExist', v => isPathExist({ path: v.fromPath })),
+      Result.andThrough(v =>
+        v.isFromPathExist === false
+          ? Result.fail({ code: 'DISK_FROM_PATH_IS_NOT_EXIST' })
+          : Result.succeed()
       ),
-      Result.andThrough(
-        (v): Result.Result<void, DiskFromPathIsNotExistError> =>
-          v.isFromPathExist === false
-            ? Result.fail({ code: 'DISK_FROM_PATH_IS_NOT_EXIST' })
-            : Result.succeed()
-      ),
-      Result.bind(
-        'isToPathExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.toPath })
-      ),
-      Result.andThrough(
-        (v): Result.Result<void, DiskToPathAlreadyExistError> =>
-          v.isToPathExist === true
-            ? Result.fail({ code: 'DISK_TO_PATH_ALREADY_EXIST' })
-            : Result.succeed()
+      Result.bind('isToPathExist', v => isPathExist({ path: v.toPath })),
+      Result.andThrough(v =>
+        v.isToPathExist === true
+          ? Result.fail({ code: 'DISK_TO_PATH_ALREADY_EXIST' })
+          : Result.succeed()
       ),
       Result.andThrough(v => ensureDir({ dir: v.toParentPath })),
       Result.andThrough(v =>
@@ -166,29 +139,25 @@ export class MoveCatalogNodeService {
         })
       ),
       Result.andThrough(v => addChangesToStage({ repoDir: v.repoDir })),
-      Result.bind(
-        'itemStatus',
-        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
-          getRepoStatus({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            repoDir: v.repoDir,
-            git: v.git,
-            isFetch: true,
-            isCheckConflicts: true
-          })
+      Result.bind('itemStatus', v =>
+        getRepoStatus({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          git: v.git,
+          isFetch: true,
+          isCheckConflicts: true
+        })
       ),
-      Result.bind(
-        'itemCatalog',
-        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
-          getNodesAndFiles({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            readFiles: true,
-            isRootMproveDir: false
-          })
+      Result.bind('itemCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        })
       ),
       Result.map(
         (v): ToDiskMoveCatalogNodeOutput => ({

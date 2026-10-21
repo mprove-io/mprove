@@ -14,7 +14,6 @@ import {
   MCP_TOOL_GET_MODEL,
   MCP_TOOL_GET_MODEL_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import type { GetModelError } from '#common/types/backend/function-errors/get-model-error';
 import {
   type McpToolGetModelInput,
   zMcpToolGetModelInput
@@ -24,7 +23,6 @@ import {
   zMcpToolGetModelOutput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-model/mcp-tool-get-model-output';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
-import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 @McpController()
@@ -99,17 +97,16 @@ export class GetModelTool {
             })
           : Result.succeed()
       ),
-      Result.andThen(
-        (v): Result.ResultAsync<ToBackendGetModelOutput, GetModelError> =>
-          this.getModelService.getModel({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId,
-            modelId: v.modelId,
-            getMalloy: v.getMalloy,
-            userId: v.user.userId
-          })
+      Result.andThen(v =>
+        this.getModelService.getModel({
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          modelId: v.modelId,
+          getMalloy: v.getMalloy,
+          userId: v.user.userId
+        })
       ),
       Result.map(
         (v): McpToolGetModelOutput => processGetModelPayload({ payload: v })

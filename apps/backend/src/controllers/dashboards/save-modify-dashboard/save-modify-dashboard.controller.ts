@@ -12,16 +12,7 @@ import {
 } from '#backend/controllers/dashboards/save-modify-dashboard/save-modify-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
-import type {
-  BranchTab,
-  BridgeTab,
-  DashboardTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
@@ -37,7 +28,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
-import type { DashboardsCatalog } from '#backend/services/db/dashboards/dashboards.service';
 import {
   DashboardsService,
   type ProcessDashboardOutput
@@ -60,28 +50,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendMemberIsNotEditorOrAdminError } from '#common/types/backend/errors/backend-member-is-not-editor-or-admin-error';
-import type { BackendMemberIsNotExplorerError } from '#common/types/backend/errors/backend-member-is-not-explorer-error';
-import type { BackendModifyDashboardFailError } from '#common/types/backend/errors/backend-modify-dashboard-fail-error';
 import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
-import type { GetDashboardCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-check-exists-and-access-error';
-import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
-import type { GetDashboardsCatalogError } from '#common/types/backend/function-errors/get-dashboards-catalog-error';
 import type { GetModelCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-model-check-exists-and-access-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { ProcessDashboardError } from '#common/types/backend/function-errors/process-dashboard-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
-import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Member } from '#common/types/backend/parts/member';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { TileX } from '#common/types/backend/parts/tile/tile-x';
@@ -91,7 +67,12 @@ import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard'
 import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 import type { ToDiskMoveCatalogNodeOutput } from '#common/types/disk/routes/catalogs/move-catalog-node/move-catalog-node-output';
-import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
+
+type PrepareRebuildPayload = {
+  diskFiles: DiskCatalogFile[];
+  selectedSpaceFilePath: string;
+  modelIds: string[];
+};
 
 type PrepareDashboardFileUpdatePayload = {
   currentDashboardSpace: string;
@@ -106,12 +87,6 @@ type PrepareDashboardFileMovePayload = {
   isDashboardPathChanged: boolean;
   isMoveDashboardRequired: boolean;
   finalDashboardFilePath: string;
-};
-
-type PrepareRebuildPayload = {
-  diskFiles: DiskCatalogFile[];
-  selectedSpaceFilePath: string;
-  modelIds: string[];
 };
 
 @ApiTags('Dashboards')
@@ -190,83 +165,59 @@ export class SaveModifyDashboardController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'apiUserMember',
-        async (
-          v
-        ): Result.ResultAsync<
-          Member,
-          CheckProjectIsNotRestrictedError | BackendMemberIsNotExplorerError
-        > => {
-          let apiUserMemberResult: Result.Result<Member, never> =
-            Result.succeed(
-              this.membersService.tabToApi({ member: v.userMember })
-            );
+      Result.bind('apiUserMember', async v => {
+        let apiUserMemberResult: Result.Result<Member, never> = Result.succeed(
+          this.membersService.tabToApi({ member: v.userMember })
+        );
 
-          if (Result.isFailure(apiUserMemberResult)) {
-            return apiUserMemberResult;
-          }
-
-          let apiUserMember: Member = apiUserMemberResult.value;
-
-          let projectRestrictionResult: Result.Result<
-            void,
-            CheckProjectIsNotRestrictedError
-          > = await this.projectsService.checkProjectIsNotRestricted({
-            projectId: v.projectId,
-            userMember: v.userMember,
-            repoId: v.repoId
-          });
-
-          if (Result.isFailure(projectRestrictionResult)) {
-            return projectRestrictionResult;
-          }
-
-          if (v.userMember.isExplorer === false) {
-            return Result.fail({
-              code: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
-            });
-          }
-
-          return Result.succeed(apiUserMember);
+        if (Result.isFailure(apiUserMemberResult)) {
+          return apiUserMemberResult;
         }
-      ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+
+        let apiUserMember: Member = apiUserMemberResult.value;
+
+        let projectRestrictionResult: Result.Result<
+          void,
+          CheckProjectIsNotRestrictedError
+        > = await this.projectsService.checkProjectIsNotRestricted({
+          projectId: v.projectId,
+          userMember: v.userMember,
+          repoId: v.repoId
+        });
+
+        if (Result.isFailure(projectRestrictionResult)) {
+          return projectRestrictionResult;
+        }
+
+        if (v.userMember.isExplorer === false) {
+          return Result.fail({
+            code: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
+          });
+        }
+
+        return Result.succeed(apiUserMember);
+      }),
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -275,585 +226,501 @@ export class SaveModifyDashboardController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'currentStruct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
+      Result.bind('currentStruct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
+      ),
+      Result.bind('fromDashboardX', v =>
+        this.dashboardsService.getDashboardXCheckExistsAndAccess({
+          dashboardId: v.fromDashboardId,
+          structId: v.bridge.structId,
+          apiUserMember: v.apiUserMember,
+          projectId: v.projectId,
+          user: v.user
+        })
+      ),
+      Result.bind('toDashboard', v =>
+        this.dashboardsService.getDashboardCheckExistsAndAccess({
+          structId: v.bridge.structId,
+          dashboardId: v.toDashboardId,
+          userMember: v.userMember,
+          user: v.user
+        })
+      ),
+      Result.bind('prepareDashboardFileUpdatePayload', async v => {
+        let currentDashboardSpace: string = getReportSpaceFromFilePath({
+          filePath: v.toDashboard.filePath,
+          spaces: v.currentStruct.spaces
+        });
+
+        let targetDashboardSpace: string = isDefined(v.newTile)
+          ? currentDashboardSpace
+          : v.space;
+
+        let dashFileText: string;
+
+        let prepareDashboardFileUpdatePayload: PrepareDashboardFileUpdatePayload =
+          {
+            currentDashboardSpace: currentDashboardSpace,
+            targetDashboardSpace: targetDashboardSpace,
+            dashFileText: dashFileText
+          };
+
+        if (isDefined(v.newTile)) {
+          let modelAccessResult: Result.Result<
+            ModelTab,
+            GetModelCheckExistsAndAccessError
+          > = await this.modelsService.getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
-            projectId: v.projectId
-          })
-      ),
-      Result.bind(
-        'fromDashboardX',
-        (
-          v
-        ): Result.ResultAsync<
-          DashboardX,
-          GetDashboardXCheckExistsAndAccessError
-        > =>
-          this.dashboardsService.getDashboardXCheckExistsAndAccess({
-            dashboardId: v.fromDashboardId,
-            structId: v.bridge.structId,
-            apiUserMember: v.apiUserMember,
-            projectId: v.projectId,
-            user: v.user
-          })
-      ),
-      Result.bind(
-        'toDashboard',
-        (
-          v
-        ): Result.ResultAsync<
-          DashboardTab,
-          GetDashboardCheckExistsAndAccessError
-        > =>
-          this.dashboardsService.getDashboardCheckExistsAndAccess({
-            structId: v.bridge.structId,
-            dashboardId: v.toDashboardId,
-            userMember: v.userMember,
-            user: v.user
-          })
-      ),
-      Result.bind(
-        'prepareDashboardFileUpdatePayload',
-        async (
-          v
-        ): Result.ResultAsync<
-          PrepareDashboardFileUpdatePayload,
-          GetModelCheckExistsAndAccessError
-        > => {
-          let currentDashboardSpace: string = getReportSpaceFromFilePath({
-            filePath: v.toDashboard.filePath,
-            spaces: v.currentStruct.spaces
+            modelId: v.newTile.mconfig.modelId,
+            userMember: v.userMember
           });
 
-          let targetDashboardSpace: string = isDefined(v.newTile)
-            ? currentDashboardSpace
-            : v.space;
-
-          let dashFileText: string;
-
-          let prepareDashboardFileUpdatePayload: PrepareDashboardFileUpdatePayload =
-            {
-              currentDashboardSpace: currentDashboardSpace,
-              targetDashboardSpace: targetDashboardSpace,
-              dashFileText: dashFileText
-            };
-
-          if (isDefined(v.newTile)) {
-            let modelAccessResult: Result.Result<
-              ModelTab,
-              GetModelCheckExistsAndAccessError
-            > = await this.modelsService.getModelCheckExistsAndAccess({
-              structId: v.bridge.structId,
-              modelId: v.newTile.mconfig.modelId,
-              userMember: v.userMember
-            });
-
-            if (Result.isFailure(modelAccessResult)) {
-              return modelAccessResult;
-            }
-
-            v.newTile.mconfig.chart.title = v.newTile.title;
-
-            let plateY: number = 0;
-
-            v.fromDashboardX.tiles.forEach(tile => {
-              plateY = plateY + tile.plateHeight;
-            });
-
-            v.newTile.plateY = plateY;
-
-            if (v.isReplaceTile === true) {
-              let oldTileIndex: number = v.fromDashboardX.tiles.findIndex(
-                x => x.title === v.selectedTileTitle
-              );
-
-              let oldTile: TileX = v.fromDashboardX.tiles[oldTileIndex];
-
-              v.newTile.plateWidth = oldTile.plateWidth;
-
-              v.newTile.plateHeight = oldTile.plateHeight;
-
-              v.newTile.plateX = oldTile.plateX;
-
-              v.newTile.plateY = oldTile.plateY;
-
-              v.fromDashboardX.tiles[oldTileIndex] = v.newTile;
-            } else {
-              v.fromDashboardX.tiles = [...v.fromDashboardX.tiles, v.newTile];
-            }
-
-            let dashboardFileText: string = makeDashboardFileText({
-              dashboard: v.fromDashboardX,
-              newDashboardId: v.fromDashboardX.dashboardId,
-              newTitle: v.fromDashboardX.title,
-              roles: v.fromDashboardX.accessRoles,
-              caseSensitiveStringFilters:
-                v.currentStruct.mproveConfig.caseSensitiveStringFilters,
-              timezone: UTC
-            });
-
-            prepareDashboardFileUpdatePayload.dashFileText = dashboardFileText;
-          } else {
-            if (isDefined(v.tilesGrid)) {
-              let yTiles: TileX[] = [];
-
-              v.tilesGrid.forEach(freshTile => {
-                let yTile = v.fromDashboardX.tiles.find(
-                  y => freshTile.title === y.title
-                );
-
-                yTile.plateX = freshTile.plateX;
-
-                yTile.plateY = freshTile.plateY;
-
-                yTile.plateWidth = freshTile.plateWidth;
-
-                yTile.plateHeight = freshTile.plateHeight;
-
-                yTile.listen = freshTile.listen;
-
-                yTile.mconfig.filters = yTile.mconfig.filters.filter(
-                  k =>
-                    isUndefined(freshTile.deletedFilterFieldIds) ||
-                    freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
-                );
-
-                yTiles.push(yTile);
-              });
-
-              v.fromDashboardX.tiles = yTiles;
-            }
-
-            let dashboardFileText: string = makeDashboardFileText({
-              dashboard: v.fromDashboardX,
-              newDashboardId: v.toDashboardId,
-              newTitle: v.dashboardTitle,
-              roles: v.accessRoles,
-              caseSensitiveStringFilters:
-                v.currentStruct.mproveConfig.caseSensitiveStringFilters,
-              timezone: UTC
-            });
-
-            prepareDashboardFileUpdatePayload.dashFileText = dashboardFileText;
+          if (Result.isFailure(modelAccessResult)) {
+            return modelAccessResult;
           }
 
-          return Result.succeed(prepareDashboardFileUpdatePayload);
-        }
-      ),
-      Result.bind(
-        'baseProject',
-        async (
-          v
-        ): Result.ResultAsync<
-          BaseProject,
-          BackendMemberIsNotEditorOrAdminError
-        > => {
-          let baseProjectResult: Result.Result<BaseProject, never> =
-            Result.succeed(
-              this.tabService.projectTabToBaseProject({
-                project: v.project
-              })
+          v.newTile.mconfig.chart.title = v.newTile.title;
+
+          let plateY: number = 0;
+
+          v.fromDashboardX.tiles.forEach(tile => {
+            plateY = plateY + tile.plateHeight;
+          });
+
+          v.newTile.plateY = plateY;
+
+          if (v.isReplaceTile === true) {
+            let oldTileIndex: number = v.fromDashboardX.tiles.findIndex(
+              x => x.title === v.selectedTileTitle
             );
 
-          if (Result.isFailure(baseProjectResult)) {
-            return baseProjectResult;
+            let oldTile: TileX = v.fromDashboardX.tiles[oldTileIndex];
+
+            v.newTile.plateWidth = oldTile.plateWidth;
+
+            v.newTile.plateHeight = oldTile.plateHeight;
+
+            v.newTile.plateX = oldTile.plateX;
+
+            v.newTile.plateY = oldTile.plateY;
+
+            v.fromDashboardX.tiles[oldTileIndex] = v.newTile;
+          } else {
+            v.fromDashboardX.tiles = [...v.fromDashboardX.tiles, v.newTile];
           }
 
-          let baseProject: BaseProject = baseProjectResult.value;
+          let dashboardFileText: string = makeDashboardFileText({
+            dashboard: v.fromDashboardX,
+            newDashboardId: v.fromDashboardX.dashboardId,
+            newTitle: v.fromDashboardX.title,
+            roles: v.fromDashboardX.accessRoles,
+            caseSensitiveStringFilters:
+              v.currentStruct.mproveConfig.caseSensitiveStringFilters,
+            timezone: UTC
+          });
 
-          if (
-            v.prepareDashboardFileUpdatePayload.currentDashboardSpace !==
-              v.prepareDashboardFileUpdatePayload.targetDashboardSpace &&
-            v.userMember.isAdmin === false &&
-            v.userMember.isEditor === false
-          ) {
-            return Result.fail({
-              code: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
+          prepareDashboardFileUpdatePayload.dashFileText = dashboardFileText;
+        } else {
+          if (isDefined(v.tilesGrid)) {
+            let yTiles: TileX[] = [];
+
+            v.tilesGrid.forEach(freshTile => {
+              let yTile = v.fromDashboardX.tiles.find(
+                y => freshTile.title === y.title
+              );
+
+              yTile.plateX = freshTile.plateX;
+
+              yTile.plateY = freshTile.plateY;
+
+              yTile.plateWidth = freshTile.plateWidth;
+
+              yTile.plateHeight = freshTile.plateHeight;
+
+              yTile.listen = freshTile.listen;
+
+              yTile.mconfig.filters = yTile.mconfig.filters.filter(
+                k =>
+                  isUndefined(freshTile.deletedFilterFieldIds) ||
+                  freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
+              );
+
+              yTiles.push(yTile);
             });
+
+            v.fromDashboardX.tiles = yTiles;
           }
 
-          return Result.succeed(baseProject);
+          let dashboardFileText: string = makeDashboardFileText({
+            dashboard: v.fromDashboardX,
+            newDashboardId: v.toDashboardId,
+            newTitle: v.dashboardTitle,
+            roles: v.accessRoles,
+            caseSensitiveStringFilters:
+              v.currentStruct.mproveConfig.caseSensitiveStringFilters,
+            timezone: UTC
+          });
+
+          prepareDashboardFileUpdatePayload.dashFileText = dashboardFileText;
         }
-      ),
-      Result.bind(
-        'prepareDashboardFileMovePayload',
-        async (
-          v
-        ): Result.ResultAsync<
-          PrepareDashboardFileMovePayload,
-          SendToDiskError
-        > => {
-          let dashboardFileName: string = `${v.toDashboardId}${'.dashboard' satisfies FileExtension}`;
 
-          let isSpaceChanged: boolean =
-            v.prepareDashboardFileUpdatePayload.currentDashboardSpace !==
-            v.prepareDashboardFileUpdatePayload.targetDashboardSpace;
+        return Result.succeed(prepareDashboardFileUpdatePayload);
+      }),
+      Result.bind('baseProject', async v => {
+        let baseProjectResult: Result.Result<BaseProject, never> =
+          Result.succeed(
+            this.tabService.projectTabToBaseProject({
+              project: v.project
+            })
+          );
 
-          let targetDashboardFilePath: string = v.toDashboard.filePath;
-
-          if (isSpaceChanged) {
-            let targetParentNodeId: string = getTargetParentNodeId({
-              projectId: v.projectId,
-              mproveDirValue: v.currentStruct.mproveConfig.mproveDirValue,
-              userAlias: v.user.alias,
-              space: v.prepareDashboardFileUpdatePayload.targetDashboardSpace,
-              spaces: v.currentStruct.spaces,
-              targetFolder: 'dashboards'
-            });
-
-            targetDashboardFilePath = `${targetParentNodeId}/${dashboardFileName}`;
-          }
-
-          let isDashboardPathChanged: boolean =
-            v.toDashboard.filePath !== targetDashboardFilePath;
-
-          let isMoveDashboardRequired: boolean =
-            isSpaceChanged && isDashboardPathChanged;
-
-          let finalDashboardFilePath: string = isMoveDashboardRequired
-            ? targetDashboardFilePath
-            : v.toDashboard.filePath;
-
-          let prepareDashboardFileMovePayload: PrepareDashboardFileMovePayload =
-            {
-              dashboardFileName: dashboardFileName,
-              isSpaceChanged: isSpaceChanged,
-              targetDashboardFilePath: targetDashboardFilePath,
-              isDashboardPathChanged: isDashboardPathChanged,
-              isMoveDashboardRequired: isMoveDashboardRequired,
-              finalDashboardFilePath: finalDashboardFilePath
-            };
-
-          if (prepareDashboardFileMovePayload.isMoveDashboardRequired) {
-            let toDiskMoveCatalogNodeOutput: Result.Result<
-              ToDiskMoveCatalogNodeOutput,
-              SendToDiskError
-            > = await this.rpcService.sendToDisk({
-              request: {
-                operation: 'moveCatalogNode',
-                traceId: body.traceId,
-                input: {
-                  baseProject: v.baseProject,
-                  repoId: v.repoId,
-                  branch: v.branchId,
-                  fromNodeId: v.toDashboard.filePath,
-                  toNodeId:
-                    prepareDashboardFileMovePayload.targetDashboardFilePath
-                }
-              }
-            });
-
-            if (Result.isFailure(toDiskMoveCatalogNodeOutput)) {
-              return toDiskMoveCatalogNodeOutput;
-            }
-          }
-
-          return Result.succeed(prepareDashboardFileMovePayload);
+        if (Result.isFailure(baseProjectResult)) {
+          return baseProjectResult;
         }
-      ),
-      Result.bind(
-        'diskSaveFileOutput',
-        (v): Result.ResultAsync<ToDiskSaveFileOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
+
+        let baseProject: BaseProject = baseProjectResult.value;
+
+        if (
+          v.prepareDashboardFileUpdatePayload.currentDashboardSpace !==
+            v.prepareDashboardFileUpdatePayload.targetDashboardSpace &&
+          v.userMember.isAdmin === false &&
+          v.userMember.isEditor === false
+        ) {
+          return Result.fail({
+            code: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
+          });
+        }
+
+        return Result.succeed(baseProject);
+      }),
+      Result.bind('prepareDashboardFileMovePayload', async v => {
+        let dashboardFileName: string = `${v.toDashboardId}${'.dashboard' satisfies FileExtension}`;
+
+        let isSpaceChanged: boolean =
+          v.prepareDashboardFileUpdatePayload.currentDashboardSpace !==
+          v.prepareDashboardFileUpdatePayload.targetDashboardSpace;
+
+        let targetDashboardFilePath: string = v.toDashboard.filePath;
+
+        if (isSpaceChanged) {
+          let targetParentNodeId: string = getTargetParentNodeId({
+            projectId: v.projectId,
+            mproveDirValue: v.currentStruct.mproveConfig.mproveDirValue,
+            userAlias: v.user.alias,
+            space: v.prepareDashboardFileUpdatePayload.targetDashboardSpace,
+            spaces: v.currentStruct.spaces,
+            targetFolder: 'dashboards'
+          });
+
+          targetDashboardFilePath = `${targetParentNodeId}/${dashboardFileName}`;
+        }
+
+        let isDashboardPathChanged: boolean =
+          v.toDashboard.filePath !== targetDashboardFilePath;
+
+        let isMoveDashboardRequired: boolean =
+          isSpaceChanged && isDashboardPathChanged;
+
+        let finalDashboardFilePath: string = isMoveDashboardRequired
+          ? targetDashboardFilePath
+          : v.toDashboard.filePath;
+
+        let prepareDashboardFileMovePayload: PrepareDashboardFileMovePayload = {
+          dashboardFileName: dashboardFileName,
+          isSpaceChanged: isSpaceChanged,
+          targetDashboardFilePath: targetDashboardFilePath,
+          isDashboardPathChanged: isDashboardPathChanged,
+          isMoveDashboardRequired: isMoveDashboardRequired,
+          finalDashboardFilePath: finalDashboardFilePath
+        };
+
+        if (prepareDashboardFileMovePayload.isMoveDashboardRequired) {
+          let toDiskMoveCatalogNodeOutput: Result.Result<
+            ToDiskMoveCatalogNodeOutput,
+            SendToDiskError
+          > = await this.rpcService.sendToDisk({
             request: {
-              operation: 'saveFile',
+              operation: 'moveCatalogNode',
               traceId: body.traceId,
               input: {
                 baseProject: v.baseProject,
                 repoId: v.repoId,
                 branch: v.branchId,
-                fileNodeId:
-                  v.prepareDashboardFileMovePayload.finalDashboardFilePath,
-                userAlias: v.user.alias,
-                content: v.prepareDashboardFileUpdatePayload.dashFileText
+                fromNodeId: v.toDashboard.filePath,
+                toNodeId:
+                  prepareDashboardFileMovePayload.targetDashboardFilePath
               }
             }
-          })
-      ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> =>
-          this.bridgesService.getBranchBridgesForRebuild({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
-          })
-      ),
-      Result.bind(
-        'prepareRebuildPayload',
-        (v): Result.Result<PrepareRebuildPayload, never> => {
-          let diskFiles: DiskCatalogFile[] = [
-            v.diskSaveFileOutput.files.find(
-              file =>
-                file.fileNodeId ===
-                v.prepareDashboardFileMovePayload.finalDashboardFilePath
-            )
-          ];
+          });
 
-          let selectedSpaceFilePath: string = v.currentStruct.spaces.find(
-            x =>
-              x.space ===
-              v.prepareDashboardFileUpdatePayload.targetDashboardSpace
-          )?.filePath;
+          if (Result.isFailure(toDiskMoveCatalogNodeOutput)) {
+            return toDiskMoveCatalogNodeOutput;
+          }
+        }
 
-          if (isDefined(selectedSpaceFilePath)) {
-            let spaceDiskFile: DiskCatalogFile =
-              v.diskSaveFileOutput.files.find(
-                file => file.fileNodeId === selectedSpaceFilePath
-              );
-
-            if (isDefined(spaceDiskFile)) {
-              diskFiles.push(spaceDiskFile);
+        return Result.succeed(prepareDashboardFileMovePayload);
+      }),
+      Result.bind('diskSaveFileOutput', v =>
+        this.rpcService.sendToDisk({
+          request: {
+            operation: 'saveFile',
+            traceId: body.traceId,
+            input: {
+              baseProject: v.baseProject,
+              repoId: v.repoId,
+              branch: v.branchId,
+              fileNodeId:
+                v.prepareDashboardFileMovePayload.finalDashboardFilePath,
+              userAlias: v.user.alias,
+              content: v.prepareDashboardFileUpdatePayload.dashFileText
             }
           }
+        })
+      ),
+      Result.bind('branchBridges', v =>
+        this.bridgesService.getBranchBridgesForRebuild({
+          projectId: v.branch.projectId,
+          repoId: v.branch.repoId,
+          branchId: v.branch.branchId,
+          envId: v.envId
+        })
+      ),
+      Result.bind('prepareRebuildPayload', v => {
+        let diskFiles: DiskCatalogFile[] = [
+          v.diskSaveFileOutput.files.find(
+            file =>
+              file.fileNodeId ===
+              v.prepareDashboardFileMovePayload.finalDashboardFilePath
+          )
+        ];
 
-          let modelIds: string[] = [
-            ...(v.fromDashboardX?.tiles ?? []).map(tile => tile.modelId),
-            ...v.fromDashboardX.fields
-              .filter(x => isDefined(x.storeModel))
-              .map(x => x.storeModel)
-          ];
+        let selectedSpaceFilePath: string = v.currentStruct.spaces.find(
+          x =>
+            x.space === v.prepareDashboardFileUpdatePayload.targetDashboardSpace
+        )?.filePath;
 
-          return Result.succeed({
-            diskFiles: diskFiles,
-            selectedSpaceFilePath: selectedSpaceFilePath,
-            modelIds: modelIds
-          });
+        if (isDefined(selectedSpaceFilePath)) {
+          let spaceDiskFile: DiskCatalogFile = v.diskSaveFileOutput.files.find(
+            file => file.fileNodeId === selectedSpaceFilePath
+          );
+
+          if (isDefined(spaceDiskFile)) {
+            diskFiles.push(spaceDiskFile);
+          }
         }
+
+        let modelIds: string[] = [
+          ...(v.fromDashboardX?.tiles ?? []).map(tile => tile.modelId),
+          ...v.fromDashboardX.fields
+            .filter(x => isDefined(x.storeModel))
+            .map(x => x.storeModel)
+        ];
+
+        let prepareRebuildPayload: PrepareRebuildPayload = {
+          diskFiles: diskFiles,
+          selectedSpaceFilePath: selectedSpaceFilePath,
+          modelIds: modelIds
+        };
+
+        return Result.succeed(prepareRebuildPayload);
+      }),
+      Result.bind('cachedModels', v =>
+        this.db.models.findMany({
+          where: and(
+            eq(modelsTable.structId, v.bridge.structId),
+            inArray(modelsTable.modelId, v.prepareRebuildPayload.modelIds)
+          )
+        })
       ),
-      Result.bind(
-        'cachedModels',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: and(
-              eq(modelsTable.structId, v.bridge.structId),
-              inArray(modelsTable.modelId, v.prepareRebuildPayload.modelIds)
-            )
-          })
-      ),
-      Result.bind(
-        'rebuild',
-        async (
-          v
-        ): Result.ResultAsync<
+      Result.bind('rebuild', async v => {
+        let rebuildStructOutput: Result.Result<
           RebuildStructOutput,
-          RebuildStructError | DbErrorToError
-        > => {
-          let rebuildStructOutput: Result.Result<
-            RebuildStructOutput,
-            RebuildStructError
-          > = await this.blockmlService.rebuildStruct({
-            traceId: v.traceId,
-            orgId: v.project.orgId,
-            projectId: v.projectId,
-            repoId: v.repoId,
-            structId: v.bridge.structId,
-            diskFiles: v.prepareRebuildPayload.diskFiles,
-            mproveDir: v.currentStruct.mproveConfig.mproveDirValue,
-            skipDb: true,
-            envId: v.envId,
-            selectedGivens: [],
-            overrideTimezone: v.timezone,
-            isUseCache: true,
-            cachedMproveConfig: v.currentStruct.mproveConfig,
-            cachedModels: v.cachedModels,
-            cachedMetrics: []
+          RebuildStructError
+        > = await this.blockmlService.rebuildStruct({
+          traceId: v.traceId,
+          orgId: v.project.orgId,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          structId: v.bridge.structId,
+          diskFiles: v.prepareRebuildPayload.diskFiles,
+          mproveDir: v.currentStruct.mproveConfig.mproveDirValue,
+          skipDb: true,
+          envId: v.envId,
+          selectedGivens: [],
+          overrideTimezone: v.timezone,
+          isUseCache: true,
+          cachedMproveConfig: v.currentStruct.mproveConfig,
+          cachedModels: v.cachedModels,
+          cachedMetrics: []
+        });
+
+        if (Result.isFailure(rebuildStructOutput)) {
+          return rebuildStructOutput;
+        }
+
+        let rebuild: RebuildStructOutput = rebuildStructOutput.value;
+
+        v.currentStruct.errors = [
+          ...v.currentStruct.errors,
+          ...rebuild.struct.errors
+        ];
+
+        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+          await this.db.write({
+            insertOrUpdate: {
+              structs: [v.currentStruct],
+              bridges: [...v.branchBridges]
+            }
           });
 
-          if (Result.isFailure(rebuildStructOutput)) {
-            return rebuildStructOutput;
-          }
-
-          let rebuild: RebuildStructOutput = rebuildStructOutput.value;
-
-          v.currentStruct.errors = [
-            ...v.currentStruct.errors,
-            ...rebuild.struct.errors
-          ];
-
-          let persistenceResult: Result.Result<PackerOutput, WriteError> =
-            await this.db.write({
-              insertOrUpdate: {
-                structs: [v.currentStruct],
-                bridges: [...v.branchBridges]
-              }
-            });
-
-          if (Result.isFailure(persistenceResult)) {
-            return persistenceResult;
-          }
-
-          return Result.succeed(rebuild);
+        if (Result.isFailure(persistenceResult)) {
+          return persistenceResult;
         }
-      ),
-      Result.bind(
-        'newApiDashboard',
-        async (
-          v
-        ): Result.ResultAsync<Dashboard, BackendModifyDashboardFailError> => {
-          let newApiDashboardResult: Result.Result<Dashboard, never> =
-            Result.succeed(
-              v.rebuild.dashboards.find(x => x.dashboardId === v.toDashboardId)
-            );
 
-          if (Result.isFailure(newApiDashboardResult)) {
-            return newApiDashboardResult;
-          }
+        return Result.succeed(rebuild);
+      }),
+      Result.bind('newApiDashboard', async v => {
+        let newApiDashboardResult: Result.Result<Dashboard, never> =
+          Result.succeed(
+            v.rebuild.dashboards.find(x => x.dashboardId === v.toDashboardId)
+          );
 
-          let newApiDashboard: Dashboard = newApiDashboardResult.value;
-
-          if (isUndefined(newApiDashboard)) {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(async tx => {
-                  await tx
-                    .delete(dashboardsTable)
-                    .where(
-                      and(
-                        eq(dashboardsTable.dashboardId, v.toDashboardId),
-                        eq(dashboardsTable.structId, v.bridge.structId)
-                      )
-                    );
-                }),
-              getRetryOption(this.cs, this.logger)
-            );
-
-            let fileIdAr: string[] = v.toDashboard.filePath.split('/');
-
-            fileIdAr.shift();
-
-            let filePath: string = fileIdAr.join('/');
-
-            return Result.fail({
-              code: 'BACKEND_MODIFY_DASHBOARD_FAIL',
-              displayData: {
-                encodedFileId: encodeFilePath({ filePath: filePath }),
-                structErrors: v.rebuild.struct.errors
-              }
-            });
-          }
-
-          return Result.succeed(newApiDashboard);
+        if (Result.isFailure(newApiDashboardResult)) {
+          return newApiDashboardResult;
         }
-      ),
-      Result.bind(
-        'processedDashboard',
-        async (
-          v
-        ): Result.ResultAsync<
+
+        let newApiDashboard: Dashboard = newApiDashboardResult.value;
+
+        if (isUndefined(newApiDashboard)) {
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(async tx => {
+                await tx
+                  .delete(dashboardsTable)
+                  .where(
+                    and(
+                      eq(dashboardsTable.dashboardId, v.toDashboardId),
+                      eq(dashboardsTable.structId, v.bridge.structId)
+                    )
+                  );
+              }),
+            getRetryOption(this.cs, this.logger)
+          );
+
+          let fileIdAr: string[] = v.toDashboard.filePath.split('/');
+
+          fileIdAr.shift();
+
+          let filePath: string = fileIdAr.join('/');
+
+          return Result.fail({
+            code: 'BACKEND_MODIFY_DASHBOARD_FAIL',
+            displayData: {
+              encodedFileId: encodeFilePath({ filePath: filePath }),
+              structErrors: v.rebuild.struct.errors
+            }
+          });
+        }
+
+        return Result.succeed(newApiDashboard);
+      }),
+      Result.bind('processedDashboard', async v => {
+        let processDashboardOutput: Result.Result<
           ProcessDashboardOutput,
-          ProcessDashboardError | DbErrorToError
-        > => {
-          let processDashboardOutput: Result.Result<
-            ProcessDashboardOutput,
-            ProcessDashboardError
-          > = await this.dashboardsService.processDashboard({
-            newApiDashboard: v.newApiDashboard,
-            apiMconfigs: v.rebuild.mconfigs,
-            apiQueries: v.rebuild.queries,
-            apiModels: v.rebuild.models,
-            fromDashboardX: v.fromDashboardX,
-            isQueryCache: true,
-            cachedQueries: [],
-            cachedMconfigs: [],
-            envId: v.envId,
-            newDashboardId: v.newApiDashboard.dashboardId,
-            tempStruct: v.rebuild.struct,
-            project: v.project
+          ProcessDashboardError
+        > = await this.dashboardsService.processDashboard({
+          newApiDashboard: v.newApiDashboard,
+          apiMconfigs: v.rebuild.mconfigs,
+          apiQueries: v.rebuild.queries,
+          apiModels: v.rebuild.models,
+          fromDashboardX: v.fromDashboardX,
+          isQueryCache: true,
+          cachedQueries: [],
+          cachedMconfigs: [],
+          envId: v.envId,
+          newDashboardId: v.newApiDashboard.dashboardId,
+          tempStruct: v.rebuild.struct,
+          project: v.project
+        });
+
+        if (Result.isFailure(processDashboardOutput)) {
+          return processDashboardOutput;
+        }
+
+        let processedDashboard: ProcessDashboardOutput =
+          processDashboardOutput.value;
+
+        let persistenceResult: Result.Result<void, DbErrorToError> =
+          await dbErrorToResult({
+            action: async () => {
+              await retry(
+                async () =>
+                  await this.db.drizzle.transaction(async tx => {
+                    await tx
+                      .delete(dashboardsTable)
+                      .where(
+                        and(
+                          eq(dashboardsTable.draft, true),
+                          eq(dashboardsTable.dashboardId, v.fromDashboardId),
+                          eq(dashboardsTable.structId, v.bridge.structId)
+                        )
+                      );
+
+                    await this.db.packer.writeUnwrap({
+                      tx: tx,
+                      insert: {
+                        mconfigs: processedDashboard.insertMconfigs
+                      },
+                      insertOrUpdate: {
+                        dashboards: [processedDashboard.newDashboard],
+                        queries: processedDashboard.insertOrUpdateQueries
+                      },
+                      insertOrDoNothing: {
+                        queries: processedDashboard.insertOrDoNothingQueries
+                      }
+                    });
+                  }),
+                getRetryOption(this.cs, this.logger)
+              );
+            }
           });
 
-          if (Result.isFailure(processDashboardOutput)) {
-            return processDashboardOutput;
-          }
-
-          let processedDashboard: ProcessDashboardOutput =
-            processDashboardOutput.value;
-
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(async tx => {
-                      await tx
-                        .delete(dashboardsTable)
-                        .where(
-                          and(
-                            eq(dashboardsTable.draft, true),
-                            eq(dashboardsTable.dashboardId, v.fromDashboardId),
-                            eq(dashboardsTable.structId, v.bridge.structId)
-                          )
-                        );
-
-                      await this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insert: {
-                          mconfigs: processedDashboard.insertMconfigs
-                        },
-                        insertOrUpdate: {
-                          dashboards: [processedDashboard.newDashboard],
-                          queries: processedDashboard.insertOrUpdateQueries
-                        },
-                        insertOrDoNothing: {
-                          queries: processedDashboard.insertOrDoNothingQueries
-                        }
-                      });
-                    }),
-                  getRetryOption(this.cs, this.logger)
-                );
-              }
-            });
-
-          if (Result.isFailure(persistenceResult)) {
-            return persistenceResult;
-          }
-
-          return Result.succeed(processedDashboard);
+        if (Result.isFailure(persistenceResult)) {
+          return persistenceResult;
         }
+
+        return Result.succeed(processedDashboard);
+      }),
+      Result.bind('apiFinalDashboardX', v =>
+        this.dashboardsService.getDashboardXCheckExistsAndAccess({
+          dashboardId: v.processedDashboard.newDashboard.dashboardId,
+          structId: v.bridge.structId,
+          apiUserMember: v.apiUserMember,
+          projectId: v.projectId,
+          user: v.user
+        })
       ),
-      Result.bind(
-        'apiFinalDashboardX',
-        (
-          v
-        ): Result.ResultAsync<
-          DashboardX,
-          GetDashboardXCheckExistsAndAccessError
-        > =>
-          this.dashboardsService.getDashboardXCheckExistsAndAccess({
-            dashboardId: v.processedDashboard.newDashboard.dashboardId,
-            structId: v.bridge.structId,
-            apiUserMember: v.apiUserMember,
-            projectId: v.projectId,
-            user: v.user
-          })
-      ),
-      Result.bind(
-        'dashboardsCatalog',
-        (v): Result.ResultAsync<DashboardsCatalog, GetDashboardsCatalogError> =>
-          this.dashboardsService.getDashboardsCatalog({
-            projectId: v.projectId,
-            structId: v.bridge.structId,
-            user: v.user,
-            apiUserMember: v.apiUserMember,
-            spaces: v.currentStruct.spaces
-          })
+      Result.bind('dashboardsCatalog', v =>
+        this.dashboardsService.getDashboardsCatalog({
+          projectId: v.projectId,
+          structId: v.bridge.structId,
+          user: v.user,
+          apiUserMember: v.apiUserMember,
+          spaces: v.currentStruct.spaces
+        })
       ),
       Result.map(
         (v): ToBackendSaveModifyDashboardOutput => ({

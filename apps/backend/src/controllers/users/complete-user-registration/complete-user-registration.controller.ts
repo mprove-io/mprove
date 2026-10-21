@@ -8,7 +8,6 @@ import {
   ToBackendCompleteUserRegistrationResponseDto
 } from '#backend/controllers/users/complete-user-registration/complete-user-registration.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -21,9 +20,6 @@ import {
 } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-output';
 
@@ -58,28 +54,22 @@ export class CompleteUserRegistrationController {
         emailVerificationToken: body.input.emailVerificationToken,
         newPassword: body.input.newPassword
       }),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'emailVerificationTokenHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.emailVerificationToken,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('emailVerificationTokenHash', v =>
+        this.hashService.makeHash({
+          input: v.emailVerificationToken,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
-          this.db.users.findFirstCheckExists({
-            where: eq(
-              usersTable.emailVerificationTokenHash,
-              v.emailVerificationTokenHash
-            )
-          })
+      Result.bind('user', v =>
+        this.db.users.findFirstCheckExists({
+          where: eq(
+            usersTable.emailVerificationTokenHash,
+            v.emailVerificationTokenHash
+          )
+        })
       ),
       Result.andThrough(v =>
         isDefined(v.user.passwordHash) || v.user.isEmailVerified === true
@@ -97,15 +87,12 @@ export class CompleteUserRegistrationController {
 
         return v;
       }),
-      Result.bind(
-        'newPasswordHS',
-        async (v): Result.ResultAsync<CreateSaltAndHashOutput, never> => {
-          let newPasswordHS: CreateSaltAndHashOutput =
-            await this.hashService.createSaltAndHash({ input: v.newPassword });
+      Result.bind('newPasswordHS', async v => {
+        let newPasswordHS: CreateSaltAndHashOutput =
+          await this.hashService.createSaltAndHash({ input: v.newPassword });
 
-          return Result.succeed(newPasswordHS);
-        }
-      ),
+        return Result.succeed(newPasswordHS);
+      }),
       Result.map(v => {
         v.user.passwordHash = v.newPasswordHS.hash;
         v.user.passwordSalt = v.newPasswordHS.salt;

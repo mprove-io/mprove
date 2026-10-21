@@ -10,7 +10,6 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
   AvatarTab,
-  MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import {
@@ -28,12 +27,6 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { Member } from '#common/types/backend/parts/member';
-import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMembersOutput } from '#common/types/backend/routes/members/get-members/get-members-output';
 
@@ -74,17 +67,13 @@ export class GetMembersController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.projectsService.checkProjectIsNotRestricted({
@@ -93,73 +82,59 @@ export class GetMembersController {
           repoId: undefined
         })
       ),
-      Result.bind(
-        'projectMembers',
-        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          this.db.members.findMany({
-            where: and(eq(membersTable.projectId, v.projectId))
-          })
+      Result.bind('projectMembers', v =>
+        this.db.members.findMany({
+          where: and(eq(membersTable.projectId, v.projectId))
+        })
       ),
-      Result.bind(
-        'sortedMembers',
-        (v): Result.Result<MemberTab[], never> =>
-          Result.succeed(
-            v.projectMembers.sort((a, b) =>
-              a.email > b.email ? 1 : b.email > a.email ? -1 : 0
-            )
+      Result.bind('sortedMembers', v =>
+        Result.succeed(
+          v.projectMembers.sort((a, b) =>
+            a.email > b.email ? 1 : b.email > a.email ? -1 : 0
           )
+        )
       ),
-      Result.bind('members', (v): Result.Result<MemberTab[], never> => {
+      Result.bind('members', v => {
         let offset = (v.pageNum - 1) * v.perPage;
 
         return Result.succeed(
           v.sortedMembers.slice(offset, offset + v.perPage)
         );
       }),
-      Result.bind(
-        'memberIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.members.map(member => member.memberId))
+      Result.bind('memberIds', v =>
+        Result.succeed(v.members.map(member => member.memberId))
       ),
-      Result.bind(
-        'avatars',
-        async (v): Result.ResultAsync<AvatarTab[], AvatarEntToTabError> =>
-          v.memberIds.length === 0
-            ? Result.succeed([])
-            : this.db.drizzle
-                .select({
-                  keyTag: avatarsTable.keyTag,
-                  userId: avatarsTable.userId,
-                  st: avatarsTable.st
-                })
-                .from(avatarsTable)
-                .where(inArray(avatarsTable.userId, v.memberIds))
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.avatarEntToTab({
-                      avatarEnt: x as AvatarEnt
-                    })
-                  )
+      Result.bind('avatars', async v =>
+        v.memberIds.length === 0
+          ? Result.succeed<AvatarTab[]>([])
+          : this.db.drizzle
+              .select({
+                keyTag: avatarsTable.keyTag,
+                userId: avatarsTable.userId,
+                st: avatarsTable.st
+              })
+              .from(avatarsTable)
+              .where(inArray(avatarsTable.userId, v.memberIds))
+              .then(xs =>
+                Result.sequence(xs, x =>
+                  this.tabService.avatarEntToTab({
+                    avatarEnt: x as AvatarEnt
+                  })
                 )
+              )
       ),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
-      Result.bind(
-        'apiMembers',
-        (v): Result.Result<Member[], never> =>
-          Result.succeed(
-            v.members.map(member =>
-              this.membersService.tabToApi({ member: member })
-            )
+      Result.bind('apiMembers', v =>
+        Result.succeed(
+          v.members.map(member =>
+            this.membersService.tabToApi({ member: member })
           )
+        )
       ),
-      Result.bind(
-        'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRoles({ projectId: v.projectId })
+      Result.bind('apiRoles', v =>
+        this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.map(v => {
         v.apiMembers.forEach(apiMember => {

@@ -9,11 +9,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
 import type { Func } from '#common/types/blockml/diagnostics/func';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
-import type { ReadFileCheckSizeError } from '#common/types/node-common/function-errors/read-file-check-size-error';
-import {
-  type ReadFileCheckSizeOutput,
-  readFileCheckSize
-} from '#node-common/functions/read-file-check-size/read-file-check-size';
+import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 
 let func: Func = 'extra/collect-files';
 
@@ -59,14 +55,8 @@ export async function collectFiles(
               filePath: absolutePath,
               getStat: false
             }),
-            Result.andThen(
-              (
-                v
-              ): Result.ResultAsync<
-                ReadFileCheckSizeOutput,
-                ReadFileCheckSizeError
-              > =>
-                readFileCheckSize({ filePath: v.filePath, getStat: v.getStat })
+            Result.andThen(v =>
+              readFileCheckSize({ filePath: v.filePath, getStat: v.getStat })
             ),
             Result.mapError(v => new ServerError({ message: v.code }))
           )

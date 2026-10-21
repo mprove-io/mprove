@@ -67,16 +67,14 @@ export class IsBranchExistController {
           )
         })
       ),
-      Result.bind(
-        'isBranchExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          this.db.branches.isExist({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('isBranchExist', v =>
+        this.db.branches.isExist({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.map(
         (v): ToBackendIsBranchExistOutput => ({

@@ -137,10 +137,7 @@ export class BlockmlService {
 
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'structId',
-        (v): Result.Result<string, never> => Result.succeed(makeId())
-      ),
+      Result.bind('structId', v => Result.succeed(makeId())),
       Result.andThrough(v =>
         this.rebuildStruct({
           traceId: v.traceId,

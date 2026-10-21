@@ -8,14 +8,7 @@ import {
   ToBackendGetQueryResponseDto
 } from '#backend/controllers/queries/get-query/get-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BranchTab,
-  BridgeTab,
-  MconfigTab,
-  MemberTab,
-  QueryTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
@@ -31,11 +24,6 @@ import { ParentService } from '#backend/services/parent/parent.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbQueriesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queries/get-query/get-query-output';
 
@@ -104,30 +92,22 @@ export class GetQueryController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -136,34 +116,23 @@ export class GetQueryController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'mconfig',
-        (
-          v
-        ): Result.ResultAsync<
-          MconfigTab,
-          DbMconfigsFindFirstCheckExistsError
-        > =>
-          this.db.mconfigs.findFirstCheckExists({
-            where: and(
-              eq(mconfigsTable.mconfigId, v.mconfigId),
-              eq(mconfigsTable.structId, v.bridge.structId)
-            )
-          })
+      Result.bind('mconfig', v =>
+        this.db.mconfigs.findFirstCheckExists({
+          where: and(
+            eq(mconfigsTable.mconfigId, v.mconfigId),
+            eq(mconfigsTable.structId, v.bridge.structId)
+          )
+        })
       ),
       Result.andThrough(v =>
         v.mconfig.queryId !== v.queryId
@@ -181,15 +150,13 @@ export class GetQueryController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'query',
-        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstCheckExistsError> =>
-          this.db.queries.findFirstCheckExists({
-            where: and(
-              eq(queriesTable.queryId, v.queryId),
-              eq(queriesTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('query', v =>
+        this.db.queries.findFirstCheckExists({
+          where: and(
+            eq(queriesTable.queryId, v.queryId),
+            eq(queriesTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.map(
         (v): ToBackendGetQueryOutput => ({

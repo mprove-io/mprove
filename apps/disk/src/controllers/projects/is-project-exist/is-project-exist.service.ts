@@ -31,11 +31,7 @@ export class IsProjectExistService {
           orgPath: v.orgPath
         })
       ),
-      Result.bind(
-        'isProjectExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.projectDir })
-      ),
+      Result.bind('isProjectExist', v => isPathExist({ path: v.projectDir })),
       Result.map(
         (v): ToDiskIsProjectExistOutput => ({
           orgId: v.orgId,

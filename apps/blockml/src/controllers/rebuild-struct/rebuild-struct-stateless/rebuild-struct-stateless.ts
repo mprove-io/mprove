@@ -9,20 +9,18 @@ import type { Ev } from '#common/types/backend/parts/ev';
 import type { SelectedGiven } from '#common/types/backend/parts/given/selected-given';
 import type { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type { RebuildConfiguredStructError } from '#common/types/blockml/function-errors/rebuild-configured-struct-error';
 import type { RebuildStructStatelessError } from '#common/types/blockml/function-errors/rebuild-struct-stateless-error';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
-import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
-import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { Model } from '#common/types/blockml/parts/model/model';
 import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import { buildSpace } from './build-space/build-space';
-import { type BuildYamlOutput, buildYaml } from './build-yaml/build-yaml';
+import { buildYaml } from './build-yaml/build-yaml';
 import { getProjectConfig } from './get-project-config/get-project-config';
 import { makeEmptyRebuildStructPrep } from './make-empty-rebuild-struct-prep/make-empty-rebuild-struct-prep';
 import { rebuildConfiguredStruct } from './rebuild-configured-struct/rebuild-configured-struct';
+
 export async function rebuildStructStateless(item: {
   files: BmlFile[];
   structId: string;
@@ -44,25 +42,20 @@ export async function rebuildStructStateless(item: {
 }): Result.ResultAsync<RebuildStructPrep, RebuildStructStatelessError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'errors',
-      (v): Result.Result<BmError[], never> => Result.succeed([])
+    Result.bind('errors', v => Result.succeed<BmError[]>([])),
+    Result.bind('yamlBuildItem', v =>
+      buildYaml({
+        files: v.files,
+        connections: v.projectConnections,
+        mproveDir: v.mproveDir,
+        structId: v.structId,
+        errors: v.errors,
+        isUseCache: v.isUseCache,
+        caller: 'BuildYaml',
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'yamlBuildItem',
-      (v): Result.Result<BuildYamlOutput, never> =>
-        buildYaml({
-          files: v.files,
-          connections: v.projectConnections,
-          mproveDir: v.mproveDir,
-          structId: v.structId,
-          errors: v.errors,
-          isUseCache: v.isUseCache,
-          caller: 'BuildYaml',
-          cs: v.cs
-        })
-    ),
-    Result.bind('stores', (v): Result.Result<FileStore[], never> => {
+    Result.bind('stores', v => {
       let stores: FileStore[] =
         v.isUseCache === true
           ? v.cachedModels
@@ -72,56 +65,49 @@ export async function rebuildStructStateless(item: {
 
       return Result.succeed(stores);
     }),
-    Result.bind(
-      'spaces',
-      (v): Result.Result<FilePartSpace[], never> =>
-        buildSpace({
-          spaces: v.yamlBuildItem.spaces,
-          errors: v.errors,
-          structId: v.structId,
-          caller: 'BuildSpace',
-          cs: v.cs
-        })
+    Result.bind('spaces', v =>
+      buildSpace({
+        spaces: v.yamlBuildItem.spaces,
+        errors: v.errors,
+        structId: v.structId,
+        caller: 'BuildSpace',
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'projectConfig',
-      (v): Result.Result<FileProjectConf, never> =>
-        getProjectConfig({
-          isUseCache: v.isUseCache,
-          cachedMproveConfig: v.cachedMproveConfig,
-          yamlProjectConfig: v.yamlBuildItem.projectConfig
-        })
+    Result.bind('projectConfig', v =>
+      getProjectConfig({
+        isUseCache: v.isUseCache,
+        cachedMproveConfig: v.cachedMproveConfig,
+        yamlProjectConfig: v.yamlBuildItem.projectConfig
+      })
     ),
-    Result.andThen(
-      async (
-        v
-      ): Result.ResultAsync<RebuildStructPrep, RebuildConfiguredStructError> =>
-        isUndefined(v.projectConfig)
-          ? makeEmptyRebuildStructPrep({ errors: v.errors })
-          : rebuildConfiguredStruct({
-              files: v.files,
-              structId: v.structId,
-              envId: v.envId,
-              projectConnections: v.projectConnections,
-              selectedGivens: v.selectedGivens,
-              projectId: v.projectId,
-              isUseCache: v.isUseCache,
-              cachedModels: v.cachedModels,
-              cachedMetrics: v.cachedMetrics,
-              isTest: v.isTest,
-              cs: v.cs,
-              logger: v.logger,
-              presets: v.presets,
-              errors: v.errors,
-              stores: v.stores,
-              schemas: v.yamlBuildItem.schemas,
-              reports: v.yamlBuildItem.reports,
-              dashboards: v.yamlBuildItem.dashboards,
-              charts: v.yamlBuildItem.charts,
-              spaces: v.spaces,
-              projectConfig: v.projectConfig,
-              overrideTimezone: v.overrideTimezone
-            })
+    Result.andThen(async v =>
+      isUndefined(v.projectConfig)
+        ? makeEmptyRebuildStructPrep({ errors: v.errors })
+        : rebuildConfiguredStruct({
+            files: v.files,
+            structId: v.structId,
+            envId: v.envId,
+            projectConnections: v.projectConnections,
+            selectedGivens: v.selectedGivens,
+            projectId: v.projectId,
+            isUseCache: v.isUseCache,
+            cachedModels: v.cachedModels,
+            cachedMetrics: v.cachedMetrics,
+            isTest: v.isTest,
+            cs: v.cs,
+            logger: v.logger,
+            presets: v.presets,
+            errors: v.errors,
+            stores: v.stores,
+            schemas: v.yamlBuildItem.schemas,
+            reports: v.yamlBuildItem.reports,
+            dashboards: v.yamlBuildItem.dashboards,
+            charts: v.yamlBuildItem.charts,
+            spaces: v.spaces,
+            projectConfig: v.projectConfig,
+            overrideTimezone: v.overrideTimezone
+          })
     )
   );
 }

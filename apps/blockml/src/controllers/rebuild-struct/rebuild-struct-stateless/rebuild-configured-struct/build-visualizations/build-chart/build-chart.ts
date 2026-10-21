@@ -3,7 +3,6 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { Caller } from '#common/types/blockml/diagnostics/caller';
-
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import { checkChartAccess } from './check-chart-access/check-chart-access';
 import { checkChartTilesExist } from './check-chart-tiles-exist/check-chart-tiles-exist';
@@ -17,26 +16,23 @@ export function buildChart(item: {
 }): Result.Result<FileChart[], never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'accessCheckedCharts',
-      (v): Result.Result<FileChart[], never> =>
-        checkChartAccess({
-          charts: v.charts,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('accessCheckedCharts', v =>
+      checkChartAccess({
+        charts: v.charts,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.andThen(
-      (v): Result.Result<FileChart[], never> =>
-        checkChartTilesExist({
-          charts: v.accessCheckedCharts,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.andThen(v =>
+      checkChartTilesExist({
+        charts: v.accessCheckedCharts,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     )
   );
 }

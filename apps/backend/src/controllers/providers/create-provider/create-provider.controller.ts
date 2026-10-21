@@ -8,10 +8,7 @@ import {
   ToBackendCreateProviderResponseDto
 } from '#backend/controllers/providers/create-provider/create-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ProviderTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -21,7 +18,6 @@ import { UrlService } from '#backend/services/url/url.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { MakeProviderError } from '#common/types/backend/function-errors/make-provider-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProviderOutput } from '#common/types/backend/routes/providers/create-provider/create-provider-output';
 
@@ -86,14 +82,12 @@ export class CreateProviderController {
           providerId: v.input.providerId
         })
       ),
-      Result.bind(
-        'provider',
-        (v): Result.Result<ProviderTab, MakeProviderError> =>
-          this.providersService.makeProvider({
-            ...v.input,
-            isEnabled: true,
-            models: []
-          })
+      Result.bind('provider', v =>
+        this.providersService.makeProvider({
+          ...v.input,
+          isEnabled: true,
+          models: []
+        })
       ),
       Result.andThrough(v =>
         this.db.write({ insert: { providers: [v.provider] } })

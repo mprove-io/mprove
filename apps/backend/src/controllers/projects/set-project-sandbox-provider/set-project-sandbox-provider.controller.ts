@@ -8,11 +8,7 @@ import {
   ToBackendSetProjectSandboxProviderResponseDto
 } from '#backend/controllers/projects/set-project-sandbox-provider/set-project-sandbox-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -21,8 +17,6 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetProjectSandboxProviderOutput } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-output';
 
@@ -55,25 +49,16 @@ export class SetProjectSandboxProviderController {
         e2bApiKey: body.input.e2bApiKey,
         userId: user.userId
       }),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            projectId: v.projectId,
-            memberId: v.userId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          projectId: v.projectId,
+          memberId: v.userId
+        })
       ),
       Result.map(v => {
         if (isDefined(v.e2bApiKey)) {

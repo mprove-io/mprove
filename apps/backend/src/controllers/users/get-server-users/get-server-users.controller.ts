@@ -10,7 +10,6 @@ import {
 } from '#backend/controllers/users/get-server-users/get-server-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  AvatarTab,
   MemberTab,
   OrgTab,
   ProjectTab,
@@ -29,11 +28,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttle
 import { DbService } from '#backend/services/db/db.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
-import type { UserEntToTabError } from '#common/types/backend/function-errors/user-ent-to-tab-error';
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';
 import type { ServerUsersMembershipItem } from '#common/types/backend/parts/users/server-users-membership-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -75,98 +69,78 @@ export class GetServerUsersController {
           ? Result.fail({ code: 'BACKEND_USER_IS_NOT_SERVER_ADMIN' })
           : Result.succeed();
       }),
-      Result.bind(
-        'total',
-        (v): Result.ResultAsync<number, never> =>
-          this.db.drizzle
-            .select({ total: count() })
-            .from(usersTable)
-            .then(xs => Result.succeed(xs[0].total))
+      Result.bind('total', v =>
+        this.db.drizzle
+          .select({ total: count() })
+          .from(usersTable)
+          .then(xs => Result.succeed(xs[0].total))
       ),
-      Result.bind(
-        'offset',
-        (v): Result.Result<number, never> =>
-          Result.succeed((v.pageNum - 1) * v.perPage)
-      ),
-      Result.bind(
-        'users',
-        (v): Result.ResultAsync<UserTab[], UserEntToTabError> =>
-          this.db.drizzle
-            .select()
-            .from(usersTable)
-            .orderBy(sql`${usersTable.createdTs} DESC NULLS LAST`)
-            .limit(v.perPage)
-            .offset(v.offset)
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.userEntToTab({ userEnt: x })
-              )
+      Result.bind('offset', v => Result.succeed((v.pageNum - 1) * v.perPage)),
+      Result.bind('users', v =>
+        this.db.drizzle
+          .select()
+          .from(usersTable)
+          .orderBy(sql`${usersTable.createdTs} DESC NULLS LAST`)
+          .limit(v.perPage)
+          .offset(v.offset)
+          .then(xs =>
+            Result.sequence(xs, x =>
+              this.tabService.userEntToTab({ userEnt: x })
             )
+          )
       ),
-      Result.bind(
-        'userIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.users.map(user => user.userId))
+      Result.bind('userIds', v =>
+        Result.succeed(v.users.map(user => user.userId))
       ),
-      Result.bind(
-        'members',
-        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          v.userIds.length === 0
-            ? Result.succeed([])
-            : this.db.members.findMany({
-                where: inArray(membersTable.memberId, v.userIds)
+      Result.bind('members', async v =>
+        v.userIds.length === 0
+          ? Result.succeed([])
+          : this.db.members.findMany({
+              where: inArray(membersTable.memberId, v.userIds)
+            })
+      ),
+      Result.bind('projectIds', v =>
+        Result.succeed<string[]>([
+          ...new Set(v.members.map(member => member.projectId))
+        ])
+      ),
+      Result.bind('projects', async v =>
+        v.projectIds.length === 0
+          ? Result.succeed([])
+          : this.db.projects.findMany({
+              where: inArray(projectsTable.projectId, v.projectIds)
+            })
+      ),
+      Result.bind('orgIds', v =>
+        Result.succeed<string[]>([
+          ...new Set(v.projects.map(project => project.orgId))
+        ])
+      ),
+      Result.bind('orgs', async v =>
+        v.orgIds.length === 0
+          ? Result.succeed([])
+          : this.db.orgs.findMany({
+              where: inArray(orgsTable.orgId, v.orgIds)
+            })
+      ),
+      Result.bind('avatars', async v =>
+        v.userIds.length === 0
+          ? Result.succeed([])
+          : this.db.drizzle
+              .select({
+                keyTag: avatarsTable.keyTag,
+                userId: avatarsTable.userId,
+                st: avatarsTable.st
               })
-      ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([
-            ...new Set(v.members.map(member => member.projectId))
-          ])
-      ),
-      Result.bind(
-        'projects',
-        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          v.projectIds.length === 0
-            ? Result.succeed([])
-            : this.db.projects.findMany({
-                where: inArray(projectsTable.projectId, v.projectIds)
-              })
-      ),
-      Result.bind(
-        'orgIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([...new Set(v.projects.map(project => project.orgId))])
-      ),
-      Result.bind(
-        'orgs',
-        async (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
-          v.orgIds.length === 0
-            ? Result.succeed([])
-            : this.db.orgs.findMany({
-                where: inArray(orgsTable.orgId, v.orgIds)
-              })
-      ),
-      Result.bind(
-        'avatars',
-        async (v): Result.ResultAsync<AvatarTab[], AvatarEntToTabError> =>
-          v.userIds.length === 0
-            ? Result.succeed([])
-            : this.db.drizzle
-                .select({
-                  keyTag: avatarsTable.keyTag,
-                  userId: avatarsTable.userId,
-                  st: avatarsTable.st
-                })
-                .from(avatarsTable)
-                .where(inArray(avatarsTable.userId, v.userIds))
-                .then(xs =>
-                  Result.sequence(xs, x =>
-                    this.tabService.avatarEntToTab({
-                      avatarEnt: x as AvatarEnt
-                    })
-                  )
+              .from(avatarsTable)
+              .where(inArray(avatarsTable.userId, v.userIds))
+              .then(xs =>
+                Result.sequence(xs, x =>
+                  this.tabService.avatarEntToTab({
+                    avatarEnt: x as AvatarEnt
+                  })
                 )
+              )
       ),
       Result.map((v): ToBackendGetServerUsersOutput => {
         let serverUserItems: ServerUsersItem[] = v.users.map(user => {

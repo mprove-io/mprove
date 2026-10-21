@@ -2,15 +2,9 @@ import { Result } from '@praha/byethrow';
 import type { StatusResult } from 'simple-git';
 import type { DiskGetSyncDataError } from '#common/types/disk/function-errors/disk-get-sync-data-error';
 import type { DiskSyncFile } from '#common/types/disk/parts/file/disk-sync-file';
-import type { GetSyncFilesPayloadError } from '#common/types/node-common/function-errors/get-sync-files-payload-error';
 import type { SyncDirection } from '#common/types/shared/sync-direction';
 import { getSyncFilesPayload } from '#node-common/functions/get-sync-files-payload/get-sync-files-payload';
 import { getToServerSyncData } from './get-to-server-sync-data/get-to-server-sync-data';
-
-type SyncFilesPayload = {
-  changedFiles: DiskSyncFile[];
-  deletedFiles: DiskSyncFile[];
-};
 
 export type SyncData =
   | {
@@ -36,12 +30,11 @@ export async function getSyncData(item: {
 
   return Result.pipe(
     Result.succeed(item),
-    Result.andThen(
-      (v): Result.ResultAsync<SyncFilesPayload, GetSyncFilesPayloadError> =>
-        getSyncFilesPayload({
-          repoDir: v.repoDir,
-          statusResult: v.statusResult
-        })
+    Result.andThen(v =>
+      getSyncFilesPayload({
+        repoDir: v.repoDir,
+        statusResult: v.statusResult
+      })
     ),
     Result.map(
       (v): SyncData => ({

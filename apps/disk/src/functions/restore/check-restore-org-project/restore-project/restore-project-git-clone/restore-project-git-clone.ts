@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
-
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
@@ -17,26 +16,16 @@ export async function restoreProjectGitClone(item: {
 }): Result.ResultAsync<string, never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'prodRepoDir',
-      (v): Result.Result<`${string}/production`, never> =>
-        Result.succeed(`${v.projectDir}/${PROD_REPO_ID}`)
+    Result.bind('prodRepoDir', v =>
+      Result.succeed(`${v.projectDir}/${PROD_REPO_ID}`)
     ),
-    Result.bind(
-      'isProjectExist',
-      (v): Result.ResultAsync<boolean, never> =>
-        isPathExist({ path: v.projectDir })
-    ),
+    Result.bind('isProjectExist', v => isPathExist({ path: v.projectDir })),
     Result.andThrough(v =>
       v.isProjectExist === false
         ? ensureDir({ dir: v.projectDir })
         : Result.succeed()
     ),
-    Result.bind(
-      'isProdRepoExist',
-      (v): Result.ResultAsync<boolean, never> =>
-        isPathExist({ path: v.prodRepoDir })
-    ),
+    Result.bind('isProdRepoExist', v => isPathExist({ path: v.prodRepoDir })),
     Result.andThrough(v =>
       v.isProdRepoExist === false
         ? cloneRemote({
@@ -53,8 +42,6 @@ export async function restoreProjectGitClone(item: {
           })
         : Result.succeed()
     ),
-    Result.andThen(
-      (v): Result.Result<string, never> => Result.succeed(v.keyDir)
-    )
+    Result.andThen(v => Result.succeed(v.keyDir))
   );
 }

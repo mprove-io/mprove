@@ -8,11 +8,7 @@ import {
   ToBackendDeleteRoleGivenResponseDto
 } from '#backend/controllers/roles/delete-role-given/delete-role-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  MemberTab,
-  RoleTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -21,10 +17,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbRolesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/roles/db-roles-find-first-check-exists-error';
-import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRoleGivenOutput } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-output';
 
@@ -63,23 +55,19 @@ export class DeleteRoleGivenController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            memberId: v.user.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          memberId: v.user.userId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'role',
-        (v): Result.ResultAsync<RoleTab, DbRolesFindFirstCheckExistsError> =>
-          this.db.roles.findFirstCheckExists({
-            where: and(
-              eq(rolesTable.projectId, v.projectId),
-              eq(rolesTable.roleId, v.roleId)
-            )
-          })
+      Result.bind('role', v =>
+        this.db.roles.findFirstCheckExists({
+          where: and(
+            eq(rolesTable.projectId, v.projectId),
+            eq(rolesTable.roleId, v.roleId)
+          )
+        })
       ),
       Result.map(v => {
         v.role.gvs = v.role.gvs.filter(gv => gv.givenId !== v.givenId);
@@ -88,10 +76,8 @@ export class DeleteRoleGivenController {
       Result.andThrough(v =>
         this.db.write({ insertOrUpdate: { roles: [v.role] } })
       ),
-      Result.bind(
-        'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRoles({ projectId: v.projectId })
+      Result.bind('apiRoles', v =>
+        this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteRoleGivenOutput => ({

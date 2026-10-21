@@ -4,7 +4,6 @@ import {
   README_FILE_NAME
 } from '#common/constants/top';
 import type { DiskWriteDefaultInitialProjectFilesError } from '#common/types/disk/function-errors/disk-write-default-initial-project-files-error';
-import type { DiskWriteToFileError } from '#common/types/disk/function-errors/disk-write-to-file-error';
 import { writeToFile } from '#disk/functions/disk/write-to-file/write-to-file';
 
 export async function writeDefaultInitialProjectFiles(item: {
@@ -19,11 +18,10 @@ export async function writeDefaultInitialProjectFiles(item: {
         content: `# ${v.projectName} project`
       })
     ),
-    Result.andThen(
-      async (v): Result.ResultAsync<void, DiskWriteToFileError> => {
-        let mproveFilePath: string = `${v.prodDir}/${MPROVE_CONFIG_FILENAME}`;
+    Result.andThen(async v => {
+      let mproveFilePath: string = `${v.prodDir}/${MPROVE_CONFIG_FILENAME}`;
 
-        let mproveContent: string = `mprove_dir: ./
+      let mproveContent: string = `mprove_dir: ./
 case_sensitive_string_filters: false
 format_number: ''
 thousands_separator: ','
@@ -31,11 +29,10 @@ currency_prefix: '$'
 currency_suffix: ''
 `;
 
-        return writeToFile({
-          filePath: mproveFilePath,
-          content: mproveContent
-        });
-      }
-    )
+      return writeToFile({
+        filePath: mproveFilePath,
+        content: mproveContent
+      });
+    })
   );
 }

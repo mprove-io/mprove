@@ -3,7 +3,6 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildField } from '#blockml/functions/build-field/build-field';
-
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { BmlFile } from '#common/types/blockml/parts/file/bml-file';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
@@ -47,94 +46,82 @@ export async function buildCompiledModels(item: {
 }): Result.ResultAsync<BuildCompiledModelsOutput, never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'compiledMods',
-      async (v): Result.ResultAsync<FileMod[], never> =>
-        v.isUseCache === true
-          ? Result.succeed([])
-          : buildModStart({
-              files: v.files,
-              malloyConnections: v.malloyConnections,
-              connections: v.projectConnections,
-              mods: v.mods,
-              spaces: v.spaces,
-              tempDir: v.tempDir,
-              projectId: v.projectId,
-              errors: v.errors,
-              structId: v.structId,
-              caller: 'BuildModStart',
-              cs: v.cs
-            })
+    Result.bind('compiledMods', async v =>
+      v.isUseCache === true
+        ? Result.succeed<FileMod[]>([])
+        : buildModStart({
+            files: v.files,
+            malloyConnections: v.malloyConnections,
+            connections: v.projectConnections,
+            mods: v.mods,
+            spaces: v.spaces,
+            tempDir: v.tempDir,
+            projectId: v.projectId,
+            errors: v.errors,
+            structId: v.structId,
+            caller: 'BuildModStart',
+            cs: v.cs
+          })
     ),
-    Result.bind(
-      'startedStores',
-      (v): Result.Result<FileStore[], never> =>
-        v.isUseCache === true
-          ? Result.succeed(v.stores)
-          : buildStoreStart({
-              stores: v.stores,
-              presets: v.presets,
-              structId: v.structId,
-              errors: v.errors,
-              caller: 'BuildStoreStart',
-              cs: v.cs
-            })
+    Result.bind('startedStores', v =>
+      v.isUseCache === true
+        ? Result.succeed(v.stores)
+        : buildStoreStart({
+            stores: v.stores,
+            presets: v.presets,
+            structId: v.structId,
+            errors: v.errors,
+            caller: 'BuildStoreStart',
+            cs: v.cs
+          })
     ),
-    Result.bind(
-      'fieldStores',
-      (v): Result.Result<FileStore[], never> =>
-        v.isUseCache === true
-          ? Result.succeed(v.startedStores)
-          : buildField({
-              entities: v.startedStores,
-              projectConfig: v.projectConfig,
-              structId: v.structId,
-              errors: v.errors,
-              caller: 'BuildStoreField',
-              cs: v.cs
-            })
+    Result.bind('fieldStores', v =>
+      v.isUseCache === true
+        ? Result.succeed(v.startedStores)
+        : buildField({
+            entities: v.startedStores,
+            projectConfig: v.projectConfig,
+            structId: v.structId,
+            errors: v.errors,
+            caller: 'BuildStoreField',
+            cs: v.cs
+          })
     ),
-    Result.bind(
-      'compiledStores',
-      (v): Result.Result<FileStore[], never> =>
-        v.isUseCache === true
-          ? Result.succeed(v.fieldStores)
-          : buildStoreNext({
-              stores: v.fieldStores,
-              spaces: v.spaces,
-              structId: v.structId,
-              errors: v.errors,
-              caller: 'BuildStoreNext',
-              cs: v.cs
-            })
+    Result.bind('compiledStores', v =>
+      v.isUseCache === true
+        ? Result.succeed(v.fieldStores)
+        : buildStoreNext({
+            stores: v.fieldStores,
+            spaces: v.spaces,
+            structId: v.structId,
+            errors: v.errors,
+            caller: 'BuildStoreNext',
+            cs: v.cs
+          })
     ),
-    Result.bind(
-      'apiModels',
-      (v): Result.Result<Model[], never> =>
-        v.isUseCache === true
-          ? Result.succeed(v.cachedModels)
-          : wrapModels({
-              projectId: v.projectId,
-              structId: v.structId,
-              stores: v.compiledStores,
-              mods: v.compiledMods,
-              spaces: v.spaces,
-              files: v.files
-            })
+    Result.bind('apiModels', v =>
+      v.isUseCache === true
+        ? Result.succeed(v.cachedModels)
+        : wrapModels({
+            projectId: v.projectId,
+            structId: v.structId,
+            stores: v.compiledStores,
+            mods: v.compiledMods,
+            spaces: v.spaces,
+            files: v.files
+          })
     ),
-    Result.bind(
-      'compiledMetrics',
-      (v): Result.Result<ModelMetric[], never> =>
-        v.isUseCache === true
-          ? Result.succeed(v.cachedMetrics)
-          : buildMetricsNext({
-              apiModels: v.apiModels,
-              stores: v.compiledStores,
-              structId: v.structId,
-              errors: v.errors,
-              caller: 'BuildModelMetric',
-              cs: v.cs
-            })
+    Result.bind('compiledMetrics', v =>
+      v.isUseCache === true
+        ? Result.succeed(v.cachedMetrics)
+        : buildMetricsNext({
+            apiModels: v.apiModels,
+            stores: v.compiledStores,
+            structId: v.structId,
+            errors: v.errors,
+            caller: 'BuildModelMetric',
+            cs: v.cs
+          })
     ),
     Result.map(
       (v): BuildCompiledModelsOutput => ({

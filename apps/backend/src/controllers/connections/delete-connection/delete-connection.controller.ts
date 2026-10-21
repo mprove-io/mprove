@@ -11,10 +11,7 @@ import {
   ToBackendDeleteConnectionResponseDto
 } from '#backend/controllers/connections/delete-connection/delete-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BridgeTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
@@ -27,7 +24,6 @@ import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteConnectionOutput } from '#common/types/backend/routes/connections/delete-connection/delete-connection-output';
 
@@ -73,15 +69,13 @@ export class DeleteConnectionController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.projectId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('branchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.projectId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
       Result.map(v => {
         v.branchBridges.forEach(bridge => {

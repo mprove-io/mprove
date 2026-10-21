@@ -8,11 +8,7 @@ import {
   ToBackendEditConnectionResponseDto
 } from '#backend/controllers/connections/edit-connection/edit-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  BridgeTab,
-  ConnectionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -29,8 +25,6 @@ import {
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
-import type { DbConnectionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/connections/db-connections-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditConnectionOutput } from '#common/types/backend/routes/connections/edit-connection/edit-connection-output';
 
@@ -91,21 +85,14 @@ export class EditConnectionController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'connection',
-        (
-          v
-        ): Result.ResultAsync<
-          ConnectionTab,
-          DbConnectionsFindFirstCheckExistsError
-        > =>
-          this.db.connections.findFirstCheckExists({
-            where: and(
-              eq(connectionsTable.connectionId, v.connectionId),
-              eq(connectionsTable.envId, v.envId),
-              eq(connectionsTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('connection', v =>
+        this.db.connections.findFirstCheckExists({
+          where: and(
+            eq(connectionsTable.connectionId, v.connectionId),
+            eq(connectionsTable.envId, v.envId),
+            eq(connectionsTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.map(v => {
         if (isDefined(v.options.storeGoogleApi)) {
@@ -153,15 +140,13 @@ export class EditConnectionController {
 
         return v;
       }),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.projectId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('branchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.projectId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
       Result.map(v => {
         v.branchBridges.forEach(bridge => {

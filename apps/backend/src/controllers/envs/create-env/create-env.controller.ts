@@ -9,10 +9,7 @@ import {
 } from '#backend/controllers/envs/create-env/create-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  BranchTab,
   BridgeTab,
-  EnvTab,
-  MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
@@ -25,10 +22,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbBranchesFindManyError } from '#common/types/backend/function-errors/db/branches/db-branches-find-many-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateEnvOutput } from '#common/types/backend/routes/envs/create-env/create-env-output';
 
@@ -67,13 +60,11 @@ export class CreateEnvController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.envsService.checkEnvDoesNotExist({
@@ -81,25 +72,21 @@ export class CreateEnvController {
           envId: v.envId
         })
       ),
-      Result.bind(
-        'newEnv',
-        (v): Result.Result<EnvTab, never> =>
-          Result.succeed(
-            this.envsService.makeEnv({
-              projectId: v.projectId,
-              envId: v.envId,
-              evs: []
-            })
-          )
-      ),
-      Result.bind(
-        'branches',
-        (v): Result.ResultAsync<BranchTab[], DbBranchesFindManyError> =>
-          this.db.branches.findMany({
-            where: eq(branchesTable.projectId, v.projectId)
+      Result.bind('newEnv', v =>
+        Result.succeed(
+          this.envsService.makeEnv({
+            projectId: v.projectId,
+            envId: v.envId,
+            evs: []
           })
+        )
       ),
-      Result.bind('newBridges', (v): Result.Result<BridgeTab[], never> => {
+      Result.bind('branches', v =>
+        this.db.branches.findMany({
+          where: eq(branchesTable.projectId, v.projectId)
+        })
+      ),
+      Result.bind('newBridges', v => {
         let newBridges: BridgeTab[] = v.branches.map(branch =>
           this.bridgesService.makeBridge({
             projectId: v.projectId,
@@ -118,10 +105,8 @@ export class CreateEnvController {
           insert: { envs: [v.newEnv], bridges: v.newBridges }
         })
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateEnvOutput => ({

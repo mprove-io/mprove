@@ -4,17 +4,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { getModelUrl } from '#backend/controllers/state/get-state/get-model-url/get-model-url';
-import type {
-  BranchTab,
-  BridgeTab,
-  ChartTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
-  ReportTab,
-  StructTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
@@ -37,20 +27,8 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbChartsFindManyError } from '#common/types/backend/function-errors/db/charts/db-charts-find-many-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbReportsFindManyError } from '#common/types/backend/function-errors/db/reports/db-reports-find-many-error';
-import type { GetDashboardPartsError } from '#common/types/backend/function-errors/get-dashboard-parts-error';
 import type { GetStateError } from '#common/types/backend/function-errors/get-state-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
-import type { DashboardPart } from '#common/types/backend/parts/dashboard/dashboard-part';
 import type { ToBackendGetStateOutput } from '#common/types/backend/routes/state/get-state/get-state-output';
-import type { ToDiskGetCatalogNodesOutput } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 
 @Injectable()
@@ -94,42 +72,27 @@ export class GetStateService {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -138,209 +101,172 @@ export class GetStateService {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'diskGetCatalogNodesOutput',
-        async (
-          v
-        ): Result.ResultAsync<ToDiskGetCatalogNodesOutput, SendToDiskError> =>
-          v.getRepo === true
-            ? this.rpcService.sendToDisk({
-                request: {
-                  operation: 'getCatalogNodes',
-                  traceId: v.traceId,
-                  input: {
-                    baseProject: this.tabService.projectTabToBaseProject({
-                      project: v.project
-                    }),
-                    repoId: v.repoId,
-                    branch: v.branchId,
-                    isFetch: v.isFetch
-                  }
+      Result.bind('diskGetCatalogNodesOutput', async v =>
+        v.getRepo === true
+          ? this.rpcService.sendToDisk({
+              request: {
+                operation: 'getCatalogNodes',
+                traceId: v.traceId,
+                input: {
+                  baseProject: this.tabService.projectTabToBaseProject({
+                    project: v.project
+                  }),
+                  repoId: v.repoId,
+                  branch: v.branchId,
+                  isFetch: v.isFetch
                 }
-              })
-            : Result.succeed(undefined)
+              }
+            })
+          : Result.succeed(undefined)
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.bridge.structId,
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId,
+          isGetEmptyStructOnError: true
+        })
+      ),
+      Result.bind('allModels', v =>
+        this.db.models.findMany({
+          where: eq(modelsTable.structId, v.bridge.structId)
+        })
+      ),
+      Result.bind('modelsWithAccess', v =>
+        Result.succeed(
+          v.allModels.filter(model =>
+            checkModelAccess({
+              member: v.userMember,
+              modelAccessRoles: model.accessRolesCombined
+            })
+          )
+        )
+      ),
+      Result.bind('charts', v =>
+        this.db.charts.findMany({
+          where: eq(chartsTable.structId, v.bridge.structId)
+        })
+      ),
+      Result.bind('chartsGrantedAccess', v =>
+        Result.succeed(
+          v.charts.filter(chart => {
+            let model: ModelTab = v.allModels.find(
+              model => model.modelId === chart.modelId
+            );
+
+            return checkModelAccess({
+              member: v.userMember,
+              modelAccessRoles: model.accessRolesCombined
+            });
+          })
+        )
+      ),
+      Result.bind('dashboardParts', v =>
+        this.dashboardsService.getDashboardParts({
+          structId: v.bridge.structId,
+          user: v.user,
+          apiUserMember: this.membersService.tabToApi({
+            member: v.userMember
+          })
+        })
+      ),
+      Result.bind('draftReports', v =>
+        this.db.reports.findMany({
+          where: and(
+            eq(reportsTable.draft, true),
+            eq(reportsTable.creatorId, v.user.userId),
+            eq(reportsTable.structId, v.bridge.structId)
+          )
+        })
+      ),
+      Result.bind('structReports', v =>
+        this.db.reports.findMany({
+          where: and(
+            eq(reportsTable.draft, false),
+            eq(reportsTable.structId, v.bridge.structId)
+          )
+        })
+      ),
+      Result.bind('reportsGrantedAccess', v =>
+        Result.succeed(
+          v.structReports.filter(report =>
+            checkAccess({
+              member: v.userMember,
+              accessRoles: report.accessRolesCombined,
+              filePath: report.filePath
+            })
+          )
+        )
+      ),
+      Result.bind('reports', v =>
+        Result.succeed([
+          ...v.draftReports
+            .sort((a, b) =>
+              a.draftCreatedTs > b.draftCreatedTs
+                ? 1
+                : b.draftCreatedTs > a.draftCreatedTs
+                  ? -1
+                  : 0
+            )
+            .reverse(),
+          ...v.reportsGrantedAccess.sort((a, b) => {
+            let aTitle: string =
+              a.title.toLowerCase() || a.reportId.toLowerCase();
+
+            let bTitle: string =
+              b.title.toLowerCase() || a.reportId.toLowerCase();
+
+            return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+          })
+        ])
+      ),
+      Result.bind('hostUrl', v =>
+        Result.succeed(
+          this.cs.get<BackendConfig['hostUrl']>('hostUrl').split(',')[0]
+        )
+      ),
+      Result.bind('defaultTimezone', v =>
+        Result.succeed(v.struct.mproveConfig.defaultTimezone)
+      ),
+      Result.bind('builderUrl', v =>
+        Result.succeed(
+          getBuilderUrl({
+            host: v.hostUrl,
+            orgId: v.project.orgId,
             projectId: v.projectId,
-            isGetEmptyStructOnError: true
+            repoId: v.repoId,
+            branch: v.branchId,
+            env: v.envId
           })
+        )
       ),
-      Result.bind(
-        'allModels',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: eq(modelsTable.structId, v.bridge.structId)
-          })
-      ),
-      Result.bind(
-        'modelsWithAccess',
-        (v): Result.Result<ModelTab[], never> =>
-          Result.succeed(
-            v.allModels.filter(model =>
-              checkModelAccess({
-                member: v.userMember,
-                modelAccessRoles: model.accessRolesCombined
-              })
-            )
-          )
-      ),
-      Result.bind(
-        'charts',
-        (v): Result.ResultAsync<ChartTab[], DbChartsFindManyError> =>
-          this.db.charts.findMany({
-            where: eq(chartsTable.structId, v.bridge.structId)
-          })
-      ),
-      Result.bind(
-        'chartsGrantedAccess',
-        (v): Result.Result<ChartTab[], never> =>
-          Result.succeed(
-            v.charts.filter(chart => {
-              let model: ModelTab = v.allModels.find(
-                model => model.modelId === chart.modelId
-              );
+      Result.bind('repo', v => {
+        if (v.getRepo === true && v.diskGetCatalogNodesOutput) {
+          let diskRepo: ToBackendGetStateOutput['repo'] =
+            v.diskGetCatalogNodesOutput.repo;
 
-              return checkModelAccess({
-                member: v.userMember,
-                modelAccessRoles: model.accessRolesCombined
-              });
-            })
-          )
-      ),
-      Result.bind(
-        'dashboardParts',
-        (v): Result.ResultAsync<DashboardPart[], GetDashboardPartsError> =>
-          this.dashboardsService.getDashboardParts({
-            structId: v.bridge.structId,
-            user: v.user,
-            apiUserMember: this.membersService.tabToApi({
-              member: v.userMember
-            })
-          })
-      ),
-      Result.bind(
-        'draftReports',
-        (v): Result.ResultAsync<ReportTab[], DbReportsFindManyError> =>
-          this.db.reports.findMany({
-            where: and(
-              eq(reportsTable.draft, true),
-              eq(reportsTable.creatorId, v.user.userId),
-              eq(reportsTable.structId, v.bridge.structId)
-            )
-          })
-      ),
-      Result.bind(
-        'structReports',
-        (v): Result.ResultAsync<ReportTab[], DbReportsFindManyError> =>
-          this.db.reports.findMany({
-            where: and(
-              eq(reportsTable.draft, false),
-              eq(reportsTable.structId, v.bridge.structId)
-            )
-          })
-      ),
-      Result.bind(
-        'reportsGrantedAccess',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed(
-            v.structReports.filter(report =>
-              checkAccess({
-                member: v.userMember,
-                accessRoles: report.accessRolesCombined,
-                filePath: report.filePath
-              })
-            )
-          )
-      ),
-      Result.bind(
-        'reports',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed([
-            ...v.draftReports
-              .sort((a, b) =>
-                a.draftCreatedTs > b.draftCreatedTs
-                  ? 1
-                  : b.draftCreatedTs > a.draftCreatedTs
-                    ? -1
-                    : 0
-              )
-              .reverse(),
-            ...v.reportsGrantedAccess.sort((a, b) => {
-              let aTitle: string =
-                a.title.toLowerCase() || a.reportId.toLowerCase();
+          delete diskRepo.changesToCommit;
 
-              let bTitle: string =
-                b.title.toLowerCase() || a.reportId.toLowerCase();
+          delete diskRepo.changesToPush;
 
-              return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-            })
-          ])
-      ),
-      Result.bind(
-        'hostUrl',
-        (v): Result.Result<string, never> =>
-          Result.succeed(
-            this.cs.get<BackendConfig['hostUrl']>('hostUrl').split(',')[0]
-          )
-      ),
-      Result.bind(
-        'defaultTimezone',
-        (v): Result.Result<string, never> =>
-          Result.succeed(v.struct.mproveConfig.defaultTimezone)
-      ),
-      Result.bind(
-        'builderUrl',
-        (v): Result.Result<string, never> =>
-          Result.succeed(
-            getBuilderUrl({
-              host: v.hostUrl,
-              orgId: v.project.orgId,
-              projectId: v.projectId,
-              repoId: v.repoId,
-              branch: v.branchId,
-              env: v.envId
-            })
-          )
-      ),
-      Result.bind(
-        'repo',
-        (v): Result.Result<ToBackendGetStateOutput['repo'], never> => {
-          if (v.getRepo === true && v.diskGetCatalogNodesOutput) {
-            let diskRepo: ToBackendGetStateOutput['repo'] =
-              v.diskGetCatalogNodesOutput.repo;
-
-            delete diskRepo.changesToCommit;
-
-            delete diskRepo.changesToPush;
-
-            if (v.getRepoNodes === false) {
-              delete diskRepo.nodes;
-            }
-
-            return Result.succeed(diskRepo);
+          if (v.getRepoNodes === false) {
+            delete diskRepo.nodes;
           }
 
-          return Result.succeed(undefined);
+          return Result.succeed(diskRepo);
         }
-      ),
+
+        return Result.succeed(undefined);
+      }),
       Result.map(
         (v): ToBackendGetStateOutput => ({
           needValidate: v.bridge.needValidate,

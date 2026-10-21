@@ -9,12 +9,7 @@ import {
 } from '#backend/controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  BranchTab,
-  BridgeTab,
   MconfigTab,
-  MemberTab,
-  ModelTab,
-  ProjectTab,
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -40,13 +35,6 @@ import {
 } from '#common/constants/mconfig-chart';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMconfigsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-first-check-exists-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/models/db-models-find-first-check-exists-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbQueriesFindFirstError } from '#common/types/backend/function-errors/db/queries/db-queries-find-first-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDuplicateMconfigAndQueryOutput } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-output';
 import type { MconfigChart } from '#common/types/blockml/parts/mconfig/mconfig-chart';
@@ -103,42 +91,27 @@ export class DuplicateMconfigAndQueryController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -147,34 +120,23 @@ export class DuplicateMconfigAndQueryController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'oldMconfig',
-        (
-          v
-        ): Result.ResultAsync<
-          MconfigTab,
-          DbMconfigsFindFirstCheckExistsError
-        > =>
-          this.db.mconfigs.findFirstCheckExists({
-            where: and(
-              eq(mconfigsTable.mconfigId, v.oldMconfigId),
-              eq(mconfigsTable.structId, v.bridge.structId)
-            )
-          })
+      Result.bind('oldMconfig', v =>
+        this.db.mconfigs.findFirstCheckExists({
+          where: and(
+            eq(mconfigsTable.mconfigId, v.oldMconfigId),
+            eq(mconfigsTable.structId, v.bridge.structId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.structsService.getStructCheckExistsAndNotChanged({
@@ -195,71 +157,69 @@ export class DuplicateMconfigAndQueryController {
         })
       ),
       // Dashboard tiles and report metrics do not require model access here.
-      Result.bind(
-        'model',
-        (v): Result.ResultAsync<ModelTab, DbModelsFindFirstCheckExistsError> =>
-          this.db.models.findFirstCheckExists({
-            where: and(
-              eq(modelsTable.structId, v.bridge.structId),
-              eq(modelsTable.modelId, v.oldMconfig.modelId)
-            )
-          })
+      Result.bind('model', v =>
+        this.db.models.findFirstCheckExists({
+          where: and(
+            eq(modelsTable.structId, v.bridge.structId),
+            eq(modelsTable.modelId, v.oldMconfig.modelId)
+          )
+        })
       ),
-      Result.bind(
-        'oldQuery',
-        (v): Result.ResultAsync<QueryTab, DbQueriesFindFirstError> =>
-          this.db.queries.findFirst({
-            where: and(
-              eq(queriesTable.queryId, v.oldMconfig.queryId),
-              eq(queriesTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('oldQuery', v =>
+        this.db.queries.findFirst({
+          where: and(
+            eq(queriesTable.queryId, v.oldMconfig.queryId),
+            eq(queriesTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'duplicateMconfigAndQueryPayload',
-        (v): Result.Result<DuplicateMconfigAndQueryPayload, never> => {
-          let newMconfigId: string = makeId();
+      Result.bind('duplicateMconfigAndQueryPayload', v => {
+        let newMconfigId: string = makeId();
 
-          let newMconfigParentType: MconfigParentType =
-            v.oldMconfig.parentType === 'Dashboard'
-              ? 'ChartDialogDashboard'
-              : v.oldMconfig.parentType === 'Report'
-                ? 'ChartDialogReport'
-                : v.oldMconfig.parentType;
+        let newMconfigParentType: MconfigParentType =
+          v.oldMconfig.parentType === 'Dashboard'
+            ? 'ChartDialogDashboard'
+            : v.oldMconfig.parentType === 'Report'
+              ? 'ChartDialogReport'
+              : v.oldMconfig.parentType;
 
-          let newQueryId: string = makeQueryId({
-            projectId: v.project.projectId,
-            connectionId: v.model.connectionId,
-            envId: v.envId,
-            mconfigParentType: newMconfigParentType,
-            mconfigParentId: v.oldMconfig.parentId,
-            sql: v.oldQuery.sql,
-            store: v.model.storeContent,
-            storeTransformedRequestString: v.oldMconfig.storePart?.reqJsonParts
-          });
+        let newQueryId: string = makeQueryId({
+          projectId: v.project.projectId,
+          connectionId: v.model.connectionId,
+          envId: v.envId,
+          mconfigParentType: newMconfigParentType,
+          mconfigParentId: v.oldMconfig.parentId,
+          sql: v.oldQuery.sql,
+          store: v.model.storeContent,
+          storeTransformedRequestString: v.oldMconfig.storePart?.reqJsonParts
+        });
 
-          let chart: MconfigChart =
-            v.setPivotDefaults === true
-              ? {
-                  ...v.oldMconfig.chart,
-                  firstColumnWidth: DEFAULT_PIVOT_FIRST_COLUMN_WIDTH,
-                  valueColumnsWidth: DEFAULT_PIVOT_COLUMNS_WIDTH
-                }
-              : v.oldMconfig.chart;
+        let chart: MconfigChart =
+          v.setPivotDefaults === true
+            ? {
+                ...v.oldMconfig.chart,
+                firstColumnWidth: DEFAULT_PIVOT_FIRST_COLUMN_WIDTH,
+                valueColumnsWidth: DEFAULT_PIVOT_COLUMNS_WIDTH
+              }
+            : v.oldMconfig.chart;
 
-          let newMconfig: MconfigTab = {
-            ...v.oldMconfig,
-            mconfigId: newMconfigId,
-            queryId: newQueryId,
-            parentType: newMconfigParentType,
-            chart: chart
-          };
+        let newMconfig: MconfigTab = {
+          ...v.oldMconfig,
+          mconfigId: newMconfigId,
+          queryId: newQueryId,
+          parentType: newMconfigParentType,
+          chart: chart
+        };
 
-          let newQuery: QueryTab = { ...v.oldQuery, queryId: newQueryId };
+        let newQuery: QueryTab = { ...v.oldQuery, queryId: newQueryId };
 
-          return Result.succeed({ newMconfig: newMconfig, newQuery: newQuery });
-        }
-      ),
+        let duplicateMconfigAndQueryPayload: DuplicateMconfigAndQueryPayload = {
+          newMconfig: newMconfig,
+          newQuery: newQuery
+        };
+
+        return Result.succeed(duplicateMconfigAndQueryPayload);
+      }),
       Result.andThrough(v =>
         this.db.write({
           insert: {

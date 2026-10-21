@@ -19,12 +19,9 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BackendUserAliasIsUndefinedError } from '#common/types/backend/errors/backend-user-alias-is-undefined-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
 import type { CheckUserPasswordHashIsDefinedError } from '#common/types/backend/function-errors/check-user-password-hash-is-defined-error';
 import type { DbMembersFindFirstError } from '#common/types/backend/function-errors/db/members/db-members-find-first-error';
-import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
 import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
 import type { GetSelectedGivensError } from '#common/types/backend/function-errors/get-selected-givens-error';
 import type { GetUserByEmailCheckExistsError } from '#common/types/backend/function-errors/get-user-by-email-check-exists-error';
@@ -305,24 +302,19 @@ export class UsersService {
   }): Result.ResultAsync<UserTab, GetUserByEmailCheckExistsError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'emailHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.email,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('emailHash', v =>
+        this.hashService.makeHash({
+          input: v.email,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.andThen(
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
-          this.db.users.findFirstCheckExists({
-            where: eq(usersTable.emailHash, v.emailHash)
-          })
+      Result.andThen(v =>
+        this.db.users.findFirstCheckExists({
+          where: eq(usersTable.emailHash, v.emailHash)
+        })
       )
     );
   }
@@ -438,26 +430,21 @@ export class UsersService {
   }): Result.ResultAsync<string, MakeAliasError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'alias',
-        (v): Result.Result<string, BackendUserAliasIsUndefinedError> => {
-          let reg: RegExp = MyRegex.CAPTURE_ALIAS();
+      Result.bind('alias', v => {
+        let reg: RegExp = MyRegex.CAPTURE_ALIAS();
 
-          let match: RegExpExecArray = reg.exec(v.email);
+        let match: RegExpExecArray = reg.exec(v.email);
 
-          let alias: string = match ? match[1] : undefined;
+        let alias: string = match ? match[1] : undefined;
 
-          return isUndefined(alias)
-            ? Result.fail({ code: 'BACKEND_USER_ALIAS_IS_UNDEFINED' })
-            : Result.succeed(alias);
-        }
+        return isUndefined(alias)
+          ? Result.fail({ code: 'BACKEND_USER_ALIAS_IS_UNDEFINED' })
+          : Result.succeed(alias);
+      }),
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
-      ),
-      Result.andThen(async (v): Result.ResultAsync<string, MakeHashError> => {
+      Result.andThen(async v => {
         let alias: string = v.alias;
 
         let count = 2;

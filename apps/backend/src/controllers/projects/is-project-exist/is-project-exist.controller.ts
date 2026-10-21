@@ -16,8 +16,6 @@ import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service'
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsProjectExistOutput } from '#common/types/backend/routes/projects/is-project-exist/is-project-exist-output';
 
@@ -54,25 +52,19 @@ export class IsProjectExistController {
           where: eq(orgsTable.orgId, v.orgId)
         })
       ),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'nameHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.name,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('nameHash', v =>
+        this.hashService.makeHash({
+          input: v.name,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'isProjectExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          this.db.projects.isExist({
-            where: eq(projectsTable.nameHash, v.nameHash)
-          })
+      Result.bind('isProjectExist', v =>
+        this.db.projects.isExist({
+          where: eq(projectsTable.nameHash, v.nameHash)
+        })
       ),
       Result.map(
         (v): ToBackendIsProjectExistOutput => ({

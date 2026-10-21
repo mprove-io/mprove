@@ -8,7 +8,6 @@ import {
   ToBackendConfirmUserEmailResponseDto
 } from '#backend/controllers/users/confirm-user-email/confirm-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -17,9 +16,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
-import type { DbUsersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/users/db-users-find-first-check-exists-error';
-import type { GetDconfigHashSecretError } from '#common/types/backend/function-errors/get-dconfig-hash-secret-error';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-output';
 
@@ -53,28 +49,22 @@ export class ConfirmUserEmailController {
         traceId: body.traceId,
         emailVerificationToken: body.input.emailVerificationToken
       }),
-      Result.bind(
-        'hashSecret',
-        (v): Result.ResultAsync<string, GetDconfigHashSecretError> =>
-          this.dconfigsService.getDconfigHashSecret()
+      Result.bind('hashSecret', v =>
+        this.dconfigsService.getDconfigHashSecret()
       ),
-      Result.bind(
-        'emailVerificationTokenHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.emailVerificationToken,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('emailVerificationTokenHash', v =>
+        this.hashService.makeHash({
+          input: v.emailVerificationToken,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, DbUsersFindFirstCheckExistsError> =>
-          this.db.users.findFirstCheckExists({
-            where: eq(
-              usersTable.emailVerificationTokenHash,
-              v.emailVerificationTokenHash
-            )
-          })
+      Result.bind('user', v =>
+        this.db.users.findFirstCheckExists({
+          where: eq(
+            usersTable.emailVerificationTokenHash,
+            v.emailVerificationTokenHash
+          )
+        })
       ),
       Result.andThrough(v =>
         this.usersService.checkUserPasswordHashIsDefined({ user: v.user })
@@ -85,10 +75,8 @@ export class ConfirmUserEmailController {
           user: v.user
         })
       ),
-      Result.bind(
-        'isVerifyEmail',
-        (v): Result.Result<boolean, never> =>
-          Result.succeed(v.user.isEmailVerified === false)
+      Result.bind('isVerifyEmail', v =>
+        Result.succeed(v.user.isEmailVerified === false)
       ),
       Result.andThrough(async v => {
         if (v.isVerifyEmail === false) {

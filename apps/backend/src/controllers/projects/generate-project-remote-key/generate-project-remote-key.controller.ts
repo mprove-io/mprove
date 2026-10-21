@@ -9,11 +9,7 @@ import {
   ToBackendGenerateProjectRemoteKeyResponseDto
 } from '#backend/controllers/projects/generate-project-remote-key/generate-project-remote-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  NoteTab,
-  OrgTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { NoteTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -23,7 +19,6 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import type { GitKeyPair } from '#backend/types/git-key-pair';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DbOrgsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-first-check-exists-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-output';
 
@@ -58,12 +53,10 @@ export class GenerateProjectRemoteKeyController {
         orgId: body.input.orgId,
         userId: user.userId
       }),
-      Result.bind(
-        'org',
-        (v): Result.ResultAsync<OrgTab, DbOrgsFindFirstCheckExistsError> =>
-          this.db.orgs.findFirstCheckExists({
-            where: eq(orgsTable.orgId, v.orgId)
-          })
+      Result.bind('org', v =>
+        this.db.orgs.findFirstCheckExists({
+          where: eq(orgsTable.orgId, v.orgId)
+        })
       ),
       Result.andThrough(v =>
         this.orgsService.checkUserIsOrgOwner({
@@ -71,7 +64,7 @@ export class GenerateProjectRemoteKeyController {
           userId: v.userId
         })
       ),
-      Result.bind('note', (v): Result.Result<NoteTab, never> => {
+      Result.bind('note', v => {
         let gitKeyPair: GitKeyPair = this.tabService.createGitKeyPair();
 
         let publicKey: string = parseKey(gitKeyPair.publicKeyEncrypted, 'pem', {

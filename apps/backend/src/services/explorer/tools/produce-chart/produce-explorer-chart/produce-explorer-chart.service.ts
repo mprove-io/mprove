@@ -2,25 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { DbService } from '#backend/services/db/db.service';
 import {
   ExplorerChartRebuildService,
-  type ExplorerRebuildOk,
-  type ExplorerRebuildResult
+  type ExplorerRebuildOk
 } from '#backend/services/explorer/explorer-chart-rebuild/explorer-chart-rebuild.service';
 import { ExplorerEventsMakerService } from '#backend/services/explorer/explorer-events-maker/explorer-events-maker.service';
 import { SessionDrainService } from '#backend/services/session/session-drain/session-drain.service';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BackendSessionTypeIsNotExplorerError } from '#common/types/backend/errors/backend-session-type-is-not-explorer-error';
 import type { BackendUnauthorizedError } from '#common/types/backend/errors/backend-unauthorized-error';
-import type { DbSessionsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-first-check-exists-error';
 import type { ProduceExplorerChartError } from '#common/types/backend/function-errors/produce-explorer-chart-error';
-import type { RebuildFromYamlError } from '#common/types/backend/function-errors/rebuild-from-yaml-error';
 import type { SessionTabCreatedEvent } from '#common/types/backend/parts/session/session-tab-created-event';
 import type { ToBackendProduceExplorerChartOutput } from '#common/types/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-output';
 
@@ -70,24 +64,13 @@ export class ProduceExplorerChartService {
         ...item,
         chartId: makeId()
       }),
-      Result.bind(
-        'preparedChartYaml',
-        (v): Result.Result<string, never> =>
-          Result.succeed(
-            v.chartYaml.split(CHART_ID_PLACEHOLDER).join(v.chartId)
-          )
+      Result.bind('preparedChartYaml', v =>
+        Result.succeed(v.chartYaml.split(CHART_ID_PLACEHOLDER).join(v.chartId))
       ),
-      Result.bind(
-        'session',
-        (
-          v
-        ): Result.ResultAsync<
-          SessionTab,
-          DbSessionsFindFirstCheckExistsError
-        > =>
-          this.db.sessions.findFirstCheckExists({
-            where: eq(sessionsTable.sessionId, v.sessionId)
-          })
+      Result.bind('session', v =>
+        this.db.sessions.findFirstCheckExists({
+          where: eq(sessionsTable.sessionId, v.sessionId)
+        })
       ),
       Result.andThrough(v =>
         v.session.userId !== v.user.userId
@@ -103,16 +86,14 @@ export class ProduceExplorerChartService {
             } satisfies BackendSessionTypeIsNotExplorerError)
           : Result.succeed()
       ),
-      Result.bind(
-        'rebuild',
-        (v): Result.ResultAsync<ExplorerRebuildResult, RebuildFromYamlError> =>
-          this.explorerChartRebuildService.rebuildFromYaml({
-            traceId: v.traceId,
-            session: v.session,
-            chartId: v.chartId,
-            modelId: v.modelId,
-            chartYaml: v.preparedChartYaml
-          })
+      Result.bind('rebuild', v =>
+        this.explorerChartRebuildService.rebuildFromYaml({
+          traceId: v.traceId,
+          session: v.session,
+          chartId: v.chartId,
+          modelId: v.modelId,
+          chartYaml: v.preparedChartYaml
+        })
       ),
       Result.map(v => {
         if (v.rebuild.ok === true) {
@@ -148,10 +129,8 @@ export class ProduceExplorerChartService {
               mconfigIds: [v.rebuild.mconfig.mconfigId]
             })
       ),
-      Result.bind(
-        'tabId',
-        (v): Result.Result<string, never> =>
-          Result.succeed(v.rebuild.ok === false ? undefined : makeId())
+      Result.bind('tabId', v =>
+        Result.succeed(v.rebuild.ok === false ? undefined : makeId())
       ),
       Result.andThrough(v => {
         if (v.rebuild.ok === true) {

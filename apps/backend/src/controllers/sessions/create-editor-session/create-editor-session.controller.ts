@@ -13,11 +13,8 @@ import {
 } from '#backend/controllers/sessions/create-editor-session/create-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  BranchTab,
-  BridgeTab,
   OcSessionTab,
   ProjectTab,
-  ProviderTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -39,7 +36,6 @@ import { BranchesService } from '#backend/services/db/branches/branches.service'
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -57,24 +53,14 @@ import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CreateSessionRepoError } from '#common/types/backend/function-errors/create-session-repo-error';
-import type { DbBranchesFindFirstError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-error';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { DbProvidersFindManyError } from '#common/types/backend/function-errors/db/providers/db-providers-find-many-error';
-import type { DbSessionsFindManyError } from '#common/types/backend/function-errors/db/sessions/db-sessions-find-many-error';
 import type { ExecuteInteractionError } from '#common/types/backend/function-errors/execute-interaction-error';
-import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { GetOpenCodeClientError } from '#common/types/backend/function-errors/get-open-code-client-error';
-import type { GetUserCheckExistsError } from '#common/types/backend/function-errors/get-user-check-exists-error';
-import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { StartEventStreamError } from '#common/types/backend/function-errors/start-event-stream-error';
-import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { SandboxType } from '#common/types/backend/parts/session/sandbox-type';
 import type { SessionStatus } from '#common/types/backend/parts/session/session-status';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateEditorSessionOutput } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-output';
-import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 
 type CreateEditorSessionRecordPayload = {
   session: SessionTab;
@@ -143,17 +129,10 @@ export class CreateEditorSessionController {
         traceId: body.traceId,
         user: user
       }),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
       Result.andThrough(v =>
         this.membersService.getMemberCheckIsEditor({
@@ -161,168 +140,147 @@ export class CreateEditorSessionController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'maxActiveEditorSessionsPerProjectUser',
-        (v): Result.Result<number, never> =>
-          Result.succeed(
-            this.cs.get<BackendConfig['maxActiveEditorSessionsPerProjectUser']>(
-              'maxActiveEditorSessionsPerProjectUser'
-            )
+      Result.bind('maxActiveEditorSessionsPerProjectUser', v =>
+        Result.succeed(
+          this.cs.get<BackendConfig['maxActiveEditorSessionsPerProjectUser']>(
+            'maxActiveEditorSessionsPerProjectUser'
           )
+        )
       ),
-      Result.bind(
-        'activeSessions',
-        (v): Result.ResultAsync<SessionTab[], DbSessionsFindManyError> =>
-          this.db.sessions.findMany({
-            where: and(
-              eq(sessionsTable.userId, v.user.userId),
-              eq(sessionsTable.type, 'Editor'),
-              inArray(sessionsTable.status, ['Active', 'New'])
-            )
-          })
+      Result.bind('activeSessions', v =>
+        this.db.sessions.findMany({
+          where: and(
+            eq(sessionsTable.userId, v.user.userId),
+            eq(sessionsTable.type, 'Editor'),
+            inArray(sessionsTable.status, ['Active', 'New'])
+          )
+        })
       ),
       Result.andThrough(v =>
         v.activeSessions.length >= v.maxActiveEditorSessionsPerProjectUser
           ? Result.fail({ code: 'BACKEND_TOO_MANY_ACTIVE_EDITOR_SESSIONS' })
           : Result.succeed()
       ),
-      Result.bind(
-        'modelSelection',
-        (
-          v
-        ): Result.ResultAsync<
-          GetModelSelectionOutput,
-          GetModelSelectionError
-        > =>
-          this.providersService.getModelSelection({
-            projectId: v.projectId,
-            providerId: v.providerId,
-            modelId: v.modelId,
-            variant: v.variant,
-            isUserCodexAuthSet: isDefined(v.user.codexAuth),
-            isBuilder: true
-          })
+      Result.bind('modelSelection', v =>
+        this.providersService.getModelSelection({
+          projectId: v.projectId,
+          providerId: v.providerId,
+          modelId: v.modelId,
+          variant: v.variant,
+          isUserCodexAuthSet: isDefined(v.user.codexAuth),
+          isBuilder: true
+        })
       ),
       Result.andThrough(async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
           ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
           : Result.succeed()
       ),
-      Result.bind(
-        'freshUser',
-        async (v): Result.ResultAsync<UserTab, GetUserCheckExistsError> =>
-          v.modelSelection.provider.type === 'OpenAICodex'
-            ? this.usersService.getUserCheckExists({
-                userId: v.user.userId
-              })
-            : Result.succeed(v.user)
+      Result.bind('freshUser', async v =>
+        v.modelSelection.provider.type === 'OpenAICodex'
+          ? this.usersService.getUserCheckExists({
+              userId: v.user.userId
+            })
+          : Result.succeed(v.user)
       ),
       // Type Editor: existing sandboxed opencode flow
-      Result.bind(
-        'providers',
-        (v): Result.ResultAsync<ProviderTab[], DbProvidersFindManyError> =>
-          this.db.providers.findMany({
-            where: and(
-              eq(providersTable.projectId, v.projectId),
-              eq(providersTable.isEnabled, true)
-            )
-          })
+      Result.bind('providers', v =>
+        this.db.providers.findMany({
+          where: and(
+            eq(providersTable.projectId, v.projectId),
+            eq(providersTable.isEnabled, true)
+          )
+        })
       ),
-      Result.bind(
-        'providerConfig',
-        async (v): Result.ResultAsync<ProviderConfigResult, never> => {
-          let providerConfig: ProviderConfigResult =
-            await this.editorOpencodeService.buildProviderConfig({
-              providers: v.providers,
-              isUserCodexAuthSet: isDefined(v.freshUser.codexAuth)
-            });
-          return Result.succeed(providerConfig);
-        }
-      ),
-      Result.bind(
-        'sandboxEnvs',
-        (v): Result.Result<Record<string, string>, never> =>
-          Result.succeed({
-            ...v.providerConfig.envs,
-            OPENCODE_CONFIG_CONTENT: v.providerConfig.content
-          })
-      ),
+      Result.bind('providerConfig', async v => {
+        let providerConfig: ProviderConfigResult =
+          await this.editorOpencodeService.buildProviderConfig({
+            providers: v.providers,
+            isUserCodexAuthSet: isDefined(v.freshUser.codexAuth)
+          });
+        return Result.succeed(providerConfig);
+      }),
+      Result.bind('sandboxEnvs', v => {
+        let sandboxEnvs: Record<string, string> = {
+          ...v.providerConfig.envs,
+          OPENCODE_CONFIG_CONTENT: v.providerConfig.content
+        };
+
+        return Result.succeed(sandboxEnvs);
+      }),
       // Phase 1: Save session with status=New and return immediately
-      Result.bind(
-        'createEditorSessionRecordPayload',
-        async (
-          v
-        ): Result.ResultAsync<
-          CreateEditorSessionRecordPayload,
-          DbErrorToError
-        > => {
-          let now: number = Date.now();
+      Result.bind('createEditorSessionRecordPayload', async v => {
+        let now: number = Date.now();
 
-          let session: SessionTab;
+        let session: SessionTab;
 
-          let apiKeyParts: Awaited<ReturnType<typeof generateApiKeyParts>>;
+        let apiKeyParts: Awaited<ReturnType<typeof generateApiKeyParts>>;
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () => {
-                    apiKeyParts = await generateApiKeyParts();
+        let persistenceResult: Result.Result<void, DbErrorToError> =
+          await dbErrorToResult({
+            action: async () => {
+              await retry(
+                async () => {
+                  apiKeyParts = await generateApiKeyParts();
 
-                    let sessionId: string = makeSessionId();
+                  let sessionId: string = makeSessionId();
 
-                    session = this.sessionsService.makeSession({
-                      sessionId: sessionId,
-                      type: 'Editor',
-                      repoId: sessionId,
-                      branchId: sessionId,
-                      userId: v.freshUser.userId,
-                      projectId: v.projectId,
-                      sandboxType: v.sandboxType,
-                      providerId: v.providerId,
-                      modelId: v.modelId,
-                      lastMessageVariant: v.variant,
-                      agent: v.agent,
-                      firstMessage: v.firstMessage,
-                      apiKeyPrefix: apiKeyParts.prefix,
-                      apiKeySecretHash: apiKeyParts.secretHash,
-                      apiKeySalt: apiKeyParts.salt,
-                      providerConfigHash: v.providerConfig.hash,
-                      initialBranch: v.initialBranch,
-                      envId: v.envId,
-                      initialCommit: undefined,
-                      codexAuthUpdateTs:
-                        v.modelSelection.provider.type === 'OpenAICodex'
-                          ? v.freshUser.codexAuthUpdateTs
-                          : undefined,
-                      status: 'New',
-                      lastActivityTs: now,
-                      createdTs: now
+                  session = this.sessionsService.makeSession({
+                    sessionId: sessionId,
+                    type: 'Editor',
+                    repoId: sessionId,
+                    branchId: sessionId,
+                    userId: v.freshUser.userId,
+                    projectId: v.projectId,
+                    sandboxType: v.sandboxType,
+                    providerId: v.providerId,
+                    modelId: v.modelId,
+                    lastMessageVariant: v.variant,
+                    agent: v.agent,
+                    firstMessage: v.firstMessage,
+                    apiKeyPrefix: apiKeyParts.prefix,
+                    apiKeySecretHash: apiKeyParts.secretHash,
+                    apiKeySalt: apiKeyParts.salt,
+                    providerConfigHash: v.providerConfig.hash,
+                    initialBranch: v.initialBranch,
+                    envId: v.envId,
+                    initialCommit: undefined,
+                    codexAuthUpdateTs:
+                      v.modelSelection.provider.type === 'OpenAICodex'
+                        ? v.freshUser.codexAuthUpdateTs
+                        : undefined,
+                    status: 'New',
+                    lastActivityTs: now,
+                    createdTs: now
+                  });
+
+                  let ocSession: OcSessionTab =
+                    this.sessionsService.makeOcSession({
+                      sessionId: sessionId
                     });
 
-                    let ocSession: OcSessionTab =
-                      this.sessionsService.makeOcSession({
-                        sessionId: sessionId
-                      });
+                  await this.db.writeUnwrap({
+                    insert: {
+                      sessions: [session],
+                      ocSessions: [ocSession]
+                    },
+                    retryOptions: { retries: 0 }
+                  });
+                },
+                getRetryOption(this.cs, this.logger)
+              );
+            }
+          });
 
-                    await this.db.writeUnwrap({
-                      insert: {
-                        sessions: [session],
-                        ocSessions: [ocSession]
-                      },
-                      retryOptions: { retries: 0 }
-                    });
-                  },
-                  getRetryOption(this.cs, this.logger)
-                );
-              }
-            });
-
-          return Result.isFailure(persistenceResult)
-            ? persistenceResult
-            : Result.succeed({ session: session, apiKeyParts: apiKeyParts });
+        if (Result.isFailure(persistenceResult)) {
+          return persistenceResult;
         }
-      ),
+
+        let createEditorSessionRecordPayload: CreateEditorSessionRecordPayload =
+          { session: session, apiKeyParts: apiKeyParts };
+
+        return Result.succeed(createEditorSessionRecordPayload);
+      }),
       // Phase 2: Activate session asynchronously (fire-and-forget)
       Result.map(v => {
         v.sandboxEnvs.MPROVE_CLI_API_KEY = buildSessionApiKey({
@@ -347,7 +305,7 @@ export class CreateEditorSessionController {
       ),
       // disabled malloy-cli in sandbox
       // Object.assign(sandboxEnvs, malloyConnectionEnvs);
-      Result.bind('sandboxFiles', (v): Result.Result<SandboxFile[], never> => {
+      Result.bind('sandboxFiles', v => {
         let sessionDataFile: SandboxFile = {
           path: '/home/user/.config/opencode/mprove-session.json',
           data: JSON.stringify(
@@ -375,7 +333,7 @@ export class CreateEditorSessionController {
           });
         }
 
-        return Result.succeed(
+        return Result.succeed<SandboxFile[]>(
           codexAuthFile
             ? [
                 // ...malloySandboxFiles,  // disabled malloy-cli in sandbox
@@ -415,21 +373,14 @@ export class CreateEditorSessionController {
         return Result.succeed();
       }),
       // Phase 3: Create session repo (awaited)
-      Result.bind(
-        'createSessionRepoOutput',
-        (
-          v
-        ): Result.ResultAsync<
-          CreateSessionRepoOutput,
-          CreateSessionRepoError
-        > =>
-          this.createSessionRepo({
-            session: v.createEditorSessionRecordPayload.session,
-            project: v.project,
-            envId: v.envId,
-            initialBranch: v.initialBranch,
-            traceId: v.traceId
-          })
+      Result.bind('createSessionRepoOutput', v =>
+        this.createSessionRepo({
+          session: v.createEditorSessionRecordPayload.session,
+          project: v.project,
+          envId: v.envId,
+          initialBranch: v.initialBranch,
+          traceId: v.traceId
+        })
       ),
       // console.log(
       //   `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
@@ -684,79 +635,67 @@ export class CreateEditorSessionController {
         sessionId: item.session.sessionId,
         projectId: item.session.projectId
       }),
-      Result.bind(
-        'baseProject',
-        (v): Result.Result<BaseProject, never> =>
-          Result.succeed(
-            this.tabService.projectTabToBaseProject({ project: v.project })
-          )
+      Result.bind('baseProject', v =>
+        Result.succeed(
+          this.tabService.projectTabToBaseProject({ project: v.project })
+        )
       ),
       // let sendToDiskStart = Date.now();
-      Result.bind(
-        'diskCreateDevRepoOutput',
-        (v): Result.ResultAsync<ToDiskCreateDevRepoOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
-            request: {
-              operation: 'createDevRepo',
-              traceId: v.traceId,
-              input: {
-                baseProject: v.baseProject,
-                devRepoId: v.sessionId,
-                initialBranch: v.initialBranch,
-                sessionBranch: v.sessionId
-              }
+      Result.bind('diskCreateDevRepoOutput', v =>
+        this.rpcService.sendToDisk({
+          request: {
+            operation: 'createDevRepo',
+            traceId: v.traceId,
+            input: {
+              baseProject: v.baseProject,
+              devRepoId: v.sessionId,
+              initialBranch: v.initialBranch,
+              sessionBranch: v.sessionId
             }
-          })
+          }
+        })
       ),
       // console.log(`sendToDisk took ${(Date.now() - sendToDiskStart) / 1000}s`);
-      Result.bind(
-        'prodBranch',
-        (v): Result.ResultAsync<BranchTab, DbBranchesFindFirstError> =>
-          this.db.branches.findFirst({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, PROD_REPO_ID),
-              eq(branchesTable.branchId, v.project.defaultBranch)
-            )
-          })
+      Result.bind('prodBranch', v =>
+        this.db.branches.findFirst({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, PROD_REPO_ID),
+            eq(branchesTable.branchId, v.project.defaultBranch)
+          )
+        })
       ),
-      Result.bind(
-        'sessionBranch',
-        (v): Result.Result<BranchTab, never> =>
-          Result.succeed(
-            this.branchesService.makeBranch({
-              projectId: v.projectId,
-              repoId: v.sessionId,
-              branchId: v.sessionId
+      Result.bind('sessionBranch', v =>
+        Result.succeed(
+          this.branchesService.makeBranch({
+            projectId: v.projectId,
+            repoId: v.sessionId,
+            branchId: v.sessionId
+          })
+        )
+      ),
+      Result.bind('prodBranchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.prodBranch.projectId),
+            eq(bridgesTable.repoId, v.prodBranch.repoId),
+            eq(bridgesTable.branchId, v.prodBranch.branchId)
+          )
+        })
+      ),
+      Result.bind('sessionBranchBridges', v =>
+        Result.succeed(
+          v.prodBranchBridges.map(bridge =>
+            this.bridgesService.makeBridge({
+              projectId: v.sessionBranch.projectId,
+              repoId: v.sessionBranch.repoId,
+              branchId: v.sessionBranch.branchId,
+              envId: bridge.envId,
+              structId: EMPTY_STRUCT_ID,
+              needValidate: true
             })
           )
-      ),
-      Result.bind(
-        'prodBranchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.prodBranch.projectId),
-              eq(bridgesTable.repoId, v.prodBranch.repoId),
-              eq(bridgesTable.branchId, v.prodBranch.branchId)
-            )
-          })
-      ),
-      Result.bind(
-        'sessionBranchBridges',
-        (v): Result.Result<BridgeTab[], never> =>
-          Result.succeed(
-            v.prodBranchBridges.map(bridge =>
-              this.bridgesService.makeBridge({
-                projectId: v.sessionBranch.projectId,
-                repoId: v.sessionBranch.repoId,
-                branchId: v.sessionBranch.branchId,
-                envId: bridge.envId,
-                structId: EMPTY_STRUCT_ID,
-                needValidate: true
-              })
-            )
-          )
+        )
       ),
       Result.andThrough(v =>
         this.blockmlService.rebuildBranchBridges({

@@ -8,10 +8,7 @@ import {
   ToBackendEditLlmModelResponseDto
 } from '#backend/controllers/llm-models/edit-llm-model/edit-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ProviderTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -26,13 +23,7 @@ import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
-import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
-import type { GetDiscoveredLlmModelPartError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-error';
-import type { GetLlmModelCheckExistsError } from '#common/types/backend/function-errors/get-llm-model-check-exists-error';
-import type { ReconcileDiscoveredModelVariantsError } from '#common/types/backend/function-errors/reconcile-discovered-model-variants-error';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
-import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
-import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditLlmModelOutput } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
 
@@ -84,75 +75,53 @@ export class EditLlmModelController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'provider',
-        (
-          v
-        ): Result.ResultAsync<
-          ProviderTab,
-          DbProvidersFindFirstCheckExistsError
-        > =>
-          this.db.providers.findFirstCheckExists({
-            where: and(
-              eq(providersTable.projectId, v.projectId),
-              eq(providersTable.providerId, v.providerId)
-            )
-          })
-      ),
-      Result.bind(
-        'model',
-        (v): Result.Result<LlmModel, GetLlmModelCheckExistsError> =>
-          this.providersService.getLlmModelCheckExists({
-            provider: v.provider,
-            modelId: v.modelId
-          })
-      ),
-      Result.bind(
-        'isManualModel',
-        (v): Result.Result<boolean, never> =>
-          Result.succeed(
-            v.provider.type === 'OpenAICompatible' || v.model.isManual === true
+      Result.bind('provider', v =>
+        this.db.providers.findFirstCheckExists({
+          where: and(
+            eq(providersTable.projectId, v.projectId),
+            eq(providersTable.providerId, v.providerId)
           )
+        })
       ),
-      Result.bind(
-        'modelPart',
-        async (
-          v
-        ): Result.ResultAsync<LlmModelPart, GetDiscoveredLlmModelPartError> =>
+      Result.bind('model', v =>
+        this.providersService.getLlmModelCheckExists({
+          provider: v.provider,
+          modelId: v.modelId
+        })
+      ),
+      Result.bind('isManualModel', v =>
+        Result.succeed(
           v.provider.type === 'OpenAICompatible' || v.model.isManual === true
-            ? Result.succeed(undefined)
-            : this.llmModelService.getDiscoveredLlmModelPart({
-                providerType: v.provider.type,
-                modelId: v.modelId,
-                apiKey:
-                  v.provider.type === 'OpenAICodex'
-                    ? undefined
-                    : v.provider.options.apiKey,
-                userId: v.userId,
-                isCodexAuthSet: v.isCodexAuthSet,
-                isForceRefresh: true
-              })
+        )
       ),
-      Result.bind(
-        'variants',
-        (
-          v
-        ): Result.Result<
-          LlmModelVariant[],
-          ReconcileDiscoveredModelVariantsError
-        > =>
-          isUndefined(v.modelPart)
-            ? Result.succeed(v.submittedVariants)
-            : this.llmModelService.reconcileDiscoveredModelVariants({
-                variants: v.submittedVariants,
-                storedVariants: v.model.variants,
-                currentVariantNames: [
-                  LLM_MODEL_DEFAULT_VARIANT,
-                  ...(v.modelPart.variants ?? [])
-                ],
-                isExplorer: v.isExplorer,
-                isBuilder: v.isBuilder
-              })
+      Result.bind('modelPart', async v =>
+        v.provider.type === 'OpenAICompatible' || v.model.isManual === true
+          ? Result.succeed(undefined)
+          : this.llmModelService.getDiscoveredLlmModelPart({
+              providerType: v.provider.type,
+              modelId: v.modelId,
+              apiKey:
+                v.provider.type === 'OpenAICodex'
+                  ? undefined
+                  : v.provider.options.apiKey,
+              userId: v.userId,
+              isCodexAuthSet: v.isCodexAuthSet,
+              isForceRefresh: true
+            })
+      ),
+      Result.bind('variants', v =>
+        isUndefined(v.modelPart)
+          ? Result.succeed(v.submittedVariants)
+          : this.llmModelService.reconcileDiscoveredModelVariants({
+              variants: v.submittedVariants,
+              storedVariants: v.model.variants,
+              currentVariantNames: [
+                LLM_MODEL_DEFAULT_VARIANT,
+                ...(v.modelPart.variants ?? [])
+              ],
+              isExplorer: v.isExplorer,
+              isBuilder: v.isBuilder
+            })
       ),
       Result.map(v => {
         if (isDefined(v.modelPart)) {

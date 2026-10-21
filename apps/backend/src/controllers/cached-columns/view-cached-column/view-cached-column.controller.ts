@@ -8,12 +8,7 @@ import {
   ToBackendViewCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/view-cached-column/view-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  CachedColumnTab,
-  CachedPartTab,
-  MemberTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -27,10 +22,6 @@ import type { BackendResultForOperation } from '#backend/types/backend-result-fo
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BackendWrongOffsetError } from '#common/types/backend/errors/backend-wrong-offset-error';
-import type { DbCachedColumnsFindFirstError } from '#common/types/backend/function-errors/db/cached-columns/db-cached-columns-find-first-error';
-import type { DbCachedPartsFindManyError } from '#common/types/backend/function-errors/db/cached-parts/db-cached-parts-find-many-error';
-import type { GetCacheEnvIdError } from '#common/types/backend/function-errors/get-cache-env-id-error';
-import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
 
@@ -80,15 +71,11 @@ export class ViewCachedColumnController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditorOrAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -97,49 +84,41 @@ export class ViewCachedColumnController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'cacheEnvId',
-        (v): Result.ResultAsync<string, GetCacheEnvIdError> =>
-          this.cachedColumnService.getCacheEnvId({
-            projectId: v.projectId,
-            envId: v.envId
-          })
+      Result.bind('cacheEnvId', v =>
+        this.cachedColumnService.getCacheEnvId({
+          projectId: v.projectId,
+          envId: v.envId
+        })
       ),
-      Result.bind(
-        'rows',
-        (v): Result.ResultAsync<CachedPartTab[], DbCachedPartsFindManyError> =>
-          this.db.cachedParts.findMany({
-            where: and(
-              eq(cachedPartsTable.projectId, v.projectId),
-              eq(cachedPartsTable.connectionId, v.connectionId),
-              eq(cachedPartsTable.envId, v.cacheEnvId),
-              eq(cachedPartsTable.schemaNameLc, v.schemaName.toLowerCase()),
-              eq(cachedPartsTable.tableNameLc, v.tableName.toLowerCase()),
-              eq(cachedPartsTable.columnNameLc, v.columnName.toLowerCase())
-            ),
-            orderBy: desc(cachedPartsTable.count),
-            limit: 100,
-            offset: v.offset
-          })
+      Result.bind('rows', v =>
+        this.db.cachedParts.findMany({
+          where: and(
+            eq(cachedPartsTable.projectId, v.projectId),
+            eq(cachedPartsTable.connectionId, v.connectionId),
+            eq(cachedPartsTable.envId, v.cacheEnvId),
+            eq(cachedPartsTable.schemaNameLc, v.schemaName.toLowerCase()),
+            eq(cachedPartsTable.tableNameLc, v.tableName.toLowerCase()),
+            eq(cachedPartsTable.columnNameLc, v.columnName.toLowerCase())
+          ),
+          orderBy: desc(cachedPartsTable.count),
+          limit: 100,
+          offset: v.offset
+        })
       ),
-      Result.bind(
-        'cachedColumn',
-        (
-          v
-        ): Result.ResultAsync<CachedColumnTab, DbCachedColumnsFindFirstError> =>
-          this.db.cachedColumns.findFirst({
-            where: eq(
-              cachedColumnsTable.cachedColumnFullId,
-              this.hashService.makeCachedColumnFullId({
-                projectId: v.projectId,
-                connectionId: v.connectionId,
-                envId: v.cacheEnvId,
-                schemaName: v.schemaName,
-                tableName: v.tableName,
-                columnName: v.columnName
-              })
-            )
-          })
+      Result.bind('cachedColumn', v =>
+        this.db.cachedColumns.findFirst({
+          where: eq(
+            cachedColumnsTable.cachedColumnFullId,
+            this.hashService.makeCachedColumnFullId({
+              projectId: v.projectId,
+              connectionId: v.connectionId,
+              envId: v.cacheEnvId,
+              schemaName: v.schemaName,
+              tableName: v.tableName,
+              columnName: v.columnName
+            })
+          )
+        })
       ),
       Result.map(
         (v): ToBackendViewCachedColumnOutput => ({

@@ -54,41 +54,36 @@ export class GenerateUserApiKeyController {
       Result.andThrough(v =>
         this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
-      Result.bind(
-        'apiKeyParts',
-        async (
-          v
-        ): Result.ResultAsync<GenerateApiKeyPartsOutput, DbErrorToError> => {
-          let apiKeyParts: GenerateApiKeyPartsOutput;
+      Result.bind('apiKeyParts', async v => {
+        let apiKeyParts: GenerateApiKeyPartsOutput;
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () => {
-                    apiKeyParts = await generateApiKeyParts();
+        let persistenceResult: Result.Result<void, DbErrorToError> =
+          await dbErrorToResult({
+            action: async () => {
+              await retry(
+                async () => {
+                  apiKeyParts = await generateApiKeyParts();
 
-                    v.user.apiKeyPrefix = apiKeyParts.prefix;
-                    v.user.apiKeySecretHash = apiKeyParts.secretHash;
-                    v.user.apiKeySalt = apiKeyParts.salt;
+                  v.user.apiKeyPrefix = apiKeyParts.prefix;
+                  v.user.apiKeySecretHash = apiKeyParts.secretHash;
+                  v.user.apiKeySalt = apiKeyParts.salt;
 
-                    await this.db.writeUnwrap({
-                      update: {
-                        users: [v.user]
-                      },
-                      retryOptions: { retries: 0 }
-                    });
-                  },
-                  getRetryOption(this.cs, this.logger)
-                );
-              }
-            });
+                  await this.db.writeUnwrap({
+                    update: {
+                      users: [v.user]
+                    },
+                    retryOptions: { retries: 0 }
+                  });
+                },
+                getRetryOption(this.cs, this.logger)
+              );
+            }
+          });
 
-          return Result.isFailure(persistenceResult)
-            ? Result.fail(persistenceResult.error)
-            : Result.succeed(apiKeyParts);
-        }
-      ),
+        return Result.isFailure(persistenceResult)
+          ? Result.fail(persistenceResult.error)
+          : Result.succeed(apiKeyParts);
+      }),
       Result.map(
         (v): ToBackendGenerateUserApiKeyOutput => ({
           apiKey: buildUserApiKey({

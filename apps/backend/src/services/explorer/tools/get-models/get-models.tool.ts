@@ -6,7 +6,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import { ExplorerModelPartsService } from '#backend/services/explorer/explorer-model-parts/explorer-model-parts.service';
 import type { GetExplorerModelsOutput } from '#backend/services/explorer/types/get-explorer-models-output';
-import type { GetExplorerModelsError } from '#common/types/backend/function-errors/get-explorer-models-error';
 
 @Injectable()
 export class GetModelsToolService {
@@ -41,22 +40,16 @@ export class GetModelsToolService {
             traceId: traceId,
             modelIds: input.modelIds
           }),
-          Result.andThen(
-            (
-              v
-            ): Result.ResultAsync<
-              GetExplorerModelsOutput,
-              GetExplorerModelsError
-            > =>
-              this.explorerModelPartsService.getExplorerModels({
-                userId: v.userId,
-                projectId: v.projectId,
-                repoId: v.repoId,
-                branchId: v.branchId,
-                envId: v.envId,
-                traceId: v.traceId,
-                modelIds: v.modelIds
-              })
+          Result.andThen(v =>
+            this.explorerModelPartsService.getExplorerModels({
+              userId: v.userId,
+              projectId: v.projectId,
+              repoId: v.repoId,
+              branchId: v.branchId,
+              envId: v.envId,
+              traceId: v.traceId,
+              modelIds: v.modelIds
+            })
           )
         );
 

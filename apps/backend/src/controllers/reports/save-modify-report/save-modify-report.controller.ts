@@ -13,13 +13,9 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
-  BranchTab,
-  BridgeTab,
   MemberTab,
   ModelTab,
-  ProjectTab,
   ReportTab,
-  StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
@@ -42,7 +38,6 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import type { ReportsCatalog } from '#backend/services/db/reports/reports.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -56,30 +51,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendMemberIsNotEditorOrAdminError } from '#common/types/backend/errors/backend-member-is-not-editor-or-admin-error';
-import type { BackendMemberIsNotExplorerError } from '#common/types/backend/errors/backend-member-is-not-explorer-error';
-import type { BackendModifyReportFailError } from '#common/types/backend/errors/backend-modify-report-fail-error';
 import type { CheckProjectIsNotRestrictedError } from '#common/types/backend/function-errors/check-project-is-not-restricted-error';
 import type { CheckUserIsNotRestrictedError } from '#common/types/backend/function-errors/check-user-is-not-restricted-error';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
 import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
-import type { DbProjectsFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/projects/db-projects-find-first-check-exists-error';
-import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
-import type { GetModelPartXsError } from '#common/types/backend/function-errors/get-model-part-xs-error';
-import type { GetReportCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-report-check-exists-and-access-error';
-import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
-import type { GetReportsCatalogError } from '#common/types/backend/function-errors/get-reports-catalog-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { SendToDiskError } from '#common/types/backend/function-errors/send-to-disk-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
-import type { Member } from '#common/types/backend/parts/member';
-import type { ModelPartX } from '#common/types/backend/parts/model/model-part-x';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { ReportX } from '#common/types/backend/parts/report/report-x';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveModifyReportOutput } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-output';
 import type { FileExtension } from '#common/types/blockml/parts/file/file-extension';
@@ -87,12 +66,16 @@ import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric
 import type { Report } from '#common/types/blockml/parts/report/report';
 import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-catalog-file';
 import type { ToDiskMoveCatalogNodeOutput } from '#common/types/disk/routes/catalogs/move-catalog-node/move-catalog-node-output';
-import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 
 type ResolveReportDependenciesPayload = {
   metricIds: string[];
   cachedMetrics: ModelMetric[];
   modelIds: string[];
+};
+
+type PrepareRebuildPayload = {
+  diskFiles: DiskCatalogFile[];
+  selectedSpaceFilePath: string;
 };
 
 type PrepareReportFilePayload = {
@@ -108,11 +91,6 @@ type PrepareReportFileMovePayload = {
   isReportPathChanged: boolean;
   isMoveReportRequired: boolean;
   finalReportFilePath: string;
-};
-
-type PrepareRebuildPayload = {
-  diskFiles: DiskCatalogFile[];
-  selectedSpaceFilePath: string;
 };
 
 type SaveReportPayload = {
@@ -194,78 +172,57 @@ export class SaveModifyReportController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'project',
-        (
-          v
-        ): Result.ResultAsync<
-          ProjectTab,
-          DbProjectsFindFirstCheckExistsError
-        > =>
-          this.db.projects.findFirstCheckExists({
-            where: eq(projectsTable.projectId, v.projectId)
-          })
+      Result.bind('project', v =>
+        this.db.projects.findFirstCheckExists({
+          where: eq(projectsTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'userMember',
-        async (
-          v
-        ): Result.ResultAsync<
+      Result.bind('userMember', async v => {
+        let userMemberResult: Result.Result<
           MemberTab,
-          | DbMembersFindFirstCheckExistsError
-          | CheckProjectIsNotRestrictedError
-          | BackendMemberIsNotExplorerError
-        > => {
-          let userMemberResult: Result.Result<
-            MemberTab,
-            DbMembersFindFirstCheckExistsError
-          > = await this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          });
+          DbMembersFindFirstCheckExistsError
+        > = await this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        });
 
-          if (Result.isFailure(userMemberResult)) {
-            return userMemberResult;
-          }
-
-          let userMember: MemberTab = userMemberResult.value;
-
-          let projectRestrictionResult: Result.Result<
-            void,
-            CheckProjectIsNotRestrictedError
-          > = await this.projectsService.checkProjectIsNotRestricted({
-            projectId: v.projectId,
-            userMember: userMember,
-            repoId: v.repoId
-          });
-
-          if (Result.isFailure(projectRestrictionResult)) {
-            return projectRestrictionResult;
-          }
-
-          if (userMember.isExplorer === false) {
-            return Result.fail({
-              code: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
-            });
-          }
-
-          return Result.succeed(userMember);
+        if (Result.isFailure(userMemberResult)) {
+          return userMemberResult;
         }
-      ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+
+        let userMember: MemberTab = userMemberResult.value;
+
+        let projectRestrictionResult: Result.Result<
+          void,
+          CheckProjectIsNotRestrictedError
+        > = await this.projectsService.checkProjectIsNotRestricted({
+          projectId: v.projectId,
+          userMember: userMember,
+          repoId: v.repoId
+        });
+
+        if (Result.isFailure(projectRestrictionResult)) {
+          return projectRestrictionResult;
+        }
+
+        if (userMember.isExplorer === false) {
+          return Result.fail({
+            code: 'BACKEND_MEMBER_IS_NOT_EXPLORER'
+          });
+        }
+
+        return Result.succeed(userMember);
+      }),
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -274,475 +231,412 @@ export class SaveModifyReportController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'fromReport',
-        (
-          v
-        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccess({
-            projectId: v.projectId,
-            reportId: v.fromReportId,
-            structId: v.bridge.structId,
-            user: v.user,
-            userMember: v.userMember
-          })
+      Result.bind('fromReport', v =>
+        this.reportsService.getReportCheckExistsAndAccess({
+          projectId: v.projectId,
+          reportId: v.fromReportId,
+          structId: v.bridge.structId,
+          user: v.user,
+          userMember: v.userMember
+        })
       ),
-      Result.bind(
-        'currentStruct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.bridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('currentStruct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'existingModReport',
-        (
-          v
-        ): Result.ResultAsync<ReportTab, GetReportCheckExistsAndAccessError> =>
-          this.reportsService.getReportCheckExistsAndAccess({
-            projectId: v.projectId,
-            reportId: v.modReportId,
-            structId: v.bridge.structId,
-            user: v.user,
-            userMember: v.userMember
-          })
+      Result.bind('existingModReport', v =>
+        this.reportsService.getReportCheckExistsAndAccess({
+          projectId: v.projectId,
+          reportId: v.modReportId,
+          structId: v.bridge.structId,
+          user: v.user,
+          userMember: v.userMember
+        })
       ),
-      Result.bind(
-        'resolveReportDependenciesPayload',
-        (v): Result.Result<ResolveReportDependenciesPayload, never> => {
-          let metricIds: string[] = [
-            ...new Set(
-              v.fromReport.rows
-                .map(row => row.metricId)
-                .filter(x => isDefined(x))
-            )
-          ];
+      Result.bind('resolveReportDependenciesPayload', v => {
+        let metricIds: string[] = [
+          ...new Set(
+            v.fromReport.rows.map(row => row.metricId).filter(x => isDefined(x))
+          )
+        ];
 
-          let cachedMetrics: ModelMetric[] = v.currentStruct.metrics.filter(
-            metric => metricIds.indexOf(metric.metricId) > -1
-          );
+        let cachedMetrics: ModelMetric[] = v.currentStruct.metrics.filter(
+          metric => metricIds.indexOf(metric.metricId) > -1
+        );
 
-          let modelIds: string[] = [
-            ...new Set(
-              cachedMetrics.map(x => x.modelId).filter(x => isDefined(x))
-            ),
-            ...v.fromReport.fields
-              .filter(x => isDefined(x.storeModel))
-              .map(x => x.storeModel)
-          ];
+        let modelIds: string[] = [
+          ...new Set(
+            cachedMetrics.map(x => x.modelId).filter(x => isDefined(x))
+          ),
+          ...v.fromReport.fields
+            .filter(x => isDefined(x.storeModel))
+            .map(x => x.storeModel)
+        ];
 
-          return Result.succeed({
+        let resolveReportDependenciesPayload: ResolveReportDependenciesPayload =
+          {
             metricIds: metricIds,
             cachedMetrics: cachedMetrics,
             modelIds: modelIds
-          });
-        }
-      ),
-      Result.bind(
-        'cachedModels',
-        async (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          v.resolveReportDependenciesPayload.modelIds.length === 0
-            ? Result.succeed([])
-            : this.db.models.findMany({
-                where: and(
-                  eq(modelsTable.structId, v.bridge.structId),
-                  inArray(
-                    modelsTable.modelId,
-                    v.resolveReportDependenciesPayload.modelIds
-                  )
+          };
+
+        return Result.succeed(resolveReportDependenciesPayload);
+      }),
+      Result.bind('cachedModels', async v =>
+        v.resolveReportDependenciesPayload.modelIds.length === 0
+          ? Result.succeed<ModelTab[]>([])
+          : this.db.models.findMany({
+              where: and(
+                eq(modelsTable.structId, v.bridge.structId),
+                inArray(
+                  modelsTable.modelId,
+                  v.resolveReportDependenciesPayload.modelIds
                 )
-              })
+              )
+            })
       ),
-      Result.bind(
-        'prepareReportFilePayload',
-        async (
-          v
-        ): Result.ResultAsync<
-          PrepareReportFilePayload,
-          BackendMemberIsNotEditorOrAdminError
-        > => {
-          let repFileText: string = makeReportFileText({
-            reportId: v.modReportId,
-            title: v.title,
-            rows: v.fromReport.rows,
-            accessRoles: v.accessRoles,
-            metrics: v.currentStruct.metrics,
-            models: v.cachedModels,
-            struct: v.currentStruct,
-            newReportFields: v.newReportFields ?? v.fromReport.fields,
-            chart: v.chart ?? v.fromReport.chart,
-            caseSensitiveStringFilters:
-              v.currentStruct.mproveConfig.caseSensitiveStringFilters,
-            timezone: UTC
+      Result.bind('prepareReportFilePayload', async v => {
+        let repFileText: string = makeReportFileText({
+          reportId: v.modReportId,
+          title: v.title,
+          rows: v.fromReport.rows,
+          accessRoles: v.accessRoles,
+          metrics: v.currentStruct.metrics,
+          models: v.cachedModels,
+          struct: v.currentStruct,
+          newReportFields: v.newReportFields ?? v.fromReport.fields,
+          chart: v.chart ?? v.fromReport.chart,
+          caseSensitiveStringFilters:
+            v.currentStruct.mproveConfig.caseSensitiveStringFilters,
+          timezone: UTC
+        });
+
+        let baseProject: BaseProject = this.tabService.projectTabToBaseProject({
+          project: v.project
+        });
+
+        let currentReportSpace: string = getReportSpaceFromFilePath({
+          filePath: v.existingModReport.filePath,
+          spaces: v.currentStruct.spaces
+        });
+
+        let prepareReportFilePayload: PrepareReportFilePayload = {
+          repFileText: repFileText,
+          baseProject: baseProject,
+          currentReportSpace: currentReportSpace
+        };
+
+        if (
+          prepareReportFilePayload.currentReportSpace !== v.space &&
+          v.userMember.isAdmin === false &&
+          v.userMember.isEditor === false
+        ) {
+          return Result.fail({
+            code: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
+          });
+        }
+
+        return Result.succeed(prepareReportFilePayload);
+      }),
+      Result.bind('prepareReportFileMovePayload', async v => {
+        let reportFileName: string = `${v.modReportId}${'.report' satisfies FileExtension}`;
+
+        let isSpaceChanged: boolean =
+          v.prepareReportFilePayload.currentReportSpace !== v.space;
+
+        let targetReportFilePath: string = v.existingModReport.filePath;
+
+        if (isSpaceChanged) {
+          let targetParentNodeId: string = getTargetParentNodeId({
+            projectId: v.projectId,
+            mproveDirValue: v.currentStruct.mproveConfig.mproveDirValue,
+            userAlias: v.user.alias,
+            space: v.space,
+            spaces: v.currentStruct.spaces,
+            targetFolder: 'reports'
           });
 
-          let baseProject: BaseProject =
-            this.tabService.projectTabToBaseProject({
-              project: v.project
-            });
-
-          let currentReportSpace: string = getReportSpaceFromFilePath({
-            filePath: v.existingModReport.filePath,
-            spaces: v.currentStruct.spaces
-          });
-
-          let prepareReportFilePayload: PrepareReportFilePayload = {
-            repFileText: repFileText,
-            baseProject: baseProject,
-            currentReportSpace: currentReportSpace
-          };
-
-          if (
-            prepareReportFilePayload.currentReportSpace !== v.space &&
-            v.userMember.isAdmin === false &&
-            v.userMember.isEditor === false
-          ) {
-            return Result.fail({
-              code: 'BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN'
-            });
-          }
-
-          return Result.succeed(prepareReportFilePayload);
+          targetReportFilePath = `${targetParentNodeId}/${reportFileName}`;
         }
-      ),
-      Result.bind(
-        'prepareReportFileMovePayload',
-        async (
-          v
-        ): Result.ResultAsync<
-          PrepareReportFileMovePayload,
-          SendToDiskError
-        > => {
-          let reportFileName: string = `${v.modReportId}${'.report' satisfies FileExtension}`;
 
-          let isSpaceChanged: boolean =
-            v.prepareReportFilePayload.currentReportSpace !== v.space;
+        let isReportPathChanged: boolean =
+          v.existingModReport.filePath !== targetReportFilePath;
 
-          let targetReportFilePath: string = v.existingModReport.filePath;
+        let isMoveReportRequired: boolean =
+          isSpaceChanged && isReportPathChanged;
 
-          if (isSpaceChanged) {
-            let targetParentNodeId: string = getTargetParentNodeId({
-              projectId: v.projectId,
-              mproveDirValue: v.currentStruct.mproveConfig.mproveDirValue,
-              userAlias: v.user.alias,
-              space: v.space,
-              spaces: v.currentStruct.spaces,
-              targetFolder: 'reports'
-            });
+        let finalReportFilePath: string = isMoveReportRequired
+          ? targetReportFilePath
+          : v.existingModReport.filePath;
 
-            targetReportFilePath = `${targetParentNodeId}/${reportFileName}`;
-          }
+        let prepareReportFileMovePayload: PrepareReportFileMovePayload = {
+          reportFileName: reportFileName,
+          isSpaceChanged: isSpaceChanged,
+          targetReportFilePath: targetReportFilePath,
+          isReportPathChanged: isReportPathChanged,
+          isMoveReportRequired: isMoveReportRequired,
+          finalReportFilePath: finalReportFilePath
+        };
 
-          let isReportPathChanged: boolean =
-            v.existingModReport.filePath !== targetReportFilePath;
-
-          let isMoveReportRequired: boolean =
-            isSpaceChanged && isReportPathChanged;
-
-          let finalReportFilePath: string = isMoveReportRequired
-            ? targetReportFilePath
-            : v.existingModReport.filePath;
-
-          let prepareReportFileMovePayload: PrepareReportFileMovePayload = {
-            reportFileName: reportFileName,
-            isSpaceChanged: isSpaceChanged,
-            targetReportFilePath: targetReportFilePath,
-            isReportPathChanged: isReportPathChanged,
-            isMoveReportRequired: isMoveReportRequired,
-            finalReportFilePath: finalReportFilePath
-          };
-
-          if (prepareReportFileMovePayload.isMoveReportRequired) {
-            let toDiskMoveCatalogNodeOutput: Result.Result<
-              ToDiskMoveCatalogNodeOutput,
-              SendToDiskError
-            > = await this.rpcService.sendToDisk({
-              request: {
-                operation: 'moveCatalogNode',
-                traceId: body.traceId,
-                input: {
-                  baseProject: v.prepareReportFilePayload.baseProject,
-                  repoId: v.repoId,
-                  branch: v.branchId,
-                  fromNodeId: v.existingModReport.filePath,
-                  toNodeId: prepareReportFileMovePayload.targetReportFilePath
-                }
-              }
-            });
-
-            if (Result.isFailure(toDiskMoveCatalogNodeOutput)) {
-              return toDiskMoveCatalogNodeOutput;
-            }
-          }
-
-          return Result.succeed(prepareReportFileMovePayload);
-        }
-      ),
-      Result.bind(
-        'diskSaveFileOutput',
-        (v): Result.ResultAsync<ToDiskSaveFileOutput, SendToDiskError> =>
-          this.rpcService.sendToDisk({
+        if (prepareReportFileMovePayload.isMoveReportRequired) {
+          let toDiskMoveCatalogNodeOutput: Result.Result<
+            ToDiskMoveCatalogNodeOutput,
+            SendToDiskError
+          > = await this.rpcService.sendToDisk({
             request: {
-              operation: 'saveFile',
+              operation: 'moveCatalogNode',
               traceId: body.traceId,
               input: {
                 baseProject: v.prepareReportFilePayload.baseProject,
                 repoId: v.repoId,
                 branch: v.branchId,
-                fileNodeId: v.prepareReportFileMovePayload.finalReportFilePath,
-                userAlias: v.user.alias,
-                content: v.prepareReportFilePayload.repFileText
+                fromNodeId: v.existingModReport.filePath,
+                toNodeId: prepareReportFileMovePayload.targetReportFilePath
               }
             }
-          })
-      ),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> =>
-          this.bridgesService.getBranchBridgesForRebuild({
-            projectId: v.branch.projectId,
-            repoId: v.branch.repoId,
-            branchId: v.branch.branchId,
-            envId: v.envId
-          })
-      ),
-      Result.bind(
-        'prepareRebuildPayload',
-        (v): Result.Result<PrepareRebuildPayload, never> => {
-          let diskFiles: DiskCatalogFile[] = v.diskSaveFileOutput.files.filter(
-            file =>
-              file.fileNodeId ===
-              v.prepareReportFileMovePayload.finalReportFilePath
-          );
+          });
 
-          let selectedSpaceFilePath: string = v.currentStruct.spaces.find(
-            x => x.space === v.space
-          )?.filePath;
+          if (Result.isFailure(toDiskMoveCatalogNodeOutput)) {
+            return toDiskMoveCatalogNodeOutput;
+          }
+        }
 
-          if (isDefined(selectedSpaceFilePath)) {
-            let spaceDiskFile: DiskCatalogFile =
-              v.diskSaveFileOutput.files.find(
-                file => file.fileNodeId === selectedSpaceFilePath
-              );
-
-            if (isDefined(spaceDiskFile)) {
-              diskFiles.push(spaceDiskFile);
+        return Result.succeed(prepareReportFileMovePayload);
+      }),
+      Result.bind('diskSaveFileOutput', v =>
+        this.rpcService.sendToDisk({
+          request: {
+            operation: 'saveFile',
+            traceId: body.traceId,
+            input: {
+              baseProject: v.prepareReportFilePayload.baseProject,
+              repoId: v.repoId,
+              branch: v.branchId,
+              fileNodeId: v.prepareReportFileMovePayload.finalReportFilePath,
+              userAlias: v.user.alias,
+              content: v.prepareReportFilePayload.repFileText
             }
           }
-
-          return Result.succeed({
-            diskFiles: diskFiles,
-            selectedSpaceFilePath: selectedSpaceFilePath
-          });
-        }
+        })
       ),
-      Result.bind(
-        'rebuild',
-        async (
-          v
-        ): Result.ResultAsync<
+      Result.bind('branchBridges', v =>
+        this.bridgesService.getBranchBridgesForRebuild({
+          projectId: v.branch.projectId,
+          repoId: v.branch.repoId,
+          branchId: v.branch.branchId,
+          envId: v.envId
+        })
+      ),
+      Result.bind('prepareRebuildPayload', v => {
+        let diskFiles: DiskCatalogFile[] = v.diskSaveFileOutput.files.filter(
+          file =>
+            file.fileNodeId ===
+            v.prepareReportFileMovePayload.finalReportFilePath
+        );
+
+        let selectedSpaceFilePath: string = v.currentStruct.spaces.find(
+          x => x.space === v.space
+        )?.filePath;
+
+        if (isDefined(selectedSpaceFilePath)) {
+          let spaceDiskFile: DiskCatalogFile = v.diskSaveFileOutput.files.find(
+            file => file.fileNodeId === selectedSpaceFilePath
+          );
+
+          if (isDefined(spaceDiskFile)) {
+            diskFiles.push(spaceDiskFile);
+          }
+        }
+
+        let prepareRebuildPayload: PrepareRebuildPayload = {
+          diskFiles: diskFiles,
+          selectedSpaceFilePath: selectedSpaceFilePath
+        };
+
+        return Result.succeed(prepareRebuildPayload);
+      }),
+      Result.bind('rebuild', async v => {
+        let rebuildStructOutput: Result.Result<
           RebuildStructOutput,
-          RebuildStructError | DbErrorToError
-        > => {
-          let rebuildStructOutput: Result.Result<
-            RebuildStructOutput,
-            RebuildStructError
-          > = await this.blockmlService.rebuildStruct({
-            traceId: v.traceId,
-            orgId: v.project.orgId,
-            projectId: v.projectId,
-            repoId: v.repoId,
-            structId: v.bridge.structId,
-            diskFiles: v.prepareRebuildPayload.diskFiles,
-            mproveDir: v.currentStruct.mproveConfig.mproveDirValue,
-            skipDb: true,
-            envId: v.envId,
-            selectedGivens: [],
-            overrideTimezone: undefined,
-            isUseCache: true,
-            cachedMproveConfig: v.currentStruct.mproveConfig,
-            cachedModels: v.cachedModels,
-            cachedMetrics: v.resolveReportDependenciesPayload.cachedMetrics
+          RebuildStructError
+        > = await this.blockmlService.rebuildStruct({
+          traceId: v.traceId,
+          orgId: v.project.orgId,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          structId: v.bridge.structId,
+          diskFiles: v.prepareRebuildPayload.diskFiles,
+          mproveDir: v.currentStruct.mproveConfig.mproveDirValue,
+          skipDb: true,
+          envId: v.envId,
+          selectedGivens: [],
+          overrideTimezone: undefined,
+          isUseCache: true,
+          cachedMproveConfig: v.currentStruct.mproveConfig,
+          cachedModels: v.cachedModels,
+          cachedMetrics: v.resolveReportDependenciesPayload.cachedMetrics
+        });
+
+        if (Result.isFailure(rebuildStructOutput)) {
+          return rebuildStructOutput;
+        }
+
+        let rebuild: RebuildStructOutput = rebuildStructOutput.value;
+
+        v.currentStruct.errors = [
+          ...v.currentStruct.errors,
+          ...rebuild.struct.errors
+        ];
+
+        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+          await this.db.write({
+            insertOrUpdate: {
+              structs: [v.currentStruct],
+              bridges: [...v.branchBridges]
+            }
           });
 
-          if (Result.isFailure(rebuildStructOutput)) {
-            return rebuildStructOutput;
-          }
-
-          let rebuild: RebuildStructOutput = rebuildStructOutput.value;
-
-          v.currentStruct.errors = [
-            ...v.currentStruct.errors,
-            ...rebuild.struct.errors
-          ];
-
-          let persistenceResult: Result.Result<PackerOutput, WriteError> =
-            await this.db.write({
-              insertOrUpdate: {
-                structs: [v.currentStruct],
-                bridges: [...v.branchBridges]
-              }
-            });
-
-          if (Result.isFailure(persistenceResult)) {
-            return persistenceResult;
-          }
-
-          return Result.succeed(rebuild);
+        if (Result.isFailure(persistenceResult)) {
+          return persistenceResult;
         }
-      ),
-      Result.bind(
-        'apiReport',
-        async (v): Result.ResultAsync<Report, BackendModifyReportFailError> => {
-          let apiReportResult: Result.Result<Report, never> = Result.succeed(
-            v.rebuild.reports.find(x => x.reportId === v.modReportId)
+
+        return Result.succeed(rebuild);
+      }),
+      Result.bind('apiReport', async v => {
+        let apiReportResult: Result.Result<Report, never> = Result.succeed(
+          v.rebuild.reports.find(x => x.reportId === v.modReportId)
+        );
+
+        if (Result.isFailure(apiReportResult)) {
+          return apiReportResult;
+        }
+
+        let apiReport: Report = apiReportResult.value;
+
+        if (isUndefined(apiReport)) {
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(async tx => {
+                await tx
+                  .delete(reportsTable)
+                  .where(
+                    and(
+                      eq(reportsTable.reportId, v.modReportId),
+                      eq(reportsTable.structId, v.bridge.structId)
+                    )
+                  );
+              }),
+            getRetryOption(this.cs, this.logger)
           );
 
-          if (Result.isFailure(apiReportResult)) {
-            return apiReportResult;
-          }
+          let fileIdAr: string[] =
+            v.prepareReportFileMovePayload.finalReportFilePath.split('/');
 
-          let apiReport: Report = apiReportResult.value;
+          fileIdAr.shift();
 
-          if (isUndefined(apiReport)) {
-            await retry(
-              async () =>
-                await this.db.drizzle.transaction(async tx => {
-                  await tx
-                    .delete(reportsTable)
-                    .where(
-                      and(
-                        eq(reportsTable.reportId, v.modReportId),
-                        eq(reportsTable.structId, v.bridge.structId)
-                      )
-                    );
-                }),
-              getRetryOption(this.cs, this.logger)
-            );
+          let filePath: string = fileIdAr.join('/');
 
-            let fileIdAr: string[] =
-              v.prepareReportFileMovePayload.finalReportFilePath.split('/');
-
-            fileIdAr.shift();
-
-            let filePath: string = fileIdAr.join('/');
-
-            return Result.fail({
-              code: 'BACKEND_MODIFY_REPORT_FAIL',
-              displayData: {
-                encodedFileId: encodeFilePath({ filePath: filePath }),
-                structErrors: v.rebuild.struct.errors
-              }
-            });
-          }
-
-          return Result.succeed(apiReport);
+          return Result.fail({
+            code: 'BACKEND_MODIFY_REPORT_FAIL',
+            displayData: {
+              encodedFileId: encodeFilePath({ filePath: filePath }),
+              structErrors: v.rebuild.struct.errors
+            }
+          });
         }
-      ),
-      Result.bind(
-        'saveReportPayload',
-        async (v): Result.ResultAsync<SaveReportPayload, DbErrorToError> => {
-          v.apiReport.rows = v.fromReport.rows;
 
-          let report: ReportTab = this.reportsService.apiToTab({
-            apiReport: v.apiReport
+        return Result.succeed(apiReport);
+      }),
+      Result.bind('saveReportPayload', async v => {
+        v.apiReport.rows = v.fromReport.rows;
+
+        let report: ReportTab = this.reportsService.apiToTab({
+          apiReport: v.apiReport
+        });
+
+        let saveReportPayload: SaveReportPayload = { report: report };
+
+        let persistenceResult: Result.Result<void, DbErrorToError> =
+          await dbErrorToResult({
+            action: async () => {
+              await retry(
+                async () =>
+                  await this.db.drizzle.transaction(async tx => {
+                    await tx
+                      .delete(reportsTable)
+                      .where(
+                        and(
+                          eq(reportsTable.draft, true),
+                          eq(reportsTable.projectId, v.projectId),
+                          eq(reportsTable.reportId, v.fromReportId),
+                          eq(reportsTable.creatorId, v.user.userId)
+                        )
+                      );
+
+                    await this.db.packer.writeUnwrap({
+                      tx: tx,
+                      insertOrUpdate: {
+                        reports: [saveReportPayload.report]
+                      }
+                    });
+                  }),
+                getRetryOption(this.cs, this.logger)
+              );
+            }
           });
 
-          let saveReportPayload: SaveReportPayload = { report: report };
-
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () =>
-                    await this.db.drizzle.transaction(async tx => {
-                      await tx
-                        .delete(reportsTable)
-                        .where(
-                          and(
-                            eq(reportsTable.draft, true),
-                            eq(reportsTable.projectId, v.projectId),
-                            eq(reportsTable.reportId, v.fromReportId),
-                            eq(reportsTable.creatorId, v.user.userId)
-                          )
-                        );
-
-                      await this.db.packer.writeUnwrap({
-                        tx: tx,
-                        insertOrUpdate: {
-                          reports: [saveReportPayload.report]
-                        }
-                      });
-                    }),
-                  getRetryOption(this.cs, this.logger)
-                );
-              }
-            });
-
-          if (Result.isFailure(persistenceResult)) {
-            return persistenceResult;
-          }
-
-          return Result.succeed(saveReportPayload);
+        if (Result.isFailure(persistenceResult)) {
+          return persistenceResult;
         }
+
+        return Result.succeed(saveReportPayload);
+      }),
+      Result.bind('apiUserMember', v =>
+        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
-      Result.bind(
-        'apiUserMember',
-        (v): Result.Result<Member, never> =>
-          Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+      Result.bind('apiFinalReport', v =>
+        this.reportDataService.getReportData({
+          report: v.saveReportPayload.report,
+          traceId: v.traceId,
+          project: v.project,
+          apiUserMember: v.apiUserMember,
+          userMember: v.userMember,
+          user: v.user,
+          envId: v.envId,
+          struct: v.rebuild.struct,
+          metrics: v.rebuild.struct.metrics,
+          timeSpec: v.timeSpec,
+          timeRangeFractionBrick: v.timeRangeFractionBrick,
+          timezone: v.timezone
+        })
       ),
-      Result.bind(
-        'apiFinalReport',
-        (v): Result.ResultAsync<ReportX, GetReportDataError> =>
-          this.reportDataService.getReportData({
-            report: v.saveReportPayload.report,
-            traceId: v.traceId,
-            project: v.project,
-            apiUserMember: v.apiUserMember,
-            userMember: v.userMember,
-            user: v.user,
-            envId: v.envId,
-            struct: v.rebuild.struct,
-            metrics: v.rebuild.struct.metrics,
-            timeSpec: v.timeSpec,
-            timeRangeFractionBrick: v.timeRangeFractionBrick,
-            timezone: v.timezone
-          })
+      Result.bind('modelPartXs', v =>
+        this.modelsService.getModelPartXs({
+          structId: v.currentStruct.structId,
+          apiUserMember: v.apiUserMember
+        })
       ),
-      Result.bind(
-        'modelPartXs',
-        (v): Result.ResultAsync<ModelPartX[], GetModelPartXsError> =>
-          this.modelsService.getModelPartXs({
-            structId: v.currentStruct.structId,
-            apiUserMember: v.apiUserMember
-          })
-      ),
-      Result.bind(
-        'reportsCatalog',
-        (v): Result.ResultAsync<ReportsCatalog, GetReportsCatalogError> =>
-          this.reportsService.getReportsCatalog({
-            projectId: v.projectId,
-            structId: v.bridge.structId,
-            user: v.user,
-            userMember: v.userMember,
-            apiUserMember: v.apiUserMember,
-            spaces: v.currentStruct.spaces
-          })
+      Result.bind('reportsCatalog', v =>
+        this.reportsService.getReportsCatalog({
+          projectId: v.projectId,
+          structId: v.bridge.structId,
+          user: v.user,
+          userMember: v.userMember,
+          apiUserMember: v.apiUserMember,
+          spaces: v.currentStruct.spaces
+        })
       ),
       Result.map(
         (v): ToBackendSaveModifyReportOutput => ({

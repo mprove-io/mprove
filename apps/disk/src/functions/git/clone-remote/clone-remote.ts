@@ -1,8 +1,6 @@
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import type { ProjectRemoteType } from '#common/types/backend/parts/project/project-remote-type';
-
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
@@ -35,20 +33,18 @@ export async function cloneRemote(item: {
               : `${item.orgPath}/${item.orgId}/${item.projectId}/${CENTRAL_REPO_ID}`,
           dirDev: `${item.orgPath}/${item.orgId}/${item.projectId}/${item.repoId}`
         }),
-        Result.bind(
-          'git',
-          (v): Result.ResultAsync<SimpleGit, never> =>
-            createGit({
-              repoDir: undefined,
-              remoteType: v.remoteType,
-              keyDir: v.keyDir,
-              gitUrl: v.gitUrl,
-              privateKeyEncrypted: v.privateKeyEncrypted,
-              publicKey: v.publicKey,
-              passPhrase: v.passPhrase
-            })
+        Result.bind('git', v =>
+          createGit({
+            repoDir: undefined,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.gitUrl,
+            privateKeyEncrypted: v.privateKeyEncrypted,
+            publicKey: v.publicKey,
+            passPhrase: v.passPhrase
+          })
         ),
-        Result.andThen(async (v): Result.ResultAsync<void, never> => {
+        Result.andThen(async v => {
           await v.git.clone(v.remoteUrl, v.dirDev);
 
           return Result.succeed();

@@ -7,7 +7,6 @@ import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import type { AuthenticateLocalError } from '#common/types/backend/function-errors/authenticate-local-error';
-import type { GetUserByEmailCheckExistsError } from '#common/types/backend/function-errors/get-user-by-email-check-exists-error';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -43,27 +42,20 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }): Result.ResultAsync<UserTab, AuthenticateLocalError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'user',
-        (v): Result.ResultAsync<UserTab, GetUserByEmailCheckExistsError> =>
-          this.usersService.getUserByEmailCheckExists({ email: v.email })
+      Result.bind('user', v =>
+        this.usersService.getUserByEmailCheckExists({ email: v.email })
       ),
       Result.andThrough(v =>
         this.usersService.checkUserPasswordHashIsDefined({ user: v.user })
       ),
-      Result.bind(
-        'passwordHash',
-        async (v): Result.ResultAsync<string, never> => {
-          let passwordHash: string = await this.hashService.createHashUsingSalt(
-            {
-              salt: v.user.passwordSalt,
-              input: v.password
-            }
-          );
+      Result.bind('passwordHash', async v => {
+        let passwordHash: string = await this.hashService.createHashUsingSalt({
+          salt: v.user.passwordSalt,
+          input: v.password
+        });
 
-          return Result.succeed(passwordHash);
-        }
-      ),
+        return Result.succeed(passwordHash);
+      }),
       Result.andThrough(v =>
         v.passwordHash !== v.user.passwordHash
           ? Result.fail({ code: 'BACKEND_WRONG_PASSWORD' })

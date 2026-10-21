@@ -8,10 +8,7 @@ import {
   ToBackendCreateLlmModelResponseDto
 } from '#backend/controllers/llm-models/create-llm-model/create-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type {
-  ProviderTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -24,9 +21,6 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
-import type { DbProvidersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/providers/db-providers-find-first-check-exists-error';
-import type { RefreshModelError } from '#common/types/backend/function-errors/refresh-model-error';
-import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateLlmModelOutput } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-output';
 
@@ -79,20 +73,13 @@ export class CreateLlmModelController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'provider',
-        (
-          v
-        ): Result.ResultAsync<
-          ProviderTab,
-          DbProvidersFindFirstCheckExistsError
-        > =>
-          this.db.providers.findFirstCheckExists({
-            where: and(
-              eq(providersTable.projectId, v.projectId),
-              eq(providersTable.providerId, v.providerId)
-            )
-          })
+      Result.bind('provider', v =>
+        this.db.providers.findFirstCheckExists({
+          where: and(
+            eq(providersTable.projectId, v.projectId),
+            eq(providersTable.providerId, v.providerId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.providersService.checkLlmModelDoesNotExist({
@@ -100,32 +87,29 @@ export class CreateLlmModelController {
           modelId: v.modelId
         })
       ),
-      Result.bind(
-        'model',
-        (v): Result.ResultAsync<LlmModel, RefreshModelError> =>
-          this.llmModelService.refreshModel({
-            providerType: v.provider.type,
-            apiKey:
-              v.provider.type === 'OpenAICodex'
-                ? undefined
-                : v.provider.options.apiKey,
-            userId: v.userId,
-            isCodexAuthSet: v.isCodexAuthSet,
-            variants: v.variants,
-            modelInput: {
-              modelId: v.modelId,
-              name: isUndefinedOrEmpty(v.name)
-                ? capitalizeFirstLetter(v.modelId)
-                : v.name,
-              isManual:
-                v.provider.type === 'OpenAICodex' && v.isManual === true,
-              contextLimit: v.contextLimit,
-              inputLimit: v.inputLimit,
-              outputLimit: v.outputLimit,
-              isExplorer: v.isExplorer,
-              isBuilder: v.isBuilder
-            }
-          })
+      Result.bind('model', v =>
+        this.llmModelService.refreshModel({
+          providerType: v.provider.type,
+          apiKey:
+            v.provider.type === 'OpenAICodex'
+              ? undefined
+              : v.provider.options.apiKey,
+          userId: v.userId,
+          isCodexAuthSet: v.isCodexAuthSet,
+          variants: v.variants,
+          modelInput: {
+            modelId: v.modelId,
+            name: isUndefinedOrEmpty(v.name)
+              ? capitalizeFirstLetter(v.modelId)
+              : v.name,
+            isManual: v.provider.type === 'OpenAICodex' && v.isManual === true,
+            contextLimit: v.contextLimit,
+            inputLimit: v.inputLimit,
+            outputLimit: v.outputLimit,
+            isExplorer: v.isExplorer,
+            isBuilder: v.isBuilder
+          }
+        })
       ),
       Result.andThrough(v =>
         v.isBuilder === true && v.model.isOpencodeSupported === false

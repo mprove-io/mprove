@@ -22,7 +22,6 @@ import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendLlmModelNotDiscoveredError } from '#common/types/backend/errors/backend-llm-model-not-discovered-error';
 import type { GetAnthropicModelPartsError } from '#common/types/backend/function-errors/get-anthropic-model-parts-error';
 import type { GetDiscoveredLlmModelPartError } from '#common/types/backend/function-errors/get-discovered-llm-model-part-error';
 import type { GetModelPartsError } from '#common/types/backend/function-errors/get-model-parts-error';
@@ -193,28 +192,24 @@ export class LlmModelService {
   }): Result.ResultAsync<LlmModelPart, GetDiscoveredLlmModelPartError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'discovery',
-        (v): Result.ResultAsync<LlmModelPartsResult, GetModelPartsError> =>
-          this.getModelParts({
-            providerType: v.providerType,
-            apiKey: v.apiKey,
-            userId: v.userId,
-            isCodexAuthSet: v.isCodexAuthSet,
-            isForceRefresh: v.isForceRefresh
-          })
+      Result.bind('discovery', v =>
+        this.getModelParts({
+          providerType: v.providerType,
+          apiKey: v.apiKey,
+          userId: v.userId,
+          isCodexAuthSet: v.isCodexAuthSet,
+          isForceRefresh: v.isForceRefresh
+        })
       ),
-      Result.andThen(
-        (v): Result.Result<LlmModelPart, BackendLlmModelNotDiscoveredError> => {
-          let modelPart: LlmModelPart = v.discovery.modelParts.find(
-            modelPart => modelPart.modelId === v.modelId
-          );
+      Result.andThen(v => {
+        let modelPart: LlmModelPart = v.discovery.modelParts.find(
+          modelPart => modelPart.modelId === v.modelId
+        );
 
-          return isUndefined(modelPart)
-            ? Result.fail({ code: 'BACKEND_LLM_MODEL_NOT_DISCOVERED' })
-            : Result.succeed(modelPart);
-        }
-      )
+        return isUndefined(modelPart)
+          ? Result.fail({ code: 'BACKEND_LLM_MODEL_NOT_DISCOVERED' })
+          : Result.succeed(modelPart);
+      })
     );
   }
 
@@ -465,12 +460,7 @@ export class LlmModelService {
     if (providerType === 'Anthropic') {
       return Result.pipe(
         Result.succeed({ apiKey: apiKey as string }),
-        Result.andThen(
-          (
-            v
-          ): Result.ResultAsync<LlmModelPart[], GetAnthropicModelPartsError> =>
-            this.getAnthropicModelParts({ apiKey: v.apiKey })
-        ),
+        Result.andThen(v => this.getAnthropicModelParts({ apiKey: v.apiKey })),
         Result.map(
           (v): LlmModelPartsResult => ({
             modelParts: v

@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import type { DiskCheckoutBranchError } from '#common/types/disk/function-errors/disk-checkout-branch-error';
 import type { DiskGetIsFetchedAfterCheckoutRequestedBranchError } from '#common/types/disk/function-errors/disk-get-is-fetched-after-checkout-requested-branch-error';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
@@ -31,17 +30,16 @@ export async function getIsFetchedAfterCheckoutRequestedBranch(item: {
         ? Result.fail({ code: 'DISK_BRANCH_IS_NOT_EXIST' })
         : Result.succeed();
     }),
-    Result.andThrough(
-      (v): Result.ResultAsync<void, DiskCheckoutBranchError> =>
-        checkoutBranch({
-          projectId: v.projectId,
-          projectDir: v.projectDir,
-          repoId: v.repoId,
-          repoDir: v.repoDir,
-          branchName: v.branch,
-          git: v.git,
-          isFetch: v.isFetch
-        })
+    Result.andThrough(v =>
+      checkoutBranch({
+        projectId: v.projectId,
+        projectDir: v.projectDir,
+        repoId: v.repoId,
+        repoDir: v.repoDir,
+        branchName: v.branch,
+        git: v.git,
+        isFetch: v.isFetch
+      })
     ),
     Result.map((v): boolean => v.isFetch)
   );

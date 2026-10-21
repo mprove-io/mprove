@@ -18,14 +18,9 @@ import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BackendConnectionDoesNotExistError } from '#common/types/backend/errors/backend-connection-does-not-exist-error';
-import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetConnectionSampleError } from '#common/types/backend/function-errors/get-connection-sample-error';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
-import type { RawSchemaTable } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-table';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
 @Injectable()
@@ -75,49 +70,38 @@ export class GetConnectionSampleService {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
-      Result.bind(
-        'apiEnv',
-        (v): Result.Result<Env, never> =>
-          Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
+      Result.bind('apiEnv', v =>
+        Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
       ),
-      Result.bind(
-        'connections',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: and(
-              eq(connectionsTable.projectId, v.projectId),
-              or(
-                eq(connectionsTable.envId, v.envId),
-                and(
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  inArray(
-                    connectionsTable.connectionId,
-                    v.apiEnv.fallbackConnectionIds
-                  )
+      Result.bind('connections', v =>
+        this.db.connections.findMany({
+          where: and(
+            eq(connectionsTable.projectId, v.projectId),
+            or(
+              eq(connectionsTable.envId, v.envId),
+              and(
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                inArray(
+                  connectionsTable.connectionId,
+                  v.apiEnv.fallbackConnectionIds
                 )
               )
             )
-          })
+          )
+        })
       ),
-      Result.bind(
-        'connection',
-        (
-          v
-        ): Result.Result<ConnectionTab, BackendConnectionDoesNotExistError> => {
-          let connection: ConnectionTab = v.connections.find(
-            connection => connection.connectionId === v.connectionId
-          );
+      Result.bind('connection', v => {
+        let connection: ConnectionTab = v.connections.find(
+          connection => connection.connectionId === v.connectionId
+        );
 
-          return isUndefined(connection)
-            ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
-            : Result.succeed(connection);
-        }
-      ),
+        return isUndefined(connection)
+          ? Result.fail({ code: 'BACKEND_CONNECTION_DOES_NOT_EXIST' })
+          : Result.succeed(connection);
+      }),
       Result.andThrough(v =>
         (
           [
@@ -141,16 +125,14 @@ export class GetConnectionSampleService {
           ? Result.fail({ code: 'BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND' })
           : Result.succeed()
       ),
-      Result.bind(
-        'schemaTable',
-        (v): Result.Result<RawSchemaTable, never> =>
-          Result.succeed(
-            v.connection.rawSchema.tables.find(
-              table =>
-                table.schemaName === v.schemaName &&
-                table.tableName === v.tableName
-            )
+      Result.bind('schemaTable', v =>
+        Result.succeed(
+          v.connection.rawSchema.tables.find(
+            table =>
+              table.schemaName === v.schemaName &&
+              table.tableName === v.tableName
           )
+        )
       ),
       Result.andThrough(v =>
         v.connection.rawSchema.tables.findIndex(
@@ -173,80 +155,77 @@ export class GetConnectionSampleService {
             ? Result.fail({ code: 'BACKEND_WRONG_COLUMN_NAME' })
             : Result.succeed()
       ),
-      Result.bind(
-        'sampleResult',
-        async (v): Result.ResultAsync<FetchSampleResult, never> => {
-          let sampleResult: FetchSampleResult;
+      Result.bind('sampleResult', async v => {
+        let sampleResult: FetchSampleResult;
 
-          if (v.connection.type === 'PostgreSQL') {
-            sampleResult = await this.pgService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          } else if (v.connection.type === 'MySQL') {
-            sampleResult = await this.mysqlService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          } else if (v.connection.type === 'SnowFlake') {
-            sampleResult = await this.snowFlakeService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          } else if (v.connection.type === 'Databricks') {
-            sampleResult = await this.databricksService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          } else if (v.connection.type === 'BigQuery') {
-            sampleResult = await this.bigQueryService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          } else if (v.connection.type === 'MotherDuck') {
-            sampleResult = await this.duckDbService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          } else if (v.connection.type === 'Presto') {
-            sampleResult = await this.prestoService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          } else if (v.connection.type === 'Trino') {
-            sampleResult = await this.trinoService.fetchSample({
-              connection: v.connection,
-              schemaName: v.schemaName,
-              tableName: v.tableName,
-              columnName: v.columnName,
-              offset: v.offset
-            });
-          }
-
-          return Result.succeed(sampleResult);
+        if (v.connection.type === 'PostgreSQL') {
+          sampleResult = await this.pgService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
+        } else if (v.connection.type === 'MySQL') {
+          sampleResult = await this.mysqlService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
+        } else if (v.connection.type === 'SnowFlake') {
+          sampleResult = await this.snowFlakeService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
+        } else if (v.connection.type === 'Databricks') {
+          sampleResult = await this.databricksService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
+        } else if (v.connection.type === 'BigQuery') {
+          sampleResult = await this.bigQueryService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
+        } else if (v.connection.type === 'MotherDuck') {
+          sampleResult = await this.duckDbService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
+        } else if (v.connection.type === 'Presto') {
+          sampleResult = await this.prestoService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
+        } else if (v.connection.type === 'Trino') {
+          sampleResult = await this.trinoService.fetchSample({
+            connection: v.connection,
+            schemaName: v.schemaName,
+            tableName: v.tableName,
+            columnName: v.columnName,
+            offset: v.offset
+          });
         }
-      ),
+
+        return Result.succeed(sampleResult);
+      }),
       Result.map(
         (v): ToBackendGetConnectionSampleOutput => ({
           columnNames: v.sampleResult.columnNames,

@@ -65,6 +65,6 @@ export function writeOutput(item: {
         }
       })
     ),
-    Result.map((): void => {})
+    Result.map((v): void => {})
   );
 }

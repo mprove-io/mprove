@@ -1,15 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { DiskGetInitialCommitHashError } from '#common/types/disk/function-errors/disk-get-initial-commit-hash-error';
-import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
-import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
-import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
-import type { RepoStatus } from '#common/types/disk/parts/repo/repo-status';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
@@ -73,22 +66,16 @@ export class CreateDevRepoService {
         orgPath: orgPath,
         remoteType: remoteType
       }),
-      Result.bind(
-        'keyDir',
-        (v): Result.ResultAsync<string, never> =>
-          checkRestoreOrgProject({
-            remoteType: v.remoteType,
-            orgId: v.orgId,
-            orgPath: v.orgPath,
-            projectId: v.projectId,
-            projectLt: v.projectLt
-          })
+      Result.bind('keyDir', v =>
+        checkRestoreOrgProject({
+          remoteType: v.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          projectId: v.projectId,
+          projectLt: v.projectLt
+        })
       ),
-      Result.bind(
-        'isDevRepoExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.devRepoDir })
-      ),
+      Result.bind('isDevRepoExist', v => isPathExist({ path: v.devRepoDir })),
       Result.andThrough(v =>
         v.isDevRepoExist === false
           ? cloneRemoteToDev({
@@ -105,68 +92,53 @@ export class CreateDevRepoService {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'devGit',
-        (v): Result.ResultAsync<SimpleGit, never> =>
-          createGit({
-            repoDir: v.devRepoDir,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.gitUrl,
-            privateKeyEncrypted: v.privateKeyEncrypted,
-            publicKey: v.publicKey,
-            passPhrase: v.passPhrase
-          })
+      Result.bind('devGit', v =>
+        createGit({
+          repoDir: v.devRepoDir,
+          remoteType: v.remoteType,
+          keyDir: v.keyDir,
+          gitUrl: v.gitUrl,
+          privateKeyEncrypted: v.privateKeyEncrypted,
+          publicKey: v.publicKey,
+          passPhrase: v.passPhrase
+        })
       ),
-      Result.bind(
-        'initialCommitHash',
-        (
-          v
-        ): Result.ResultAsync<
-          string | undefined,
-          DiskGetInitialCommitHashError
-        > =>
-          getInitialCommitHash({
-            initialBranch: v.initialBranch,
-            sessionBranch: v.sessionBranch,
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            devRepoId: v.devRepoId,
-            devRepoDir: v.devRepoDir,
-            devGit: v.devGit
-          })
+      Result.bind('initialCommitHash', v =>
+        getInitialCommitHash({
+          initialBranch: v.initialBranch,
+          sessionBranch: v.sessionBranch,
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          devRepoId: v.devRepoId,
+          devRepoDir: v.devRepoDir,
+          devGit: v.devGit
+        })
       ),
-      Result.bind(
-        'devItemStatus',
-        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
-          getRepoStatus({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.devRepoId,
-            repoDir: v.devRepoDir,
-            git: v.devGit,
-            isFetch: false, // or !sessionBranch
-            isCheckConflicts: true
-          })
+      Result.bind('devItemStatus', v =>
+        getRepoStatus({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.devRepoId,
+          repoDir: v.devRepoDir,
+          git: v.devGit,
+          isFetch: false, // or !sessionBranch
+          isCheckConflicts: true
+        })
       ),
       // The session branch does not exist remotely, so use NeedPush without fetching.
-      Result.bind(
-        'repoStatus',
-        (v): Result.Result<RepoStatus, never> =>
-          Result.succeed(
-            isDefined(v.sessionBranch) ? 'NeedPush' : v.devItemStatus.repoStatus
-          )
+      Result.bind('repoStatus', v =>
+        Result.succeed(
+          isDefined(v.sessionBranch) ? 'NeedPush' : v.devItemStatus.repoStatus
+        )
       ),
-      Result.bind(
-        'itemCatalog',
-        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
-          getNodesAndFiles({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.devRepoId,
-            readFiles: true,
-            isRootMproveDir: false
-          })
+      Result.bind('itemCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.devRepoId,
+          readFiles: true,
+          isRootMproveDir: false
+        })
       ),
       Result.map(
         (v): ToDiskCreateDevRepoOutput => ({

@@ -13,7 +13,6 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
   MemberTab,
-  OrgTab,
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -30,9 +29,6 @@ import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { DbOrgsFindManyError } from '#common/types/backend/function-errors/db/orgs/db-orgs-find-many-error';
-import type { DbProjectsFindManyError } from '#common/types/backend/function-errors/db/projects/db-projects-find-many-error';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
@@ -68,12 +64,10 @@ export class DeleteUserController {
       Result.andThrough(v =>
         this.usersService.checkUserIsNotRestricted({ user: v.user })
       ),
-      Result.bind(
-        'ownerOrgs',
-        (v): Result.ResultAsync<OrgTab[], DbOrgsFindManyError> =>
-          this.db.orgs.findMany({
-            where: eq(orgsTable.ownerId, v.user.userId)
-          })
+      Result.bind('ownerOrgs', v =>
+        this.db.orgs.findMany({
+          where: eq(orgsTable.ownerId, v.user.userId)
+        })
       ),
       Result.andThrough(v =>
         v.ownerOrgs.length > 0
@@ -85,43 +79,35 @@ export class DeleteUserController {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'userAdminMembers',
-        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          this.db.members.findMany({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.isAdmin, true)
-            )
-          })
-      ),
-      Result.bind(
-        'userAdminProjectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.userAdminMembers.map(member => member.projectId))
-      ),
-      Result.bind(
-        'admins',
-        async (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          v.userAdminProjectIds.length === 0
-            ? Result.succeed([])
-            : this.db.members.findMany({
-                where: and(
-                  inArray(membersTable.projectId, v.userAdminProjectIds),
-                  eq(membersTable.isAdmin, true)
-                )
-              })
-      ),
-      Result.bind(
-        'erProjectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(
-            v.userAdminProjectIds.filter(
-              projectId =>
-                v.admins.filter(member => member.projectId === projectId)
-                  .length === 1
-            )
+      Result.bind('userAdminMembers', v =>
+        this.db.members.findMany({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.isAdmin, true)
           )
+        })
+      ),
+      Result.bind('userAdminProjectIds', v =>
+        Result.succeed(v.userAdminMembers.map(member => member.projectId))
+      ),
+      Result.bind('admins', async v =>
+        v.userAdminProjectIds.length === 0
+          ? Result.succeed([])
+          : this.db.members.findMany({
+              where: and(
+                inArray(membersTable.projectId, v.userAdminProjectIds),
+                eq(membersTable.isAdmin, true)
+              )
+            })
+      ),
+      Result.bind('erProjectIds', v =>
+        Result.succeed(
+          v.userAdminProjectIds.filter(
+            projectId =>
+              v.admins.filter(member => member.projectId === projectId)
+                .length === 1
+          )
+        )
       ),
       Result.andThrough(v =>
         v.erProjectIds.length > 0
@@ -131,26 +117,20 @@ export class DeleteUserController {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'userMembers',
-        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          this.db.members.findMany({
-            where: eq(membersTable.memberId, v.user.userId)
-          })
+      Result.bind('userMembers', v =>
+        this.db.members.findMany({
+          where: eq(membersTable.memberId, v.user.userId)
+        })
       ),
-      Result.bind(
-        'projectIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.userMembers.map(member => member.projectId))
+      Result.bind('projectIds', v =>
+        Result.succeed(v.userMembers.map(member => member.projectId))
       ),
-      Result.bind(
-        'projects',
-        async (v): Result.ResultAsync<ProjectTab[], DbProjectsFindManyError> =>
-          v.projectIds.length === 0
-            ? Result.succeed([])
-            : this.db.projects.findMany({
-                where: inArray(projectsTable.projectId, v.projectIds)
-              })
+      Result.bind('projects', async v =>
+        v.projectIds.length === 0
+          ? Result.succeed([])
+          : this.db.projects.findMany({
+              where: inArray(projectsTable.projectId, v.projectIds)
+            })
       ),
       Result.andThrough(v =>
         customAsyncPool({

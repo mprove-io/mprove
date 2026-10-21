@@ -347,21 +347,19 @@ export class ConnectionsService {
   }): Result.ResultAsync<void, CheckConnectionDoesNotExistError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.andThen(
-        (v): Result.ResultAsync<boolean, never> =>
-          this.db.connections.isExist({
-            where: and(
-              eq(connectionsTable.connectionId, v.connectionId),
-              eq(connectionsTable.envId, v.envId),
-              eq(connectionsTable.projectId, v.projectId)
-            )
-          })
+      Result.andThen(v =>
+        this.db.connections.isExist({
+          where: and(
+            eq(connectionsTable.connectionId, v.connectionId),
+            eq(connectionsTable.envId, v.envId),
+            eq(connectionsTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.andThen(
-        (v): Result.Result<void, CheckConnectionDoesNotExistError> =>
-          v
-            ? Result.fail({ code: 'BACKEND_CONNECTION_ALREADY_EXISTS' })
-            : Result.succeed()
+      Result.andThen(v =>
+        v
+          ? Result.fail({ code: 'BACKEND_CONNECTION_ALREADY_EXISTS' })
+          : Result.succeed()
       )
     );
   }

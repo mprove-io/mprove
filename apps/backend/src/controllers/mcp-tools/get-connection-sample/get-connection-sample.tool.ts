@@ -14,7 +14,6 @@ import {
   MCP_TOOL_GET_SAMPLE,
   MCP_TOOL_GET_SAMPLE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import type { GetConnectionSampleError } from '#common/types/backend/function-errors/get-connection-sample-error';
 import {
   type McpToolGetSampleInput,
   zMcpToolGetSampleInput
@@ -64,23 +63,17 @@ export class GetConnectionSampleTool {
             })
           : Result.succeed()
       ),
-      Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<
-          ToBackendGetConnectionSampleOutput,
-          GetConnectionSampleError
-        > =>
-          this.getConnectionSampleService.getConnectionSample({
-            projectId: v.projectId,
-            envId: v.envId,
-            connectionId: v.connectionId,
-            schemaName: v.schemaName,
-            tableName: v.tableName,
-            columnName: v.columnName,
-            offset: v.offset,
-            userId: v.user.userId
-          })
+      Result.andThen(v =>
+        this.getConnectionSampleService.getConnectionSample({
+          projectId: v.projectId,
+          envId: v.envId,
+          connectionId: v.connectionId,
+          schemaName: v.schemaName,
+          tableName: v.tableName,
+          columnName: v.columnName,
+          offset: v.offset,
+          userId: v.user.userId
+        })
       )
     );
 

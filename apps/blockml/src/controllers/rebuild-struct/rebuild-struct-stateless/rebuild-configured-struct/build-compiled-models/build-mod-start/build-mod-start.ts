@@ -29,65 +29,56 @@ export async function buildModStart(item: {
 }): Result.ResultAsync<FileMod[], never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind(
-      'compiledMods',
-      (v): Result.ResultAsync<FileMod[], never> =>
-        buildMods({
-          mods: v.mods,
-          malloyConnections: v.malloyConnections,
-          connections: v.connections,
-          tempDir: v.tempDir,
-          projectId: v.projectId,
-          structId: v.structId,
-          errors: v.errors,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('compiledMods', v =>
+      buildMods({
+        mods: v.mods,
+        malloyConnections: v.malloyConnections,
+        connections: v.connections,
+        tempDir: v.tempDir,
+        projectId: v.projectId,
+        structId: v.structId,
+        errors: v.errors,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'flatMods',
-      (v): Result.Result<FileMod[], never> =>
-        buildFlatMalloyFieldItems({
-          mods: v.compiledMods,
-          projectId: v.projectId,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('flatMods', v =>
+      buildFlatMalloyFieldItems({
+        mods: v.compiledMods,
+        projectId: v.projectId,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'spaceMods',
-      (v): Result.Result<FileMod[], never> =>
-        checkModSpaces({
-          mods: v.flatMods,
-          spaces: v.spaces,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('spaceMods', v =>
+      checkModSpaces({
+        mods: v.flatMods,
+        spaces: v.spaces,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.bind(
-      'timeframeMods',
-      (v): Result.Result<FileMod[], never> =>
-        checkTimeframes({
-          mods: v.spaceMods,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.bind('timeframeMods', v =>
+      checkTimeframes({
+        mods: v.spaceMods,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     ),
-    Result.andThen(
-      (v): Result.Result<FileMod[], never> =>
-        checkBuildMetricsFieldGroups({
-          mods: v.timeframeMods,
-          errors: v.errors,
-          structId: v.structId,
-          caller: v.caller,
-          cs: v.cs
-        })
+    Result.andThen(v =>
+      checkBuildMetricsFieldGroups({
+        mods: v.timeframeMods,
+        errors: v.errors,
+        structId: v.structId,
+        caller: v.caller,
+        cs: v.cs
+      })
     )
   );
 }

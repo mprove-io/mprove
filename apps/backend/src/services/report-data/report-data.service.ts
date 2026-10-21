@@ -3,7 +3,6 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
-  KitTab,
   MconfigTab,
   MemberTab,
   ModelTab,
@@ -28,7 +27,6 @@ import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { DocService } from '#backend/services/doc/doc.service';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
-import type { GetTimeColumnsOutput } from '#backend/services/report-time-columns/report-time-columns.service';
 import { ReportTimeColumnsService } from '#backend/services/report-time-columns/report-time-columns.service';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
@@ -41,13 +39,10 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { CalculateDataError } from '#common/types/backend/function-errors/calculate-data-error';
-import type { DbKitsFindManyError } from '#common/types/backend/function-errors/db/kits/db-kits-find-many-error';
 import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
-import type { DbModelsFindManyError } from '#common/types/backend/function-errors/db/models/db-models-find-many-error';
 import type { DbQueriesFindManyError } from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
 import type { GetReportDataError } from '#common/types/backend/function-errors/get-report-data-error';
-import type { GetTimeColumnsError } from '#common/types/backend/function-errors/get-time-columns-error';
 import type { MakeReportDataColumnsError } from '#common/types/backend/function-errors/make-report-data-columns-error';
 import type { PrepStoreMconfigQueryError } from '#common/types/backend/function-errors/prep-store-mconfig-query-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
@@ -130,202 +125,192 @@ export class ReportDataService {
   }): Result.ResultAsync<ReportX, GetReportDataError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'getTimeColumnsOutput',
-        (v): Result.ResultAsync<GetTimeColumnsOutput, GetTimeColumnsError> =>
-          this.reportTimeColumnsService.getTimeColumns({
-            traceId: v.traceId,
-            timezone: v.timezone,
-            timeSpec: v.timeSpec,
-            timeRangeFractionBrick: v.timeRangeFractionBrick,
-            projectWeekStart: v.struct.mproveConfig.weekStart,
-            caseSensitiveStringFilters:
-              v.struct.mproveConfig.caseSensitiveStringFilters
-          })
+      Result.bind('getTimeColumnsOutput', v =>
+        this.reportTimeColumnsService.getTimeColumns({
+          traceId: v.traceId,
+          timezone: v.timezone,
+          timeSpec: v.timeSpec,
+          timeRangeFractionBrick: v.timeRangeFractionBrick,
+          projectWeekStart: v.struct.mproveConfig.weekStart,
+          caseSensitiveStringFilters:
+            v.struct.mproveConfig.caseSensitiveStringFilters
+        })
       ),
-      Result.bind(
-        'prepareMetricRangePayload',
-        (v): Result.Result<PrepareMetricRangePayload, never> => {
-          let metricsStartDateYYYYMMDD: string = isUndefined(
-            v.getTimeColumnsOutput.rangeStart
+      Result.bind('prepareMetricRangePayload', v => {
+        let metricsStartDateYYYYMMDD: string = isUndefined(
+          v.getTimeColumnsOutput.rangeStart
+        )
+          ? undefined
+          : getYYYYMMDDFromEpochUtcByTimezone({
+              timezone: v.timezone,
+              secondsEpochUTC: v.getTimeColumnsOutput.rangeStart
+            });
+
+        let metricsEndDateExcludedYYYYMMDD: string = isUndefined(
+          v.getTimeColumnsOutput.rangeEnd
+        )
+          ? undefined
+          : getYYYYMMDDFromEpochUtcByTimezone({
+              timezone: v.timezone,
+              secondsEpochUTC: v.getTimeColumnsOutput.rangeEnd
+            });
+
+        let metricsEndDateIncludedYYYYMMDD: string = isUndefined(
+          v.getTimeColumnsOutput.rangeEnd
+        )
+          ? undefined
+          : getYYYYMMDDFromEpochUtcByTimezone({
+              timezone: v.timezone,
+              secondsEpochUTC:
+                v.getTimeColumnsOutput.rangeEnd -
+                  v.getTimeColumnsOutput.rangeStart >=
+                24 * 60 * 60
+                  ? v.getTimeColumnsOutput.rangeEnd - 24 * 60 * 60
+                  : v.getTimeColumnsOutput.rangeEnd
+            });
+
+        let modelIds: string[] = v.metrics
+          .filter(m => isDefined(m.modelId))
+          .map(x => x.modelId);
+
+        let prepareMetricRangePayload: PrepareMetricRangePayload = {
+          metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+          metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
+          metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
+          modelIds: modelIds
+        };
+
+        return Result.succeed(prepareMetricRangePayload);
+      }),
+      Result.bind('models', v =>
+        this.db.models.findMany({
+          where: and(
+            inArray(modelsTable.modelId, v.prepareMetricRangePayload.modelIds),
+            eq(modelsTable.structId, v.struct.structId)
           )
-            ? undefined
-            : getYYYYMMDDFromEpochUtcByTimezone({
-                timezone: v.timezone,
-                secondsEpochUTC: v.getTimeColumnsOutput.rangeStart
-              });
-
-          let metricsEndDateExcludedYYYYMMDD: string = isUndefined(
-            v.getTimeColumnsOutput.rangeEnd
-          )
-            ? undefined
-            : getYYYYMMDDFromEpochUtcByTimezone({
-                timezone: v.timezone,
-                secondsEpochUTC: v.getTimeColumnsOutput.rangeEnd
-              });
-
-          let metricsEndDateIncludedYYYYMMDD: string = isUndefined(
-            v.getTimeColumnsOutput.rangeEnd
-          )
-            ? undefined
-            : getYYYYMMDDFromEpochUtcByTimezone({
-                timezone: v.timezone,
-                secondsEpochUTC:
-                  v.getTimeColumnsOutput.rangeEnd -
-                    v.getTimeColumnsOutput.rangeStart >=
-                  24 * 60 * 60
-                    ? v.getTimeColumnsOutput.rangeEnd - 24 * 60 * 60
-                    : v.getTimeColumnsOutput.rangeEnd
-              });
-
-          let modelIds: string[] = v.metrics
-            .filter(m => isDefined(m.modelId))
-            .map(x => x.modelId);
-
-          return Result.succeed({
-            metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
-            metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
-            metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
-            modelIds: modelIds
-          });
-        }
+        })
       ),
-      Result.bind(
-        'models',
-        (v): Result.ResultAsync<ModelTab[], DbModelsFindManyError> =>
-          this.db.models.findMany({
-            where: and(
-              inArray(
-                modelsTable.modelId,
-                v.prepareMetricRangePayload.modelIds
-              ),
-              eq(modelsTable.structId, v.struct.structId)
-            )
-          })
-      ),
-      Result.bind(
-        'prepareReportQueriesPayload',
-        (v): Result.Result<PrepareReportQueriesPayload, never> => {
-          v.report.rows
-            .filter(row => isDefined(row.parameters))
-            .forEach(row => {
-              row.parameters.forEach(rowParameter => {
-                if (isDefined(rowParameter.listen)) {
-                  let reportField = v.report.fields.find(
-                    rField => rField.id === rowParameter.listen
-                  );
+      Result.bind('prepareReportQueriesPayload', v => {
+        v.report.rows
+          .filter(row => isDefined(row.parameters))
+          .forEach(row => {
+            row.parameters.forEach(rowParameter => {
+              if (isDefined(rowParameter.listen)) {
+                let reportField = v.report.fields.find(
+                  rField => rField.id === rowParameter.listen
+                );
 
-                  if (isUndefined(reportField)) {
-                    delete rowParameter.listen;
-                  } else {
-                    rowParameter.fractions = reportField.fractions;
-                  }
+                if (isUndefined(reportField)) {
+                  delete rowParameter.listen;
+                } else {
+                  rowParameter.fractions = reportField.fractions;
                 }
-              });
-            });
-
-          v.report.rows
-            .filter(row => isDefined(row.parameters) && isDefined(row.metricId))
-            .forEach(row => {
-              let metric: ModelMetric = v.metrics.find(
-                m => m.metricId === row.metricId
-              );
-
-              let model = v.models.find(ml => ml.modelId === metric.modelId);
-
-              if (model.type === 'Store') {
-                model.storeContent.fields
-                  .filter(x => x.fieldClass === 'filter')
-                  .forEach(storeFilter => {
-                    if (
-                      toBooleanFromLowercaseString(storeFilter.required) ===
-                      true
-                    ) {
-                      let selectedParameter = row.parameters.find(
-                        x => x.apply_to === `${storeFilter.name}`
-                      );
-
-                      if (isUndefined(selectedParameter)) {
-                        let newFraction: Fraction = {
-                          type: 'StoreFraction',
-                          controls: [] as any[],
-                          brick: undefined as any,
-                          parentBrick: undefined as any,
-                          operator: undefined as any
-                        };
-
-                        let newParameter: Parameter = {
-                          apply_to: storeFilter.name,
-                          fractions: [newFraction],
-                          listen: undefined
-                        };
-
-                        row.parameters.push(newParameter);
-
-                        selectedParameter = newParameter;
-                      }
-
-                      storeFilter.fraction_controls.forEach(
-                        storeFractionControl => {
-                          let selectedControl =
-                            selectedParameter.fractions[0].controls.find(
-                              x => x.name === storeFractionControl.name
-                            );
-
-                          if (isUndefined(selectedControl)) {
-                            let newControl: FractionControl = {
-                              isMetricsDate: storeFractionControl.isMetricsDate,
-                              options: storeFractionControl.options,
-                              value: storeFractionControl.value,
-                              label: storeFractionControl.label,
-                              required: storeFractionControl.required,
-                              name: storeFractionControl.name,
-                              controlClass: storeFractionControl.controlClass
-                            };
-
-                            selectedParameter.fractions[0].controls.push(
-                              newControl
-                            );
-                          }
-                        }
-                      );
-                    }
-                  });
               }
+            });
+          });
 
-              let filters: Filter[] = [];
+        v.report.rows
+          .filter(row => isDefined(row.parameters) && isDefined(row.metricId))
+          .forEach(row => {
+            let metric: ModelMetric = v.metrics.find(
+              m => m.metricId === row.metricId
+            );
 
-              row.parameters.forEach(rowParameter => {
-                let filter: Filter = {
-                  fieldId: rowParameter.apply_to,
-                  fractions: rowParameter.fractions
-                };
+            let model = v.models.find(ml => ml.modelId === metric.modelId);
 
-                filters.push(filter);
-              });
+            if (model.type === 'Store') {
+              model.storeContent.fields
+                .filter(x => x.fieldClass === 'filter')
+                .forEach(storeFilter => {
+                  if (
+                    toBooleanFromLowercaseString(storeFilter.required) === true
+                  ) {
+                    let selectedParameter = row.parameters.find(
+                      x => x.apply_to === `${storeFilter.name}`
+                    );
 
-              row.parametersFiltersWithExcludedTime = filters;
+                    if (isUndefined(selectedParameter)) {
+                      let newFraction: Fraction = {
+                        type: 'StoreFraction',
+                        controls: [] as any[],
+                        brick: undefined as any,
+                        parentBrick: undefined as any,
+                        operator: undefined as any
+                      };
+
+                      let newParameter: Parameter = {
+                        apply_to: storeFilter.name,
+                        fractions: [newFraction],
+                        listen: undefined
+                      };
+
+                      row.parameters.push(newParameter);
+
+                      selectedParameter = newParameter;
+                    }
+
+                    storeFilter.fraction_controls.forEach(
+                      storeFractionControl => {
+                        let selectedControl =
+                          selectedParameter.fractions[0].controls.find(
+                            x => x.name === storeFractionControl.name
+                          );
+
+                        if (isUndefined(selectedControl)) {
+                          let newControl: FractionControl = {
+                            isMetricsDate: storeFractionControl.isMetricsDate,
+                            options: storeFractionControl.options,
+                            value: storeFractionControl.value,
+                            label: storeFractionControl.label,
+                            required: storeFractionControl.required,
+                            name: storeFractionControl.name,
+                            controlClass: storeFractionControl.controlClass
+                          };
+
+                          selectedParameter.fractions[0].controls.push(
+                            newControl
+                          );
+                        }
+                      }
+                    );
+                  }
+                });
+            }
+
+            let filters: Filter[] = [];
+
+            row.parameters.forEach(rowParameter => {
+              let filter: Filter = {
+                fieldId: rowParameter.apply_to,
+                fractions: rowParameter.fractions
+              };
+
+              filters.push(filter);
             });
 
-          let newMconfigs: MconfigTab[] = [];
-
-          let newQueries: QueryTab[] = [];
-
-          let mconfigIds: string[] = [];
-
-          let queryIds: string[] = [];
-
-          let kitIds: string[] = [];
-
-          return Result.succeed({
-            newMconfigs: newMconfigs,
-            newQueries: newQueries,
-            mconfigIds: mconfigIds,
-            queryIds: queryIds,
-            kitIds: kitIds
+            row.parametersFiltersWithExcludedTime = filters;
           });
-        }
-      ),
+
+        let newMconfigs: MconfigTab[] = [];
+
+        let newQueries: QueryTab[] = [];
+
+        let mconfigIds: string[] = [];
+
+        let queryIds: string[] = [];
+
+        let kitIds: string[] = [];
+
+        let prepareReportQueriesPayload: PrepareReportQueriesPayload = {
+          newMconfigs: newMconfigs,
+          newQueries: newQueries,
+          mconfigIds: mconfigIds,
+          queryIds: queryIds,
+          kitIds: kitIds
+        };
+
+        return Result.succeed(prepareReportQueriesPayload);
+      }),
       Result.andThrough(async v => {
         let reportQueryPreparationResult: Result.Result<
           void[],
@@ -672,10 +657,7 @@ export class ReportDataService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'mconfigs',
-        (v): Result.Result<MconfigTab[], never> => Result.succeed([])
-      ),
+      Result.bind('mconfigs', v => Result.succeed<MconfigTab[]>([])),
       Result.andThrough(async v => {
         if (v.prepareReportQueriesPayload.mconfigIds.length > 0) {
           let mconfigResult: Result.Result<
@@ -700,10 +682,7 @@ export class ReportDataService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'queries',
-        (v): Result.Result<QueryTab[], never> => Result.succeed([])
-      ),
+      Result.bind('queries', v => Result.succeed<QueryTab[]>([])),
       Result.andThrough(async v => {
         if (v.prepareReportQueriesPayload.queryIds.length > 0) {
           let queryResult: Result.Result<QueryTab[], DbQueriesFindManyError> =
@@ -726,108 +705,122 @@ export class ReportDataService {
 
         return Result.succeed();
       }),
-      Result.bind(
-        'kits',
-        async (v): Result.ResultAsync<KitTab[], DbKitsFindManyError> =>
-          v.prepareReportQueriesPayload.kitIds.length === 0
-            ? Result.succeed([])
-            : this.db.kits.findMany({
-                where: and(
-                  inArray(
-                    kitsTable.kitId,
-                    v.prepareReportQueriesPayload.kitIds
-                  ),
-                  eq(kitsTable.structId, v.report.structId)
-                )
-              })
+      Result.bind('kits', async v =>
+        v.prepareReportQueriesPayload.kitIds.length === 0
+          ? Result.succeed([])
+          : this.db.kits.findMany({
+              where: and(
+                inArray(kitsTable.kitId, v.prepareReportQueriesPayload.kitIds),
+                eq(kitsTable.structId, v.report.structId)
+              )
+            })
       ),
-      Result.bind(
-        'prepareReportCalculationPayload',
-        (v): Result.Result<PrepareReportCalculationPayload, never> => {
-          let queriesApi: Query[] = v.queries.map(x =>
-            this.queriesService.tabToApi({ query: x })
-          );
+      Result.bind('prepareReportCalculationPayload', v => {
+        let queriesApi: Query[] = v.queries.map(x =>
+          this.queriesService.tabToApi({ query: x })
+        );
 
-          let mconfigsApi: MconfigX[] = v.mconfigs.map(x =>
-            this.mconfigsService.tabToApi({
-              mconfig: x,
-              modelFields: v.models.find(m => m.modelId === x.modelId).fields
+        let mconfigsApi: MconfigX[] = v.mconfigs.map(x =>
+          this.mconfigsService.tabToApi({
+            mconfig: x,
+            modelFields: v.models.find(m => m.modelId === x.modelId).fields
+          })
+        );
+
+        let modelsApi: ModelX[] = v.models.map(x =>
+          this.modelsService.tabToApi({
+            model: x,
+            hasAccess: checkModelAccess({
+              member: v.userMember,
+              modelAccessRoles: x.accessRolesCombined
             })
+          })
+        );
+
+        v.report.rows.forEach(x => {
+          let rq = x.rqs.find(
+            y =>
+              y.fractionBrick ===
+                v.getTimeColumnsOutput.timeRangeFraction.brick &&
+              y.timeSpec === v.timeSpec &&
+              y.timezone === v.timezone
           );
 
-          let modelsApi: ModelX[] = v.models.map(x =>
-            this.modelsService.tabToApi({
-              model: x,
-              hasAccess: checkModelAccess({
-                member: v.userMember,
-                modelAccessRoles: x.accessRolesCombined
-              })
-            })
-          );
-
-          v.report.rows.forEach(x => {
-            let rq = x.rqs.find(
+          if (x.rowType === 'metric') {
+            let newMconfigsApi = v.prepareReportQueriesPayload.newMconfigs.map(
               y =>
-                y.fractionBrick ===
-                  v.getTimeColumnsOutput.timeRangeFraction.brick &&
-                y.timeSpec === v.timeSpec &&
-                y.timezone === v.timezone
+                this.mconfigsService.tabToApi({
+                  mconfig: y,
+                  modelFields: modelsApi.find(m => m.modelId === y.modelId)
+                    .fields
+                })
             );
 
-            if (x.rowType === 'metric') {
-              let newMconfigsApi =
-                v.prepareReportQueriesPayload.newMconfigs.map(y =>
-                  this.mconfigsService.tabToApi({
-                    mconfig: y,
-                    modelFields: modelsApi.find(m => m.modelId === y.modelId)
-                      .fields
-                  })
-                );
+            x.mconfig = [...mconfigsApi, ...newMconfigsApi].find(
+              y => y.mconfigId === rq.mconfigId
+            );
 
-              x.mconfig = [...mconfigsApi, ...newMconfigsApi].find(
-                y => y.mconfigId === rq.mconfigId
-              );
+            let newQueriesApi = v.prepareReportQueriesPayload.newQueries.map(
+              y =>
+                this.queriesService.tabToApi({
+                  query: y
+                })
+            );
 
-              let newQueriesApi = v.prepareReportQueriesPayload.newQueries.map(
-                y =>
-                  this.queriesService.tabToApi({
-                    query: y
-                  })
-              );
+            x.query = [...queriesApi, ...newQueriesApi].find(
+              y => y.queryId === rq.queryId
+            );
+          }
+        });
 
-              x.query = [...queriesApi, ...newQueriesApi].find(
-                y => y.queryId === rq.queryId
-              );
-            }
-          });
+        let reportApi: ReportX = this.reportsService.tabToApi({
+          report: v.report,
+          models: modelsApi,
+          member: v.apiUserMember,
+          columns: v.getTimeColumnsOutput.columns,
+          timezone: v.timezone,
+          timeSpec: v.timeSpec,
+          timeRangeFraction: v.getTimeColumnsOutput.timeRangeFraction,
+          rangeStart: v.getTimeColumnsOutput.rangeStart,
+          rangeEnd: v.getTimeColumnsOutput.rangeEnd,
+          metricsStartDateYYYYMMDD:
+            v.prepareMetricRangePayload.metricsStartDateYYYYMMDD,
+          metricsEndDateExcludedYYYYMMDD:
+            v.prepareMetricRangePayload.metricsEndDateExcludedYYYYMMDD,
+          metricsEndDateIncludedYYYYMMDD:
+            v.prepareMetricRangePayload.metricsEndDateIncludedYYYYMMDD,
+          timeColumnsLimit: v.getTimeColumnsOutput.timeColumnsLimit,
+          timeColumnsLength: v.getTimeColumnsOutput.columns.length,
+          isTimeColumnsLimitExceeded:
+            v.getTimeColumnsOutput.isTimeColumnsLimitExceeded
+        });
 
-          let reportApi: ReportX = this.reportsService.tabToApi({
-            report: v.report,
-            models: modelsApi,
-            member: v.apiUserMember,
-            columns: v.getTimeColumnsOutput.columns,
-            timezone: v.timezone,
-            timeSpec: v.timeSpec,
-            timeRangeFraction: v.getTimeColumnsOutput.timeRangeFraction,
-            rangeStart: v.getTimeColumnsOutput.rangeStart,
-            rangeEnd: v.getTimeColumnsOutput.rangeEnd,
-            metricsStartDateYYYYMMDD:
-              v.prepareMetricRangePayload.metricsStartDateYYYYMMDD,
-            metricsEndDateExcludedYYYYMMDD:
-              v.prepareMetricRangePayload.metricsEndDateExcludedYYYYMMDD,
-            metricsEndDateIncludedYYYYMMDD:
-              v.prepareMetricRangePayload.metricsEndDateIncludedYYYYMMDD,
-            timeColumnsLimit: v.getTimeColumnsOutput.timeColumnsLimit,
-            timeColumnsLength: v.getTimeColumnsOutput.columns.length,
-            isTimeColumnsLimitExceeded:
-              v.getTimeColumnsOutput.isTimeColumnsLimitExceeded
-          });
+        let formulaRows: Row[] = reportApi.rows.filter(
+          row => row.rowType === 'formula'
+        );
 
-          let formulaRows: Row[] = reportApi.rows.filter(
-            row => row.rowType === 'formula'
+        let formulaRowsCalculated: Row[] = formulaRows.filter(row => {
+          let rq = row.rqs.find(
+            y =>
+              y.fractionBrick ===
+                v.getTimeColumnsOutput.timeRangeFraction.brick &&
+              y.timeSpec === v.timeSpec &&
+              y.timezone === v.timezone
           );
 
-          let formulaRowsCalculated: Row[] = formulaRows.filter(row => {
+          return isDefined(rq) && rq.lastCalculatedTs > 0;
+        });
+
+        let queryRows: Row[] = reportApi.rows.filter(
+          row => row.rowType === 'metric'
+        );
+
+        let queryRowsCompleted: Row[] = queryRows.filter(
+          row => row.query.status === 'Completed'
+        );
+
+        let queryRowsCompletedCalculated: Row[] = queryRowsCompleted.filter(
+          row => {
             let rq = row.rqs.find(
               y =>
                 y.fractionBrick ===
@@ -836,54 +829,33 @@ export class ReportDataService {
                 y.timezone === v.timezone
             );
 
-            return isDefined(rq) && rq.lastCalculatedTs > 0;
-          });
+            return (
+              isDefined(rq) && rq.lastCalculatedTs > row.query.lastCompleteTs
+            );
+          }
+        );
 
-          let queryRows: Row[] = reportApi.rows.filter(
-            row => row.rowType === 'metric'
-          );
+        let isCalculateData: boolean =
+          v.report.reportId !== EMPTY_REPORT_ID &&
+          queryRows.length === queryRowsCompleted.length &&
+          (queryRowsCompleted.length !== queryRowsCompletedCalculated.length ||
+            formulaRows.length !== formulaRowsCalculated.length);
 
-          let queryRowsCompleted: Row[] = queryRows.filter(
-            row => row.query.status === 'Completed'
-          );
+        let prepareReportCalculationPayload: PrepareReportCalculationPayload = {
+          queriesApi: queriesApi,
+          mconfigsApi: mconfigsApi,
+          modelsApi: modelsApi,
+          reportApi: reportApi,
+          formulaRows: formulaRows,
+          formulaRowsCalculated: formulaRowsCalculated,
+          queryRows: queryRows,
+          queryRowsCompleted: queryRowsCompleted,
+          queryRowsCompletedCalculated: queryRowsCompletedCalculated,
+          isCalculateData: isCalculateData
+        };
 
-          let queryRowsCompletedCalculated: Row[] = queryRowsCompleted.filter(
-            row => {
-              let rq = row.rqs.find(
-                y =>
-                  y.fractionBrick ===
-                    v.getTimeColumnsOutput.timeRangeFraction.brick &&
-                  y.timeSpec === v.timeSpec &&
-                  y.timezone === v.timezone
-              );
-
-              return (
-                isDefined(rq) && rq.lastCalculatedTs > row.query.lastCompleteTs
-              );
-            }
-          );
-
-          let isCalculateData: boolean =
-            v.report.reportId !== EMPTY_REPORT_ID &&
-            queryRows.length === queryRowsCompleted.length &&
-            (queryRowsCompleted.length !==
-              queryRowsCompletedCalculated.length ||
-              formulaRows.length !== formulaRowsCalculated.length);
-
-          return Result.succeed({
-            queriesApi: queriesApi,
-            mconfigsApi: mconfigsApi,
-            modelsApi: modelsApi,
-            reportApi: reportApi,
-            formulaRows: formulaRows,
-            formulaRowsCalculated: formulaRowsCalculated,
-            queryRows: queryRows,
-            queryRowsCompleted: queryRowsCompleted,
-            queryRowsCompletedCalculated: queryRowsCompletedCalculated,
-            isCalculateData: isCalculateData
-          });
-        }
-      ),
+        return Result.succeed(prepareReportCalculationPayload);
+      }),
       Result.andThrough(async v => {
         if (v.prepareReportCalculationPayload.isCalculateData === true) {
           let calculatedReportResult: Result.Result<

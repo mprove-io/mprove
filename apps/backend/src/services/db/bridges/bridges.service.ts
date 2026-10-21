@@ -6,7 +6,6 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
-import type { DbBridgesFindManyError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-many-error';
 import type { GetBranchBridgesForRebuildError } from '#common/types/backend/function-errors/get-branch-bridges-for-rebuild-error';
 
 @Injectable()
@@ -54,16 +53,14 @@ export class BridgesService {
   }): Result.ResultAsync<BridgeTab[], GetBranchBridgesForRebuildError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'branchBridges',
-        (v): Result.ResultAsync<BridgeTab[], DbBridgesFindManyError> =>
-          this.db.bridges.findMany({
-            where: and(
-              eq(bridgesTable.projectId, v.projectId),
-              eq(bridgesTable.repoId, v.repoId),
-              eq(bridgesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branchBridges', v =>
+        this.db.bridges.findMany({
+          where: and(
+            eq(bridgesTable.projectId, v.projectId),
+            eq(bridgesTable.repoId, v.repoId),
+            eq(bridgesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.map((v): BridgeTab[] => {
         v.branchBridges.forEach(bridge => {

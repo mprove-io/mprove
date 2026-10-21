@@ -1,15 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { DiskFileIsNotExistError } from '#common/types/disk/errors/disk-file-is-not-exist-error';
-import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
-import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
-import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { DiskItemCatalog } from '#common/types/disk/parts/catalog/disk-item-catalog';
-import type { DiskItemStatus } from '#common/types/disk/parts/repo/disk-item-status';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -78,36 +71,27 @@ export class SaveFileService {
           allowedDir: v.repoDir
         })
       ),
-      Result.bind(
-        'keyDir',
-        (
-          v
-        ): Result.ResultAsync<
-          string,
-          DiskCheckRestoreOrgProjectRepoBranchError
-        > =>
-          checkRestoreOrgProjectRepoBranch({
-            remoteType: v.remoteType,
-            orgId: v.orgId,
-            orgPath: v.orgPath,
-            projectId: v.projectId,
-            projectLt: v.projectLt,
-            repoId: v.repoId,
-            branchId: v.branch
-          })
+      Result.bind('keyDir', v =>
+        checkRestoreOrgProjectRepoBranch({
+          remoteType: v.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          projectId: v.projectId,
+          projectLt: v.projectLt,
+          repoId: v.repoId,
+          branchId: v.branch
+        })
       ),
-      Result.bind(
-        'git',
-        (v): Result.ResultAsync<SimpleGit, never> =>
-          createGit({
-            repoDir: v.repoDir,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.projectLt.gitUrl,
-            privateKeyEncrypted: v.projectLt.privateKeyEncrypted,
-            publicKey: v.projectLt.publicKey,
-            passPhrase: v.projectLt.passPhrase
-          })
+      Result.bind('git', v =>
+        createGit({
+          repoDir: v.repoDir,
+          remoteType: v.remoteType,
+          keyDir: v.keyDir,
+          gitUrl: v.projectLt.gitUrl,
+          privateKeyEncrypted: v.projectLt.privateKeyEncrypted,
+          publicKey: v.projectLt.publicKey,
+          passPhrase: v.projectLt.passPhrase
+        })
       ),
       Result.andThrough(v =>
         checkoutBranch({
@@ -120,16 +104,11 @@ export class SaveFileService {
           isFetch: false
         })
       ),
-      Result.bind(
-        'isFileExist',
-        (v): Result.ResultAsync<boolean, never> =>
-          isPathExist({ path: v.filePath })
-      ),
-      Result.andThrough(
-        (v): Result.Result<void, DiskFileIsNotExistError> =>
-          v.isFileExist === false
-            ? Result.fail({ code: 'DISK_FILE_IS_NOT_EXIST' })
-            : Result.succeed()
+      Result.bind('isFileExist', v => isPathExist({ path: v.filePath })),
+      Result.andThrough(v =>
+        v.isFileExist === false
+          ? Result.fail({ code: 'DISK_FILE_IS_NOT_EXIST' })
+          : Result.succeed()
       ),
       Result.andThrough(v =>
         writeToFile({ filePath: v.filePath, content: v.content })
@@ -157,29 +136,25 @@ export class SaveFileService {
             })
           : Result.succeed()
       ),
-      Result.bind(
-        'repoStatus',
-        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
-          getRepoStatus({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            repoDir: v.repoDir,
-            git: v.git,
-            isFetch: true,
-            isCheckConflicts: true
-          })
+      Result.bind('repoStatus', v =>
+        getRepoStatus({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          git: v.git,
+          isFetch: true,
+          isCheckConflicts: true
+        })
       ),
-      Result.bind(
-        'itemCatalog',
-        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
-          getNodesAndFiles({
-            projectId: v.projectId,
-            projectDir: v.projectDir,
-            repoId: v.repoId,
-            readFiles: true,
-            isRootMproveDir: false
-          })
+      Result.bind('itemCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        })
       ),
       Result.map(
         (v): ToDiskSaveFileOutput => ({

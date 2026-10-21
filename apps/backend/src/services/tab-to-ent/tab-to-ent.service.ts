@@ -71,7 +71,6 @@ import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { HashService } from '#backend/services/hash/hash.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MakeHashError } from '#common/types/backend/function-errors/make-hash-error';
 import type { MemberTabToEntError } from '#common/types/backend/function-errors/member-tab-to-ent-error';
 import type { OrgTabToEntError } from '#common/types/backend/function-errors/org-tab-to-ent-error';
 import type { ProjectTabToEntError } from '#common/types/backend/function-errors/project-tab-to-ent-error';
@@ -283,17 +282,15 @@ export class TabToEntService {
 
         return v;
       }),
-      Result.bind(
-        'memberEnts',
-        (v): Result.Result<MemberEnt[], MemberTabToEntError> =>
-          Result.sequence(
-            v.tabsPack.members?.filter(x => isDefined(x)) ?? [],
-            member =>
-              this.memberTabToEnt({
-                tab: member,
-                hashSecret: v.hashSecret
-              })
-          )
+      Result.bind('memberEnts', v =>
+        Result.sequence(
+          v.tabsPack.members?.filter(x => isDefined(x)) ?? [],
+          member =>
+            this.memberTabToEnt({
+              tab: member,
+              hashSecret: v.hashSecret
+            })
+        )
       ),
       Result.map(v => {
         let entsPack: DbEntsPack = {
@@ -338,13 +335,10 @@ export class TabToEntService {
 
         return v;
       }),
-      Result.bind(
-        'orgEnts',
-        (v): Result.Result<OrgEnt[], OrgTabToEntError> =>
-          Result.sequence(
-            v.tabsPack.orgs?.filter(x => isDefined(x)) ?? [],
-            org => this.orgTabToEnt({ tab: org, hashSecret: v.hashSecret })
-          )
+      Result.bind('orgEnts', v =>
+        Result.sequence(v.tabsPack.orgs?.filter(x => isDefined(x)) ?? [], org =>
+          this.orgTabToEnt({ tab: org, hashSecret: v.hashSecret })
+        )
       ),
       Result.map(v => {
         let entsPack: DbEntsPack = {
@@ -362,17 +356,15 @@ export class TabToEntService {
 
         return v;
       }),
-      Result.bind(
-        'projectEnts',
-        (v): Result.Result<ProjectEnt[], ProjectTabToEntError> =>
-          Result.sequence(
-            v.tabsPack.projects?.filter(x => isDefined(x)) ?? [],
-            project =>
-              this.projectTabToEnt({
-                tab: project,
-                hashSecret: v.hashSecret
-              })
-          )
+      Result.bind('projectEnts', v =>
+        Result.sequence(
+          v.tabsPack.projects?.filter(x => isDefined(x)) ?? [],
+          project =>
+            this.projectTabToEnt({
+              tab: project,
+              hashSecret: v.hashSecret
+            })
+        )
       ),
       Result.map(v => {
         let entsPack: DbEntsPack = {
@@ -390,14 +382,11 @@ export class TabToEntService {
 
         return v;
       }),
-      Result.bind(
-        'queryEnts',
-        (v): Result.Result<QueryEnt[], QueryTabToEntError> =>
-          Result.sequence(
-            v.tabsPack.queries?.filter(x => isDefined(x)) ?? [],
-            query =>
-              this.queryTabToEnt({ tab: query, hashSecret: v.hashSecret })
-          )
+      Result.bind('queryEnts', v =>
+        Result.sequence(
+          v.tabsPack.queries?.filter(x => isDefined(x)) ?? [],
+          query => this.queryTabToEnt({ tab: query, hashSecret: v.hashSecret })
+        )
       ),
       Result.map(v => {
         let entsPack: DbEntsPack = {
@@ -421,13 +410,11 @@ export class TabToEntService {
 
         return v;
       }),
-      Result.bind(
-        'userEnts',
-        (v): Result.Result<UserEnt[], UserTabToEntError> =>
-          Result.sequence(
-            v.tabsPack.users?.filter(x => isDefined(x)) ?? [],
-            user => this.userTabToEnt({ tab: user, hashSecret: v.hashSecret })
-          )
+      Result.bind('userEnts', v =>
+        Result.sequence(
+          v.tabsPack.users?.filter(x => isDefined(x)) ?? [],
+          user => this.userTabToEnt({ tab: user, hashSecret: v.hashSecret })
+        )
       ),
       Result.map(v => {
         let entsPack: DbEntsPack = {
@@ -1009,21 +996,17 @@ export class TabToEntService {
           isMetadata: false
         })
       }),
-      Result.bind(
-        'emailHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.email,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('emailHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.email,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'aliasHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.alias,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('aliasHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.alias,
+          hashSecret: v.hashSecret
+        })
       ),
       Result.map(
         (v): MemberEnt => ({
@@ -1196,21 +1179,17 @@ export class TabToEntService {
           isMetadata: false
         })
       }),
-      Result.bind(
-        'nameHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.name,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('nameHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.name,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'ownerEmailHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.ownerEmail,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('ownerEmailHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.ownerEmail,
+          hashSecret: v.hashSecret
+        })
       ),
       Result.map(
         (v): OrgEnt => ({
@@ -1273,21 +1252,17 @@ export class TabToEntService {
           isMetadata: false
         })
       }),
-      Result.bind(
-        'nameHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.name,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('nameHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.name,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'gitUrlHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.gitUrl,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('gitUrlHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.gitUrl,
+          hashSecret: v.hashSecret
+        })
       ),
       Result.map(
         (v): ProjectEnt => ({
@@ -1381,13 +1356,11 @@ export class TabToEntService {
           isMetadata: false
         })
       }),
-      Result.bind(
-        'apiUrlHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.apiUrl,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('apiUrlHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.apiUrl,
+          hashSecret: v.hashSecret
+        })
       ),
       Result.map(
         (v): QueryEnt => ({
@@ -1540,37 +1513,29 @@ export class TabToEntService {
           isMetadata: false
         })
       }),
-      Result.bind(
-        'emailHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.email,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('emailHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.email,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'aliasHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.alias,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('aliasHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.alias,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'emailVerificationTokenHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.emailVerificationToken,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('emailVerificationTokenHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.emailVerificationToken,
+          hashSecret: v.hashSecret
+        })
       ),
-      Result.bind(
-        'passwordResetTokenHash',
-        (v): Result.Result<string, MakeHashError> =>
-          this.hashService.makeHash({
-            input: v.tab.passwordResetToken,
-            hashSecret: v.hashSecret
-          })
+      Result.bind('passwordResetTokenHash', v =>
+        this.hashService.makeHash({
+          input: v.tab.passwordResetToken,
+          hashSecret: v.hashSecret
+        })
       ),
       Result.map(
         (v): UserEnt => ({

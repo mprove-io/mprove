@@ -27,10 +27,6 @@ import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbMembersFindManyError } from '#common/types/backend/function-errors/db/members/db-members-find-many-error';
-import type { GetApiRolesError } from '#common/types/backend/function-errors/get-api-roles-error';
-import type { GetMemberCheckIsAdminError } from '#common/types/backend/function-errors/get-member-check-is-admin-error';
-import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteRoleOutput } from '#common/types/backend/routes/roles/delete-role/delete-role-output';
 
@@ -70,27 +66,21 @@ export class DeleteRoleController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (v): Result.ResultAsync<MemberTab, GetMemberCheckIsAdminError> =>
-          this.membersService.getMemberCheckIsAdmin({
-            memberId: v.user.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsAdmin({
+          memberId: v.user.userId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'projectMembers',
-        (v): Result.ResultAsync<MemberTab[], DbMembersFindManyError> =>
-          this.db.members.findMany({
-            where: eq(membersTable.projectId, v.projectId)
-          })
+      Result.bind('projectMembers', v =>
+        this.db.members.findMany({
+          where: eq(membersTable.projectId, v.projectId)
+        })
       ),
-      Result.bind(
-        'membersToUpdate',
-        (v): Result.Result<MemberTab[], never> =>
-          Result.succeed(
-            v.projectMembers.filter(member => member.roles.includes(v.roleId))
-          )
+      Result.bind('membersToUpdate', v =>
+        Result.succeed(
+          v.projectMembers.filter(member => member.roles.includes(v.roleId))
+        )
       ),
       Result.map(v => {
         v.membersToUpdate.forEach(member => {
@@ -123,23 +113,18 @@ export class DeleteRoleController {
           }
         })
       ),
-      Result.bind(
-        'apiRoles',
-        (v): Result.ResultAsync<Role[], GetApiRolesError> =>
-          this.rolesService.getApiRoles({ projectId: v.projectId })
+      Result.bind('apiRoles', v =>
+        this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
-      Result.bind(
-        'responseUserMember',
-        (v): Result.Result<MemberTab, never> => {
-          let updatedUserMember: MemberTab = v.membersToUpdate.find(
-            member => member.memberId === v.userMember.memberId
-          );
+      Result.bind('responseUserMember', v => {
+        let updatedUserMember: MemberTab = v.membersToUpdate.find(
+          member => member.memberId === v.userMember.memberId
+        );
 
-          return Result.succeed(
-            isDefined(updatedUserMember) ? updatedUserMember : v.userMember
-          );
-        }
-      ),
+        return Result.succeed(
+          isDefined(updatedUserMember) ? updatedUserMember : v.userMember
+        );
+      }),
       Result.map(
         (v): ToBackendDeleteRoleOutput => ({
           userMember: this.membersService.tabToApi({

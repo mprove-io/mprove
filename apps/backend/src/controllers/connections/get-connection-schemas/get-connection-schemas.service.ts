@@ -3,13 +3,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 import { sortSchemaColumns } from '#backend/controllers/connections/get-connection-schemas/sort-schema-columns/sort-schema-columns';
-import type {
-  BridgeTab,
-  CachedColumnTab,
-  ConnectionTab,
-  MemberTab,
-  StructTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
@@ -33,13 +27,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbCachedColumnsFindManyError } from '#common/types/backend/function-errors/db/cached-columns/db-cached-columns-find-many-error';
-import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
-import type { GetApiEnvsError } from '#common/types/backend/function-errors/get-api-envs-error';
 import type { GetConnectionSchemasError } from '#common/types/backend/function-errors/get-connection-schemas-error';
-import type { GetMemberCheckIsEditorOrAdminError } from '#common/types/backend/function-errors/get-member-check-is-editor-or-admin-error';
-import type { GetStructCheckExistsError } from '#common/types/backend/function-errors/get-struct-check-exists-error';
 import type { ColumnCombinedReference } from '#common/types/backend/parts/connection-schemas/combined-schemas/column-combined-reference';
 import type { CombinedSchema } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema';
 import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
@@ -48,7 +36,6 @@ import type { CombinedSchemaTable } from '#common/types/backend/parts/connection
 import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
-import type { Env } from '#common/types/backend/parts/env';
 import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 import type { RelationshipType } from '#common/types/shared/schema/relationship-type';
 import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
@@ -120,175 +107,141 @@ export class GetConnectionSchemasService {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, GetMemberCheckIsEditorOrAdminError> =>
-          this.membersService.getMemberCheckIsEditorOrAdmin({
-            memberId: v.userId,
-            projectId: v.projectId
-          })
+      Result.bind('userMember', v =>
+        this.membersService.getMemberCheckIsEditorOrAdmin({
+          memberId: v.userId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.projectId),
-              eq(bridgesTable.repoId, v.repoId),
-              eq(bridgesTable.branchId, v.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.projectId),
+            eq(bridgesTable.repoId, v.repoId),
+            eq(bridgesTable.branchId, v.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
-      Result.bind(
-        'struct',
-        (v): Result.ResultAsync<StructTab, GetStructCheckExistsError> =>
-          this.structsService.getStructCheckExists({
-            structId: v.bridge.structId,
-            projectId: v.projectId
-          })
+      Result.bind('struct', v =>
+        this.structsService.getStructCheckExists({
+          structId: v.bridge.structId,
+          projectId: v.projectId
+        })
       ),
-      Result.bind(
-        'apiEnvs',
-        (v): Result.ResultAsync<Env[], GetApiEnvsError> =>
-          this.envsService.getApiEnvs({ projectId: v.projectId })
+      Result.bind('apiEnvs', v =>
+        this.envsService.getApiEnvs({ projectId: v.projectId })
       ),
-      Result.bind(
-        'apiEnv',
-        (v): Result.Result<Env, never> =>
-          Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
+      Result.bind('apiEnv', v =>
+        Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
       ),
-      Result.bind(
-        'connections',
-        (v): Result.ResultAsync<ConnectionTab[], DbConnectionsFindManyError> =>
-          this.db.connections.findMany({
-            where: and(
-              eq(connectionsTable.projectId, v.projectId),
-              or(
-                eq(connectionsTable.envId, v.envId),
-                and(
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  inArray(
-                    connectionsTable.connectionId,
-                    v.apiEnv.fallbackConnectionIds
-                  )
+      Result.bind('connections', v =>
+        this.db.connections.findMany({
+          where: and(
+            eq(connectionsTable.projectId, v.projectId),
+            or(
+              eq(connectionsTable.envId, v.envId),
+              and(
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                inArray(
+                  connectionsTable.connectionId,
+                  v.apiEnv.fallbackConnectionIds
                 )
               )
             )
-          })
-      ),
-      Result.bind(
-        'eligibleConnections',
-        (v): Result.Result<ConnectionTab[], never> =>
-          Result.succeed(
-            v.connections.filter(
-              c =>
-                c.type !== 'GoogleApi' &&
-                c.type !== 'Api' &&
-                (c.type === 'PostgreSQL' ||
-                  c.type === 'MySQL' ||
-                  c.type === 'SnowFlake' ||
-                  c.type === 'Databricks' ||
-                  c.type === 'BigQuery' ||
-                  c.type === 'MotherDuck' ||
-                  c.type === 'Presto' ||
-                  c.type === 'Trino')
-            )
           )
+        })
       ),
-      Result.bind(
-        'connectionRawSchemaItems',
-        async (v): Result.ResultAsync<ConnectionRawSchemaItem[], never> => {
-          let connectionRawSchemaItems: ConnectionRawSchemaItem[] = [];
+      Result.bind('eligibleConnections', v =>
+        Result.succeed(
+          v.connections.filter(
+            c =>
+              c.type !== 'GoogleApi' &&
+              c.type !== 'Api' &&
+              (c.type === 'PostgreSQL' ||
+                c.type === 'MySQL' ||
+                c.type === 'SnowFlake' ||
+                c.type === 'Databricks' ||
+                c.type === 'BigQuery' ||
+                c.type === 'MotherDuck' ||
+                c.type === 'Presto' ||
+                c.type === 'Trino')
+          )
+        )
+      ),
+      Result.bind('connectionRawSchemaItems', async v => {
+        let connectionRawSchemaItems: ConnectionRawSchemaItem[] = [];
 
-          if (v.isRefreshExistingCache === true) {
+        if (v.isRefreshExistingCache === true) {
+          let fetched: ConnectionRawSchemaItem[] =
+            await this.fetchAndSaveSchemas({
+              connections: v.eligibleConnections
+            });
+
+          fetched.forEach(x => {
+            connectionRawSchemaItems.push(x);
+          });
+        } else {
+          let connectionsWithCache: ConnectionTab[] =
+            v.eligibleConnections.filter(x => isDefined(x.rawSchema));
+
+          connectionsWithCache.forEach(x => {
+            connectionRawSchemaItems.push({
+              connectionId: x.connectionId,
+              schema: x.rawSchema
+            });
+          });
+
+          let connectionsWithoutCache: ConnectionTab[] =
+            v.eligibleConnections.filter(x => isUndefined(x.rawSchema));
+
+          if (connectionsWithoutCache.length > 0) {
             let fetched: ConnectionRawSchemaItem[] =
               await this.fetchAndSaveSchemas({
-                connections: v.eligibleConnections
+                connections: connectionsWithoutCache
               });
 
             fetched.forEach(x => {
               connectionRawSchemaItems.push(x);
             });
-          } else {
-            let connectionsWithCache: ConnectionTab[] =
-              v.eligibleConnections.filter(x => isDefined(x.rawSchema));
-
-            connectionsWithCache.forEach(x => {
-              connectionRawSchemaItems.push({
-                connectionId: x.connectionId,
-                schema: x.rawSchema
-              });
-            });
-
-            let connectionsWithoutCache: ConnectionTab[] =
-              v.eligibleConnections.filter(x => isUndefined(x.rawSchema));
-
-            if (connectionsWithoutCache.length > 0) {
-              let fetched: ConnectionRawSchemaItem[] =
-                await this.fetchAndSaveSchemas({
-                  connections: connectionsWithoutCache
-                });
-
-              fetched.forEach(x => {
-                connectionRawSchemaItems.push(x);
-              });
-            }
           }
-
-          return Result.succeed(connectionRawSchemaItems);
         }
+
+        return Result.succeed(connectionRawSchemaItems);
+      }),
+      Result.bind('cacheEnvId', v =>
+        Result.succeed(
+          v.apiEnv?.useProdCache === true ? PROJECT_ENV_PROD : v.envId
+        )
       ),
-      Result.bind(
-        'cacheEnvId',
-        (v): Result.Result<string, never> =>
-          Result.succeed(
-            v.apiEnv?.useProdCache === true ? PROJECT_ENV_PROD : v.envId
-          )
+      Result.bind('connectionIds', v =>
+        Result.succeed(
+          v.eligibleConnections.map(connection => connection.connectionId)
+        )
       ),
-      Result.bind(
-        'connectionIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(
-            v.eligibleConnections.map(connection => connection.connectionId)
-          )
-      ),
-      Result.bind(
-        'cachedColumns',
-        async (
-          v
-        ): Result.ResultAsync<
-          CachedColumnTab[],
-          DbCachedColumnsFindManyError
-        > =>
-          v.connectionIds.length === 0
-            ? Result.succeed([])
-            : this.db.cachedColumns.findMany({
-                where: and(
-                  eq(cachedColumnsTable.projectId, v.projectId),
-                  eq(cachedColumnsTable.envId, v.cacheEnvId),
-                  inArray(cachedColumnsTable.connectionId, v.connectionIds)
-                )
-              })
-      ),
-      Result.bind(
-        'combinedSchemaItems',
-        (v): Result.Result<CombinedSchemaItem[], never> =>
-          Result.succeed(
-            this.buildCombinedSchema({
-              connectionRawSchemaItems: v.connectionRawSchemaItems,
-              extraSchemas: v.struct.extraSchemas ?? [],
-              cachedColumns: v.cachedColumns.map(cachedColumn =>
-                this.cachedColumnService.cachedColumnTabToApi({
-                  cachedColumn: cachedColumn
-                })
+      Result.bind('cachedColumns', async v =>
+        v.connectionIds.length === 0
+          ? Result.succeed([])
+          : this.db.cachedColumns.findMany({
+              where: and(
+                eq(cachedColumnsTable.projectId, v.projectId),
+                eq(cachedColumnsTable.envId, v.cacheEnvId),
+                inArray(cachedColumnsTable.connectionId, v.connectionIds)
               )
             })
-          )
+      ),
+      Result.bind('combinedSchemaItems', v =>
+        Result.succeed(
+          this.buildCombinedSchema({
+            connectionRawSchemaItems: v.connectionRawSchemaItems,
+            extraSchemas: v.struct.extraSchemas ?? [],
+            cachedColumns: v.cachedColumns.map(cachedColumn =>
+              this.cachedColumnService.cachedColumnTabToApi({
+                cachedColumn: cachedColumn
+              })
+            )
+          })
+        )
       ),
       Result.map(
         (v): ToBackendGetConnectionSchemasOutput => ({

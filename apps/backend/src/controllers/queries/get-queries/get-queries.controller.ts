@@ -9,11 +9,7 @@ import {
 } from '#backend/controllers/queries/get-queries/get-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  BranchTab,
-  BridgeTab,
   MconfigTab,
-  MemberTab,
-  QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
@@ -30,12 +26,6 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { ParentService } from '#backend/services/parent/parent.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
-import type { DbBridgesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/bridges/db-bridges-find-first-check-exists-error';
-import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { GetQueriesCheckExistError } from '#common/types/backend/function-errors/get-queries-check-exist-error';
-import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueriesOutput } from '#common/types/backend/routes/queries/get-queries/get-queries-output';
 
@@ -103,30 +93,22 @@ export class GetQueriesController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -135,19 +117,15 @@ export class GetQueriesController {
           member: v.userMember
         })
       ),
-      Result.bind(
-        'bridge',
-        (
-          v
-        ): Result.ResultAsync<BridgeTab, DbBridgesFindFirstCheckExistsError> =>
-          this.db.bridges.findFirstCheckExists({
-            where: and(
-              eq(bridgesTable.projectId, v.branch.projectId),
-              eq(bridgesTable.repoId, v.branch.repoId),
-              eq(bridgesTable.branchId, v.branch.branchId),
-              eq(bridgesTable.envId, v.envId)
-            )
-          })
+      Result.bind('bridge', v =>
+        this.db.bridges.findFirstCheckExists({
+          where: and(
+            eq(bridgesTable.projectId, v.branch.projectId),
+            eq(bridgesTable.repoId, v.branch.repoId),
+            eq(bridgesTable.branchId, v.branch.branchId),
+            eq(bridgesTable.envId, v.envId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.structsService.getStructCheckExists({
@@ -155,22 +133,18 @@ export class GetQueriesController {
           projectId: v.projectId
         })
       ),
-      Result.bind(
-        'mconfigs',
-        (v): Result.ResultAsync<MconfigTab[], DbMconfigsFindManyError> =>
-          this.db.mconfigs.findMany({
-            where: and(
-              eq(mconfigsTable.structId, v.bridge.structId),
-              inArray(mconfigsTable.mconfigId, v.mconfigIds)
-            )
-          })
+      Result.bind('mconfigs', v =>
+        this.db.mconfigs.findMany({
+          where: and(
+            eq(mconfigsTable.structId, v.bridge.structId),
+            inArray(mconfigsTable.mconfigId, v.mconfigIds)
+          )
+        })
       ),
-      Result.bind(
-        'uniqueParentIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([
-            ...new Set(v.mconfigs.map(mconfig => mconfig.parentId))
-          ])
+      Result.bind('uniqueParentIds', v =>
+        Result.succeed<string[]>([
+          ...new Set(v.mconfigs.map(mconfig => mconfig.parentId))
+        ])
       ),
       Result.andThrough(v =>
         Result.sequence(v.uniqueParentIds, parentId => {
@@ -189,30 +163,21 @@ export class GetQueriesController {
           });
         })
       ),
-      Result.bind(
-        'queryIds',
-        (v): Result.Result<string[], never> =>
-          Result.succeed([
-            ...new Set(v.mconfigs.map(mconfig => mconfig.queryId))
-          ])
+      Result.bind('queryIds', v =>
+        Result.succeed<string[]>([
+          ...new Set(v.mconfigs.map(mconfig => mconfig.queryId))
+        ])
       ),
-      Result.bind(
-        'queries',
-        (
-          v
-        ): Result.ResultAsync<
-          QueryTab[],
-          GetQueriesCheckExistError | GetQueriesCheckExistSkipSqlDataError
-        > =>
-          v.skipData === true
-            ? this.queriesService.getQueriesCheckExistSkipSqlData({
-                queryIds: v.queryIds,
-                projectId: v.projectId
-              })
-            : this.queriesService.getQueriesCheckExist({
-                queryIds: v.queryIds,
-                projectId: v.projectId
-              })
+      Result.bind('queries', v =>
+        v.skipData === true
+          ? this.queriesService.getQueriesCheckExistSkipSqlData({
+              queryIds: v.queryIds,
+              projectId: v.projectId
+            })
+          : this.queriesService.getQueriesCheckExist({
+              queryIds: v.queryIds,
+              projectId: v.projectId
+            })
       ),
       Result.map(
         (v): ToBackendGetQueriesOutput => ({

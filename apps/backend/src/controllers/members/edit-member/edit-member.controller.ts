@@ -10,7 +10,6 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
   AvatarTab,
-  MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import {
@@ -27,8 +26,6 @@ import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { AvatarEntToTabError } from '#common/types/backend/function-errors/avatar-ent-to-tab-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
 import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditMemberOutput } from '#common/types/backend/routes/members/edit-member/edit-member-output';
@@ -91,17 +88,13 @@ export class EditMemberController {
           roleIds: v.roles
         })
       ),
-      Result.bind(
-        'member',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.memberId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('member', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.memberId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.map(v => {
         v.member.isAdmin = v.isAdmin;
@@ -118,27 +111,25 @@ export class EditMemberController {
           }
         })
       ),
-      Result.bind(
-        'avatars',
-        (v): Result.ResultAsync<AvatarTab[], AvatarEntToTabError> =>
-          this.db.drizzle
-            .select({
-              keyTag: avatarsTable.keyTag,
-              userId: avatarsTable.userId,
-              st: avatarsTable.st
-              // lt: {},
-            })
-            .from(avatarsTable)
-            .where(eq(avatarsTable.userId, v.member.memberId))
-            .then(xs =>
-              Result.sequence(xs, x =>
-                this.tabService.avatarEntToTab({
-                  avatarEnt: x as AvatarEnt
-                })
-              )
+      Result.bind('avatars', v =>
+        this.db.drizzle
+          .select({
+            keyTag: avatarsTable.keyTag,
+            userId: avatarsTable.userId,
+            st: avatarsTable.st
+            // lt: {},
+          })
+          .from(avatarsTable)
+          .where(eq(avatarsTable.userId, v.member.memberId))
+          .then(xs =>
+            Result.sequence(xs, x =>
+              this.tabService.avatarEntToTab({
+                avatarEnt: x as AvatarEnt
+              })
             )
+          )
       ),
-      Result.bind('apiMember', (v): Result.Result<Member, never> => {
+      Result.bind('apiMember', v => {
         let avatar: AvatarTab = v.avatars.length > 0 ? v.avatars[0] : undefined;
 
         let apiMember: Member = this.membersService.tabToApi({

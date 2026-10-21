@@ -10,8 +10,6 @@ let tracerNodeSdk = startTelemetry({
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '#common/constants/top-disk';
-
-import type { DiskCheckSymlinksInDirError } from '#common/types/disk/function-errors/disk-check-symlinks-in-dir-error';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { AppModule } from './app.module';
@@ -46,9 +44,8 @@ async function bootstrap(): Promise<void> {
         Result.succeed({
           diskOrganizationsPath: config.diskOrganizationsPath
         }),
-        Result.andThen(
-          (v): Result.ResultAsync<void, DiskCheckSymlinksInDirError> =>
-            checkSymlinksInDir({ dir: v.diskOrganizationsPath })
+        Result.andThen(v =>
+          checkSymlinksInDir({ dir: v.diskOrganizationsPath })
         ),
         Result.mapError(v => {
           switch (v.code) {

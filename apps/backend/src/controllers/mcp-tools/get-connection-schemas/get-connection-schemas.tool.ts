@@ -14,7 +14,6 @@ import {
   MCP_TOOL_GET_SCHEMAS,
   MCP_TOOL_GET_SCHEMAS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import type { GetConnectionSchemasError } from '#common/types/backend/function-errors/get-connection-schemas-error';
 import {
   type McpToolGetSchemasInput,
   zMcpToolGetSchemasInput
@@ -24,7 +23,6 @@ import {
   zMcpToolGetSchemasOutput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-schemas/mcp-tool-get-schemas-output';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
-import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
 @McpController()
@@ -90,21 +88,15 @@ export class GetConnectionSchemasTool {
             })
           : Result.succeed()
       ),
-      Result.andThen(
-        (
-          v
-        ): Result.ResultAsync<
-          ToBackendGetConnectionSchemasOutput,
-          GetConnectionSchemasError
-        > =>
-          this.getConnectionSchemasService.getConnectionSchemas({
-            projectId: v.projectId,
-            repoId: v.repoId,
-            branchId: v.branchId,
-            envId: v.envId,
-            isRefreshExistingCache: v.isRefreshExistingCache,
-            userId: v.user.userId
-          })
+      Result.andThen(v =>
+        this.getConnectionSchemasService.getConnectionSchemas({
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          isRefreshExistingCache: v.isRefreshExistingCache,
+          userId: v.user.userId
+        })
       ),
       Result.map(
         (v): McpToolGetSchemasOutput =>

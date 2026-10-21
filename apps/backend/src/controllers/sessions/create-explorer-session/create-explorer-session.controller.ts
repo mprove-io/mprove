@@ -14,8 +14,6 @@ import {
 } from '#backend/controllers/sessions/create-explorer-session/create-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
-  BranchTab,
-  MemberTab,
   OcEventTab,
   OcSessionTab,
   SessionTab,
@@ -34,17 +32,13 @@ import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
-import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DbBranchesFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/branches/db-branches-find-first-check-exists-error';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
-import type { DbMembersFindFirstCheckExistsError } from '#common/types/backend/function-errors/db/members/db-members-find-first-check-exists-error';
-import type { GetModelSelectionError } from '#common/types/backend/function-errors/get-model-selection-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
 
@@ -96,17 +90,13 @@ export class CreateExplorerSessionController {
           where: eq(projectsTable.projectId, v.projectId)
         })
       ),
-      Result.bind(
-        'userMember',
-        (
-          v
-        ): Result.ResultAsync<MemberTab, DbMembersFindFirstCheckExistsError> =>
-          this.db.members.findFirstCheckExists({
-            where: and(
-              eq(membersTable.memberId, v.user.userId),
-              eq(membersTable.projectId, v.projectId)
-            )
-          })
+      Result.bind('userMember', v =>
+        this.db.members.findFirstCheckExists({
+          where: and(
+            eq(membersTable.memberId, v.user.userId),
+            eq(membersTable.projectId, v.projectId)
+          )
+        })
       ),
       Result.andThrough(v =>
         v.userMember.isExplorer === false
@@ -121,18 +111,14 @@ export class CreateExplorerSessionController {
           allowProdRepo: true
         })
       ),
-      Result.bind(
-        'branch',
-        (
-          v
-        ): Result.ResultAsync<BranchTab, DbBranchesFindFirstCheckExistsError> =>
-          this.db.branches.findFirstCheckExists({
-            where: and(
-              eq(branchesTable.projectId, v.projectId),
-              eq(branchesTable.repoId, v.repoId),
-              eq(branchesTable.branchId, v.branchId)
-            )
-          })
+      Result.bind('branch', v =>
+        this.db.branches.findFirstCheckExists({
+          where: and(
+            eq(branchesTable.projectId, v.projectId),
+            eq(branchesTable.repoId, v.repoId),
+            eq(branchesTable.branchId, v.branchId)
+          )
+        })
       ),
       Result.andThrough(v =>
         this.envsService.getEnvCheckExistsAndAccess({
@@ -151,22 +137,15 @@ export class CreateExplorerSessionController {
           )
         })
       ),
-      Result.bind(
-        'modelSelection',
-        (
-          v
-        ): Result.ResultAsync<
-          GetModelSelectionOutput,
-          GetModelSelectionError
-        > =>
-          this.providersService.getModelSelection({
-            projectId: v.projectId,
-            providerId: v.providerId,
-            modelId: v.modelId,
-            variant: v.variant,
-            isUserCodexAuthSet: isDefined(v.user.codexAuth),
-            isBuilder: false
-          })
+      Result.bind('modelSelection', v =>
+        this.providersService.getModelSelection({
+          projectId: v.projectId,
+          providerId: v.providerId,
+          modelId: v.modelId,
+          variant: v.variant,
+          isUserCodexAuthSet: isDefined(v.user.codexAuth),
+          isBuilder: false
+        })
       ),
       // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
       Result.andThrough(async v =>
@@ -174,99 +153,96 @@ export class CreateExplorerSessionController {
           ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
           : Result.succeed()
       ),
-      Result.bind(
-        'session',
-        async (v): Result.ResultAsync<SessionTab, DbErrorToError> => {
-          let now: number = Date.now();
+      Result.bind('session', async v => {
+        let now: number = Date.now();
 
-          let session: SessionTab;
+        let session: SessionTab;
 
-          let persistenceResult: Result.Result<void, DbErrorToError> =
-            await dbErrorToResult({
-              action: async () => {
-                await retry(
-                  async () => {
-                    let sessionId: string = makeSessionId();
+        let persistenceResult: Result.Result<void, DbErrorToError> =
+          await dbErrorToResult({
+            action: async () => {
+              await retry(
+                async () => {
+                  let sessionId: string = makeSessionId();
 
-                    session = this.sessionsService.makeSession({
-                      sessionId: sessionId,
-                      type: 'Explorer',
-                      repoId: v.repoId,
-                      branchId: v.branchId,
-                      userId: v.user.userId,
-                      projectId: v.projectId,
-                      sandboxType: undefined,
-                      providerId: v.providerId,
-                      modelId: v.modelId,
-                      lastMessageVariant: v.variant,
-                      agent: undefined,
-                      firstMessage: v.firstMessage,
-                      initialBranch: undefined,
-                      envId: v.envId,
-                      initialCommit: undefined,
-                      status: 'Active',
-                      lastActivityTs: now,
-                      codexAuthUpdateTs:
-                        v.modelSelection.provider.type === 'OpenAICodex'
-                          ? v.user.codexAuthUpdateTs
-                          : undefined,
-                      createdTs: now
+                  session = this.sessionsService.makeSession({
+                    sessionId: sessionId,
+                    type: 'Explorer',
+                    repoId: v.repoId,
+                    branchId: v.branchId,
+                    userId: v.user.userId,
+                    projectId: v.projectId,
+                    sandboxType: undefined,
+                    providerId: v.providerId,
+                    modelId: v.modelId,
+                    lastMessageVariant: v.variant,
+                    agent: undefined,
+                    firstMessage: v.firstMessage,
+                    initialBranch: undefined,
+                    envId: v.envId,
+                    initialCommit: undefined,
+                    status: 'Active',
+                    lastActivityTs: now,
+                    codexAuthUpdateTs:
+                      v.modelSelection.provider.type === 'OpenAICodex'
+                        ? v.user.codexAuthUpdateTs
+                        : undefined,
+                    createdTs: now
+                  });
+
+                  let ocSession: OcSessionTab =
+                    this.sessionsService.makeOcSession({
+                      sessionId: sessionId
                     });
 
-                    let ocSession: OcSessionTab =
-                      this.sessionsService.makeOcSession({
-                        sessionId: sessionId
+                  if (v.firstMessage) {
+                    let busyEvent: EventSessionStatus = {
+                      id: crypto.randomUUID(),
+                      type: 'session.status',
+                      properties: {
+                        sessionID: sessionId,
+                        status: { type: 'busy' }
+                      }
+                    };
+
+                    let busyStatus: SessionStatus = { type: 'busy' };
+
+                    ocSession = { ...ocSession, ocSessionStatus: busyStatus };
+
+                    let busyEventTab: OcEventTab =
+                      this.ocEventsService.makeOcEvent({
+                        sessionId: sessionId,
+                        event: busyEvent,
+                        eventIndex: 0
                       });
 
-                    if (v.firstMessage) {
-                      let busyEvent: EventSessionStatus = {
-                        id: crypto.randomUUID(),
-                        type: 'session.status',
-                        properties: {
-                          sessionID: sessionId,
-                          status: { type: 'busy' }
-                        }
-                      };
+                    await this.db.writeUnwrap({
+                      insert: {
+                        sessions: [session],
+                        ocSessions: [ocSession],
+                        ocEvents: [busyEventTab]
+                      },
+                      retryOptions: { retries: 0 }
+                    });
+                  } else {
+                    await this.db.writeUnwrap({
+                      insert: {
+                        sessions: [session],
+                        ocSessions: [ocSession]
+                      },
+                      retryOptions: { retries: 0 }
+                    });
+                  }
+                },
+                getRetryOption(this.cs, this.logger)
+              );
+            }
+          });
 
-                      let busyStatus: SessionStatus = { type: 'busy' };
-
-                      ocSession = { ...ocSession, ocSessionStatus: busyStatus };
-
-                      let busyEventTab: OcEventTab =
-                        this.ocEventsService.makeOcEvent({
-                          sessionId: sessionId,
-                          event: busyEvent,
-                          eventIndex: 0
-                        });
-
-                      await this.db.writeUnwrap({
-                        insert: {
-                          sessions: [session],
-                          ocSessions: [ocSession],
-                          ocEvents: [busyEventTab]
-                        },
-                        retryOptions: { retries: 0 }
-                      });
-                    } else {
-                      await this.db.writeUnwrap({
-                        insert: {
-                          sessions: [session],
-                          ocSessions: [ocSession]
-                        },
-                        retryOptions: { retries: 0 }
-                      });
-                    }
-                  },
-                  getRetryOption(this.cs, this.logger)
-                );
-              }
-            });
-
-          return Result.isFailure(persistenceResult)
-            ? persistenceResult
-            : Result.succeed(session);
-        }
-      ),
+        return Result.isFailure(persistenceResult)
+          ? persistenceResult
+          : Result.succeed(session);
+      }),
       // Fire-and-forget first message streaming
       Result.andThrough(v => {
         if (v.firstMessage) {

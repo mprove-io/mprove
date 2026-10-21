@@ -10,7 +10,7 @@ export async function initializeManagedCentralRepo(item: {
   return Result.pipe(
     Result.succeed(item),
     Result.andThrough(v => ensureDir({ dir: v.centralDir })),
-    Result.andThen(async (v): Result.ResultAsync<void, never> => {
+    Result.andThen(async v => {
       let centralGit: SimpleGit = createSimpleGit({ baseDir: v.centralDir });
 
       // Initialize the central repository as bare.

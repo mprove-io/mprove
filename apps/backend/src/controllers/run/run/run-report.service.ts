@@ -3,7 +3,6 @@ import { Result } from '@praha/byethrow';
 import { and, eq, or } from 'drizzle-orm';
 import type {
   MemberTab,
-  ReportTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
@@ -12,7 +11,6 @@ import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { DbService } from '#backend/services/db/db.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DbReportsFindManyError } from '#common/types/backend/function-errors/db/reports/db-reports-find-many-error';
 import type { PrepareRunReportError } from '#common/types/backend/function-errors/prepare-run-report-error';
 import type { RunQuery } from '#common/types/backend/parts/run/run-query';
 import type { RunReport } from '#common/types/backend/parts/run/run-report';
@@ -58,38 +56,32 @@ export class RunReportService {
   }): Result.ResultAsync<PrepareRunReportOutput, PrepareRunReportError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind(
-        'reports',
-        (v): Result.ResultAsync<ReportTab[], DbReportsFindManyError> =>
-          this.db.reports.findMany({
-            where: and(
-              eq(reportsTable.structId, v.structId),
-              or(
-                eq(reportsTable.draft, false),
-                eq(reportsTable.creatorId, v.user.userId)
-              )
-            )
-          })
-      ),
-      Result.bind(
-        'reportsGrantedAccess',
-        (v): Result.Result<ReportTab[], never> =>
-          Result.succeed(
-            v.reports.filter(
-              x =>
-                x.draft === true ||
-                checkAccess({
-                  member: v.userMember,
-                  accessRoles: x.accessRolesCombined,
-                  filePath: x.filePath
-                })
+      Result.bind('reports', v =>
+        this.db.reports.findMany({
+          where: and(
+            eq(reportsTable.structId, v.structId),
+            or(
+              eq(reportsTable.draft, false),
+              eq(reportsTable.creatorId, v.user.userId)
             )
           )
+        })
       ),
-      Result.bind(
-        'reportIdsList',
-        (v): Result.Result<string[], never> =>
-          Result.succeed(v.reportIds?.split(','))
+      Result.bind('reportsGrantedAccess', v =>
+        Result.succeed(
+          v.reports.filter(
+            x =>
+              x.draft === true ||
+              checkAccess({
+                member: v.userMember,
+                accessRoles: x.accessRolesCombined,
+                filePath: x.filePath
+              })
+          )
+        )
+      ),
+      Result.bind('reportIdsList', v =>
+        Result.succeed(v.reportIds?.split(','))
       ),
       Result.andThrough(v =>
         isUndefined(v.reportIdsList)
