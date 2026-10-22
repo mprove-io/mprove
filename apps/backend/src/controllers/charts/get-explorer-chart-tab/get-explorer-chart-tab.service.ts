@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   ChartTab,
   MconfigTab,
@@ -24,6 +23,7 @@ import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service'
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import {
   ExplorerChartRebuildService,
   type ExplorerRebuildResult
@@ -276,7 +276,7 @@ export class GetExplorerChartTabService {
 
             rebuiltChart.title = v.originalChart.title;
 
-            let persistenceResult: Result.Result<PackerOutput, WriteError> =
+            let persistenceResult: Result.Result<WriteOutput, WriteError> =
               await this.db.write({
                 insert: {
                   charts: [rebuiltChart],

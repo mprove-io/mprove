@@ -394,7 +394,7 @@ export class RefreshCachedColumnController {
 
       currentCachedColumn.errorMessage = refreshErrorMessage;
 
-      await this.db.packer.writeUnwrap({
+      await this.db.txWriteUnwrap({
         tx: tx,
         update: {
           cachedColumns: [currentCachedColumn]
@@ -509,7 +509,7 @@ export class RefreshCachedColumnController {
                     i + CACHED_PARTS_INSERT_CHUNK_SIZE
                   );
 
-                  await this.db.packer.writeUnwrap({
+                  await this.db.txWriteUnwrap({
                     tx: tx,
                     insert: {
                       cachedParts: cachedPartsChunk
@@ -536,7 +536,7 @@ export class RefreshCachedColumnController {
 
               currentCachedColumn.sampleSize = v.sampleSize;
 
-              await this.db.packer.writeUnwrap({
+              await this.db.txWriteUnwrap({
                 tx: tx,
                 update: {
                   cachedColumns: [currentCachedColumn]

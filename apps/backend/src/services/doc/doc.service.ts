@@ -7,10 +7,10 @@ import { DateTime } from 'luxon';
 import pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix/node-format-ts-unix';
 import { DbService } from '#backend/services/db/db.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import { makeTs } from '#backend/services/doc/make-ts/make-ts';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import {
@@ -339,7 +339,7 @@ FROM main;`;
       });
 
     if (newKits.length > 0) {
-      let persistenceResult: Result.Result<PackerOutput, WriteError> =
+      let persistenceResult: Result.Result<WriteOutput, WriteError> =
         await this.db.write({
           insert: {
             kits: newKits

@@ -8,7 +8,6 @@ import {
   ToBackendEditDraftDashboardResponseDto
 } from '#backend/controllers/dashboards/edit-draft-dashboard/edit-draft-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -28,6 +27,7 @@ import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -346,7 +346,7 @@ export class EditDraftDashboardController {
         })
       ),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        let persistenceResult: Result.Result<WriteOutput, WriteError> =
           await this.db.write({
             insert: {
               mconfigs: v.processedDashboard.insertMconfigs

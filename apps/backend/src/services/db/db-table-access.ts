@@ -1,7 +1,7 @@
 import type { DbTableRegistry } from '#backend/services/db/create-db-table-registry';
 
 export class DbTableAccess implements DbTableRegistry {
-  private readonly tableRegistry: DbTableRegistry;
+  protected readonly tableRegistry: DbTableRegistry;
 
   constructor(item: { tableRegistry: DbTableRegistry }) {
     let { tableRegistry } = item;

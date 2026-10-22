@@ -17,6 +17,7 @@ import { connectionEntToTab } from '#backend/services/db/connections/connection-
 import { connectionTabToEnt } from '#backend/services/db/connections/connection-tab-to-ent/connection-tab-to-ent';
 import { dashboardEntToTab } from '#backend/services/db/dashboards/dashboard-ent-to-tab/dashboard-ent-to-tab';
 import { dashboardTabToEnt } from '#backend/services/db/dashboards/dashboard-tab-to-ent/dashboard-tab-to-ent';
+import type { DbEntityWriteConfig } from '#backend/services/db/db-write-operation';
 import { dconfigEntToTab } from '#backend/services/db/dconfigs/dconfig-ent-to-tab/dconfig-ent-to-tab';
 import { dconfigTabToEnt } from '#backend/services/db/dconfigs/dconfig-tab-to-ent/dconfig-tab-to-ent';
 import { envEntToTab } from '#backend/services/db/envs/env-ent-to-tab/env-ent-to-tab';
@@ -150,6 +151,7 @@ export type DbExistsColumns<Table extends PgTable> = {
 export type DbWriteEntityRegistry = {
   [Key in DbWriteTableKey]: {
     table: (typeof schemaPostgres)[`${Key}Table`];
+    write: DbEntityWriteConfig<(typeof schemaPostgres)[`${Key}Table`]>;
     tabToEnt: (item: {
       tab: DbTableTab<Key>;
       hashSecret?: string;
@@ -173,9 +175,14 @@ export type DbReadEntityRegistry = {
   };
 };
 
+// Declaration order determines conversion and SQL execution order.
 export const dbEntityRegistry = {
   avatars: {
     table: schemaPostgres.avatarsTable,
+    write: {
+      identityKey: 'userId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.avatarsTable>,
     defaultError: {
       code: 'BACKEND_AVATAR_DOES_NOT_EXIST'
     } satisfies BackendAvatarDoesNotExistError,
@@ -184,6 +191,10 @@ export const dbEntityRegistry = {
   },
   branches: {
     table: schemaPostgres.branchesTable,
+    write: {
+      identityKey: 'branchFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.branchesTable>,
     defaultError: {
       code: 'BACKEND_BRANCH_DOES_NOT_EXIST'
     } satisfies BackendBranchDoesNotExistError,
@@ -192,6 +203,10 @@ export const dbEntityRegistry = {
   },
   bridges: {
     table: schemaPostgres.bridgesTable,
+    write: {
+      identityKey: 'bridgeFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.bridgesTable>,
     defaultError: {
       code: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST'
     } satisfies BackendBridgeBranchEnvDoesNotExistError,
@@ -200,6 +215,10 @@ export const dbEntityRegistry = {
   },
   cachedColumns: {
     table: schemaPostgres.cachedColumnsTable,
+    write: {
+      identityKey: 'cachedColumnFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.cachedColumnsTable>,
     defaultError: {
       code: 'BACKEND_CACHED_COLUMN_DOES_NOT_EXIST'
     } satisfies BackendCachedColumnDoesNotExistError,
@@ -208,25 +227,22 @@ export const dbEntityRegistry = {
   },
   cachedParts: {
     table: schemaPostgres.cachedPartsTable,
+    write: {
+      identityKey: 'cachedPartFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.cachedPartsTable>,
     defaultError: {
       code: 'BACKEND_CACHED_PART_DOES_NOT_EXIST'
     } satisfies BackendCachedPartDoesNotExistError,
     entToTab: cachedPartEntToTab,
     tabToEnt: cachedPartTabToEnt
   },
-  charts: {
-    table: schemaPostgres.chartsTable,
-    existsColumns: { chartId: true } satisfies DbExistsColumns<
-      typeof schemaPostgres.chartsTable
-    >,
-    defaultError: {
-      code: 'BACKEND_CHART_DOES_NOT_EXIST'
-    } satisfies BackendChartDoesNotExistError,
-    entToTab: chartEntToTab,
-    tabToEnt: chartTabToEnt
-  },
   connections: {
     table: schemaPostgres.connectionsTable,
+    write: {
+      identityKey: 'connectionFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.connectionsTable>,
     defaultError: {
       code: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
     } satisfies BackendConnectionDoesNotExistError,
@@ -235,6 +251,10 @@ export const dbEntityRegistry = {
   },
   dashboards: {
     table: schemaPostgres.dashboardsTable,
+    write: {
+      identityKey: 'dashboardFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.dashboardsTable>,
     existsColumns: { dashboardId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.dashboardsTable
     >,
@@ -246,14 +266,34 @@ export const dbEntityRegistry = {
   },
   dconfigs: {
     table: schemaPostgres.dconfigsTable,
+    write: {
+      identityKey: 'dconfigId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.dconfigsTable>,
     defaultError: {
       code: 'BACKEND_DCONFIG_DOES_NOT_EXIST'
     } satisfies BackendDconfigDoesNotExistError,
     entToTab: dconfigEntToTab,
     tabToEnt: dconfigTabToEnt
   },
+  uconfigs: {
+    table: schemaPostgres.uconfigsTable,
+    write: {
+      identityKey: 'uconfigId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.uconfigsTable>,
+    defaultError: {
+      code: 'BACKEND_UCONFIG_DOES_NOT_EXIST'
+    } satisfies BackendUconfigDoesNotExistError,
+    entToTab: uconfigEntToTab,
+    tabToEnt: uconfigTabToEnt
+  },
   envs: {
     table: schemaPostgres.envsTable,
+    write: {
+      identityKey: 'envFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.envsTable>,
     defaultError: {
       code: 'BACKEND_ENV_DOES_NOT_EXIST'
     } satisfies BackendEnvDoesNotExistError,
@@ -262,14 +302,34 @@ export const dbEntityRegistry = {
   },
   givens: {
     table: schemaPostgres.givensTable,
+    write: {
+      identityKey: 'givenFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.givensTable>,
     defaultError: {
       code: 'BACKEND_GIVEN_DOES_NOT_EXIST'
     } satisfies BackendGivenDoesNotExistError,
     entToTab: givenEntToTab,
     tabToEnt: givenTabToEnt
   },
+  roles: {
+    table: schemaPostgres.rolesTable,
+    write: {
+      identityKey: 'roleFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.rolesTable>,
+    defaultError: {
+      code: 'BACKEND_ROLE_DOES_NOT_EXIST'
+    } satisfies BackendRoleDoesNotExistError,
+    entToTab: roleEntToTab,
+    tabToEnt: roleTabToEnt
+  },
   kits: {
     table: schemaPostgres.kitsTable,
+    write: {
+      identityKey: 'kitId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.kitsTable>,
     defaultError: {
       code: 'BACKEND_KIT_DOES_NOT_EXIST'
     } satisfies BackendKitDoesNotExistError,
@@ -278,6 +338,10 @@ export const dbEntityRegistry = {
   },
   mconfigs: {
     table: schemaPostgres.mconfigsTable,
+    write: {
+      identityKey: 'mconfigId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.mconfigsTable>,
     defaultError: {
       code: 'BACKEND_MCONFIG_DOES_NOT_EXIST'
     } satisfies BackendMconfigDoesNotExistError,
@@ -286,18 +350,22 @@ export const dbEntityRegistry = {
   },
   members: {
     table: schemaPostgres.membersTable,
+    write: {
+      identityKey: 'memberFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.membersTable>,
     defaultError: {
       code: 'BACKEND_MEMBER_DOES_NOT_EXIST'
     } satisfies BackendMemberDoesNotExistError,
     entToTab: memberEntToTab,
     tabToEnt: memberTabToEnt
   },
-  modelFieldLeafs: {
-    table: schemaPostgres.modelFieldLeafsTable,
-    tabToEnt: modelFieldLeafTabToEnt
-  },
   models: {
     table: schemaPostgres.modelsTable,
+    write: {
+      identityKey: 'modelFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.modelsTable>,
     existsColumns: { modelId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.modelsTable
     >,
@@ -307,48 +375,32 @@ export const dbEntityRegistry = {
     entToTab: modelEntToTab,
     tabToEnt: modelTabToEnt
   },
+  modelFieldLeafs: {
+    table: schemaPostgres.modelFieldLeafsTable,
+    write: {
+      identityKey: 'modelFieldLeafFullId',
+      operations: ['insert']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.modelFieldLeafsTable>,
+    tabToEnt: modelFieldLeafTabToEnt
+  },
   notes: {
     table: schemaPostgres.notesTable,
+    write: {
+      identityKey: 'noteId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.notesTable>,
     defaultError: {
       code: 'BACKEND_NOTE_DOES_NOT_EXIST'
     } satisfies BackendNoteDoesNotExistError,
     entToTab: noteEntToTab,
     tabToEnt: noteTabToEnt
   },
-  ocEvents: {
-    table: schemaPostgres.ocEventsTable,
-    defaultError: {
-      code: 'BACKEND_OC_EVENT_DOES_NOT_EXIST'
-    } satisfies BackendOcEventDoesNotExistError,
-    entToTab: ocEventEntToTab,
-    tabToEnt: ocEventTabToEnt
-  },
-  ocMessages: {
-    table: schemaPostgres.ocMessagesTable,
-    defaultError: {
-      code: 'BACKEND_OC_MESSAGE_DOES_NOT_EXIST'
-    } satisfies BackendOcMessageDoesNotExistError,
-    entToTab: ocMessageEntToTab,
-    tabToEnt: ocMessageTabToEnt
-  },
-  ocParts: {
-    table: schemaPostgres.ocPartsTable,
-    defaultError: {
-      code: 'BACKEND_OC_PART_DOES_NOT_EXIST'
-    } satisfies BackendOcPartDoesNotExistError,
-    entToTab: ocPartEntToTab,
-    tabToEnt: ocPartTabToEnt
-  },
-  ocSessions: {
-    table: schemaPostgres.ocSessionsTable,
-    defaultError: {
-      code: 'BACKEND_OC_SESSION_DOES_NOT_EXIST'
-    } satisfies BackendOcSessionDoesNotExistError,
-    entToTab: ocSessionEntToTab,
-    tabToEnt: ocSessionTabToEnt
-  },
   orgs: {
     table: schemaPostgres.orgsTable,
+    write: {
+      identityKey: 'orgId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.orgsTable>,
     defaultError: {
       code: 'BACKEND_ORG_DOES_NOT_EXIST'
     } satisfies BackendOrgDoesNotExistError,
@@ -357,6 +409,10 @@ export const dbEntityRegistry = {
   },
   projects: {
     table: schemaPostgres.projectsTable,
+    write: {
+      identityKey: 'projectId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.projectsTable>,
     defaultError: {
       code: 'BACKEND_PROJECT_DOES_NOT_EXIST'
     } satisfies BackendProjectDoesNotExistError,
@@ -365,6 +421,10 @@ export const dbEntityRegistry = {
   },
   providers: {
     table: schemaPostgres.providersTable,
+    write: {
+      identityKey: 'providerFullId',
+      operations: ['insert', 'update', 'insertOrUpdate', 'insertOrDoNothing']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.providersTable>,
     defaultError: {
       code: 'BACKEND_PROVIDER_DOES_NOT_EXIST'
     } satisfies BackendProviderDoesNotExistError,
@@ -373,6 +433,10 @@ export const dbEntityRegistry = {
   },
   queries: {
     table: schemaPostgres.queriesTable,
+    write: {
+      identityKey: 'queryId',
+      operations: ['insert', 'update', 'insertOrUpdate', 'insertOrDoNothing']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.queriesTable>,
     defaultError: {
       code: 'BACKEND_QUERY_DOES_NOT_EXIST'
     } satisfies BackendQueryDoesNotExistError,
@@ -381,6 +445,10 @@ export const dbEntityRegistry = {
   },
   reports: {
     table: schemaPostgres.reportsTable,
+    write: {
+      identityKey: 'reportFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.reportsTable>,
     existsColumns: { reportId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.reportsTable
     >,
@@ -390,16 +458,63 @@ export const dbEntityRegistry = {
     entToTab: reportEntToTab,
     tabToEnt: reportTabToEnt
   },
-  roles: {
-    table: schemaPostgres.rolesTable,
+  structs: {
+    table: schemaPostgres.structsTable,
+    write: {
+      identityKey: 'structId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.structsTable>,
     defaultError: {
-      code: 'BACKEND_ROLE_DOES_NOT_EXIST'
-    } satisfies BackendRoleDoesNotExistError,
-    entToTab: roleEntToTab,
-    tabToEnt: roleTabToEnt
+      code: 'BACKEND_STRUCT_DOES_NOT_EXIST'
+    } satisfies BackendStructDoesNotExistError,
+    entToTab: structEntToTab,
+    tabToEnt: structTabToEnt
+  },
+  users: {
+    table: schemaPostgres.usersTable,
+    write: {
+      identityKey: 'userId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.usersTable>,
+    defaultError: {
+      code: 'BACKEND_USER_DOES_NOT_EXIST'
+    } satisfies BackendUserDoesNotExistError,
+    entToTab: userEntToTab,
+    tabToEnt: userTabToEnt
+  },
+  charts: {
+    table: schemaPostgres.chartsTable,
+    write: {
+      identityKey: 'chartFullId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.chartsTable>,
+    existsColumns: { chartId: true } satisfies DbExistsColumns<
+      typeof schemaPostgres.chartsTable
+    >,
+    defaultError: {
+      code: 'BACKEND_CHART_DOES_NOT_EXIST'
+    } satisfies BackendChartDoesNotExistError,
+    entToTab: chartEntToTab,
+    tabToEnt: chartTabToEnt
+  },
+  ocEvents: {
+    table: schemaPostgres.ocEventsTable,
+    write: {
+      identityKey: 'eventId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocEventsTable>,
+    defaultError: {
+      code: 'BACKEND_OC_EVENT_DOES_NOT_EXIST'
+    } satisfies BackendOcEventDoesNotExistError,
+    entToTab: ocEventEntToTab,
+    tabToEnt: ocEventTabToEnt
   },
   sessions: {
     table: schemaPostgres.sessionsTable,
+    write: {
+      identityKey: 'sessionId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.sessionsTable>,
     existsColumns: { sessionId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.sessionsTable
     >,
@@ -409,28 +524,45 @@ export const dbEntityRegistry = {
     entToTab: sessionEntToTab,
     tabToEnt: sessionTabToEnt
   },
-  structs: {
-    table: schemaPostgres.structsTable,
+  ocSessions: {
+    table: schemaPostgres.ocSessionsTable,
+    write: {
+      identityKey: 'sessionId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocSessionsTable>,
     defaultError: {
-      code: 'BACKEND_STRUCT_DOES_NOT_EXIST'
-    } satisfies BackendStructDoesNotExistError,
-    entToTab: structEntToTab,
-    tabToEnt: structTabToEnt
+      code: 'BACKEND_OC_SESSION_DOES_NOT_EXIST'
+    } satisfies BackendOcSessionDoesNotExistError,
+    entToTab: ocSessionEntToTab,
+    tabToEnt: ocSessionTabToEnt
   },
-  uconfigs: {
-    table: schemaPostgres.uconfigsTable,
+  ocMessages: {
+    table: schemaPostgres.ocMessagesTable,
+    write: {
+      identityKey: 'messageId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocMessagesTable>,
     defaultError: {
-      code: 'BACKEND_UCONFIG_DOES_NOT_EXIST'
-    } satisfies BackendUconfigDoesNotExistError,
-    entToTab: uconfigEntToTab,
-    tabToEnt: uconfigTabToEnt
+      code: 'BACKEND_OC_MESSAGE_DOES_NOT_EXIST'
+    } satisfies BackendOcMessageDoesNotExistError,
+    entToTab: ocMessageEntToTab,
+    tabToEnt: ocMessageTabToEnt
   },
-  users: {
-    table: schemaPostgres.usersTable,
+  ocParts: {
+    table: schemaPostgres.ocPartsTable,
+    write: {
+      identityKey: 'partId',
+      operations: ['insert', 'update', 'insertOrUpdate']
+    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocPartsTable>,
     defaultError: {
-      code: 'BACKEND_USER_DOES_NOT_EXIST'
-    } satisfies BackendUserDoesNotExistError,
-    entToTab: userEntToTab,
-    tabToEnt: userTabToEnt
+      code: 'BACKEND_OC_PART_DOES_NOT_EXIST'
+    } satisfies BackendOcPartDoesNotExistError,
+    entToTab: ocPartEntToTab,
+    tabToEnt: ocPartTabToEnt
   }
 };
+
+// Object.keys loses the literal keys only at this enumeration boundary.
+export const dbTableKeys: DbWriteTableKey[] = Object.keys(
+  dbEntityRegistry
+) as DbWriteTableKey[];

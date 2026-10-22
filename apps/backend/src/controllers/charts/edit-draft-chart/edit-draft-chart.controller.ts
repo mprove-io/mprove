@@ -8,7 +8,6 @@ import {
   ToBackendEditDraftChartResponseDto
 } from '#backend/controllers/charts/edit-draft-chart/edit-draft-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   ChartTab,
   MconfigTab,
@@ -33,6 +32,7 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
@@ -316,7 +316,7 @@ export class EditDraftChartController {
         return Result.succeed(prepareDraftChartPayload);
       }),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        let persistenceResult: Result.Result<WriteOutput, WriteError> =
           await this.db.write({
             insert: {
               mconfigs: [v.prepareQueryPayload.newMconfig]

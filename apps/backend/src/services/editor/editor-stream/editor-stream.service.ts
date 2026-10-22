@@ -835,7 +835,7 @@ export class EditorStreamService implements OnModuleDestroy {
       }
 
       await this.db.drizzle.transaction(async tx => {
-        await this.db.packer.writeUnwrap({
+        await this.db.txWriteUnwrap({
           tx: tx,
           insertOrUpdate: {
             ocMessages: messageTabs,

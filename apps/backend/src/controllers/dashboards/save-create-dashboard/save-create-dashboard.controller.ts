@@ -11,7 +11,6 @@ import {
   ToBackendSaveCreateDashboardResponseDto
 } from '#backend/controllers/dashboards/save-create-dashboard/save-create-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   MemberTab,
   UserTab
@@ -44,6 +43,7 @@ import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -489,7 +489,7 @@ export class SaveCreateDashboardController {
           ...rebuild.struct.errors
         ];
 
-        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        let persistenceResult: Result.Result<WriteOutput, WriteError> =
           await this.db.write({
             insertOrUpdate: {
               structs: [v.currentStruct],
@@ -579,7 +579,7 @@ export class SaveCreateDashboardController {
                         );
                     }
 
-                    await this.db.packer.writeUnwrap({
+                    await this.db.txWriteUnwrap({
                       tx: tx,
                       insert: {
                         dashboards: [processedDashboard.newDashboard],

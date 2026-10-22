@@ -8,7 +8,6 @@ import {
   ToBackendCreateDraftReportResponseDto
 } from '#backend/controllers/reports/create-draft-report/create-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   ModelTab,
   ReportTab,
@@ -30,6 +29,7 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { ReportRowService } from '#backend/services/report-row/report-row.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -373,7 +373,7 @@ export class CreateDraftReportController {
         return Result.succeed();
       }),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        let persistenceResult: Result.Result<WriteOutput, WriteError> =
           await this.db.write({
             insert: {
               mconfigs: v.copyMconfigs,

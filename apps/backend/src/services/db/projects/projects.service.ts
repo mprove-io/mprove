@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BranchTab,
   BridgeTab,
@@ -22,6 +21,7 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -336,7 +336,7 @@ export class ProjectsService {
       return devStructResult;
     }
 
-    let persistence: Result.Result<PackerOutput, WriteError> =
+    let persistence: Result.Result<WriteOutput, WriteError> =
       await this.db.write({
         insert: {
           projects: [newProject],

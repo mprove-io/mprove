@@ -206,7 +206,7 @@ export class DeleteChartController {
                       )
                     );
 
-                  await this.db.packer.writeUnwrap({
+                  await this.db.txWriteUnwrap({
                     tx: tx,
                     insertOrUpdate: { bridges: [...v.branchBridges] }
                   });

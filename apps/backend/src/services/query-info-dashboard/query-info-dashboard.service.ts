@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   BridgeTab,
   MemberTab,
@@ -17,6 +16,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -245,7 +245,7 @@ export class QueryInfoDashboardService {
         })
       ),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        let persistenceResult: Result.Result<WriteOutput, WriteError> =
           await this.db.write({
             insert: {
               mconfigs: v.processedDashboard.insertMconfigs
@@ -292,7 +292,7 @@ export class QueryInfoDashboardService {
 
           v.user.ui.timezone = v.timezone;
 
-          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+          let persistenceResult: Result.Result<WriteOutput, WriteError> =
             await this.db.write({
               insertOrUpdate: {
                 users: [v.user]

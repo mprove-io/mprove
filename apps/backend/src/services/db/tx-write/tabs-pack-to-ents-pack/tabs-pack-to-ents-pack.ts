@@ -1,51 +1,13 @@
 import { Result } from '@praha/byethrow';
+import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
+import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
+import { dbTableKeys } from '#backend/services/db/db-entity-registry';
+import type { DbWriteTableRegistry } from '#backend/services/db/db-table';
 import {
   type ConvertTabsPackKeyOutput,
   convertTabsPackKey
-} from '#backend/functions/tabs-pack-to-ents-pack/convert-tabs-pack-key/convert-tabs-pack-key';
-import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
-import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import type { DbWriteTableRegistry } from '#backend/services/db/db-table';
-import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+} from '#backend/services/db/tx-write/tabs-pack-to-ents-pack/convert-tabs-pack-key/convert-tabs-pack-key';
 import type { TabsPackToEntsPackError } from '#common/types/backend/function-errors/tabs-pack-to-ents-pack-error';
-
-export const tabsPackKeys = [
-  'avatars',
-  'branches',
-  'bridges',
-  'cachedColumns',
-  'cachedParts',
-  'charts',
-  'connections',
-  'dashboards',
-  'dconfigs',
-  'envs',
-  'givens',
-  'roles',
-  'kits',
-  'mconfigs',
-  'members',
-  'ocMessages',
-  'modelFieldLeafs',
-  'models',
-  'notes',
-  'ocSessions',
-  'orgs',
-  'ocParts',
-  'projects',
-  'providers',
-  'queries',
-  'reports',
-  'structs',
-  'users',
-  'ocEvents',
-  'sessions',
-  'uconfigs'
-] as const;
-
-assertTypesEqual<(typeof tabsPackKeys)[number], keyof DbTabsPack>({
-  value: true
-});
 
 export function tabsPackToEntsPack(item: {
   tabsPack: DbTabsPack;
@@ -55,7 +17,7 @@ export function tabsPackToEntsPack(item: {
   return Result.pipe(
     Result.succeed(item),
     Result.bind('keyOutputs', v =>
-      Result.sequence(tabsPackKeys, key =>
+      Result.sequence(dbTableKeys, key =>
         convertTabsPackKey({
           key: key,
           tabsPack: v.tabsPack,

@@ -107,7 +107,7 @@ export class DeleteGivenController {
                       )
                     );
 
-                  await this.db.packer.writeUnwrap({
+                  await this.db.txWriteUnwrap({
                     tx: tx,
                     insertOrUpdate: { roles: v.rolesToUpdate }
                   });

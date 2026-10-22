@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   MconfigTab,
   MemberTab,
@@ -20,6 +19,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
@@ -196,7 +196,7 @@ export class QueryInfoChartService {
         return Result.succeed();
       }),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        let persistenceResult: Result.Result<WriteOutput, WriteError> =
           await this.db.write({
             insert: {
               mconfigs: [v.prepareQueryPayload.newMconfig]
@@ -241,7 +241,7 @@ export class QueryInfoChartService {
 
           v.user.ui.timezone = v.timezone;
 
-          let persistenceResult: Result.Result<PackerOutput, WriteError> =
+          let persistenceResult: Result.Result<WriteOutput, WriteError> =
             await this.db.write({
               insertOrUpdate: {
                 users: [v.user]

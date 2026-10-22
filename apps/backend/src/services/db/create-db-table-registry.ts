@@ -4,7 +4,8 @@ import {
   type DbReadTableKey,
   type DbWriteEntityRegistry,
   type DbWriteTableKey,
-  dbEntityRegistry
+  dbEntityRegistry,
+  dbTableKeys
 } from '#backend/services/db/db-entity-registry';
 import {
   DbTable,
@@ -38,11 +39,7 @@ export function createDbTableRegistry(item: {
     [Key in DbReadTableKey as `${Key}Table`]: DbTableExistsQuery<Key>;
   } = dbExtra.drizzle.query;
 
-  let keys: DbWriteTableKey[] = Object.keys(
-    dbEntityRegistry
-  ) as DbWriteTableKey[];
-
-  let entries: [string, unknown][] = keys.map(
+  let entries: [string, unknown][] = dbTableKeys.map(
     <Key extends DbWriteTableKey>(key: Key): [string, unknown] => {
       let entityConfig: (typeof dbEntityRegistry)[Key] = dbEntityRegistry[key];
 

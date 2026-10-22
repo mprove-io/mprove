@@ -11,7 +11,6 @@ import {
   ToBackendSaveModifyReportResponseDto
 } from '#backend/controllers/reports/save-modify-report/save-modify-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
-import type { PackerOutput } from '#backend/drizzle/postgres/drizzle-packer';
 import type {
   MemberTab,
   ModelTab,
@@ -43,6 +42,7 @@ import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import type { WriteOutput } from '#backend/services/db/write-output';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -502,7 +502,7 @@ export class SaveModifyReportController {
           ...rebuild.struct.errors
         ];
 
-        let persistenceResult: Result.Result<PackerOutput, WriteError> =
+        let persistenceResult: Result.Result<WriteOutput, WriteError> =
           await this.db.write({
             insertOrUpdate: {
               structs: [v.currentStruct],
@@ -587,7 +587,7 @@ export class SaveModifyReportController {
                         )
                       );
 
-                    await this.db.packer.writeUnwrap({
+                    await this.db.txWriteUnwrap({
                       tx: tx,
                       insertOrUpdate: {
                         reports: [saveReportPayload.report]
