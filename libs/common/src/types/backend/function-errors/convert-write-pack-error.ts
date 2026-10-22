@@ -5,13 +5,12 @@ import {
   zConvertTabsPackKeyError
 } from '#common/types/backend/function-errors/convert-tabs-pack-key-error';
 
-export type TabsPackToEntsPackError = ConvertTabsPackKeyError;
+export type ConvertWritePackError = ConvertTabsPackKeyError;
 
-export let zTabsPackToEntsPackError = zConvertTabsPackKeyError;
+export const zConvertWritePackError = zConvertTabsPackKeyError;
 
-assertTypesEqual<
-  TabsPackToEntsPackError,
-  z.infer<typeof zTabsPackToEntsPackError>
->({
-  value: true
-});
+assertTypesEqual<ConvertWritePackError, z.infer<typeof zConvertWritePackError>>(
+  {
+    value: true
+  }
+);

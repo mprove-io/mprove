@@ -1,19 +1,19 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
+  type ConvertWritePackError,
+  zConvertWritePackError
+} from '#common/types/backend/function-errors/convert-write-pack-error';
+import {
   type DconfigEntToTabError,
   zDconfigEntToTabError
 } from '#common/types/backend/function-errors/dconfig-ent-to-tab-error';
-import {
-  type TabsPackToEntsPackError,
-  zTabsPackToEntsPackError
-} from '#common/types/backend/function-errors/tabs-pack-to-ents-pack-error';
 
-export type TxWriteError = DconfigEntToTabError | TabsPackToEntsPackError;
+export type TxWriteError = DconfigEntToTabError | ConvertWritePackError;
 
 export const zTxWriteError = z.union([
   zDconfigEntToTabError,
-  zTabsPackToEntsPackError
+  zConvertWritePackError
 ]);
 
 assertTypesEqual<TxWriteError, z.infer<typeof zTxWriteError>>({

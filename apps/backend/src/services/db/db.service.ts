@@ -4,7 +4,6 @@ import { Result } from '@praha/byethrow';
 import type { Options } from 'async-retry';
 import { isNotNull, type SQLWrapper } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { type DbExtra, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
@@ -15,26 +14,19 @@ import {
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
-import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import {
   createDbTableRegistry,
   type DbTableRegistry
 } from '#backend/services/db/create-db-table-registry';
-import {
-  type DbTableEnt,
-  type DbWriteTableKey,
-  dbTableKeys
-} from '#backend/services/db/db-entity-registry';
+import { dbEntityRegistry } from '#backend/services/db/db-entity-registry';
 import type { DbTableContext } from '#backend/services/db/db-table';
 import { DbTableAccess } from '#backend/services/db/db-table-access';
 import type { DbTransaction } from '#backend/services/db/db-transaction';
-import {
-  type DbWriteOperation,
-  dbWriteOperationValues
-} from '#backend/services/db/db-write-operation';
-import { tabsPackToEntsPack } from '#backend/services/db/tx-write/tabs-pack-to-ents-pack/tabs-pack-to-ents-pack';
-import { writeDbPack } from '#backend/services/db/tx-write/write-db-pack/write-db-pack';
+import { dbWriteOperationValues } from '#backend/services/db/db-write-operation';
+import type { ConvertTabsPackKeyOutput } from '#backend/services/db/tx-write/convert-write-pack/convert-tabs-pack-key/convert-tabs-pack-key';
+import { convertWritePack } from '#backend/services/db/tx-write/convert-write-pack/convert-write-pack';
+import { writeDbTable } from '#backend/services/db/tx-write/write-db-table/write-db-table';
 import type { WriteOutput } from '#backend/services/db/write-output';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -43,12 +35,6 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { TxWriteError } from '#common/types/backend/function-errors/tx-write-error';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
-
-const { forEachSeries } = pIteration;
-
-type WriteEntPack = {
-  [Operation in DbWriteOperation]?: DbEntsPack;
-};
 
 @Injectable()
 export class DbService extends DbTableAccess {
@@ -242,99 +228,62 @@ export class DbService extends DbTableAccess {
               : this.tableRegistry.dconfigs.entToTab({ ent: x })
           )
       ),
-      Result.bind('insertEntsPack', v =>
-        isDefined(v.insert) && Object.keys(v.insert).length > 0
-          ? tabsPackToEntsPack({
-              tabsPack: v.insert,
-              hashSecret: v.dconfig?.hashSecret,
-              tableRegistry: this.tableRegistry
-            })
-          : Result.succeed(undefined)
+      Result.bind('activeWriteOperations', v =>
+        Result.succeed(
+          dbWriteOperationValues.filter(
+            operation =>
+              isDefined(v[operation]) && Object.keys(v[operation]).length > 0
+          )
+        )
       ),
-      Result.bind('updateEntsPack', v =>
-        isDefined(v.update) && Object.keys(v.update).length > 0
-          ? tabsPackToEntsPack({
-              tabsPack: v.update,
-              hashSecret: v.dconfig?.hashSecret,
-              tableRegistry: this.tableRegistry
-            })
-          : Result.succeed(undefined)
-      ),
-      Result.bind('insertOrUpdateEntsPack', v =>
-        isDefined(v.insertOrUpdate) && Object.keys(v.insertOrUpdate).length > 0
-          ? tabsPackToEntsPack({
-              tabsPack: v.insertOrUpdate,
-              hashSecret: v.dconfig?.hashSecret,
-              tableRegistry: this.tableRegistry
-            })
-          : Result.succeed(undefined)
-      ),
-      Result.bind('insertOrDoNothingEntsPack', v =>
-        isDefined(v.insertOrDoNothing) &&
-        Object.keys(v.insertOrDoNothing).length > 0
-          ? tabsPackToEntsPack({
-              tabsPack: v.insertOrDoNothing,
-              hashSecret: v.dconfig?.hashSecret,
-              tableRegistry: this.tableRegistry
-            })
-          : Result.succeed(undefined)
+      Result.bind('convertedPacks', v =>
+        Result.sequence(v.activeWriteOperations, operation =>
+          convertWritePack({
+            operation: operation,
+            tabsPack: v[operation],
+            hashSecret: v.dconfig?.hashSecret,
+            tableRegistry: this.tableRegistry
+          })
+        )
       ),
       Result.bind('newServerTs', v =>
         Result.succeed(isDefined(v.serverTs) ? v.serverTs : makeTsNumber())
       ),
       Result.map(v => {
-        [
-          v.insertEntsPack,
-          v.updateEntsPack,
-          v.insertOrUpdateEntsPack,
-          v.insertOrDoNothingEntsPack
-        ].forEach(entsPack => {
-          if (isDefined(entsPack)) {
-            dbTableKeys.forEach(key => {
-              entsPack[key]?.forEach((ent: DbTableEnt<DbWriteTableKey>) => {
-                ent.serverTs = v.newServerTs;
-              });
+        v.convertedPacks.forEach(convertedPack => {
+          convertedPack.tableConversions.forEach(tableConversion => {
+            tableConversion.ents.forEach(ent => {
+              ent.serverTs = v.newServerTs;
             });
-          }
+          });
         });
         return v;
       }),
-      Result.andThrough(async v => {
-        let writeEntPack: WriteEntPack = {
-          insert: v.insertEntsPack,
-          update: v.updateEntsPack,
-          insertOrUpdate: v.insertOrUpdateEntsPack,
-          insertOrDoNothing: v.insertOrDoNothingEntsPack
-        };
-
-        await forEachSeries(
-          [...dbWriteOperationValues],
-          async (operation: DbWriteOperation): Promise<void> => {
-            let entsPack: DbEntsPack = writeEntPack[operation];
-
-            if (isDefined(entsPack)) {
-              await writeDbPack({
-                tx: v.tx,
-                entsPack: entsPack,
-                operation: operation
-              });
-            }
-          }
-        );
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async v => {
-        if (isDefined(v.rawQueries)) {
-          await forEachSeries(
-            v.rawQueries,
-            async (query: SQLWrapper): Promise<void> => {
-              await v.tx.execute(query);
-            }
-          );
-        }
-        return Result.succeed();
-      }),
+      Result.andThrough(v =>
+        Result.sequence(v.convertedPacks, convertedPack =>
+          Result.sequence(
+            convertedPack.tableConversions,
+            async (tableConversion: ConvertTabsPackKeyOutput) =>
+              dbEntityRegistry[tableConversion.key].write.operations.findIndex(
+                operation => operation === convertedPack.operation
+              ) < 0
+                ? Result.succeed()
+                : writeDbTable({
+                    tx: v.tx,
+                    table: dbEntityRegistry[tableConversion.key].table,
+                    identityKey:
+                      dbEntityRegistry[tableConversion.key].write.identityKey,
+                    operation: convertedPack.operation,
+                    ents: tableConversion.ents
+                  }).then(() => Result.succeed())
+          )
+        )
+      ),
+      Result.andThrough(v =>
+        Result.sequence(v.rawQueries ?? [], (query: SQLWrapper) =>
+          v.tx.execute(query).then(() => Result.succeed())
+        )
+      ),
       Result.map(
         (v): WriteOutput => ({
           insert: v.insert,

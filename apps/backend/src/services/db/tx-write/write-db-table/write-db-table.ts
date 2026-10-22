@@ -3,8 +3,8 @@ import type { PgColumn, PgTable } from 'drizzle-orm/pg-core';
 import pIteration from 'p-iteration';
 import type { DbTransaction } from '#backend/services/db/db-transaction';
 import type { DbWriteOperation } from '#backend/services/db/db-write-operation';
-import { drizzleSetAllColumnsFull } from '#backend/services/db/tx-write/write-db-pack/write-db-table/drizzle-set-all-columns-full/drizzle-set-all-columns-full';
-import { setUndefinedToNull } from '#backend/services/db/tx-write/write-db-pack/write-db-table/set-undefined-to-null/set-undefined-to-null';
+import { drizzleSetAllColumnsFull } from '#backend/services/db/tx-write/write-db-table/drizzle-set-all-columns-full/drizzle-set-all-columns-full';
+import { setUndefinedToNull } from '#backend/services/db/tx-write/write-db-table/set-undefined-to-null/set-undefined-to-null';
 
 const { forEachSeries } = pIteration;
 
