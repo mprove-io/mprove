@@ -1,135 +1,135 @@
-import type { DbTableMap } from '#backend/services/db/db-table-types';
+import type { DbTableRegistry } from '#backend/services/db/create-db-table-registry';
 
-export class DbTableAccess implements DbTableMap {
-  private readonly tableMap: DbTableMap;
+export class DbTableAccess implements DbTableRegistry {
+  private readonly tableRegistry: DbTableRegistry;
 
-  constructor(item: { tableMap: DbTableMap }) {
-    let { tableMap } = item;
+  constructor(item: { tableRegistry: DbTableRegistry }) {
+    let { tableRegistry } = item;
 
-    this.tableMap = tableMap;
+    this.tableRegistry = tableRegistry;
   }
 
-  get avatars(): DbTableMap['avatars'] {
-    return this.tableMap.avatars;
+  get avatars(): DbTableRegistry['avatars'] {
+    return this.tableRegistry.avatars;
   }
 
-  get branches(): DbTableMap['branches'] {
-    return this.tableMap.branches;
+  get branches(): DbTableRegistry['branches'] {
+    return this.tableRegistry.branches;
   }
 
-  get bridges(): DbTableMap['bridges'] {
-    return this.tableMap.bridges;
+  get bridges(): DbTableRegistry['bridges'] {
+    return this.tableRegistry.bridges;
   }
 
-  get cachedColumns(): DbTableMap['cachedColumns'] {
-    return this.tableMap.cachedColumns;
+  get cachedColumns(): DbTableRegistry['cachedColumns'] {
+    return this.tableRegistry.cachedColumns;
   }
 
-  get cachedParts(): DbTableMap['cachedParts'] {
-    return this.tableMap.cachedParts;
+  get cachedParts(): DbTableRegistry['cachedParts'] {
+    return this.tableRegistry.cachedParts;
   }
 
-  get charts(): DbTableMap['charts'] {
-    return this.tableMap.charts;
+  get charts(): DbTableRegistry['charts'] {
+    return this.tableRegistry.charts;
   }
 
-  get connections(): DbTableMap['connections'] {
-    return this.tableMap.connections;
+  get connections(): DbTableRegistry['connections'] {
+    return this.tableRegistry.connections;
   }
 
-  get dashboards(): DbTableMap['dashboards'] {
-    return this.tableMap.dashboards;
+  get dashboards(): DbTableRegistry['dashboards'] {
+    return this.tableRegistry.dashboards;
   }
 
-  get dconfigs(): DbTableMap['dconfigs'] {
-    return this.tableMap.dconfigs;
+  get dconfigs(): DbTableRegistry['dconfigs'] {
+    return this.tableRegistry.dconfigs;
   }
 
-  get envs(): DbTableMap['envs'] {
-    return this.tableMap.envs;
+  get envs(): DbTableRegistry['envs'] {
+    return this.tableRegistry.envs;
   }
 
-  get givens(): DbTableMap['givens'] {
-    return this.tableMap.givens;
+  get givens(): DbTableRegistry['givens'] {
+    return this.tableRegistry.givens;
   }
 
-  get kits(): DbTableMap['kits'] {
-    return this.tableMap.kits;
+  get kits(): DbTableRegistry['kits'] {
+    return this.tableRegistry.kits;
   }
 
-  get mconfigs(): DbTableMap['mconfigs'] {
-    return this.tableMap.mconfigs;
+  get mconfigs(): DbTableRegistry['mconfigs'] {
+    return this.tableRegistry.mconfigs;
   }
 
-  get members(): DbTableMap['members'] {
-    return this.tableMap.members;
+  get members(): DbTableRegistry['members'] {
+    return this.tableRegistry.members;
   }
 
-  get modelFieldLeafs(): DbTableMap['modelFieldLeafs'] {
-    return this.tableMap.modelFieldLeafs;
+  get modelFieldLeafs(): DbTableRegistry['modelFieldLeafs'] {
+    return this.tableRegistry.modelFieldLeafs;
   }
 
-  get models(): DbTableMap['models'] {
-    return this.tableMap.models;
+  get models(): DbTableRegistry['models'] {
+    return this.tableRegistry.models;
   }
 
-  get notes(): DbTableMap['notes'] {
-    return this.tableMap.notes;
+  get notes(): DbTableRegistry['notes'] {
+    return this.tableRegistry.notes;
   }
 
-  get ocEvents(): DbTableMap['ocEvents'] {
-    return this.tableMap.ocEvents;
+  get ocEvents(): DbTableRegistry['ocEvents'] {
+    return this.tableRegistry.ocEvents;
   }
 
-  get ocMessages(): DbTableMap['ocMessages'] {
-    return this.tableMap.ocMessages;
+  get ocMessages(): DbTableRegistry['ocMessages'] {
+    return this.tableRegistry.ocMessages;
   }
 
-  get ocParts(): DbTableMap['ocParts'] {
-    return this.tableMap.ocParts;
+  get ocParts(): DbTableRegistry['ocParts'] {
+    return this.tableRegistry.ocParts;
   }
 
-  get ocSessions(): DbTableMap['ocSessions'] {
-    return this.tableMap.ocSessions;
+  get ocSessions(): DbTableRegistry['ocSessions'] {
+    return this.tableRegistry.ocSessions;
   }
 
-  get orgs(): DbTableMap['orgs'] {
-    return this.tableMap.orgs;
+  get orgs(): DbTableRegistry['orgs'] {
+    return this.tableRegistry.orgs;
   }
 
-  get projects(): DbTableMap['projects'] {
-    return this.tableMap.projects;
+  get projects(): DbTableRegistry['projects'] {
+    return this.tableRegistry.projects;
   }
 
-  get providers(): DbTableMap['providers'] {
-    return this.tableMap.providers;
+  get providers(): DbTableRegistry['providers'] {
+    return this.tableRegistry.providers;
   }
 
-  get queries(): DbTableMap['queries'] {
-    return this.tableMap.queries;
+  get queries(): DbTableRegistry['queries'] {
+    return this.tableRegistry.queries;
   }
 
-  get reports(): DbTableMap['reports'] {
-    return this.tableMap.reports;
+  get reports(): DbTableRegistry['reports'] {
+    return this.tableRegistry.reports;
   }
 
-  get roles(): DbTableMap['roles'] {
-    return this.tableMap.roles;
+  get roles(): DbTableRegistry['roles'] {
+    return this.tableRegistry.roles;
   }
 
-  get sessions(): DbTableMap['sessions'] {
-    return this.tableMap.sessions;
+  get sessions(): DbTableRegistry['sessions'] {
+    return this.tableRegistry.sessions;
   }
 
-  get structs(): DbTableMap['structs'] {
-    return this.tableMap.structs;
+  get structs(): DbTableRegistry['structs'] {
+    return this.tableRegistry.structs;
   }
 
-  get uconfigs(): DbTableMap['uconfigs'] {
-    return this.tableMap.uconfigs;
+  get uconfigs(): DbTableRegistry['uconfigs'] {
+    return this.tableRegistry.uconfigs;
   }
 
-  get users(): DbTableMap['users'] {
-    return this.tableMap.users;
+  get users(): DbTableRegistry['users'] {
+    return this.tableRegistry.users;
   }
 }

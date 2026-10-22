@@ -5,7 +5,7 @@ import {
 } from '#backend/functions/tabs-pack-to-ents-pack/convert-tabs-pack-key/convert-tabs-pack-key';
 import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import type { DbWriteConverterMap } from '#backend/services/db/db-table-types';
+import type { DbWriteTableRegistry } from '#backend/services/db/db-table';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { TabsPackToEntsPackError } from '#common/types/backend/function-errors/tabs-pack-to-ents-pack-error';
 
@@ -50,7 +50,7 @@ assertTypesEqual<(typeof tabsPackKeys)[number], keyof DbTabsPack>({
 export function tabsPackToEntsPack(item: {
   tabsPack: DbTabsPack;
   hashSecret?: string;
-  tableRegistry: DbWriteConverterMap;
+  tableRegistry: DbWriteTableRegistry;
 }): Result.Result<DbEntsPack, TabsPackToEntsPackError> {
   return Result.pipe(
     Result.succeed(item),

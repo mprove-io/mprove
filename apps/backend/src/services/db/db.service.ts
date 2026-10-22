@@ -14,12 +14,12 @@ import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-po
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import { createDbTables } from '#backend/services/db/create-db-tables';
+import {
+  createDbTableRegistry,
+  type DbTableRegistry
+} from '#backend/services/db/create-db-table-registry';
+import type { DbTableContext } from '#backend/services/db/db-table';
 import { DbTableAccess } from '#backend/services/db/db-table-access';
-import type {
-  DbConverterContext,
-  DbTableMap
-} from '#backend/services/db/db-table-types';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -37,7 +37,7 @@ export class DbService extends DbTableAccess {
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {
-    let context: DbConverterContext = {
+    let context: DbTableContext = {
       hashService: hashService,
       tabService: tabService,
       isEncryptDb: cs.get<BackendConfig['isEncryptDb']>('isEncryptDb'),
@@ -45,14 +45,14 @@ export class DbService extends DbTableAccess {
         cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata')
     };
 
-    let tableMap: DbTableMap = createDbTables({
+    let tableRegistry: DbTableRegistry = createDbTableRegistry({
       dbExtra: dbExtra,
       context: context
     });
 
-    super({ tableMap: tableMap });
+    super({ tableRegistry: tableRegistry });
 
-    this.packer = new DrizzlePacker({ tableRegistry: tableMap });
+    this.packer = new DrizzlePacker({ tableRegistry: tableRegistry });
   }
 
   get drizzle(): NodePgDatabase<typeof schemaPostgres> {

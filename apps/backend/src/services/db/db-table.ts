@@ -6,18 +6,38 @@ import type {
 } from 'drizzle-orm';
 import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import type {
-  DbConverterContext,
-  DbReadDefinitionMap,
+  DbReadEntityRegistry,
   DbReadTableKey,
   DbTableEnt,
   DbTableNotFoundError,
   DbTableReadError,
   DbTableTab,
-  DbWriteConverter
-} from '#backend/services/db/db-table-types';
+  DbTableWriteError,
+  DbWriteTableKey
+} from '#backend/services/db/db-entity-registry';
+import type { HashService } from '#backend/services/hash/hash.service';
+import type { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+
+export type DbTableContext = {
+  hashService: HashService;
+  tabService: TabService;
+  isEncryptDb: boolean;
+  isEncryptMetadata: boolean;
+};
+
+export type DbWriteTable<Key extends DbWriteTableKey> = {
+  tabToEnt: (item: {
+    tab: DbTableTab<Key>;
+    hashSecret?: string;
+  }) => Result.Result<DbTableEnt<Key>, DbTableWriteError<Key>>;
+};
+
+export type DbWriteTableRegistry = {
+  [Key in DbWriteTableKey]: DbWriteTable<Key>;
+};
 
 type DbReadSchema = ExtractTablesWithRelations<typeof schemaPostgres>;
 
@@ -45,39 +65,37 @@ export type DbTableQuery<Key extends DbReadTableKey> = {
 export type DbTableExistsQuery<Key extends DbReadTableKey> = {
   findFirst: (
     item: Omit<DbFindFirstOptions<Key>, 'columns'> & {
-      columns: DbReadDefinitionMap[Key]['existsColumns'];
+      columns: DbReadEntityRegistry[Key]['existsColumns'];
     }
   ) => PromiseLike<unknown>;
 };
 
-export class DbTable<Key extends DbReadTableKey>
-  implements DbWriteConverter<Key>
-{
+export class DbTable<Key extends DbReadTableKey> implements DbWriteTable<Key> {
   readonly entToTab: (item: {
     ent: DbTableEnt<Key>;
   }) => Result.Result<DbTableTab<Key>, DbTableReadError<Key>>;
 
-  readonly tabToEnt: DbWriteConverter<Key>['tabToEnt'];
+  readonly tabToEnt: DbWriteTable<Key>['tabToEnt'];
 
   constructor(
     private readonly item: {
       key: Key;
       query: DbTableQuery<NoInfer<Key>>;
       existsQuery: DbTableExistsQuery<NoInfer<Key>>;
-      definition: DbReadDefinitionMap[NoInfer<Key>];
-      context: DbConverterContext;
+      entityConfig: DbReadEntityRegistry[NoInfer<Key>];
+      context: DbTableContext;
     }
   ) {
-    let { definition, context } = item;
+    let { entityConfig, context } = item;
 
     this.entToTab = x =>
-      definition.entToTab({
+      entityConfig.entToTab({
         ent: x.ent,
         tabService: context.tabService
       });
 
     this.tabToEnt = x =>
-      definition.tabToEnt({
+      entityConfig.tabToEnt({
         tab: x.tab,
         hashSecret: x.hashSecret,
         hashService: context.hashService,
@@ -122,10 +140,10 @@ export class DbTable<Key extends DbReadTableKey>
     item?: KnownKeysOnly<Config, DbFindFirstOptions<Key>>
   ): Result.ResultAsync<boolean, never> {
     return (
-      isDefined(this.item.definition.existsColumns)
+      isDefined(this.item.entityConfig.existsColumns)
         ? this.item.existsQuery.findFirst({
             ...item,
-            columns: this.item.definition.existsColumns
+            columns: this.item.entityConfig.existsColumns
           })
         : this.item.query.findFirst(item)
     ).then(x => Result.succeed(isDefined(x)));
@@ -164,7 +182,7 @@ export class DbTable<Key extends DbReadTableKey>
           DbTableReadError<Key> | DbTableNotFoundError<Key>
         > =>
           isUndefined(x)
-            ? await Result.fail(this.item.definition.defaultError)
+            ? await Result.fail(this.item.entityConfig.defaultError)
             : this.entToTab({ ent: x })
       );
   }

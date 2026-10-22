@@ -1,3 +1,5 @@
+import type { Result } from '@praha/byethrow';
+import type { PgTable } from 'drizzle-orm/pg-core';
 import { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import { avatarEntToTab } from '#backend/services/db/avatars/avatar-ent-to-tab/avatar-ent-to-tab';
 import { avatarTabToEnt } from '#backend/services/db/avatars/avatar-tab-to-ent/avatar-tab-to-ent';
@@ -15,7 +17,6 @@ import { connectionEntToTab } from '#backend/services/db/connections/connection-
 import { connectionTabToEnt } from '#backend/services/db/connections/connection-tab-to-ent/connection-tab-to-ent';
 import { dashboardEntToTab } from '#backend/services/db/dashboards/dashboard-ent-to-tab/dashboard-ent-to-tab';
 import { dashboardTabToEnt } from '#backend/services/db/dashboards/dashboard-tab-to-ent/dashboard-tab-to-ent';
-import type { DbExistsColumns } from '#backend/services/db/db-table-types';
 import { dconfigEntToTab } from '#backend/services/db/dconfigs/dconfig-ent-to-tab/dconfig-ent-to-tab';
 import { dconfigTabToEnt } from '#backend/services/db/dconfigs/dconfig-tab-to-ent/dconfig-tab-to-ent';
 import { envEntToTab } from '#backend/services/db/envs/env-ent-to-tab/env-ent-to-tab';
@@ -61,6 +62,8 @@ import { uconfigEntToTab } from '#backend/services/db/uconfigs/uconfig-ent-to-ta
 import { uconfigTabToEnt } from '#backend/services/db/uconfigs/uconfig-tab-to-ent/uconfig-tab-to-ent';
 import { userEntToTab } from '#backend/services/db/users/user-ent-to-tab/user-ent-to-tab';
 import { userTabToEnt } from '#backend/services/db/users/user-tab-to-ent/user-tab-to-ent';
+import type { HashService } from '#backend/services/hash/hash.service';
+import type { TabService } from '#backend/services/tab/tab.service';
 import type { BackendAvatarDoesNotExistError } from '#common/types/backend/errors/backend-avatar-does-not-exist-error';
 import type { BackendBranchDoesNotExistError } from '#common/types/backend/errors/backend-branch-does-not-exist-error';
 import type { BackendBridgeBranchEnvDoesNotExistError } from '#common/types/backend/errors/backend-bridge-branch-env-does-not-exist-error';
@@ -92,7 +95,85 @@ import type { BackendStructDoesNotExistError } from '#common/types/backend/error
 import type { BackendUconfigDoesNotExistError } from '#common/types/backend/errors/backend-uconfig-does-not-exist-error';
 import type { BackendUserDoesNotExistError } from '#common/types/backend/errors/backend-user-does-not-exist-error';
 
-export const dbEntityDefinition = {
+type DbEntityRegistry = typeof dbEntityRegistry;
+
+export type DbWriteTableKey = keyof DbEntityRegistry;
+
+export type DbReadTableKey = {
+  [Key in DbWriteTableKey]: DbEntityRegistry[Key] extends {
+    entToTab: unknown;
+  }
+    ? Key
+    : never;
+}[DbWriteTableKey];
+
+type DbWriteTypeMap = {
+  [Key in DbWriteTableKey]: {
+    ent: DbEntityRegistry[Key]['table']['$inferSelect'];
+    tab: Parameters<DbEntityRegistry[Key]['tabToEnt']>[0]['tab'];
+    writeError: Extract<
+      ReturnType<DbEntityRegistry[Key]['tabToEnt']>,
+      Result.Failure<unknown>
+    >['error'];
+  };
+};
+
+type DbReadTypeMap = {
+  [Key in DbReadTableKey]: {
+    readError: Extract<
+      ReturnType<DbEntityRegistry[Key]['entToTab']>,
+      Result.Failure<unknown>
+    >['error'];
+    notFoundError: DbEntityRegistry[Key]['defaultError'];
+  };
+};
+
+export type DbTableEnt<Key extends DbWriteTableKey> =
+  DbWriteTypeMap[Key]['ent'];
+
+export type DbTableTab<Key extends DbWriteTableKey> =
+  DbWriteTypeMap[Key]['tab'];
+
+export type DbTableReadError<Key extends DbReadTableKey> =
+  DbReadTypeMap[Key]['readError'];
+
+export type DbTableWriteError<Key extends DbWriteTableKey> =
+  DbWriteTypeMap[Key]['writeError'];
+
+export type DbTableNotFoundError<Key extends DbReadTableKey> =
+  DbReadTypeMap[Key]['notFoundError'];
+
+export type DbExistsColumns<Table extends PgTable> = {
+  [Column in keyof Table['$inferSelect']]?: true;
+};
+
+export type DbWriteEntityRegistry = {
+  [Key in DbWriteTableKey]: {
+    table: (typeof schemaPostgres)[`${Key}Table`];
+    tabToEnt: (item: {
+      tab: DbTableTab<Key>;
+      hashSecret?: string;
+      hashService: HashService;
+      tabService: TabService;
+      isEncryptDb: boolean;
+      isEncryptMetadata: boolean;
+    }) => Result.Result<DbTableEnt<Key>, DbTableWriteError<Key>>;
+  };
+};
+
+export type DbReadEntityRegistry = {
+  [Key in DbReadTableKey]: {
+    entToTab: (item: {
+      ent: DbTableEnt<Key>;
+      tabService: TabService;
+    }) => Result.Result<DbTableTab<Key>, DbTableReadError<Key>>;
+    tabToEnt: DbWriteEntityRegistry[Key]['tabToEnt'];
+    defaultError: DbTableNotFoundError<Key>;
+    existsColumns?: DbExistsColumns<DbEntityRegistry[Key]['table']>;
+  };
+};
+
+export const dbEntityRegistry = {
   avatars: {
     table: schemaPostgres.avatarsTable,
     defaultError: {

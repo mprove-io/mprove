@@ -1,29 +1,34 @@
 import type { DbExtra } from '#backend/drizzle/drizzle.module';
-import { dbEntityDefinition } from '#backend/services/db/db-entity-defs';
+import {
+  type DbReadEntityRegistry,
+  type DbReadTableKey,
+  type DbWriteEntityRegistry,
+  type DbWriteTableKey,
+  dbEntityRegistry
+} from '#backend/services/db/db-entity-registry';
 import {
   DbTable,
+  type DbTableContext,
   type DbTableExistsQuery,
-  type DbTableQuery
+  type DbTableQuery,
+  type DbWriteTable
 } from '#backend/services/db/db-table';
-import type {
-  DbConverterContext,
-  DbReadDefinitionMap,
-  DbReadTableKey,
-  DbTableMap,
-  DbWriteConverter,
-  DbWriteDefinitionMap,
-  DbWriteTableKey
-} from '#backend/services/db/db-table-types';
 
-export function createDbTables(item: {
+export type DbTableRegistry = {
+  [Key in DbWriteTableKey]: Key extends DbReadTableKey
+    ? DbTable<Key>
+    : DbWriteTable<Key>;
+};
+
+export function createDbTableRegistry(item: {
   dbExtra: DbExtra;
-  context: DbConverterContext;
-}): DbTableMap {
+  context: DbTableContext;
+}): DbTableRegistry {
   let { dbExtra, context } = item;
 
-  let readDefinitionMap: DbReadDefinitionMap = dbEntityDefinition;
+  let readEntityRegistry: DbReadEntityRegistry = dbEntityRegistry;
 
-  let writeDefinitionMap: DbWriteDefinitionMap = dbEntityDefinition;
+  let writeEntityRegistry: DbWriteEntityRegistry = dbEntityRegistry;
 
   let queryMap: {
     [Key in DbReadTableKey as `${Key}Table`]: DbTableQuery<Key>;
@@ -34,15 +39,14 @@ export function createDbTables(item: {
   } = dbExtra.drizzle.query;
 
   let keys: DbWriteTableKey[] = Object.keys(
-    dbEntityDefinition
+    dbEntityRegistry
   ) as DbWriteTableKey[];
 
   let entries: [string, unknown][] = keys.map(
     <Key extends DbWriteTableKey>(key: Key): [string, unknown] => {
-      let definition: (typeof dbEntityDefinition)[Key] =
-        dbEntityDefinition[key];
+      let entityConfig: (typeof dbEntityRegistry)[Key] = dbEntityRegistry[key];
 
-      if ('entToTab' in definition) {
+      if ('entToTab' in entityConfig) {
         // Key enumeration loses key/value correlation. Keep the assertions at
         // this construction boundary, after checking the read capability.
         let readKey: DbReadTableKey = key as DbReadTableKey;
@@ -53,16 +57,16 @@ export function createDbTables(item: {
           key: readKey,
           query: query,
           existsQuery: existsQueryMap[`${readKey}Table`],
-          definition: readDefinitionMap[readKey],
+          entityConfig: readEntityRegistry[readKey],
           context: context
         });
 
         return [key, table];
       }
 
-      let converter: DbWriteConverter<Key> = {
+      let writeTable: DbWriteTable<Key> = {
         tabToEnt: x =>
-          writeDefinitionMap[key].tabToEnt({
+          writeEntityRegistry[key].tabToEnt({
             tab: x.tab,
             hashSecret: x.hashSecret,
             hashService: context.hashService,
@@ -72,13 +76,15 @@ export function createDbTables(item: {
           })
       };
 
-      return [key, converter];
+      return [key, writeTable];
     }
   );
 
-  // Every definition contributes exactly one wrapper, with read capabilities
-  // only when its definition provides them.
-  let tableMap: DbTableMap = Object.fromEntries(entries) as DbTableMap;
+  // Every entity config contributes exactly one wrapper, with read capabilities
+  // only when its config provides them.
+  let tableRegistry: DbTableRegistry = Object.fromEntries(
+    entries
+  ) as DbTableRegistry;
 
-  return tableMap;
+  return tableRegistry;
 }

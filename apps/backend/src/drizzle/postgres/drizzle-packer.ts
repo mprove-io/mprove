@@ -16,9 +16,9 @@ import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import type {
   DbTableEnt,
   DbTableReadError,
-  DbTableTab,
-  DbWriteConverterMap
-} from '#backend/services/db/db-table-types';
+  DbTableTab
+} from '#backend/services/db/db-entity-registry';
+import type { DbWriteTableRegistry } from '#backend/services/db/db-table';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -85,7 +85,7 @@ export interface PackerOutput {
   serverTs?: number;
 }
 
-type PackerTableRegistry = DbWriteConverterMap & {
+type PackerTableRegistry = DbWriteTableRegistry & {
   dconfigs: {
     entToTab: (item: {
       ent: DbTableEnt<'dconfigs'>;

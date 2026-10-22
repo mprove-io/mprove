@@ -2,9 +2,9 @@ import { Result } from '@praha/byethrow';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import type {
   DbTableEnt,
-  DbTableTab,
-  DbWriteConverterMap
-} from '#backend/services/db/db-table-types';
+  DbTableTab
+} from '#backend/services/db/db-entity-registry';
+import type { DbWriteTableRegistry } from '#backend/services/db/db-table';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConvertTabsPackKeyError } from '#common/types/backend/function-errors/convert-tabs-pack-key-error';
 
@@ -19,7 +19,7 @@ export function convertTabsPackKey<Key extends keyof DbTabsPack>(item: {
   key: Key;
   tabsPack: DbTabsPack;
   hashSecret?: string;
-  tableRegistry: DbWriteConverterMap;
+  tableRegistry: DbWriteTableRegistry;
 }): Result.Result<ConvertTabsPackKeyOutput<Key>, ConvertTabsPackKeyError> {
   return Result.pipe(
     Result.succeed(item),
