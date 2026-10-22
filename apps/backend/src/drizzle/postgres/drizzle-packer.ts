@@ -13,8 +13,12 @@ import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { tabsPackToEntsPack } from '#backend/functions/tabs-pack-to-ents-pack/tabs-pack-to-ents-pack';
 import type { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import type { DbTable } from '#backend/services/db/db-table';
-import type { DbTableRegistryLike } from '#backend/services/db/db-table-registry-like';
+import type {
+  DbTableEnt,
+  DbTableReadError,
+  DbTableTab,
+  DbWriteConverterMap
+} from '#backend/services/db/db-table-types';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -81,14 +85,18 @@ export interface PackerOutput {
   serverTs?: number;
 }
 
-export class DrizzlePacker {
-  private readonly tableRegistry: DbTableRegistryLike & {
-    dconfigs: DbTable<'dconfigs'>;
+type PackerTableRegistry = DbWriteConverterMap & {
+  dconfigs: {
+    entToTab: (item: {
+      ent: DbTableEnt<'dconfigs'>;
+    }) => Result.Result<DbTableTab<'dconfigs'>, DbTableReadError<'dconfigs'>>;
   };
+};
 
-  constructor(item: {
-    tableRegistry: DbTableRegistryLike & { dconfigs: DbTable<'dconfigs'> };
-  }) {
+export class DrizzlePacker {
+  private readonly tableRegistry: PackerTableRegistry;
+
+  constructor(item: { tableRegistry: PackerTableRegistry }) {
     let { tableRegistry } = item;
 
     this.tableRegistry = tableRegistry;

@@ -22,6 +22,7 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
@@ -33,6 +34,7 @@ import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   EMPTY_REPORT_ID,
@@ -87,6 +89,7 @@ import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/m
 @Controller()
 export class CreateMemberController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rpcService: RpcService,
@@ -217,7 +220,8 @@ export class CreateMemberController {
             operation: 'createDevRepo',
             traceId: v.traceId,
             input: {
-              baseProject: this.db.projectTabToBaseProject({
+              baseProject: projectTabToBaseProject({
+                tabService: this.tabService,
                 project: v.project
               }),
               devRepoId: v.newMember.memberId

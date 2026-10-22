@@ -12,11 +12,13 @@ import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -30,6 +32,7 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class GetRebuildStructController {
   constructor(
+    private tabService: TabService,
     private rpcService: RpcService,
     private envsService: EnvsService,
     private connectionsService: ConnectionsService,
@@ -69,7 +72,12 @@ export class GetRebuildStructController {
         })
       ),
       Result.bind('baseProject', v =>
-        Result.succeed(this.db.projectTabToBaseProject({ project: v.project }))
+        Result.succeed(
+          projectTabToBaseProject({
+            tabService: this.tabService,
+            project: v.project
+          })
+        )
       ),
       Result.bind('diskGetCatalogFilesOutput', v =>
         this.rpcService.sendToDisk({

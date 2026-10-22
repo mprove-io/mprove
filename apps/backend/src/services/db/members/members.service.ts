@@ -17,12 +17,14 @@ import {
 } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -42,6 +44,7 @@ const { forEachSeries } = pIteration;
 @Injectable()
 export class MembersService {
   constructor(
+    private tabService: TabService,
     private hashService: HashService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
@@ -247,7 +250,10 @@ export class MembersService {
         Result.succeed(
           isUndefined(v.newMember)
             ? undefined
-            : this.db.projectTabToBaseProject({ project: v.project })
+            : projectTabToBaseProject({
+                tabService: this.tabService,
+                project: v.project
+              })
         )
       ),
       Result.bind('diskCreateDevRepoOutput', async v =>

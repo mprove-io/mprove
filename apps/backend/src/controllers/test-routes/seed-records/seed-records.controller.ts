@@ -36,6 +36,7 @@ import {
   parseApiKey
 } from '#backend/functions/api-key/parse-api-key/parse-api-key';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import {
   BlockmlService,
@@ -58,6 +59,7 @@ import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
@@ -128,6 +130,7 @@ type PrepareSeedPayload = {
 @Controller()
 export class SeedRecordsController {
   constructor(
+    private tabService: TabService,
     private hashService: HashService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -495,7 +498,8 @@ export class SeedRecordsController {
                 serverTs: undefined
               };
 
-              let baseProject: BaseProject = this.db.projectTabToBaseProject({
+              let baseProject: BaseProject = projectTabToBaseProject({
+                tabService: this.tabService,
                 project: newProject
               });
 

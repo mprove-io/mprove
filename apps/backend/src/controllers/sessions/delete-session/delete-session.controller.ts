@@ -28,6 +28,7 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -37,6 +38,7 @@ import { EditorSessionLockService } from '#backend/services/editor/editor-sessio
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -52,6 +54,7 @@ import type { ToBackendDeleteSessionOutput } from '#common/types/backend/routes/
 @Controller()
 export class DeleteSessionController {
   constructor(
+    private tabService: TabService,
     private editorSandboxService: EditorSandboxService,
     private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
@@ -151,7 +154,8 @@ export class DeleteSessionController {
             return Result.succeed();
           }
 
-          let baseProject: BaseProject = this.db.projectTabToBaseProject({
+          let baseProject: BaseProject = projectTabToBaseProject({
+            tabService: this.tabService,
             project: v.project
           });
 

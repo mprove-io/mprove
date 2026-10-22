@@ -27,6 +27,7 @@ import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
@@ -46,6 +47,7 @@ import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/
 import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
@@ -81,6 +83,7 @@ type SandboxFile = { path: string; data: string };
 @Controller()
 export class CreateEditorSessionController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private providersService: ProvidersService,
@@ -634,7 +637,12 @@ export class CreateEditorSessionController {
         projectId: item.session.projectId
       }),
       Result.bind('baseProject', v =>
-        Result.succeed(this.db.projectTabToBaseProject({ project: v.project }))
+        Result.succeed(
+          projectTabToBaseProject({
+            tabService: this.tabService,
+            project: v.project
+          })
+        )
       ),
       // let sendToDiskStart = Date.now();
       Result.bind('diskCreateDevRepoOutput', v =>

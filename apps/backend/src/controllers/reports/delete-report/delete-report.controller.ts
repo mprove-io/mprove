@@ -18,6 +18,7 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -29,6 +30,7 @@ import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -40,6 +42,7 @@ import type { ToBackendDeleteReportOutput } from '#common/types/backend/routes/r
 @Controller()
 export class DeleteReportController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
@@ -150,7 +153,8 @@ export class DeleteReportController {
             operation: 'deleteFile',
             traceId: v.traceId,
             input: {
-              baseProject: this.db.projectTabToBaseProject({
+              baseProject: projectTabToBaseProject({
+                tabService: this.tabService,
                 project: v.project
               }),
               repoId: v.repoId,

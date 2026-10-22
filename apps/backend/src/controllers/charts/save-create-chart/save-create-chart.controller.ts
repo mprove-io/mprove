@@ -29,6 +29,7 @@ import { checkModelAccess } from '#backend/functions/check-model-access/check-mo
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text/make-chart-file-text';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
@@ -46,6 +47,7 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
@@ -95,6 +97,7 @@ type SaveChartPayload = {
 @Controller()
 export class SaveCreateChartController {
   constructor(
+    private tabService: TabService,
     private usersService: UsersService,
     private chartsService: ChartsService,
     private rpcService: RpcService,
@@ -271,7 +274,8 @@ export class SaveCreateChartController {
           accessRoles: v.accessRoles
         });
 
-        let baseProject: BaseProject = this.db.projectTabToBaseProject({
+        let baseProject: BaseProject = projectTabToBaseProject({
+          tabService: this.tabService,
           project: v.project
         });
 

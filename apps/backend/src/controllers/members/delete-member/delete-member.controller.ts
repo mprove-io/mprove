@@ -16,11 +16,13 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -32,6 +34,7 @@ import type { ToBackendDeleteMemberOutput } from '#common/types/backend/routes/m
 @Controller()
 export class DeleteMemberController {
   constructor(
+    private tabService: TabService,
     private rpcService: RpcService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
@@ -88,7 +91,8 @@ export class DeleteMemberController {
             operation: 'deleteDevRepo',
             traceId: v.traceId,
             input: {
-              baseProject: this.db.projectTabToBaseProject({
+              baseProject: projectTabToBaseProject({
+                tabService: this.tabService,
                 project: v.project
               }),
               devRepoId: v.member.memberId

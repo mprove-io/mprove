@@ -6,6 +6,7 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -16,6 +17,7 @@ import type {
   GetExplorerModelsOutput
 } from '#backend/services/explorer/types/get-explorer-models-output';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetExplorerModelPartsError } from '#common/types/backend/function-errors/get-explorer-model-parts-error';
 import type { GetExplorerModelsError } from '#common/types/backend/function-errors/get-explorer-models-error';
@@ -24,6 +26,7 @@ import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-cata
 @Injectable()
 export class ExplorerModelPartsService {
   constructor(
+    private tabService: TabService,
     private envsService: EnvsService,
     private modelsService: ModelsService,
     private structsService: StructsService,
@@ -147,7 +150,8 @@ export class ExplorerModelPartsService {
             operation: 'getCatalogFiles',
             traceId: v.traceId,
             input: {
-              baseProject: this.db.projectTabToBaseProject({
+              baseProject: projectTabToBaseProject({
+                tabService: this.tabService,
                 project: v.project
               }),
               repoId: v.repoId,

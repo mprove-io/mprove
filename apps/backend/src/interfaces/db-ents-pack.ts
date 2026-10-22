@@ -1,8 +1,8 @@
 import type {
-  DbTableDefinitionMap,
-  DbTableEnt
-} from '#backend/services/db/db-table-definition-map';
+  DbTableEnt,
+  DbWriteTableKey
+} from '#backend/services/db/db-table-types';
 
 export type DbEntsPack = {
-  [Key in keyof DbTableDefinitionMap]?: DbTableEnt<Key>[];
+  [Key in DbWriteTableKey]?: DbTableEnt<Key>[];
 };

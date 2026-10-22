@@ -14,7 +14,6 @@ import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DbTableFactoryService } from '#backend/services/db/db-table-factory.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
@@ -169,7 +168,6 @@ export const appProviders = [
   ReportTimeColumnsService,
   StoreService,
   TabService,
-  DbTableFactoryService,
   UnitsService,
   UrlService,
   LlmModelService,

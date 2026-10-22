@@ -17,6 +17,7 @@ import { checkModelAccess } from '#backend/functions/check-model-access/check-mo
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
@@ -24,6 +25,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
 import type { GetStateError } from '#common/types/backend/function-errors/get-state-error';
@@ -33,6 +35,7 @@ import type { TimeSpec } from '#common/types/shared/time/timespec';
 @Injectable()
 export class GetStateService {
   constructor(
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private membersService: MembersService,
     private rpcService: RpcService,
@@ -116,7 +119,8 @@ export class GetStateService {
                 operation: 'getCatalogNodes',
                 traceId: v.traceId,
                 input: {
-                  baseProject: this.db.projectTabToBaseProject({
+                  baseProject: projectTabToBaseProject({
+                    tabService: this.tabService,
                     project: v.project
                   }),
                   repoId: v.repoId,

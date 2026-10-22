@@ -19,6 +19,7 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
@@ -31,6 +32,7 @@ import { SessionsService } from '#backend/services/db/sessions/sessions.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -42,6 +44,7 @@ import type { ToBackendDeleteChartOutput } from '#common/types/backend/routes/ch
 @Controller()
 export class DeleteChartController {
   constructor(
+    private tabService: TabService,
     private usersService: UsersService,
     private rpcService: RpcService,
     private membersService: MembersService,
@@ -168,7 +171,8 @@ export class DeleteChartController {
             operation: 'deleteFile',
             traceId: v.traceId,
             input: {
-              baseProject: this.db.projectTabToBaseProject({
+              baseProject: projectTabToBaseProject({
+                tabService: this.tabService,
                 project: v.project
               }),
               repoId: v.repoId,

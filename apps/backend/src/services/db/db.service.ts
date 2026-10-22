@@ -3,103 +3,60 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { Options } from 'async-retry';
 import type { SQLWrapper } from 'drizzle-orm';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { type DbExtra, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import {
   DrizzlePacker,
   type PackerOutput
 } from '#backend/drizzle/postgres/drizzle-packer';
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
-import {
-  type GetEntPropsOutput,
-  getEntProps
-} from '#backend/functions/get-ent-props/get-ent-props';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import { DbTableFactoryService } from '#backend/services/db/db-table-factory.service';
-import { DbTableRegistry } from '#backend/services/db/db-table-registry';
+import { createDbTables } from '#backend/services/db/create-db-tables';
+import { DbTableAccess } from '#backend/services/db/db-table-access';
+import type {
+  DbConverterContext,
+  DbTableMap
+} from '#backend/services/db/db-table-types';
+import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { WriteError } from '#common/types/backend/function-errors/write-error';
-import type { BaseProject } from '#common/types/backend/parts/project/base-project';
-import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
-import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 
 @Injectable()
-export class DbService extends DbTableRegistry implements DbExtra {
+export class DbService extends DbTableAccess {
   readonly packer: DrizzlePacker;
 
   constructor(
     @Inject(DRIZZLE) private dbExtra: DbExtra,
-    private tableFactory: DbTableFactoryService,
-    private tabService: TabService,
+    hashService: HashService,
+    tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {
-    super({
+    let context: DbConverterContext = {
+      hashService: hashService,
+      tabService: tabService,
+      isEncryptDb: cs.get<BackendConfig['isEncryptDb']>('isEncryptDb'),
+      isEncryptMetadata:
+        cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata')
+    };
+
+    let tableMap: DbTableMap = createDbTables({
       dbExtra: dbExtra,
-      tableFactory: tableFactory
+      context: context
     });
 
-    this.packer = new DrizzlePacker({ tableRegistry: this });
+    super({ tableMap: tableMap });
+
+    this.packer = new DrizzlePacker({ tableRegistry: tableMap });
   }
 
-  get drizzle(): DbExtra['drizzle'] {
+  get drizzle(): NodePgDatabase<typeof schemaPostgres> {
     return this.dbExtra.drizzle;
-  }
-
-  get pool(): DbExtra['pool'] {
-    return this.dbExtra.pool;
-  }
-
-  getEntProps<DataSt, DataLt>(item: {
-    dataSt: DataSt;
-    dataLt: DataLt;
-    isMetadata: boolean;
-  }): GetEntPropsOutput<DataSt, DataLt> {
-    let { dataSt, dataLt, isMetadata } = item;
-
-    let output: GetEntPropsOutput<DataSt, DataLt> = getEntProps({
-      dataSt: dataSt,
-      dataLt: dataLt,
-      isMetadata: isMetadata,
-      tabService: this.tabService,
-      isEncryptDb: this.tableFactory.isEncryptDb,
-      isEncryptMetadata: this.tableFactory.isEncryptMetadata
-    });
-
-    return output;
-  }
-
-  projectTabToBaseProject(item: { project: ProjectTab }): BaseProject {
-    let { project } = item;
-
-    let projectSt: ProjectSt = {
-      name: project.name,
-      e2bApiKey: undefined // baseProject does not need project.e2bApiKey
-    };
-
-    let projectLt: ProjectLt = {
-      defaultBranch: project.defaultBranch,
-      gitUrl: project.gitUrl,
-      publicKey: project.publicKey,
-      privateKey: project.privateKey,
-      publicKeyEncrypted: project.publicKey,
-      privateKeyEncrypted: project.privateKeyEncrypted,
-      passPhrase: project.passPhrase
-    };
-
-    let baseProject: BaseProject = {
-      orgId: project.orgId,
-      projectId: project.projectId,
-      remoteType: project.remoteType,
-      st: this.tabService.encrypt({ data: projectSt }),
-      lt: this.tabService.encrypt({ data: projectLt })
-    };
-
-    return baseProject;
   }
 
   async writeUnwrap(item: {
@@ -170,7 +127,7 @@ export class DbService extends DbTableRegistry implements DbExtra {
 
         try {
           let success: Result.Success<PackerOutput> =
-            await this.dbExtra.drizzle.transaction(
+            await this.drizzle.transaction(
               async (tx): Promise<Result.Success<PackerOutput>> => {
                 let result: Result.Result<PackerOutput, WriteError> =
                   await this.packer.write({

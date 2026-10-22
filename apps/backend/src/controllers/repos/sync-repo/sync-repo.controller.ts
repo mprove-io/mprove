@@ -12,6 +12,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
@@ -20,6 +21,7 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -31,6 +33,7 @@ import type { ToBackendSyncRepoOutput } from '#common/types/backend/routes/repos
 @Controller()
 export class SyncRepoController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private rpcService: RpcService,
     private structsService: StructsService,
@@ -121,7 +124,8 @@ export class SyncRepoController {
                   traceId: v.traceId,
                   input: {
                     direction: 'to-server',
-                    baseProject: this.db.projectTabToBaseProject({
+                    baseProject: projectTabToBaseProject({
+                      tabService: this.tabService,
                       project: v.project
                     }),
                     repoId: v.repoId,
@@ -138,7 +142,8 @@ export class SyncRepoController {
                   traceId: v.traceId,
                   input: {
                     direction: 'from-server',
-                    baseProject: this.db.projectTabToBaseProject({
+                    baseProject: projectTabToBaseProject({
+                      tabService: this.tabService,
                       project: v.project
                     }),
                     repoId: v.repoId,

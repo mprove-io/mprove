@@ -15,6 +15,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -23,6 +24,7 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -35,6 +37,7 @@ import type { ToBackendGetNavOutput } from '#common/types/backend/routes/nav/get
 @Controller()
 export class GetNavController {
   constructor(
+    private tabService: TabService,
     private rpcService: RpcService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
@@ -212,7 +215,8 @@ export class GetNavController {
                 operation: 'getCatalogNodes',
                 traceId: v.traceId,
                 input: {
-                  baseProject: this.db.projectTabToBaseProject({
+                  baseProject: projectTabToBaseProject({
+                    tabService: this.tabService,
                     project: v.resultProject
                   }),
                   repoId: v.bridge.repoId,

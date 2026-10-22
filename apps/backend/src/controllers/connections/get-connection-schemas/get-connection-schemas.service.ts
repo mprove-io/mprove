@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { sortSchemaColumns } from '#backend/controllers/connections/get-connection-schemas/sort-schema-columns/sort-schema-columns';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import type { GetEntPropsOutput } from '#backend/functions/get-ent-props/get-ent-props';
+import {
+  type GetEntPropsOutput,
+  getEntProps
+} from '#backend/functions/get-ent-props/get-ent-props';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
 import { DbService } from '#backend/services/db/db.service';
@@ -23,6 +28,7 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -51,6 +57,8 @@ const { forEachSeries } = pIteration;
 @Injectable()
 export class GetConnectionSchemasService {
   constructor(
+    private cs: ConfigService<BackendConfig>,
+    private tabService: TabService,
     private cachedColumnService: CachedColumnService,
     private structsService: StructsService,
     private envsService: EnvsService,
@@ -317,10 +325,17 @@ export class GetConnectionSchemasService {
         let connectionLt: ConnectionLt = { rawSchema: c.rawSchema };
 
         let entProps: GetEntPropsOutput<ConnectionSt, ConnectionLt> =
-          this.db.getEntProps({
+          getEntProps({
             dataSt: connectionSt,
             dataLt: connectionLt,
-            isMetadata: false
+            isMetadata: false,
+            tabService: this.tabService,
+            isEncryptDb:
+              this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb'),
+            isEncryptMetadata:
+              this.cs.get<BackendConfig['isEncryptMetadata']>(
+                'isEncryptMetadata'
+              )
           });
 
         await this.db.drizzle.execute(

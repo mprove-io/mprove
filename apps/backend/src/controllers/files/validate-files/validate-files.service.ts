@@ -5,6 +5,7 @@ import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import {
   BlockmlService,
   type RebuildStructOutput
@@ -17,6 +18,7 @@ import { ProjectsService } from '#backend/services/db/projects/projects.service'
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { RebuildStructError } from '#common/types/backend/function-errors/rebuild-struct-error';
 import type { ValidateFilesError } from '#common/types/backend/function-errors/validate-files-error';
@@ -25,6 +27,7 @@ import type { ToBackendValidateFilesOutput } from '#common/types/backend/routes/
 @Injectable()
 export class ValidateFilesService {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private modelsService: ModelsService,
@@ -94,7 +97,8 @@ export class ValidateFilesService {
             operation: 'getCatalogFiles',
             traceId: v.traceId,
             input: {
-              baseProject: this.db.projectTabToBaseProject({
+              baseProject: projectTabToBaseProject({
+                tabService: this.tabService,
                 project: v.project
               }),
               repoId: v.repoId,
