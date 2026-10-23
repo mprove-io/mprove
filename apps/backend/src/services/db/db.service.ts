@@ -263,19 +263,14 @@ export class DbService extends DbTableAccess {
         Result.sequence(v.convertedPacks, convertedPack =>
           Result.sequence(
             convertedPack.tableConversions,
-            async (tableConversion: ConvertTabsPackKeyOutput) =>
-              dbEntityRegistry[tableConversion.key].write.operations.findIndex(
-                operation => operation === convertedPack.operation
-              ) < 0
-                ? Result.succeed()
-                : writeDbTable({
-                    tx: v.tx,
-                    table: dbEntityRegistry[tableConversion.key].table,
-                    identityKey:
-                      dbEntityRegistry[tableConversion.key].write.identityKey,
-                    operation: convertedPack.operation,
-                    ents: tableConversion.ents
-                  }).then(() => Result.succeed())
+            (tableConversion: ConvertTabsPackKeyOutput) =>
+              writeDbTable({
+                tx: v.tx,
+                table: dbEntityRegistry[tableConversion.key].table,
+                identityKey: dbEntityRegistry[tableConversion.key].identityKey,
+                operation: convertedPack.operation,
+                ents: tableConversion.ents
+              }).then(() => Result.succeed())
           )
         )
       ),

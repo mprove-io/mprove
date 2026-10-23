@@ -1,7 +1,9 @@
 import type { BackendCachedColumnDoesNotExistError } from '#common/types/backend/errors/backend-cached-column-does-not-exist-error';
 import type { BackendCachedPartDoesNotExistError } from '#common/types/backend/errors/backend-cached-part-does-not-exist-error';
 import type { BackendDconfigDoesNotExistError } from '#common/types/backend/errors/backend-dconfig-does-not-exist-error';
+import type { BackendFavoriteDoesNotExistError } from '#common/types/backend/errors/backend-favorite-does-not-exist-error';
 import type { BackendKitDoesNotExistError } from '#common/types/backend/errors/backend-kit-does-not-exist-error';
+import type { BackendModelFieldLeafDoesNotExistError } from '#common/types/backend/errors/backend-model-field-leaf-does-not-exist-error';
 import type { BackendOcEventDoesNotExistError } from '#common/types/backend/errors/backend-oc-event-does-not-exist-error';
 import type { BackendOcMessageDoesNotExistError } from '#common/types/backend/errors/backend-oc-message-does-not-exist-error';
 import type { BackendOcPartDoesNotExistError } from '#common/types/backend/errors/backend-oc-part-does-not-exist-error';
@@ -19,6 +21,8 @@ type ServerErrorMessage =
   | BackendCachedPartDoesNotExistError['code']
   | BackendDconfigDoesNotExistError['code']
   | BackendKitDoesNotExistError['code']
+  | BackendFavoriteDoesNotExistError['code']
+  | BackendModelFieldLeafDoesNotExistError['code']
   | BackendOcEventDoesNotExistError['code']
   | BackendOcMessageDoesNotExistError['code']
   | BackendOcPartDoesNotExistError['code']

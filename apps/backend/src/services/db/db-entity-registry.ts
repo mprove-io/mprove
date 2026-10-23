@@ -17,11 +17,12 @@ import { connectionEntToTab } from '#backend/services/db/connections/connection-
 import { connectionTabToEnt } from '#backend/services/db/connections/connection-tab-to-ent/connection-tab-to-ent';
 import { dashboardEntToTab } from '#backend/services/db/dashboards/dashboard-ent-to-tab/dashboard-ent-to-tab';
 import { dashboardTabToEnt } from '#backend/services/db/dashboards/dashboard-tab-to-ent/dashboard-tab-to-ent';
-import type { DbEntityWriteConfig } from '#backend/services/db/db-write-operation';
 import { dconfigEntToTab } from '#backend/services/db/dconfigs/dconfig-ent-to-tab/dconfig-ent-to-tab';
 import { dconfigTabToEnt } from '#backend/services/db/dconfigs/dconfig-tab-to-ent/dconfig-tab-to-ent';
 import { envEntToTab } from '#backend/services/db/envs/env-ent-to-tab/env-ent-to-tab';
 import { envTabToEnt } from '#backend/services/db/envs/env-tab-to-ent/env-tab-to-ent';
+import { favoriteEntToTab } from '#backend/services/db/favorites/favorite-ent-to-tab/favorite-ent-to-tab';
+import { favoriteTabToEnt } from '#backend/services/db/favorites/favorite-tab-to-ent/favorite-tab-to-ent';
 import { givenEntToTab } from '#backend/services/db/givens/given-ent-to-tab/given-ent-to-tab';
 import { givenTabToEnt } from '#backend/services/db/givens/given-tab-to-ent/given-tab-to-ent';
 import { kitEntToTab } from '#backend/services/db/kits/kit-ent-to-tab/kit-ent-to-tab';
@@ -30,6 +31,7 @@ import { mconfigEntToTab } from '#backend/services/db/mconfigs/mconfig-ent-to-ta
 import { mconfigTabToEnt } from '#backend/services/db/mconfigs/mconfig-tab-to-ent/mconfig-tab-to-ent';
 import { memberEntToTab } from '#backend/services/db/members/member-ent-to-tab/member-ent-to-tab';
 import { memberTabToEnt } from '#backend/services/db/members/member-tab-to-ent/member-tab-to-ent';
+import { modelFieldLeafEntToTab } from '#backend/services/db/model-field-leafs/model-field-leaf-ent-to-tab/model-field-leaf-ent-to-tab';
 import { modelFieldLeafTabToEnt } from '#backend/services/db/model-field-leafs/model-field-leaf-tab-to-ent/model-field-leaf-tab-to-ent';
 import { modelEntToTab } from '#backend/services/db/models/model-ent-to-tab/model-ent-to-tab';
 import { modelTabToEnt } from '#backend/services/db/models/model-tab-to-ent/model-tab-to-ent';
@@ -75,11 +77,13 @@ import type { BackendConnectionDoesNotExistError } from '#common/types/backend/e
 import type { BackendDashboardDoesNotExistError } from '#common/types/backend/errors/backend-dashboard-does-not-exist-error';
 import type { BackendDconfigDoesNotExistError } from '#common/types/backend/errors/backend-dconfig-does-not-exist-error';
 import type { BackendEnvDoesNotExistError } from '#common/types/backend/errors/backend-env-does-not-exist-error';
+import type { BackendFavoriteDoesNotExistError } from '#common/types/backend/errors/backend-favorite-does-not-exist-error';
 import type { BackendGivenDoesNotExistError } from '#common/types/backend/errors/backend-given-does-not-exist-error';
 import type { BackendKitDoesNotExistError } from '#common/types/backend/errors/backend-kit-does-not-exist-error';
 import type { BackendMconfigDoesNotExistError } from '#common/types/backend/errors/backend-mconfig-does-not-exist-error';
 import type { BackendMemberDoesNotExistError } from '#common/types/backend/errors/backend-member-does-not-exist-error';
 import type { BackendModelDoesNotExistError } from '#common/types/backend/errors/backend-model-does-not-exist-error';
+import type { BackendModelFieldLeafDoesNotExistError } from '#common/types/backend/errors/backend-model-field-leaf-does-not-exist-error';
 import type { BackendNoteDoesNotExistError } from '#common/types/backend/errors/backend-note-does-not-exist-error';
 import type { BackendOcEventDoesNotExistError } from '#common/types/backend/errors/backend-oc-event-does-not-exist-error';
 import type { BackendOcMessageDoesNotExistError } from '#common/types/backend/errors/backend-oc-message-does-not-exist-error';
@@ -96,62 +100,61 @@ import type { BackendStructDoesNotExistError } from '#common/types/backend/error
 import type { BackendUconfigDoesNotExistError } from '#common/types/backend/errors/backend-uconfig-does-not-exist-error';
 import type { BackendUserDoesNotExistError } from '#common/types/backend/errors/backend-user-does-not-exist-error';
 
-type DbEntityRegistry = typeof dbEntityRegistry;
+type DbEntityRegistryDefinition = typeof dbEntityRegistry;
 
-export type DbWriteTableKey = keyof DbEntityRegistry;
-
-export type DbReadTableKey = {
-  [Key in DbWriteTableKey]: DbEntityRegistry[Key] extends {
-    entToTab: unknown;
-  }
-    ? Key
+// Require a registry entry for every PostgreSQL table exported by the schema.
+export type DbTableKey = {
+  [Key in keyof typeof schemaPostgres]: (typeof schemaPostgres)[Key] extends PgTable
+    ? Key extends `${infer Name}Table`
+      ? Name
+      : never
     : never;
-}[DbWriteTableKey];
+}[keyof typeof schemaPostgres];
 
-type DbWriteTypeMap = {
-  [Key in DbWriteTableKey]: {
-    ent: DbEntityRegistry[Key]['table']['$inferSelect'];
-    tab: Parameters<DbEntityRegistry[Key]['tabToEnt']>[0]['tab'];
-    writeError: Extract<
-      ReturnType<DbEntityRegistry[Key]['tabToEnt']>,
-      Result.Failure<unknown>
-    >['error'];
-  };
-};
-
-type DbReadTypeMap = {
-  [Key in DbReadTableKey]: {
+type DbTableTypeMap = {
+  [Key in DbTableKey]: {
+    ent: (typeof schemaPostgres)[`${Key}Table`]['$inferSelect'];
+    tab: Parameters<DbEntityRegistryDefinition[Key]['tabToEnt']>[0]['tab'];
     readError: Extract<
-      ReturnType<DbEntityRegistry[Key]['entToTab']>,
+      ReturnType<DbEntityRegistryDefinition[Key]['entToTab']>,
       Result.Failure<unknown>
     >['error'];
-    notFoundError: DbEntityRegistry[Key]['defaultError'];
+    writeError: Extract<
+      ReturnType<DbEntityRegistryDefinition[Key]['tabToEnt']>,
+      Result.Failure<unknown>
+    >['error'];
+    notFoundError: DbEntityRegistryDefinition[Key]['defaultError'];
   };
 };
 
-export type DbTableEnt<Key extends DbWriteTableKey> =
-  DbWriteTypeMap[Key]['ent'];
+export type DbTableEnt<Key extends DbTableKey> = DbTableTypeMap[Key]['ent'];
 
-export type DbTableTab<Key extends DbWriteTableKey> =
-  DbWriteTypeMap[Key]['tab'];
+export type DbTableTab<Key extends DbTableKey> = DbTableTypeMap[Key]['tab'];
 
-export type DbTableReadError<Key extends DbReadTableKey> =
-  DbReadTypeMap[Key]['readError'];
+export type DbTableReadError<Key extends DbTableKey> =
+  DbTableTypeMap[Key]['readError'];
 
-export type DbTableWriteError<Key extends DbWriteTableKey> =
-  DbWriteTypeMap[Key]['writeError'];
+export type DbTableWriteError<Key extends DbTableKey> =
+  DbTableTypeMap[Key]['writeError'];
 
-export type DbTableNotFoundError<Key extends DbReadTableKey> =
-  DbReadTypeMap[Key]['notFoundError'];
+export type DbTableNotFoundError<Key extends DbTableKey> =
+  DbTableTypeMap[Key]['notFoundError'];
 
 export type DbExistsColumns<Table extends PgTable> = {
   [Column in keyof Table['$inferSelect']]?: true;
 };
 
-export type DbWriteEntityRegistry = {
-  [Key in DbWriteTableKey]: {
+// Every table must provide the same read and write API.
+export type DbEntityRegistry = {
+  [Key in DbTableKey]: {
     table: (typeof schemaPostgres)[`${Key}Table`];
-    write: DbEntityWriteConfig<(typeof schemaPostgres)[`${Key}Table`]>;
+    identityKey: Extract<keyof DbTableEnt<Key>, string>;
+    existsColumns?: DbExistsColumns<(typeof schemaPostgres)[`${Key}Table`]>;
+    defaultError: DbTableNotFoundError<Key>;
+    entToTab: (item: {
+      ent: DbTableEnt<Key>;
+      tabService: TabService;
+    }) => Result.Result<DbTableTab<Key>, DbTableReadError<Key>>;
     tabToEnt: (item: {
       tab: DbTableTab<Key>;
       hashSecret?: string;
@@ -163,26 +166,12 @@ export type DbWriteEntityRegistry = {
   };
 };
 
-export type DbReadEntityRegistry = {
-  [Key in DbReadTableKey]: {
-    entToTab: (item: {
-      ent: DbTableEnt<Key>;
-      tabService: TabService;
-    }) => Result.Result<DbTableTab<Key>, DbTableReadError<Key>>;
-    tabToEnt: DbWriteEntityRegistry[Key]['tabToEnt'];
-    defaultError: DbTableNotFoundError<Key>;
-    existsColumns?: DbExistsColumns<DbEntityRegistry[Key]['table']>;
-  };
-};
-
 // Declaration order determines conversion and SQL execution order.
 export const dbEntityRegistry = {
   avatars: {
     table: schemaPostgres.avatarsTable,
-    write: {
-      identityKey: 'userId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.avatarsTable>,
+    identityKey:
+      'userId' as const satisfies keyof typeof schemaPostgres.avatarsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_AVATAR_DOES_NOT_EXIST'
     } satisfies BackendAvatarDoesNotExistError,
@@ -191,10 +180,8 @@ export const dbEntityRegistry = {
   },
   branches: {
     table: schemaPostgres.branchesTable,
-    write: {
-      identityKey: 'branchFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.branchesTable>,
+    identityKey:
+      'branchFullId' as const satisfies keyof typeof schemaPostgres.branchesTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_BRANCH_DOES_NOT_EXIST'
     } satisfies BackendBranchDoesNotExistError,
@@ -203,10 +190,8 @@ export const dbEntityRegistry = {
   },
   bridges: {
     table: schemaPostgres.bridgesTable,
-    write: {
-      identityKey: 'bridgeFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.bridgesTable>,
+    identityKey:
+      'bridgeFullId' as const satisfies keyof typeof schemaPostgres.bridgesTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST'
     } satisfies BackendBridgeBranchEnvDoesNotExistError,
@@ -215,10 +200,8 @@ export const dbEntityRegistry = {
   },
   cachedColumns: {
     table: schemaPostgres.cachedColumnsTable,
-    write: {
-      identityKey: 'cachedColumnFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.cachedColumnsTable>,
+    identityKey:
+      'cachedColumnFullId' as const satisfies keyof typeof schemaPostgres.cachedColumnsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_CACHED_COLUMN_DOES_NOT_EXIST'
     } satisfies BackendCachedColumnDoesNotExistError,
@@ -227,10 +210,8 @@ export const dbEntityRegistry = {
   },
   cachedParts: {
     table: schemaPostgres.cachedPartsTable,
-    write: {
-      identityKey: 'cachedPartFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.cachedPartsTable>,
+    identityKey:
+      'cachedPartFullId' as const satisfies keyof typeof schemaPostgres.cachedPartsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_CACHED_PART_DOES_NOT_EXIST'
     } satisfies BackendCachedPartDoesNotExistError,
@@ -239,10 +220,8 @@ export const dbEntityRegistry = {
   },
   connections: {
     table: schemaPostgres.connectionsTable,
-    write: {
-      identityKey: 'connectionFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.connectionsTable>,
+    identityKey:
+      'connectionFullId' as const satisfies keyof typeof schemaPostgres.connectionsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
     } satisfies BackendConnectionDoesNotExistError,
@@ -251,10 +230,8 @@ export const dbEntityRegistry = {
   },
   dashboards: {
     table: schemaPostgres.dashboardsTable,
-    write: {
-      identityKey: 'dashboardFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.dashboardsTable>,
+    identityKey:
+      'dashboardFullId' as const satisfies keyof typeof schemaPostgres.dashboardsTable.$inferSelect,
     existsColumns: { dashboardId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.dashboardsTable
     >,
@@ -266,10 +243,8 @@ export const dbEntityRegistry = {
   },
   dconfigs: {
     table: schemaPostgres.dconfigsTable,
-    write: {
-      identityKey: 'dconfigId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.dconfigsTable>,
+    identityKey:
+      'dconfigId' as const satisfies keyof typeof schemaPostgres.dconfigsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_DCONFIG_DOES_NOT_EXIST'
     } satisfies BackendDconfigDoesNotExistError,
@@ -278,10 +253,8 @@ export const dbEntityRegistry = {
   },
   uconfigs: {
     table: schemaPostgres.uconfigsTable,
-    write: {
-      identityKey: 'uconfigId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.uconfigsTable>,
+    identityKey:
+      'uconfigId' as const satisfies keyof typeof schemaPostgres.uconfigsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_UCONFIG_DOES_NOT_EXIST'
     } satisfies BackendUconfigDoesNotExistError,
@@ -290,22 +263,28 @@ export const dbEntityRegistry = {
   },
   envs: {
     table: schemaPostgres.envsTable,
-    write: {
-      identityKey: 'envFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.envsTable>,
+    identityKey:
+      'envFullId' as const satisfies keyof typeof schemaPostgres.envsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_ENV_DOES_NOT_EXIST'
     } satisfies BackendEnvDoesNotExistError,
     entToTab: envEntToTab,
     tabToEnt: envTabToEnt
   },
+  favorites: {
+    table: schemaPostgres.favoritesTable,
+    identityKey:
+      'favoriteFullId' as const satisfies keyof typeof schemaPostgres.favoritesTable.$inferSelect,
+    defaultError: {
+      code: 'BACKEND_FAVORITE_DOES_NOT_EXIST'
+    } satisfies BackendFavoriteDoesNotExistError,
+    entToTab: favoriteEntToTab,
+    tabToEnt: favoriteTabToEnt
+  },
   givens: {
     table: schemaPostgres.givensTable,
-    write: {
-      identityKey: 'givenFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.givensTable>,
+    identityKey:
+      'givenFullId' as const satisfies keyof typeof schemaPostgres.givensTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_GIVEN_DOES_NOT_EXIST'
     } satisfies BackendGivenDoesNotExistError,
@@ -314,10 +293,8 @@ export const dbEntityRegistry = {
   },
   roles: {
     table: schemaPostgres.rolesTable,
-    write: {
-      identityKey: 'roleFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.rolesTable>,
+    identityKey:
+      'roleFullId' as const satisfies keyof typeof schemaPostgres.rolesTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_ROLE_DOES_NOT_EXIST'
     } satisfies BackendRoleDoesNotExistError,
@@ -326,10 +303,8 @@ export const dbEntityRegistry = {
   },
   kits: {
     table: schemaPostgres.kitsTable,
-    write: {
-      identityKey: 'kitId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.kitsTable>,
+    identityKey:
+      'kitId' as const satisfies keyof typeof schemaPostgres.kitsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_KIT_DOES_NOT_EXIST'
     } satisfies BackendKitDoesNotExistError,
@@ -338,10 +313,8 @@ export const dbEntityRegistry = {
   },
   mconfigs: {
     table: schemaPostgres.mconfigsTable,
-    write: {
-      identityKey: 'mconfigId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.mconfigsTable>,
+    identityKey:
+      'mconfigId' as const satisfies keyof typeof schemaPostgres.mconfigsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_MCONFIG_DOES_NOT_EXIST'
     } satisfies BackendMconfigDoesNotExistError,
@@ -350,10 +323,8 @@ export const dbEntityRegistry = {
   },
   members: {
     table: schemaPostgres.membersTable,
-    write: {
-      identityKey: 'memberFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.membersTable>,
+    identityKey:
+      'memberFullId' as const satisfies keyof typeof schemaPostgres.membersTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_MEMBER_DOES_NOT_EXIST'
     } satisfies BackendMemberDoesNotExistError,
@@ -362,10 +333,8 @@ export const dbEntityRegistry = {
   },
   models: {
     table: schemaPostgres.modelsTable,
-    write: {
-      identityKey: 'modelFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.modelsTable>,
+    identityKey:
+      'modelFullId' as const satisfies keyof typeof schemaPostgres.modelsTable.$inferSelect,
     existsColumns: { modelId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.modelsTable
     >,
@@ -377,18 +346,18 @@ export const dbEntityRegistry = {
   },
   modelFieldLeafs: {
     table: schemaPostgres.modelFieldLeafsTable,
-    write: {
-      identityKey: 'modelFieldLeafFullId',
-      operations: ['insert']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.modelFieldLeafsTable>,
+    identityKey:
+      'modelFieldLeafFullId' as const satisfies keyof typeof schemaPostgres.modelFieldLeafsTable.$inferSelect,
+    defaultError: {
+      code: 'BACKEND_MODEL_FIELD_LEAF_DOES_NOT_EXIST'
+    } satisfies BackendModelFieldLeafDoesNotExistError,
+    entToTab: modelFieldLeafEntToTab,
     tabToEnt: modelFieldLeafTabToEnt
   },
   notes: {
     table: schemaPostgres.notesTable,
-    write: {
-      identityKey: 'noteId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.notesTable>,
+    identityKey:
+      'noteId' as const satisfies keyof typeof schemaPostgres.notesTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_NOTE_DOES_NOT_EXIST'
     } satisfies BackendNoteDoesNotExistError,
@@ -397,10 +366,8 @@ export const dbEntityRegistry = {
   },
   orgs: {
     table: schemaPostgres.orgsTable,
-    write: {
-      identityKey: 'orgId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.orgsTable>,
+    identityKey:
+      'orgId' as const satisfies keyof typeof schemaPostgres.orgsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_ORG_DOES_NOT_EXIST'
     } satisfies BackendOrgDoesNotExistError,
@@ -409,10 +376,8 @@ export const dbEntityRegistry = {
   },
   projects: {
     table: schemaPostgres.projectsTable,
-    write: {
-      identityKey: 'projectId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.projectsTable>,
+    identityKey:
+      'projectId' as const satisfies keyof typeof schemaPostgres.projectsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_PROJECT_DOES_NOT_EXIST'
     } satisfies BackendProjectDoesNotExistError,
@@ -421,10 +386,8 @@ export const dbEntityRegistry = {
   },
   providers: {
     table: schemaPostgres.providersTable,
-    write: {
-      identityKey: 'providerFullId',
-      operations: ['insert', 'update', 'insertOrUpdate', 'insertOrDoNothing']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.providersTable>,
+    identityKey:
+      'providerFullId' as const satisfies keyof typeof schemaPostgres.providersTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_PROVIDER_DOES_NOT_EXIST'
     } satisfies BackendProviderDoesNotExistError,
@@ -433,10 +396,8 @@ export const dbEntityRegistry = {
   },
   queries: {
     table: schemaPostgres.queriesTable,
-    write: {
-      identityKey: 'queryId',
-      operations: ['insert', 'update', 'insertOrUpdate', 'insertOrDoNothing']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.queriesTable>,
+    identityKey:
+      'queryId' as const satisfies keyof typeof schemaPostgres.queriesTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_QUERY_DOES_NOT_EXIST'
     } satisfies BackendQueryDoesNotExistError,
@@ -445,10 +406,8 @@ export const dbEntityRegistry = {
   },
   reports: {
     table: schemaPostgres.reportsTable,
-    write: {
-      identityKey: 'reportFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.reportsTable>,
+    identityKey:
+      'reportFullId' as const satisfies keyof typeof schemaPostgres.reportsTable.$inferSelect,
     existsColumns: { reportId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.reportsTable
     >,
@@ -460,10 +419,8 @@ export const dbEntityRegistry = {
   },
   structs: {
     table: schemaPostgres.structsTable,
-    write: {
-      identityKey: 'structId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.structsTable>,
+    identityKey:
+      'structId' as const satisfies keyof typeof schemaPostgres.structsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_STRUCT_DOES_NOT_EXIST'
     } satisfies BackendStructDoesNotExistError,
@@ -472,10 +429,8 @@ export const dbEntityRegistry = {
   },
   users: {
     table: schemaPostgres.usersTable,
-    write: {
-      identityKey: 'userId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.usersTable>,
+    identityKey:
+      'userId' as const satisfies keyof typeof schemaPostgres.usersTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_USER_DOES_NOT_EXIST'
     } satisfies BackendUserDoesNotExistError,
@@ -484,10 +439,8 @@ export const dbEntityRegistry = {
   },
   charts: {
     table: schemaPostgres.chartsTable,
-    write: {
-      identityKey: 'chartFullId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.chartsTable>,
+    identityKey:
+      'chartFullId' as const satisfies keyof typeof schemaPostgres.chartsTable.$inferSelect,
     existsColumns: { chartId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.chartsTable
     >,
@@ -499,10 +452,8 @@ export const dbEntityRegistry = {
   },
   ocEvents: {
     table: schemaPostgres.ocEventsTable,
-    write: {
-      identityKey: 'eventId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocEventsTable>,
+    identityKey:
+      'eventId' as const satisfies keyof typeof schemaPostgres.ocEventsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_OC_EVENT_DOES_NOT_EXIST'
     } satisfies BackendOcEventDoesNotExistError,
@@ -511,10 +462,8 @@ export const dbEntityRegistry = {
   },
   sessions: {
     table: schemaPostgres.sessionsTable,
-    write: {
-      identityKey: 'sessionId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.sessionsTable>,
+    identityKey:
+      'sessionId' as const satisfies keyof typeof schemaPostgres.sessionsTable.$inferSelect,
     existsColumns: { sessionId: true } satisfies DbExistsColumns<
       typeof schemaPostgres.sessionsTable
     >,
@@ -526,10 +475,8 @@ export const dbEntityRegistry = {
   },
   ocSessions: {
     table: schemaPostgres.ocSessionsTable,
-    write: {
-      identityKey: 'sessionId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocSessionsTable>,
+    identityKey:
+      'sessionId' as const satisfies keyof typeof schemaPostgres.ocSessionsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_OC_SESSION_DOES_NOT_EXIST'
     } satisfies BackendOcSessionDoesNotExistError,
@@ -538,10 +485,8 @@ export const dbEntityRegistry = {
   },
   ocMessages: {
     table: schemaPostgres.ocMessagesTable,
-    write: {
-      identityKey: 'messageId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocMessagesTable>,
+    identityKey:
+      'messageId' as const satisfies keyof typeof schemaPostgres.ocMessagesTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_OC_MESSAGE_DOES_NOT_EXIST'
     } satisfies BackendOcMessageDoesNotExistError,
@@ -550,10 +495,8 @@ export const dbEntityRegistry = {
   },
   ocParts: {
     table: schemaPostgres.ocPartsTable,
-    write: {
-      identityKey: 'partId',
-      operations: ['insert', 'update', 'insertOrUpdate']
-    } satisfies DbEntityWriteConfig<typeof schemaPostgres.ocPartsTable>,
+    identityKey:
+      'partId' as const satisfies keyof typeof schemaPostgres.ocPartsTable.$inferSelect,
     defaultError: {
       code: 'BACKEND_OC_PART_DOES_NOT_EXIST'
     } satisfies BackendOcPartDoesNotExistError,
@@ -563,6 +506,6 @@ export const dbEntityRegistry = {
 };
 
 // Object.keys loses the literal keys only at this enumeration boundary.
-export const dbTableKeys: DbWriteTableKey[] = Object.keys(
+export const dbTableKeys: DbTableKey[] = Object.keys(
   dbEntityRegistry
-) as DbWriteTableKey[];
+) as DbTableKey[];

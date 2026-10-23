@@ -1,8 +1,8 @@
 import type {
-  DbTableTab,
-  DbWriteTableKey
+  DbTableKey,
+  DbTableTab
 } from '#backend/services/db/db-entity-registry';
 
 export type DbTabsPack = {
-  [Key in DbWriteTableKey]?: DbTableTab<Key>[];
+  [Key in DbTableKey]?: DbTableTab<Key>[];
 };

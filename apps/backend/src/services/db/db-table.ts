@@ -6,14 +6,13 @@ import type {
 } from 'drizzle-orm';
 import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import type {
-  DbReadEntityRegistry,
-  DbReadTableKey,
+  DbEntityRegistry,
   DbTableEnt,
+  DbTableKey,
   DbTableNotFoundError,
   DbTableReadError,
   DbTableTab,
-  DbTableWriteError,
-  DbWriteTableKey
+  DbTableWriteError
 } from '#backend/services/db/db-entity-registry';
 import type { HashService } from '#backend/services/hash/hash.service';
 import type { TabService } from '#backend/services/tab/tab.service';
@@ -28,17 +27,6 @@ export type DbTableContext = {
   isEncryptMetadata: boolean;
 };
 
-export type DbWriteTable<Key extends DbWriteTableKey> = {
-  tabToEnt: (item: {
-    tab: DbTableTab<Key>;
-    hashSecret?: string;
-  }) => Result.Result<DbTableEnt<Key>, DbTableWriteError<Key>>;
-};
-
-export type DbWriteTableRegistry = {
-  [Key in DbWriteTableKey]: DbWriteTable<Key>;
-};
-
 type DbReadSchema = ExtractTablesWithRelations<typeof schemaPostgres>;
 
 type DbTableReadOptions<Table extends keyof DbReadSchema> = Omit<
@@ -46,43 +34,46 @@ type DbTableReadOptions<Table extends keyof DbReadSchema> = Omit<
   'columns' | 'with' | 'extras'
 > & { columns?: never; with?: never; extras?: never };
 
-type DbTableSchemaKey<Key extends DbReadTableKey> = `${Key}Table`;
+type DbTableSchemaKey<Key extends DbTableKey> = `${Key}Table`;
 
-type DbFindFirstOptions<Key extends DbReadTableKey> = Omit<
+type DbFindFirstOptions<Key extends DbTableKey> = Omit<
   DbTableReadOptions<DbTableSchemaKey<Key>>,
   'limit'
 >;
 
-type DbFindManyOptions<Key extends DbReadTableKey> = DbTableReadOptions<
+type DbFindManyOptions<Key extends DbTableKey> = DbTableReadOptions<
   DbTableSchemaKey<Key>
 >;
 
-export type DbTableQuery<Key extends DbReadTableKey> = {
+export type DbTableQuery<Key extends DbTableKey> = {
   findFirst: (item?: DbFindFirstOptions<Key>) => PromiseLike<DbTableEnt<Key>>;
   findMany: (item?: DbFindManyOptions<Key>) => PromiseLike<DbTableEnt<Key>[]>;
 };
 
-export type DbTableExistsQuery<Key extends DbReadTableKey> = {
+export type DbTableExistsQuery<Key extends DbTableKey> = {
   findFirst: (
     item: Omit<DbFindFirstOptions<Key>, 'columns'> & {
-      columns: DbReadEntityRegistry[Key]['existsColumns'];
+      columns: DbEntityRegistry[Key]['existsColumns'];
     }
   ) => PromiseLike<unknown>;
 };
 
-export class DbTable<Key extends DbReadTableKey> implements DbWriteTable<Key> {
+export class DbTable<Key extends DbTableKey> {
   readonly entToTab: (item: {
     ent: DbTableEnt<Key>;
   }) => Result.Result<DbTableTab<Key>, DbTableReadError<Key>>;
 
-  readonly tabToEnt: DbWriteTable<Key>['tabToEnt'];
+  readonly tabToEnt: (item: {
+    tab: DbTableTab<Key>;
+    hashSecret?: string;
+  }) => Result.Result<DbTableEnt<Key>, DbTableWriteError<Key>>;
 
   constructor(
     private readonly item: {
       key: Key;
       query: DbTableQuery<NoInfer<Key>>;
       existsQuery: DbTableExistsQuery<NoInfer<Key>>;
-      entityConfig: DbReadEntityRegistry[NoInfer<Key>];
+      entityConfig: DbEntityRegistry[NoInfer<Key>];
       context: DbTableContext;
     }
   ) {

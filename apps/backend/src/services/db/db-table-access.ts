@@ -53,6 +53,10 @@ export class DbTableAccess implements DbTableRegistry {
     return this.tableRegistry.givens;
   }
 
+  get favorites(): DbTableRegistry['favorites'] {
+    return this.tableRegistry.favorites;
+  }
+
   get kits(): DbTableRegistry['kits'] {
     return this.tableRegistry.kits;
   }

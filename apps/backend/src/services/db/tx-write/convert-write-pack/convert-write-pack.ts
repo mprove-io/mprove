@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
+import type { DbTableRegistry } from '#backend/services/db/create-db-table-registry';
 import { dbTableKeys } from '#backend/services/db/db-entity-registry';
-import type { DbWriteTableRegistry } from '#backend/services/db/db-table';
 import type { DbWriteOperation } from '#backend/services/db/db-write-operation';
 import {
   type ConvertTabsPackKeyOutput,
@@ -18,7 +18,7 @@ export function convertWritePack(item: {
   operation: DbWriteOperation;
   tabsPack: DbTabsPack;
   hashSecret?: string;
-  tableRegistry: DbWriteTableRegistry;
+  tableRegistry: DbTableRegistry;
 }): Result.Result<ConvertWritePackOutput, ConvertWritePackError> {
   return Result.pipe(
     Result.succeed(item),

@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
-import {
-  type ModelFieldLeafEnt,
-  modelFieldLeafsTable
-} from '#backend/drizzle/postgres/schema/model-field-leafs';
+import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import { DbService } from '#backend/services/db/db.service';
 import type { SearchFieldMatch } from '#backend/services/explorer/tools/search-model-fields/search-model-fields.types';
@@ -108,23 +106,21 @@ export class SearchDwhSchemaFieldNamesService {
           })
         )
       ),
-      Result.bind('leafEnts', async v =>
+      Result.bind('modelFieldLeafs', async v =>
         v.dwhMatches.length === 0
-          ? Result.succeed<ModelFieldLeafEnt[]>([])
-          : this.db.drizzle.query.modelFieldLeafsTable
-              .findMany({
-                where: and(
-                  eq(modelFieldLeafsTable.structId, v.structId),
-                  eq(modelFieldLeafsTable.modelType, 'Malloy'),
-                  inArray(modelFieldLeafsTable.modelId, v.modelIds)
-                )
-              })
-              .then(xs => Result.succeed(xs))
+          ? Result.succeed<ModelFieldLeafTab[]>([])
+          : this.db.modelFieldLeafs.findMany({
+              where: and(
+                eq(modelFieldLeafsTable.structId, v.structId),
+                eq(modelFieldLeafsTable.modelType, 'Malloy'),
+                inArray(modelFieldLeafsTable.modelId, v.modelIds)
+              )
+            })
       ),
       Result.map((v): SearchFieldMatch[] =>
         this.mapDwhMatchesToLeafs({
           dwhMatches: v.dwhMatches,
-          leafEnts: v.leafEnts
+          modelFieldLeafs: v.modelFieldLeafs
         })
       )
     );
@@ -187,40 +183,47 @@ export class SearchDwhSchemaFieldNamesService {
 
   private mapDwhMatchesToLeafs(item: {
     dwhMatches: DwhFieldNameMatch[];
-    leafEnts: ModelFieldLeafEnt[];
+    modelFieldLeafs: ModelFieldLeafTab[];
   }): SearchFieldMatch[] {
-    let { dwhMatches, leafEnts } = item;
+    let { dwhMatches, modelFieldLeafs } = item;
 
     let matches: SearchFieldMatch[] = [];
 
     dwhMatches.forEach(dwhMatch => {
-      let matchingLeafEnts: ModelFieldLeafEnt[] = leafEnts.filter(leafEnt => {
-        let isConnectionMatch =
-          (leafEnt.connectionId ?? '') === dwhMatch.connectionId;
+      let matchingModelFieldLeafs: ModelFieldLeafTab[] = modelFieldLeafs.filter(
+        modelFieldLeaf => {
+          let isConnectionMatch =
+            (modelFieldLeaf.connectionId ?? '') === dwhMatch.connectionId;
 
-        let isSchemaMatch =
-          (leafEnt.schemaNameLc ?? '') === dwhMatch.schemaName.toLowerCase();
+          let isSchemaMatch =
+            (modelFieldLeaf.schemaNameLc ?? '') ===
+            dwhMatch.schemaName.toLowerCase();
 
-        let isTableMatch =
-          (leafEnt.tableNameLc ?? '') === dwhMatch.tableName.toLowerCase();
+          let isTableMatch =
+            (modelFieldLeaf.tableNameLc ?? '') ===
+            dwhMatch.tableName.toLowerCase();
 
-        let isColumnMatch =
-          (leafEnt.columnNameLc ?? '') === dwhMatch.columnName.toLowerCase();
+          let isColumnMatch =
+            (modelFieldLeaf.columnNameLc ?? '') ===
+            dwhMatch.columnName.toLowerCase();
 
-        return (
-          isConnectionMatch && isSchemaMatch && isTableMatch && isColumnMatch
-        );
-      });
+          return (
+            isConnectionMatch && isSchemaMatch && isTableMatch && isColumnMatch
+          );
+        }
+      );
 
-      matchingLeafEnts.forEach(leafEnt => {
+      matchingModelFieldLeafs.forEach(modelFieldLeaf => {
         let match = matches.find(
-          x => x.modelId === leafEnt.modelId && x.fieldId === leafEnt.fieldId
+          x =>
+            x.modelId === modelFieldLeaf.modelId &&
+            x.fieldId === modelFieldLeaf.fieldId
         );
 
         if (!match) {
           match = {
-            modelId: leafEnt.modelId,
-            fieldId: leafEnt.fieldId,
+            modelId: modelFieldLeaf.modelId,
+            fieldId: modelFieldLeaf.fieldId,
             matchedByValues: [],
             matchedByNames: []
           };

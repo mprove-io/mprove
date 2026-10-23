@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
+import type { FavoriteTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { favoritesTable } from '#backend/drizzle/postgres/schema/favorites';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { DbService } from '#backend/services/db/db.service';
@@ -72,14 +73,14 @@ export class FavoritesService {
     userId: string;
     type: FavoriteType;
     targetIds: string[];
-  }) {
+  }): Promise<string[]> {
     let { projectId, userId, type, targetIds } = item;
 
     if (targetIds.length === 0) {
       return [];
     }
 
-    let favorites = await this.db.drizzle.query.favoritesTable.findMany({
+    let favorites: FavoriteTab[] = await this.db.favorites.findManyUnwrap({
       where: and(
         eq(favoritesTable.projectId, projectId),
         eq(favoritesTable.userId, userId),
@@ -88,6 +89,10 @@ export class FavoritesService {
       )
     });
 
-    return favorites.map(favorite => favorite.targetId);
+    let favoriteTargetIds: string[] = favorites.map(
+      favorite => favorite.targetId
+    );
+
+    return favoriteTargetIds;
   }
 }
