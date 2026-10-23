@@ -1,23 +1,16 @@
 import { Result } from '@praha/byethrow';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import type { DbTableRegistry } from '#backend/services/db/create-db-table-registry';
-import type { DbTableEnt } from '#backend/services/db/db-entity-registry';
+import type { DbTableConversion } from '#backend/services/db/db-table-conversion';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConvertTabsPackKeyError } from '#common/types/backend/function-errors/convert-tabs-pack-key-error';
-
-export type ConvertTabsPackKeyOutput<
-  Key extends keyof DbTabsPack = keyof DbTabsPack
-> = {
-  key: Key;
-  ents: DbTableEnt<Key>[];
-};
 
 export function convertTabsPackKey<Key extends keyof DbTabsPack>(item: {
   key: Key;
   tabsPack: DbTabsPack;
   hashSecret?: string;
   tableRegistry: DbTableRegistry;
-}): Result.Result<ConvertTabsPackKeyOutput<Key>, ConvertTabsPackKeyError> {
+}): Result.Result<DbTableConversion<Key>, ConvertTabsPackKeyError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind('tabs', v =>
@@ -32,7 +25,7 @@ export function convertTabsPackKey<Key extends keyof DbTabsPack>(item: {
       )
     ),
     Result.map(
-      (v): ConvertTabsPackKeyOutput<Key> => ({
+      (v): DbTableConversion<Key> => ({
         key: v.key,
         ents: v.ents
       })

@@ -1,6 +1,8 @@
 import { eq, getTableColumns } from 'drizzle-orm';
 import type { PgColumn, PgTable } from 'drizzle-orm/pg-core';
 import pIteration from 'p-iteration';
+import { dbEntityRegistry } from '#backend/services/db/db-entity-registry';
+import type { DbTableConversion } from '#backend/services/db/db-table-conversion';
 import type { DbTransaction } from '#backend/services/db/db-transaction';
 import type { DbWriteOperation } from '#backend/services/db/db-write-operation';
 import { drizzleSetAllColumnsFull } from '#backend/services/db/tx-write/write-db-table/drizzle-set-all-columns-full/drizzle-set-all-columns-full';
@@ -10,12 +12,18 @@ const { forEachSeries } = pIteration;
 
 export async function writeDbTable(item: {
   tx: DbTransaction;
-  table: PgTable;
-  identityKey: string;
+  tableConversion: DbTableConversion;
   operation: DbWriteOperation;
-  ents: Record<string, unknown>[];
 }): Promise<void> {
-  let { tx, table, identityKey, operation, ents } = item;
+  let { tx, tableConversion, operation } = item;
+
+  // The correlated input checks table/entity pairing at the boundary. Keep
+  // Drizzle's dynamic SQL implementation broad instead of expanding every table.
+  let ents: Record<string, unknown>[] = tableConversion.ents;
+
+  let table: PgTable = dbEntityRegistry[tableConversion.key].table;
+
+  let identityKey: string = dbEntityRegistry[tableConversion.key].identityKey;
 
   if (ents.length === 0) {
     return;

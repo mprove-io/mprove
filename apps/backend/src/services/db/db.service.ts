@@ -19,12 +19,12 @@ import {
   createDbTableRegistry,
   type DbTableRegistry
 } from '#backend/services/db/create-db-table-registry';
-import { dbEntityRegistry } from '#backend/services/db/db-entity-registry';
 import type { DbTableContext } from '#backend/services/db/db-table';
 import { DbTableAccess } from '#backend/services/db/db-table-access';
+import type { DbTableConversion } from '#backend/services/db/db-table-conversion';
 import type { DbTransaction } from '#backend/services/db/db-transaction';
 import { dbWriteOperationValues } from '#backend/services/db/db-write-operation';
-import type { ConvertTabsPackKeyOutput } from '#backend/services/db/tx-write/convert-write-pack/convert-tabs-pack-key/convert-tabs-pack-key';
+import { transaction } from '#backend/services/db/transaction/transaction';
 import { convertWritePack } from '#backend/services/db/tx-write/convert-write-pack/convert-write-pack';
 import { writeDbTable } from '#backend/services/db/tx-write/write-db-table/write-db-table';
 import { HashService } from '#backend/services/hash/hash.service';
@@ -119,47 +119,20 @@ export class DbService extends DbTableAccess {
 
     return customRetry({
       options: retryOptions ?? getRetryOption(this.cs, this.logger),
-      action: async (): Result.ResultAsync<void, WriteError> => {
-        let rollbackSignal: Error & { cause?: WriteError } = new Error(
-          'Transaction domain failure'
-        );
-
-        let state: { failure?: Result.Failure<WriteError> } = {};
-
-        try {
-          let success: Result.Success<void> = await this.drizzle.transaction(
-            async (tx): Promise<Result.Success<void>> => {
-              let result: Result.Result<void, WriteError> = await this.txWrite({
-                tx: tx,
-                insert: insert,
-                update: update,
-                insertOrUpdate: insertOrUpdate,
-                insertOrDoNothing: insertOrDoNothing,
-                rawQueries: rawQueries,
-                serverTs: serverTs
-              });
-
-              if (Result.isFailure(result)) {
-                state.failure = result;
-
-                rollbackSignal.cause = result.error;
-
-                throw rollbackSignal;
-              }
-
-              return result;
-            }
-          );
-
-          return success;
-        } catch (error: unknown) {
-          if (error === rollbackSignal && isDefined(state.failure)) {
-            return state.failure;
-          }
-
-          throw error;
-        }
-      }
+      action: () =>
+        transaction({
+          drizzle: this.drizzle,
+          action: tx =>
+            this.txWrite({
+              tx: tx,
+              insert: insert,
+              update: update,
+              insertOrUpdate: insertOrUpdate,
+              insertOrDoNothing: insertOrDoNothing,
+              rawQueries: rawQueries,
+              serverTs: serverTs
+            })
+        })
     });
   }
 
@@ -252,13 +225,11 @@ export class DbService extends DbTableAccess {
         Result.sequence(v.convertedPacks, convertedPack =>
           Result.sequence(
             convertedPack.tableConversions,
-            (tableConversion: ConvertTabsPackKeyOutput) =>
+            (tableConversion: DbTableConversion) =>
               writeDbTable({
                 tx: v.tx,
-                table: dbEntityRegistry[tableConversion.key].table,
-                identityKey: dbEntityRegistry[tableConversion.key].identityKey,
-                operation: convertedPack.operation,
-                ents: tableConversion.ents
+                tableConversion: tableConversion,
+                operation: convertedPack.operation
               }).then(() => Result.succeed())
           )
         )

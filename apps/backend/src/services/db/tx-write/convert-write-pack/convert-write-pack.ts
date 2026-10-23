@@ -2,16 +2,14 @@ import { Result } from '@praha/byethrow';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import type { DbTableRegistry } from '#backend/services/db/create-db-table-registry';
 import { dbTableKeys } from '#backend/services/db/db-entity-registry';
+import type { DbTableConversion } from '#backend/services/db/db-table-conversion';
 import type { DbWriteOperation } from '#backend/services/db/db-write-operation';
-import {
-  type ConvertTabsPackKeyOutput,
-  convertTabsPackKey
-} from '#backend/services/db/tx-write/convert-write-pack/convert-tabs-pack-key/convert-tabs-pack-key';
+import { convertTabsPackKey } from '#backend/services/db/tx-write/convert-write-pack/convert-tabs-pack-key/convert-tabs-pack-key';
 import type { ConvertWritePackError } from '#common/types/backend/function-errors/convert-write-pack-error';
 
 export type ConvertWritePackOutput = {
   operation: DbWriteOperation;
-  tableConversions: ConvertTabsPackKeyOutput[];
+  tableConversions: DbTableConversion[];
 };
 
 export function convertWritePack(item: {
