@@ -25,6 +25,7 @@ import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
@@ -33,7 +34,6 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { CodexService } from '#backend/services/codex/codex.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -46,6 +46,7 @@ import type { ProviderConfigResult } from '#backend/services/editor/editor-openc
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
 import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -94,7 +95,7 @@ export class CreateEditorSessionController {
     private codexService: CodexService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
-    private branchesService: BranchesService,
+    private hashService: HashService,
     private bridgesService: BridgesService,
     private editorConnectionsService: EditorConnectionsService,
     private cs: ConfigService<BackendConfig>,
@@ -671,7 +672,8 @@ export class CreateEditorSessionController {
       ),
       Result.bind('sessionBranch', v =>
         Result.succeed(
-          this.branchesService.makeBranch({
+          makeBranch({
+            hashService: this.hashService,
             projectId: v.projectId,
             repoId: v.sessionId,
             branchId: v.sessionId

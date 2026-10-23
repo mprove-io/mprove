@@ -17,6 +17,7 @@ export function avatarTabToEnt(item: {
   let avatarSt: AvatarSt = {
     avatarSmall: tab.avatarSmall
   };
+
   let avatarLt: AvatarLt = {
     avatarBig: tab.avatarBig
   };

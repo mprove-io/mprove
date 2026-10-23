@@ -11,16 +11,17 @@ import type {
   ProjectTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import {
   BlockmlService,
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -48,7 +49,7 @@ export class ProjectsService {
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private branchesService: BranchesService,
+    private hashService: HashService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
@@ -261,13 +262,15 @@ export class ProjectsService {
 
     let prodStructId: string = makeId();
 
-    let prodBranch: BranchTab = this.branchesService.makeBranch({
+    let prodBranch: BranchTab = makeBranch({
+      hashService: this.hashService,
       projectId: newProject.projectId,
       repoId: PROD_REPO_ID,
       branchId: newProject.defaultBranch
     });
 
-    let devBranch: BranchTab = this.branchesService.makeBranch({
+    let devBranch: BranchTab = makeBranch({
+      hashService: this.hashService,
       projectId: newProject.projectId,
       repoId: user.userId,
       branchId: newProject.defaultBranch

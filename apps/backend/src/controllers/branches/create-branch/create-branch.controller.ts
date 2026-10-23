@@ -12,14 +12,16 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { checkBranchDoesNotExist } from '#backend/functions/db/branches/check-branch-does-not-exist/check-branch-does-not-exist';
+import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -38,7 +40,7 @@ export class CreateBranchController {
     private tabService: TabService,
     private rpcService: RpcService,
     private sessionsService: SessionsService,
-    private branchesService: BranchesService,
+    private hashService: HashService,
     private bridgesService: BridgesService,
     private membersService: MembersService,
     private blockmlService: BlockmlService,
@@ -102,7 +104,8 @@ export class CreateBranchController {
         })
       ),
       Result.andThrough(v =>
-        this.branchesService.checkBranchDoesNotExist({
+        checkBranchDoesNotExist({
+          db: this.db,
           projectId: v.projectId,
           repoId: v.repoId,
           branchId: v.newBranchId
@@ -128,7 +131,8 @@ export class CreateBranchController {
       ),
       Result.bind('newBranch', v =>
         Result.succeed(
-          this.branchesService.makeBranch({
+          makeBranch({
+            hashService: this.hashService,
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.newBranchId

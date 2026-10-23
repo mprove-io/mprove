@@ -22,10 +22,10 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
@@ -93,7 +93,6 @@ export class CreateMemberController {
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rpcService: RpcService,
-    private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private blockmlService: BlockmlService,
     private usersService: UsersService,
@@ -240,7 +239,8 @@ export class CreateMemberController {
       ),
       Result.bind('devBranch', v =>
         Result.succeed(
-          this.branchesService.makeBranch({
+          makeBranch({
+            hashService: this.hashService,
             projectId: v.projectId,
             repoId: v.newMember.memberId,
             branchId: v.project.defaultBranch

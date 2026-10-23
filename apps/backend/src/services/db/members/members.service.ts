@@ -16,10 +16,10 @@ import {
   membersTable
 } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
@@ -48,7 +48,6 @@ export class MembersService {
     private hashService: HashService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
-    private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
@@ -285,7 +284,8 @@ export class MembersService {
         Result.succeed(
           isUndefined(v.newMember)
             ? undefined
-            : this.branchesService.makeBranch({
+            : makeBranch({
+                hashService: this.hashService,
                 projectId: v.demoProjectId,
                 repoId: v.newMember.memberId,
                 branchId: v.project.defaultBranch

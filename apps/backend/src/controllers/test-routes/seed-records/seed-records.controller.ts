@@ -35,6 +35,7 @@ import {
   type ParseApiKeyOutput,
   parseApiKey
 } from '#backend/functions/api-key/parse-api-key/parse-api-key';
+import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
@@ -42,7 +43,6 @@ import {
   BlockmlService,
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { ConnectionsService } from '#backend/services/db/connections/connections.service';
@@ -132,7 +132,6 @@ export class SeedRecordsController {
   constructor(
     private tabService: TabService,
     private hashService: HashService,
-    private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private rpcService: RpcService,
     private usersService: UsersService,
@@ -611,13 +610,15 @@ export class SeedRecordsController {
                 queries: prodQueriesApi
               } = prodRebuildStructOutput.value;
 
-              let devBranch: BranchTab = this.branchesService.makeBranch({
+              let devBranch: BranchTab = makeBranch({
+                hashService: this.hashService,
                 projectId: newProject.projectId,
                 repoId: v.prepareSeedPayload.users[0].userId,
                 branchId: newProject.defaultBranch
               });
 
-              let prodBranch: BranchTab = this.branchesService.makeBranch({
+              let prodBranch: BranchTab = makeBranch({
+                hashService: this.hashService,
                 projectId: newProject.projectId,
                 repoId: PROD_REPO_ID,
                 branchId: newProject.defaultBranch

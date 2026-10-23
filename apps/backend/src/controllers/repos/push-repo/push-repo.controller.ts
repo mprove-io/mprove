@@ -16,13 +16,13 @@ import type {
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import {
   BlockmlService,
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
@@ -31,6 +31,7 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -59,7 +60,7 @@ export class PushRepoController {
     private rpcService: RpcService,
     private sessionsService: SessionsService,
     private structsService: StructsService,
-    private branchesService: BranchesService,
+    private hashService: HashService,
     private bridgesService: BridgesService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
@@ -177,7 +178,8 @@ export class PushRepoController {
         let productionBranch: BranchTab = v.prodBranch;
 
         if (isUndefined(productionBranch)) {
-          productionBranch = this.branchesService.makeBranch({
+          productionBranch = makeBranch({
+            hashService: this.hashService,
             projectId: v.projectId,
             repoId: PROD_REPO_ID,
             branchId: v.branchId

@@ -17,6 +17,7 @@ export function branchTabToEnt(item: {
   let { tab, hashService, tabService, isEncryptDb, isEncryptMetadata } = item;
 
   let branchSt: BranchSt = {};
+
   let branchLt: BranchLt = {};
 
   let branchEnt: BranchEnt = {

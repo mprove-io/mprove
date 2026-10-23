@@ -6,8 +6,6 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { CodexService } from '#backend/services/codex/codex.service';
-import { AvatarsService } from '#backend/services/db/avatars/avatars.service';
-import { BranchesService } from '#backend/services/db/branches/branches.service';
 import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
 import { ChartsService } from '#backend/services/db/charts/charts.service';
@@ -113,9 +111,6 @@ export const appProviders = [
   LocalStrategy,
   JwtStrategy,
   //
-  BranchesService,
-  AvatarsService,
-  BranchesService,
   BridgesService,
   ChartsService,
   ConnectionsService,

@@ -1,10 +1,10 @@
 import type { Result } from '@praha/byethrow';
 import type { PgTable } from 'drizzle-orm/pg-core';
 import { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
-import { avatarEntToTab } from '#backend/services/db/avatars/avatar-ent-to-tab/avatar-ent-to-tab';
-import { avatarTabToEnt } from '#backend/services/db/avatars/avatar-tab-to-ent/avatar-tab-to-ent';
-import { branchEntToTab } from '#backend/services/db/branches/branch-ent-to-tab/branch-ent-to-tab';
-import { branchTabToEnt } from '#backend/services/db/branches/branch-tab-to-ent/branch-tab-to-ent';
+import { avatarEntToTab } from '#backend/functions/db/avatars/avatar-ent-to-tab/avatar-ent-to-tab';
+import { avatarTabToEnt } from '#backend/functions/db/avatars/avatar-tab-to-ent/avatar-tab-to-ent';
+import { branchEntToTab } from '#backend/functions/db/branches/branch-ent-to-tab/branch-ent-to-tab';
+import { branchTabToEnt } from '#backend/functions/db/branches/branch-tab-to-ent/branch-tab-to-ent';
 import { bridgeEntToTab } from '#backend/services/db/bridges/bridge-ent-to-tab/bridge-ent-to-tab';
 import { bridgeTabToEnt } from '#backend/services/db/bridges/bridge-tab-to-ent/bridge-tab-to-ent';
 import { cachedColumnEntToTab } from '#backend/services/db/cached-columns/cached-column-ent-to-tab/cached-column-ent-to-tab';
