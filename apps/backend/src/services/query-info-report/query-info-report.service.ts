@@ -11,7 +11,6 @@ import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -94,7 +93,7 @@ export class QueryInfoReportService {
 
           v.user.ui.timeRangeFraction = v.apiReport.timeRangeFraction;
 
-          let persistenceResult: Result.Result<WriteOutput, WriteError> =
+          let persistenceResult: Result.Result<void, WriteError> =
             await this.db.write({
               insertOrUpdate: {
                 users: [v.user]

@@ -34,8 +34,7 @@ export function createDbTableRegistry(item: {
 
   let entries: [DbTableKey, DbTable<DbTableKey>][] = dbTableKeys.map(
     (key: DbTableKey): [DbTableKey, DbTable<DbTableKey>] => {
-      let table: DbTable<DbTableKey> = new DbTable({
-        key: key,
+      let table: DbTable<DbTableKey> = new DbTable<DbTableKey>({
         query: queryMap[`${key}Table`],
         existsQuery: existsQueryMap[`${key}Table`],
         entityConfig: entityRegistry[key],

@@ -27,7 +27,6 @@ import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -346,7 +345,7 @@ export class EditDraftDashboardController {
         })
       ),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<WriteOutput, WriteError> =
+        let persistenceResult: Result.Result<void, WriteError> =
           await this.db.write({
             insert: {
               mconfigs: v.processedDashboard.insertMconfigs

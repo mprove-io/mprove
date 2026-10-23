@@ -23,7 +23,6 @@ import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service'
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { DocService } from '#backend/services/doc/doc.service';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
@@ -929,7 +928,7 @@ export class ReportDataService {
           v.prepareReportQueriesPayload.newMconfigs.length > 0 ||
           v.prepareReportQueriesPayload.newQueries.length > 0
         ) {
-          let persistenceResult: Result.Result<WriteOutput, WriteError> =
+          let persistenceResult: Result.Result<void, WriteError> =
             await this.db.write({
               insert: {
                 mconfigs: v.prepareReportQueriesPayload.newMconfigs
@@ -962,7 +961,7 @@ export class ReportDataService {
 
           v.report.rows = dbRows;
 
-          let persistenceResult: Result.Result<WriteOutput, WriteError> =
+          let persistenceResult: Result.Result<void, WriteError> =
             await this.db.write({
               insertOrUpdate: {
                 reports: [v.report]

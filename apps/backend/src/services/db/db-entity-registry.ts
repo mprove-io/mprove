@@ -123,7 +123,7 @@ type DbTableTypeMap = {
       ReturnType<DbEntityRegistryDefinition[Key]['tabToEnt']>,
       Result.Failure<unknown>
     >['error'];
-    notFoundError: DbEntityRegistryDefinition[Key]['defaultError'];
+    notFoundError: DbEntityRegistryDefinition[Key]['notFoundError'];
   };
 };
 
@@ -140,17 +140,12 @@ export type DbTableWriteError<Key extends DbTableKey> =
 export type DbTableNotFoundError<Key extends DbTableKey> =
   DbTableTypeMap[Key]['notFoundError'];
 
-export type DbExistsColumns<Table extends PgTable> = {
-  [Column in keyof Table['$inferSelect']]?: true;
-};
-
 // Every table must provide the same read and write API.
 export type DbEntityRegistry = {
   [Key in DbTableKey]: {
     table: (typeof schemaPostgres)[`${Key}Table`];
     identityKey: Extract<keyof DbTableEnt<Key>, string>;
-    existsColumns?: DbExistsColumns<(typeof schemaPostgres)[`${Key}Table`]>;
-    defaultError: DbTableNotFoundError<Key>;
+    notFoundError: DbTableNotFoundError<Key>;
     entToTab: (item: {
       ent: DbTableEnt<Key>;
       tabService: TabService;
@@ -172,7 +167,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.avatarsTable,
     identityKey:
       'userId' as const satisfies keyof typeof schemaPostgres.avatarsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_AVATAR_DOES_NOT_EXIST'
     } satisfies BackendAvatarDoesNotExistError,
     entToTab: avatarEntToTab,
@@ -182,7 +177,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.branchesTable,
     identityKey:
       'branchFullId' as const satisfies keyof typeof schemaPostgres.branchesTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_BRANCH_DOES_NOT_EXIST'
     } satisfies BackendBranchDoesNotExistError,
     entToTab: branchEntToTab,
@@ -192,7 +187,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.bridgesTable,
     identityKey:
       'bridgeFullId' as const satisfies keyof typeof schemaPostgres.bridgesTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST'
     } satisfies BackendBridgeBranchEnvDoesNotExistError,
     entToTab: bridgeEntToTab,
@@ -202,7 +197,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.cachedColumnsTable,
     identityKey:
       'cachedColumnFullId' as const satisfies keyof typeof schemaPostgres.cachedColumnsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_CACHED_COLUMN_DOES_NOT_EXIST'
     } satisfies BackendCachedColumnDoesNotExistError,
     entToTab: cachedColumnEntToTab,
@@ -212,7 +207,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.cachedPartsTable,
     identityKey:
       'cachedPartFullId' as const satisfies keyof typeof schemaPostgres.cachedPartsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_CACHED_PART_DOES_NOT_EXIST'
     } satisfies BackendCachedPartDoesNotExistError,
     entToTab: cachedPartEntToTab,
@@ -222,7 +217,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.connectionsTable,
     identityKey:
       'connectionFullId' as const satisfies keyof typeof schemaPostgres.connectionsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_CONNECTION_DOES_NOT_EXIST'
     } satisfies BackendConnectionDoesNotExistError,
     entToTab: connectionEntToTab,
@@ -232,10 +227,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.dashboardsTable,
     identityKey:
       'dashboardFullId' as const satisfies keyof typeof schemaPostgres.dashboardsTable.$inferSelect,
-    existsColumns: { dashboardId: true } satisfies DbExistsColumns<
-      typeof schemaPostgres.dashboardsTable
-    >,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_DASHBOARD_DOES_NOT_EXIST'
     } satisfies BackendDashboardDoesNotExistError,
     entToTab: dashboardEntToTab,
@@ -245,7 +237,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.dconfigsTable,
     identityKey:
       'dconfigId' as const satisfies keyof typeof schemaPostgres.dconfigsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_DCONFIG_DOES_NOT_EXIST'
     } satisfies BackendDconfigDoesNotExistError,
     entToTab: dconfigEntToTab,
@@ -255,7 +247,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.uconfigsTable,
     identityKey:
       'uconfigId' as const satisfies keyof typeof schemaPostgres.uconfigsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_UCONFIG_DOES_NOT_EXIST'
     } satisfies BackendUconfigDoesNotExistError,
     entToTab: uconfigEntToTab,
@@ -265,7 +257,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.envsTable,
     identityKey:
       'envFullId' as const satisfies keyof typeof schemaPostgres.envsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_ENV_DOES_NOT_EXIST'
     } satisfies BackendEnvDoesNotExistError,
     entToTab: envEntToTab,
@@ -275,7 +267,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.favoritesTable,
     identityKey:
       'favoriteFullId' as const satisfies keyof typeof schemaPostgres.favoritesTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_FAVORITE_DOES_NOT_EXIST'
     } satisfies BackendFavoriteDoesNotExistError,
     entToTab: favoriteEntToTab,
@@ -285,7 +277,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.givensTable,
     identityKey:
       'givenFullId' as const satisfies keyof typeof schemaPostgres.givensTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_GIVEN_DOES_NOT_EXIST'
     } satisfies BackendGivenDoesNotExistError,
     entToTab: givenEntToTab,
@@ -295,7 +287,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.rolesTable,
     identityKey:
       'roleFullId' as const satisfies keyof typeof schemaPostgres.rolesTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_ROLE_DOES_NOT_EXIST'
     } satisfies BackendRoleDoesNotExistError,
     entToTab: roleEntToTab,
@@ -305,7 +297,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.kitsTable,
     identityKey:
       'kitId' as const satisfies keyof typeof schemaPostgres.kitsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_KIT_DOES_NOT_EXIST'
     } satisfies BackendKitDoesNotExistError,
     entToTab: kitEntToTab,
@@ -315,7 +307,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.mconfigsTable,
     identityKey:
       'mconfigId' as const satisfies keyof typeof schemaPostgres.mconfigsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_MCONFIG_DOES_NOT_EXIST'
     } satisfies BackendMconfigDoesNotExistError,
     entToTab: mconfigEntToTab,
@@ -325,7 +317,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.membersTable,
     identityKey:
       'memberFullId' as const satisfies keyof typeof schemaPostgres.membersTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_MEMBER_DOES_NOT_EXIST'
     } satisfies BackendMemberDoesNotExistError,
     entToTab: memberEntToTab,
@@ -335,10 +327,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.modelsTable,
     identityKey:
       'modelFullId' as const satisfies keyof typeof schemaPostgres.modelsTable.$inferSelect,
-    existsColumns: { modelId: true } satisfies DbExistsColumns<
-      typeof schemaPostgres.modelsTable
-    >,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_MODEL_DOES_NOT_EXIST'
     } satisfies BackendModelDoesNotExistError,
     entToTab: modelEntToTab,
@@ -348,7 +337,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.modelFieldLeafsTable,
     identityKey:
       'modelFieldLeafFullId' as const satisfies keyof typeof schemaPostgres.modelFieldLeafsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_MODEL_FIELD_LEAF_DOES_NOT_EXIST'
     } satisfies BackendModelFieldLeafDoesNotExistError,
     entToTab: modelFieldLeafEntToTab,
@@ -358,7 +347,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.notesTable,
     identityKey:
       'noteId' as const satisfies keyof typeof schemaPostgres.notesTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_NOTE_DOES_NOT_EXIST'
     } satisfies BackendNoteDoesNotExistError,
     entToTab: noteEntToTab,
@@ -368,7 +357,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.orgsTable,
     identityKey:
       'orgId' as const satisfies keyof typeof schemaPostgres.orgsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_ORG_DOES_NOT_EXIST'
     } satisfies BackendOrgDoesNotExistError,
     entToTab: orgEntToTab,
@@ -378,7 +367,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.projectsTable,
     identityKey:
       'projectId' as const satisfies keyof typeof schemaPostgres.projectsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_PROJECT_DOES_NOT_EXIST'
     } satisfies BackendProjectDoesNotExistError,
     entToTab: projectEntToTab,
@@ -388,7 +377,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.providersTable,
     identityKey:
       'providerFullId' as const satisfies keyof typeof schemaPostgres.providersTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_PROVIDER_DOES_NOT_EXIST'
     } satisfies BackendProviderDoesNotExistError,
     entToTab: providerEntToTab,
@@ -398,7 +387,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.queriesTable,
     identityKey:
       'queryId' as const satisfies keyof typeof schemaPostgres.queriesTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_QUERY_DOES_NOT_EXIST'
     } satisfies BackendQueryDoesNotExistError,
     entToTab: queryEntToTab,
@@ -408,10 +397,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.reportsTable,
     identityKey:
       'reportFullId' as const satisfies keyof typeof schemaPostgres.reportsTable.$inferSelect,
-    existsColumns: { reportId: true } satisfies DbExistsColumns<
-      typeof schemaPostgres.reportsTable
-    >,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_REPORT_NOT_FOUND'
     } satisfies BackendReportNotFoundError,
     entToTab: reportEntToTab,
@@ -421,7 +407,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.structsTable,
     identityKey:
       'structId' as const satisfies keyof typeof schemaPostgres.structsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_STRUCT_DOES_NOT_EXIST'
     } satisfies BackendStructDoesNotExistError,
     entToTab: structEntToTab,
@@ -431,7 +417,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.usersTable,
     identityKey:
       'userId' as const satisfies keyof typeof schemaPostgres.usersTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_USER_DOES_NOT_EXIST'
     } satisfies BackendUserDoesNotExistError,
     entToTab: userEntToTab,
@@ -441,10 +427,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.chartsTable,
     identityKey:
       'chartFullId' as const satisfies keyof typeof schemaPostgres.chartsTable.$inferSelect,
-    existsColumns: { chartId: true } satisfies DbExistsColumns<
-      typeof schemaPostgres.chartsTable
-    >,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_CHART_DOES_NOT_EXIST'
     } satisfies BackendChartDoesNotExistError,
     entToTab: chartEntToTab,
@@ -454,7 +437,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.ocEventsTable,
     identityKey:
       'eventId' as const satisfies keyof typeof schemaPostgres.ocEventsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_OC_EVENT_DOES_NOT_EXIST'
     } satisfies BackendOcEventDoesNotExistError,
     entToTab: ocEventEntToTab,
@@ -464,10 +447,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.sessionsTable,
     identityKey:
       'sessionId' as const satisfies keyof typeof schemaPostgres.sessionsTable.$inferSelect,
-    existsColumns: { sessionId: true } satisfies DbExistsColumns<
-      typeof schemaPostgres.sessionsTable
-    >,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_SESSION_NOT_FOUND'
     } satisfies BackendSessionNotFoundError,
     entToTab: sessionEntToTab,
@@ -477,7 +457,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.ocSessionsTable,
     identityKey:
       'sessionId' as const satisfies keyof typeof schemaPostgres.ocSessionsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_OC_SESSION_DOES_NOT_EXIST'
     } satisfies BackendOcSessionDoesNotExistError,
     entToTab: ocSessionEntToTab,
@@ -487,7 +467,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.ocMessagesTable,
     identityKey:
       'messageId' as const satisfies keyof typeof schemaPostgres.ocMessagesTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_OC_MESSAGE_DOES_NOT_EXIST'
     } satisfies BackendOcMessageDoesNotExistError,
     entToTab: ocMessageEntToTab,
@@ -497,7 +477,7 @@ export const dbEntityRegistry = {
     table: schemaPostgres.ocPartsTable,
     identityKey:
       'partId' as const satisfies keyof typeof schemaPostgres.ocPartsTable.$inferSelect,
-    defaultError: {
+    notFoundError: {
       code: 'BACKEND_OC_PART_DOES_NOT_EXIST'
     } satisfies BackendOcPartDoesNotExistError,
     entToTab: ocPartEntToTab,

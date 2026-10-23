@@ -27,7 +27,6 @@ import { dbWriteOperationValues } from '#backend/services/db/db-write-operation'
 import type { ConvertTabsPackKeyOutput } from '#backend/services/db/tx-write/convert-write-pack/convert-tabs-pack-key/convert-tabs-pack-key';
 import { convertWritePack } from '#backend/services/db/tx-write/convert-write-pack/convert-write-pack';
 import { writeDbTable } from '#backend/services/db/tx-write/write-db-table/write-db-table';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { HashService } from '#backend/services/hash/hash.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -73,7 +72,7 @@ export class DbService extends DbTableAccess {
     rawQueries?: SQLWrapper[];
     serverTs?: number;
     retryOptions?: Options;
-  }): Promise<WriteOutput> {
+  }): Promise<void> {
     let {
       insert,
       update,
@@ -84,7 +83,7 @@ export class DbService extends DbTableAccess {
       retryOptions
     } = item;
 
-    let result: Result.Result<WriteOutput, WriteError> = await this.write({
+    let result: Result.Result<void, WriteError> = await this.write({
       insert: insert,
       update: update,
       insertOrUpdate: insertOrUpdate,
@@ -97,10 +96,6 @@ export class DbService extends DbTableAccess {
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
     }
-
-    let output: WriteOutput = result.value;
-
-    return output;
   }
 
   async write(item: {
@@ -111,7 +106,7 @@ export class DbService extends DbTableAccess {
     rawQueries?: SQLWrapper[];
     serverTs?: number;
     retryOptions?: Options;
-  }): Result.ResultAsync<WriteOutput, WriteError> {
+  }): Result.ResultAsync<void, WriteError> {
     let {
       insert,
       update,
@@ -124,7 +119,7 @@ export class DbService extends DbTableAccess {
 
     return customRetry({
       options: retryOptions ?? getRetryOption(this.cs, this.logger),
-      action: async (): Result.ResultAsync<WriteOutput, WriteError> => {
+      action: async (): Result.ResultAsync<void, WriteError> => {
         let rollbackSignal: Error & { cause?: WriteError } = new Error(
           'Transaction domain failure'
         );
@@ -132,31 +127,29 @@ export class DbService extends DbTableAccess {
         let state: { failure?: Result.Failure<WriteError> } = {};
 
         try {
-          let success: Result.Success<WriteOutput> =
-            await this.drizzle.transaction(
-              async (tx): Promise<Result.Success<WriteOutput>> => {
-                let result: Result.Result<WriteOutput, WriteError> =
-                  await this.txWrite({
-                    tx: tx,
-                    insert: insert,
-                    update: update,
-                    insertOrUpdate: insertOrUpdate,
-                    insertOrDoNothing: insertOrDoNothing,
-                    rawQueries: rawQueries,
-                    serverTs: serverTs
-                  });
+          let success: Result.Success<void> = await this.drizzle.transaction(
+            async (tx): Promise<Result.Success<void>> => {
+              let result: Result.Result<void, WriteError> = await this.txWrite({
+                tx: tx,
+                insert: insert,
+                update: update,
+                insertOrUpdate: insertOrUpdate,
+                insertOrDoNothing: insertOrDoNothing,
+                rawQueries: rawQueries,
+                serverTs: serverTs
+              });
 
-                if (Result.isFailure(result)) {
-                  state.failure = result;
+              if (Result.isFailure(result)) {
+                state.failure = result;
 
-                  rollbackSignal.cause = result.error;
+                rollbackSignal.cause = result.error;
 
-                  throw rollbackSignal;
-                }
-
-                return result;
+                throw rollbackSignal;
               }
-            );
+
+              return result;
+            }
+          );
 
           return success;
         } catch (error: unknown) {
@@ -178,7 +171,7 @@ export class DbService extends DbTableAccess {
     insertOrDoNothing?: DbTabsPack;
     rawQueries?: SQLWrapper[];
     serverTs?: number;
-  }): Promise<WriteOutput> {
+  }): Promise<void> {
     let {
       tx,
       insert,
@@ -189,7 +182,7 @@ export class DbService extends DbTableAccess {
       serverTs
     } = item;
 
-    let result: Result.Result<WriteOutput, TxWriteError> = await this.txWrite({
+    let result: Result.Result<void, TxWriteError> = await this.txWrite({
       tx: tx,
       insert: insert,
       update: update,
@@ -202,10 +195,6 @@ export class DbService extends DbTableAccess {
     if (Result.isFailure(result)) {
       throw new ServerError({ message: result.error.code });
     }
-
-    let output: WriteOutput = result.value;
-
-    return output;
   }
 
   async txWrite(item: {
@@ -216,7 +205,7 @@ export class DbService extends DbTableAccess {
     insertOrDoNothing?: DbTabsPack;
     rawQueries?: SQLWrapper[];
     serverTs?: number;
-  }): Result.ResultAsync<WriteOutput, TxWriteError> {
+  }): Result.ResultAsync<void, TxWriteError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind('dconfig', v =>
@@ -279,14 +268,7 @@ export class DbService extends DbTableAccess {
           v.tx.execute(query).then(() => Result.succeed())
         )
       ),
-      Result.map(
-        (v): WriteOutput => ({
-          insert: v.insert,
-          update: v.update,
-          insertOrUpdate: v.insertOrUpdate,
-          insertOrDoNothing: v.insertOrDoNothing
-        })
-      )
+      Result.map((v): void => undefined)
     );
   }
 }

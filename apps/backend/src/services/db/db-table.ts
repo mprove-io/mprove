@@ -53,7 +53,7 @@ export type DbTableQuery<Key extends DbTableKey> = {
 export type DbTableExistsQuery<Key extends DbTableKey> = {
   findFirst: (
     item: Omit<DbFindFirstOptions<Key>, 'columns'> & {
-      columns: DbEntityRegistry[Key]['existsColumns'];
+      columns: Record<string, true>;
     }
   ) => PromiseLike<unknown>;
 };
@@ -70,10 +70,9 @@ export class DbTable<Key extends DbTableKey> {
 
   constructor(
     private readonly item: {
-      key: Key;
-      query: DbTableQuery<NoInfer<Key>>;
-      existsQuery: DbTableExistsQuery<NoInfer<Key>>;
-      entityConfig: DbEntityRegistry[NoInfer<Key>];
+      query: DbTableQuery<Key>;
+      existsQuery: DbTableExistsQuery<Key>;
+      entityConfig: DbEntityRegistry[Key];
       context: DbTableContext;
     }
   ) {
@@ -130,14 +129,12 @@ export class DbTable<Key extends DbTableKey> {
   async isExist<Config extends DbFindFirstOptions<Key>>(
     item?: KnownKeysOnly<Config, DbFindFirstOptions<Key>>
   ): Result.ResultAsync<boolean, never> {
-    return (
-      isDefined(this.item.entityConfig.existsColumns)
-        ? this.item.existsQuery.findFirst({
-            ...item,
-            columns: this.item.entityConfig.existsColumns
-          })
-        : this.item.query.findFirst(item)
-    ).then(x => Result.succeed(isDefined(x)));
+    return this.item.existsQuery
+      .findFirst({
+        ...item,
+        columns: { [this.item.entityConfig.identityKey]: true }
+      })
+      .then(x => Result.succeed(isDefined(x)));
   }
 
   async findFirstCheckExistsUnwrap<Config extends DbFindFirstOptions<Key>>(
@@ -165,16 +162,15 @@ export class DbTable<Key extends DbTableKey> {
   > {
     return this.item.query
       .findFirst(item)
-      .then(
-        async (
-          x: DbTableEnt<Key>
-        ): Result.ResultAsync<
+      .then<
+        Result.Result<
           DbTableTab<Key>,
           DbTableReadError<Key> | DbTableNotFoundError<Key>
-        > =>
-          isUndefined(x)
-            ? await Result.fail(this.item.entityConfig.defaultError)
-            : this.entToTab({ ent: x })
+        >
+      >(x =>
+        isUndefined(x)
+          ? Result.fail(this.item.entityConfig.notFoundError)
+          : this.entToTab({ ent: x })
       );
   }
 

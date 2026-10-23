@@ -21,7 +21,6 @@ import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -336,16 +335,15 @@ export class ProjectsService {
       return devStructResult;
     }
 
-    let persistence: Result.Result<WriteOutput, WriteError> =
-      await this.db.write({
-        insert: {
-          projects: [newProject],
-          envs: [prodEnv],
-          members: [newMember],
-          branches: [prodBranch, devBranch],
-          bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
-        }
-      });
+    let persistence: Result.Result<void, WriteError> = await this.db.write({
+      insert: {
+        projects: [newProject],
+        envs: [prodEnv],
+        members: [newMember],
+        branches: [prodBranch, devBranch],
+        bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
+      }
+    });
 
     if (Result.isFailure(persistence)) {
       return persistence;

@@ -26,7 +26,6 @@ import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -177,7 +176,7 @@ export class RunQueriesService {
         connection: connection
       });
 
-      let persistenceResult: Result.Result<WriteOutput, WriteError> =
+      let persistenceResult: Result.Result<void, WriteError> =
         await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
@@ -194,7 +193,7 @@ export class RunQueriesService {
 
       query.lastRunTs = makeTsNumber();
 
-      let persistenceResult: Result.Result<WriteOutput, WriteError> =
+      let persistenceResult: Result.Result<void, WriteError> =
         await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
@@ -313,7 +312,7 @@ export class RunQueriesService {
         connection: connection
       });
 
-      let persistenceResult: Result.Result<WriteOutput, WriteError> =
+      let persistenceResult: Result.Result<void, WriteError> =
         await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
@@ -332,7 +331,7 @@ export class RunQueriesService {
 
       query.lastRunTs = makeTsNumber();
 
-      let persistenceResult: Result.Result<WriteOutput, WriteError> =
+      let persistenceResult: Result.Result<void, WriteError> =
         await this.db.write({
           insertOrUpdate: { queries: [query] }
         });
@@ -759,7 +758,7 @@ export class RunQueriesService {
                 connection.options.storeGoogleApi.googleAccessTokenExpiryDate =
                   tokens.expiry_date;
 
-                let persistenceResult: Result.Result<WriteOutput, WriteError> =
+                let persistenceResult: Result.Result<void, WriteError> =
                   await this.db.write({
                     insertOrUpdate: { connections: [connection] }
                   });

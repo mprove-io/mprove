@@ -41,7 +41,6 @@ import { ReportsService } from '#backend/services/db/reports/reports.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { ReportDataService } from '#backend/services/report-data/report-data.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -426,7 +425,7 @@ export class SaveCreateReportController {
           ...rebuild.struct.errors
         ];
 
-        let persistenceResult: Result.Result<WriteOutput, WriteError> =
+        let persistenceResult: Result.Result<void, WriteError> =
           await this.db.write({
             insertOrUpdate: {
               structs: [v.currentStruct],

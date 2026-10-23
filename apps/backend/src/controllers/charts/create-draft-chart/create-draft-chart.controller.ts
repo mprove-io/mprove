@@ -33,7 +33,6 @@ import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
@@ -358,7 +357,7 @@ export class CreateDraftChartController {
         return Result.succeed(prepareDraftChartPayload);
       }),
       Result.andThrough(async v => {
-        let persistenceResult: Result.Result<WriteOutput, WriteError> =
+        let persistenceResult: Result.Result<void, WriteError> =
           await this.db.write({
             insert: {
               charts: [v.prepareDraftChartPayload.newChart],

@@ -24,7 +24,6 @@ import {
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import type { WriteOutput } from '#backend/services/db/write-output';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -232,7 +231,7 @@ export class SpecialRebuildStructsController {
               bridge.needValidate = true;
             }
 
-            let writeResult: Result.Result<WriteOutput, WriteError> =
+            let writeResult: Result.Result<void, WriteError> =
               await this.db.write({
                 insertOrUpdate: { bridges: [bridge] }
               });
