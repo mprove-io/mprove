@@ -23,6 +23,8 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeReportFileText } from '#backend/functions/make-report-file-text/make-report-file-text';
@@ -31,9 +33,7 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
@@ -103,8 +103,6 @@ export class SaveCreateReportController {
     private reportsService: ReportsService,
     private sessionsService: SessionsService,
     private reportDataService: ReportDataService,
-    private envsService: EnvsService,
-    private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -224,7 +222,8 @@ export class SaveCreateReportController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -356,7 +355,8 @@ export class SaveCreateReportController {
         })
       ),
       Result.bind('branchBridges', v =>
-        this.bridgesService.getBranchBridgesForRebuild({
+        getBranchBridgesForRebuild({
+          db: this.db,
           projectId: v.branch.projectId,
           repoId: v.branch.repoId,
           branchId: v.branch.branchId,

@@ -15,8 +15,8 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -42,7 +42,6 @@ export class RunService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
     private structsService: StructsService,
     private queriesService: QueriesService,
     private runQueriesService: RunQueriesService,
@@ -161,7 +160,8 @@ export class RunService {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember

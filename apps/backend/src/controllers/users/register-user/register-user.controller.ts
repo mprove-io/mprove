@@ -12,9 +12,9 @@ import {
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
 import {
@@ -56,7 +56,6 @@ import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/u
 @Controller()
 export class RegisterUserController {
   constructor(
-    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private usersService: UsersService,
     private emailService: EmailService,
@@ -86,9 +85,7 @@ export class RegisterUserController {
 
         return Result.succeed(passwordHS);
       }),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('emailHash', v =>
         this.hashService.makeHash({
           input: v.email,

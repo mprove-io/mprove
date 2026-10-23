@@ -18,9 +18,10 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -53,7 +54,6 @@ export class RunQueriesDryController {
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
     private bigqueryService: BigQueryService,
-    private envsService: EnvsService,
     private db: DbService
   ) {}
 
@@ -100,7 +100,8 @@ export class RunQueriesDryController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -206,7 +207,7 @@ export class RunQueriesDryController {
         })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.bind('connection', async v => {
         let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);

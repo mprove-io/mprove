@@ -19,10 +19,10 @@ import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-fie
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -59,7 +59,6 @@ export class SuggestDimensionValuesController {
   constructor(
     private parentService: ParentService,
     private structsService: StructsService,
-    private envsService: EnvsService,
     private mconfigsService: MconfigsService,
     private sessionsService: SessionsService,
     private runQueriesService: RunQueriesService,
@@ -125,7 +124,8 @@ export class SuggestDimensionValuesController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember

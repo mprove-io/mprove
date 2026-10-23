@@ -12,9 +12,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { validateGivenValues } from '#backend/functions/db/givens/validate-given-values/validate-given-values';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -29,7 +29,6 @@ import type { ToBackendEditRoleGivenOutput } from '#common/types/backend/routes/
 export class EditRoleGivenController {
   constructor(
     private membersService: MembersService,
-    private givensService: GivensService,
     private rolesService: RolesService,
     private db: DbService
   ) {}
@@ -88,7 +87,7 @@ export class EditRoleGivenController {
         })
       ),
       Result.andThrough(v =>
-        this.givensService.validateGivenValues({
+        validateGivenValues({
           type: v.given.type,
           isMultiple: v.given.isMultiple === true,
           values: v.values

@@ -15,11 +15,11 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -33,7 +33,6 @@ import type { ToBackendDeleteGivenOutput } from '#common/types/backend/routes/gi
 export class DeleteGivenController {
   constructor(
     private membersService: MembersService,
-    private givensService: GivensService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -118,7 +117,7 @@ export class DeleteGivenController {
         })
       ),
       Result.bind('apiGivens', v =>
-        this.givensService.getApiGivens({ projectId: v.projectId })
+        getApiGivens({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteGivenOutput => ({

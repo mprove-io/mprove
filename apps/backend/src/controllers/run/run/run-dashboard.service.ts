@@ -4,8 +4,9 @@ import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { getDashboardParts } from '#backend/functions/db/dashboards/get-dashboard-parts/get-dashboard-parts';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { PrepareRunDashboardError } from '#common/types/backend/function-errors/prepare-run-dashboard-error';
@@ -38,7 +39,7 @@ export type PrepareRunDashboardOutput = {
 export class RunDashboardService {
   constructor(
     private membersService: MembersService,
-    private dashboardsService: DashboardsService
+    private db: DbService
   ) {}
 
   async prepareRunDashboard(item: {
@@ -60,7 +61,8 @@ export class RunDashboardService {
         Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
       Result.bind('dashboards', v =>
-        this.dashboardsService.getDashboardParts({
+        getDashboardParts({
+          db: this.db,
           structId: v.structId,
           user: v.user,
           apiUserMember: v.apiUserMember

@@ -25,6 +25,11 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
+import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
+import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
+import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text/make-chart-file-text';
@@ -33,10 +38,7 @@ import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retr
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -45,8 +47,11 @@ import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
@@ -98,7 +103,6 @@ export class SaveCreateChartController {
   constructor(
     private tabService: TabService,
     private usersService: UsersService,
-    private chartsService: ChartsService,
     private rpcService: RpcService,
     private structsService: StructsService,
     private membersService: MembersService,
@@ -108,11 +112,12 @@ export class SaveCreateChartController {
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
-    private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService
+    private db: DbService,
+    private hashService: HashService,
+    private unitsService: UnitsService,
+    private spaceService: SpaceService
   ) {}
 
   @Post('api/ToBackendSaveCreateChart' satisfies ToBackendRoute)
@@ -225,7 +230,8 @@ export class SaveCreateChartController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -305,7 +311,8 @@ export class SaveCreateChartController {
         })
       ),
       Result.bind('branchBridges', v =>
-        this.bridgesService.getBranchBridgesForRebuild({
+        getBranchBridgesForRebuild({
+          db: this.db,
           projectId: v.branch.projectId,
           repoId: v.branch.repoId,
           branchId: v.branch.branchId,
@@ -451,7 +458,8 @@ export class SaveCreateChartController {
           apiQuery: apiQuery
         });
 
-        let chart: ChartTab = this.chartsService.apiToTab({
+        let chart: ChartTab = chartApiToTab({
+          hashService: this.hashService,
           apiChart: v.apiChart,
           chartType: apiMconfig.chart.type
         });
@@ -529,7 +537,10 @@ export class SaveCreateChartController {
         Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
       ),
       Result.bind('chartsCatalog', v =>
-        this.chartsService.getChartsCatalog({
+        getChartsCatalog({
+          db: this.db,
+          unitsService: this.unitsService,
+          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,
@@ -540,7 +551,7 @@ export class SaveCreateChartController {
       ),
       Result.map(
         (v): ToBackendSaveCreateChartOutput => ({
-          chart: this.chartsService.tabToApi({
+          chart: chartTabToApi({
             chart: v.saveChartPayload.chart,
             mconfigs: [],
             queries: [],

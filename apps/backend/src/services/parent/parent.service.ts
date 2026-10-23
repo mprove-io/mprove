@@ -12,8 +12,9 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
+import { checkChartOrModelAccess } from '#backend/functions/db/charts/check-chart-or-model-access/check-chart-or-model-access';
+import { getChartCheckExists } from '#backend/functions/db/charts/get-chart-check-exists/get-chart-check-exists';
+import { getDashboardCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-check-exists-and-access/get-dashboard-check-exists-and-access';
 import { DbService } from '#backend/services/db/db.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -26,8 +27,6 @@ import type { MconfigParentType } from '#common/types/blockml/parts/mconfig/mcon
 export class ParentService {
   constructor(
     private mconfigsService: MconfigsService,
-    private chartsService: ChartsService,
-    private dashboardsService: DashboardsService,
     private reportsService: ReportsService,
     private modelsService: ModelsService,
     private cs: ConfigService<BackendConfig>,
@@ -61,7 +60,8 @@ export class ParentService {
       }),
       Result.bind('dashboard', async v =>
         v.isDashboard
-          ? this.dashboardsService.getDashboardCheckExistsAndAccess({
+          ? getDashboardCheckExistsAndAccess({
+              db: this.db,
               structId: v.structId,
               dashboardId: v.parentId,
               userMember: v.userMember,
@@ -131,7 +131,8 @@ export class ParentService {
       }),
       Result.bind('chart', async v =>
         v.parentType === 'Chart'
-          ? this.chartsService.getChartCheckExists({
+          ? getChartCheckExists({
+              db: this.db,
               structId: v.structId,
               chartId: v.parentId,
               userMember: v.userMember,
@@ -151,7 +152,7 @@ export class ParentService {
       ),
       Result.andThrough(v =>
         v.parentType === 'Chart'
-          ? this.chartsService.checkChartOrModelAccess({
+          ? checkChartOrModelAccess({
               chart: v.chart,
               model: v.chartModel,
               userMember: v.userMember

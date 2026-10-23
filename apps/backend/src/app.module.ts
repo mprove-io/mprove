@@ -27,12 +27,12 @@ import type {
   UconfigTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
+import { getDconfigHashSecretUnwrap } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret-unwrap/get-dconfig-hash-secret-unwrap';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { JwtAuthGuard } from '#backend/guards/jwt-auth/jwt-auth.guard';
 import { ZodValidationPipe } from '#backend/pipes/zod-validation/zod-validation.pipe';
-import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
@@ -172,11 +172,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
   constructor(
     private usersService: UsersService,
     private membersService: MembersService,
-    private dconfigsService: DconfigsService,
     private orgsService: OrgsService,
     private checkTabService: TabCheckerService,
     private projectsService: ProjectsService,
-    private connectionsService: ConnectionsService,
     private hashService: HashService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -299,8 +297,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           isDefinedAndNotEmpty(mproveAdminEmail) &&
           isDefinedAndNotEmpty(mproveAdminInitialPassword)
         ) {
-          let hashSecret =
-            await this.dconfigsService.getDconfigHashSecretUnwrap();
+          let hashSecret = await getDconfigHashSecretUnwrap({ db: this.db });
 
           let mproveAdminEmailHash = this.hashService.makeHashUnwrap({
             input: mproveAdminEmail,
@@ -544,7 +541,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         });
       }
 
-      let hashSecret = await this.dconfigsService.getDconfigHashSecretUnwrap();
+      let hashSecret = await getDconfigHashSecretUnwrap({ db: this.db });
 
       let demoUserEmail = RESTRICTED_USER_EMAIL;
       let demoUserInitialPassword = RESTRICTED_USER_PASSWORD;
@@ -592,7 +589,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       !isC1ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhPostgresPassword)
     ) {
-      let c1 = this.connectionsService.makeConnection({
+      let c1 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c1_postgres',
@@ -636,7 +634,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         fse.readFileSync(demoProjectDwhBigqueryCredentialsPath).toString()
       );
 
-      let c3 = this.connectionsService.makeConnection({
+      let c3 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c3_bigquery',
@@ -670,7 +669,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       !isC4ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhSnowflakeAccount)
     ) {
-      let c4 = this.connectionsService.makeConnection({
+      let c4 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c4_snowflake',
@@ -711,7 +711,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       !isC5ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhMotherDuckToken)
     ) {
-      let c5 = this.connectionsService.makeConnection({
+      let c5 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c5_duckdb',
@@ -745,7 +746,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       !isC6ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhMysqlPassword)
     ) {
-      let c6 = this.connectionsService.makeConnection({
+      let c6 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c6_mysql',
@@ -792,7 +794,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         fse.readFileSync(demoProjectDwhGoogleApiCredentialsPath).toString()
       );
 
-      let c7 = this.connectionsService.makeConnection({
+      let c7 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c7_google',
@@ -829,7 +832,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     >('demoProjectDwhTrinoUser');
 
     if (!isC8ConnectionExist && isDefinedAndNotEmpty(demoProjectDwhTrinoUser)) {
-      let c8 = this.connectionsService.makeConnection({
+      let c8 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c8_trino',
@@ -867,7 +871,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       !isC9ConnectionExist &&
       isDefinedAndNotEmpty(demoProjectDwhPrestoUser)
     ) {
-      let c9 = this.connectionsService.makeConnection({
+      let c9 = makeConnection({
+        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c9_presto',

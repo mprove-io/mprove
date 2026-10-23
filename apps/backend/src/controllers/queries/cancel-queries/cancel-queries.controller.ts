@@ -23,11 +23,12 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -53,7 +54,6 @@ export class CancelQueriesController {
     private structsService: StructsService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -109,7 +109,8 @@ export class CancelQueriesController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -217,7 +218,7 @@ export class CancelQueriesController {
     return Result.pipe(
       Result.succeed(item),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.query.projectId })
+        getApiEnvs({ db: this.db, projectId: v.query.projectId })
       ),
       Result.bind('connection', v => {
         let apiEnv: Env = v.apiEnvs.find(x => x.envId === v.query.envId);

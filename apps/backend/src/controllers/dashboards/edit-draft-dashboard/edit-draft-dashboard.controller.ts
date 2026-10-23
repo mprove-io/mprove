@@ -14,12 +14,13 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
+import { processDashboard } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -27,6 +28,7 @@ import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -70,12 +72,11 @@ export class EditDraftDashboardController {
     private usersService: UsersService,
     private blockmlService: BlockmlService,
     private structsService: StructsService,
-    private dashboardsService: DashboardsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
-    private db: DbService
+    private db: DbService,
+    private hashService: HashService
   ) {}
 
   @Post('api/ToBackendEditDraftDashboard' satisfies ToBackendRoute)
@@ -137,7 +138,8 @@ export class EditDraftDashboardController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -160,7 +162,11 @@ export class EditDraftDashboardController {
         })
       ),
       Result.bind('fromDashboardX', v =>
-        this.dashboardsService.getDashboardXCheckExistsAndAccess({
+        getDashboardXCheckExistsAndAccess({
+          db: this.db,
+          modelsService: this.modelsService,
+          mconfigsService: this.mconfigsService,
+          queriesService: this.queriesService,
           dashboardId: v.oldDashboardId,
           structId: v.bridge.structId,
           apiUserMember: v.apiUserMember,
@@ -329,7 +335,11 @@ export class EditDraftDashboardController {
         return Result.succeed();
       }),
       Result.bind('processedDashboard', v =>
-        this.dashboardsService.processDashboard({
+        processDashboard({
+          queriesService: this.queriesService,
+          mconfigsService: this.mconfigsService,
+          modelsService: this.modelsService,
+          hashService: this.hashService,
           newApiDashboard: v.newApiDashboard,
           apiMconfigs: v.rebuild.mconfigs,
           apiQueries: v.rebuild.queries,
@@ -366,7 +376,11 @@ export class EditDraftDashboardController {
         return Result.succeed();
       }),
       Result.bind('newDashboardX', v =>
-        this.dashboardsService.getDashboardXCheckExistsAndAccess({
+        getDashboardXCheckExistsAndAccess({
+          db: this.db,
+          modelsService: this.modelsService,
+          mconfigsService: this.mconfigsService,
+          queriesService: this.queriesService,
           dashboardId: v.processedDashboard.newDashboard.dashboardId,
           projectId: v.projectId,
           structId: v.bridge.structId,

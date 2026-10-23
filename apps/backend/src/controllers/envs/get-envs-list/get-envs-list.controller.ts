@@ -11,9 +11,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { wrapToApiEnvsItem } from '#backend/functions/db/envs/wrap-to-api-envs-item/wrap-to-api-envs-item';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -23,10 +23,7 @@ import type { ToBackendGetEnvsListOutput } from '#common/types/backend/routes/en
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetEnvsListController {
-  constructor(
-    private envsService: EnvsService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetEnvsList' satisfies ToBackendRoute)
   @ApiOperation({
@@ -84,9 +81,7 @@ export class GetEnvsListController {
       ),
       Result.map(
         (v): ToBackendGetEnvsListOutput => ({
-          envsList: v.sortedEnvs.map(env =>
-            this.envsService.wrapToApiEnvsItem({ env: env })
-          )
+          envsList: v.sortedEnvs.map(env => wrapToApiEnvsItem({ env: env }))
         })
       )
     );

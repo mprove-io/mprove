@@ -12,8 +12,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { cleanInternalFields } from '#backend/functions/db/connections/clean-internal-fields/clean-internal-fields';
+import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { UrlService } from '#backend/services/url/url.service';
@@ -35,7 +36,6 @@ import type { ToBackendEditConnectionOutput } from '#common/types/backend/routes
 export class EditConnectionController {
   constructor(
     private urlService: UrlService,
-    private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private db: DbService
   ) {}
@@ -134,7 +134,7 @@ export class EditConnectionController {
           : Result.succeed();
       }),
       Result.map(v => {
-        this.connectionsService.cleanInternalFields({ options: v.options });
+        cleanInternalFields({ options: v.options });
 
         v.connection.options = v.options;
 
@@ -164,7 +164,7 @@ export class EditConnectionController {
       ),
       Result.map(
         (v): ToBackendEditConnectionOutput => ({
-          connection: this.connectionsService.tabToApiProjectConnection({
+          connection: tabToApiProjectConnection({
             connection: v.connection,
             isIncludePasswords: false
           })

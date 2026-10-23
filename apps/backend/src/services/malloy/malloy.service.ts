@@ -8,10 +8,10 @@ import type {
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
+import { getApiEnvConnectionsWithFallback } from '#backend/functions/db/envs/get-api-env-connections-with-fallback/get-api-env-connections-with-fallback';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { UsersService } from '#backend/services/db/users/users.service';
@@ -46,10 +46,8 @@ export type EditMalloyQueryOutput = {
 @Injectable()
 export class MalloyService {
   constructor(
-    private envsService: EnvsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
-    private connectionsService: ConnectionsService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -77,7 +75,8 @@ export class MalloyService {
         return Result.succeed();
       }),
       Result.bind('getApiEnvConnectionsWithFallbackOutput', v =>
-        this.envsService.getApiEnvConnectionsWithFallback({
+        getApiEnvConnectionsWithFallback({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId
         })
@@ -88,11 +87,10 @@ export class MalloyService {
             x => x.connectionId === v.model.connectionId
           );
 
-        let projectConnection: ProjectConnection =
-          this.connectionsService.tabToApiProjectConnection({
-            connection: connection,
-            isIncludePasswords: true
-          });
+        let projectConnection: ProjectConnection = tabToApiProjectConnection({
+          connection: connection,
+          isIncludePasswords: true
+        });
 
         let malloyConnections: MalloyConnection[] = makeMalloyConnections({
           connections: [projectConnection]

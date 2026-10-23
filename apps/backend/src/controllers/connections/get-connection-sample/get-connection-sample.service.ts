@@ -4,8 +4,8 @@ import { and, eq, inArray, or } from 'drizzle-orm';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
@@ -26,7 +26,6 @@ import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/r
 @Injectable()
 export class GetConnectionSampleService {
   constructor(
-    private envsService: EnvsService,
     private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
@@ -71,7 +70,7 @@ export class GetConnectionSampleService {
         })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.bind('apiEnv', v =>
         Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))

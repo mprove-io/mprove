@@ -11,21 +11,23 @@ import type {
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
+import { tabToBaseConnection } from '#backend/functions/db/connections/tab-to-base-connection/tab-to-base-connection';
+import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';
 import { processRowIds } from '#backend/functions/process-row-ids/process-row-ids';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { buildModelFieldLeafs } from '#backend/services/blockml/build-model-field-leafs/build-model-field-leafs';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
-import { ConnectionsService } from '#backend/services/db/connections/connections.service';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -69,17 +71,15 @@ export type RebuildStructOutput = {
 export class BlockmlService {
   constructor(
     private rpcService: RpcService,
-    private envsService: EnvsService,
-    private connectionsService: ConnectionsService,
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
-    private chartsService: ChartsService,
     private reportsService: ReportsService,
-    private dashboardsService: DashboardsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService
+    private db: DbService,
+    private tabService: TabService,
+    private hashService: HashService
   ) {}
 
   async rebuildBranchBridges(item: {
@@ -201,10 +201,12 @@ export class BlockmlService {
       cachedMetrics
     } = item;
 
-    let apiEnvsResult: Result.Result<Env[], GetApiEnvsError> =
-      await this.envsService.getApiEnvs({
+    let apiEnvsResult: Result.Result<Env[], GetApiEnvsError> = await getApiEnvs(
+      {
+        db: this.db,
         projectId: projectId
-      });
+      }
+    );
 
     if (Result.isFailure(apiEnvsResult)) {
       return apiEnvsResult;
@@ -245,7 +247,7 @@ export class BlockmlService {
       : connectionsWithFallback;
 
     let baseConnections: BaseConnection[] = connectionsToUse.map(x =>
-      this.connectionsService.tabToBaseConnection({ connection: x })
+      tabToBaseConnection({ tabService: this.tabService, connection: x })
     );
 
     let toBlockmlRebuildStructRequest: ToBlockmlRebuildStructRequest = {
@@ -325,7 +327,8 @@ export class BlockmlService {
                   insert: {
                     structs: [struct],
                     charts: rs.charts.map(x =>
-                      this.chartsService.apiToTab({
+                      chartApiToTab({
+                        hashService: this.hashService,
                         apiChart: x,
                         chartType: rs.mconfigs.find(
                           mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
@@ -343,7 +346,10 @@ export class BlockmlService {
                       this.mconfigsService.apiToTab({ apiMconfig: x })
                     ),
                     dashboards: rs.dashboards.map(x =>
-                      this.dashboardsService.apiToTab({ apiDashboard: x })
+                      dashboardApiToTab({
+                        hashService: this.hashService,
+                        apiDashboard: x
+                      })
                     )
                   },
                   insertOrDoNothing: {

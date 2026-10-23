@@ -8,10 +8,10 @@ import {
 } from '#backend/controllers/users/update-user-password/update-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import {
   type CreateSaltAndHashOutput,
   HashService
@@ -26,7 +26,6 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
-    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private db: DbService
   ) {}
@@ -47,9 +46,7 @@ export class UpdateUserPasswordController {
         passwordResetToken: body.input.passwordResetToken,
         newPassword: body.input.newPassword
       }),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('passwordResetTokenHash', v =>
         this.hashService.makeHash({
           input: v.passwordResetToken,

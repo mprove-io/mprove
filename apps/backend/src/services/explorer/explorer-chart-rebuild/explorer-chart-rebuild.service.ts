@@ -12,15 +12,16 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER
@@ -64,14 +65,13 @@ export type ExplorerRebuildResult = ExplorerRebuildOk | ExplorerRebuildErr;
 export class ExplorerChartRebuildService {
   constructor(
     private usersService: UsersService,
-    private envsService: EnvsService,
     private structsService: StructsService,
     private modelsService: ModelsService,
     private blockmlService: BlockmlService,
-    private chartsService: ChartsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
-    private db: DbService
+    private db: DbService,
+    private hashService: HashService
   ) {}
 
   async rebuildFromYaml(item: {
@@ -114,7 +114,8 @@ export class ExplorerChartRebuildService {
         let envAccessResult: Result.Result<
           EnvTab,
           GetEnvCheckExistsAndAccessError
-        > = await this.envsService.getEnvCheckExistsAndAccess({
+        > = await getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.session.projectId,
           envId: v.session.envId,
           member: v.userMember
@@ -261,7 +262,8 @@ export class ExplorerChartRebuildService {
           apiQuery: apiQuery
         });
 
-        let chartTab: ChartTab = this.chartsService.apiToTab({
+        let chartTab: ChartTab = chartApiToTab({
+          hashService: this.hashService,
           apiChart: {
             ...apiChart,
             draft: true,

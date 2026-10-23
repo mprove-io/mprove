@@ -8,14 +8,20 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
+import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
+import { getDashboardXUsingDashboardTab } from '#backend/functions/db/dashboards/get-dashboard-x-using-dashboard-tab/get-dashboard-x-using-dashboard-tab';
+import { processDashboard } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
+import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
+import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -54,8 +60,10 @@ export class QueryInfoDashboardService {
     private modelsService: ModelsService,
     private blockmlService: BlockmlService,
     private structsService: StructsService,
-    private dashboardsService: DashboardsService,
-    private db: DbService
+    private db: DbService,
+    private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
+    private hashService: HashService
   ) {}
 
   async getDashboardData(item: {
@@ -83,7 +91,11 @@ export class QueryInfoDashboardService {
         })
       ),
       Result.bind('fromDashboardX', v =>
-        this.dashboardsService.getDashboardXCheckExistsAndAccess({
+        getDashboardXCheckExistsAndAccess({
+          db: this.db,
+          modelsService: this.modelsService,
+          mconfigsService: this.mconfigsService,
+          queriesService: this.queriesService,
           dashboardId: v.dashboardId,
           structId: v.bridge.structId,
           apiUserMember: v.apiUserMember,
@@ -228,7 +240,11 @@ export class QueryInfoDashboardService {
         return Result.succeed();
       }),
       Result.bind('processedDashboard', v =>
-        this.dashboardsService.processDashboard({
+        processDashboard({
+          queriesService: this.queriesService,
+          mconfigsService: this.mconfigsService,
+          modelsService: this.modelsService,
+          hashService: this.hashService,
           newApiDashboard: v.newApiDashboard,
           apiMconfigs: v.rebuild.mconfigs,
           apiQueries: v.rebuild.queries,
@@ -264,8 +280,13 @@ export class QueryInfoDashboardService {
         return Result.succeed();
       }),
       Result.bind('newDashboardX', v =>
-        this.dashboardsService.getDashboardXUsingDashboardTab({
-          dashboard: this.dashboardsService.apiToTab({
+        getDashboardXUsingDashboardTab({
+          db: this.db,
+          modelsService: this.modelsService,
+          mconfigsService: this.mconfigsService,
+          queriesService: this.queriesService,
+          dashboard: dashboardApiToTab({
+            hashService: this.hashService,
             apiDashboard: v.newApiDashboard
           }),
           projectId: v.projectId,

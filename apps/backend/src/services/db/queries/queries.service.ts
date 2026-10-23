@@ -14,10 +14,10 @@ import {
   type QueryEnt,
   queriesTable
 } from '#backend/drizzle/postgres/schema/queries';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -35,7 +35,6 @@ import type { StoreMethod } from '#common/types/blockml/parts/store/store-method
 @Injectable()
 export class QueriesService {
   constructor(
-    private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -319,7 +318,8 @@ WHERE q.report_id is NULL
     await asyncPool(8, queries, async (query: QueryTab) => {
       try {
         let apiEnvsResult: Result.Result<Env[], GetApiEnvsError> =
-          await this.envsService.getApiEnvs({
+          await getApiEnvs({
+            db: this.db,
             projectId: query.projectId
           });
 

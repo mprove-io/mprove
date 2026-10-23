@@ -10,9 +10,9 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -23,7 +23,6 @@ import type { ToBackendIsProjectExistOutput } from '#common/types/backend/routes
 @Controller()
 export class IsProjectExistController {
   constructor(
-    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private db: DbService
   ) {}
@@ -50,9 +49,7 @@ export class IsProjectExistController {
           where: eq(orgsTable.orgId, v.orgId)
         })
       ),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('nameHash', v =>
         this.hashService.makeHash({
           input: v.name,

@@ -9,9 +9,9 @@ import type {
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { makeMconfigFields } from '#backend/services/db/mconfigs/make-mconfig-fields/make-mconfig-fields';
 import { makeMconfigFiltersX } from '#backend/services/db/mconfigs/make-mconfig-filters-x/make-mconfig-filters-x';
 import { StoreService } from '#backend/services/store/store.service';
@@ -45,7 +45,6 @@ export type PrepStoreMconfigQueryOutput = {
 @Injectable()
 export class MconfigsService {
   constructor(
-    private envsService: EnvsService,
     private storeService: StoreService,
     private db: DbService
   ) {}
@@ -164,7 +163,8 @@ export class MconfigsService {
         );
       }),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({
+        getApiEnvs({
+          db: this.db,
           projectId: v.project.projectId
         })
       ),

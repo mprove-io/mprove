@@ -17,10 +17,10 @@ import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-colu
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -35,7 +35,6 @@ import type { ToBackendDeleteEnvOutput } from '#common/types/backend/routes/envs
 export class DeleteEnvController {
   constructor(
     private membersService: MembersService,
-    private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -120,7 +119,7 @@ export class DeleteEnvController {
         return Result.succeed();
       }),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteEnvOutput => ({

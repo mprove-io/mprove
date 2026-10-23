@@ -8,11 +8,11 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { QueryInfoChartService } from '#backend/services/query-info-chart/query-info-chart.service';
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard/query-info-dashboard.service';
@@ -38,7 +38,6 @@ export class GetQueryInfoService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
     private queryInfoChartService: QueryInfoChartService,
     private queryInfoDashboardService: QueryInfoDashboardService,
     private queryInfoReportService: QueryInfoReportService,
@@ -131,7 +130,8 @@ export class GetQueryInfoService {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember

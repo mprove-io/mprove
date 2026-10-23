@@ -7,9 +7,10 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import { getMemberGivensForSelection } from '#backend/functions/db/givens/get-member-givens-for-selection/get-member-givens-for-selection';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
+import { RolesService } from '#backend/services/db/roles/roles.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -37,10 +38,9 @@ import type { User } from '#common/types/backend/parts/user';
 @Injectable()
 export class UsersService {
   constructor(
-    private dconfigsService: DconfigsService,
-    private givensService: GivensService,
     private hashService: HashService,
-    private db: DbService
+    private db: DbService,
+    private rolesService: RolesService
   ) {}
 
   tabToApi(item: { user: UserTab }): User {
@@ -193,7 +193,9 @@ export class UsersService {
     let memberGivensResult: Result.Result<
       MemberGiven[],
       GetMemberGivensForSelectionError
-    > = await this.givensService.getMemberGivensForSelection({
+    > = await getMemberGivensForSelection({
+      rolesService: this.rolesService,
+      db: this.db,
       projectId: member.projectId,
       roles: member.roles
     });
@@ -302,9 +304,7 @@ export class UsersService {
   }): Result.ResultAsync<UserTab, GetUserByEmailCheckExistsError> {
     return Result.pipe(
       Result.succeed(item),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('emailHash', v =>
         this.hashService.makeHash({
           input: v.email,
@@ -441,9 +441,7 @@ export class UsersService {
           ? Result.fail({ code: 'BACKEND_USER_ALIAS_IS_UNDEFINED' })
           : Result.succeed(alias);
       }),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.andThen(async v => {
         let alias: string = v.alias;
 

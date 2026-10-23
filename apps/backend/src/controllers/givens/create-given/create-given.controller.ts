@@ -14,10 +14,14 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { checkGivenDoesNotExist } from '#backend/functions/db/givens/check-given-does-not-exist/check-given-does-not-exist';
+import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
+import { makeGiven } from '#backend/functions/db/givens/make-given/make-given';
+import { validateGivenValues } from '#backend/functions/db/givens/validate-given-values/validate-given-values';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -36,8 +40,8 @@ type CreateGivenWriteState = {
 export class CreateGivenController {
   constructor(
     private membersService: MembersService,
-    private givensService: GivensService,
-    private db: DbService
+    private db: DbService,
+    private hashService: HashService
   ) {}
 
   @Post('api/ToBackendCreateGiven' satisfies ToBackendRoute)
@@ -73,13 +77,14 @@ export class CreateGivenController {
         })
       ),
       Result.andThrough(v =>
-        this.givensService.checkGivenDoesNotExist({
+        checkGivenDoesNotExist({
+          db: this.db,
           projectId: v.projectId,
           givenId: v.givenId
         })
       ),
       Result.andThrough(v =>
-        this.givensService.validateGivenValues({
+        validateGivenValues({
           type: v.type,
           isMultiple: v.isMultiple,
           values: v.values
@@ -89,7 +94,8 @@ export class CreateGivenController {
         let givenWriteState: CreateGivenWriteState = {
           projectId: v.projectId,
           userMember: v.userMember,
-          given: this.givensService.makeGiven({
+          given: makeGiven({
+            hashService: this.hashService,
             projectId: v.projectId,
             givenId: v.givenId,
             type: v.type,
@@ -102,7 +108,7 @@ export class CreateGivenController {
       }),
       Result.andThrough(v => this.db.write({ insert: { givens: [v.given] } })),
       Result.bind('apiGivens', v =>
-        this.givensService.getApiGivens({ projectId: v.projectId })
+        getApiGivens({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateGivenOutput => ({

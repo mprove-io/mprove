@@ -11,9 +11,10 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -28,7 +29,6 @@ import type { ToBackendEditEnvFallbacksOutput } from '#common/types/backend/rout
 export class EditEnvFallbacksController {
   constructor(
     private projectsService: ProjectsService,
-    private envsService: EnvsService,
     private membersService: MembersService,
     private db: DbService
   ) {}
@@ -73,7 +73,8 @@ export class EditEnvFallbacksController {
         })
       ),
       Result.bind('env', v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -111,7 +112,7 @@ export class EditEnvFallbacksController {
         })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendEditEnvFallbacksOutput => ({

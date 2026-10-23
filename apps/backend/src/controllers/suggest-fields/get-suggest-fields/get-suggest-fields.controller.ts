@@ -18,10 +18,10 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getDashboardCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-check-exists-and-access/get-dashboard-check-exists-and-access';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
@@ -40,11 +40,9 @@ export class GetSuggestFieldsController {
   constructor(
     private membersService: MembersService,
     private modelsService: ModelsService,
-    private dashboardsService: DashboardsService,
     private reportsService: ReportsService,
     private sessionsService: SessionsService,
     private structsService: StructsService,
-    private envsService: EnvsService,
     private db: DbService
   ) {}
 
@@ -101,7 +99,8 @@ export class GetSuggestFieldsController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -130,7 +129,8 @@ export class GetSuggestFieldsController {
       ),
       Result.bind('dashboard', async v =>
         v.parentType === 'Dashboard'
-          ? this.dashboardsService.getDashboardCheckExistsAndAccess({
+          ? getDashboardCheckExistsAndAccess({
+              db: this.db,
               dashboardId: v.parentId,
               structId: v.bridge.structId,
               userMember: v.userMember,

@@ -4,8 +4,8 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -30,7 +30,6 @@ export type GetMalloySandboxEnvsAndFilesOutput = {
 @Injectable()
 export class EditorConnectionsService {
   constructor(
-    private envsService: EnvsService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private bigQueryService: BigQueryService,
@@ -55,10 +54,10 @@ export class EditorConnectionsService {
 
     let malloySandboxFiles: { path: string; data: string }[] = [];
 
-    let envResult: Result.Result<Env[], GetApiEnvsError> =
-      await this.envsService.getApiEnvs({
-        projectId: projectId
-      });
+    let envResult: Result.Result<Env[], GetApiEnvsError> = await getApiEnvs({
+      db: this.db,
+      projectId: projectId
+    });
 
     if (Result.isFailure(envResult)) {
       return envResult;

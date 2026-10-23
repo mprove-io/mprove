@@ -17,13 +17,13 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { ReportsService } from '#backend/services/db/reports/reports.service';
@@ -49,8 +49,6 @@ export class DeleteReportController {
     private sessionsService: SessionsService,
     private structsService: StructsService,
     private rpcService: RpcService,
-    private envsService: EnvsService,
-    private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -116,7 +114,8 @@ export class DeleteReportController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -166,7 +165,8 @@ export class DeleteReportController {
         })
       ),
       Result.bind('branchBridges', v =>
-        this.bridgesService.getBranchBridgesForRebuild({
+        getBranchBridgesForRebuild({
+          db: this.db,
           projectId: v.branch.projectId,
           repoId: v.branch.repoId,
           branchId: v.branch.branchId,

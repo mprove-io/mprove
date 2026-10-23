@@ -14,10 +14,10 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkBranchDoesNotExist } from '#backend/functions/db/branches/check-branch-does-not-exist/check-branch-does-not-exist';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
+import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
@@ -41,7 +41,6 @@ export class CreateBranchController {
     private rpcService: RpcService,
     private sessionsService: SessionsService,
     private hashService: HashService,
-    private bridgesService: BridgesService,
     private membersService: MembersService,
     private blockmlService: BlockmlService,
     private db: DbService
@@ -151,7 +150,8 @@ export class CreateBranchController {
       Result.bind('newBranchBridges', v =>
         Result.succeed(
           v.fromBranchBridges.map(bridge =>
-            this.bridgesService.makeBridge({
+            makeBridge({
+              hashService: this.hashService,
               projectId: v.newBranch.projectId,
               repoId: v.newBranch.repoId,
               branchId: v.newBranch.branchId,

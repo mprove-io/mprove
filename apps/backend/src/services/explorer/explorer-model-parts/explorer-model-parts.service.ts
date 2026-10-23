@@ -6,9 +6,9 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
@@ -27,7 +27,6 @@ import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-cata
 export class ExplorerModelPartsService {
   constructor(
     private tabService: TabService,
-    private envsService: EnvsService,
     private modelsService: ModelsService,
     private structsService: StructsService,
     private rpcService: RpcService,
@@ -92,7 +91,8 @@ export class ExplorerModelPartsService {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember

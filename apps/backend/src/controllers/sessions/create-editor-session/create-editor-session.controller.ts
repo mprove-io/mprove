@@ -26,6 +26,7 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
+import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
@@ -34,7 +35,6 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { CodexService } from '#backend/services/codex/codex.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
@@ -96,7 +96,6 @@ export class CreateEditorSessionController {
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private hashService: HashService,
-    private bridgesService: BridgesService,
     private editorConnectionsService: EditorConnectionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -692,7 +691,8 @@ export class CreateEditorSessionController {
       Result.bind('sessionBranchBridges', v =>
         Result.succeed(
           v.prodBranchBridges.map(bridge =>
-            this.bridgesService.makeBridge({
+            makeBridge({
+              hashService: this.hashService,
               projectId: v.sessionBranch.projectId,
               repoId: v.sessionBranch.repoId,
               branchId: v.sessionBranch.branchId,

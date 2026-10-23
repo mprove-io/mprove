@@ -19,10 +19,11 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { QueriesService } from '#backend/services/db/queries/queries.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -83,7 +84,6 @@ export class RunQueriesService {
     private trinoService: TrinoService,
     private storeService: StoreService,
     private bigqueryService: BigQueryService,
-    private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
@@ -114,7 +114,7 @@ export class RunQueriesService {
         })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.bind('apiEnv', v =>
         Result.succeed(v.apiEnvs.find(x => x.envId === v.query.envId))
@@ -593,7 +593,8 @@ export class RunQueriesService {
         let envAccessResult: Result.Result<
           EnvTab,
           GetEnvCheckExistsAndAccessError
-        > = await this.envsService.getEnvCheckExistsAndAccess({
+        > = await getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember

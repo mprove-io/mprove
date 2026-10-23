@@ -9,9 +9,9 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -23,7 +23,6 @@ import type { ToBackendGetGivensOutput } from '#common/types/backend/routes/give
 export class GetGivensController {
   constructor(
     private membersService: MembersService,
-    private givensService: GivensService,
     private db: DbService
   ) {}
 
@@ -56,7 +55,7 @@ export class GetGivensController {
         })
       ),
       Result.bind('apiGivens', v =>
-        this.givensService.getApiGivens({ projectId: v.projectId })
+        getApiGivens({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetGivensOutput => ({

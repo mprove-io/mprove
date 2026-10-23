@@ -3,8 +3,8 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -15,7 +15,6 @@ import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/ro
 @Injectable()
 export class GetConnectionsListService {
   constructor(
-    private envsService: EnvsService,
     private membersService: MembersService,
     private db: DbService
   ) {}
@@ -42,7 +41,7 @@ export class GetConnectionsListService {
         })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.bind('apiEnv', v =>
         Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))

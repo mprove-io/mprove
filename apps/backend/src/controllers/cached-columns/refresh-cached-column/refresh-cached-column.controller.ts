@@ -20,13 +20,15 @@ import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-colu
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
+import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
-import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
@@ -65,8 +67,6 @@ const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 export class RefreshCachedColumnController {
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private cachedColumnService: CachedColumnService,
-    private envsService: EnvsService,
     private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
@@ -114,14 +114,16 @@ export class RefreshCachedColumnController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
         })
       ),
       Result.bind('cacheEnvId', v =>
-        this.cachedColumnService.getCacheEnvId({
+        getCacheEnvId({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId
         })
@@ -135,7 +137,7 @@ export class RefreshCachedColumnController {
           : Result.succeed()
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.bind('apiEnv', v =>
         Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.cacheEnvId))
@@ -305,7 +307,7 @@ export class RefreshCachedColumnController {
       }),
       Result.map(
         (v): ToBackendRefreshCachedColumnOutput => ({
-          cachedColumn: this.cachedColumnService.cachedColumnTabToApi({
+          cachedColumn: cachedColumnTabToApi({
             cachedColumn: v.runningCachedColumn
           })
         })

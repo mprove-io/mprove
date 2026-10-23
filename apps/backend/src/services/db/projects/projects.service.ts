@@ -12,14 +12,14 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
+import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
+import { makeEnv } from '#backend/functions/db/envs/make-env/make-env';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import {
   BlockmlService,
   type RebuildStructOutput
 } from '#backend/services/blockml/blockml.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
@@ -47,10 +47,8 @@ export class ProjectsService {
     private tabService: TabService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
-    private envsService: EnvsService,
     private membersService: MembersService,
     private hashService: HashService,
-    private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
   ) {}
@@ -244,7 +242,8 @@ export class ProjectsService {
 
     newProject.defaultBranch = diskCreateProjectOutput.defaultBranch;
 
-    let prodEnv: EnvTab = this.envsService.makeEnv({
+    let prodEnv: EnvTab = makeEnv({
+      hashService: this.hashService,
       projectId: newProject.projectId,
       envId: PROJECT_ENV_PROD,
       evs: evs
@@ -276,7 +275,8 @@ export class ProjectsService {
       branchId: newProject.defaultBranch
     });
 
-    let prodBranchBridgeProdEnv: BridgeTab = this.bridgesService.makeBridge({
+    let prodBranchBridgeProdEnv: BridgeTab = makeBridge({
+      hashService: this.hashService,
       projectId: prodBranch.projectId,
       repoId: prodBranch.repoId,
       branchId: prodBranch.branchId,
@@ -285,7 +285,8 @@ export class ProjectsService {
       needValidate: false
     });
 
-    let devBranchBridgeProdEnv: BridgeTab = this.bridgesService.makeBridge({
+    let devBranchBridgeProdEnv: BridgeTab = makeBridge({
+      hashService: this.hashService,
       projectId: devBranch.projectId,
       repoId: devBranch.repoId,
       branchId: devBranch.branchId,

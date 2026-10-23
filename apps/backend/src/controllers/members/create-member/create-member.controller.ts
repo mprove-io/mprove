@@ -23,12 +23,12 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
+import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
@@ -90,10 +90,8 @@ import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/m
 export class CreateMemberController {
   constructor(
     private tabService: TabService,
-    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rpcService: RpcService,
-    private bridgesService: BridgesService,
     private blockmlService: BlockmlService,
     private usersService: UsersService,
     private membersService: MembersService,
@@ -132,9 +130,7 @@ export class CreateMemberController {
           projectId: v.projectId
         })
       ),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('emailHash', v =>
         this.hashService.makeHash({
           input: v.email,
@@ -259,7 +255,8 @@ export class CreateMemberController {
       Result.bind('devBranchBridges', v =>
         Result.succeed(
           v.prodBranchBridges.map(bridge =>
-            this.bridgesService.makeBridge({
+            makeBridge({
+              hashService: this.hashService,
               projectId: v.devBranch.projectId,
               repoId: v.devBranch.repoId,
               branchId: v.devBranch.branchId,

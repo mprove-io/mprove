@@ -18,21 +18,25 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
+import { checkChartPath } from '#backend/functions/db/charts/check-chart-path/check-chart-path';
+import { getChartCheckExists } from '#backend/functions/db/charts/get-chart-check-exists/get-chart-check-exists';
+import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
+import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
+import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -50,13 +54,12 @@ export class DeleteChartController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
-    private chartsService: ChartsService,
-    private envsService: EnvsService,
-    private bridgesService: BridgesService,
     private structsService: StructsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService
+    private db: DbService,
+    private unitsService: UnitsService,
+    private spaceService: SpaceService
   ) {}
 
   @Post('api/ToBackendDeleteChart' satisfies ToBackendRoute)
@@ -127,7 +130,8 @@ export class DeleteChartController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -150,7 +154,8 @@ export class DeleteChartController {
         })
       ),
       Result.bind('existingChart', v =>
-        this.chartsService.getChartCheckExists({
+        getChartCheckExists({
+          db: this.db,
           structId: v.bridge.structId,
           chartId: v.chartId,
           userMember: v.userMember,
@@ -159,7 +164,7 @@ export class DeleteChartController {
       ),
       Result.andThrough(v =>
         v.userMember.isAdmin === false && v.userMember.isEditor === false
-          ? this.chartsService.checkChartPath({
+          ? checkChartPath({
               userAlias: v.user.alias,
               filePath: v.existingChart.filePath
             })
@@ -184,7 +189,8 @@ export class DeleteChartController {
         })
       ),
       Result.bind('branchBridges', v =>
-        this.bridgesService.getBranchBridgesForRebuild({
+        getBranchBridgesForRebuild({
+          db: this.db,
           projectId: v.branch.projectId,
           repoId: v.branch.repoId,
           branchId: v.branch.branchId,
@@ -225,7 +231,10 @@ export class DeleteChartController {
         })
       ),
       Result.bind('chartsCatalog', v =>
-        this.chartsService.getChartsCatalog({
+        getChartsCatalog({
+          db: this.db,
+          unitsService: this.unitsService,
+          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,

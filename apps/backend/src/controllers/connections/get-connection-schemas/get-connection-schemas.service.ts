@@ -10,14 +10,14 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import {
   type GetEntPropsOutput,
   getEntProps
 } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
-import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
@@ -59,9 +59,7 @@ export class GetConnectionSchemasService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private tabService: TabService,
-    private cachedColumnService: CachedColumnService,
     private structsService: StructsService,
-    private envsService: EnvsService,
     private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
@@ -137,7 +135,7 @@ export class GetConnectionSchemasService {
         })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.bind('apiEnv', v =>
         Result.succeed(v.apiEnvs.find(apiEnv => apiEnv.envId === v.envId))
@@ -243,7 +241,7 @@ export class GetConnectionSchemasService {
             connectionRawSchemaItems: v.connectionRawSchemaItems,
             extraSchemas: v.struct.extraSchemas ?? [],
             cachedColumns: v.cachedColumns.map(cachedColumn =>
-              this.cachedColumnService.cachedColumnTabToApi({
+              cachedColumnTabToApi({
                 cachedColumn: cachedColumn
               })
             )

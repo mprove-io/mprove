@@ -11,9 +11,10 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { setFavorite } from '#backend/functions/db/favorites/set-favorite/set-favorite';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -25,8 +26,8 @@ import type { ToBackendSetFavoriteOutput } from '#common/types/backend/routes/fa
 @Controller()
 export class SetFavoriteController {
   constructor(
-    private favoritesService: FavoritesService,
-    private db: DbService
+    private db: DbService,
+    private hashService: HashService
   ) {}
 
   @Post('api/ToBackendSetFavorite' satisfies ToBackendRoute)
@@ -63,7 +64,9 @@ export class SetFavoriteController {
         })
       ),
       Result.andThrough(v =>
-        this.favoritesService.setFavorite({
+        setFavorite({
+          db: this.db,
+          hashService: this.hashService,
           projectId: v.projectId,
           userId: v.user.userId,
           type: v.type,

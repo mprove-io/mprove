@@ -23,6 +23,7 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
@@ -30,7 +31,6 @@ import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backe
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
 import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
@@ -49,7 +49,6 @@ import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend
 export class CreateExplorerSessionController {
   constructor(
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
     private ocEventsService: OcEventsService,
     private providersService: ProvidersService,
     private codexService: CodexService,
@@ -121,7 +120,8 @@ export class CreateExplorerSessionController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember

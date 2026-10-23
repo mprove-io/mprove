@@ -14,14 +14,16 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getDashboardsCatalog } from '#backend/functions/db/dashboards/get-dashboards-catalog/get-dashboards-catalog';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
+import { SpaceService } from '#backend/services/space/space.service';
+import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetDashboardsOutput } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-output';
@@ -33,11 +35,11 @@ export class GetDashboardsController {
   constructor(
     private membersService: MembersService,
     private modelsService: ModelsService,
-    private dashboardsService: DashboardsService,
     private structsService: StructsService,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
-    private db: DbService
+    private db: DbService,
+    private unitsService: UnitsService,
+    private spaceService: SpaceService
   ) {}
 
   @Post('api/ToBackendGetDashboards' satisfies ToBackendRoute)
@@ -91,7 +93,8 @@ export class GetDashboardsController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -141,7 +144,10 @@ export class GetDashboardsController {
         })
       ),
       Result.bind('dashboardsCatalog', v =>
-        this.dashboardsService.getDashboardsCatalog({
+        getDashboardsCatalog({
+          db: this.db,
+          unitsService: this.unitsService,
+          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,

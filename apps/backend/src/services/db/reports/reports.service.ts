@@ -8,8 +8,8 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access/check-access';
+import { getFavoriteTargetIds } from '#backend/functions/db/favorites/get-favorite-target-ids/get-favorite-target-ids';
 import { DbService } from '#backend/services/db/db.service';
-import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
 import { makeReportFiltersX } from '#backend/services/db/reports/make-report-filters-x/make-report-filters-x';
 import { HashService } from '#backend/services/hash/hash.service';
 import { SpaceService } from '#backend/services/space/space.service';
@@ -49,7 +49,6 @@ export type ReportsCatalog = {
 export class ReportsService {
   constructor(
     private hashService: HashService,
-    private favoritesService: FavoritesService,
     private spaceService: SpaceService,
     private unitsService: UnitsService,
     private db: DbService
@@ -126,14 +125,13 @@ export class ReportsService {
         Result.succeed(v.sortedNonDraftReports.map(report => report.reportId))
       ),
       Result.bind('favoriteReportIds', v =>
-        this.favoritesService
-          .getFavoriteTargetIds({
-            projectId: v.projectId,
-            userId: v.user.userId,
-            type: 'Report',
-            targetIds: v.reportTargetIds
-          })
-          .then(ids => Result.succeed(ids))
+        getFavoriteTargetIds({
+          db: this.db,
+          projectId: v.projectId,
+          userId: v.user.userId,
+          type: 'Report',
+          targetIds: v.reportTargetIds
+        }).then(ids => Result.succeed(ids))
       ),
       Result.bind('reportSpaceUnits', v =>
         Result.succeed(

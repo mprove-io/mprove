@@ -18,15 +18,17 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
+import { SpaceService } from '#backend/services/space/space.service';
+import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -41,12 +43,12 @@ export class DeleteDraftChartsController {
     private usersService: UsersService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
-    private chartsService: ChartsService,
     private structsService: StructsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService
+    private db: DbService,
+    private unitsService: UnitsService,
+    private spaceService: SpaceService
   ) {}
 
   @Post('api/ToBackendDeleteDraftCharts' satisfies ToBackendRoute)
@@ -109,7 +111,8 @@ export class DeleteDraftChartsController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -163,7 +166,10 @@ export class DeleteDraftChartsController {
         })
       ),
       Result.bind('chartsCatalog', v =>
-        this.chartsService.getChartsCatalog({
+        getChartsCatalog({
+          db: this.db,
+          unitsService: this.unitsService,
+          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,

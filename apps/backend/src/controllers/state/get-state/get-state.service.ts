@@ -14,13 +14,13 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { getDashboardParts } from '#backend/functions/db/dashboards/get-dashboard-parts/get-dashboard-parts';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { StructsService } from '#backend/services/db/structs/structs.service';
@@ -41,8 +41,6 @@ export class GetStateService {
     private rpcService: RpcService,
     private sessionsService: SessionsService,
     private structsService: StructsService,
-    private envsService: EnvsService,
-    private dashboardsService: DashboardsService,
     private db: DbService
   ) {}
 
@@ -96,7 +94,8 @@ export class GetStateService {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -173,7 +172,8 @@ export class GetStateService {
         )
       ),
       Result.bind('dashboardParts', v =>
-        this.dashboardsService.getDashboardParts({
+        getDashboardParts({
+          db: this.db,
           structId: v.bridge.structId,
           user: v.user,
           apiUserMember: this.membersService.tabToApi({

@@ -35,10 +35,10 @@ import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { structsTable } from '#backend/drizzle/postgres/schema/structs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -56,7 +56,6 @@ import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom
 @Controller()
 export class DeleteRecordsController {
   constructor(
-    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
@@ -87,9 +86,7 @@ export class DeleteRecordsController {
           : [],
         traceId: body.traceId
       }),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('projectNameHashes', v =>
         Result.sequence(v.projectNames || [], projectName =>
           this.hashService.makeHash({

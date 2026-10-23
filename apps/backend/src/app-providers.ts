@@ -6,17 +6,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { CodexService } from '#backend/services/codex/codex.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
-import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
-import { ConnectionsService } from '#backend/services/db/connections/connections.service';
-import { DashboardsService } from '#backend/services/db/dashboards/dashboards.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
-import { FavoritesService } from '#backend/services/db/favorites/favorites.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
-import { KitsService } from '#backend/services/db/kits/kits.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { ModelsService } from '#backend/services/db/models/models.service';
@@ -110,17 +100,7 @@ import { SearchModelFieldsToolService } from './services/explorer/tools/search-m
 export const appProviders = [
   LocalStrategy,
   JwtStrategy,
-  //
-  BridgesService,
-  ChartsService,
-  ConnectionsService,
-  DashboardsService,
-  DconfigsService,
-  EnvsService,
-  FavoritesService,
-  GivensService,
   OcEventsService,
-  KitsService,
   MconfigsService,
   MembersService,
   OcMessagesService,
@@ -202,7 +182,6 @@ export const appProviders = [
   GetConnectionSampleService,
   GetConnectionsListService,
   GetConnectionSchemasService,
-  CachedColumnService,
   ValidateFilesService,
   QueryInfoChartService,
   QueryInfoDashboardService,

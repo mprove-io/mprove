@@ -12,9 +12,9 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
@@ -31,7 +31,6 @@ import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs
 export class CreateOrgController {
   constructor(
     private usersService: UsersService,
-    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
@@ -74,9 +73,7 @@ export class CreateOrgController {
             })
           : Result.succeed();
       }),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('nameHash', v =>
         this.hashService.makeHash({
           input: v.name,

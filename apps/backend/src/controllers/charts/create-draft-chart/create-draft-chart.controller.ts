@@ -21,11 +21,12 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
+import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
+import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -36,6 +37,8 @@ import { StructsService } from '#backend/services/db/structs/structs.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
 import { MalloyService } from '#backend/services/malloy/malloy.service';
+import { SpaceService } from '#backend/services/space/space.service';
+import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -73,10 +76,10 @@ export class CreateDraftChartController {
     private structsService: StructsService,
     private queriesService: QueriesService,
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
     private mconfigsService: MconfigsService,
-    private chartsService: ChartsService,
-    private db: DbService
+    private db: DbService,
+    private unitsService: UnitsService,
+    private spaceService: SpaceService
   ) {}
 
   @Post('api/ToBackendCreateDraftChart' satisfies ToBackendRoute)
@@ -143,7 +146,8 @@ export class CreateDraftChartController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -400,7 +404,10 @@ export class CreateDraftChartController {
         })
       ),
       Result.bind('chartsCatalog', v =>
-        this.chartsService.getChartsCatalog({
+        getChartsCatalog({
+          db: this.db,
+          unitsService: this.unitsService,
+          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,
@@ -411,7 +418,7 @@ export class CreateDraftChartController {
       ),
       Result.map(
         (v): ToBackendCreateDraftChartOutput => ({
-          chart: this.chartsService.tabToApi({
+          chart: chartTabToApi({
             chart: v.prepareDraftChartPayload.newChart,
             mconfigs: [
               this.mconfigsService.tabToApi({

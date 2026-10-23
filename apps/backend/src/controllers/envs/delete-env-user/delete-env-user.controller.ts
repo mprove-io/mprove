@@ -10,9 +10,10 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -25,7 +26,6 @@ import type { ToBackendDeleteEnvUserOutput } from '#common/types/backend/routes/
 @Controller()
 export class DeleteEnvUserController {
   constructor(
-    private envsService: EnvsService,
     private membersService: MembersService,
     private db: DbService
   ) {}
@@ -61,7 +61,8 @@ export class DeleteEnvUserController {
         })
       ),
       Result.bind('env', v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -77,7 +78,7 @@ export class DeleteEnvUserController {
         this.db.write({ insertOrUpdate: { envs: [v.env] } })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendDeleteEnvUserOutput => ({

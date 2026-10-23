@@ -10,9 +10,9 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -26,7 +26,6 @@ export class GetRolesController {
   constructor(
     private membersService: MembersService,
     private rolesService: RolesService,
-    private givensService: GivensService,
     private db: DbService
   ) {}
 
@@ -64,7 +63,7 @@ export class GetRolesController {
         this.rolesService.getApiRoles({ projectId: v.projectId })
       ),
       Result.bind('apiGivens', v =>
-        this.givensService.getApiGivens({ projectId: v.projectId })
+        getApiGivens({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetRolesOutput => ({

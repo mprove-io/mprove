@@ -10,9 +10,10 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { getMemberGivensForSelection } from '#backend/functions/db/givens/get-member-givens-for-selection/get-member-givens-for-selection';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
+import { RolesService } from '#backend/services/db/roles/roles.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -25,9 +26,9 @@ import type { ToBackendGetUserGivensOutput } from '#common/types/backend/routes/
 @Controller()
 export class GetUserGivensController {
   constructor(
-    private givensService: GivensService,
     private usersService: UsersService,
-    private db: DbService
+    private db: DbService,
+    private rolesService: RolesService
   ) {}
 
   @Post('api/ToBackendGetUserGivens' satisfies ToBackendRoute)
@@ -60,7 +61,9 @@ export class GetUserGivensController {
         })
       ),
       Result.bind('memberGivens', v =>
-        this.givensService.getMemberGivensForSelection({
+        getMemberGivensForSelection({
+          rolesService: this.rolesService,
+          db: this.db,
           projectId: v.projectId,
           roles: v.member.roles
         })

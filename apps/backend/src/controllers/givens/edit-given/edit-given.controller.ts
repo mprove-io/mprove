@@ -11,9 +11,10 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
+import { validateGivenValues } from '#backend/functions/db/givens/validate-given-values/validate-given-values';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { GivensService } from '#backend/services/db/givens/givens.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -27,7 +28,6 @@ import type { ToBackendEditGivenOutput } from '#common/types/backend/routes/give
 export class EditGivenController {
   constructor(
     private membersService: MembersService,
-    private givensService: GivensService,
     private db: DbService
   ) {}
 
@@ -70,7 +70,7 @@ export class EditGivenController {
         })
       ),
       Result.andThrough(v =>
-        this.givensService.validateGivenValues({
+        validateGivenValues({
           type: v.given.type,
           isMultiple: v.given.isMultiple === true,
           values: v.values
@@ -84,7 +84,7 @@ export class EditGivenController {
         this.db.write({ insertOrUpdate: { givens: [v.given] } })
       ),
       Result.bind('apiGivens', v =>
-        this.givensService.getApiGivens({ projectId: v.projectId })
+        getApiGivens({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendEditGivenOutput => ({

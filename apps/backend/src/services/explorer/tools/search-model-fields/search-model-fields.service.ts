@@ -6,9 +6,9 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
+import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { SearchCachedFieldValuesService } from '#backend/services/explorer/tools/search-model-fields/search-cached-field-values/search-cached-field-values.service';
 import { SearchDwhSchemaFieldNamesService } from '#backend/services/explorer/tools/search-model-fields/search-dwh-schema-field-names/search-dwh-schema-field-names.service';
 import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names/search-model-field-leaf-names.service';
@@ -25,8 +25,6 @@ import type {
 @Injectable()
 export class SearchModelFieldsService {
   constructor(
-    private cachedColumnService: CachedColumnService,
-    private envsService: EnvsService,
     private searchCachedFieldValuesService: SearchCachedFieldValuesService,
     private searchModelFieldLeafNamesService: SearchModelFieldLeafNamesService,
     private searchDwhSchemaFieldNamesService: SearchDwhSchemaFieldNamesService,
@@ -66,7 +64,8 @@ export class SearchModelFieldsService {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
@@ -103,7 +102,8 @@ export class SearchModelFieldsService {
         Result.succeed(v.accessibleMalloyModels.map(model => model.modelId))
       ),
       Result.bind('cacheEnvId', v =>
-        this.cachedColumnService.getCacheEnvId({
+        getCacheEnvId({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId
         })

@@ -12,9 +12,9 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard/query-info-dashboard.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -27,7 +27,6 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 export class GetDashboardController {
   constructor(
     private sessionsService: SessionsService,
-    private envsService: EnvsService,
     private queryInfoDashboardService: QueryInfoDashboardService,
     private db: DbService
   ) {}
@@ -89,7 +88,8 @@ export class GetDashboardController {
         let envAccessResult: Result.Result<
           EnvTab,
           GetEnvCheckExistsAndAccessError
-        > = await this.envsService.getEnvCheckExistsAndAccess({
+        > = await getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember

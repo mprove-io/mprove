@@ -17,7 +17,7 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
 import { DbService } from '#backend/services/db/db.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
@@ -72,7 +72,6 @@ export class GetExplorerChartTabService {
   constructor(
     private membersService: MembersService,
     private modelsService: ModelsService,
-    private chartsService: ChartsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private explorerChartRebuildService: ExplorerChartRebuildService,
@@ -395,7 +394,7 @@ export class GetExplorerChartTabService {
             modelFields: model ? model.fields : []
           });
 
-          let chartX: ChartX = this.chartsService.tabToApi({
+          let chartX: ChartX = chartTabToApi({
             chart: v.resolveChartPayload.chart,
             mconfigs: [mconfigX],
             queries: [apiQuery],

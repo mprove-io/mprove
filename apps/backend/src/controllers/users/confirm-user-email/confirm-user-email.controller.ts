@@ -9,9 +9,9 @@ import {
 } from '#backend/controllers/users/confirm-user-email/confirm-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { UsersService } from '#backend/services/db/users/users.service';
 import { HashService } from '#backend/services/hash/hash.service';
@@ -25,7 +25,6 @@ import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/rout
 @Controller()
 export class ConfirmUserEmailController {
   constructor(
-    private dconfigsService: DconfigsService,
     private jwtService: JwtService,
     private hashService: HashService,
     private usersService: UsersService,
@@ -49,9 +48,7 @@ export class ConfirmUserEmailController {
         traceId: body.traceId,
         emailVerificationToken: body.input.emailVerificationToken
       }),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('emailVerificationTokenHash', v =>
         this.hashService.makeHash({
           input: v.emailVerificationToken,

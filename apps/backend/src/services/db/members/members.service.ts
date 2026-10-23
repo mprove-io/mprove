@@ -17,10 +17,10 @@ import {
 } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
+import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
@@ -48,7 +48,6 @@ export class MembersService {
     private hashService: HashService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
-    private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
   ) {}
@@ -306,7 +305,8 @@ export class MembersService {
       Result.bind('devBranchBridges', v =>
         Result.succeed(
           v.prodBranchBridges.map(bridge =>
-            this.bridgesService.makeBridge({
+            makeBridge({
+              hashService: this.hashService,
               projectId: v.devBranch.projectId,
               repoId: v.devBranch.repoId,
               branchId: v.devBranch.branchId,

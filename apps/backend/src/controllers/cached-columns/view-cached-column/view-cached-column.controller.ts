@@ -12,10 +12,11 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
+import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
+import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { CachedColumnService } from '#backend/services/db/cached-column/cached-column.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service.js';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -31,10 +32,8 @@ import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/rout
 @Controller()
 export class ViewCachedColumnController {
   constructor(
-    private cachedColumnService: CachedColumnService,
     private membersService: MembersService,
     private hashService: HashService,
-    private envsService: EnvsService,
     private db: DbService
   ) {}
 
@@ -78,14 +77,16 @@ export class ViewCachedColumnController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.getEnvCheckExistsAndAccess({
+        getEnvCheckExistsAndAccess({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId,
           member: v.userMember
         })
       ),
       Result.bind('cacheEnvId', v =>
-        this.cachedColumnService.getCacheEnvId({
+        getCacheEnvId({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId
         })
@@ -124,7 +125,7 @@ export class ViewCachedColumnController {
         (v): ToBackendViewCachedColumnOutput => ({
           cachedColumn: isUndefined(v.cachedColumn)
             ? undefined
-            : this.cachedColumnService.cachedColumnTabToApi({
+            : cachedColumnTabToApi({
                 cachedColumn: v.cachedColumn
               }),
           columnNames: ['Value', 'Count'],

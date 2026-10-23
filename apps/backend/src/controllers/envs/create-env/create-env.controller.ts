@@ -14,11 +14,14 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
+import { checkEnvDoesNotExist } from '#backend/functions/db/envs/check-env-does-not-exist/check-env-does-not-exist';
+import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { makeEnv } from '#backend/functions/db/envs/make-env/make-env';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BridgesService } from '#backend/services/db/bridges/bridges.service';
 import { DbService } from '#backend/services/db/db.service';
-import { EnvsService } from '#backend/services/db/envs/envs.service';
 import { MembersService } from '#backend/services/db/members/members.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -31,10 +34,9 @@ import type { ToBackendCreateEnvOutput } from '#common/types/backend/routes/envs
 @Controller()
 export class CreateEnvController {
   constructor(
-    private bridgesService: BridgesService,
-    private envsService: EnvsService,
     private membersService: MembersService,
-    private db: DbService
+    private db: DbService,
+    private hashService: HashService
   ) {}
 
   @Post('api/ToBackendCreateEnv' satisfies ToBackendRoute)
@@ -67,14 +69,16 @@ export class CreateEnvController {
         })
       ),
       Result.andThrough(v =>
-        this.envsService.checkEnvDoesNotExist({
+        checkEnvDoesNotExist({
+          db: this.db,
           projectId: v.projectId,
           envId: v.envId
         })
       ),
       Result.bind('newEnv', v =>
         Result.succeed(
-          this.envsService.makeEnv({
+          makeEnv({
+            hashService: this.hashService,
             projectId: v.projectId,
             envId: v.envId,
             evs: []
@@ -88,7 +92,8 @@ export class CreateEnvController {
       ),
       Result.bind('newBridges', v => {
         let newBridges: BridgeTab[] = v.branches.map(branch =>
-          this.bridgesService.makeBridge({
+          makeBridge({
+            hashService: this.hashService,
             projectId: v.projectId,
             repoId: branch.repoId,
             branchId: branch.branchId,
@@ -106,7 +111,7 @@ export class CreateEnvController {
         })
       ),
       Result.bind('apiEnvs', v =>
-        this.envsService.getApiEnvs({ projectId: v.projectId })
+        getApiEnvs({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendCreateEnvOutput => ({

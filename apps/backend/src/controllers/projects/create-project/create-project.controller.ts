@@ -14,9 +14,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { notesTable } from '#backend/drizzle/postgres/schema/notes';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { DconfigsService } from '#backend/services/db/dconfigs/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import { HashService } from '#backend/services/hash/hash.service';
@@ -33,7 +33,6 @@ import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/
 @Controller()
 export class CreateProjectController {
   constructor(
-    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
@@ -82,9 +81,7 @@ export class CreateProjectController {
           ? Result.fail({ code: 'BACKEND_RESTRICTED_ORGANIZATION' })
           : Result.succeed();
       }),
-      Result.bind('hashSecret', v =>
-        this.dconfigsService.getDconfigHashSecret()
-      ),
+      Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('nameHash', v =>
         this.hashService.makeHash({
           input: v.name,

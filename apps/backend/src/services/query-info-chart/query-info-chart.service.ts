@@ -11,7 +11,9 @@ import type {
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { ChartsService } from '#backend/services/db/charts/charts.service';
+import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
+import { checkChartOrModelAccess } from '#backend/functions/db/charts/check-chart-or-model-access/check-chart-or-model-access';
+import { getChartCheckExists } from '#backend/functions/db/charts/get-chart-check-exists/get-chart-check-exists';
 import { DbService } from '#backend/services/db/db.service';
 import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
 import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
@@ -40,7 +42,6 @@ type PrepareQueryPayload = {
 export class QueryInfoChartService {
   constructor(
     private malloyService: MalloyService,
-    private chartsService: ChartsService,
     private mconfigsService: MconfigsService,
     private modelsService: ModelsService,
     private queriesService: QueriesService,
@@ -77,7 +78,8 @@ export class QueryInfoChartService {
         })
       ),
       Result.bind('chart', v =>
-        this.chartsService.getChartCheckExists({
+        getChartCheckExists({
+          db: this.db,
           structId: v.structId,
           chartId: v.chartId,
           userMember: v.userMember,
@@ -101,7 +103,7 @@ export class QueryInfoChartService {
         })
       ),
       Result.bind('chartOrModelAccess', v =>
-        this.chartsService.checkChartOrModelAccess({
+        checkChartOrModelAccess({
           chart: v.chart,
           model: v.model,
           userMember: v.userMember
@@ -260,7 +262,7 @@ export class QueryInfoChartService {
       Result.map(
         (v): ToBackendGetChartOutput => ({
           userMember: v.apiUserMember,
-          chart: this.chartsService.tabToApi({
+          chart: chartTabToApi({
             chart: v.chart,
             mconfigs: [
               this.mconfigsService.tabToApi({

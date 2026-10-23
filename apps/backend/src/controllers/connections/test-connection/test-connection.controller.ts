@@ -13,8 +13,8 @@ import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorato
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { ConnectionsService } from '#backend/services/db/connections/connections.service';
 import { DbService } from '#backend/services/db/db.service';
 import { MembersService } from '#backend/services/db/members/members.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
@@ -25,6 +25,7 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
+import { HashService } from '#backend/services/hash/hash.service';
 import { StoreService } from '#backend/services/store/store.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -40,7 +41,6 @@ import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes
 @Controller()
 export class TestConnectionController {
   constructor(
-    private connectionsService: ConnectionsService,
     private mysqlService: MysqlService,
     private pgService: PgService,
     private databricksService: DatabricksService,
@@ -53,7 +53,8 @@ export class TestConnectionController {
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService
+    private db: DbService,
+    private hashService: HashService
   ) {}
 
   @Post('api/ToBackendTestConnection' satisfies ToBackendRoute)
@@ -113,7 +114,8 @@ export class TestConnectionController {
       ),
       Result.bind('connection', v =>
         Result.succeed(
-          this.connectionsService.makeConnection({
+          makeConnection({
+            hashService: this.hashService,
             projectId: v.projectId,
             envId: v.envId,
             connectionId: v.connectionId,
