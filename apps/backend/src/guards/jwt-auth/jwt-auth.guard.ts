@@ -23,6 +23,7 @@ import type { AuthenticateApiKeyError } from '#common/types/backend/function-err
 import type { AuthenticatePersonalApiKeyError } from '#common/types/backend/function-errors/authenticate-personal-api-key-error';
 import type { AuthenticateSessionApiKeyError } from '#common/types/backend/function-errors/authenticate-session-api-key-error';
 import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
+import type { McpApiKeyParsed } from '#common/types/backend/parts/api-key/mcp-api-key-parsed';
 import { toBackendTelemetryRouteValues } from '#common/types/backend/request/to-backend-telemetry-route';
 
 type ApiKeyAuthRequest = {
@@ -31,11 +32,7 @@ type ApiKeyAuthRequest = {
   route?: { path?: string };
   body?: { input?: { repoId?: string; envId?: string; branchId?: string } };
   user?: UserTab;
-  apiKeyType?: ApiKeyType;
-  apiKeyToValidateSessionId?: string;
-  apiKeyToValidateProjectId?: string;
-  apiKeyToValidateEnvId?: string;
-  apiKeyToValidateBranchId?: string;
+  apiKeyParsed?: McpApiKeyParsed;
 };
 
 @Injectable()
@@ -116,10 +113,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           ? Result.fail({ code: 'BACKEND_API_KEY_NOT_FOUND' })
           : Result.succeed()
       ),
-      Result.map(v => {
-        v.request.apiKeyType = v.parsed.type;
-        return v;
-      }),
       Result.andThen(v =>
         v.parsed.type === 'PK'
           ? this.authenticatePersonalApiKey({
@@ -170,6 +163,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }),
       Result.map(v => {
         v.request.user = v.user;
+        v.request.apiKeyParsed = {
+          apiKeyType: 'PK',
+          userId: v.user.userId
+        };
         return v;
       }),
       Result.bind('path', v => Result.succeed(v.request.url?.substring(1))),
@@ -251,13 +248,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       Result.bind('path', v => Result.succeed(v.request.url?.substring(1))),
       Result.andThen(v => {
         if (v.path === 'api/mcp' || v.path.startsWith('api/mcp/')) {
-          v.request.apiKeyToValidateSessionId = v.parsed.entityId;
-
-          v.request.apiKeyToValidateProjectId = v.session.projectId;
-
-          v.request.apiKeyToValidateEnvId = v.session.envId;
-
-          v.request.apiKeyToValidateBranchId = v.session.branchId;
+          v.request.apiKeyParsed = {
+            apiKeyType: 'SK',
+            projectId: v.session.projectId,
+            repoId: v.parsed.entityId,
+            branchId: v.session.branchId,
+            envId: v.session.envId
+          };
 
           return Result.succeed(true);
         }

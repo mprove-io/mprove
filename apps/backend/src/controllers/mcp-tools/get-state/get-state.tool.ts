@@ -8,8 +8,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
 import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
 import { makeMcpToolResponse } from '#backend/functions/make-mcp-tool-response/make-mcp-tool-response';
+import { validateMcpProjectRepoBranchEnvAccess } from '#backend/functions/validate-mcp/validate-mcp-project-repo-branch-env-access/validate-mcp-project-repo-branch-env-access';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
-import { ToolService } from '#backend/services/tool/tool.service';
 import {
   MCP_TOOL_GET_STATE,
   MCP_TOOL_GET_STATE_DESCRIPTION
@@ -23,15 +23,12 @@ import {
   type McpToolGetStateOutput,
   zMcpToolGetStateOutput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-state/mcp-tool-get-state-output';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
+import type { McpApiKeyParsed } from '#common/types/backend/parts/api-key/mcp-api-key-parsed';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
 export class GetStateTool {
-  constructor(
-    private getStateService: GetStateService,
-    private toolService: ToolService
-  ) {}
+  constructor(private getStateService: GetStateService) {}
 
   @Tool({
     name: MCP_TOOL_GET_STATE,
@@ -61,48 +58,16 @@ export class GetStateTool {
         getMetrics: item.getMetrics,
         getReports: item.getReports,
         user: (request as any).user as UserTab,
-        apiKeyType: (request as any).apiKeyType as ApiKeyType,
-        request: request
+        apiKeyParsed: (request as any).apiKeyParsed as McpApiKeyParsed
       }),
       Result.andThrough(v =>
-        v.apiKeyType === 'PK'
-          ? this.toolService.validateUserRepoId({
-              repoId: v.repoId,
-              userId: v.user.userId
-            })
-          : Result.succeed()
-      ),
-      Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionProjectId({
-              projectId: v.projectId,
-              request: v.request
-            })
-          : Result.succeed()
-      ),
-      Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionRepoId({
-              repoId: v.repoId,
-              request: v.request
-            })
-          : Result.succeed()
-      ),
-      Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionBranchId({
-              branchId: v.branchId,
-              request: v.request
-            })
-          : Result.succeed()
-      ),
-      Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionEnvId({
-              envId: v.envId,
-              request: v.request
-            })
-          : Result.succeed()
+        validateMcpProjectRepoBranchEnvAccess({
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          apiKeyParsed: v.apiKeyParsed
+        })
       ),
       Result.andThen(v =>
         this.getStateService.getState({

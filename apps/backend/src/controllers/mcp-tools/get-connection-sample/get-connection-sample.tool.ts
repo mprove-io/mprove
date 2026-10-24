@@ -8,8 +8,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
 import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
 import { makeMcpToolResponse } from '#backend/functions/make-mcp-tool-response/make-mcp-tool-response';
+import { validateMcpEnvAccess } from '#backend/functions/validate-mcp/validate-mcp-env-access/validate-mcp-env-access';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
-import { ToolService } from '#backend/services/tool/tool.service';
 import {
   MCP_TOOL_GET_SAMPLE,
   MCP_TOOL_GET_SAMPLE_DESCRIPTION
@@ -19,16 +19,13 @@ import {
   zMcpToolGetSampleInput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-input';
 import { zMcpToolGetSampleOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-output';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
+import type { McpApiKeyParsed } from '#common/types/backend/parts/api-key/mcp-api-key-parsed';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
 export class GetConnectionSampleTool {
-  constructor(
-    private getConnectionSampleService: GetConnectionSampleService,
-    private toolService: ToolService
-  ) {}
+  constructor(private getConnectionSampleService: GetConnectionSampleService) {}
 
   @Tool({
     name: MCP_TOOL_GET_SAMPLE,
@@ -52,16 +49,13 @@ export class GetConnectionSampleTool {
         columnName: item.columnName,
         offset: item.offset,
         user: (request as any).user as UserTab,
-        apiKeyType: (request as any).apiKeyType as ApiKeyType,
-        request: request
+        apiKeyParsed: (request as any).apiKeyParsed as McpApiKeyParsed
       }),
       Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionEnvId({
-              envId: v.envId,
-              request: v.request
-            })
-          : Result.succeed()
+        validateMcpEnvAccess({
+          envId: v.envId,
+          apiKeyParsed: v.apiKeyParsed
+        })
       ),
       Result.andThen(v =>
         this.getConnectionSampleService.getConnectionSample({

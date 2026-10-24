@@ -1,15 +1,15 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type BackendEnvIdDoesNotMatchSessionError,
   zBackendEnvIdDoesNotMatchSessionError
 } from '#common/types/backend/errors/backend-env-id-does-not-match-session-error';
 
-export type ValidateSessionEnvIdError = BackendEnvIdDoesNotMatchSessionError;
+export type ValidateMcpEnvAccessError = BackendEnvIdDoesNotMatchSessionError;
 
-export let zValidateSessionEnvIdError = zBackendEnvIdDoesNotMatchSessionError;
+export let zValidateMcpEnvAccessError = zBackendEnvIdDoesNotMatchSessionError;
 
 assertTypesEqual<
-  ValidateSessionEnvIdError,
-  z.infer<typeof zValidateSessionEnvIdError>
+  ValidateMcpEnvAccessError,
+  z.infer<typeof zValidateMcpEnvAccessError>
 >({ value: true });

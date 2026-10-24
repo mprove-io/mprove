@@ -42,7 +42,6 @@ import { SessionDrainTimerService } from '#backend/services/session/session-drai
 import { SessionSseService } from '#backend/services/session/session-sse/session-sse.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { TasksService } from '#backend/services/tasks/tasks.service';
-import { ToolService } from '#backend/services/tool/tool.service';
 import { UrlService } from '#backend/services/url/url.service';
 import { GetExplorerChartTabService } from './controllers/charts/get-explorer-chart-tab/get-explorer-chart-tab.service';
 import { GetConnectionSampleService } from './controllers/connections/get-connection-sample/get-connection-sample.service';
@@ -117,7 +116,6 @@ export const appProviders = [
   ProduceExplorerChartService,
   GetExplorerChartTabService,
   //
-  ToolService,
   ListDocsService,
   ReadDocsService,
   SearchDocsService,

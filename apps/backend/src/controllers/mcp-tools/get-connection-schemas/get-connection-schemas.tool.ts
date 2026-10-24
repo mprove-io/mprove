@@ -8,8 +8,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
 import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
 import { makeMcpToolResponse } from '#backend/functions/make-mcp-tool-response/make-mcp-tool-response';
+import { validateMcpRepoBranchEnvAccess } from '#backend/functions/validate-mcp/validate-mcp-repo-branch-env-access/validate-mcp-repo-branch-env-access';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
-import { ToolService } from '#backend/services/tool/tool.service';
 import {
   MCP_TOOL_GET_SCHEMAS,
   MCP_TOOL_GET_SCHEMAS_DESCRIPTION
@@ -22,15 +22,14 @@ import {
   type McpToolGetSchemasOutput,
   zMcpToolGetSchemasOutput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-schemas/mcp-tool-get-schemas-output';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
+import type { McpApiKeyParsed } from '#common/types/backend/parts/api-key/mcp-api-key-parsed';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
 export class GetConnectionSchemasTool {
   constructor(
-    private getConnectionSchemasService: GetConnectionSchemasService,
-    private toolService: ToolService
+    private getConnectionSchemasService: GetConnectionSchemasService
   ) {}
 
   @Tool({
@@ -53,40 +52,15 @@ export class GetConnectionSchemasTool {
         envId: item.envId,
         isRefreshExistingCache: item.isRefreshExistingCache,
         user: (request as any).user as UserTab,
-        apiKeyType: (request as any).apiKeyType as ApiKeyType,
-        request: request
+        apiKeyParsed: (request as any).apiKeyParsed as McpApiKeyParsed
       }),
       Result.andThrough(v =>
-        v.apiKeyType === 'PK'
-          ? this.toolService.validateUserRepoId({
-              repoId: v.repoId,
-              userId: v.user.userId
-            })
-          : Result.succeed()
-      ),
-      Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionRepoId({
-              repoId: v.repoId,
-              request: v.request
-            })
-          : Result.succeed()
-      ),
-      Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionBranchId({
-              branchId: v.branchId,
-              request: v.request
-            })
-          : Result.succeed()
-      ),
-      Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionEnvId({
-              envId: v.envId,
-              request: v.request
-            })
-          : Result.succeed()
+        validateMcpRepoBranchEnvAccess({
+          repoId: v.repoId,
+          branchId: v.branchId,
+          envId: v.envId,
+          apiKeyParsed: v.apiKeyParsed
+        })
       ),
       Result.andThen(v =>
         this.getConnectionSchemasService.getConnectionSchemas({

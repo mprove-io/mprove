@@ -8,8 +8,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
 import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
 import { makeMcpToolResponse } from '#backend/functions/make-mcp-tool-response/make-mcp-tool-response';
+import { validateMcpEnvAccess } from '#backend/functions/validate-mcp/validate-mcp-env-access/validate-mcp-env-access';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
-import { ToolService } from '#backend/services/tool/tool.service';
 import {
   MCP_TOOL_GET_CONNECTIONS_LIST,
   MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION
@@ -19,16 +19,13 @@ import {
   zMcpToolGetConnectionsListInput
 } from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-input';
 import { zMcpToolGetConnectionsListOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-output';
-import type { ApiKeyType } from '#common/types/backend/parts/api-key/api-key-type';
+import type { McpApiKeyParsed } from '#common/types/backend/parts/api-key/mcp-api-key-parsed';
 import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)
 export class GetConnectionsListTool {
-  constructor(
-    private getConnectionsListService: GetConnectionsListService,
-    private toolService: ToolService
-  ) {}
+  constructor(private getConnectionsListService: GetConnectionsListService) {}
 
   @Tool({
     name: MCP_TOOL_GET_CONNECTIONS_LIST,
@@ -49,16 +46,13 @@ export class GetConnectionsListTool {
         projectId: item.projectId,
         envId: item.envId,
         user: (request as any).user as UserTab,
-        apiKeyType: (request as any).apiKeyType as ApiKeyType,
-        request: request
+        apiKeyParsed: (request as any).apiKeyParsed as McpApiKeyParsed
       }),
       Result.andThrough(v =>
-        v.apiKeyType === 'SK'
-          ? this.toolService.validateSessionEnvId({
-              envId: v.envId,
-              request: v.request
-            })
-          : Result.succeed()
+        validateMcpEnvAccess({
+          envId: v.envId,
+          apiKeyParsed: v.apiKeyParsed
+        })
       ),
       Result.andThen(v =>
         this.getConnectionsListService.getConnectionsList({
