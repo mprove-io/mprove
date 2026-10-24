@@ -13,6 +13,10 @@ export class TabService {
   readonly prevKeyBuffer?: Buffer;
   readonly prevKeyTag?: string;
 
+  readonly isEncryptDb: boolean;
+
+  readonly isEncryptMetadata: boolean;
+
   constructor(private cs: ConfigService<BackendConfig>) {
     let keyBase64: string = this.cs.get<BackendConfig['aesKey']>('aesKey');
 
@@ -29,6 +33,11 @@ export class TabService {
 
     this.prevKeyTag =
       this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
+
+    this.isEncryptDb = this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb');
+
+    this.isEncryptMetadata =
+      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata');
   }
 
   encrypt(item: { data: unknown }): string {

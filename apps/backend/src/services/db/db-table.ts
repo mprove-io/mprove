@@ -19,12 +19,6 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
-export type DbTableContext = {
-  tabService: TabService;
-  isEncryptDb: boolean;
-  isEncryptMetadata: boolean;
-};
-
 type DbReadSchema = ExtractTablesWithRelations<typeof schemaPostgres>;
 
 type DbTableReadOptions<Table extends keyof DbReadSchema> = Omit<
@@ -71,24 +65,24 @@ export class DbTable<Key extends DbTableKey> {
       query: DbTableQuery<Key>;
       existsQuery: DbTableExistsQuery<Key>;
       entityConfig: DbEntityRegistry[Key];
-      context: DbTableContext;
+      tabService: TabService;
     }
   ) {
-    let { entityConfig, context } = item;
+    let { entityConfig, tabService } = item;
 
     this.entToTab = x =>
       entityConfig.entToTab({
         ent: x.ent,
-        tabService: context.tabService
+        tabService: tabService
       });
 
     this.tabToEnt = x =>
       entityConfig.tabToEnt({
         tab: x.tab,
         hashSecret: x.hashSecret,
-        tabService: context.tabService,
-        isEncryptDb: context.isEncryptDb,
-        isEncryptMetadata: context.isEncryptMetadata
+        tabService: tabService,
+        isEncryptDb: tabService.isEncryptDb,
+        isEncryptMetadata: tabService.isEncryptMetadata
       });
   }
 

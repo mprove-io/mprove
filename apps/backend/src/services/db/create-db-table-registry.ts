@@ -1,4 +1,5 @@
-import type { DbExtra } from '#backend/drizzle/drizzle.module';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { schemaPostgres } from '#backend/drizzle/postgres/schema/_schema-postgres';
 import {
   type DbEntityRegistry,
   type DbTableKey,
@@ -7,30 +8,30 @@ import {
 } from '#backend/services/db/db-entity-registry';
 import {
   DbTable,
-  type DbTableContext,
   type DbTableExistsQuery,
   type DbTableQuery
 } from '#backend/services/db/db-table';
+import type { TabService } from '#backend/services/tab/tab.service';
 
 export type DbTableRegistry = {
   [Key in DbTableKey]: DbTable<Key>;
 };
 
 export function createDbTableRegistry(item: {
-  dbExtra: DbExtra;
-  context: DbTableContext;
+  drizzle: NodePgDatabase<typeof schemaPostgres>;
+  tabService: TabService;
 }): DbTableRegistry {
-  let { dbExtra, context } = item;
+  let { drizzle, tabService } = item;
 
   let entityRegistry: DbEntityRegistry = dbEntityRegistry;
 
   let queryMap: {
     [Key in DbTableKey as `${Key}Table`]: DbTableQuery<Key>;
-  } = dbExtra.drizzle.query;
+  } = drizzle.query;
 
   let existsQueryMap: {
     [Key in DbTableKey as `${Key}Table`]: DbTableExistsQuery<Key>;
-  } = dbExtra.drizzle.query;
+  } = drizzle.query;
 
   let entries: [DbTableKey, DbTable<DbTableKey>][] = dbTableKeys.map(
     (key: DbTableKey): [DbTableKey, DbTable<DbTableKey>] => {
@@ -38,7 +39,7 @@ export function createDbTableRegistry(item: {
         query: queryMap[`${key}Table`],
         existsQuery: existsQueryMap[`${key}Table`],
         entityConfig: entityRegistry[key],
-        context: context
+        tabService: tabService
       });
 
       return [key, table];

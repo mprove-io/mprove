@@ -47,7 +47,6 @@ import { ZodValidationPipe } from '#backend/pipes/zod-validation/zod-validation.
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { TabCheckerService } from '#backend/services/tab-checker/tab-checker.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
   DEMO_ORG_NAME,
@@ -179,7 +178,6 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
 })
 export class AppModule implements OnModuleInit, OnModuleDestroy {
   constructor(
-    private checkTabService: TabCheckerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService,
@@ -427,7 +425,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       });
     }
 
-    await this.checkTabService.readWriteRecords({
+    await this.db.rewriteRecordsUnwrap({
       isAllRecords: isUpdateHashSecret
     });
 

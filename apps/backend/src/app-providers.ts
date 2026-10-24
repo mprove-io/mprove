@@ -41,7 +41,6 @@ import { SessionDrainService } from '#backend/services/session/session-drain/ses
 import { SessionDrainTimerService } from '#backend/services/session/session-drain-timer/session-drain-timer.service';
 import { SessionSseService } from '#backend/services/session/session-sse/session-sse.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { TabCheckerService } from '#backend/services/tab-checker/tab-checker.service';
 import { TasksService } from '#backend/services/tasks/tasks.service';
 import { ToolService } from '#backend/services/tool/tool.service';
 import { UrlService } from '#backend/services/url/url.service';
@@ -83,7 +82,6 @@ export const appProviders = [
   //
   AscendingIdService,
   DbService,
-  TabCheckerService,
   DocService,
   EmailService,
   RpcService,

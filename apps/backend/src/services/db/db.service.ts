@@ -14,20 +14,23 @@ import {
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { convertWritePack } from '#backend/services/db/convert-write-pack/convert-write-pack';
 import {
   createDbTableRegistry,
   type DbTableRegistry
 } from '#backend/services/db/create-db-table-registry';
-import type { DbTableContext } from '#backend/services/db/db-table';
+import { dbTableKeys } from '#backend/services/db/db-entity-registry';
 import { DbTableAccess } from '#backend/services/db/db-table-access';
 import type { DbTableConversion } from '#backend/services/db/db-table-conversion';
 import type { DbTransaction } from '#backend/services/db/db-transaction';
 import { dbWriteOperationValues } from '#backend/services/db/db-write-operation';
+import { rewriteTableRecords } from '#backend/services/db/rewrite-table-records/rewrite-table-records';
 import { transaction } from '#backend/services/db/transaction/transaction';
 import { writeDbTable } from '#backend/services/db/write-db-table/write-db-table';
 import { TabService } from '#backend/services/tab/tab.service';
+import type { RewriteRecordsError } from '#backend/types/function-errors/rewrite-records-error';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -38,20 +41,13 @@ import type { WriteError } from '#common/types/backend/function-errors/write-err
 export class DbService extends DbTableAccess {
   constructor(
     @Inject(DRIZZLE) private dbExtra: DbExtra,
-    tabService: TabService,
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {
-    let context: DbTableContext = {
-      tabService: tabService,
-      isEncryptDb: cs.get<BackendConfig['isEncryptDb']>('isEncryptDb'),
-      isEncryptMetadata:
-        cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata')
-    };
-
     let tableRegistry: DbTableRegistry = createDbTableRegistry({
-      dbExtra: dbExtra,
-      context: context
+      drizzle: dbExtra.drizzle,
+      tabService: tabService
     });
 
     super({ tableRegistry: tableRegistry });
@@ -236,6 +232,62 @@ export class DbService extends DbTableAccess {
           v.tx.execute(query).then(() => Result.succeed())
         )
       ),
+      Result.map((v): void => undefined)
+    );
+  }
+
+  async rewriteRecordsUnwrap(item: { isAllRecords: boolean }): Promise<void> {
+    let { isAllRecords } = item;
+
+    let result: Result.Result<void, RewriteRecordsError> =
+      await this.rewriteRecords({ isAllRecords: isAllRecords });
+
+    if (Result.isFailure(result)) {
+      throw new ServerError({
+        message: result.error.code,
+        customData:
+          'customData' in result.error ? result.error.customData : undefined
+      });
+    }
+  }
+
+  async rewriteRecords(item: {
+    isAllRecords: boolean;
+  }): Result.ResultAsync<void, RewriteRecordsError> {
+    return Result.pipe(
+      Result.succeed({
+        ...item,
+        startTs: Date.now()
+      }),
+      Result.inspect(v => {
+        logToConsoleBackend({
+          log: `DB rewrite started, isAllRecords: ${v.isAllRecords} ...`,
+          logLevel: 'Info',
+          logger: this.logger,
+          cs: this.cs
+        });
+      }),
+      Result.andThrough(v =>
+        Result.sequence(dbTableKeys, key =>
+          rewriteTableRecords({
+            key: key,
+            db: this,
+            tableRegistry: this.tableRegistry,
+            cs: this.cs,
+            logger: this.logger,
+            isAllRecords: v.isAllRecords,
+            tabService: this.tabService
+          })
+        )
+      ),
+      Result.inspect(v => {
+        logToConsoleBackend({
+          log: `DB rewrite completed, total ${Date.now() - v.startTs} ms`,
+          logLevel: 'Info',
+          logger: this.logger,
+          cs: this.cs
+        });
+      }),
       Result.map((v): void => undefined)
     );
   }

@@ -65,6 +65,7 @@ import { uconfigEntToTab } from '#backend/functions/db/uconfigs/uconfig-ent-to-t
 import { uconfigTabToEnt } from '#backend/functions/db/uconfigs/uconfig-tab-to-ent/uconfig-tab-to-ent';
 import { userEntToTab } from '#backend/functions/db/users/user-ent-to-tab/user-ent-to-tab';
 import { userTabToEnt } from '#backend/functions/db/users/user-tab-to-ent/user-tab-to-ent';
+import type { DbEncryptionPolicy } from '#backend/services/db/db-encryption-policy';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { BackendAvatarDoesNotExistError } from '#common/types/backend/errors/backend-avatar-does-not-exist-error';
 import type { BackendBranchDoesNotExistError } from '#common/types/backend/errors/backend-branch-does-not-exist-error';
@@ -144,6 +145,7 @@ export type DbEntityRegistry = {
   [Key in DbTableKey]: {
     table: (typeof schemaPostgres)[`${Key}Table`];
     identityKey: Extract<keyof DbTableEnt<Key>, string>;
+    encryptionPolicy: DbEncryptionPolicy;
     notFoundError: DbTableNotFoundError<Key>;
     entToTab: (item: {
       ent: DbTableEnt<Key>;
@@ -163,6 +165,7 @@ export type DbEntityRegistry = {
 // Declaration order determines conversion and SQL execution order.
 export const dbEntityRegistry = {
   avatars: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.avatarsTable,
     identityKey:
       'userId' as const satisfies keyof typeof schemaPostgres.avatarsTable.$inferSelect,
@@ -173,6 +176,7 @@ export const dbEntityRegistry = {
     tabToEnt: avatarTabToEnt
   },
   branches: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.branchesTable,
     identityKey:
       'branchFullId' as const satisfies keyof typeof schemaPostgres.branchesTable.$inferSelect,
@@ -183,6 +187,7 @@ export const dbEntityRegistry = {
     tabToEnt: branchTabToEnt
   },
   bridges: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.bridgesTable,
     identityKey:
       'bridgeFullId' as const satisfies keyof typeof schemaPostgres.bridgesTable.$inferSelect,
@@ -193,6 +198,7 @@ export const dbEntityRegistry = {
     tabToEnt: bridgeTabToEnt
   },
   cachedColumns: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.cachedColumnsTable,
     identityKey:
       'cachedColumnFullId' as const satisfies keyof typeof schemaPostgres.cachedColumnsTable.$inferSelect,
@@ -203,6 +209,7 @@ export const dbEntityRegistry = {
     tabToEnt: cachedColumnTabToEnt
   },
   cachedParts: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.cachedPartsTable,
     identityKey:
       'cachedPartFullId' as const satisfies keyof typeof schemaPostgres.cachedPartsTable.$inferSelect,
@@ -213,6 +220,7 @@ export const dbEntityRegistry = {
     tabToEnt: cachedPartTabToEnt
   },
   connections: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.connectionsTable,
     identityKey:
       'connectionFullId' as const satisfies keyof typeof schemaPostgres.connectionsTable.$inferSelect,
@@ -223,6 +231,7 @@ export const dbEntityRegistry = {
     tabToEnt: connectionTabToEnt
   },
   dashboards: {
+    encryptionPolicy: 'metadata' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.dashboardsTable,
     identityKey:
       'dashboardFullId' as const satisfies keyof typeof schemaPostgres.dashboardsTable.$inferSelect,
@@ -233,6 +242,7 @@ export const dbEntityRegistry = {
     tabToEnt: dashboardTabToEnt
   },
   dconfigs: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.dconfigsTable,
     identityKey:
       'dconfigId' as const satisfies keyof typeof schemaPostgres.dconfigsTable.$inferSelect,
@@ -243,6 +253,7 @@ export const dbEntityRegistry = {
     tabToEnt: dconfigTabToEnt
   },
   uconfigs: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.uconfigsTable,
     identityKey:
       'uconfigId' as const satisfies keyof typeof schemaPostgres.uconfigsTable.$inferSelect,
@@ -253,6 +264,7 @@ export const dbEntityRegistry = {
     tabToEnt: uconfigTabToEnt
   },
   envs: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.envsTable,
     identityKey:
       'envFullId' as const satisfies keyof typeof schemaPostgres.envsTable.$inferSelect,
@@ -263,6 +275,7 @@ export const dbEntityRegistry = {
     tabToEnt: envTabToEnt
   },
   favorites: {
+    encryptionPolicy: 'none' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.favoritesTable,
     identityKey:
       'favoriteFullId' as const satisfies keyof typeof schemaPostgres.favoritesTable.$inferSelect,
@@ -273,6 +286,7 @@ export const dbEntityRegistry = {
     tabToEnt: favoriteTabToEnt
   },
   givens: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.givensTable,
     identityKey:
       'givenFullId' as const satisfies keyof typeof schemaPostgres.givensTable.$inferSelect,
@@ -283,6 +297,7 @@ export const dbEntityRegistry = {
     tabToEnt: givenTabToEnt
   },
   roles: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.rolesTable,
     identityKey:
       'roleFullId' as const satisfies keyof typeof schemaPostgres.rolesTable.$inferSelect,
@@ -293,6 +308,7 @@ export const dbEntityRegistry = {
     tabToEnt: roleTabToEnt
   },
   kits: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.kitsTable,
     identityKey:
       'kitId' as const satisfies keyof typeof schemaPostgres.kitsTable.$inferSelect,
@@ -303,6 +319,7 @@ export const dbEntityRegistry = {
     tabToEnt: kitTabToEnt
   },
   mconfigs: {
+    encryptionPolicy: 'metadata' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.mconfigsTable,
     identityKey:
       'mconfigId' as const satisfies keyof typeof schemaPostgres.mconfigsTable.$inferSelect,
@@ -313,6 +330,7 @@ export const dbEntityRegistry = {
     tabToEnt: mconfigTabToEnt
   },
   members: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.membersTable,
     identityKey:
       'memberFullId' as const satisfies keyof typeof schemaPostgres.membersTable.$inferSelect,
@@ -323,6 +341,7 @@ export const dbEntityRegistry = {
     tabToEnt: memberTabToEnt
   },
   models: {
+    encryptionPolicy: 'metadata' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.modelsTable,
     identityKey:
       'modelFullId' as const satisfies keyof typeof schemaPostgres.modelsTable.$inferSelect,
@@ -333,6 +352,7 @@ export const dbEntityRegistry = {
     tabToEnt: modelTabToEnt
   },
   modelFieldLeafs: {
+    encryptionPolicy: 'none' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.modelFieldLeafsTable,
     identityKey:
       'modelFieldLeafFullId' as const satisfies keyof typeof schemaPostgres.modelFieldLeafsTable.$inferSelect,
@@ -343,6 +363,7 @@ export const dbEntityRegistry = {
     tabToEnt: modelFieldLeafTabToEnt
   },
   notes: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.notesTable,
     identityKey:
       'noteId' as const satisfies keyof typeof schemaPostgres.notesTable.$inferSelect,
@@ -353,6 +374,7 @@ export const dbEntityRegistry = {
     tabToEnt: noteTabToEnt
   },
   orgs: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.orgsTable,
     identityKey:
       'orgId' as const satisfies keyof typeof schemaPostgres.orgsTable.$inferSelect,
@@ -363,6 +385,7 @@ export const dbEntityRegistry = {
     tabToEnt: orgTabToEnt
   },
   projects: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.projectsTable,
     identityKey:
       'projectId' as const satisfies keyof typeof schemaPostgres.projectsTable.$inferSelect,
@@ -373,6 +396,7 @@ export const dbEntityRegistry = {
     tabToEnt: projectTabToEnt
   },
   providers: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.providersTable,
     identityKey:
       'providerFullId' as const satisfies keyof typeof schemaPostgres.providersTable.$inferSelect,
@@ -383,6 +407,7 @@ export const dbEntityRegistry = {
     tabToEnt: providerTabToEnt
   },
   queries: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.queriesTable,
     identityKey:
       'queryId' as const satisfies keyof typeof schemaPostgres.queriesTable.$inferSelect,
@@ -393,6 +418,7 @@ export const dbEntityRegistry = {
     tabToEnt: queryTabToEnt
   },
   reports: {
+    encryptionPolicy: 'metadata' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.reportsTable,
     identityKey:
       'reportFullId' as const satisfies keyof typeof schemaPostgres.reportsTable.$inferSelect,
@@ -403,6 +429,7 @@ export const dbEntityRegistry = {
     tabToEnt: reportTabToEnt
   },
   structs: {
+    encryptionPolicy: 'metadata' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.structsTable,
     identityKey:
       'structId' as const satisfies keyof typeof schemaPostgres.structsTable.$inferSelect,
@@ -413,6 +440,7 @@ export const dbEntityRegistry = {
     tabToEnt: structTabToEnt
   },
   users: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.usersTable,
     identityKey:
       'userId' as const satisfies keyof typeof schemaPostgres.usersTable.$inferSelect,
@@ -423,6 +451,7 @@ export const dbEntityRegistry = {
     tabToEnt: userTabToEnt
   },
   charts: {
+    encryptionPolicy: 'metadata' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.chartsTable,
     identityKey:
       'chartFullId' as const satisfies keyof typeof schemaPostgres.chartsTable.$inferSelect,
@@ -433,6 +462,7 @@ export const dbEntityRegistry = {
     tabToEnt: chartTabToEnt
   },
   ocEvents: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.ocEventsTable,
     identityKey:
       'eventId' as const satisfies keyof typeof schemaPostgres.ocEventsTable.$inferSelect,
@@ -443,6 +473,7 @@ export const dbEntityRegistry = {
     tabToEnt: ocEventTabToEnt
   },
   sessions: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.sessionsTable,
     identityKey:
       'sessionId' as const satisfies keyof typeof schemaPostgres.sessionsTable.$inferSelect,
@@ -453,6 +484,7 @@ export const dbEntityRegistry = {
     tabToEnt: sessionTabToEnt
   },
   ocSessions: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.ocSessionsTable,
     identityKey:
       'sessionId' as const satisfies keyof typeof schemaPostgres.ocSessionsTable.$inferSelect,
@@ -463,6 +495,7 @@ export const dbEntityRegistry = {
     tabToEnt: ocSessionTabToEnt
   },
   ocMessages: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.ocMessagesTable,
     identityKey:
       'messageId' as const satisfies keyof typeof schemaPostgres.ocMessagesTable.$inferSelect,
@@ -473,6 +506,7 @@ export const dbEntityRegistry = {
     tabToEnt: ocMessageTabToEnt
   },
   ocParts: {
+    encryptionPolicy: 'regular' as const satisfies DbEncryptionPolicy,
     table: schemaPostgres.ocPartsTable,
     identityKey:
       'partId' as const satisfies keyof typeof schemaPostgres.ocPartsTable.$inferSelect,

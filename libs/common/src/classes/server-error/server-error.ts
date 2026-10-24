@@ -1,5 +1,6 @@
 import type { BackendCachedColumnDoesNotExistError } from '#common/types/backend/errors/backend-cached-column-does-not-exist-error';
 import type { BackendCachedPartDoesNotExistError } from '#common/types/backend/errors/backend-cached-part-does-not-exist-error';
+import type { BackendDbServerTsIsInFutureError } from '#common/types/backend/errors/backend-db-server-ts-is-in-future-error';
 import type { BackendDconfigDoesNotExistError } from '#common/types/backend/errors/backend-dconfig-does-not-exist-error';
 import type { BackendFavoriteDoesNotExistError } from '#common/types/backend/errors/backend-favorite-does-not-exist-error';
 import type { BackendKitDoesNotExistError } from '#common/types/backend/errors/backend-kit-does-not-exist-error';
@@ -16,9 +17,10 @@ import type { Er } from '#common/types/shared/errors/er';
 
 type ServerErrorMessage =
   | Er
-  // Internal DB-reader failures that are not exposed by API responses.
+  // Internal DB failures that are not exposed by API responses.
   | BackendCachedColumnDoesNotExistError['code']
   | BackendCachedPartDoesNotExistError['code']
+  | BackendDbServerTsIsInFutureError['code']
   | BackendDconfigDoesNotExistError['code']
   | BackendKitDoesNotExistError['code']
   | BackendFavoriteDoesNotExistError['code']
