@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   type Model,
   Models,
@@ -8,11 +8,12 @@ import {
 } from '@opencode-ai/models';
 import { Result } from '@praha/byethrow';
 import OpenAI from 'openai';
-import { isCodexModelSupportedByOpencode } from '#backend/functions/llm-providers/codex/is-codex-model-supported-by-opencode/is-codex-model-supported-by-opencode';
 import {
-  type CodexModelsResult,
-  CodexService
-} from '#backend/services/codex/codex.service';
+  type GetCodexModelsOutput,
+  getCodexModels
+} from '#backend/functions/codex/get-codex-models/get-codex-models';
+import { isCodexModelSupportedByOpencode } from '#backend/functions/llm-providers/codex/is-codex-model-supported-by-opencode/is-codex-model-supported-by-opencode';
+import { DbService } from '#backend/services/db/db.service';
 import { anthropicModelToLlmModelPart } from '#backend/services/llm-model/anthropic-model-to-llm-model-part/anthropic-model-to-llm-model-part';
 import { codexModelToLlmModelPart } from '#backend/services/llm-model/codex-model-to-llm-model-part/codex-model-to-llm-model-part';
 import { openAiModelToLlmModelPart } from '#backend/services/llm-model/open-ai-model-to-llm-model-part/open-ai-model-to-llm-model-part';
@@ -46,7 +47,10 @@ export class LlmModelService {
   private readonly modelsDevTtlMs = 60 * 60 * 1000;
   private modelsDev?: ProviderMap;
   private modelsDevTs?: number;
-  constructor(private codexService: CodexService) {}
+  constructor(
+    private logger: Logger,
+    private db: DbService
+  ) {}
   async refreshModel(item: {
     providerType: ProviderType;
     apiKey?: string;
@@ -431,24 +435,27 @@ export class LlmModelService {
         return Result.succeed(result);
       }
 
-      let codexModelsResult: CodexModelsResult =
-        await this.codexService.getModels({ userId: userId });
+      let getCodexModelsOutput: GetCodexModelsOutput = await getCodexModels({
+        userId: userId,
+        logger: this.logger,
+        db: this.db
+      });
 
-      if (isDefinedAndNotEmpty(codexModelsResult.errorMessage)) {
+      if (isDefinedAndNotEmpty(getCodexModelsOutput.errorMessage)) {
         let result: LlmModelPartsResult = {
           modelParts: [],
-          errorMessage: codexModelsResult.errorMessage
+          errorMessage: getCodexModelsOutput.errorMessage
         };
 
         return Result.succeed(result);
       }
 
-      let codexModelParts: LlmModelPart[] = codexModelsResult.codexModels.map(
-        codexModel =>
+      let codexModelParts: LlmModelPart[] =
+        getCodexModelsOutput.codexModels.map(codexModel =>
           codexModelToLlmModelPart({
             codexModel: codexModel
           })
-      );
+        );
 
       let result: LlmModelPartsResult = {
         modelParts: codexModelParts

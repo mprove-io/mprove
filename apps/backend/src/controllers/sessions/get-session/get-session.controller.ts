@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, asc, eq, gt, max } from 'drizzle-orm';
 import {
-  ToBackendGetSessionRequestDto,
+  type ToBackendGetSessionRequestDto,
   ToBackendGetSessionResponseDto
 } from '#backend/controllers/sessions/get-session/get-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -15,10 +15,12 @@ import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { getBasicSessionsList } from '#backend/functions/db/sessions/get-basic-sessions-list/get-basic-sessions-list';
+import { tabToOcSessionApi } from '#backend/functions/db/sessions/tab-to-oc-session-api/tab-to-oc-session-api';
+import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -34,7 +36,6 @@ import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/ses
 @Controller()
 export class GetSessionController {
   constructor(
-    private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
     private editorStreamService: EditorStreamService,
     private db: DbService
@@ -151,7 +152,7 @@ export class GetSessionController {
       ),
       Result.bind('sessionApi', v =>
         Result.succeed(
-          this.sessionsService.tabToSessionApi({
+          tabToSessionApi({
             session: v.session,
             ocSession: v.ocSession
           })
@@ -160,7 +161,7 @@ export class GetSessionController {
       Result.bind('ocSessionApi', v =>
         Result.succeed(
           v.ocSession
-            ? this.sessionsService.tabToOcSessionApi({
+            ? tabToOcSessionApi({
                 ocSession: v.ocSession
               })
             : undefined
@@ -188,10 +189,11 @@ export class GetSessionController {
         })
       ),
       Result.bind('sessionList', v =>
-        this.sessionsService.getBasicSessionsList({
+        getBasicSessionsList({
           projectId: v.session.projectId,
           userId: v.userId,
-          currentSessionId: v.sessionId
+          currentSessionId: v.sessionId,
+          db: this.db
         })
       ),
       Result.map(

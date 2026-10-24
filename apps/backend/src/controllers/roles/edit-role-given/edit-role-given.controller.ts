@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendEditRoleGivenRequestDto,
+  type ToBackendEditRoleGivenRequestDto,
   ToBackendEditRoleGivenResponseDto
 } from '#backend/controllers/roles/edit-role-given/edit-role-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -13,10 +13,12 @@ import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
 import { validateGivenValues } from '#backend/functions/db/givens/validate-given-values/validate-given-values';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';
+import { getRoleGivenCheckExists } from '#backend/functions/db/roles/get-role-given-check-exists/get-role-given-check-exists';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -27,11 +29,7 @@ import type { ToBackendEditRoleGivenOutput } from '#common/types/backend/routes/
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class EditRoleGivenController {
-  constructor(
-    private membersService: MembersService,
-    private rolesService: RolesService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendEditRoleGiven' satisfies ToBackendRoute)
   @ApiOperation({
@@ -59,9 +57,10 @@ export class EditRoleGivenController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('role', v =>
@@ -73,7 +72,7 @@ export class EditRoleGivenController {
         })
       ),
       Result.bind('roleGiven', v =>
-        this.rolesService.getRoleGivenCheckExists({
+        getRoleGivenCheckExists({
           role: v.role,
           givenId: v.givenId
         })
@@ -101,11 +100,16 @@ export class EditRoleGivenController {
         this.db.write({ insertOrUpdate: { roles: [v.role] } })
       ),
       Result.bind('apiRoles', v =>
-        this.rolesService.getApiRoles({ projectId: v.projectId })
+        getApiRoles({
+          projectId: v.projectId,
+          db: this.db
+        })
       ),
       Result.map(
         (v): ToBackendEditRoleGivenOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           roles: v.apiRoles
         })
       )

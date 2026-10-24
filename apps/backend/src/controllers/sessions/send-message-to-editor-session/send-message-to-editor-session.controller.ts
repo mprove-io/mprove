@@ -8,7 +8,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSendMessageToEditorSessionRequestDto,
+  type ToBackendSendMessageToEditorSessionRequestDto,
   ToBackendSendMessageToEditorSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -24,14 +24,14 @@ import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { customRetry } from '#backend/functions/custom-retry/custom-retry';
+import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
+import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex/editor-codex.service';
 import {
   EditorOpencodeService,
@@ -39,8 +39,10 @@ import {
 } from '#backend/services/editor/editor-opencode/editor-opencode.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
-import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
-import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
+import {
+  EditorStreamService,
+  type ExecuteInteractionOutput
+} from '#backend/services/editor/editor-stream/editor-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -75,15 +77,11 @@ type MakeRotatedSessionCredentialsOutput = {
 @Controller()
 export class SendMessageToEditorSessionController {
   constructor(
-    private sessionsService: SessionsService,
-    private providersService: ProvidersService,
-    private usersService: UsersService,
     private editorStreamService: EditorStreamService,
     private editorSessionLockService: EditorSessionLockService,
     private editorOpencodeService: EditorOpencodeService,
     private editorCodexService: EditorCodexService,
     private editorSandboxService: EditorSandboxService,
-    private codexService: CodexService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -153,13 +151,14 @@ export class SendMessageToEditorSessionController {
       ),
       Result.bind('modelSelection', async v =>
         v.interactionType === 'Message'
-          ? this.providersService.getModelSelection({
+          ? getModelSelection({
               projectId: v.session.projectId,
               providerId: v.providerId,
               modelId: v.modelId,
               variant: v.variant,
               isUserCodexAuthSet: isDefined(v.user.codexAuth),
-              isBuilder: true
+              isBuilder: true,
+              db: this.db
             })
           : Result.succeed(undefined)
       ),
@@ -196,7 +195,7 @@ export class SendMessageToEditorSessionController {
       ),
       Result.map(
         (v): ToBackendSendMessageToEditorSessionOutput => ({
-          session: this.sessionsService.tabToSessionApi({
+          session: tabToSessionApi({
             session: v.updatedSession,
             ocSession: v.ocSession
           })
@@ -246,15 +245,17 @@ export class SendMessageToEditorSessionController {
         ),
         Result.andThrough(async v =>
           v.isCodex
-            ? this.codexService.prewarmCodexAuth({
-                userId: v.user.userId
+            ? prewarmCodexAuth({
+                userId: v.user.userId,
+                db: this.db
               })
             : Result.succeed()
         ),
         Result.bind('freshUser', async v =>
           v.isCodex
-            ? this.usersService.getUserCheckExists({
-                userId: v.user.userId
+            ? getUserCheckExists({
+                userId: v.user.userId,
+                db: this.db
               })
             : Result.succeed(v.user)
         ),

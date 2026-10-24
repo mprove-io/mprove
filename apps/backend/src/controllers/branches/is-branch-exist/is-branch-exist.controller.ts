@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendIsBranchExistRequestDto,
+  type ToBackendIsBranchExistRequestDto,
   ToBackendIsBranchExistResponseDto
 } from '#backend/controllers/branches/is-branch-exist/is-branch-exist.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -11,9 +11,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsBranchExistOutput } from '#common/types/backend/routes/branches/is-branch-exist/is-branch-exist-output';
@@ -22,10 +22,7 @@ import type { ToBackendIsBranchExistOutput } from '#common/types/backend/routes/
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class IsBranchExistController {
-  constructor(
-    private sessionsService: SessionsService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendIsBranchExist' satisfies ToBackendRoute)
   @ApiOperation({
@@ -47,11 +44,12 @@ export class IsBranchExistController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>

@@ -3,18 +3,12 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getDashboardCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-check-exists-and-access/get-dashboard-check-exists-and-access';
 import { getDashboardXUsingDashboardTab } from '#backend/functions/db/dashboards/get-dashboard-x-using-dashboard-tab/get-dashboard-x-using-dashboard-tab';
 import type { DbService } from '#backend/services/db/db.service';
-import type { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import type { ModelsService } from '#backend/services/db/models/models.service';
-import type { QueriesService } from '#backend/services/db/queries/queries.service';
 import type { GetDashboardXCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-dashboard-x-check-exists-and-access-error';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Member } from '#common/types/backend/parts/member';
 
 export async function getDashboardXCheckExistsAndAccess(item: {
   db: DbService;
-  modelsService: ModelsService;
-  mconfigsService: MconfigsService;
-  queriesService: QueriesService;
   dashboardId: string;
   structId: string;
   projectId: string;
@@ -35,9 +29,6 @@ export async function getDashboardXCheckExistsAndAccess(item: {
     Result.bind('dashboardX', v =>
       getDashboardXUsingDashboardTab({
         db: v.db,
-        modelsService: v.modelsService,
-        mconfigsService: v.mconfigsService,
-        queriesService: v.queriesService,
         dashboard: v.dashboard,
         structId: v.structId,
         projectId: v.projectId,

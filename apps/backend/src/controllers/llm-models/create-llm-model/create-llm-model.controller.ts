@@ -4,17 +4,18 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendCreateLlmModelRequestDto,
+  type ToBackendCreateLlmModelRequestDto,
   ToBackendCreateLlmModelResponseDto
 } from '#backend/controllers/llm-models/create-llm-model/create-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { checkLlmModelDoesNotExist } from '#backend/functions/db/providers/check-llm-model-does-not-exist/check-llm-model-does-not-exist';
+import { tabToApiProvider } from '#backend/functions/db/providers/tab-to-api-provider/tab-to-api-provider';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { LlmModelService } from '#backend/services/llm-model/llm-model.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -30,8 +31,6 @@ import type { ToBackendCreateLlmModelOutput } from '#common/types/backend/routes
 @Controller()
 export class CreateLlmModelController {
   constructor(
-    private providersService: ProvidersService,
-    private membersService: MembersService,
     private llmModelService: LlmModelService,
     private db: DbService
   ) {}
@@ -68,9 +67,10 @@ export class CreateLlmModelController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('provider', v =>
@@ -82,7 +82,7 @@ export class CreateLlmModelController {
         })
       ),
       Result.andThrough(v =>
-        this.providersService.checkLlmModelDoesNotExist({
+        checkLlmModelDoesNotExist({
           provider: v.provider,
           modelId: v.modelId
         })
@@ -127,7 +127,7 @@ export class CreateLlmModelController {
       ),
       Result.map(
         (v): ToBackendCreateLlmModelOutput => ({
-          provider: this.providersService.tabToApiProvider({
+          provider: tabToApiProvider({
             provider: v.provider,
             isIncludePasswords: false
           })

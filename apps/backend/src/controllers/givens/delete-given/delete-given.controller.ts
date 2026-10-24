@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteGivenRequestDto,
+  type ToBackendDeleteGivenRequestDto,
   ToBackendDeleteGivenResponseDto
 } from '#backend/controllers/givens/delete-given/delete-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -16,11 +16,12 @@ import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -32,7 +33,6 @@ import type { ToBackendDeleteGivenOutput } from '#common/types/backend/routes/gi
 @Controller()
 export class DeleteGivenController {
   constructor(
-    private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -62,9 +62,10 @@ export class DeleteGivenController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -121,7 +122,9 @@ export class DeleteGivenController {
       ),
       Result.map(
         (v): ToBackendDeleteGivenOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           givens: v.apiGivens
         })
       )

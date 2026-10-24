@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { DbService } from '#backend/services/db/db.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { ExplorerModelPart } from '#backend/services/explorer/types/explorer-model-part';
 import type {
   ExplorerModel,
@@ -27,10 +29,9 @@ import type { DiskCatalogFile } from '#common/types/disk/parts/catalog/disk-cata
 export class ExplorerModelPartsService {
   constructor(
     private tabService: TabService,
-    private modelsService: ModelsService,
-    private structsService: StructsService,
     private rpcService: RpcService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   async getExplorerModelParts(item: {
@@ -109,9 +110,11 @@ export class ExplorerModelPartsService {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('models', v =>
@@ -128,7 +131,7 @@ export class ExplorerModelPartsService {
         Result.succeed(
           v.models
             .map(model =>
-              this.modelsService.tabToApi({
+              modelTabToApi({
                 model: model,
                 hasAccess: checkModelAccess({
                   member: v.userMember,

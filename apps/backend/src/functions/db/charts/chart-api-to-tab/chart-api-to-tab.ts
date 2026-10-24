@@ -1,22 +1,21 @@
 import type { ChartTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeChartFullId } from '#backend/functions/hash/make-chart-full-id/make-chart-full-id';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Chart } from '#common/types/blockml/parts/chart/chart';
 import type { ChartType } from '#common/types/blockml/parts/chart/chart-type';
 
 export function chartApiToTab(item: {
-  hashService: HashService;
   apiChart: Chart;
   chartType: ChartType;
 }): ChartTab {
-  let { hashService, apiChart, chartType } = item;
+  let { apiChart, chartType } = item;
 
   if (isUndefined(apiChart)) {
     return;
   }
 
   let chart: ChartTab = {
-    chartFullId: hashService.makeChartFullId({
+    chartFullId: makeChartFullId({
       structId: apiChart.structId,
       chartId: apiChart.chartId
     }),

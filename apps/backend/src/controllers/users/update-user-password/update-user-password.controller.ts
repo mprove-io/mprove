@@ -3,19 +3,20 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendUpdateUserPasswordRequestDto,
+  type ToBackendUpdateUserPasswordRequestDto,
   ToBackendUpdateUserPasswordResponseDto
 } from '#backend/controllers/users/update-user-password/update-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import {
+  type CreateSaltAndHashOutput,
+  createSaltAndHash
+} from '#backend/functions/hash/create-salt-and-hash/create-salt-and-hash';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
-import {
-  type CreateSaltAndHashOutput,
-  HashService
-} from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { BackendUpdatePasswordWrongTokenError } from '#common/types/backend/errors/backend-update-password-wrong-token-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -25,10 +26,7 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @UseGuards(ThrottlerIpGuard)
 @Controller()
 export class UpdateUserPasswordController {
-  constructor(
-    private hashService: HashService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendUpdateUserPassword' satisfies ToBackendRoute)
   @ApiOperation({
@@ -48,7 +46,7 @@ export class UpdateUserPasswordController {
       }),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('passwordResetTokenHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.passwordResetToken,
           hashSecret: v.hashSecret
         })
@@ -73,8 +71,9 @@ export class UpdateUserPasswordController {
           : Result.succeed();
       }),
       Result.bind('passwordHS', async v => {
-        let passwordHS: CreateSaltAndHashOutput =
-          await this.hashService.createSaltAndHash({ input: v.newPassword });
+        let passwordHS: CreateSaltAndHashOutput = await createSaltAndHash({
+          input: v.newPassword
+        });
 
         return Result.succeed(passwordHS);
       }),

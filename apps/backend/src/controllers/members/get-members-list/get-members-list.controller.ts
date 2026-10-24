@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendGetMembersListRequestDto,
+  type ToBackendGetMembersListRequestDto,
   ToBackendGetMembersListResponseDto
 } from '#backend/controllers/members/get-members-list/get-members-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -11,9 +11,10 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { wrapToApiEnvUser } from '#backend/functions/db/envs/wrap-to-api-env-user/wrap-to-api-env-user';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMembersListOutput } from '#common/types/backend/routes/members/get-members-list/get-members-list-output';
@@ -22,10 +23,7 @@ import type { ToBackendGetMembersListOutput } from '#common/types/backend/routes
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetMembersListController {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetMembersList' satisfies ToBackendRoute)
   @ApiOperation({
@@ -47,9 +45,10 @@ export class GetMembersListController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('members', v =>
@@ -59,7 +58,9 @@ export class GetMembersListController {
       ),
       Result.map(
         (v): ToBackendGetMembersListOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           membersList: v.members.map(member =>
             wrapToApiEnvUser({ member: member })
           )

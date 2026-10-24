@@ -13,11 +13,11 @@ import {
   type GenerateApiKeyPartsOutput,
   generateApiKeyParts
 } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { DbErrorToError } from '#common/types/backend/function-errors/db/db-error-to-error';
@@ -30,7 +30,6 @@ import type { ToBackendGenerateUserApiKeyOutput } from '#common/types/backend/ro
 @Controller()
 export class GenerateUserApiKeyController {
   constructor(
-    private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -52,7 +51,9 @@ export class GenerateUserApiKeyController {
     return Result.pipe(
       Result.succeed({ user: user }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.bind('apiKeyParts', async v => {
         let apiKeyParts: GenerateApiKeyPartsOutput;

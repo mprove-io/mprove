@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendMergeRepoRequestDto,
+  type ToBackendMergeRepoRequestDto,
   ToBackendMergeRepoResponseDto
 } from '#backend/controllers/repos/merge-repo/merge-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -12,15 +14,17 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -36,13 +40,10 @@ import type { ToBackendMergeRepoOutput } from '#common/types/backend/routes/repo
 export class MergeRepoController {
   constructor(
     private tabService: TabService,
-    private membersService: MembersService,
-    private modelsService: ModelsService,
     private rpcService: RpcService,
-    private sessionsService: SessionsService,
-    private structsService: StructsService,
-    private blockmlService: BlockmlService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendMergeRepo' satisfies ToBackendRoute)
@@ -69,11 +70,12 @@ export class MergeRepoController {
         user: user
       }),
       Result.bind('repoType', v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: false
+          allowProdRepo: false,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -87,9 +89,10 @@ export class MergeRepoController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditor({
+        getMemberCheckIsEditor({
           projectId: v.projectId,
-          memberId: v.user.userId
+          memberId: v.user.userId,
+          db: this.db
         })
       ),
       Result.bind('branch', v =>
@@ -150,7 +153,7 @@ export class MergeRepoController {
         })
       ),
       Result.andThrough(v =>
-        this.blockmlService.rebuildBranchBridges({
+        rebuildBranchBridges({
           branchBridges: v.branchBridges,
           envId: v.envId,
           traceId: v.traceId,
@@ -158,7 +161,12 @@ export class MergeRepoController {
           projectId: v.projectId,
           repoId: v.repoId,
           diskFiles: v.diskMergeRepoOutput.files,
-          mproveDir: v.diskMergeRepoOutput.mproveDir
+          mproveDir: v.diskMergeRepoOutput.mproveDir,
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         })
       ),
       Result.andThrough(v =>
@@ -172,23 +180,26 @@ export class MergeRepoController {
         Result.succeed(v.branchBridges.find(bridge => bridge.envId === v.envId))
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.currentBridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('modelPartXs', v =>
-        this.modelsService.getModelPartXs({
+        getModelPartXs({
           structId: v.struct.structId,
-          apiUserMember: this.membersService.tabToApi({
+          apiUserMember: memberTabToApi({
             member: v.userMember
-          })
+          }),
+          db: this.db
         })
       ),
       Result.map(
         (v): ToBackendMergeRepoOutput => ({
           repo: v.diskMergeRepoOutput.repo,
-          struct: this.structsService.tabToApi({
+          struct: structTabToApi({
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -6,7 +6,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateProjectRequestDto,
+  type ToBackendCreateProjectRequestDto,
   ToBackendCreateProjectResponseDto
 } from '#backend/controllers/projects/create-project/create-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -15,11 +15,14 @@ import { notesTable } from '#backend/drizzle/postgres/schema/notes';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
+import { addProject } from '#backend/functions/db/projects/add-project/add-project';
+import { tabToApiProject } from '#backend/functions/db/projects/tab-to-api-project/tab-to-api-project';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -33,11 +36,11 @@ import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/
 @Controller()
 export class CreateProjectController {
   constructor(
-    private hashService: HashService,
-    private projectsService: ProjectsService,
-    private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
-    private db: DbService
+    private db: DbService,
+    private tabService: TabService,
+    private rpcService: RpcService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendCreateProject' satisfies ToBackendRoute)
@@ -68,7 +71,7 @@ export class CreateProjectController {
         })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwner({
+        checkUserIsOrgOwner({
           org: v.org,
           userId: v.user.userId
         })
@@ -83,7 +86,7 @@ export class CreateProjectController {
       }),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('nameHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.name,
           hashSecret: v.hashSecret
         })
@@ -109,7 +112,7 @@ export class CreateProjectController {
             })
       ),
       Result.bind('newProject', v =>
-        this.projectsService.addProject({
+        addProject({
           orgId: v.orgId,
           name: v.name,
           traceId: v.traceId,
@@ -125,7 +128,12 @@ export class CreateProjectController {
           privateKeyEncrypted: v.note?.privateKeyEncrypted,
           passPhrase: v.note?.passPhrase,
           evs: [],
-          connections: []
+          connections: [],
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          db: this.db,
+          cs: this.cs,
+          logger: this.logger
         })
       ),
       Result.andThrough(v =>
@@ -136,7 +144,7 @@ export class CreateProjectController {
       ),
       Result.map(
         (v): ToBackendCreateProjectOutput => ({
-          project: this.projectsService.tabToApiProject({
+          project: tabToApiProject({
             project: v.newProject,
             isAddPublicKey: true,
             isAddGitUrl: true

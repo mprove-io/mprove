@@ -5,10 +5,11 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { addModelLevelToChartSpaceNodesRecursive } from '#backend/functions/db/charts/get-charts-catalog/add-model-level-to-chart-space-nodes-recursive/add-model-level-to-chart-space-nodes-recursive';
+import { makeChartSpaceUnit } from '#backend/functions/db/charts/get-charts-catalog/make-chart-space-unit/make-chart-space-unit';
+import { makeChartUnit } from '#backend/functions/db/charts/get-charts-catalog/make-chart-unit/make-chart-unit';
 import { getFavoriteTargetIds } from '#backend/functions/db/favorites/get-favorite-target-ids/get-favorite-target-ids';
+import { makeSpaceNodes } from '#backend/functions/space/make-space-nodes/make-space-nodes';
 import type { DbService } from '#backend/services/db/db.service';
-import type { SpaceService } from '#backend/services/space/space.service';
-import type { UnitsService } from '#backend/services/units/units.service';
 import { MY_CHARTS_SPACE_TITLE } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetChartsCatalogError } from '#common/types/backend/function-errors/get-charts-catalog-error';
@@ -24,8 +25,6 @@ export type GetChartsCatalogOutput = {
 
 export async function getChartsCatalog(item: {
   db: DbService;
-  unitsService: UnitsService;
-  spaceService: SpaceService;
   projectId: string;
   structId: string;
   user: UserTab;
@@ -124,7 +123,7 @@ export async function getChartsCatalog(item: {
     Result.bind('chartSpaceUnits', v =>
       Result.succeed(
         v.sortedSavedCharts.map(chart =>
-          v.unitsService.makeChartSpaceUnit({
+          makeChartSpaceUnit({
             chart: chart,
             model: v.models.find(model => model.modelId === chart.modelId),
             member: v.apiUserMember,
@@ -136,7 +135,7 @@ export async function getChartsCatalog(item: {
     Result.bind('chartUnitDrafts', v =>
       Result.succeed(
         v.sortedDraftCharts.map(chart =>
-          v.unitsService.makeChartUnit({
+          makeChartUnit({
             chart: chart,
             model: v.models.find(model => model.modelId === chart.modelId),
             member: v.apiUserMember,
@@ -151,7 +150,7 @@ export async function getChartsCatalog(item: {
     ),
     Result.bind('chartSpaceNodes', v =>
       Result.succeed(
-        v.spaceService.makeSpaceNodes({
+        makeSpaceNodes({
           spaces: v.spaces ?? [],
           units: v.chartSpaceUnits,
           member: v.apiUserMember,

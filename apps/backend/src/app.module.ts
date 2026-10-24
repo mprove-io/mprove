@@ -1,7 +1,12 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { Logger, Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Logger,
+  Module,
+  type OnModuleDestroy,
+  type OnModuleInit
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,14 +16,14 @@ import { seconds, ThrottlerModule } from '@nestjs/throttler';
 import { and, DefaultLogger, eq, isNotNull } from 'drizzle-orm';
 import {
   drizzle as drizzlePg,
-  NodePgDatabase
+  type NodePgDatabase
 } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import fse from 'fs-extra';
 import Redis from 'ioredis';
 import type { ClientConfig } from 'pg';
 import pg from 'pg';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   ConnectionTab,
   DconfigTab,
@@ -29,15 +34,19 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
 import { getDconfigHashSecretUnwrap } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret-unwrap/get-dconfig-hash-secret-unwrap';
+import { addDemoMemberToDemoProject } from '#backend/functions/db/members/add-demo-member-to-demo-project/add-demo-member-to-demo-project';
+import { addOrgUnwrap } from '#backend/functions/db/orgs/add-org-unwrap/add-org-unwrap';
+import { addProjectUnwrap } from '#backend/functions/db/projects/add-project-unwrap/add-project-unwrap';
+import { addDemoUser } from '#backend/functions/db/users/add-demo-user/add-demo-user';
+import { addMproveAdminUser } from '#backend/functions/db/users/add-mprove-admin-user/add-mprove-admin-user';
+import { createHashSecret } from '#backend/functions/hash/create-hash-secret/create-hash-secret';
+import { makeHashUnwrap } from '#backend/functions/hash/make-hash-unwrap/make-hash-unwrap';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { JwtAuthGuard } from '#backend/guards/jwt-auth/jwt-auth.guard';
 import { ZodValidationPipe } from '#backend/pipes/zod-validation/zod-validation.pipe';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { TabCheckerService } from '#backend/services/tab-checker/tab-checker.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
@@ -60,7 +69,7 @@ import { appProviders } from './app-providers';
 import { getConfig } from './config/get.config';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
-import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
+import type { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
 import { connectionsTable } from './drizzle/postgres/schema/connections';
 import { dconfigsTable } from './drizzle/postgres/schema/dconfigs';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
@@ -170,15 +179,12 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
 })
 export class AppModule implements OnModuleInit, OnModuleDestroy {
   constructor(
-    private usersService: UsersService,
-    private membersService: MembersService,
-    private orgsService: OrgsService,
     private checkTabService: TabCheckerService,
-    private projectsService: ProjectsService,
-    private hashService: HashService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService
+    private db: DbService,
+    private rpcService: RpcService,
+    private tabService: TabService
   ) {}
 
   @WithTraceSpan()
@@ -241,7 +247,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         });
 
         if (isUndefined(dconfig)) {
-          let hashSecret = this.hashService.createHashSecret();
+          let hashSecret = createHashSecret();
 
           let dconfigInit: DconfigTab = {
             dconfigId: makeId(),
@@ -299,7 +305,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         ) {
           let hashSecret = await getDconfigHashSecretUnwrap({ db: this.db });
 
-          let mproveAdminEmailHash = this.hashService.makeHashUnwrap({
+          let mproveAdminEmailHash = makeHashUnwrap({
             input: mproveAdminEmail,
             hashSecret: hashSecret
           });
@@ -309,9 +315,10 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           });
 
           if (isUndefined(mproveAdminUser)) {
-            mproveAdminUser = await this.usersService.addMproveAdminUser({
+            mproveAdminUser = await addMproveAdminUser({
               email: mproveAdminEmail,
-              password: mproveAdminInitialPassword
+              password: mproveAdminInitialPassword,
+              db: this.db
             });
           }
         }
@@ -411,7 +418,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     }
 
     if (isUpdateHashSecret === true) {
-      dconfigA.hashSecret = this.hashService.createHashSecret(); // hashSecretCheck is prev value
+      dconfigA.hashSecret = createHashSecret(); // hashSecretCheck is prev value
 
       await this.db.writeUnwrap({
         update: {
@@ -458,12 +465,14 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       });
 
       if (isUndefined(demoOrg)) {
-        demoOrg = await this.orgsService.addOrgUnwrap({
+        demoOrg = await addOrgUnwrap({
           ownerId: mproveAdminUser.userId,
           ownerEmail: mproveAdminUser.email,
           name: DEMO_ORG_NAME,
           traceId: makeId(),
-          orgId: demoOrgId
+          orgId: demoOrgId,
+          rpcService: this.rpcService,
+          db: this.db
         });
       }
 
@@ -521,7 +530,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           BackendConfig['demoProjectE2bApiKey']
         >('demoProjectE2bApiKey');
 
-        demoProject = await this.projectsService.addProjectUnwrap({
+        demoProject = await addProjectUnwrap({
           orgId: demoOrg.orgId,
           name: demoProjectName,
           user: mproveAdminUser,
@@ -537,7 +546,12 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           passPhrase: demoProjectRemotePassPhrase,
           e2bApiKey: demoProjectE2bApiKey,
           evs: [ev1],
-          connections: connections
+          connections: connections,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          db: this.db,
+          cs: this.cs,
+          logger: this.logger
         });
       }
 
@@ -546,7 +560,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       let demoUserEmail = RESTRICTED_USER_EMAIL;
       let demoUserInitialPassword = RESTRICTED_USER_PASSWORD;
 
-      let demoUserEmailHash = this.hashService.makeHashUnwrap({
+      let demoUserEmailHash = makeHashUnwrap({
         input: demoUserEmail,
         hashSecret: hashSecret
       });
@@ -556,13 +570,16 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       });
 
       if (isUndefined(demoUser)) {
-        demoUser = await this.usersService.addDemoUser({
+        demoUser = await addDemoUser({
           email: demoUserEmail,
-          password: demoUserInitialPassword
+          password: demoUserInitialPassword,
+          db: this.db
         });
 
-        await this.membersService.addDemoMemberToDemoProject({
-          user: demoUser
+        await addDemoMemberToDemoProject({
+          user: demoUser,
+          cs: this.cs,
+          db: this.db
         });
       }
     }
@@ -590,7 +607,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       isDefinedAndNotEmpty(demoProjectDwhPostgresPassword)
     ) {
       let c1 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c1_postgres',
@@ -635,7 +651,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       );
 
       let c3 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c3_bigquery',
@@ -670,7 +685,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       isDefinedAndNotEmpty(demoProjectDwhSnowflakeAccount)
     ) {
       let c4 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c4_snowflake',
@@ -712,7 +726,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       isDefinedAndNotEmpty(demoProjectDwhMotherDuckToken)
     ) {
       let c5 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c5_duckdb',
@@ -747,7 +760,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       isDefinedAndNotEmpty(demoProjectDwhMysqlPassword)
     ) {
       let c6 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c6_mysql',
@@ -795,7 +807,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       );
 
       let c7 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c7_google',
@@ -833,7 +844,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
 
     if (!isC8ConnectionExist && isDefinedAndNotEmpty(demoProjectDwhTrinoUser)) {
       let c8 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c8_trino',
@@ -872,7 +882,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
       isDefinedAndNotEmpty(demoProjectDwhPrestoUser)
     ) {
       let c9 = makeConnection({
-        hashService: this.hashService,
         projectId: demoProjectId,
         envId: PROJECT_ENV_PROD,
         connectionId: 'c9_presto',

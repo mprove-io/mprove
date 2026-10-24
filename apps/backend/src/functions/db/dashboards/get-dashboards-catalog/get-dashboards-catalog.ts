@@ -3,10 +3,11 @@ import { and, eq, or } from 'drizzle-orm';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { checkAccess } from '#backend/functions/check-access/check-access';
+import { makeDashboardSpaceUnit } from '#backend/functions/db/dashboards/get-dashboards-catalog/make-dashboard-space-unit/make-dashboard-space-unit';
+import { makeDashboardUnit } from '#backend/functions/db/dashboards/get-dashboards-catalog/make-dashboard-unit/make-dashboard-unit';
 import { getFavoriteTargetIds } from '#backend/functions/db/favorites/get-favorite-target-ids/get-favorite-target-ids';
+import { makeSpaceNodes } from '#backend/functions/space/make-space-nodes/make-space-nodes';
 import type { DbService } from '#backend/services/db/db.service';
-import type { SpaceService } from '#backend/services/space/space.service';
-import type { UnitsService } from '#backend/services/units/units.service';
 import { MY_DASHBOARDS_SPACE_TITLE } from '#common/constants/top';
 import type { GetDashboardsCatalogError } from '#common/types/backend/function-errors/get-dashboards-catalog-error';
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard/dashboard-unit';
@@ -21,8 +22,6 @@ export type GetDashboardsCatalogOutput = {
 
 export async function getDashboardsCatalog(item: {
   db: DbService;
-  unitsService: UnitsService;
-  spaceService: SpaceService;
   projectId: string;
   structId: string;
   user: UserTab;
@@ -83,7 +82,7 @@ export async function getDashboardsCatalog(item: {
     Result.bind('dashboardSpaceUnits', v =>
       Result.succeed(
         v.savedDashboards.map(dashboard =>
-          v.unitsService.makeDashboardSpaceUnit({
+          makeDashboardSpaceUnit({
             dashboard: dashboard,
             member: v.apiUserMember,
             favoriteDashboardIds: v.favoriteDashboardIds
@@ -94,7 +93,7 @@ export async function getDashboardsCatalog(item: {
     Result.map(
       (v): GetDashboardsCatalogOutput => ({
         dashboardUnitDrafts: v.draftDashboards.map(dashboard =>
-          v.unitsService.makeDashboardUnit({
+          makeDashboardUnit({
             dashboard: dashboard,
             member: v.apiUserMember,
             favoriteDashboardIds: [],
@@ -105,7 +104,7 @@ export async function getDashboardsCatalog(item: {
               : ''
           })
         ),
-        dashboardSpaceNodes: v.spaceService.makeSpaceNodes({
+        dashboardSpaceNodes: makeSpaceNodes({
           spaces: v.spaces ?? [],
           units: v.dashboardSpaceUnits,
           member: v.apiUserMember,

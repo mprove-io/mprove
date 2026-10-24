@@ -2,19 +2,18 @@ import { Result } from '@praha/byethrow';
 import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
 import type { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeDashboardFullId } from '#backend/functions/hash/make-dashboard-full-id/make-dashboard-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { DashboardLt } from '#common/types/shared/st-lt/dashboards/dashboard-lt';
 import type { DashboardSt } from '#common/types/shared/st-lt/dashboards/dashboard-st';
 
 export function dashboardTabToEnt(item: {
   tab: DashboardTab;
-  hashService: HashService;
   tabService: TabService;
   isEncryptDb: boolean;
   isEncryptMetadata: boolean;
 }): Result.Result<DashboardEnt, never> {
-  let { tab, hashService, tabService, isEncryptDb, isEncryptMetadata } = item;
+  let { tab, tabService, isEncryptDb, isEncryptMetadata } = item;
 
   let dashboardSt: DashboardSt = {
     title: tab.title,
@@ -25,10 +24,11 @@ export function dashboardTabToEnt(item: {
     tiles: tab.tiles,
     fields: tab.fields
   };
+
   let dashboardLt: DashboardLt = { content: tab.content };
 
   let dashboardEnt: DashboardEnt = {
-    dashboardFullId: hashService.makeDashboardFullId({
+    dashboardFullId: makeDashboardFullId({
       structId: tab.structId,
       dashboardId: tab.dashboardId
     }),

@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import {
-  ToBackendGetBranchesListRequestDto,
+  type ToBackendGetBranchesListRequestDto,
   ToBackendGetBranchesListResponseDto
 } from '#backend/controllers/branches/get-branches-list/get-branches-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -16,10 +16,10 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROD_REPO_ID } from '#common/constants/top';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -29,11 +29,7 @@ import type { ToBackendGetBranchesListOutput } from '#common/types/backend/route
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetBranchesListController {
-  constructor(
-    private membersService: MembersService,
-    private sessionsService: SessionsService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetBranchesList' satisfies ToBackendRoute)
   @ApiOperation({
@@ -125,9 +121,11 @@ export class GetBranchesListController {
       ),
       Result.map(
         (v): ToBackendGetBranchesListOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           sessionsList: v.sessions.map(session =>
-            this.sessionsService.tabToSessionApi({
+            tabToSessionApi({
               session: session,
               ocSession: v.ocSessionsById[session.sessionId]
             })

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
@@ -6,7 +6,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateMemberRequestDto,
+  type ToBackendCreateMemberRequestDto,
   ToBackendCreateMemberResponseDto
 } from '#backend/controllers/members/create-member/create-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -22,17 +22,20 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import { checkMemberDoesNotExist } from '#backend/functions/db/members/check-member-does-not-exist/check-member-does-not-exist';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { makeMember } from '#backend/functions/db/members/make-member/make-member';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { makeAlias } from '#backend/functions/db/users/make-alias/make-alias';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -90,14 +93,11 @@ import type { ToBackendCreateMemberOutput } from '#common/types/backend/routes/m
 export class CreateMemberController {
   constructor(
     private tabService: TabService,
-    private hashService: HashService,
     private rpcService: RpcService,
-    private blockmlService: BlockmlService,
-    private usersService: UsersService,
-    private membersService: MembersService,
     private emailService: EmailService,
     private cs: ConfigService<BackendConfig>,
-    private db: DbService
+    private db: DbService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendCreateMember' satisfies ToBackendRoute)
@@ -125,14 +125,15 @@ export class CreateMemberController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('emailHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.email,
           hashSecret: v.hashSecret
         })
@@ -148,7 +149,10 @@ export class CreateMemberController {
         }
 
         let aliasResult: Result.Result<string, MakeAliasError> =
-          await this.usersService.makeAlias({ email: v.email });
+          await makeAlias({
+            email: v.email,
+            db: this.db
+          });
 
         if (Result.isFailure(aliasResult)) {
           return Result.fail(aliasResult.error);
@@ -193,14 +197,15 @@ export class CreateMemberController {
       Result.andThrough(v =>
         isUndefined(v.invitedUser)
           ? Result.succeed()
-          : this.membersService.checkMemberDoesNotExist({
+          : checkMemberDoesNotExist({
               memberId: v.invitedUser.userId,
-              projectId: v.projectId
+              projectId: v.projectId,
+              db: this.db
             })
       ),
       Result.bind('newMember', v =>
         Result.succeed(
-          this.membersService.makeMember({
+          makeMember({
             projectId: v.projectId,
             user: isDefined(v.invitedUser) ? v.invitedUser : v.newUser,
             isAdmin: false,
@@ -236,7 +241,6 @@ export class CreateMemberController {
       Result.bind('devBranch', v =>
         Result.succeed(
           makeBranch({
-            hashService: this.hashService,
             projectId: v.projectId,
             repoId: v.newMember.memberId,
             branchId: v.project.defaultBranch
@@ -256,7 +260,6 @@ export class CreateMemberController {
         Result.succeed(
           v.prodBranchBridges.map(bridge =>
             makeBridge({
-              hashService: this.hashService,
               projectId: v.devBranch.projectId,
               repoId: v.devBranch.repoId,
               branchId: v.devBranch.branchId,
@@ -268,7 +271,7 @@ export class CreateMemberController {
         )
       ),
       Result.andThrough(v =>
-        this.blockmlService.rebuildBranchBridges({
+        rebuildBranchBridges({
           branchBridges: v.devBranchBridges,
           envId: PROJECT_ENV_PROD,
           traceId: v.traceId,
@@ -276,7 +279,12 @@ export class CreateMemberController {
           projectId: v.projectId,
           repoId: v.newMember.memberId,
           diskFiles: v.diskCreateDevRepoOutput.files,
-          mproveDir: v.diskCreateDevRepoOutput.mproveDir
+          mproveDir: v.diskCreateDevRepoOutput.mproveDir,
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         })
       ),
       Result.andThrough(v =>
@@ -361,7 +369,7 @@ export class CreateMemberController {
       Result.bind('apiMember', v => {
         let avatar: AvatarTab = v.avatars.length > 0 ? v.avatars[0] : undefined;
 
-        let apiMember: Member = this.membersService.tabToApi({
+        let apiMember: Member = memberTabToApi({
           member: v.newMember
         });
 

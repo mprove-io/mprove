@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteProjectRequestDto,
+  type ToBackendDeleteProjectRequestDto,
   ToBackendDeleteProjectResponseDto
 } from '#backend/controllers/projects/delete-project/delete-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -20,10 +20,10 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -36,7 +36,6 @@ import type { ToBackendDeleteProjectOutput } from '#common/types/backend/routes/
 @Controller()
 export class DeleteProjectController {
   constructor(
-    private membersService: MembersService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -67,9 +66,10 @@ export class DeleteProjectController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           projectId: v.projectId,
-          memberId: v.userId
+          memberId: v.userId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>

@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteDraftDashboardsRequestDto,
+  type ToBackendDeleteDraftDashboardsRequestDto,
   ToBackendDeleteDraftDashboardsResponseDto
 } from '#backend/controllers/dashboards/delete-draft-dashboards/delete-draft-dashboards.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -19,15 +19,13 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getDashboardsCatalog } from '#backend/functions/db/dashboards/get-dashboards-catalog/get-dashboards-catalog';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { SpaceService } from '#backend/services/space/space.service';
-import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -39,15 +37,9 @@ import type { ToBackendDeleteDraftDashboardsOutput } from '#common/types/backend
 @Controller()
 export class DeleteDraftDashboardsController {
   constructor(
-    private usersService: UsersService,
-    private membersService: MembersService,
-    private sessionsService: SessionsService,
-    private structsService: StructsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService,
-    private unitsService: UnitsService,
-    private spaceService: SpaceService
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendDeleteDraftDashboards' satisfies ToBackendRoute)
@@ -72,14 +64,17 @@ export class DeleteDraftDashboardsController {
         user: user
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -123,9 +118,11 @@ export class DeleteDraftDashboardsController {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.andThrough(async v => {
@@ -148,13 +145,15 @@ export class DeleteDraftDashboardsController {
         return Result.succeed();
       }),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.member }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.member
+          })
+        )
       ),
       Result.bind('dashboardsCatalog', v =>
         getDashboardsCatalog({
           db: this.db,
-          unitsService: this.unitsService,
-          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,

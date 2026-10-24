@@ -1,10 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGetRepoRequestDto,
+  type ToBackendGetRepoRequestDto,
   ToBackendGetRepoResponseDto
 } from '#backend/controllers/repos/get-repo/get-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,14 +16,15 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -36,13 +39,9 @@ import type { ToBackendGetRepoOutput } from '#common/types/backend/routes/repos/
 export class GetRepoController {
   constructor(
     private tabService: TabService,
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private usersService: UsersService,
     private rpcService: RpcService,
-    private sessionsService: SessionsService,
-    private structsService: StructsService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendGetRepo' satisfies ToBackendRoute)
@@ -68,11 +67,12 @@ export class GetRepoController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -133,27 +133,36 @@ export class GetRepoController {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
           projectId: v.projectId,
-          isGetEmptyStructOnError: true
+          isGetEmptyStructOnError: true,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('modelPartXs', v =>
-        this.modelsService.getModelPartXs({
+        getModelPartXs({
           structId: v.struct.structId,
-          apiUserMember: v.apiUserMember
+          apiUserMember: v.apiUserMember,
+          db: this.db
         })
       ),
       Result.map(
         (v): ToBackendGetRepoOutput => ({
           userMember: v.apiUserMember,
-          user: this.usersService.tabToApi({ user: v.user }),
+          user: userTabToApi({
+            user: v.user
+          }),
           needValidate: v.bridge.needValidate,
-          struct: this.structsService.tabToApi({
+          struct: structTabToApi({
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),

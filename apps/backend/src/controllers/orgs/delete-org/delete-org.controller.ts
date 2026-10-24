@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteOrgRequestDto,
+  type ToBackendDeleteOrgRequestDto,
   ToBackendDeleteOrgResponseDto
 } from '#backend/controllers/orgs/delete-org/delete-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -21,10 +21,10 @@ import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -37,7 +37,6 @@ import type { ToBackendDeleteOrgOutput } from '#common/types/backend/routes/orgs
 @Controller()
 export class DeleteOrgController {
   constructor(
-    private orgsService: OrgsService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -68,7 +67,7 @@ export class DeleteOrgController {
         })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwner({
+        checkUserIsOrgOwner({
           org: v.org,
           userId: v.userId
         })

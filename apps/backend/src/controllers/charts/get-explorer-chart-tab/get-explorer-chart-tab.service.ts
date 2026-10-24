@@ -18,11 +18,11 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
+import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
 import {
   ExplorerChartRebuildService,
   type ExplorerRebuildResult
@@ -70,10 +70,6 @@ type GetExplorerChartTabErrors = Extract<
 @Injectable()
 export class GetExplorerChartTabService {
   constructor(
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
     private explorerChartRebuildService: ExplorerChartRebuildService,
     private runQueriesService: RunQueriesService,
     private db: DbService
@@ -371,12 +367,12 @@ export class GetExplorerChartTabService {
             x => x.modelId === v.resolveChartPayload.mconfig.modelId
           );
 
-          let apiUserMember: Member = this.membersService.tabToApi({
+          let apiUserMember: Member = memberTabToApi({
             member: v.userMember
           });
 
           let apiModels: ModelX[] = allModels.map(m =>
-            this.modelsService.tabToApi({
+            modelTabToApi({
               model: m,
               hasAccess: checkModelAccess({
                 member: v.userMember,
@@ -385,11 +381,11 @@ export class GetExplorerChartTabService {
             })
           );
 
-          let apiQuery: Query = this.queriesService.tabToApi({
+          let apiQuery: Query = queryTabToApi({
             query: v.resolveChartPayload.query
           });
 
-          let mconfigX: MconfigX = this.mconfigsService.tabToApi({
+          let mconfigX: MconfigX = mconfigTabToApi({
             mconfig: v.resolveChartPayload.mconfig,
             modelFields: model ? model.fields : []
           });

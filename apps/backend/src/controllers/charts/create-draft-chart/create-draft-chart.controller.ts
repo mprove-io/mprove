@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateDraftChartRequestDto,
+  type ToBackendCreateDraftChartRequestDto,
   ToBackendCreateDraftChartResponseDto
 } from '#backend/controllers/charts/create-draft-chart/create-draft-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -24,21 +26,26 @@ import { checkModelAccess } from '#backend/functions/check-model-access/check-mo
 import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
 import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
+import {
+  type PrepStoreMconfigQueryOutput,
+  prepStoreMconfigQuery
+} from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
+import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
+import { makeChartFullId } from '#backend/functions/hash/make-chart-full-id/make-chart-full-id';
+import {
+  type EditMalloyQueryOutput,
+  editMalloyQuery
+} from '#backend/functions/malloy/edit-malloy-query/edit-malloy-query';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { HashService } from '#backend/services/hash/hash.service';
-import type { EditMalloyQueryOutput } from '#backend/services/malloy/malloy.service';
-import { MalloyService } from '#backend/services/malloy/malloy.service';
-import { SpaceService } from '#backend/services/space/space.service';
-import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -69,17 +76,9 @@ type PrepareQueryPayload = {
 @Controller()
 export class CreateDraftChartController {
   constructor(
-    private hashService: HashService,
-    private malloyService: MalloyService,
-    private modelsService: ModelsService,
-    private membersService: MembersService,
-    private structsService: StructsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
-    private mconfigsService: MconfigsService,
     private db: DbService,
-    private unitsService: UnitsService,
-    private spaceService: SpaceService
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendCreateDraftChart' satisfies ToBackendRoute)
@@ -109,11 +108,12 @@ export class CreateDraftChartController {
         queryOperation: body.input.queryOperation
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -164,17 +164,20 @@ export class CreateDraftChartController {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExistsAndNotChanged({
+        getStructCheckExistsAndNotChanged({
           projectId: v.projectId,
           bridgeStructId: v.bridge.structId,
-          structId: v.apiMconfig.structId
+          structId: v.apiMconfig.structId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('model', v =>
-        this.modelsService.getModelCheckExistsAndAccess({
+        getModelCheckExistsAndAccess({
           structId: v.bridge.structId,
           modelId: v.apiMconfig.modelId,
-          userMember: v.userMember
+          userMember: v.userMember,
+          db: this.db
         })
       ),
       Result.bind('prepareQueryPayload', v => {
@@ -200,7 +203,7 @@ export class CreateDraftChartController {
           let prepStoreMconfigQueryOutput: Result.Result<
             PrepStoreMconfigQueryOutput,
             PrepStoreMconfigQueryError
-          > = await this.mconfigsService.prepStoreMconfigQuery({
+          > = await prepStoreMconfigQuery({
             struct: v.struct,
             project: v.project,
             envId: v.envId,
@@ -211,7 +214,7 @@ export class CreateDraftChartController {
                 ? v.apiMconfig.parentId
                 : v.prepareQueryPayload.chartId,
             model: v.model,
-            mconfig: this.mconfigsService.apiToTab({
+            mconfig: mconfigApiToTab({
               apiMconfig: v.apiMconfig
             }),
             metricsStartDateYYYYMMDD: isDefined(v.cellMetricsStartDateMs)
@@ -225,7 +228,8 @@ export class CreateDraftChartController {
                   timezone: v.apiMconfig.timezone,
                   secondsEpochUTC: v.cellMetricsEndDateMs / 1000
                 })
-              : undefined
+              : undefined,
+            db: this.db
           });
 
           if (Result.isFailure(prepStoreMconfigQueryOutput)) {
@@ -245,7 +249,7 @@ export class CreateDraftChartController {
           let editMalloyQueryOutput: Result.Result<
             EditMalloyQueryOutput,
             EditMalloyQueryError
-          > = await this.malloyService.editMalloyQuery({
+          > = await editMalloyQuery({
             projectId: v.projectId,
             envId: v.envId,
             structId: v.struct.structId,
@@ -257,12 +261,15 @@ export class CreateDraftChartController {
                 : v.prepareQueryPayload.chartId,
             user: v.user,
             model: v.model,
-            mconfig: this.mconfigsService.apiToTab({
+            mconfig: mconfigApiToTab({
               apiMconfig: v.apiMconfig
             }),
             queryOperations: isDefined(v.queryOperation)
               ? [v.queryOperation]
-              : []
+              : [],
+            db: this.db,
+            logger: this.logger,
+            cs: this.cs
           });
 
           if (Result.isFailure(editMalloyQueryOutput)) {
@@ -329,7 +336,7 @@ export class CreateDraftChartController {
         };
 
         let newChart: ChartTab = {
-          chartFullId: this.hashService.makeChartFullId({
+          chartFullId: makeChartFullId({
             structId: v.bridge.structId,
             chartId: v.prepareQueryPayload.chartId
           }),
@@ -396,7 +403,11 @@ export class CreateDraftChartController {
         })
       ),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('models', v =>
         this.db.models.findMany({
@@ -406,8 +417,6 @@ export class CreateDraftChartController {
       Result.bind('chartsCatalog', v =>
         getChartsCatalog({
           db: this.db,
-          unitsService: this.unitsService,
-          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,
@@ -421,13 +430,13 @@ export class CreateDraftChartController {
           chart: chartTabToApi({
             chart: v.prepareDraftChartPayload.newChart,
             mconfigs: [
-              this.mconfigsService.tabToApi({
+              mconfigTabToApi({
                 mconfig: v.prepareQueryPayload.newMconfig,
                 modelFields: v.model.fields
               })
             ],
             queries: [
-              this.queriesService.tabToApi({
+              queryTabToApi({
                 query: isDefined(v.query)
                   ? v.query
                   : v.prepareQueryPayload.newQuery
@@ -435,7 +444,7 @@ export class CreateDraftChartController {
             ],
             member: v.apiUserMember,
             models: [
-              this.modelsService.tabToApi({
+              modelTabToApi({
                 model: v.model,
                 hasAccess: checkModelAccess({
                   member: v.userMember,

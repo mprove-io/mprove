@@ -4,7 +4,7 @@ import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendGetQueryRequestDto,
+  type ToBackendGetQueryRequestDto,
   ToBackendGetQueryResponseDto
 } from '#backend/controllers/queries/get-query/get-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -16,11 +16,11 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { ParentService } from '#backend/services/parent/parent.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -47,12 +47,7 @@ import type { ToBackendGetQueryOutput } from '#common/types/backend/routes/queri
 })
 @Controller()
 export class GetQueryController {
-  constructor(
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
-    private parentService: ParentService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetQuery' satisfies ToBackendRoute)
   @ApiOperation({
@@ -77,11 +72,12 @@ export class GetQueryController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -138,14 +134,15 @@ export class GetQueryController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.parentService.checkParentAccess({
+        checkParentAccess({
           parentId: v.mconfig.parentId,
           parentType: v.mconfig.parentType,
           modelId: v.mconfig.modelId,
           user: v.user,
           userMember: v.userMember,
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('query', v =>
@@ -158,7 +155,9 @@ export class GetQueryController {
       ),
       Result.map(
         (v): ToBackendGetQueryOutput => ({
-          query: this.queriesService.tabToApi({ query: v.query })
+          query: queryTabToApi({
+            query: v.query
+          })
         })
       )
     );

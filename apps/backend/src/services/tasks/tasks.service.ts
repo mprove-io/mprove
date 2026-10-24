@@ -3,10 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Result } from '@praha/byethrow';
 import pIteration from 'p-iteration';
+import { removeNotes } from '#backend/functions/db/notes/remove-notes/remove-notes';
+import { checkBigqueryRunningQueries } from '#backend/functions/db/queries/check-bigquery-running-queries/check-bigquery-running-queries';
+import { removeQueries } from '#backend/functions/db/queries/remove-queries/remove-queries';
+import { removeStructs } from '#backend/functions/db/structs/remove-structs/remove-structs';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
-import { NotesService } from '#backend/services/db/notes/notes.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
+import { DbService } from '#backend/services/db/db.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
@@ -30,13 +32,11 @@ export class TasksService {
 
   constructor(
     private cs: ConfigService,
-    private queriesService: QueriesService,
-    private structsService: StructsService,
-    private notesService: NotesService,
     private editorSandboxService: EditorSandboxService,
     private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
-    private logger: Logger
+    private logger: Logger,
+    private db: DbService
   ) {}
 
   @Cron('*/3 * * * * *') // EVERY_3_SECONDS
@@ -45,8 +45,11 @@ export class TasksService {
     if (this.isRunningCheckQueries === false) {
       this.isRunningCheckQueries = true;
 
-      await this.queriesService
-        .checkBigqueryRunningQueries()
+      await checkBigqueryRunningQueries({
+        db: this.db,
+        logger: this.logger,
+        cs: this.cs
+      })
         .then(result => {
           if (Result.isFailure(result)) {
             throw new ServerError({ message: result.error.code });
@@ -74,7 +77,9 @@ export class TasksService {
     if (this.isRunningRemoveStructs === false) {
       this.isRunningRemoveStructs = true;
 
-      await this.structsService.removeStructs().catch(e => {
+      await removeStructs({
+        db: this.db
+      }).catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: 'BACKEND_SCHEDULER_REMOVE_STRUCTS',
@@ -96,7 +101,9 @@ export class TasksService {
     if (this.isRunningRemoveQueries === false) {
       this.isRunningRemoveQueries = true;
 
-      await this.queriesService.removeQueries().catch(e => {
+      await removeQueries({
+        db: this.db
+      }).catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: 'BACKEND_SCHEDULER_REMOVE_QUERIES',
@@ -118,7 +125,9 @@ export class TasksService {
     if (this.isRunningRemoveNotes === false) {
       this.isRunningRemoveNotes = true;
 
-      await this.notesService.removeNotes().catch(e => {
+      await removeNotes({
+        db: this.db
+      }).catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: 'BACKEND_SCHEDULER_REMOVE_NOTES',

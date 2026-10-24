@@ -1,10 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDuplicateMconfigAndQueryRequestDto,
+  type ToBackendDuplicateMconfigAndQueryRequestDto,
   ToBackendDuplicateMconfigAndQueryResponseDto
 } from '#backend/controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -21,13 +23,13 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
+import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { ParentService } from '#backend/services/parent/parent.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   DEFAULT_PIVOT_COLUMNS_WIDTH,
@@ -52,12 +54,8 @@ type DuplicateMconfigAndQueryPayload = {
 @Controller()
 export class DuplicateMconfigAndQueryController {
   constructor(
-    private parentService: ParentService,
-    private structsService: StructsService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendDuplicateMconfigAndQuery' satisfies ToBackendRoute)
@@ -83,11 +81,12 @@ export class DuplicateMconfigAndQueryController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -139,21 +138,24 @@ export class DuplicateMconfigAndQueryController {
         })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExistsAndNotChanged({
+        getStructCheckExistsAndNotChanged({
           projectId: v.projectId,
           bridgeStructId: v.bridge.structId,
-          structId: v.oldMconfig.structId
+          structId: v.oldMconfig.structId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
-        this.parentService.checkParentAccess({
+        checkParentAccess({
           parentId: v.oldMconfig.parentId,
           parentType: v.oldMconfig.parentType,
           modelId: v.oldMconfig.modelId,
           user: v.user,
           userMember: v.userMember,
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       // Dashboard tiles and report metrics do not require model access here.
@@ -232,11 +234,11 @@ export class DuplicateMconfigAndQueryController {
       ),
       Result.map(
         (v): ToBackendDuplicateMconfigAndQueryOutput => ({
-          mconfig: this.mconfigsService.tabToApi({
+          mconfig: mconfigTabToApi({
             mconfig: v.duplicateMconfigAndQueryPayload.newMconfig,
             modelFields: v.model.fields
           }),
-          query: this.queriesService.tabToApi({
+          query: queryTabToApi({
             query: v.duplicateMconfigAndQueryPayload.newQuery
           })
         })

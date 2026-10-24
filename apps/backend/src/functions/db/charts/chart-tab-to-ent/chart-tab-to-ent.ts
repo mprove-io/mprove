@@ -2,19 +2,18 @@ import { Result } from '@praha/byethrow';
 import type { ChartTab } from '#backend/drizzle/postgres/schema/_tabs';
 import type { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
 import { getEntProps } from '#backend/functions/get-ent-props/get-ent-props';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeChartFullId } from '#backend/functions/hash/make-chart-full-id/make-chart-full-id';
 import type { TabService } from '#backend/services/tab/tab.service';
 import type { ChartLt } from '#common/types/shared/st-lt/charts/chart-lt';
 import type { ChartSt } from '#common/types/shared/st-lt/charts/chart-st';
 
 export function chartTabToEnt(item: {
   tab: ChartTab;
-  hashService: HashService;
   tabService: TabService;
   isEncryptDb: boolean;
   isEncryptMetadata: boolean;
 }): Result.Result<ChartEnt, never> {
-  let { tab, hashService, tabService, isEncryptDb, isEncryptMetadata } = item;
+  let { tab, tabService, isEncryptDb, isEncryptMetadata } = item;
 
   let chartSt: ChartSt = {
     title: tab.title,
@@ -29,7 +28,7 @@ export function chartTabToEnt(item: {
   let chartLt: ChartLt = {};
 
   let chartEnt: ChartEnt = {
-    chartFullId: hashService.makeChartFullId({
+    chartFullId: makeChartFullId({
       structId: tab.structId,
       chartId: tab.chartId
     }),

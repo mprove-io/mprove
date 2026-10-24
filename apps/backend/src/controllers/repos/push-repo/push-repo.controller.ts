@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendPushRepoRequestDto,
+  type ToBackendPushRepoRequestDto,
   ToBackendPushRepoResponseDto
 } from '#backend/controllers/repos/push-repo/push-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -16,22 +18,23 @@ import type {
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import {
+  type RebuildStructOutput,
+  rebuildStruct
+} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import {
-  BlockmlService,
-  type RebuildStructOutput
-} from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -54,15 +57,10 @@ import type { ToBackendPushRepoOutput } from '#common/types/backend/routes/repos
 export class PushRepoController {
   constructor(
     private tabService: TabService,
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private modelsService: ModelsService,
     private rpcService: RpcService,
-    private sessionsService: SessionsService,
-    private structsService: StructsService,
-    private hashService: HashService,
-    private blockmlService: BlockmlService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendPushRepo' satisfies ToBackendRoute)
@@ -87,11 +85,12 @@ export class PushRepoController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -100,16 +99,18 @@ export class PushRepoController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditor({
+        getMemberCheckIsEditor({
           projectId: v.projectId,
-          memberId: v.user.userId
+          memberId: v.user.userId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestricted({
+        checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
-          repoId: undefined // no check for repoId
+          repoId: undefined, // no check for repoId
+          cs: this.cs
         })
       ),
       Result.bind('branch', v =>
@@ -178,7 +179,6 @@ export class PushRepoController {
 
         if (isUndefined(productionBranch)) {
           productionBranch = makeBranch({
-            hashService: this.hashService,
             projectId: v.projectId,
             repoId: PROD_REPO_ID,
             branchId: v.branchId
@@ -186,7 +186,6 @@ export class PushRepoController {
 
           v.branchBridges.forEach(bridge => {
             let prodBranchBridge: BridgeTab = makeBridge({
-              hashService: this.hashService,
               projectId: v.branch.projectId,
               repoId: PROD_REPO_ID,
               branchId: v.branch.branchId,
@@ -211,7 +210,7 @@ export class PushRepoController {
               let result: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStruct({
+              > = await rebuildStruct({
                 traceId: v.traceId,
                 orgId: v.project.orgId,
                 projectId: v.projectId,
@@ -221,7 +220,12 @@ export class PushRepoController {
                 mproveDir: v.diskPushRepoOutput.productionMproveDir,
                 envId: bridge.envId,
                 selectedGivens: [],
-                overrideTimezone: undefined
+                overrideTimezone: undefined,
+                db: this.db,
+                tabService: this.tabService,
+                rpcService: this.rpcService,
+                cs: this.cs,
+                logger: this.logger
               });
 
               if (Result.isFailure(result)) {
@@ -251,23 +255,26 @@ export class PushRepoController {
         Result.succeed(v.branchBridges.find(bridge => bridge.envId === v.envId))
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.currentBridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('modelPartXs', v =>
-        this.modelsService.getModelPartXs({
+        getModelPartXs({
           structId: v.struct.structId,
-          apiUserMember: this.membersService.tabToApi({
+          apiUserMember: memberTabToApi({
             member: v.userMember
-          })
+          }),
+          db: this.db
         })
       ),
       Result.map(
         (v): ToBackendPushRepoOutput => ({
           repo: v.diskPushRepoOutput.repo,
-          struct: this.structsService.tabToApi({
+          struct: structTabToApi({
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),

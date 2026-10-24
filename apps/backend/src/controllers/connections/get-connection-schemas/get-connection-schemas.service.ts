@@ -12,14 +12,15 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import {
   type GetEntPropsOutput,
   getEntProps
 } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -59,8 +60,6 @@ export class GetConnectionSchemasService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private tabService: TabService,
-    private structsService: StructsService,
-    private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private snowFlakeService: SnowFlakeService,
@@ -113,9 +112,10 @@ export class GetConnectionSchemasService {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('bridge', v =>
@@ -129,9 +129,11 @@ export class GetConnectionSchemasService {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('apiEnvs', v =>
@@ -250,7 +252,9 @@ export class GetConnectionSchemasService {
       ),
       Result.map(
         (v): ToBackendGetConnectionSchemasOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           combinedSchemaItems: v.combinedSchemaItems
         })
       )

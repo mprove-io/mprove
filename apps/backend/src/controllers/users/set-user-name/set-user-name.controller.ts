@@ -4,15 +4,16 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendSetUserNameRequestDto,
+  type ToBackendSetUserNameRequestDto,
   ToBackendSetUserNameResponseDto
 } from '#backend/controllers/users/set-user-name/set-user-name.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -23,10 +24,7 @@ import type { ToBackendSetUserNameOutput } from '#common/types/backend/routes/us
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetUserNameController {
-  constructor(
-    private usersService: UsersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendSetUserName' satisfies ToBackendRoute)
   @ApiOperation({
@@ -47,7 +45,9 @@ export class SetUserNameController {
         lastName: body.input.lastName
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.map(v => {
         v.user.firstName = v.firstName;
@@ -78,7 +78,9 @@ export class SetUserNameController {
       ),
       Result.map(
         (v): ToBackendSetUserNameOutput => ({
-          user: this.usersService.tabToApi({ user: v.user })
+          user: userTabToApi({
+            user: v.user
+          })
         })
       )
     );

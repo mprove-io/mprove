@@ -7,7 +7,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCancelQueriesRequestDto,
+  type ToBackendCancelQueriesRequestDto,
   ToBackendCancelQueriesResponseDto
 } from '#backend/controllers/queries/cancel-queries/cancel-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -25,14 +25,15 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getQueriesCheckExistSkipSqlData } from '#backend/functions/db/queries/get-queries-check-exist-skip-sql-data/get-queries-check-exist-skip-sql-data';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { ParentService } from '#backend/services/parent/parent.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -50,10 +51,6 @@ import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom
 @Controller()
 export class CancelQueriesController {
   constructor(
-    private parentService: ParentService,
-    private structsService: StructsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -79,11 +76,12 @@ export class CancelQueriesController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -127,9 +125,11 @@ export class CancelQueriesController {
         })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('mconfigs', v =>
@@ -149,14 +149,15 @@ export class CancelQueriesController {
             x => x.parentId === parentId
           );
 
-          return this.parentService.checkParentAccess({
+          return checkParentAccess({
             parentId: mconfig.parentId,
             parentType: mconfig.parentType,
             modelId: mconfig.modelId,
             user: v.user,
             userMember: v.userMember,
             structId: v.bridge.structId,
-            projectId: v.projectId
+            projectId: v.projectId,
+            db: this.db
           });
         })
       ),
@@ -164,9 +165,10 @@ export class CancelQueriesController {
         Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.queryId))])
       ),
       Result.bind('queries', v =>
-        this.queriesService.getQueriesCheckExistSkipSqlData({
+        getQueriesCheckExistSkipSqlData({
           queryIds: v.queryIds,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('connectionsWithAnyEnvId', v =>
@@ -204,7 +206,9 @@ export class CancelQueriesController {
       Result.map(
         (v): ToBackendCancelQueriesOutput => ({
           queries: v.canceledQueries.map(x =>
-            this.queriesService.tabToApi({ query: x })
+            queryTabToApi({
+              query: x
+            })
           )
         })
       )

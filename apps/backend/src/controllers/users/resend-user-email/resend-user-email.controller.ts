@@ -3,13 +3,14 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import {
-  ToBackendResendUserEmailRequestDto,
+  type ToBackendResendUserEmailRequestDto,
   ToBackendResendUserEmailResponseDto
 } from '#backend/controllers/users/resend-user-email/resend-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
+import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
@@ -38,7 +39,6 @@ import type { ToBackendResendUserEmailOutput } from '#common/types/backend/route
 @Controller()
 export class ResendUserEmailController {
   constructor(
-    private usersService: UsersService,
     private emailService: EmailService,
     private db: DbService
   ) {}
@@ -57,10 +57,15 @@ export class ResendUserEmailController {
     return Result.pipe(
       Result.succeed({ userId: body.input.userId }),
       Result.bind('user', v =>
-        this.usersService.getUserCheckExists({ userId: v.userId })
+        getUserCheckExists({
+          userId: v.userId,
+          db: this.db
+        })
       ),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.andThrough(async v => {
         if (v.user.isEmailVerified === true) {

@@ -1,9 +1,11 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGetChartsRequestDto,
+  type ToBackendGetChartsRequestDto,
   ToBackendGetChartsResponseDto
 } from '#backend/controllers/charts/get-charts/get-charts.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -16,14 +18,13 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { SpaceService } from '#backend/services/space/space.service';
-import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetChartsOutput } from '#common/types/backend/routes/charts/get-charts/get-charts-output';
@@ -33,13 +34,8 @@ import type { ToBackendGetChartsOutput } from '#common/types/backend/routes/char
 @Controller()
 export class GetChartsController {
   constructor(
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private structsService: StructsService,
-    private sessionsService: SessionsService,
     private db: DbService,
-    private unitsService: UnitsService,
-    private spaceService: SpaceService
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendGetCharts' satisfies ToBackendRoute)
@@ -63,11 +59,12 @@ export class GetChartsController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -121,19 +118,25 @@ export class GetChartsController {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('apiModels', v =>
         Result.succeed(
           v.models
             .map(model =>
-              this.modelsService.tabToApi({
+              modelTabToApi({
                 model: model,
                 hasAccess: checkModelAccess({
                   member: v.userMember,
@@ -149,8 +152,6 @@ export class GetChartsController {
       Result.bind('chartsCatalog', v =>
         getChartsCatalog({
           db: this.db,
-          unitsService: this.unitsService,
-          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,
@@ -162,7 +163,7 @@ export class GetChartsController {
       Result.map(
         (v): ToBackendGetChartsOutput => ({
           needValidate: v.bridge.needValidate,
-          struct: this.structsService.tabToApi({
+          struct: structTabToApi({
             struct: v.struct,
             modelPartXs: v.apiModels
           }),

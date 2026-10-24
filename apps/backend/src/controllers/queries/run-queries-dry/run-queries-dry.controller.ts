@@ -1,10 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendRunQueriesDryRequestDto,
+  type ToBackendRunQueriesDryRequestDto,
   ToBackendRunQueriesDryResponseDto
 } from '#backend/controllers/queries/run-queries-dry/run-queries-dry.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -20,13 +22,14 @@ import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-query-check-exists-skip-data/get-query-check-exists-skip-data';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { ParentService } from '#backend/services/parent/parent.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -49,12 +52,9 @@ type RunQueryDryOutput = {
 @Controller()
 export class RunQueriesDryController {
   constructor(
-    private parentService: ParentService,
-    private structsService: StructsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
     private bigqueryService: BigQueryService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendRunQueriesDry' satisfies ToBackendRoute)
@@ -75,11 +75,12 @@ export class RunQueriesDryController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('userMember', v =>
@@ -118,9 +119,11 @@ export class RunQueriesDryController {
         })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('mconfigs', v =>
@@ -140,14 +143,15 @@ export class RunQueriesDryController {
             x => x.parentId === parentId
           );
 
-          return this.parentService.checkParentAccess({
+          return checkParentAccess({
             parentId: mconfig.parentId,
             parentType: mconfig.parentType,
             modelId: mconfig.modelId, // for chart as parent
             user: v.user,
             userMember: v.userMember,
             structId: v.bridge.structId,
-            projectId: v.projectId
+            projectId: v.projectId,
+            db: this.db
           });
         })
       ),
@@ -186,7 +190,9 @@ export class RunQueriesDryController {
         (v): ToBackendRunQueriesDryOutput => ({
           dryId: v.dryId,
           errorQueries: v.errorQueries.map(x =>
-            this.queriesService.tabToApi({ query: x })
+            queryTabToApi({
+              query: x
+            })
           ),
           validQueryEstimates: v.validEstimates
         })
@@ -201,9 +207,10 @@ export class RunQueriesDryController {
     return Result.pipe(
       Result.succeed(item),
       Result.bind('query', v =>
-        this.queriesService.getQueryCheckExistsSkipData({
+        getQueryCheckExistsSkipData({
           projectId: v.projectId,
-          queryId: v.queryId
+          queryId: v.queryId,
+          db: this.db
         })
       ),
       Result.bind('apiEnvs', v =>

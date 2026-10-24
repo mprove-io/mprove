@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq, inArray } from 'drizzle-orm';
 import {
-  ToBackendGetOrgsListRequestDto,
+  type ToBackendGetOrgsListRequestDto,
   ToBackendGetOrgsListResponseDto
 } from '#backend/controllers/orgs/get-orgs-list/get-orgs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -11,9 +11,9 @@ import type { OrgTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { orgTabToApi } from '#backend/functions/db/orgs/org-tab-to-api/org-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetOrgsListOutput } from '#common/types/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
@@ -22,10 +22,7 @@ import type { ToBackendGetOrgsListOutput } from '#common/types/backend/routes/or
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetOrgsListController {
-  constructor(
-    private orgsService: OrgsService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetOrgsList' satisfies ToBackendRoute)
   @ApiOperation({
@@ -88,7 +85,11 @@ export class GetOrgsListController {
         (v): ToBackendGetOrgsListOutput => ({
           orgsList: v.orgs
             .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
-            .map(org => this.orgsService.tabToApi({ org: org }))
+            .map(org =>
+              orgTabToApi({
+                org: org
+              })
+            )
         })
       )
     );

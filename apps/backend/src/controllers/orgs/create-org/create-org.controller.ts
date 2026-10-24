@@ -6,18 +6,20 @@ import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateOrgRequestDto,
+  type ToBackendCreateOrgRequestDto,
   ToBackendCreateOrgResponseDto
 } from '#backend/controllers/orgs/create-org/create-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import { addOrg } from '#backend/functions/db/orgs/add-org/add-org';
+import { orgTabToApi } from '#backend/functions/db/orgs/org-tab-to-api/org-tab-to-api';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -30,11 +32,9 @@ import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs
 @Controller()
 export class CreateOrgController {
   constructor(
-    private usersService: UsersService,
-    private hashService: HashService,
-    private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
-    private db: DbService
+    private db: DbService,
+    private rpcService: RpcService
   ) {}
 
   @Post('api/ToBackendCreateOrg' satisfies ToBackendRoute)
@@ -56,7 +56,9 @@ export class CreateOrgController {
         user: user
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.andThrough(v => {
         let allowUsersToCreateOrganizations: boolean = this.cs.get<
@@ -75,7 +77,7 @@ export class CreateOrgController {
       }),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('nameHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.name,
           hashSecret: v.hashSecret
         })
@@ -96,16 +98,20 @@ export class CreateOrgController {
           : Result.succeed()
       ),
       Result.bind('org', v =>
-        this.orgsService.addOrg({
+        addOrg({
           name: v.name,
           ownerId: v.user.userId,
           ownerEmail: v.user.email,
-          traceId: v.traceId
+          traceId: v.traceId,
+          rpcService: this.rpcService,
+          db: this.db
         })
       ),
       Result.map(
         (v): ToBackendCreateOrgOutput => ({
-          org: this.orgsService.tabToApi({ org: v.org })
+          org: orgTabToApi({
+            org: v.org
+          })
         })
       )
     );

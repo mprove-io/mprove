@@ -6,7 +6,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendRefreshCachedColumnRequestDto,
+  type ToBackendRefreshCachedColumnRequestDto,
   ToBackendRefreshCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/refresh-cached-column/refresh-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -24,12 +24,15 @@ import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached
 import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
+import { makeCachedColumnFullId } from '#backend/functions/hash/make-cached-column-full-id/make-cached-column-full-id';
+import { makeCachedPartFullId } from '#backend/functions/hash/make-cached-part-full-id/make-cached-part-full-id';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -38,7 +41,6 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -67,7 +69,6 @@ const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 export class RefreshCachedColumnController {
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private snowFlakeService: SnowFlakeService,
@@ -76,7 +77,6 @@ export class RefreshCachedColumnController {
     private duckDbService: DuckDbService,
     private prestoService: PrestoService,
     private trinoService: TrinoService,
-    private hashService: HashService,
     private db: DbService
   ) {}
 
@@ -108,9 +108,10 @@ export class RefreshCachedColumnController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -130,9 +131,10 @@ export class RefreshCachedColumnController {
       ),
       Result.andThrough(v =>
         v.cacheEnvId === PROJECT_ENV_PROD
-          ? this.membersService.getMemberCheckIsAdmin({
+          ? getMemberCheckIsAdmin({
               memberId: v.userId,
-              projectId: v.projectId
+              projectId: v.projectId,
+              db: this.db
             })
           : Result.succeed()
       ),
@@ -223,7 +225,7 @@ export class RefreshCachedColumnController {
         this.db.cachedColumns.findFirst({
           where: eq(
             cachedColumnsTable.cachedColumnFullId,
-            this.hashService.makeCachedColumnFullId({
+            makeCachedColumnFullId({
               projectId: v.projectId,
               connectionId: v.connectionId,
               envId: v.cacheEnvId,
@@ -237,7 +239,7 @@ export class RefreshCachedColumnController {
       Result.bind('runningCachedColumn', v => {
         if (isUndefined(v.currentCachedColumn)) {
           let runningCachedColumn: CachedColumnTab = {
-            cachedColumnFullId: this.hashService.makeCachedColumnFullId({
+            cachedColumnFullId: makeCachedColumnFullId({
               projectId: v.projectId,
               connectionId: v.connectionId,
               envId: v.cacheEnvId,
@@ -374,7 +376,7 @@ export class RefreshCachedColumnController {
         await this.db.cachedColumns.findFirstUnwrap({
           where: eq(
             cachedColumnsTable.cachedColumnFullId,
-            this.hashService.makeCachedColumnFullId({
+            makeCachedColumnFullId({
               projectId: projectId,
               connectionId: connectionId,
               envId: cacheEnvId,
@@ -438,7 +440,7 @@ export class RefreshCachedColumnController {
                 await this.db.cachedColumns.findFirstUnwrap({
                   where: eq(
                     cachedColumnsTable.cachedColumnFullId,
-                    this.hashService.makeCachedColumnFullId({
+                    makeCachedColumnFullId({
                       projectId: v.projectId,
                       connectionId: v.connectionId,
                       envId: v.cacheEnvId,
@@ -479,7 +481,7 @@ export class RefreshCachedColumnController {
 
               if (uniqueValues.length > 0) {
                 let cachedParts: CachedPartTab[] = uniqueValues.map(row => ({
-                  cachedPartFullId: this.hashService.makeCachedPartFullId({
+                  cachedPartFullId: makeCachedPartFullId({
                     projectId: v.projectId,
                     connectionId: v.connectionId,
                     envId: v.cacheEnvId,

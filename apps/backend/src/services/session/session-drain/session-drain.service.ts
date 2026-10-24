@@ -18,7 +18,7 @@ import type {
 } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
 import { eq, max, sql } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   OcMessageTab,
   OcPartTab,
@@ -28,13 +28,13 @@ import type {
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { makeOcEvent } from '#backend/functions/db/oc-events/make-oc-event/make-oc-event';
+import { makeOcMessage } from '#backend/functions/db/oc-messages/make-oc-message/make-oc-message';
+import { makeOcPart } from '#backend/functions/db/oc-parts/make-oc-part/make-oc-part';
+import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
-import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
-import { OcMessagesService } from '#backend/services/db/oc-messages/oc-messages.service';
-import { OcPartsService } from '#backend/services/db/oc-parts/oc-parts.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { SESSION_TITLE_UPDATED_EVENT_TYPE } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -63,10 +63,6 @@ export class SessionDrainService {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private sessionsService: SessionsService,
-    private ocEventsService: OcEventsService,
-    private ocMessagesService: OcMessagesService,
-    private ocPartsService: OcPartsService,
     private logger: Logger,
     private db: DbService
   ) {}
@@ -174,7 +170,7 @@ export class SessionDrainService {
     let items = queue.slice(0, itemCount);
 
     let eventTabs = items.map(item =>
-      this.ocEventsService.makeOcEvent({
+      makeOcEvent({
         sessionId: item.sessionId,
         event: item.event,
         eventIndex: item.eventIndex
@@ -187,7 +183,7 @@ export class SessionDrainService {
       .filter(i => i.event.type === 'message.updated')
       .forEach(item => {
         let props = (item.event as EventMessageUpdated).properties;
-        let tab = this.ocMessagesService.makeOcMessage({
+        let tab = makeOcMessage({
           messageId: props.info.id,
           sessionId: sessionId,
           role: props.info.role,
@@ -208,7 +204,7 @@ export class SessionDrainService {
       .filter(i => i.event.type === 'message.part.updated')
       .forEach(item => {
         let props = (item.event as EventMessagePartUpdated).properties;
-        let tab = this.ocPartsService.makeOcPart({
+        let tab = makeOcPart({
           partId: props.part.id as string,
           messageId: props.part.messageID as string,
           sessionId: sessionId,
@@ -273,7 +269,9 @@ export class SessionDrainService {
       let ocSessionTab: OcSessionTab = ocSessionResult.value;
 
       if (!ocSessionTab) {
-        ocSessionTab = this.sessionsService.makeOcSession({ sessionId });
+        ocSessionTab = makeOcSession({
+          sessionId
+        });
       }
 
       if (sessionUpdatedItems.length > 0) {

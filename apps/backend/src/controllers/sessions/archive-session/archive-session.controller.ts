@@ -1,19 +1,24 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendArchiveSessionRequestDto,
+  type ToBackendArchiveSessionRequestDto,
   ToBackendArchiveSessionResponseDto
 } from '#backend/controllers/sessions/archive-session/archive-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { archiveSession } from '#backend/functions/session-archive/archive-session/archive-session';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionArchiveService } from '#backend/services/session/session-archive/session-archive.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -25,8 +30,12 @@ import type { ToBackendArchiveSessionOutput } from '#common/types/backend/routes
 @Controller()
 export class ArchiveSessionController {
   constructor(
-    private sessionArchiveService: SessionArchiveService,
-    private db: DbService
+    private db: DbService,
+    private editorSessionLockService: EditorSessionLockService,
+    private editorSandboxService: EditorSandboxService,
+    private editorStreamService: EditorStreamService,
+    private logger: Logger,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendArchiveSession' satisfies ToBackendRoute)
@@ -64,10 +73,16 @@ export class ArchiveSessionController {
         })
       ),
       Result.bind('sessionApi', v =>
-        this.sessionArchiveService.archiveSession({
+        archiveSession({
           session: v.session,
           archiveReason: 'User',
-          e2bApiKey: v.project.e2bApiKey
+          e2bApiKey: v.project.e2bApiKey,
+          editorSessionLockService: this.editorSessionLockService,
+          db: this.db,
+          editorSandboxService: this.editorSandboxService,
+          editorStreamService: this.editorStreamService,
+          logger: this.logger,
+          cs: this.cs
         })
       ),
       Result.map(

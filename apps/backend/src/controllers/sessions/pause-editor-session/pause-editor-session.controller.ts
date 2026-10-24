@@ -4,15 +4,15 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendPauseEditorSessionRequestDto,
+  type ToBackendPauseEditorSessionRequestDto,
   ToBackendPauseEditorSessionResponseDto
 } from '#backend/controllers/sessions/pause-editor-session/pause-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
@@ -28,7 +28,6 @@ import type { ToBackendPauseEditorSessionOutput } from '#common/types/backend/ro
 @Controller()
 export class PauseEditorSessionController {
   constructor(
-    private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
     private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
@@ -109,7 +108,7 @@ export class PauseEditorSessionController {
         ),
         Result.map(
           (v): ToBackendPauseEditorSessionOutput => ({
-            session: this.sessionsService.tabToSessionApi({
+            session: tabToSessionApi({
               session: v.freshSession
             })
           })

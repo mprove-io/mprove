@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendGetMemberGivensRequestDto,
+  type ToBackendGetMemberGivensRequestDto,
   ToBackendGetMemberGivensResponseDto
 } from '#backend/controllers/members/get-member-givens/get-member-givens.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -13,7 +13,6 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getMemberGivensForSelection } from '#backend/functions/db/givens/get-member-givens-for-selection/get-member-givens-for-selection';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMemberGivensOutput } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-output';
@@ -22,10 +21,7 @@ import type { ToBackendGetMemberGivensOutput } from '#common/types/backend/route
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetMemberGivensController {
-  constructor(
-    private db: DbService,
-    private rolesService: RolesService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetMemberGivens' satisfies ToBackendRoute)
   @ApiOperation({
@@ -68,7 +64,6 @@ export class GetMemberGivensController {
       ),
       Result.bind('memberGivens', v =>
         getMemberGivensForSelection({
-          rolesService: this.rolesService,
           db: this.db,
           projectId: v.projectId,
           roles: v.member.roles

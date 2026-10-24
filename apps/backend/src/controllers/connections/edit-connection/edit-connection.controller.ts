@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendEditConnectionRequestDto,
+  type ToBackendEditConnectionRequestDto,
   ToBackendEditConnectionResponseDto
 } from '#backend/controllers/connections/edit-connection/edit-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,9 +14,9 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { cleanInternalFields } from '#backend/functions/db/connections/clean-internal-fields/clean-internal-fields';
 import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { UrlService } from '#backend/services/url/url.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
@@ -36,7 +36,6 @@ import type { ToBackendEditConnectionOutput } from '#common/types/backend/routes
 export class EditConnectionController {
   constructor(
     private urlService: UrlService,
-    private membersService: MembersService,
     private db: DbService
   ) {}
 
@@ -80,9 +79,10 @@ export class EditConnectionController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('connection', v =>

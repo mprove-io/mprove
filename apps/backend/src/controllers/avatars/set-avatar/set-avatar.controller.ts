@@ -3,15 +3,15 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendSetAvatarRequestDto,
+  type ToBackendSetAvatarRequestDto,
   ToBackendSetAvatarResponseDto
 } from '#backend/controllers/avatars/set-avatar/set-avatar.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -21,10 +21,7 @@ import type { ToBackendSetAvatarOutput } from '#common/types/backend/routes/avat
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class SetAvatarController {
-  constructor(
-    private db: DbService,
-    private usersService: UsersService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendSetAvatar' satisfies ToBackendRoute)
   @ApiOperation({
@@ -45,7 +42,9 @@ export class SetAvatarController {
         user: user
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.bind('avatar', v =>
         this.db.avatars.findFirst({

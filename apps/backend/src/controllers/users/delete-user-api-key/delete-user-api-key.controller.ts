@@ -5,9 +5,9 @@ import { Result } from '@praha/byethrow';
 import { ToBackendDeleteUserApiKeyResponseDto } from '#backend/controllers/users/delete-user-api-key/delete-user-api-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -17,10 +17,7 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteUserApiKeyController {
-  constructor(
-    private usersService: UsersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendDeleteUserApiKey' satisfies ToBackendRoute)
   @ApiOperation({
@@ -37,7 +34,9 @@ export class DeleteUserApiKeyController {
     return Result.pipe(
       Result.succeed({ user: user }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.map(v => {
         v.user.apiKeyPrefix = undefined;

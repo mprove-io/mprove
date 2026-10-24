@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
+import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';
 import type { DbService } from '#backend/services/db/db.service';
-import type { RolesService } from '#backend/services/db/roles/roles.service';
 import type { GetMemberGivensForSelectionError } from '#common/types/backend/function-errors/get-member-givens-for-selection-error';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 import type { MemberGiven } from '#common/types/backend/parts/members/member-given';
@@ -9,7 +9,6 @@ import type { MemberGivenValue } from '#common/types/backend/parts/members/membe
 import type { Role } from '#common/types/backend/parts/role';
 
 export async function getMemberGivensForSelection(item: {
-  rolesService: RolesService;
   db: DbService;
   projectId: string;
   roles: string[];
@@ -20,7 +19,10 @@ export async function getMemberGivensForSelection(item: {
       getApiGivens({ db: v.db, projectId: v.projectId })
     ),
     Result.bind('apiRoles', v =>
-      v.rolesService.getApiRoles({ projectId: v.projectId })
+      getApiRoles({
+        projectId: v.projectId,
+        db: v.db
+      })
     ),
     Result.map((v): MemberGiven[] => {
       let memberRoles: Role[] = v.apiRoles.filter(role =>
@@ -29,7 +31,13 @@ export async function getMemberGivensForSelection(item: {
 
       let valueOriginsByGivenId: Record<
         string,
-        Record<string, { isProjectDefault: boolean; roleIds: string[] }>
+        Record<
+          string,
+          {
+            isProjectDefault: boolean;
+            roleIds: string[];
+          }
+        >
       > = {};
 
       let typeByGivenId: Record<string, GivenType> = {};

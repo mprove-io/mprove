@@ -13,7 +13,9 @@ export function makeDashboardFiltersX(item: {
       fractions: field.fractions.sort((a, b) => {
         let getPriority = (op: FractionOperator): number => {
           if (op === 'Or') return 0;
+
           if (op === 'And') return 1;
+
           return 2;
         };
 
@@ -21,6 +23,7 @@ export function makeDashboardFiltersX(item: {
       }),
       field: field as any
     };
+
     return filterX;
   });
 

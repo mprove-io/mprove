@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteRoleRequestDto,
+  type ToBackendDeleteRoleRequestDto,
   ToBackendDeleteRoleResponseDto
 } from '#backend/controllers/roles/delete-role/delete-role.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -18,12 +18,13 @@ import type {
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -36,8 +37,6 @@ import type { ToBackendDeleteRoleOutput } from '#common/types/backend/routes/rol
 @Controller()
 export class DeleteRoleController {
   constructor(
-    private membersService: MembersService,
-    private rolesService: RolesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -67,9 +66,10 @@ export class DeleteRoleController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('projectMembers', v =>
@@ -114,7 +114,10 @@ export class DeleteRoleController {
         })
       ),
       Result.bind('apiRoles', v =>
-        this.rolesService.getApiRoles({ projectId: v.projectId })
+        getApiRoles({
+          projectId: v.projectId,
+          db: this.db
+        })
       ),
       Result.bind('responseUserMember', v => {
         let updatedUserMember: MemberTab = v.membersToUpdate.find(
@@ -127,7 +130,7 @@ export class DeleteRoleController {
       }),
       Result.map(
         (v): ToBackendDeleteRoleOutput => ({
-          userMember: this.membersService.tabToApi({
+          userMember: memberTabToApi({
             member: v.responseUserMember
           }),
           roles: v.apiRoles

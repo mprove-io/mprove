@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import {
-  ToBackendGetConnectionsRequestDto,
+  type ToBackendGetConnectionsRequestDto,
   ToBackendGetConnectionsResponseDto
 } from '#backend/controllers/connections/get-connections/get-connections.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -12,9 +12,10 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -25,10 +26,7 @@ import type { ToBackendGetConnectionsOutput } from '#common/types/backend/routes
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetConnectionsController {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetConnections' satisfies ToBackendRoute)
   @ApiOperation({
@@ -54,9 +52,10 @@ export class GetConnectionsController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('apiEnvs', async v =>
@@ -88,7 +87,9 @@ export class GetConnectionsController {
       ),
       Result.map(
         (v): ToBackendGetConnectionsOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           connections: v.connections
             .sort((a, b) =>
               a.connectionId > b.connectionId

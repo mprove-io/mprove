@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSaveCreateChartRequestDto,
+  type ToBackendSaveCreateChartRequestDto,
   ToBackendSaveCreateChartResponseDto
 } from '#backend/controllers/charts/save-create-chart/save-create-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -22,36 +22,39 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
+import {
+  type ModelEnt,
+  modelsTable
+} from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import {
+  type RebuildStructOutput,
+  rebuildStruct
+} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
 import { chartTabToApi } from '#backend/functions/db/charts/chart-tab-to-api/chart-tab-to-api';
 import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
+import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text/make-chart-file-text';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
@@ -102,22 +105,10 @@ type SaveChartPayload = {
 export class SaveCreateChartController {
   constructor(
     private tabService: TabService,
-    private usersService: UsersService,
     private rpcService: RpcService,
-    private structsService: StructsService,
-    private membersService: MembersService,
-    private projectsService: ProjectsService,
-    private blockmlService: BlockmlService,
-    private modelsService: ModelsService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService,
-    private hashService: HashService,
-    private unitsService: UnitsService,
-    private spaceService: SpaceService
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSaveCreateChart' satisfies ToBackendRoute)
@@ -151,7 +142,9 @@ export class SaveCreateChartController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
+        > = checkUserIsNotRestricted({
+          user: v.user
+        });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -160,11 +153,12 @@ export class SaveCreateChartController {
         return Result.succeed();
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -192,10 +186,11 @@ export class SaveCreateChartController {
         let projectRestrictionResult: Result.Result<
           void,
           CheckProjectIsNotRestrictedError
-        > = await this.projectsService.checkProjectIsNotRestricted({
+        > = await checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: userMember,
-          repoId: v.repoId
+          repoId: v.repoId,
+          cs: this.cs
         });
 
         if (Result.isFailure(projectRestrictionResult)) {
@@ -248,16 +243,19 @@ export class SaveCreateChartController {
         })
       ),
       Result.bind('currentStruct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
-        this.modelsService.getModelCheckExistsAndAccess({
+        getModelCheckExistsAndAccess({
           structId: v.bridge.structId,
           modelId: v.mconfig.modelId,
-          userMember: v.userMember
+          userMember: v.userMember,
+          db: this.db
         })
       ),
       Result.bind('prepareChartFilePayload', v => {
@@ -365,7 +363,7 @@ export class SaveCreateChartController {
         let rebuildStructOutput: Result.Result<
           RebuildStructOutput,
           RebuildStructError
-        > = await this.blockmlService.rebuildStruct({
+        > = await rebuildStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.projectId,
@@ -380,7 +378,12 @@ export class SaveCreateChartController {
           isUseCache: true,
           cachedMproveConfig: v.currentStruct.mproveConfig,
           cachedModels: v.cachedModels,
-          cachedMetrics: []
+          cachedMetrics: [],
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         });
 
         if (Result.isFailure(rebuildStructOutput)) {
@@ -450,16 +453,15 @@ export class SaveCreateChartController {
           x => x.queryId === chartTile.queryId
         );
 
-        let newMconfig: MconfigTab = this.mconfigsService.apiToTab({
+        let newMconfig: MconfigTab = mconfigApiToTab({
           apiMconfig: apiMconfig
         });
 
-        let newQuery: QueryTab = this.queriesService.apiToTab({
+        let newQuery: QueryTab = queryApiToTab({
           apiQuery: apiQuery
         });
 
         let chart: ChartTab = chartApiToTab({
-          hashService: this.hashService,
           apiChart: v.apiChart,
           chartType: apiMconfig.chart.type
         });
@@ -534,13 +536,15 @@ export class SaveCreateChartController {
           )
       ),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('chartsCatalog', v =>
         getChartsCatalog({
           db: this.db,
-          unitsService: this.unitsService,
-          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,
@@ -557,7 +561,7 @@ export class SaveCreateChartController {
             queries: [],
             member: v.apiUserMember,
             models: v.models.map(model =>
-              this.modelsService.tabToApi({
+              modelTabToApi({
                 model: model,
                 hasAccess: checkModelAccess({
                   member: v.userMember,

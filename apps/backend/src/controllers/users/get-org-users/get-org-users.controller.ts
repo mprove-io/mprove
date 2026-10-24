@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import {
-  ToBackendGetOrgUsersRequestDto,
+  type ToBackendGetOrgUsersRequestDto,
   ToBackendGetOrgUsersResponseDto
 } from '#backend/controllers/users/get-org-users/get-org-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -20,10 +20,10 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
 import { makeFullName } from '#backend/functions/make-full-name/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { OrgUsersItem } from '#common/types/backend/parts/org-users/org-users-item';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -33,10 +33,7 @@ import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/or
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetOrgUsersController {
-  constructor(
-    private orgsService: OrgsService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetOrgUsers' satisfies ToBackendRoute)
   @ApiOperation({
@@ -63,7 +60,7 @@ export class GetOrgUsersController {
         })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwner({
+        checkUserIsOrgOwner({
           org: v.org,
           userId: v.user.userId
         })

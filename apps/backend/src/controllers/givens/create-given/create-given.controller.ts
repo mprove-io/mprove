@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendCreateGivenRequestDto,
+  type ToBackendCreateGivenRequestDto,
   ToBackendCreateGivenResponseDto
 } from '#backend/controllers/givens/create-given/create-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -18,10 +18,10 @@ import { checkGivenDoesNotExist } from '#backend/functions/db/givens/check-given
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { makeGiven } from '#backend/functions/db/givens/make-given/make-given';
 import { validateGivenValues } from '#backend/functions/db/givens/validate-given-values/validate-given-values';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -38,11 +38,7 @@ type CreateGivenWriteState = {
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateGivenController {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService,
-    private hashService: HashService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendCreateGiven' satisfies ToBackendRoute)
   @ApiOperation({
@@ -71,9 +67,10 @@ export class CreateGivenController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -95,7 +92,6 @@ export class CreateGivenController {
           projectId: v.projectId,
           userMember: v.userMember,
           given: makeGiven({
-            hashService: this.hashService,
             projectId: v.projectId,
             givenId: v.givenId,
             type: v.type,
@@ -112,7 +108,9 @@ export class CreateGivenController {
       ),
       Result.map(
         (v): ToBackendCreateGivenOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           givens: v.apiGivens
         })
       )

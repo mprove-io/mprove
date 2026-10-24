@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendClearCachedColumnRequestDto,
+  type ToBackendClearCachedColumnRequestDto,
   ToBackendClearCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/clear-cached-column/clear-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,10 +14,11 @@ import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts'
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
+import { makeCachedColumnFullId } from '#backend/functions/hash/make-cached-column-full-id/make-cached-column-full-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -29,11 +30,7 @@ import type { ToBackendClearCachedColumnOutput } from '#common/types/backend/rou
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class ClearCachedColumnController {
-  constructor(
-    private membersService: MembersService,
-    private hashService: HashService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendClearCachedColumn' satisfies ToBackendRoute)
   @ApiOperation({
@@ -61,9 +58,10 @@ export class ClearCachedColumnController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -83,9 +81,10 @@ export class ClearCachedColumnController {
       ),
       Result.andThrough(v =>
         v.cacheEnvId === PROJECT_ENV_PROD
-          ? this.membersService.getMemberCheckIsAdmin({
+          ? getMemberCheckIsAdmin({
               memberId: v.userId,
-              projectId: v.projectId
+              projectId: v.projectId,
+              db: this.db
             })
           : Result.succeed()
       ),
@@ -107,7 +106,7 @@ export class ClearCachedColumnController {
           await tx.delete(cachedColumnsTable).where(
             eq(
               cachedColumnsTable.cachedColumnFullId,
-              this.hashService.makeCachedColumnFullId({
+              makeCachedColumnFullId({
                 projectId: v.projectId,
                 connectionId: v.connectionId,
                 envId: v.cacheEnvId,

@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   ChartTab,
   EnvTab,
@@ -12,16 +14,18 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
+import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { getSelectedGivens } from '#backend/functions/db/users/get-selected-givens/get-selected-givens';
+import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER
@@ -64,14 +68,11 @@ export type ExplorerRebuildResult = ExplorerRebuildOk | ExplorerRebuildErr;
 @Injectable()
 export class ExplorerChartRebuildService {
   constructor(
-    private usersService: UsersService,
-    private structsService: StructsService,
-    private modelsService: ModelsService,
-    private blockmlService: BlockmlService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
     private db: DbService,
-    private hashService: HashService
+    private cs: ConfigService<BackendConfig>,
+    private tabService: TabService,
+    private rpcService: RpcService,
+    private logger: Logger
   ) {}
 
   async rebuildFromYaml(item: {
@@ -89,8 +90,9 @@ export class ExplorerChartRebuildService {
         })
       ),
       Result.bind('user', v =>
-        this.usersService.getUserCheckExists({
-          userId: v.session.userId
+        getUserCheckExists({
+          userId: v.session.userId,
+          db: this.db
         })
       ),
       Result.bind('userMember', v =>
@@ -138,16 +140,19 @@ export class ExplorerChartRebuildService {
         })
       ),
       Result.bind('currentStruct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.session.projectId
+          projectId: v.session.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('model', v =>
-        this.modelsService.getModelCheckExistsAndAccess({
+        getModelCheckExistsAndAccess({
           structId: v.bridge.structId,
           modelId: v.modelId,
-          userMember: v.userMember
+          userMember: v.userMember,
+          db: this.db
         })
       ),
       Result.bind('prepareChartFilePayload', v => {
@@ -199,13 +204,14 @@ export class ExplorerChartRebuildService {
         return Result.succeed(prepareChartFilePayload);
       }),
       Result.bind('selectedGivens', v =>
-        this.usersService.getSelectedGivens({
+        getSelectedGivens({
           user: v.user,
-          projectId: v.session.projectId
+          projectId: v.session.projectId,
+          db: this.db
         })
       ),
       Result.bind('rebuild', v =>
-        this.blockmlService.rebuildStruct({
+        rebuildStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.session.projectId,
@@ -220,7 +226,12 @@ export class ExplorerChartRebuildService {
           isUseCache: true,
           cachedMproveConfig: v.currentStruct.mproveConfig,
           cachedModels: [v.model],
-          cachedMetrics: []
+          cachedMetrics: [],
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         })
       ),
       Result.andThen(v => {
@@ -254,16 +265,15 @@ export class ExplorerChartRebuildService {
           x => x.queryId === chartTile.queryId
         );
 
-        let newMconfig: MconfigTab = this.mconfigsService.apiToTab({
+        let newMconfig: MconfigTab = mconfigApiToTab({
           apiMconfig: apiMconfig
         });
 
-        let newQuery: QueryTab = this.queriesService.apiToTab({
+        let newQuery: QueryTab = queryApiToTab({
           apiQuery: apiQuery
         });
 
         let chartTab: ChartTab = chartApiToTab({
-          hashService: this.hashService,
           apiChart: {
             ...apiChart,
             draft: true,

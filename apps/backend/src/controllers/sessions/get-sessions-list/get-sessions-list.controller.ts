@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, desc, eq, gte, inArray, lt, notInArray } from 'drizzle-orm';
 import {
-  ToBackendGetSessionsListRequestDto,
+  type ToBackendGetSessionsListRequestDto,
   ToBackendGetSessionsListResponseDto
 } from '#backend/controllers/sessions/get-sessions-list/get-sessions-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -15,9 +15,9 @@ import type {
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { tabsToSessionApis } from '#backend/functions/db/sessions/tabs-to-session-apis/tabs-to-session-apis';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -34,7 +34,6 @@ import type { ToBackendGetSessionsListOutput } from '#common/types/backend/route
 @Controller()
 export class GetSessionsListController {
   constructor(
-    private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
     private db: DbService
   ) {}
@@ -203,10 +202,11 @@ export class GetSessionsListController {
           : Result.succeed(undefined);
       }),
       Result.bind('apiSessions', v =>
-        this.sessionsService.tabsToSessionApis({
+        tabsToSessionApis({
           sessions: isUndefined(v.currentSession)
             ? v.listedSessions
-            : [...v.listedSessions, v.currentSession]
+            : [...v.listedSessions, v.currentSession],
+          db: this.db
         })
       ),
       Result.map(

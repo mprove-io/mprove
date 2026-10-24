@@ -14,7 +14,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   OcMessageTab,
   OcPartTab,
@@ -24,11 +24,11 @@ import type {
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { makeOcMessage } from '#backend/functions/db/oc-messages/make-oc-message/make-oc-message';
+import { makeOcPart } from '#backend/functions/db/oc-parts/make-oc-part/make-oc-part';
+import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
-import { OcMessagesService } from '#backend/services/db/oc-messages/oc-messages.service';
-import { OcPartsService } from '#backend/services/db/oc-parts/oc-parts.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import {
   EditorOpencodeService,
   OPENCODE_PROJECT_OPENAI_PROVIDER_ID
@@ -98,9 +98,6 @@ export class EditorStreamService implements OnModuleDestroy {
     private editorSandboxService: EditorSandboxService,
     private editorSessionLockService: EditorSessionLockService,
     private editorOpencodeService: EditorOpencodeService,
-    private sessionsService: SessionsService,
-    private ocMessagesService: OcMessagesService,
-    private ocPartsService: OcPartsService,
     private logger: Logger,
     private db: DbService
   ) {
@@ -768,7 +765,7 @@ export class EditorStreamService implements OnModuleDestroy {
       });
 
       let messageTabs = messages.map(m =>
-        this.ocMessagesService.makeOcMessage({
+        makeOcMessage({
           messageId: m.info.id,
           sessionId: item.sessionId,
           role: m.info.role,
@@ -778,7 +775,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
       let partTabs = messages.flatMap(m =>
         m.parts.map(p =>
-          this.ocPartsService.makeOcPart({
+          makeOcPart({
             partId: p.id as string,
             messageId: m.info.id,
             sessionId: item.sessionId,
@@ -801,7 +798,7 @@ export class EditorStreamService implements OnModuleDestroy {
       let ocSessionTab: OcSessionTab = ocSessionResult.value;
 
       if (!ocSessionTab) {
-        ocSessionTab = this.sessionsService.makeOcSession({
+        ocSessionTab = makeOcSession({
           sessionId: item.sessionId
         });
       }
@@ -998,13 +995,12 @@ export class EditorStreamService implements OnModuleDestroy {
             model: messageModel
           };
 
-          let userOcMessage: OcMessageTab =
-            this.ocMessagesService.makeOcMessage({
-              messageId: messageId,
-              sessionId: sessionId,
-              role: 'user',
-              ocMessage: userMessage
-            });
+          let userOcMessage: OcMessageTab = makeOcMessage({
+            messageId: messageId,
+            sessionId: sessionId,
+            role: 'user',
+            ocMessage: userMessage
+          });
 
           let userPart: TextPart = {
             id: partId,
@@ -1014,7 +1010,7 @@ export class EditorStreamService implements OnModuleDestroy {
             text: message
           };
 
-          let userOcPart: OcPartTab = this.ocPartsService.makeOcPart({
+          let userOcPart: OcPartTab = makeOcPart({
             partId: partId,
             messageId: messageId,
             sessionId: sessionId,

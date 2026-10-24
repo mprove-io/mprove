@@ -1,9 +1,9 @@
 import { UseFilters } from '@nestjs/common';
 import { McpController, Tool } from '@rekog/mcp-nest';
+import { SearchDocsService } from '#backend/controllers/mcp-tools/search-docs/search-docs.service';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception/mcp-exception.filter';
 import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema/make-mcp-output-schema';
 import { zodStripMcpSchemaId } from '#backend/functions/zod/zod-strip-mcp-schema-id/zod-strip-mcp-schema-id';
-import { DocsService } from '#backend/services/docs/docs.service';
 import {
   MCP_TOOL_SEARCH_DOCS,
   MCP_TOOL_SEARCH_DOCS_DESCRIPTION
@@ -20,7 +20,7 @@ import {
 @McpController()
 @UseFilters(McpExceptionFilter)
 export class SearchDocsTool {
-  constructor(private docsService: DocsService) {}
+  constructor(private searchDocsService: SearchDocsService) {}
 
   @Tool({
     name: MCP_TOOL_SEARCH_DOCS,
@@ -33,7 +33,9 @@ export class SearchDocsTool {
   async searchDocs(
     item: McpToolSearchDocsInput
   ): Promise<McpToolSearchDocsOutput> {
-    let output: McpToolSearchDocsOutput = this.docsService.searchDocs(item);
+    let output: McpToolSearchDocsOutput = this.searchDocsService.searchDocs({
+      ...item
+    });
 
     return output;
   }

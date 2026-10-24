@@ -16,14 +16,14 @@ import { checkAccess } from '#backend/functions/check-access/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getDashboardParts } from '#backend/functions/db/dashboards/get-dashboard-parts/get-dashboard-parts';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
@@ -37,10 +37,7 @@ export class GetStateService {
   constructor(
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
-    private membersService: MembersService,
     private rpcService: RpcService,
-    private sessionsService: SessionsService,
-    private structsService: StructsService,
     private db: DbService
   ) {}
 
@@ -64,11 +61,12 @@ export class GetStateService {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -131,10 +129,12 @@ export class GetStateService {
           : Result.succeed(undefined)
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
           projectId: v.projectId,
-          isGetEmptyStructOnError: true
+          isGetEmptyStructOnError: true,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('allModels', v =>
@@ -176,7 +176,7 @@ export class GetStateService {
           db: this.db,
           structId: v.bridge.structId,
           user: v.user,
-          apiUserMember: this.membersService.tabToApi({
+          apiUserMember: memberTabToApi({
             member: v.userMember
           })
         })

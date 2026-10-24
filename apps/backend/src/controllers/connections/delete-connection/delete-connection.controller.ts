@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteConnectionRequestDto,
+  type ToBackendDeleteConnectionRequestDto,
   ToBackendDeleteConnectionResponseDto
 } from '#backend/controllers/connections/delete-connection/delete-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -17,11 +17,11 @@ import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-colu
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -33,7 +33,6 @@ import type { ToBackendDeleteConnectionOutput } from '#common/types/backend/rout
 @Controller()
 export class DeleteConnectionController {
   constructor(
-    private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -64,9 +63,10 @@ export class DeleteConnectionController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('branchBridges', v =>

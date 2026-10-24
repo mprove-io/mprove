@@ -4,15 +4,16 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendSetOrgInfoRequestDto,
+  type ToBackendSetOrgInfoRequestDto,
   ToBackendSetOrgInfoResponseDto
 } from '#backend/controllers/orgs/set-org-info/set-org-info.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
+import { orgTabToApi } from '#backend/functions/db/orgs/org-tab-to-api/org-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -25,10 +26,7 @@ import type { ToBackendSetOrgInfoOutput } from '#common/types/backend/routes/org
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetOrgInfoController {
-  constructor(
-    private orgsService: OrgsService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendSetOrgInfo' satisfies ToBackendRoute)
   @ApiOperation({
@@ -54,7 +52,7 @@ export class SetOrgInfoController {
         })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwner({
+        checkUserIsOrgOwner({
           org: v.org,
           userId: v.userId
         })
@@ -77,7 +75,9 @@ export class SetOrgInfoController {
       ),
       Result.map(
         (v): ToBackendSetOrgInfoOutput => ({
-          org: this.orgsService.tabToApi({ org: v.org })
+          org: orgTabToApi({
+            org: v.org
+          })
         })
       )
     );

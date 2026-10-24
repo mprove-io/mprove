@@ -30,8 +30,11 @@ export function addModelLevelToChartSpaceNodesRecursive(item: {
 
     unitChildren.forEach(chartUnit => {
       let modelId = chartUnit.modelId ?? '';
+
       let modelLabel = chartUnit.modelLabel ?? modelId;
+
       let modelFolderId = `${node.id}/model/${modelId}`;
+
       let modelFolder: SpaceFolder = modelFolders.find(
         folder => folder.id === modelFolderId
       );

@@ -1,23 +1,28 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCompleteUserRegistrationRequestDto,
+  type ToBackendCompleteUserRegistrationRequestDto,
   ToBackendCompleteUserRegistrationResponseDto
 } from '#backend/controllers/users/complete-user-registration/complete-user-registration.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
-import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { UsersService } from '#backend/services/db/users/users.service';
+import { addMemberToDemoProject } from '#backend/functions/db/members/add-member-to-demo-project/add-member-to-demo-project';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import {
   type CreateSaltAndHashOutput,
-  HashService
-} from '#backend/services/hash/hash.service';
+  createSaltAndHash
+} from '#backend/functions/hash/create-salt-and-hash/create-salt-and-hash';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DbService } from '#backend/services/db/db.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -30,10 +35,11 @@ import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/rout
 export class CompleteUserRegistrationController {
   constructor(
     private jwtService: JwtService,
-    private hashService: HashService,
-    private usersService: UsersService,
-    private membersService: MembersService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private tabService: TabService,
+    private rpcService: RpcService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendCompleteUserRegistration' satisfies ToBackendRoute)
@@ -55,7 +61,7 @@ export class CompleteUserRegistrationController {
       }),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('emailVerificationTokenHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.emailVerificationToken,
           hashSecret: v.hashSecret
         })
@@ -74,9 +80,14 @@ export class CompleteUserRegistrationController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.membersService.addMemberToDemoProject({
+        addMemberToDemoProject({
           traceId: v.traceId,
-          user: v.user
+          user: v.user,
+          cs: this.cs,
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          logger: this.logger
         })
       ),
       Result.map(v => {
@@ -85,8 +96,9 @@ export class CompleteUserRegistrationController {
         return v;
       }),
       Result.bind('newPasswordHS', async v => {
-        let newPasswordHS: CreateSaltAndHashOutput =
-          await this.hashService.createSaltAndHash({ input: v.newPassword });
+        let newPasswordHS: CreateSaltAndHashOutput = await createSaltAndHash({
+          input: v.newPassword
+        });
 
         return Result.succeed(newPasswordHS);
       }),
@@ -107,7 +119,9 @@ export class CompleteUserRegistrationController {
       Result.map(
         (v): ToBackendConfirmUserEmailOutput => ({
           token: this.jwtService.sign({ userId: v.user.userId }),
-          user: this.usersService.tabToApi({ user: v.user })
+          user: userTabToApi({
+            user: v.user
+          })
         })
       )
     );

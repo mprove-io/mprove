@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { Credentials } from 'google-auth-library';
-import { JWT } from 'google-auth-library';
+import { type Credentials, JWT } from 'google-auth-library';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   ConnectionTab,
@@ -21,12 +20,16 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getQueriesCheckExistSkipSqlData } from '#backend/functions/db/queries/get-queries-check-exist-skip-sql-data/get-queries-check-exist-skip-sql-data';
+import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-query-check-exists-skip-data/get-query-check-exists-skip-data';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
+import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
+import { runQuery } from '#backend/functions/store/run-query/run-query';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -35,8 +38,7 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
-import { ParentService } from '#backend/services/parent/parent.service';
-import { StoreService } from '#backend/services/store/store.service';
+import { UrlService } from '#backend/services/url/url.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -71,22 +73,18 @@ const apiConnectionTypes = ['Api', 'GoogleApi'] satisfies ConnectionType[];
 @Injectable()
 export class RunQueriesService {
   constructor(
-    private parentService: ParentService,
-    private structsService: StructsService,
-    private queriesService: QueriesService,
     private db: DbService,
-    private sessionsService: SessionsService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private databricksService: DatabricksService,
     private duckdbService: DuckDbService,
     private prestoService: PrestoService,
     private trinoService: TrinoService,
-    private storeService: StoreService,
     private bigqueryService: BigQueryService,
     private snowflakeService: SnowFlakeService,
     private cs: ConfigService<BackendConfig>,
-    private logger: Logger
+    private logger: Logger,
+    private urlService: UrlService
   ) {}
 
   private async getQueryExecutionContext(item: {
@@ -100,9 +98,10 @@ export class RunQueriesService {
     return Result.pipe(
       Result.succeed(item),
       Result.bind('query', v =>
-        this.queriesService.getQueryCheckExistsSkipData({
+        getQueryCheckExistsSkipData({
           projectId: v.projectId,
-          queryId: v.queryId
+          queryId: v.queryId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -267,12 +266,14 @@ export class RunQueriesService {
 
         let model: ModelTab = models.find(x => x.modelId === mconfig.modelId);
 
-        await this.storeService.runQuery({
+        await runQuery({
           projectId: projectId,
           connection: connection,
           model: model,
           queryId: query.queryId,
-          queryJobId: query.queryJobId
+          queryJobId: query.queryJobId,
+          db: this.db,
+          urlService: this.urlService
         });
       }
     }
@@ -491,25 +492,25 @@ export class RunQueriesService {
 
         let model: ModelTab = models.find(x => x.modelId === mconfig.modelId);
 
-        void this.storeService
-          .runQuery({
-            projectId: projectId,
-            connection: connection,
-            model: model,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_API_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runQuery({
+          projectId: projectId,
+          connection: connection,
+          model: model,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          db: this.db,
+          urlService: this.urlService
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_API_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       }
     }
 
@@ -565,11 +566,12 @@ export class RunQueriesService {
     return Result.pipe(
       Result.succeed(item),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('userMember', v =>
@@ -617,9 +619,11 @@ export class RunQueriesService {
         })
       ),
       Result.andThrough(v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('mconfigs', v =>
@@ -649,14 +653,15 @@ export class RunQueriesService {
             let parentAccessResult: Result.Result<
               void,
               CheckParentAccessError
-            > = await this.parentService.checkParentAccess({
+            > = await checkParentAccess({
               parentId: mconfig.parentId,
               parentType: mconfig.parentType,
               modelId: mconfig.modelId,
               user: v.user,
               userMember: v.userMember,
               structId: v.bridge.structId,
-              projectId: v.projectId
+              projectId: v.projectId,
+              db: this.db
             });
 
             if (Result.isFailure(parentAccessResult)) {
@@ -677,9 +682,10 @@ export class RunQueriesService {
         Result.succeed<string[]>([...new Set(v.mconfigs.map(x => x.queryId))])
       ),
       Result.bind('queries', v =>
-        this.queriesService.getQueriesCheckExistSkipSqlData({
+        getQueriesCheckExistSkipSqlData({
           queryIds: v.queryIds,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('modelIds', v =>
@@ -845,7 +851,9 @@ export class RunQueriesService {
       Result.map(
         (v): ToBackendRunQueriesOutput => ({
           runningQueries: v.prepareQueryExecutionPayload.runningQueries.map(x =>
-            this.queriesService.tabToApi({ query: x })
+            queryTabToApi({
+              query: x
+            })
           ),
           startedQueryIds: v.prepareQueryExecutionPayload.startedQueryIds
         })

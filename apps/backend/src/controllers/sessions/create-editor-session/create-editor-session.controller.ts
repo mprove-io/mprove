@@ -8,7 +8,7 @@ import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateEditorSessionRequestDto,
+  type ToBackendCreateEditorSessionRequestDto,
   ToBackendCreateEditorSessionResponseDto
 } from '#backend/controllers/sessions/create-editor-session/create-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -25,28 +25,32 @@ import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key/build-session-api-key';
 import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts/generate-api-key-parts';
+import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
+import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
+import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
+import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';
+import { makeSession } from '#backend/functions/db/sessions/make-session/make-session';
+import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
-import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex/editor-codex.service';
 import { EditorConnectionsService } from '#backend/services/editor/editor-connections/editor-connections.service';
-import type { ProviderConfigResult } from '#backend/services/editor/editor-opencode/editor-opencode.service';
-import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
-import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
-import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
-import { HashService } from '#backend/services/hash/hash.service';
+import {
+  EditorOpencodeService,
+  type ProviderConfigResult
+} from '#backend/services/editor/editor-opencode/editor-opencode.service';
+import {
+  EditorStreamService,
+  type ExecuteInteractionOutput
+} from '#backend/services/editor/editor-stream/editor-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -85,17 +89,10 @@ type SandboxFile = { path: string; data: string };
 export class CreateEditorSessionController {
   constructor(
     private tabService: TabService,
-    private membersService: MembersService,
-    private sessionsService: SessionsService,
-    private providersService: ProvidersService,
-    private usersService: UsersService,
     private editorStreamService: EditorStreamService,
     private editorOpencodeService: EditorOpencodeService,
     private editorCodexService: EditorCodexService,
-    private codexService: CodexService,
     private rpcService: RpcService,
-    private blockmlService: BlockmlService,
-    private hashService: HashService,
     private editorConnectionsService: EditorConnectionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -136,9 +133,10 @@ export class CreateEditorSessionController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsEditor({
+        getMemberCheckIsEditor({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('maxActiveEditorSessionsPerProjectUser', v =>
@@ -163,24 +161,29 @@ export class CreateEditorSessionController {
           : Result.succeed()
       ),
       Result.bind('modelSelection', v =>
-        this.providersService.getModelSelection({
+        getModelSelection({
           projectId: v.projectId,
           providerId: v.providerId,
           modelId: v.modelId,
           variant: v.variant,
           isUserCodexAuthSet: isDefined(v.user.codexAuth),
-          isBuilder: true
+          isBuilder: true,
+          db: this.db
         })
       ),
       Result.andThrough(async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
-          ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
+          ? prewarmCodexAuth({
+              userId: v.user.userId,
+              db: this.db
+            })
           : Result.succeed()
       ),
       Result.bind('freshUser', async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
-          ? this.usersService.getUserCheckExists({
-              userId: v.user.userId
+          ? getUserCheckExists({
+              userId: v.user.userId,
+              db: this.db
             })
           : Result.succeed(v.user)
       ),
@@ -226,7 +229,7 @@ export class CreateEditorSessionController {
 
                   let sessionId: string = makeSessionId();
 
-                  session = this.sessionsService.makeSession({
+                  session = makeSession({
                     sessionId: sessionId,
                     type: 'Editor',
                     repoId: sessionId,
@@ -255,10 +258,9 @@ export class CreateEditorSessionController {
                     createdTs: now
                   });
 
-                  let ocSession: OcSessionTab =
-                    this.sessionsService.makeOcSession({
-                      sessionId: sessionId
-                    });
+                  let ocSession: OcSessionTab = makeOcSession({
+                    sessionId: sessionId
+                  });
 
                   await this.db.writeUnwrap({
                     insert: {
@@ -672,7 +674,6 @@ export class CreateEditorSessionController {
       Result.bind('sessionBranch', v =>
         Result.succeed(
           makeBranch({
-            hashService: this.hashService,
             projectId: v.projectId,
             repoId: v.sessionId,
             branchId: v.sessionId
@@ -692,7 +693,6 @@ export class CreateEditorSessionController {
         Result.succeed(
           v.prodBranchBridges.map(bridge =>
             makeBridge({
-              hashService: this.hashService,
               projectId: v.sessionBranch.projectId,
               repoId: v.sessionBranch.repoId,
               branchId: v.sessionBranch.branchId,
@@ -704,7 +704,7 @@ export class CreateEditorSessionController {
         )
       ),
       Result.andThrough(v =>
-        this.blockmlService.rebuildBranchBridges({
+        rebuildBranchBridges({
           branchBridges: v.sessionBranchBridges,
           envId: v.envId,
           traceId: v.traceId,
@@ -712,7 +712,12 @@ export class CreateEditorSessionController {
           projectId: v.projectId,
           repoId: v.sessionId,
           diskFiles: v.diskCreateDevRepoOutput.files,
-          mproveDir: v.diskCreateDevRepoOutput.mproveDir
+          mproveDir: v.diskCreateDevRepoOutput.mproveDir,
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         })
       ),
       Result.andThrough(v =>

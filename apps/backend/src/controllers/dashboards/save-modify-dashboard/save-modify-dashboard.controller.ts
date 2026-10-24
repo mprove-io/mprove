@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSaveModifyDashboardRequestDto,
+  type ToBackendSaveModifyDashboardRequestDto,
   ToBackendSaveModifyDashboardResponseDto
 } from '#backend/controllers/dashboards/save-modify-dashboard/save-modify-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -18,6 +18,10 @@ import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import {
+  type RebuildStructOutput,
+  rebuildStruct
+} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
 import { getDashboardCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-check-exists-and-access/get-dashboard-check-exists-and-access';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
@@ -27,6 +31,12 @@ import {
   processDashboard
 } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path/get-report-space-from-file-path';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
@@ -34,22 +44,9 @@ import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-te
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -102,22 +99,10 @@ type PrepareDashboardFileMovePayload = {
 export class SaveModifyDashboardController {
   constructor(
     private tabService: TabService,
-    private usersService: UsersService,
-    private structsService: StructsService,
     private rpcService: RpcService,
-    private membersService: MembersService,
-    private projectsService: ProjectsService,
-    private blockmlService: BlockmlService,
-    private modelsService: ModelsService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService,
-    private hashService: HashService,
-    private unitsService: UnitsService,
-    private spaceService: SpaceService
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSaveModifyDashboard' satisfies ToBackendRoute)
@@ -155,7 +140,9 @@ export class SaveModifyDashboardController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
+        > = checkUserIsNotRestricted({
+          user: v.user
+        });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -164,11 +151,12 @@ export class SaveModifyDashboardController {
         return Result.succeed();
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -186,7 +174,9 @@ export class SaveModifyDashboardController {
       ),
       Result.bind('apiUserMember', async v => {
         let apiUserMemberResult: Result.Result<Member, never> = Result.succeed(
-          this.membersService.tabToApi({ member: v.userMember })
+          memberTabToApi({
+            member: v.userMember
+          })
         );
 
         if (Result.isFailure(apiUserMemberResult)) {
@@ -198,10 +188,11 @@ export class SaveModifyDashboardController {
         let projectRestrictionResult: Result.Result<
           void,
           CheckProjectIsNotRestrictedError
-        > = await this.projectsService.checkProjectIsNotRestricted({
+        > = await checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
-          repoId: v.repoId
+          repoId: v.repoId,
+          cs: this.cs
         });
 
         if (Result.isFailure(projectRestrictionResult)) {
@@ -244,17 +235,16 @@ export class SaveModifyDashboardController {
         })
       ),
       Result.bind('currentStruct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('fromDashboardX', v =>
         getDashboardXCheckExistsAndAccess({
           db: this.db,
-          modelsService: this.modelsService,
-          mconfigsService: this.mconfigsService,
-          queriesService: this.queriesService,
           dashboardId: v.fromDashboardId,
           structId: v.bridge.structId,
           apiUserMember: v.apiUserMember,
@@ -294,10 +284,11 @@ export class SaveModifyDashboardController {
           let modelAccessResult: Result.Result<
             ModelTab,
             GetModelCheckExistsAndAccessError
-          > = await this.modelsService.getModelCheckExistsAndAccess({
+          > = await getModelCheckExistsAndAccess({
             structId: v.bridge.structId,
             modelId: v.newTile.mconfig.modelId,
-            userMember: v.userMember
+            userMember: v.userMember,
+            db: this.db
           });
 
           if (Result.isFailure(modelAccessResult)) {
@@ -563,7 +554,7 @@ export class SaveModifyDashboardController {
         let rebuildStructOutput: Result.Result<
           RebuildStructOutput,
           RebuildStructError
-        > = await this.blockmlService.rebuildStruct({
+        > = await rebuildStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.projectId,
@@ -578,7 +569,12 @@ export class SaveModifyDashboardController {
           isUseCache: true,
           cachedMproveConfig: v.currentStruct.mproveConfig,
           cachedModels: v.cachedModels,
-          cachedMetrics: []
+          cachedMetrics: [],
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         });
 
         if (Result.isFailure(rebuildStructOutput)) {
@@ -656,10 +652,7 @@ export class SaveModifyDashboardController {
           ProcessDashboardOutput,
           ProcessDashboardError
         > = await processDashboard({
-          queriesService: this.queriesService,
-          mconfigsService: this.mconfigsService,
-          modelsService: this.modelsService,
-          hashService: this.hashService,
+          db: this.db,
           newApiDashboard: v.newApiDashboard,
           apiMconfigs: v.rebuild.mconfigs,
           apiQueries: v.rebuild.queries,
@@ -725,9 +718,6 @@ export class SaveModifyDashboardController {
       Result.bind('apiFinalDashboardX', v =>
         getDashboardXCheckExistsAndAccess({
           db: this.db,
-          modelsService: this.modelsService,
-          mconfigsService: this.mconfigsService,
-          queriesService: this.queriesService,
           dashboardId: v.processedDashboard.newDashboard.dashboardId,
           structId: v.bridge.structId,
           apiUserMember: v.apiUserMember,
@@ -738,8 +728,6 @@ export class SaveModifyDashboardController {
       Result.bind('dashboardsCatalog', v =>
         getDashboardsCatalog({
           db: this.db,
-          unitsService: this.unitsService,
-          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,

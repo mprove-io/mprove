@@ -1,10 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq, type SQL, sql } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSuggestDimensionValuesRequestDto,
+  type ToBackendSuggestDimensionValuesRequestDto,
   ToBackendSuggestDimensionValuesResponseDto
 } from '#backend/controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.dto';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
@@ -20,13 +22,14 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import { prepStoreMconfigQuery } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
+import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { ParentService } from '#backend/services/parent/parent.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { UTC } from '#common/constants/top';
@@ -57,12 +60,9 @@ type CachedColumnRow = { cachedColumnFullId: string };
 @Controller()
 export class SuggestDimensionValuesController {
   constructor(
-    private parentService: ParentService,
-    private structsService: StructsService,
-    private mconfigsService: MconfigsService,
-    private sessionsService: SessionsService,
     private runQueriesService: RunQueriesService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendSuggestDimensionValues' satisfies ToBackendRoute)
@@ -94,11 +94,12 @@ export class SuggestDimensionValuesController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -142,10 +143,12 @@ export class SuggestDimensionValuesController {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExistsAndNotChanged({
+        getStructCheckExistsAndNotChanged({
           projectId: v.projectId,
           bridgeStructId: v.bridge.structId,
-          structId: v.structId
+          structId: v.structId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('prepareParentPayload', v => {
@@ -177,7 +180,7 @@ export class SuggestDimensionValuesController {
         })
       ),
       Result.andThrough(v =>
-        this.parentService.checkParentAccess({
+        checkParentAccess({
           parentId: v.prepareParentPayload.parentId,
           parentType: v.prepareParentPayload.parentType,
           modelId: v.modelId,
@@ -188,7 +191,8 @@ export class SuggestDimensionValuesController {
           isCheckSuggest: true,
           suggestFieldId: v.fieldId,
           suggestRowId: v.rowId,
-          suggestModel: v.model
+          suggestModel: v.model,
+          db: this.db
         })
       ),
       Result.bind('cachedValuesOutput', async v =>
@@ -253,14 +257,14 @@ export class SuggestDimensionValuesController {
       Result.bind('prepStoreMconfigQueryOutput', async v =>
         v.model.type !== 'Store'
           ? Result.succeed(undefined)
-          : this.mconfigsService.prepStoreMconfigQuery({
+          : prepStoreMconfigQuery({
               struct: v.struct,
               project: v.project,
               envId: v.envId,
               model: v.model,
               mconfigParentType: v.apiMconfig.parentType,
               mconfigParentId: v.apiMconfig.parentId,
-              mconfig: this.mconfigsService.apiToTab({
+              mconfig: mconfigApiToTab({
                 apiMconfig: v.apiMconfig
               }),
               metricsStartDateYYYYMMDD: isDefined(v.cellMetricsStartDateMs)
@@ -274,7 +278,8 @@ export class SuggestDimensionValuesController {
                     timezone: v.apiMconfig.timezone,
                     secondsEpochUTC: v.cellMetricsEndDateMs / 1000
                   })
-                : undefined
+                : undefined,
+              db: this.db
             })
       ),
       Result.andThrough(v =>

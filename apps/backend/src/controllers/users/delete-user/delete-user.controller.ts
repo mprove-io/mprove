@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteUserRequestDto,
+  type ToBackendDeleteUserRequestDto,
   ToBackendDeleteUserResponseDto
 } from '#backend/controllers/users/delete-user/delete-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -21,11 +21,11 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -41,7 +41,6 @@ import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom
 export class DeleteUserController {
   constructor(
     private tabService: TabService,
-    private usersService: UsersService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -63,7 +62,9 @@ export class DeleteUserController {
     return Result.pipe(
       Result.succeed({ user: user, traceId: body.traceId }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.bind('ownerOrgs', v =>
         this.db.orgs.findMany({

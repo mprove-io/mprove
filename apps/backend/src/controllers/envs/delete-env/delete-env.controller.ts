@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteEnvRequestDto,
+  type ToBackendDeleteEnvRequestDto,
   ToBackendDeleteEnvResponseDto
 } from '#backend/controllers/envs/delete-env/delete-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -18,10 +18,11 @@ import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts'
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -34,7 +35,6 @@ import type { ToBackendDeleteEnvOutput } from '#common/types/backend/routes/envs
 @Controller()
 export class DeleteEnvController {
   constructor(
-    private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -64,9 +64,10 @@ export class DeleteEnvController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -123,7 +124,9 @@ export class DeleteEnvController {
       ),
       Result.map(
         (v): ToBackendDeleteEnvOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           envs: v.apiEnvs
         })
       )

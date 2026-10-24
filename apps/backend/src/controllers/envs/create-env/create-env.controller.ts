@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendCreateEnvRequestDto,
+  type ToBackendCreateEnvRequestDto,
   ToBackendCreateEnvResponseDto
 } from '#backend/controllers/envs/create-env/create-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -18,10 +18,10 @@ import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridg
 import { checkEnvDoesNotExist } from '#backend/functions/db/envs/check-env-does-not-exist/check-env-does-not-exist';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { makeEnv } from '#backend/functions/db/envs/make-env/make-env';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -33,11 +33,7 @@ import type { ToBackendCreateEnvOutput } from '#common/types/backend/routes/envs
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateEnvController {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService,
-    private hashService: HashService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendCreateEnv' satisfies ToBackendRoute)
   @ApiOperation({
@@ -63,9 +59,10 @@ export class CreateEnvController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -78,7 +75,6 @@ export class CreateEnvController {
       Result.bind('newEnv', v =>
         Result.succeed(
           makeEnv({
-            hashService: this.hashService,
             projectId: v.projectId,
             envId: v.envId,
             evs: []
@@ -93,7 +89,6 @@ export class CreateEnvController {
       Result.bind('newBridges', v => {
         let newBridges: BridgeTab[] = v.branches.map(branch =>
           makeBridge({
-            hashService: this.hashService,
             projectId: v.projectId,
             repoId: branch.repoId,
             branchId: branch.branchId,
@@ -115,7 +110,9 @@ export class CreateEnvController {
       ),
       Result.map(
         (v): ToBackendCreateEnvOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           envs: v.apiEnvs
         })
       )

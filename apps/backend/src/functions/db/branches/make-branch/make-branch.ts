@@ -1,16 +1,15 @@
 import type { BranchTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeBranchFullId } from '#backend/functions/hash/make-branch-full-id/make-branch-full-id';
 
 export function makeBranch(item: {
   projectId: string;
   repoId: string;
   branchId: string;
-  hashService: HashService;
 }): BranchTab {
-  let { projectId, repoId, branchId, hashService } = item;
+  let { projectId, repoId, branchId } = item;
 
   let branch: BranchTab = {
-    branchFullId: hashService.makeBranchFullId({
+    branchFullId: makeBranchFullId({
       projectId: projectId,
       repoId: repoId,
       branchId: branchId

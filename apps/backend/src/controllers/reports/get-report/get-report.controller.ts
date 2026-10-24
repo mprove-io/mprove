@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGetReportRequestDto,
+  type ToBackendGetReportRequestDto,
   ToBackendGetReportResponseDto
 } from '#backend/controllers/reports/get-report/get-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,10 +16,11 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getQueryInfoReportData } from '#backend/functions/query-info-report/get-query-info-report-data/get-query-info-report-data';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { QueryInfoReportService } from '#backend/services/query-info-report/query-info-report.service';
+import { DocService } from '#backend/services/doc/doc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
@@ -44,9 +47,10 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class GetReportController {
   constructor(
-    private sessionsService: SessionsService,
-    private queryInfoReportService: QueryInfoReportService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private docService: DocService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendGetReport' satisfies ToBackendRoute)
@@ -75,11 +79,12 @@ export class GetReportController {
         timezone: body.input.timezone
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -132,7 +137,7 @@ export class GetReportController {
         })
       ),
       Result.andThen(v =>
-        this.queryInfoReportService.getQueryInfoReportData({
+        getQueryInfoReportData({
           traceId: v.traceId,
           user: v.user,
           userMember: v.userMember,
@@ -144,7 +149,11 @@ export class GetReportController {
           timezone: v.timezone,
           timeSpec: v.timeSpec,
           timeRangeFractionBrick: v.timeRangeFractionBrick,
-          skipUi: false
+          skipUi: false,
+          db: this.db,
+          cs: this.cs,
+          docService: this.docService,
+          logger: this.logger
         })
       )
     );

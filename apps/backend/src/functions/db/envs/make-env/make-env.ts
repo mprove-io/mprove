@@ -1,17 +1,16 @@
 import type { EnvTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeEnvFullId } from '#backend/functions/hash/make-env-full-id/make-env-full-id';
 import type { Ev } from '#common/types/backend/parts/ev';
 
 export function makeEnv(item: {
-  hashService: HashService;
   projectId: string;
   envId: string;
   evs: Ev[];
 }): EnvTab {
-  let { hashService, projectId, envId, evs } = item;
+  let { projectId, envId, evs } = item;
 
   let env: EnvTab = {
-    envFullId: hashService.makeEnvFullId({
+    envFullId: makeEnvFullId({
       projectId: projectId,
       envId: envId
     }),

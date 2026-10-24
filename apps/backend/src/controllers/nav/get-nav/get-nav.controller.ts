@@ -5,7 +5,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGetNavRequestDto,
+  type ToBackendGetNavRequestDto,
   ToBackendGetNavResponseDto
 } from '#backend/controllers/nav/get-nav/get-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -15,14 +15,14 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -39,11 +39,6 @@ export class GetNavController {
   constructor(
     private tabService: TabService,
     private rpcService: RpcService,
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private structsService: StructsService,
-    private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
   ) {}
@@ -176,32 +171,37 @@ export class GetNavController {
       Result.bind('apiMember', v =>
         Result.succeed(
           v.isGetRepo
-            ? this.membersService.tabToApi({ member: v.userMember })
+            ? memberTabToApi({
+                member: v.userMember
+              })
             : undefined
         )
       ),
       Result.bind('struct', async v =>
         v.isGetRepo
-          ? this.structsService.getStructCheckExists({
+          ? getStructCheckExists({
               structId: v.bridge.structId,
-              projectId: v.resultProject.projectId
+              projectId: v.resultProject.projectId,
+              cs: this.cs,
+              db: this.db
             })
           : Result.succeed(undefined)
       ),
       Result.bind('modelPartXs', async v =>
         v.isGetRepo
-          ? this.modelsService.getModelPartXs({
+          ? getModelPartXs({
               structId: v.struct.structId,
-              apiUserMember: this.membersService.tabToApi({
+              apiUserMember: memberTabToApi({
                 member: v.userMember
-              })
+              }),
+              db: this.db
             })
           : Result.succeed(undefined)
       ),
       Result.bind('apiStruct', v =>
         Result.succeed(
           v.isGetRepo
-            ? this.structsService.tabToApi({
+            ? structTabToApi({
                 struct: v.struct,
                 modelPartXs: v.modelPartXs
               })
@@ -242,7 +242,9 @@ export class GetNavController {
           branchId: v.resultProject?.defaultBranch,
           envId: PROJECT_ENV_PROD,
           needValidate: isDefined(v.bridge) ? v.bridge.needValidate : false,
-          user: this.usersService.tabToApi({ user: v.user }),
+          user: userTabToApi({
+            user: v.user
+          }),
           serverNowTs: Date.now(),
           isMproveAdmin:
             v.user.email ===

@@ -3,17 +3,16 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Result } from '@praha/byethrow';
 import { Strategy } from 'passport-local';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
+import { checkUserPasswordHashIsDefined } from '#backend/functions/db/users/check-user-password-hash-is-defined/check-user-password-hash-is-defined';
+import { getUserByEmailCheckExists } from '#backend/functions/db/users/get-user-by-email-check-exists/get-user-by-email-check-exists';
+import { createHashUsingSalt } from '#backend/functions/hash/create-hash-using-salt/create-hash-using-salt';
+import { DbService } from '#backend/services/db/db.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import type { AuthenticateLocalError } from '#common/types/backend/function-errors/authenticate-local-error';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private hashService: HashService,
-    private usersService: UsersService
-  ) {
+  constructor(private db: DbService) {
     super({
       usernameField: 'input[]email',
       passwordField: 'input[]password'
@@ -43,13 +42,18 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     return Result.pipe(
       Result.succeed(item),
       Result.bind('user', v =>
-        this.usersService.getUserByEmailCheckExists({ email: v.email })
+        getUserByEmailCheckExists({
+          email: v.email,
+          db: this.db
+        })
       ),
       Result.andThrough(v =>
-        this.usersService.checkUserPasswordHashIsDefined({ user: v.user })
+        checkUserPasswordHashIsDefined({
+          user: v.user
+        })
       ),
       Result.bind('passwordHash', async v => {
-        let passwordHash: string = await this.hashService.createHashUsingSalt({
+        let passwordHash: string = await createHashUsingSalt({
           salt: v.user.passwordSalt,
           input: v.password
         });

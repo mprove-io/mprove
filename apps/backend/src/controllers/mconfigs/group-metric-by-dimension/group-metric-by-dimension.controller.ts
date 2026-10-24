@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGroupMetricByDimensionRequestDto,
+  type ToBackendGroupMetricByDimensionRequestDto,
   ToBackendGroupMetricByDimensionResponseDto
 } from '#backend/controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -17,15 +19,17 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
+import { prepStoreMconfigQuery } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExistsAndNotChanged } from '#backend/functions/db/structs/get-struct-check-exists-and-not-changed/get-struct-check-exists-and-not-changed';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
+import { editMalloyQuery } from '#backend/functions/malloy/edit-malloy-query/edit-malloy-query';
+import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { MalloyService } from '#backend/services/malloy/malloy.service';
-import { ParentService } from '#backend/services/parent/parent.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -56,13 +60,9 @@ type SelectSorting = {
 @Controller()
 export class GroupMetricByDimensionController {
   constructor(
-    private parentService: ParentService,
-    private structsService: StructsService,
-    private malloyService: MalloyService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendGroupMetricByDimension' satisfies ToBackendRoute)
@@ -91,11 +91,12 @@ export class GroupMetricByDimensionController {
         user: user
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -147,21 +148,24 @@ export class GroupMetricByDimensionController {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExistsAndNotChanged({
+        getStructCheckExistsAndNotChanged({
           projectId: v.projectId,
           bridgeStructId: v.bridge.structId,
-          structId: v.oldMconfig.structId
+          structId: v.oldMconfig.structId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
-        this.parentService.checkParentAccess({
+        checkParentAccess({
           parentId: v.oldMconfig.parentId,
           parentType: v.oldMconfig.parentType,
           modelId: v.oldMconfig.modelId,
           user: v.user,
           userMember: v.userMember,
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       // Grouping does not require additional model access.
@@ -174,7 +178,7 @@ export class GroupMetricByDimensionController {
         })
       ),
       Result.bind('prepareMconfigPayload', v => {
-        let apiMconfig: MconfigX = this.mconfigsService.tabToApi({
+        let apiMconfig: MconfigX = mconfigTabToApi({
           mconfig: v.oldMconfig,
           modelFields: v.model.fields
         });
@@ -226,14 +230,14 @@ export class GroupMetricByDimensionController {
       }),
       Result.bind('mconfigQuery', v =>
         v.model.type === 'Store'
-          ? this.mconfigsService.prepStoreMconfigQuery({
+          ? prepStoreMconfigQuery({
               struct: v.struct,
               project: v.project,
               envId: v.envId,
               model: v.model,
               mconfigParentType: v.prepareMconfigPayload.apiMconfig.parentType,
               mconfigParentId: v.prepareMconfigPayload.apiMconfig.parentId,
-              mconfig: this.mconfigsService.apiToTab({
+              mconfig: mconfigApiToTab({
                 apiMconfig: v.prepareMconfigPayload.apiMconfig
               }),
               metricsStartDateYYYYMMDD: isDefined(v.cellMetricsStartDateMs)
@@ -247,9 +251,10 @@ export class GroupMetricByDimensionController {
                     timezone: v.prepareMconfigPayload.apiMconfig.timezone,
                     secondsEpochUTC: v.cellMetricsEndDateMs / 1000
                   })
-                : undefined
+                : undefined,
+              db: this.db
             })
-          : this.malloyService.editMalloyQuery({
+          : editMalloyQuery({
               projectId: v.projectId,
               envId: v.envId,
               structId: v.struct.structId,
@@ -257,10 +262,13 @@ export class GroupMetricByDimensionController {
               mconfigParentId: v.prepareMconfigPayload.apiMconfig.parentId,
               user: v.user,
               model: v.model,
-              mconfig: this.mconfigsService.apiToTab({
+              mconfig: mconfigApiToTab({
                 apiMconfig: v.prepareMconfigPayload.apiMconfig
               }),
-              queryOperations: [v.prepareMconfigPayload.queryOperation]
+              queryOperations: [v.prepareMconfigPayload.queryOperation],
+              db: this.db,
+              logger: this.logger,
+              cs: this.cs
             })
       ),
       Result.andThrough(v =>
@@ -286,11 +294,11 @@ export class GroupMetricByDimensionController {
       ),
       Result.map(
         (v): ToBackendGroupMetricByDimensionOutput => ({
-          mconfig: this.mconfigsService.tabToApi({
+          mconfig: mconfigTabToApi({
             mconfig: v.mconfigQuery.newMconfig,
             modelFields: v.model.fields
           }),
-          query: this.queriesService.tabToApi({
+          query: queryTabToApi({
             query: isDefined(v.query) ? v.query : v.mconfigQuery.newQuery
           })
         })

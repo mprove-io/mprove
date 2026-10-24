@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendGetRolesRequestDto,
+  type ToBackendGetRolesRequestDto,
   ToBackendGetRolesResponseDto
 } from '#backend/controllers/roles/get-roles/get-roles.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -11,10 +11,10 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
@@ -23,11 +23,7 @@ import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetRolesController {
-  constructor(
-    private membersService: MembersService,
-    private rolesService: RolesService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetRoles' satisfies ToBackendRoute)
   @ApiOperation({
@@ -60,14 +56,19 @@ export class GetRolesController {
         })
       ),
       Result.bind('apiRoles', v =>
-        this.rolesService.getApiRoles({ projectId: v.projectId })
+        getApiRoles({
+          projectId: v.projectId,
+          db: this.db
+        })
       ),
       Result.bind('apiGivens', v =>
         getApiGivens({ db: this.db, projectId: v.projectId })
       ),
       Result.map(
         (v): ToBackendGetRolesOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           roles: v.apiRoles,
           givens: v.apiGivens
         })

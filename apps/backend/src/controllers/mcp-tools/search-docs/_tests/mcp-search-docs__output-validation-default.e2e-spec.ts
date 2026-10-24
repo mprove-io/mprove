@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
 import type { Response } from 'supertest';
-import { mockMcpSearchDocsOutput } from '#backend/controllers/mcp-tools/search-docs/_tests/fixtures/mock-mcp-search-docs-output';
+import { SearchDocsService } from '#backend/controllers/mcp-tools/search-docs/search-docs.service';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { prepareSeed } from '#backend/functions/top/prepare-test-and-seed/prepare-seed/prepare-seed';
 import { prepareTest } from '#backend/functions/top/prepare-test-and-seed/prepare-test/prepare-test';
@@ -15,6 +15,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { McpToolSearchDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 import type { ToBackendGenerateUserApiKeyResponse } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
 
@@ -39,7 +40,15 @@ test('1', async t => {
         mcpOptions: {}
       });
 
-      mockMcpSearchDocsOutput({ prepTest: prepTest });
+      let searchDocsService: SearchDocsService =
+        prepTest.moduleRef.get<SearchDocsService>(SearchDocsService);
+
+      searchDocsService.searchDocs = (): McpToolSearchDocsOutput =>
+        ({
+          ok: true,
+          searchDocsResults: 'not-an-array',
+          extra: 'preserve-me'
+        }) as unknown as McpToolSearchDocsOutput;
 
       let prepareSeedResult: { loginToken?: string } = await prepareSeed({
         httpServer: prepTest.httpServer,

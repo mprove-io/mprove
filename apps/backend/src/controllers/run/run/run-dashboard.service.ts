@@ -5,9 +5,9 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { getDashboardParts } from '#backend/functions/db/dashboards/get-dashboard-parts/get-dashboard-parts';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { PrepareRunDashboardError } from '#common/types/backend/function-errors/prepare-run-dashboard-error';
 import type { RunDashboard } from '#common/types/backend/parts/run/run-dashboard';
@@ -37,10 +37,7 @@ export type PrepareRunDashboardOutput = {
 
 @Injectable()
 export class RunDashboardService {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   async prepareRunDashboard(item: {
     structId: string;
@@ -58,7 +55,11 @@ export class RunDashboardService {
     return Result.pipe(
       Result.succeed(item),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('dashboards', v =>
         getDashboardParts({

@@ -15,6 +15,7 @@ import { customRetry } from '#backend/functions/custom-retry/custom-retry';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import type { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
+import { convertWritePack } from '#backend/services/db/convert-write-pack/convert-write-pack';
 import {
   createDbTableRegistry,
   type DbTableRegistry
@@ -25,9 +26,7 @@ import type { DbTableConversion } from '#backend/services/db/db-table-conversion
 import type { DbTransaction } from '#backend/services/db/db-transaction';
 import { dbWriteOperationValues } from '#backend/services/db/db-write-operation';
 import { transaction } from '#backend/services/db/transaction/transaction';
-import { convertWritePack } from '#backend/services/db/tx-write/convert-write-pack/convert-write-pack';
-import { writeDbTable } from '#backend/services/db/tx-write/write-db-table/write-db-table';
-import { HashService } from '#backend/services/hash/hash.service';
+import { writeDbTable } from '#backend/services/db/write-db-table/write-db-table';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -39,13 +38,11 @@ import type { WriteError } from '#common/types/backend/function-errors/write-err
 export class DbService extends DbTableAccess {
   constructor(
     @Inject(DRIZZLE) private dbExtra: DbExtra,
-    hashService: HashService,
     tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {
     let context: DbTableContext = {
-      hashService: hashService,
       tabService: tabService,
       isEncryptDb: cs.get<BackendConfig['isEncryptDb']>('isEncryptDb'),
       isEncryptMetadata:

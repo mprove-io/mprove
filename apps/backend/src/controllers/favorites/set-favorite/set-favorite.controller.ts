@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendSetFavoriteRequestDto,
+  type ToBackendSetFavoriteRequestDto,
   ToBackendSetFavoriteResponseDto
 } from '#backend/controllers/favorites/set-favorite/set-favorite.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,7 +14,6 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { setFavorite } from '#backend/functions/db/favorites/set-favorite/set-favorite';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -25,10 +24,7 @@ import type { ToBackendSetFavoriteOutput } from '#common/types/backend/routes/fa
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetFavoriteController {
-  constructor(
-    private db: DbService,
-    private hashService: HashService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendSetFavorite' satisfies ToBackendRoute)
   @ApiOperation({
@@ -66,7 +62,6 @@ export class SetFavoriteController {
       Result.andThrough(v =>
         setFavorite({
           db: this.db,
-          hashService: this.hashService,
           projectId: v.projectId,
           userId: v.user.userId,
           type: v.type,

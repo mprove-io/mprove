@@ -7,13 +7,14 @@ import type {
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
-import type {
-  MconfigsService,
-  PrepStoreMconfigQueryOutput
-} from '#backend/services/db/mconfigs/mconfigs.service';
-import type { ModelsService } from '#backend/services/db/models/models.service';
-import type { QueriesService } from '#backend/services/db/queries/queries.service';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import {
+  type PrepStoreMconfigQueryOutput,
+  prepStoreMconfigQuery
+} from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
+import { modelApiToTab } from '#backend/functions/db/models/model-api-to-tab/model-api-to-tab';
+import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
+import type { DbService } from '#backend/services/db/db.service';
 import { EMPTY_QUERY_ID } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -53,10 +54,6 @@ export type ProcessDashboardOutput = {
 };
 
 export async function processDashboard(item: {
-  queriesService: QueriesService;
-  mconfigsService: MconfigsService;
-  modelsService: ModelsService;
-  hashService: HashService;
   newApiDashboard: Dashboard;
   apiMconfigs: Mconfig[];
   apiQueries: Query[];
@@ -69,6 +66,7 @@ export async function processDashboard(item: {
   newDashboardId: string;
   tempStruct: StructTab;
   project: ProjectTab;
+  db: DbService;
 }): Result.ResultAsync<ProcessDashboardOutput, ProcessDashboardError> {
   return Result.pipe(
     Result.succeed(item),
@@ -87,7 +85,11 @@ export async function processDashboard(item: {
 
       let dashboardQueries: QueryTab[] = v.apiQueries
         .filter(x => dashboardQueryIds.indexOf(x.queryId) > -1)
-        .map(x => v.queriesService.apiToTab({ apiQuery: x }));
+        .map(x =>
+          queryApiToTab({
+            apiQuery: x
+          })
+        );
 
       let insertMconfigs: MconfigTab[] = [];
 
@@ -102,7 +104,7 @@ export async function processDashboard(item: {
       let dashboardMalloyQueries: QueryTab[] = [];
 
       dashboardMalloyMconfigs.forEach(apiMconfig => {
-        let mconfig: MconfigTab = v.mconfigsService.apiToTab({
+        let mconfig: MconfigTab = mconfigApiToTab({
           apiMconfig: apiMconfig
         });
 
@@ -163,18 +165,21 @@ export async function processDashboard(item: {
           let prepStoreMconfigQueryOutput: Result.Result<
             PrepStoreMconfigQueryOutput,
             PrepStoreMconfigQueryError
-          > = await v.mconfigsService.prepStoreMconfigQuery({
+          > = await prepStoreMconfigQuery({
             struct: v.tempStruct,
             project: v.project,
             envId: v.envId,
             mconfigParentType: 'Dashboard',
             mconfigParentId: v.newDashboardId,
-            model: v.modelsService.apiToTab({ apiModel: apiModel }),
-            mconfig: v.mconfigsService.apiToTab({
+            model: modelApiToTab({
+              apiModel: apiModel
+            }),
+            mconfig: mconfigApiToTab({
               apiMconfig: apiMconfig
             }),
             metricsStartDateYYYYMMDD: undefined,
-            metricsEndDateYYYYMMDD: undefined
+            metricsEndDateYYYYMMDD: undefined,
+            db: v.db
           });
 
           if (Result.isFailure(prepStoreMconfigQueryOutput)) {
@@ -285,7 +290,6 @@ export async function processDashboard(item: {
       });
 
       let newDashboard: DashboardTab = dashboardApiToTab({
-        hashService: v.hashService,
         apiDashboard: v.newApiDashboard
       });
 

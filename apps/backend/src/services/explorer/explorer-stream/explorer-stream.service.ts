@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { EventMessagePartUpdated, ToolPart } from '@opencode-ai/sdk/v2';
 import { Result } from '@praha/byethrow';
@@ -29,15 +29,17 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { buildCodexFetch } from '#backend/functions/codex/build-codex-fetch/build-codex-fetch';
+import {
+  type GetModelSelectionOutput,
+  getModelSelection
+} from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
 import { makeExplorerToolError } from '#backend/functions/make-explorer-tool-error/make-explorer-tool-error';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
-import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import type { GetModelSelectionOutput } from '#backend/services/db/providers/providers.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { ExecuteInteractionOutput } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { ExplorerEventsMakerService } from '#backend/services/explorer/explorer-events-maker/explorer-events-maker.service';
 import { ExplorerModelPartsService } from '#backend/services/explorer/explorer-model-parts/explorer-model-parts.service';
@@ -109,16 +111,12 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private cs: ConfigService<BackendConfig>,
     private sessionDrainService: SessionDrainService,
     private ascendingIdService: AscendingIdService,
-    private codexService: CodexService,
     private explorerModelsService: ExplorerModelsService,
     private explorerPromptsService: ExplorerPromptsService,
     private explorerTitleService: ExplorerTitleService,
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private explorerToolsService: ExplorerToolsService,
     private explorerModelPartsService: ExplorerModelPartsService,
-    private providersService: ProvidersService,
-    private structsService: StructsService,
-    private usersService: UsersService,
     private logger: Logger,
     private db: DbService
   ) {
@@ -655,8 +653,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let session: SessionTab = sessionResult.value;
 
     let userResult: Result.Result<UserTab, GetUserCheckExistsError> =
-      await this.usersService.getUserCheckExists({
-        userId: session.userId
+      await getUserCheckExists({
+        userId: session.userId,
+        db: this.db
       });
 
     if (Result.isFailure(userResult)) {
@@ -668,13 +667,14 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let modelSelectionResult: Result.Result<
       GetModelSelectionOutput,
       GetModelSelectionError
-    > = await this.providersService.getModelSelection({
+    > = await getModelSelection({
       projectId: session.projectId,
       providerId: provider,
       modelId: modelId,
       variant: variant,
       isUserCodexAuthSet: isDefined(user.codexAuth),
-      isBuilder: false
+      isBuilder: false,
+      db: this.db
     });
 
     if (Result.isFailure(modelSelectionResult)) {
@@ -717,9 +717,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let traceId = makeId();
 
     let structResult: Result.Result<StructTab, GetStructCheckExistsError> =
-      await this.structsService.getStructCheckExists({
+      await getStructCheckExists({
         structId: bridge.structId,
-        projectId: session.projectId
+        projectId: session.projectId,
+        cs: this.cs,
+        db: this.db
       });
 
     if (Result.isFailure(structResult)) {
@@ -834,9 +836,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
     // Build codex fetch if needed (reads fresh auth from DB)
     let codexFetchResult: Result.Result<typeof fetch, BuildCodexFetchError> =
       isCodex
-        ? await this.codexService.buildCodexFetch({
+        ? await buildCodexFetch({
             userId: user.userId,
-            sessionId: sessionId
+            sessionId: sessionId,
+            db: this.db
           })
         : Result.succeed(undefined);
 

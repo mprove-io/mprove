@@ -5,7 +5,7 @@ import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import sshpk from 'sshpk';
 import {
-  ToBackendGenerateProjectRemoteKeyRequestDto,
+  type ToBackendGenerateProjectRemoteKeyRequestDto,
   ToBackendGenerateProjectRemoteKeyResponseDto
 } from '#backend/controllers/projects/generate-project-remote-key/generate-project-remote-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -15,9 +15,9 @@ import {
   createGitKeyPair,
   type GitKeyPair
 } from '#backend/functions/create-git-key-pair/create-git-key-pair';
+import { checkUserIsOrgOwner } from '#backend/functions/db/orgs/check-user-is-org-owner/check-user-is-org-owner';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { OrgsService } from '#backend/services/db/orgs/orgs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
@@ -31,10 +31,7 @@ const { parseKey, parsePrivateKey } = sshpk;
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GenerateProjectRemoteKeyController {
-  constructor(
-    private orgsService: OrgsService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGenerateProjectRemoteKey' satisfies ToBackendRoute)
   @ApiOperation({
@@ -60,7 +57,7 @@ export class GenerateProjectRemoteKeyController {
         })
       ),
       Result.andThrough(v =>
-        this.orgsService.checkUserIsOrgOwner({
+        checkUserIsOrgOwner({
           org: v.org,
           userId: v.userId
         })

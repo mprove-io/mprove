@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
@@ -9,14 +9,17 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
 import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
+import { getChartData } from '#backend/functions/query-info-chart/get-chart-data/get-chart-data';
+import { getDashboardData } from '#backend/functions/query-info-dashboard/get-dashboard-data/get-dashboard-data';
+import { getQueryInfoReportData } from '#backend/functions/query-info-report/get-query-info-report-data/get-query-info-report-data';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { QueryInfoChartService } from '#backend/services/query-info-chart/query-info-chart.service';
-import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard/query-info-dashboard.service';
-import { QueryInfoReportService } from '#backend/services/query-info-report/query-info-report.service';
+import { DocService } from '#backend/services/doc/doc.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetQueryInfoError } from '#common/types/backend/function-errors/get-query-info-error';
@@ -37,11 +40,11 @@ import type { TimeSpec } from '#common/types/shared/time/timespec';
 export class GetQueryInfoService {
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private sessionsService: SessionsService,
-    private queryInfoChartService: QueryInfoChartService,
-    private queryInfoDashboardService: QueryInfoDashboardService,
-    private queryInfoReportService: QueryInfoReportService,
-    private db: DbService
+    private db: DbService,
+    private logger: Logger,
+    private tabService: TabService,
+    private rpcService: RpcService,
+    private docService: DocService
   ) {}
 
   async getQueryInfo(item: {
@@ -100,11 +103,12 @@ export class GetQueryInfoService {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -155,7 +159,7 @@ export class GetQueryInfoService {
       Result.bind('chartOutput', async v =>
         isUndefined(v.chartId)
           ? Result.succeed(undefined)
-          : this.queryInfoChartService.getChartData({
+          : getChartData({
               traceId: v.traceId,
               user: v.user,
               userMember: v.userMember,
@@ -165,7 +169,10 @@ export class GetQueryInfoService {
               structId: v.bridge.structId,
               chartId: v.chartId,
               timezone: v.timezone,
-              skipUi: true
+              skipUi: true,
+              db: this.db,
+              cs: this.cs,
+              logger: this.logger
             })
       ),
       Result.bind('chart', v => {
@@ -209,7 +216,7 @@ export class GetQueryInfoService {
       Result.bind('dashboardOutput', async v =>
         isUndefined(v.dashboardId)
           ? Result.succeed<ToBackendGetDashboardOutput>(undefined)
-          : this.queryInfoDashboardService.getDashboardData({
+          : getDashboardData({
               traceId: v.traceId,
               user: v.user,
               userMember: v.userMember,
@@ -220,7 +227,12 @@ export class GetQueryInfoService {
               envId: v.envId,
               dashboardId: v.dashboardId,
               timezone: v.timezone,
-              skipUi: true
+              skipUi: true,
+              db: this.db,
+              cs: this.cs,
+              tabService: this.tabService,
+              rpcService: this.rpcService,
+              logger: this.logger
             })
       ),
       Result.bind('dashboard', v => {
@@ -266,7 +278,7 @@ export class GetQueryInfoService {
       Result.bind('reportOutput', async v =>
         isUndefined(v.reportId)
           ? Result.succeed<ToBackendGetReportOutput>(undefined)
-          : this.queryInfoReportService.getQueryInfoReportData({
+          : getQueryInfoReportData({
               traceId: v.traceId,
               user: v.user,
               userMember: v.userMember,
@@ -278,7 +290,11 @@ export class GetQueryInfoService {
               timezone: v.timezone,
               timeSpec: v.timeSpec,
               timeRangeFractionBrick: v.timeRangeFractionBrick,
-              skipUi: true
+              skipUi: true,
+              db: this.db,
+              cs: this.cs,
+              docService: this.docService,
+              logger: this.logger
             })
       ),
       Result.bind('report', v => {

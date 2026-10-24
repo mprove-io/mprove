@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteBranchRequestDto,
+  type ToBackendDeleteBranchRequestDto,
   ToBackendDeleteBranchResponseDto
 } from '#backend/controllers/branches/delete-branch/delete-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -15,13 +15,13 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -38,10 +38,7 @@ import type { ToBackendDeleteBranchOutput } from '#common/types/backend/routes/b
 export class DeleteBranchController {
   constructor(
     private tabService: TabService,
-    private projectsService: ProjectsService,
     private rpcService: RpcService,
-    private sessionsService: SessionsService,
-    private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -68,11 +65,12 @@ export class DeleteBranchController {
         userId: user.userId
       }),
       Result.bind('repoType', v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -88,16 +86,18 @@ export class DeleteBranchController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditor({
+        getMemberCheckIsEditor({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestricted({
+        checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
-          repoId: v.repoId
+          repoId: v.repoId,
+          cs: this.cs
         })
       ),
       Result.andThrough(v =>

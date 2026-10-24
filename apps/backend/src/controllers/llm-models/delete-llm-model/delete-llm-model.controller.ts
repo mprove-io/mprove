@@ -4,17 +4,18 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendDeleteLlmModelRequestDto,
+  type ToBackendDeleteLlmModelRequestDto,
   ToBackendDeleteLlmModelResponseDto
 } from '#backend/controllers/llm-models/delete-llm-model/delete-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { getLlmModelCheckExists } from '#backend/functions/db/providers/get-llm-model-check-exists/get-llm-model-check-exists';
+import { tabToApiProvider } from '#backend/functions/db/providers/tab-to-api-provider/tab-to-api-provider';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -25,11 +26,7 @@ import type { ToBackendDeleteLlmModelOutput } from '#common/types/backend/routes
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteLlmModelController {
-  constructor(
-    private providersService: ProvidersService,
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendDeleteLlmModel' satisfies ToBackendRoute)
   @ApiOperation({
@@ -54,9 +51,10 @@ export class DeleteLlmModelController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('provider', v =>
@@ -68,7 +66,7 @@ export class DeleteLlmModelController {
         })
       ),
       Result.andThrough(v =>
-        this.providersService.getLlmModelCheckExists({
+        getLlmModelCheckExists({
           provider: v.provider,
           modelId: v.modelId
         })
@@ -84,7 +82,7 @@ export class DeleteLlmModelController {
       ),
       Result.map(
         (v): ToBackendDeleteLlmModelOutput => ({
-          provider: this.providersService.tabToApiProvider({
+          provider: tabToApiProvider({
             provider: v.provider,
             isIncludePasswords: false
           })

@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendEditMemberRequestDto,
+  type ToBackendEditMemberRequestDto,
   ToBackendEditMemberResponseDto
 } from '#backend/controllers/members/edit-member/edit-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -18,10 +18,11 @@ import {
 } from '#backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { checkRolesExist } from '#backend/functions/db/roles/check-roles-exist/check-roles-exist';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -34,11 +35,7 @@ import type { ToBackendEditMemberOutput } from '#common/types/backend/routes/mem
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class EditMemberController {
-  constructor(
-    private membersService: MembersService,
-    private rolesService: RolesService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendEditMember' satisfies ToBackendRoute)
   @ApiOperation({
@@ -68,9 +65,10 @@ export class EditMemberController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -81,9 +79,10 @@ export class EditMemberController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.rolesService.checkRolesExist({
+        checkRolesExist({
           projectId: v.projectId,
-          roleIds: v.roles
+          roleIds: v.roles,
+          db: this.db
         })
       ),
       Result.bind('member', v =>
@@ -130,7 +129,7 @@ export class EditMemberController {
       Result.bind('apiMember', v => {
         let avatar: AvatarTab = v.avatars.length > 0 ? v.avatars[0] : undefined;
 
-        let apiMember: Member = this.membersService.tabToApi({
+        let apiMember: Member = memberTabToApi({
           member: v.member
         });
 

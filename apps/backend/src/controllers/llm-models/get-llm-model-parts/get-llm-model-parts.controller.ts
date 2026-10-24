@@ -4,16 +4,16 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendGetLlmModelPartsRequestDto,
+  type ToBackendGetLlmModelPartsRequestDto,
   ToBackendGetLlmModelPartsResponseDto
 } from '#backend/controllers/llm-models/get-llm-model-parts/get-llm-model-parts.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { LlmModelService } from '#backend/services/llm-model/llm-model.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
@@ -32,7 +32,6 @@ import type { ToBackendGetLlmModelPartsOutput } from '#common/types/backend/rout
 @Controller()
 export class GetLlmModelPartsController {
   constructor(
-    private membersService: MembersService,
     private llmModelService: LlmModelService,
     private db: DbService
   ) {}
@@ -60,9 +59,10 @@ export class GetLlmModelPartsController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('provider', v =>

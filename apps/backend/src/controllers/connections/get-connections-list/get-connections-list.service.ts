@@ -4,8 +4,8 @@ import { and, eq, inArray, or } from 'drizzle-orm';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { GetConnectionsListError } from '#common/types/backend/function-errors/get-connections-list-error';
@@ -14,10 +14,7 @@ import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/ro
 
 @Injectable()
 export class GetConnectionsListService {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   async getConnectionsList(item: {
     userId: string;
@@ -35,9 +32,10 @@ export class GetConnectionsListService {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('apiEnvs', v =>

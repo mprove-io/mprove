@@ -3,14 +3,17 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import {
-  ToBackendPollUserCodexAuthRequestDto,
+  type ToBackendPollUserCodexAuthRequestDto,
   ToBackendPollUserCodexAuthResponseDto
 } from '#backend/controllers/users/poll-user-codex-auth/poll-user-codex-auth.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { pollDeviceAuth } from '#backend/functions/codex/poll-device-auth/poll-device-auth';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
+import { getUserCheckExists } from '#backend/functions/db/users/get-user-check-exists/get-user-check-exists';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex/codex.service';
-import { UsersService } from '#backend/services/db/users/users.service';
+import { DbService } from '#backend/services/db/db.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -21,10 +24,7 @@ import type { ToBackendPollUserCodexAuthOutput } from '#common/types/backend/rou
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class PollUserCodexAuthController {
-  constructor(
-    private usersService: UsersService,
-    private codexService: CodexService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendPollUserCodexAuth' satisfies ToBackendRoute)
   @ApiOperation({
@@ -46,19 +46,23 @@ export class PollUserCodexAuthController {
         userCode: body.input.userCode
       }),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.bind('status', v =>
-        this.codexService.pollDeviceAuth({
+        pollDeviceAuth({
           userId: v.user.userId,
           deviceAuthId: v.deviceAuthId,
-          userCode: v.userCode
+          userCode: v.userCode,
+          db: this.db
         })
       ),
       Result.bind('freshUser', async v =>
         v.status === 'Authorized'
-          ? this.usersService.getUserCheckExists({
-              userId: v.user.userId
+          ? getUserCheckExists({
+              userId: v.user.userId,
+              db: this.db
             })
           : Result.succeed(undefined)
       ),
@@ -67,7 +71,9 @@ export class PollUserCodexAuthController {
           v.status === 'Authorized'
             ? {
                 status: v.status,
-                user: this.usersService.tabToApi({ user: v.freshUser })
+                user: userTabToApi({
+                  user: v.freshUser
+                })
               }
             : { status: v.status }
       )

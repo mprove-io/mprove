@@ -1,10 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateEnvVarRequestDto,
+  type ToBackendCreateEnvVarRequestDto,
   ToBackendCreateEnvVarResponseDto
 } from '#backend/controllers/envs/create-env-var/create-env-var.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -13,10 +15,11 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { Ev } from '#common/types/backend/parts/ev';
@@ -29,9 +32,8 @@ import type { ToBackendCreateEnvVarOutput } from '#common/types/backend/routes/e
 @Controller()
 export class CreateEnvVarController {
   constructor(
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendCreateEnvVar' satisfies ToBackendRoute)
@@ -60,16 +62,18 @@ export class CreateEnvVarController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestricted({
+        checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
-          repoId: undefined
+          repoId: undefined,
+          cs: this.cs
         })
       ),
       Result.bind('env', v =>
@@ -119,7 +123,9 @@ export class CreateEnvVarController {
       ),
       Result.map(
         (v): ToBackendCreateEnvVarOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           envs: v.apiEnvs
         })
       )

@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSaveModifyReportRequestDto,
+  type ToBackendSaveModifyReportRequestDto,
   ToBackendSaveModifyReportResponseDto
 } from '#backend/controllers/reports/save-modify-report/save-modify-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -23,26 +23,32 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import {
+  type RebuildStructOutput,
+  rebuildStruct
+} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { getReportCheckExistsAndAccess } from '#backend/functions/db/reports/get-report-check-exists-and-access/get-report-check-exists-and-access';
+import { getReportsCatalog } from '#backend/functions/db/reports/get-reports-catalog/get-reports-catalog';
+import { reportApiToTab } from '#backend/functions/db/reports/report-api-to-tab/report-api-to-tab';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path/get-report-space-from-file-path';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeReportFileText } from '#backend/functions/make-report-file-text/make-report-file-text';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
+import { getReportData } from '#backend/functions/report-data/get-report-data/get-report-data';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { ReportsService } from '#backend/services/db/reports/reports.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { ReportDataService } from '#backend/services/report-data/report-data.service';
+import { DocService } from '#backend/services/doc/doc.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -104,19 +110,11 @@ type SaveReportPayload = {
 export class SaveModifyReportController {
   constructor(
     private tabService: TabService,
-    private usersService: UsersService,
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private projectsService: ProjectsService,
-    private structsService: StructsService,
-    private reportsService: ReportsService,
-    private sessionsService: SessionsService,
-    private reportDataService: ReportDataService,
     private rpcService: RpcService,
-    private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService
+    private db: DbService,
+    private docService: DocService
   ) {}
 
   @Post('api/ToBackendSaveModifyReport' satisfies ToBackendRoute)
@@ -154,7 +152,9 @@ export class SaveModifyReportController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
+        > = checkUserIsNotRestricted({
+          user: v.user
+        });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -163,11 +163,12 @@ export class SaveModifyReportController {
         return Result.succeed();
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -195,10 +196,11 @@ export class SaveModifyReportController {
         let projectRestrictionResult: Result.Result<
           void,
           CheckProjectIsNotRestrictedError
-        > = await this.projectsService.checkProjectIsNotRestricted({
+        > = await checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: userMember,
-          repoId: v.repoId
+          repoId: v.repoId,
+          cs: this.cs
         });
 
         if (Result.isFailure(projectRestrictionResult)) {
@@ -241,27 +243,31 @@ export class SaveModifyReportController {
         })
       ),
       Result.bind('fromReport', v =>
-        this.reportsService.getReportCheckExistsAndAccess({
+        getReportCheckExistsAndAccess({
           projectId: v.projectId,
           reportId: v.fromReportId,
           structId: v.bridge.structId,
           user: v.user,
-          userMember: v.userMember
+          userMember: v.userMember,
+          db: this.db
         })
       ),
       Result.bind('currentStruct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('existingModReport', v =>
-        this.reportsService.getReportCheckExistsAndAccess({
+        getReportCheckExistsAndAccess({
           projectId: v.projectId,
           reportId: v.modReportId,
           structId: v.bridge.structId,
           user: v.user,
-          userMember: v.userMember
+          userMember: v.userMember,
+          db: this.db
         })
       ),
       Result.bind('resolveReportDependenciesPayload', v => {
@@ -472,7 +478,7 @@ export class SaveModifyReportController {
         let rebuildStructOutput: Result.Result<
           RebuildStructOutput,
           RebuildStructError
-        > = await this.blockmlService.rebuildStruct({
+        > = await rebuildStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.projectId,
@@ -487,7 +493,12 @@ export class SaveModifyReportController {
           isUseCache: true,
           cachedMproveConfig: v.currentStruct.mproveConfig,
           cachedModels: v.cachedModels,
-          cachedMetrics: v.resolveReportDependenciesPayload.cachedMetrics
+          cachedMetrics: v.resolveReportDependenciesPayload.cachedMetrics,
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         });
 
         if (Result.isFailure(rebuildStructOutput)) {
@@ -563,7 +574,7 @@ export class SaveModifyReportController {
       Result.bind('saveReportPayload', async v => {
         v.apiReport.rows = v.fromReport.rows;
 
-        let report: ReportTab = this.reportsService.apiToTab({
+        let report: ReportTab = reportApiToTab({
           apiReport: v.apiReport
         });
 
@@ -605,10 +616,14 @@ export class SaveModifyReportController {
         return Result.succeed(saveReportPayload);
       }),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('apiFinalReport', v =>
-        this.reportDataService.getReportData({
+        getReportData({
           report: v.saveReportPayload.report,
           traceId: v.traceId,
           project: v.project,
@@ -620,29 +635,35 @@ export class SaveModifyReportController {
           metrics: v.rebuild.struct.metrics,
           timeSpec: v.timeSpec,
           timeRangeFractionBrick: v.timeRangeFractionBrick,
-          timezone: v.timezone
+          timezone: v.timezone,
+          db: this.db,
+          docService: this.docService,
+          logger: this.logger,
+          cs: this.cs
         })
       ),
       Result.bind('modelPartXs', v =>
-        this.modelsService.getModelPartXs({
+        getModelPartXs({
           structId: v.currentStruct.structId,
-          apiUserMember: v.apiUserMember
+          apiUserMember: v.apiUserMember,
+          db: this.db
         })
       ),
       Result.bind('reportsCatalog', v =>
-        this.reportsService.getReportsCatalog({
+        getReportsCatalog({
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,
           userMember: v.userMember,
           apiUserMember: v.apiUserMember,
-          spaces: v.currentStruct.spaces
+          spaces: v.currentStruct.spaces,
+          db: this.db
         })
       ),
       Result.map(
         (v): ToBackendSaveModifyReportOutput => ({
           needValidate: v.bridge.needValidate,
-          struct: this.structsService.tabToApi({
+          struct: structTabToApi({
             struct: v.currentStruct,
             modelPartXs: v.modelPartXs
           }),

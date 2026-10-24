@@ -4,22 +4,29 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import type { PrepareRunChartOutput } from '#backend/controllers/run/run/run-chart.service';
-import { RunChartService } from '#backend/controllers/run/run/run-chart.service';
-import type { PrepareRunDashboardOutput } from '#backend/controllers/run/run/run-dashboard.service';
-import { RunDashboardService } from '#backend/controllers/run/run/run-dashboard.service';
-import type { PrepareRunReportOutput } from '#backend/controllers/run/run/run-report.service';
-import { RunReportService } from '#backend/controllers/run/run/run-report.service';
+import {
+  type PrepareRunChartOutput,
+  RunChartService
+} from '#backend/controllers/run/run/run-chart.service';
+import {
+  type PrepareRunDashboardOutput,
+  RunDashboardService
+} from '#backend/controllers/run/run/run-dashboard.service';
+import {
+  type PrepareRunReportOutput,
+  RunReportService
+} from '#backend/controllers/run/run/run-report.service';
 import type { QueryTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getQueriesCheckExistSkipSqlData } from '#backend/functions/db/queries/get-queries-check-exist-skip-sql-data/get-queries-check-exist-skip-sql-data';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { DbService } from '#backend/services/db/db.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { sleep } from '#common/functions/sleep/sleep';
 import type { GetQueriesCheckExistSkipSqlDataError } from '#common/types/backend/function-errors/get-queries-check-exist-skip-sql-data-error';
@@ -41,9 +48,6 @@ type RunMconfigPart = {
 export class RunService {
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private sessionsService: SessionsService,
-    private structsService: StructsService,
-    private queriesService: QueriesService,
     private runQueriesService: RunQueriesService,
     private runChartService: RunChartService,
     private runDashboardService: RunDashboardService,
@@ -130,11 +134,12 @@ export class RunService {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -178,9 +183,11 @@ export class RunService {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('hostUrl', v =>
@@ -267,14 +274,19 @@ export class RunService {
         ])
       ),
       Result.bind('queriesStart', v =>
-        this.queriesService.getQueriesCheckExistSkipSqlData({
+        getQueriesCheckExistSkipSqlData({
           queryIds: v.mconfigParts.map(x => x.queryId),
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('apiQueriesStart', v =>
         Result.succeed(
-          v.queriesStart.map(q => this.queriesService.tabToApi({ query: q }))
+          v.queriesStart.map(q =>
+            queryTabToApi({
+              query: q
+            })
+          )
         )
       ),
       Result.bind('runQueriesOutput', v =>
@@ -300,9 +312,10 @@ export class RunService {
             let queriesResult: Result.Result<
               QueryTab[],
               GetQueriesCheckExistSkipSqlDataError
-            > = await this.queriesService.getQueriesCheckExistSkipSqlData({
+            > = await getQueriesCheckExistSkipSqlData({
               queryIds: mconfigPartsToGet.map(x => x.queryId),
-              projectId: v.projectId
+              projectId: v.projectId,
+              db: this.db
             });
 
             if (Result.isFailure(queriesResult)) {
@@ -310,7 +323,9 @@ export class RunService {
             }
 
             let apiQueries: Query[] = queriesResult.value.map(q =>
-              this.queriesService.tabToApi({ query: q })
+              queryTabToApi({
+                query: q
+              })
             );
 
             apiQueries.forEach(query => {

@@ -4,17 +4,18 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendDeleteRoleGivenRequestDto,
+  type ToBackendDeleteRoleGivenRequestDto,
   ToBackendDeleteRoleGivenResponseDto
 } from '#backend/controllers/roles/delete-role-given/delete-role-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { rolesTable } from '#backend/drizzle/postgres/schema/roles';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -25,11 +26,7 @@ import type { ToBackendDeleteRoleGivenOutput } from '#common/types/backend/route
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteRoleGivenController {
-  constructor(
-    private membersService: MembersService,
-    private rolesService: RolesService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendDeleteRoleGiven' satisfies ToBackendRoute)
   @ApiOperation({
@@ -56,9 +53,10 @@ export class DeleteRoleGivenController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('role', v =>
@@ -77,11 +75,16 @@ export class DeleteRoleGivenController {
         this.db.write({ insertOrUpdate: { roles: [v.role] } })
       ),
       Result.bind('apiRoles', v =>
-        this.rolesService.getApiRoles({ projectId: v.projectId })
+        getApiRoles({
+          projectId: v.projectId,
+          db: this.db
+        })
       ),
       Result.map(
         (v): ToBackendDeleteRoleGivenOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           roles: v.apiRoles
         })
       )

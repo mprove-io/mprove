@@ -3,15 +3,15 @@ import { JwtService } from '@nestjs/jwt';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import {
-  ToBackendLoginUserRequestDto,
+  type ToBackendLoginUserRequestDto,
   ToBackendLoginUserResponseDto
 } from '#backend/controllers/users/login-user/login-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { LocalAuthGuard } from '#backend/guards/local-auth/local-auth.guard';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/users/login-user/login-user-output';
@@ -21,10 +21,7 @@ import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/user
 @UseGuards(ThrottlerIpGuard, LocalAuthGuard)
 @Controller()
 export class LoginUserController {
-  constructor(
-    private jwtService: JwtService,
-    private usersService: UsersService
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   @Post('api/ToBackendLoginUser' satisfies ToBackendRoute)
   @ApiOperation({
@@ -42,7 +39,9 @@ export class LoginUserController {
 
     let payload: ToBackendLoginUserOutput = {
       token: token,
-      user: this.usersService.tabToApi({ user: user })
+      user: userTabToApi({
+        user: user
+      })
     };
 
     return Result.succeed(payload);

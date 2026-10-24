@@ -1,10 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGetStructRequestDto,
+  type ToBackendGetStructRequestDto,
   ToBackendGetStructResponseDto
 } from '#backend/controllers/structs/get-struct/get-struct.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,12 +16,13 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -31,11 +34,8 @@ import type { ToBackendGetStructOutput } from '#common/types/backend/routes/stru
 @Controller()
 export class GetStructController {
   constructor(
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private sessionsService: SessionsService,
-    private structsService: StructsService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendGetStruct' satisfies ToBackendRoute)
@@ -59,11 +59,12 @@ export class GetStructController {
         userId: user.userId
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -107,27 +108,32 @@ export class GetStructController {
         })
       ),
       Result.bind('struct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('modelPartXs', v =>
-        this.modelsService.getModelPartXs({
+        getModelPartXs({
           structId: v.struct.structId,
-          apiUserMember: this.membersService.tabToApi({
+          apiUserMember: memberTabToApi({
             member: v.userMember
-          })
+          }),
+          db: this.db
         })
       ),
       Result.map(
         (v): ToBackendGetStructOutput => ({
           needValidate: v.bridge.needValidate,
-          struct: this.structsService.tabToApi({
+          struct: structTabToApi({
             struct: v.struct,
             modelPartXs: v.modelPartXs
           }),
-          userMember: this.membersService.tabToApi({ member: v.userMember })
+          userMember: memberTabToApi({
+            member: v.userMember
+          })
         })
       )
     );

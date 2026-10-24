@@ -7,7 +7,7 @@ import { Result } from '@praha/byethrow';
 import { and, desc, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSendMessageToExplorerSessionRequestDto,
+  type ToBackendSendMessageToExplorerSessionRequestDto,
   ToBackendSendMessageToExplorerSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -19,12 +19,12 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
+import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+import { tabToSessionApi } from '#backend/functions/db/sessions/tab-to-session-api/tab-to-session-api';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -41,9 +41,6 @@ import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/types/
 @Controller()
 export class SendMessageToExplorerSessionController {
   constructor(
-    private sessionsService: SessionsService,
-    private providersService: ProvidersService,
-    private codexService: CodexService,
     private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -146,7 +143,7 @@ export class SendMessageToExplorerSessionController {
       ),
       Result.map(
         (v): ToBackendSendMessageToExplorerSessionOutput => ({
-          session: this.sessionsService.tabToSessionApi({
+          session: tabToSessionApi({
             session: v.updatedSession,
             ocSession: v.ocSession
           })
@@ -178,13 +175,14 @@ export class SendMessageToExplorerSessionController {
           : Result.succeed()
       ),
       Result.bind('modelSelection', v =>
-        this.providersService.getModelSelection({
+        getModelSelection({
           projectId: v.session.projectId,
           providerId: v.providerId,
           modelId: v.modelId,
           variant: v.variant,
           isUserCodexAuthSet: isDefined(v.user.codexAuth),
-          isBuilder: false
+          isBuilder: false,
+          db: this.db
         })
       ),
       Result.bind('latestAssistantMessage', v =>
@@ -230,7 +228,10 @@ export class SendMessageToExplorerSessionController {
       // Ensure codex auth is fresh in DB before stream / interact dispatch
       Result.andThrough(async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
-          ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
+          ? prewarmCodexAuth({
+              userId: v.user.userId,
+              db: this.db
+            })
           : Result.succeed()
       ),
       Result.bind('updatedSession', v => {

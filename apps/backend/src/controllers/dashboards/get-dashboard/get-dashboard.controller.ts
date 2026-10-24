@@ -1,9 +1,11 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGetDashboardRequestDto,
+  type ToBackendGetDashboardRequestDto,
   ToBackendGetDashboardResponseDto
 } from '#backend/controllers/dashboards/get-dashboard/get-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -13,10 +15,12 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getDashboardData } from '#backend/functions/query-info-dashboard/get-dashboard-data/get-dashboard-data';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard/query-info-dashboard.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -26,9 +30,11 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 @Controller()
 export class GetDashboardController {
   constructor(
-    private sessionsService: SessionsService,
-    private queryInfoDashboardService: QueryInfoDashboardService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private tabService: TabService,
+    private rpcService: RpcService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendGetDashboard' satisfies ToBackendRoute)
@@ -55,11 +61,12 @@ export class GetDashboardController {
         timezone: body.input.timezone
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -112,7 +119,7 @@ export class GetDashboardController {
         })
       ),
       Result.andThen(v =>
-        this.queryInfoDashboardService.getDashboardData({
+        getDashboardData({
           traceId: v.traceId,
           user: v.user,
           userMember: v.userMember,
@@ -123,7 +130,12 @@ export class GetDashboardController {
           envId: v.envId,
           dashboardId: v.dashboardId,
           timezone: v.timezone,
-          skipUi: false
+          skipUi: false,
+          db: this.db,
+          cs: this.cs,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          logger: this.logger
         })
       )
     );

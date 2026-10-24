@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendDeleteRecordsRequestDto,
+  type ToBackendDeleteRecordsRequestDto,
   ToBackendDeleteRecordsResponseDto
 } from '#backend/controllers/test-routes/delete-records/delete-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
@@ -36,10 +36,10 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { structsTable } from '#backend/drizzle/postgres/schema/structs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -56,7 +56,6 @@ import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom
 @Controller()
 export class DeleteRecordsController {
   constructor(
-    private hashService: HashService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -89,7 +88,7 @@ export class DeleteRecordsController {
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('projectNameHashes', v =>
         Result.sequence(v.projectNames || [], projectName =>
-          this.hashService.makeHash({
+          makeHash({
             input: projectName,
             hashSecret: v.hashSecret
           })
@@ -113,7 +112,7 @@ export class DeleteRecordsController {
       ),
       Result.bind('orgNameHashes', v =>
         Result.sequence(v.orgNames || [], orgName =>
-          this.hashService.makeHash({
+          makeHash({
             input: orgName,
             hashSecret: v.hashSecret
           })
@@ -161,7 +160,7 @@ export class DeleteRecordsController {
                 MakeHashError | DbUsersFindFirstError
               > => {
                 let emailHashResult: Result.Result<string, MakeHashError> =
-                  this.hashService.makeHash({
+                  makeHash({
                     input: email,
                     hashSecret: v.hashSecret
                   });

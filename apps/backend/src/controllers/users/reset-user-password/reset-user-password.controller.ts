@@ -5,14 +5,16 @@ import { seconds, Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendResetUserPasswordRequestDto,
+  type ToBackendResetUserPasswordRequestDto,
   ToBackendResetUserPasswordResponseDto
 } from '#backend/controllers/users/reset-user-password/reset-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
+import { checkUserPasswordHashIsDefined } from '#backend/functions/db/users/check-user-password-hash-is-defined/check-user-password-hash-is-defined';
+import { getUserByEmailCheckExists } from '#backend/functions/db/users/get-user-by-email-check-exists/get-user-by-email-check-exists';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import { EmailService } from '#backend/services/email/email.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PATH_UPDATE_PASSWORD } from '#common/constants/top';
@@ -46,7 +48,6 @@ import type { ToBackendRoute } from '#common/types/backend/request/to-backend-ro
 export class ResetUserPasswordController {
   constructor(
     private emailService: EmailService,
-    private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
   ) {}
@@ -65,13 +66,20 @@ export class ResetUserPasswordController {
     return Result.pipe(
       Result.succeed({ email: body.input.email }),
       Result.bind('user', v =>
-        this.usersService.getUserByEmailCheckExists({ email: v.email })
+        getUserByEmailCheckExists({
+          email: v.email,
+          db: this.db
+        })
       ),
       Result.andThrough(v =>
-        this.usersService.checkUserIsNotRestricted({ user: v.user })
+        checkUserIsNotRestricted({
+          user: v.user
+        })
       ),
       Result.andThrough(v =>
-        this.usersService.checkUserPasswordHashIsDefined({ user: v.user })
+        checkUserPasswordHashIsDefined({
+          user: v.user
+        })
       ),
       Result.map(v => {
         v.user.passwordResetToken = makeId();

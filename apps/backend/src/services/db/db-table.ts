@@ -14,14 +14,12 @@ import type {
   DbTableTab,
   DbTableWriteError
 } from '#backend/services/db/db-entity-registry';
-import type { HashService } from '#backend/services/hash/hash.service';
 import type { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 export type DbTableContext = {
-  hashService: HashService;
   tabService: TabService;
   isEncryptDb: boolean;
   isEncryptMetadata: boolean;
@@ -88,7 +86,6 @@ export class DbTable<Key extends DbTableKey> {
       entityConfig.tabToEnt({
         tab: x.tab,
         hashSecret: x.hashSecret,
-        hashService: context.hashService,
         tabService: context.tabService,
         isEncryptDb: context.isEncryptDb,
         isEncryptMetadata: context.isEncryptMetadata

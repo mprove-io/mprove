@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendEditGivenRequestDto,
+  type ToBackendEditGivenRequestDto,
   ToBackendEditGivenResponseDto
 } from '#backend/controllers/givens/edit-given/edit-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -13,9 +13,10 @@ import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiGivens } from '#backend/functions/db/givens/get-api-givens/get-api-givens';
 import { validateGivenValues } from '#backend/functions/db/givens/validate-given-values/validate-given-values';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -26,10 +27,7 @@ import type { ToBackendEditGivenOutput } from '#common/types/backend/routes/give
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class EditGivenController {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendEditGiven' satisfies ToBackendRoute)
   @ApiOperation({
@@ -56,9 +54,10 @@ export class EditGivenController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.user.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('given', v =>
@@ -88,7 +87,9 @@ export class EditGivenController {
       ),
       Result.map(
         (v): ToBackendEditGivenOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           givens: v.apiGivens
         })
       )

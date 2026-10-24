@@ -6,21 +6,23 @@ import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendRegisterUserRequestDto,
+  type ToBackendRegisterUserRequestDto,
   ToBackendRegisterUserResponseDto
 } from '#backend/controllers/users/register-user/register-user.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
-import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
-import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { EmailService } from '#backend/services/email/email.service';
+import { makeAlias } from '#backend/functions/db/users/make-alias/make-alias';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import {
   type CreateSaltAndHashOutput,
-  HashService
-} from '#backend/services/hash/hash.service';
+  createSaltAndHash
+} from '#backend/functions/hash/create-salt-and-hash/create-salt-and-hash';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
+import { DbService } from '#backend/services/db/db.service';
+import { EmailService } from '#backend/services/email/email.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import {
@@ -56,8 +58,6 @@ import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/u
 @Controller()
 export class RegisterUserController {
   constructor(
-    private hashService: HashService,
-    private usersService: UsersService,
     private emailService: EmailService,
     private cs: ConfigService<BackendConfig>,
     private db: DbService
@@ -80,14 +80,15 @@ export class RegisterUserController {
         password: body.input.password
       }),
       Result.bind('passwordHS', async v => {
-        let passwordHS: CreateSaltAndHashOutput =
-          await this.hashService.createSaltAndHash({ input: v.password });
+        let passwordHS: CreateSaltAndHashOutput = await createSaltAndHash({
+          input: v.password
+        });
 
         return Result.succeed(passwordHS);
       }),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('emailHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.email,
           hashSecret: v.hashSecret
         })
@@ -113,7 +114,10 @@ export class RegisterUserController {
       Result.bind('alias', async v =>
         isDefined(v.user)
           ? Result.succeed(undefined)
-          : this.usersService.makeAlias({ email: v.email })
+          : makeAlias({
+              email: v.email,
+              db: this.db
+            })
       ),
       Result.andThrough(v =>
         isUndefined(v.user) && v.alias === RESTRICTED_USER_ALIAS
@@ -174,7 +178,9 @@ export class RegisterUserController {
       }),
       Result.map(
         (v): ToBackendRegisterUserOutput => ({
-          user: this.usersService.tabToApi({ user: v.newUser })
+          user: userTabToApi({
+            user: v.newUser
+          })
         })
       )
     );

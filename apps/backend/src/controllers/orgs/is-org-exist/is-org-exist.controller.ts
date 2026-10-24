@@ -3,14 +3,14 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendIsOrgExistRequestDto,
+  type ToBackendIsOrgExistRequestDto,
   ToBackendIsOrgExistResponseDto
 } from '#backend/controllers/orgs/is-org-exist/is-org-exist.dto';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsOrgExistOutput } from '#common/types/backend/routes/orgs/is-org-exist/is-org-exist-output';
@@ -19,10 +19,7 @@ import type { ToBackendIsOrgExistOutput } from '#common/types/backend/routes/org
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class IsOrgExistController {
-  constructor(
-    private hashService: HashService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendIsOrgExist' satisfies ToBackendRoute)
   @ApiOperation({
@@ -41,7 +38,7 @@ export class IsOrgExistController {
       }),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('nameHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.name,
           hashSecret: v.hashSecret
         })

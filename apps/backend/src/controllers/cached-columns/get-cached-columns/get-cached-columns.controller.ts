@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq, inArray } from 'drizzle-orm';
 import {
-  ToBackendGetCachedColumnsRequestDto,
+  type ToBackendGetCachedColumnsRequestDto,
   ToBackendGetCachedColumnsResponseDto
 } from '#backend/controllers/cached-columns/get-cached-columns/get-cached-columns.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,10 +14,10 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { cachedColumnTabToApi } from '#backend/functions/db/cached-column/cached-column-tab-to-api/cached-column-tab-to-api';
 import { getCacheEnvId } from '#backend/functions/db/cached-column/get-cache-env-id/get-cache-env-id';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
+import { makeCachedColumnFullId } from '#backend/functions/hash/make-cached-column-full-id/make-cached-column-full-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -28,11 +28,7 @@ import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/rout
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetCachedColumnsController {
-  constructor(
-    private membersService: MembersService,
-    private hashService: HashService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetCachedColumns' satisfies ToBackendRoute)
   @ApiOperation({
@@ -57,9 +53,10 @@ export class GetCachedColumnsController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -80,7 +77,7 @@ export class GetCachedColumnsController {
       Result.bind('cachedColumnFullIds', v =>
         Result.succeed(
           v.columns.map(column =>
-            this.hashService.makeCachedColumnFullId({
+            makeCachedColumnFullId({
               projectId: v.projectId,
               connectionId: column.connectionId,
               envId: v.cacheEnvId,

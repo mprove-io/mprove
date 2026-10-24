@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCommitRepoRequestDto,
+  type ToBackendCommitRepoRequestDto,
   ToBackendCommitRepoResponseDto
 } from '#backend/controllers/repos/commit-repo/commit-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -12,14 +14,17 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
+import { archiveSession } from '#backend/functions/session-archive/archive-session/archive-session';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock/editor-session-lock.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream/editor-stream.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { SessionArchiveService } from '#backend/services/session/session-archive/session-archive.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -34,12 +39,13 @@ import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/rep
 export class CommitRepoController {
   constructor(
     private tabService: TabService,
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private sessionsService: SessionsService,
     private rpcService: RpcService,
-    private sessionArchiveService: SessionArchiveService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private editorSessionLockService: EditorSessionLockService,
+    private editorSandboxService: EditorSandboxService,
+    private editorStreamService: EditorStreamService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendCommitRepo' satisfies ToBackendRoute)
@@ -64,11 +70,12 @@ export class CommitRepoController {
         user: user
       }),
       Result.bind('repoType', v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -84,16 +91,18 @@ export class CommitRepoController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditor({
+        getMemberCheckIsEditor({
           projectId: v.projectId,
-          memberId: v.user.userId
+          memberId: v.user.userId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestricted({
+        checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
-          repoId: v.repoId
+          repoId: v.repoId,
+          cs: this.cs
         })
       ),
       Result.andThrough(v =>
@@ -133,10 +142,16 @@ export class CommitRepoController {
       Result.bind('apiSession', async v =>
         isUndefined(v.session)
           ? Result.succeed(undefined)
-          : this.sessionArchiveService.archiveSession({
+          : archiveSession({
               session: v.session,
               archiveReason: 'Commit',
-              e2bApiKey: v.project.e2bApiKey
+              e2bApiKey: v.project.e2bApiKey,
+              editorSessionLockService: this.editorSessionLockService,
+              db: this.db,
+              editorSandboxService: this.editorSandboxService,
+              editorStreamService: this.editorStreamService,
+              logger: this.logger,
+              cs: this.cs
             })
       ),
       Result.map(

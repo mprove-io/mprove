@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateBranchRequestDto,
+  type ToBackendCreateBranchRequestDto,
   ToBackendCreateBranchResponseDto
 } from '#backend/controllers/branches/create-branch/create-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -12,16 +14,15 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { rebuildBranchBridges } from '#backend/functions/blockml/rebuild-branch-bridges/rebuild-branch-bridges';
 import { checkBranchDoesNotExist } from '#backend/functions/db/branches/check-branch-does-not-exist/check-branch-does-not-exist';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
+import { getMemberCheckIsEditor } from '#backend/functions/db/members/get-member-check-is-editor/get-member-check-is-editor';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -39,11 +40,9 @@ export class CreateBranchController {
   constructor(
     private tabService: TabService,
     private rpcService: RpcService,
-    private sessionsService: SessionsService,
-    private hashService: HashService,
-    private membersService: MembersService,
-    private blockmlService: BlockmlService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendCreateBranch' satisfies ToBackendRoute)
@@ -68,11 +67,12 @@ export class CreateBranchController {
         userId: user.userId
       }),
       Result.bind('repoType', v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -88,9 +88,10 @@ export class CreateBranchController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsEditor({
+        getMemberCheckIsEditor({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('fromBranch', v =>
@@ -131,7 +132,6 @@ export class CreateBranchController {
       Result.bind('newBranch', v =>
         Result.succeed(
           makeBranch({
-            hashService: this.hashService,
             projectId: v.projectId,
             repoId: v.repoId,
             branchId: v.newBranchId
@@ -151,7 +151,6 @@ export class CreateBranchController {
         Result.succeed(
           v.fromBranchBridges.map(bridge =>
             makeBridge({
-              hashService: this.hashService,
               projectId: v.newBranch.projectId,
               repoId: v.newBranch.repoId,
               branchId: v.newBranch.branchId,
@@ -163,7 +162,7 @@ export class CreateBranchController {
         )
       ),
       Result.andThrough(v =>
-        this.blockmlService.rebuildBranchBridges({
+        rebuildBranchBridges({
           branchBridges: v.newBranchBridges,
           envId: PROJECT_ENV_PROD,
           traceId: v.traceId,
@@ -171,7 +170,12 @@ export class CreateBranchController {
           projectId: v.projectId,
           repoId: v.repoId,
           diskFiles: v.diskCreateBranchOutput.files,
-          mproveDir: v.diskCreateBranchOutput.mproveDir
+          mproveDir: v.diskCreateBranchOutput.mproveDir,
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         })
       ),
       Result.andThrough(v =>

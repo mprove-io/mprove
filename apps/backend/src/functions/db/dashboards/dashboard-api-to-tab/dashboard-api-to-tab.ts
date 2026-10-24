@@ -1,20 +1,19 @@
 import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeDashboardFullId } from '#backend/functions/hash/make-dashboard-full-id/make-dashboard-full-id';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Dashboard } from '#common/types/blockml/parts/dashboard/dashboard';
 
 export function dashboardApiToTab(item: {
-  hashService: HashService;
   apiDashboard: Dashboard;
 }): DashboardTab {
-  let { hashService, apiDashboard } = item;
+  let { apiDashboard } = item;
 
   if (isUndefined(apiDashboard)) {
     return;
   }
 
   let dashboard: DashboardTab = {
-    dashboardFullId: hashService.makeDashboardFullId({
+    dashboardFullId: makeDashboardFullId({
       structId: apiDashboard.structId,
       dashboardId: apiDashboard.dashboardId
     }),

@@ -3,17 +3,18 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendGetProvidersRequestDto,
+  type ToBackendGetProvidersRequestDto,
   ToBackendGetProvidersResponseDto
 } from '#backend/controllers/providers/get-providers/get-providers.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { tabToApiProvider } from '#backend/functions/db/providers/tab-to-api-provider/tab-to-api-provider';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
@@ -22,11 +23,7 @@ import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/p
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetProvidersController {
-  constructor(
-    private providersService: ProvidersService,
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetProviders' satisfies ToBackendRoute)
   @ApiOperation({
@@ -51,9 +48,10 @@ export class GetProvidersController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('providers', v =>
@@ -63,11 +61,13 @@ export class GetProvidersController {
       ),
       Result.map(
         (v): ToBackendGetProvidersOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           providers: v.providers
             .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
             .map(provider =>
-              this.providersService.tabToApiProvider({
+              tabToApiProvider({
                 provider: provider,
                 isIncludePasswords: false
               })

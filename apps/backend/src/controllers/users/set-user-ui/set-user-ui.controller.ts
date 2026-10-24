@@ -3,14 +3,14 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import {
-  ToBackendSetUserUiRequestDto,
+  type ToBackendSetUserUiRequestDto,
   ToBackendSetUserUiResponseDto
 } from '#backend/controllers/users/set-user-ui/set-user-ui.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -22,10 +22,7 @@ import type { ToBackendSetUserUiOutput } from '#common/types/backend/routes/user
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetUserUiController {
-  constructor(
-    private usersService: UsersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendSetUserUi' satisfies ToBackendRoute)
   @ApiOperation({
@@ -56,7 +53,9 @@ export class SetUserUiController {
       }),
       Result.map(
         (v): ToBackendSetUserUiOutput => ({
-          user: this.usersService.tabToApi({ user: v.user })
+          user: userTabToApi({
+            user: v.user
+          })
         })
       )
     );

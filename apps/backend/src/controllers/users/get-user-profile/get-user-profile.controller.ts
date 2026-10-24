@@ -3,13 +3,13 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import {
-  ToBackendGetUserProfileRequestDto,
+  type ToBackendGetUserProfileRequestDto,
   ToBackendGetUserProfileResponseDto
 } from '#backend/controllers/users/get-user-profile/get-user-profile.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { userTabToApi } from '#backend/functions/db/users/user-tab-to-api/user-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { UsersService } from '#backend/services/db/users/users.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
@@ -20,7 +20,7 @@ import type { ToBackendGetUserProfileOutput } from '#common/types/backend/routes
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetUserProfileController {
-  constructor(private usersService: UsersService) {}
+  constructor() {}
 
   @Post('api/ToBackendGetUserProfile' satisfies ToBackendRoute)
   @ApiOperation({
@@ -35,7 +35,9 @@ export class GetUserProfileController {
     @Body() body: ToBackendGetUserProfileRequestDto
   ): Promise<BackendResultForOperation<'getUserProfile'>> {
     let payload: ToBackendGetUserProfileOutput = {
-      user: this.usersService.tabToApi({ user: user })
+      user: userTabToApi({
+        user: user
+      })
     };
 
     return Result.succeed(payload);

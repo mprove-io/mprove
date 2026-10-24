@@ -4,17 +4,17 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendEditProviderRequestDto,
+  type ToBackendEditProviderRequestDto,
   ToBackendEditProviderResponseDto
 } from '#backend/controllers/providers/edit-provider/edit-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { tabToApiProvider } from '#backend/functions/db/providers/tab-to-api-provider/tab-to-api-provider';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
 import { UrlService } from '#backend/services/url/url.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -28,8 +28,6 @@ import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/p
 @Controller()
 export class EditProviderController {
   constructor(
-    private providersService: ProvidersService,
-    private membersService: MembersService,
     private urlService: UrlService,
     private db: DbService
   ) {}
@@ -57,9 +55,10 @@ export class EditProviderController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.input.projectId
+          projectId: v.input.projectId,
+          db: this.db
         })
       ),
       Result.bind('provider', v =>
@@ -127,7 +126,7 @@ export class EditProviderController {
       ),
       Result.map(
         (v): ToBackendEditProviderOutput => ({
-          provider: this.providersService.tabToApiProvider({
+          provider: tabToApiProvider({
             provider: v.provider,
             isIncludePasswords: false
           })

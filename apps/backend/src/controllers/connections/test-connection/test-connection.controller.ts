@@ -6,7 +6,7 @@ import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendTestConnectionRequestDto,
+  type ToBackendTestConnectionRequestDto,
   ToBackendTestConnectionResponseDto
 } from '#backend/controllers/connections/test-connection/test-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,9 +14,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -25,8 +25,6 @@ import { PgService } from '#backend/services/dwh/pg/pg.service';
 import { PrestoService } from '#backend/services/dwh/presto/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino/trino.service';
-import { HashService } from '#backend/services/hash/hash.service';
-import { StoreService } from '#backend/services/store/store.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
@@ -49,12 +47,9 @@ export class TestConnectionController {
     private prestoService: PrestoService,
     private bigQueryService: BigQueryService,
     private snowFlakeService: SnowFlakeService,
-    private storeService: StoreService,
-    private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService,
-    private hashService: HashService
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendTestConnection' satisfies ToBackendRoute)
@@ -99,9 +94,10 @@ export class TestConnectionController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.andThrough(v =>
@@ -115,7 +111,6 @@ export class TestConnectionController {
       Result.bind('connection', v =>
         Result.succeed(
           makeConnection({
-            hashService: this.hashService,
             projectId: v.projectId,
             envId: v.envId,
             connectionId: v.connectionId,

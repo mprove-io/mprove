@@ -1,19 +1,18 @@
 import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeGivenFullId } from '#backend/functions/hash/make-given-full-id/make-given-full-id';
 import type { GivenType } from '#common/types/backend/parts/given/given-type';
 
 export function makeGiven(item: {
-  hashService: HashService;
   projectId: string;
   givenId: string;
   type: GivenType;
   isMultiple: boolean;
   values: string[];
 }): GivenTab {
-  let { hashService, projectId, givenId, type, isMultiple, values } = item;
+  let { projectId, givenId, type, isMultiple, values } = item;
 
   let given: GivenTab = {
-    givenFullId: hashService.makeGivenFullId({
+    givenFullId: makeGivenFullId({
       projectId: projectId,
       givenId: givenId
     }),

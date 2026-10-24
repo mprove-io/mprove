@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendEditDraftDashboardRequestDto,
+  type ToBackendEditDraftDashboardRequestDto,
   ToBackendEditDraftDashboardResponseDto
 } from '#backend/controllers/dashboards/edit-draft-dashboard/edit-draft-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -14,21 +16,19 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { rebuildStruct } from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { getDashboardXCheckExistsAndAccess } from '#backend/functions/db/dashboards/get-dashboard-x-check-exists-and-access/get-dashboard-x-check-exists-and-access';
 import { processDashboard } from '#backend/functions/db/dashboards/process-dashboard/process-dashboard';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { getSelectedGivens } from '#backend/functions/db/users/get-selected-givens/get-selected-givens';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
+import { RpcService } from '#backend/services/rpc/rpc.service';
+import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -67,16 +67,11 @@ type ReviseDashboardFilePayload = {
 @Controller()
 export class EditDraftDashboardController {
   constructor(
-    private modelsService: ModelsService,
-    private membersService: MembersService,
-    private usersService: UsersService,
-    private blockmlService: BlockmlService,
-    private structsService: StructsService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
     private db: DbService,
-    private hashService: HashService
+    private cs: ConfigService<BackendConfig>,
+    private tabService: TabService,
+    private rpcService: RpcService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendEditDraftDashboard' satisfies ToBackendRoute)
@@ -105,11 +100,12 @@ export class EditDraftDashboardController {
         timezone: body.input.timezone
       }),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('project', v =>
@@ -126,7 +122,11 @@ export class EditDraftDashboardController {
         })
       ),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('branch', v =>
         this.db.branches.findFirstCheckExists({
@@ -156,17 +156,16 @@ export class EditDraftDashboardController {
         })
       ),
       Result.bind('currentStruct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('fromDashboardX', v =>
         getDashboardXCheckExistsAndAccess({
           db: this.db,
-          modelsService: this.modelsService,
-          mconfigsService: this.mconfigsService,
-          queriesService: this.queriesService,
           dashboardId: v.oldDashboardId,
           structId: v.bridge.structId,
           apiUserMember: v.apiUserMember,
@@ -286,13 +285,14 @@ export class EditDraftDashboardController {
         })
       ),
       Result.bind('selectedGivens', v =>
-        this.usersService.getSelectedGivens({
+        getSelectedGivens({
           user: v.user,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('rebuild', v =>
-        this.blockmlService.rebuildStruct({
+        rebuildStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.projectId,
@@ -307,7 +307,12 @@ export class EditDraftDashboardController {
           isUseCache: true,
           cachedMproveConfig: v.currentStruct.mproveConfig,
           cachedModels: v.cachedModels,
-          cachedMetrics: []
+          cachedMetrics: [],
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         })
       ),
       Result.bind('newApiDashboard', v =>
@@ -336,10 +341,7 @@ export class EditDraftDashboardController {
       }),
       Result.bind('processedDashboard', v =>
         processDashboard({
-          queriesService: this.queriesService,
-          mconfigsService: this.mconfigsService,
-          modelsService: this.modelsService,
-          hashService: this.hashService,
+          db: this.db,
           newApiDashboard: v.newApiDashboard,
           apiMconfigs: v.rebuild.mconfigs,
           apiQueries: v.rebuild.queries,
@@ -378,9 +380,6 @@ export class EditDraftDashboardController {
       Result.bind('newDashboardX', v =>
         getDashboardXCheckExistsAndAccess({
           db: this.db,
-          modelsService: this.modelsService,
-          mconfigsService: this.mconfigsService,
-          queriesService: this.queriesService,
           dashboardId: v.processedDashboard.newDashboard.dashboardId,
           projectId: v.projectId,
           structId: v.bridge.structId,

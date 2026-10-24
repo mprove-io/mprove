@@ -1,11 +1,13 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import * as bcrypt from 'bcrypt';
 import asyncPool from 'tiny-async-pool';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSeedRecordsRequestDto,
+  type ToBackendSeedRecordsRequestDto,
   ToBackendSeedRecordsResponseDto
 } from '#backend/controllers/test-routes/seed-records/seed-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
@@ -35,29 +37,28 @@ import {
   type ParseApiKeyOutput,
   parseApiKey
 } from '#backend/functions/api-key/parse-api-key/parse-api-key';
+import {
+  type RebuildStructOutput,
+  rebuildStruct
+} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { makeBranch } from '#backend/functions/db/branches/make-branch/make-branch';
 import { makeBridge } from '#backend/functions/db/bridges/make-bridge/make-bridge';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
 import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
 import { dashboardApiToTab } from '#backend/functions/db/dashboards/dashboard-api-to-tab/dashboard-api-to-tab';
 import { makeEnv } from '#backend/functions/db/envs/make-env/make-env';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import { makeMember } from '#backend/functions/db/members/make-member/make-member';
+import { modelApiToTab } from '#backend/functions/db/models/model-api-to-tab/model-api-to-tab';
+import { makeProvider } from '#backend/functions/db/providers/make-provider/make-provider';
+import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
+import { reportApiToTab } from '#backend/functions/db/reports/report-api-to-tab/report-api-to-tab';
+import { makeAlias } from '#backend/functions/db/users/make-alias/make-alias';
+import { createSaltAndHash } from '#backend/functions/hash/create-salt-and-hash/create-salt-and-hash';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now/make-ts-using-offset-from-now';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { TestRoutesGuard } from '#backend/guards/test-routes/test-routes.guard';
-import {
-  BlockmlService,
-  type RebuildStructOutput
-} from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { ReportsService } from '#backend/services/db/reports/reports.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
@@ -131,18 +132,10 @@ type PrepareSeedPayload = {
 export class SeedRecordsController {
   constructor(
     private tabService: TabService,
-    private hashService: HashService,
     private rpcService: RpcService,
-    private usersService: UsersService,
-    private providersService: ProvidersService,
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private mconfigsService: MconfigsService,
-    private projectsService: ProjectsService,
-    private queriesService: QueriesService,
-    private reportsService: ReportsService,
-    private blockmlService: BlockmlService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendSeedRecords' satisfies ToBackendRoute)
@@ -206,7 +199,10 @@ export class SeedRecordsController {
               x: ToBackendSeedRecordsInputUsersItem
             ): Result.ResultAsync<void, MakeAliasError | ParseApiKeyError> => {
               let aliasResult: Result.Result<string, MakeAliasError> =
-                await this.usersService.makeAlias({ email: x.email });
+                await makeAlias({
+                  email: x.email,
+                  db: this.db
+                });
 
               if (Result.isFailure(aliasResult)) {
                 return aliasResult;
@@ -215,7 +211,7 @@ export class SeedRecordsController {
               let alias: string = aliasResult.value;
 
               let passwordHS: SaltAndHash = isDefined(x.password)
-                ? await this.hashService.createSaltAndHash({
+                ? await createSaltAndHash({
                     input: x.password
                   })
                 : { salt: undefined, hash: undefined };
@@ -384,7 +380,6 @@ export class SeedRecordsController {
         if (isDefined(v.payloadConnections)) {
           v.payloadConnections.forEach(x => {
             let newConnection: ConnectionTab = makeConnection({
-              hashService: this.hashService,
               projectId: x.projectId,
               envId: x.envId,
               connectionId: x.connectionId,
@@ -430,7 +425,7 @@ export class SeedRecordsController {
             let newProviderResult: Result.Result<
               ProviderTab,
               MakeProviderError
-            > = this.providersService.makeProvider({
+            > = makeProvider({
               ...x,
               models: providerModels
             });
@@ -451,7 +446,6 @@ export class SeedRecordsController {
         if (isDefined(v.payloadEnvs)) {
           v.payloadEnvs.forEach(x => {
             let newEnv: EnvTab = makeEnv({
-              hashService: this.hashService,
               projectId: x.projectId,
               envId: x.envId,
               evs: x.evs
@@ -499,7 +493,6 @@ export class SeedRecordsController {
               });
 
               let prodEnv: EnvTab = makeEnv({
-                hashService: this.hashService,
                 projectId: baseProject.projectId,
                 envId: PROJECT_ENV_PROD,
                 evs: []
@@ -542,7 +535,7 @@ export class SeedRecordsController {
               let devRebuildStructOutput: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStruct({
+              > = await rebuildStruct({
                 traceId: v.traceId,
                 orgId: newProject.orgId,
                 projectId: newProject.projectId,
@@ -555,7 +548,12 @@ export class SeedRecordsController {
                 skipDb: true,
                 connections: prodEnvConnections,
                 overrideTimezone: undefined,
-                evs: prodEnv.evs
+                evs: prodEnv.evs,
+                db: this.db,
+                tabService: this.tabService,
+                rpcService: this.rpcService,
+                cs: this.cs,
+                logger: this.logger
               });
 
               if (Result.isFailure(devRebuildStructOutput)) {
@@ -576,7 +574,7 @@ export class SeedRecordsController {
               let prodRebuildStructOutput: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStruct({
+              > = await rebuildStruct({
                 traceId: v.traceId,
                 orgId: newProject.orgId,
                 projectId: newProject.projectId,
@@ -589,7 +587,12 @@ export class SeedRecordsController {
                 skipDb: true,
                 connections: prodEnvConnections,
                 overrideTimezone: undefined,
-                evs: prodEnv.evs
+                evs: prodEnv.evs,
+                db: this.db,
+                tabService: this.tabService,
+                rpcService: this.rpcService,
+                cs: this.cs,
+                logger: this.logger
               });
 
               if (Result.isFailure(prodRebuildStructOutput)) {
@@ -608,21 +611,18 @@ export class SeedRecordsController {
               } = prodRebuildStructOutput.value;
 
               let devBranch: BranchTab = makeBranch({
-                hashService: this.hashService,
                 projectId: newProject.projectId,
                 repoId: v.prepareSeedPayload.users[0].userId,
                 branchId: newProject.defaultBranch
               });
 
               let prodBranch: BranchTab = makeBranch({
-                hashService: this.hashService,
                 projectId: newProject.projectId,
                 repoId: PROD_REPO_ID,
                 branchId: newProject.defaultBranch
               });
 
               let devBranchBridgeProdEnv: BridgeTab = makeBridge({
-                hashService: this.hashService,
                 projectId: devBranch.projectId,
                 repoId: devBranch.repoId,
                 branchId: devBranch.branchId,
@@ -632,7 +632,6 @@ export class SeedRecordsController {
               });
 
               let prodBranchBridgeProdEnv: BridgeTab = makeBridge({
-                hashService: this.hashService,
                 projectId: prodBranch.projectId,
                 repoId: prodBranch.repoId,
                 branchId: prodBranch.branchId,
@@ -667,7 +666,6 @@ export class SeedRecordsController {
                 ...v.prepareSeedPayload.charts,
                 ...devChartsApi.map(y =>
                   chartApiToTab({
-                    hashService: this.hashService,
                     apiChart: y,
                     chartType: devMconfigsApi.find(
                       mconfig => mconfig.mconfigId === y.tiles[0].mconfigId
@@ -676,7 +674,6 @@ export class SeedRecordsController {
                 ),
                 ...prodChartsApi.map(y =>
                   chartApiToTab({
-                    hashService: this.hashService,
                     apiChart: y,
                     chartType: prodMconfigsApi.find(
                       mconfig => mconfig.mconfigId === y.tiles[0].mconfigId
@@ -688,30 +685,42 @@ export class SeedRecordsController {
               v.prepareSeedPayload.models = [
                 ...v.prepareSeedPayload.models,
                 ...devModelsApi.map(y =>
-                  this.modelsService.apiToTab({ apiModel: y })
+                  modelApiToTab({
+                    apiModel: y
+                  })
                 ),
                 ...prodModelsApi.map(y =>
-                  this.modelsService.apiToTab({ apiModel: y })
+                  modelApiToTab({
+                    apiModel: y
+                  })
                 )
               ];
 
               v.prepareSeedPayload.reports = [
                 ...v.prepareSeedPayload.reports,
                 ...devReportsApi.map(y =>
-                  this.reportsService.apiToTab({ apiReport: y })
+                  reportApiToTab({
+                    apiReport: y
+                  })
                 ),
                 ...prodReportsApi.map(y =>
-                  this.reportsService.apiToTab({ apiReport: y })
+                  reportApiToTab({
+                    apiReport: y
+                  })
                 )
               ];
 
               v.prepareSeedPayload.queries = [
                 ...v.prepareSeedPayload.queries,
                 ...devQueriesApi.map(y =>
-                  this.queriesService.apiToTab({ apiQuery: y })
+                  queryApiToTab({
+                    apiQuery: y
+                  })
                 ),
                 ...prodQueriesApi.map(y =>
-                  this.queriesService.apiToTab({ apiQuery: y })
+                  queryApiToTab({
+                    apiQuery: y
+                  })
                 )
               ];
 
@@ -719,13 +728,11 @@ export class SeedRecordsController {
                 ...v.prepareSeedPayload.dashboards,
                 ...devDashboardsApi.map(y =>
                   dashboardApiToTab({
-                    hashService: this.hashService,
                     apiDashboard: y
                   })
                 ),
                 ...prodDashboardsApi.map(y =>
                   dashboardApiToTab({
-                    hashService: this.hashService,
                     apiDashboard: y
                   })
                 )
@@ -734,10 +741,14 @@ export class SeedRecordsController {
               v.prepareSeedPayload.mconfigs = [
                 ...v.prepareSeedPayload.mconfigs,
                 ...devMconfigsApi.map(y =>
-                  this.mconfigsService.apiToTab({ apiMconfig: y })
+                  mconfigApiToTab({
+                    apiMconfig: y
+                  })
                 ),
                 ...prodMconfigsApi.map(y =>
-                  this.mconfigsService.apiToTab({ apiMconfig: y })
+                  mconfigApiToTab({
+                    apiMconfig: y
+                  })
                 )
               ];
 
@@ -758,7 +769,7 @@ export class SeedRecordsController {
                 u => u.email === x.email
               );
 
-              let newMember: MemberTab = this.membersService.makeMember({
+              let newMember: MemberTab = makeMember({
                 projectId: x.projectId,
                 user: user,
                 roles: x.roles,
@@ -779,7 +790,9 @@ export class SeedRecordsController {
           v.prepareSeedPayload.queries = [
             ...v.prepareSeedPayload.queries,
             ...v.payloadQueries.map(pq =>
-              this.queriesService.apiToTab({ apiQuery: pq })
+              queryApiToTab({
+                apiQuery: pq
+              })
             )
           ];
         }
@@ -791,7 +804,9 @@ export class SeedRecordsController {
           v.prepareSeedPayload.mconfigs = [
             ...v.prepareSeedPayload.mconfigs,
             ...v.payloadMconfigs.map(mc =>
-              this.mconfigsService.apiToTab({ apiMconfig: mc })
+              mconfigApiToTab({
+                apiMconfig: mc
+              })
             )
           ];
         }

@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendIsProjectExistRequestDto,
+  type ToBackendIsProjectExistRequestDto,
   ToBackendIsProjectExistResponseDto
 } from '#backend/controllers/projects/is-project-exist/is-project-exist.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -11,9 +11,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getDconfigHashSecret } from '#backend/functions/db/dconfigs/get-dconfig-hash-secret/get-dconfig-hash-secret';
+import { makeHash } from '#backend/functions/hash/make-hash/make-hash';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsProjectExistOutput } from '#common/types/backend/routes/projects/is-project-exist/is-project-exist-output';
@@ -22,10 +22,7 @@ import type { ToBackendIsProjectExistOutput } from '#common/types/backend/routes
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class IsProjectExistController {
-  constructor(
-    private hashService: HashService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendIsProjectExist' satisfies ToBackendRoute)
   @ApiOperation({
@@ -51,7 +48,7 @@ export class IsProjectExistController {
       ),
       Result.bind('hashSecret', v => getDconfigHashSecret({ db: this.db })),
       Result.bind('nameHash', v =>
-        this.hashService.makeHash({
+        makeHash({
           input: v.name,
           hashSecret: v.hashSecret
         })

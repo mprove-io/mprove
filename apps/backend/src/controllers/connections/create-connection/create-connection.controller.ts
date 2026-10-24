@@ -4,7 +4,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendCreateConnectionRequestDto,
+  type ToBackendCreateConnectionRequestDto,
   ToBackendCreateConnectionResponseDto
 } from '#backend/controllers/connections/create-connection/create-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -16,10 +16,9 @@ import { checkConnectionDoesNotExist } from '#backend/functions/db/connections/c
 import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
 import { tabToApiProjectConnection } from '#backend/functions/db/connections/tab-to-api-project-connection/tab-to-api-project-connection';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { UrlService } from '#backend/services/url/url.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -36,9 +35,7 @@ import type { ToBackendCreateConnectionOutput } from '#common/types/backend/rout
 export class CreateConnectionController {
   constructor(
     private urlService: UrlService,
-    private membersService: MembersService,
-    private db: DbService,
-    private hashService: HashService
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendCreateConnection' satisfies ToBackendRoute)
@@ -97,9 +94,10 @@ export class CreateConnectionController {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('member', v =>
@@ -129,7 +127,6 @@ export class CreateConnectionController {
       Result.bind('connection', v =>
         Result.succeed(
           makeConnection({
-            hashService: this.hashService,
             projectId: v.projectId,
             envId: v.envId,
             connectionId: v.connectionId,

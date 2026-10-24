@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Result } from '@praha/byethrow';
 import { and, eq } from 'drizzle-orm';
 import {
-  ToBackendGetEnvsRequestDto,
+  type ToBackendGetEnvsRequestDto,
   ToBackendGetEnvsResponseDto
 } from '#backend/controllers/envs/get-envs/get-envs.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -11,9 +11,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetEnvsOutput } from '#common/types/backend/routes/envs/get-envs/get-envs-output';
@@ -22,10 +22,7 @@ import type { ToBackendGetEnvsOutput } from '#common/types/backend/routes/envs/g
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetEnvsController {
-  constructor(
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendGetEnvs' satisfies ToBackendRoute)
   @ApiOperation({
@@ -62,7 +59,9 @@ export class GetEnvsController {
       ),
       Result.map(
         (v): ToBackendGetEnvsOutput => ({
-          userMember: this.membersService.tabToApi({ member: v.userMember }),
+          userMember: memberTabToApi({
+            member: v.userMember
+          }),
           envs: v.apiEnvs
         })
       )

@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSaveModifyChartRequestDto,
+  type ToBackendSaveModifyChartRequestDto,
   ToBackendSaveModifyChartResponseDto
 } from '#backend/controllers/charts/save-modify-chart/save-modify-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -26,6 +26,10 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import {
+  type RebuildStructOutput,
+  rebuildStruct
+} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { getBranchBridgesForRebuild } from '#backend/functions/db/bridges/get-branch-bridges-for-rebuild/get-branch-bridges-for-rebuild';
 import { chartApiToTab } from '#backend/functions/db/charts/chart-api-to-tab/chart-api-to-tab';
@@ -34,6 +38,21 @@ import { checkChartPath } from '#backend/functions/db/charts/check-chart-path/ch
 import { getChartCheckExists } from '#backend/functions/db/charts/get-chart-check-exists/get-chart-check-exists';
 import { getChartsCatalog } from '#backend/functions/db/charts/get-charts-catalog/get-charts-catalog';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
+import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
+import {
+  type PrepStoreMconfigQueryOutput,
+  prepStoreMconfigQuery
+} from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
+import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path/get-report-space-from-file-path';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
@@ -41,23 +60,9 @@ import { makeChartFileText } from '#backend/functions/make-chart-file-text/make-
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import type { RebuildStructOutput } from '#backend/services/blockml/blockml.service';
-import { BlockmlService } from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
-import type { PrepStoreMconfigQueryOutput } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ModelsService } from '#backend/services/db/models/models.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { QueriesService } from '#backend/services/db/queries/queries.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
-import { StructsService } from '#backend/services/db/structs/structs.service';
-import { UsersService } from '#backend/services/db/users/users.service';
-import { HashService } from '#backend/services/hash/hash.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
-import { SpaceService } from '#backend/services/space/space.service';
 import { TabService } from '#backend/services/tab/tab.service';
-import { UnitsService } from '#backend/services/units/units.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
@@ -133,22 +138,10 @@ type SaveChartPayload = {
 export class SaveModifyChartController {
   constructor(
     private tabService: TabService,
-    private usersService: UsersService,
-    private mconfigsService: MconfigsService,
     private rpcService: RpcService,
-    private structsService: StructsService,
-    private membersService: MembersService,
-    private projectsService: ProjectsService,
-    private modelsService: ModelsService,
-    private blockmlService: BlockmlService,
-    private queriesService: QueriesService,
-    private sessionsService: SessionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
-    private db: DbService,
-    private hashService: HashService,
-    private unitsService: UnitsService,
-    private spaceService: SpaceService
+    private db: DbService
   ) {}
 
   @Post('api/ToBackendSaveModifyChart' satisfies ToBackendRoute)
@@ -182,7 +175,9 @@ export class SaveModifyChartController {
         let userRestrictionResult: Result.Result<
           void,
           CheckUserIsNotRestrictedError
-        > = this.usersService.checkUserIsNotRestricted({ user: v.user });
+        > = checkUserIsNotRestricted({
+          user: v.user
+        });
 
         if (Result.isFailure(userRestrictionResult)) {
           return userRestrictionResult;
@@ -191,11 +186,12 @@ export class SaveModifyChartController {
         let repoAccessResult: Result.Result<
           'session' | 'production' | 'dev',
           CheckRepoIdError
-        > = await this.sessionsService.checkRepoId({
+        > = await checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         });
 
         if (Result.isFailure(repoAccessResult)) {
@@ -229,10 +225,11 @@ export class SaveModifyChartController {
         let projectRestrictionResult: Result.Result<
           void,
           CheckProjectIsNotRestrictedError
-        > = await this.projectsService.checkProjectIsNotRestricted({
+        > = await checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: userMember,
-          repoId: v.repoId
+          repoId: v.repoId,
+          cs: this.cs
         });
 
         if (Result.isFailure(projectRestrictionResult)) {
@@ -275,9 +272,11 @@ export class SaveModifyChartController {
         })
       ),
       Result.bind('currentStruct', v =>
-        this.structsService.getStructCheckExists({
+        getStructCheckExists({
           structId: v.bridge.structId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          cs: this.cs,
+          db: this.db
         })
       ),
       Result.bind('existingChart', async v => {
@@ -321,15 +320,16 @@ export class SaveModifyChartController {
         })
       ),
       Result.bind('model', v =>
-        this.modelsService.getModelCheckExistsAndAccess({
+        getModelCheckExistsAndAccess({
           structId: v.bridge.structId,
           modelId: v.mconfig.modelId,
-          userMember: v.userMember
+          userMember: v.userMember,
+          db: this.db
         })
       ),
       Result.bind('prepareChartFilePayload', async v => {
         let chartFileText: string = makeChartFileText({
-          mconfig: this.mconfigsService.tabToApi({
+          mconfig: mconfigTabToApi({
             mconfig: v.mconfig,
             modelFields: v.model.fields
           }),
@@ -497,7 +497,7 @@ export class SaveModifyChartController {
         let rebuildStructOutput: Result.Result<
           RebuildStructOutput,
           RebuildStructError
-        > = await this.blockmlService.rebuildStruct({
+        > = await rebuildStruct({
           traceId: v.traceId,
           orgId: v.project.orgId,
           projectId: v.projectId,
@@ -512,7 +512,12 @@ export class SaveModifyChartController {
           isUseCache: true,
           cachedMproveConfig: v.currentStruct.mproveConfig,
           cachedModels: v.cachedModels,
-          cachedMetrics: []
+          cachedMetrics: [],
+          db: this.db,
+          tabService: this.tabService,
+          rpcService: this.rpcService,
+          cs: this.cs,
+          logger: this.logger
         });
 
         if (Result.isFailure(rebuildStructOutput)) {
@@ -596,11 +601,11 @@ export class SaveModifyChartController {
           x => x.queryId === chartTile.queryId
         );
 
-        let newMconfig: MconfigTab = this.mconfigsService.apiToTab({
+        let newMconfig: MconfigTab = mconfigApiToTab({
           apiMconfig: chartApiMconfig
         });
 
-        let newQuery: QueryTab = this.queriesService.apiToTab({
+        let newQuery: QueryTab = queryApiToTab({
           apiQuery: chartApiQuery
         });
 
@@ -619,7 +624,7 @@ export class SaveModifyChartController {
           let prepStoreMconfigQueryOutput: Result.Result<
             PrepStoreMconfigQueryOutput,
             PrepStoreMconfigQueryError
-          > = await this.mconfigsService.prepStoreMconfigQuery({
+          > = await prepStoreMconfigQuery({
             struct: v.rebuild.struct,
             project: v.project,
             envId: v.envId,
@@ -628,7 +633,8 @@ export class SaveModifyChartController {
             model: v.model,
             mconfig: prepareQueryPayload.newMconfig,
             metricsStartDateYYYYMMDD: undefined,
-            metricsEndDateYYYYMMDD: undefined
+            metricsEndDateYYYYMMDD: undefined,
+            db: this.db
           });
 
           if (Result.isFailure(prepStoreMconfigQueryOutput)) {
@@ -652,7 +658,6 @@ export class SaveModifyChartController {
       }),
       Result.bind('saveChartPayload', async v => {
         let chart: ChartTab = chartApiToTab({
-          hashService: this.hashService,
           apiChart: v.apiChart,
           chartType: v.prepareQueryPayload.chartApiMconfig.chart.type
         });
@@ -719,11 +724,11 @@ export class SaveModifyChartController {
         })
       ),
       Result.bind('assembleChartResponsePayload', v => {
-        let apiUserMember: Member = this.membersService.tabToApi({
+        let apiUserMember: Member = memberTabToApi({
           member: v.userMember
         });
 
-        let modelApi: ModelX = this.modelsService.tabToApi({
+        let modelApi: ModelX = modelTabToApi({
           model: v.model,
           hasAccess: checkModelAccess({
             member: v.userMember,
@@ -746,8 +751,6 @@ export class SaveModifyChartController {
       Result.bind('chartsCatalog', v =>
         getChartsCatalog({
           db: this.db,
-          unitsService: this.unitsService,
-          spaceService: this.spaceService,
           projectId: v.projectId,
           structId: v.bridge.structId,
           user: v.user,
@@ -761,12 +764,16 @@ export class SaveModifyChartController {
           chart: chartTabToApi({
             chart: v.saveChartPayload.chart,
             mconfigs: [
-              this.mconfigsService.tabToApi({
+              mconfigTabToApi({
                 mconfig: v.prepareQueryPayload.newMconfig,
                 modelFields: v.assembleChartResponsePayload.modelApi.fields
               })
             ],
-            queries: [this.queriesService.tabToApi({ query: v.query })],
+            queries: [
+              queryTabToApi({
+                query: v.query
+              })
+            ],
             member: v.assembleChartResponsePayload.apiUserMember,
             models: [v.assembleChartResponsePayload.modelApi],
             isAddMconfigAndQuery: true

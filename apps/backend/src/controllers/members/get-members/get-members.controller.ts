@@ -1,10 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendGetMembersRequestDto,
+  type ToBackendGetMembersRequestDto,
   ToBackendGetMembersResponseDto
 } from '#backend/controllers/members/get-members/get-members.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -18,11 +20,11 @@ import {
 } from '#backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { checkProjectIsNotRestricted } from '#backend/functions/db/projects/check-project-is-not-restricted/check-project-is-not-restricted';
+import { getApiRoles } from '#backend/functions/db/roles/get-api-roles/get-api-roles';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
-import { RolesService } from '#backend/services/db/roles/roles.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -35,10 +37,8 @@ import type { ToBackendGetMembersOutput } from '#common/types/backend/routes/mem
 @Controller()
 export class GetMembersController {
   constructor(
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private rolesService: RolesService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post('api/ToBackendGetMembers' satisfies ToBackendRoute)
@@ -74,10 +74,11 @@ export class GetMembersController {
         })
       ),
       Result.andThrough(v =>
-        this.projectsService.checkProjectIsNotRestricted({
+        checkProjectIsNotRestricted({
           projectId: v.projectId,
           userMember: v.userMember,
-          repoId: undefined
+          repoId: undefined,
+          cs: this.cs
         })
       ),
       Result.bind('projectMembers', v =>
@@ -122,17 +123,26 @@ export class GetMembersController {
               )
       ),
       Result.bind('apiUserMember', v =>
-        Result.succeed(this.membersService.tabToApi({ member: v.userMember }))
+        Result.succeed(
+          memberTabToApi({
+            member: v.userMember
+          })
+        )
       ),
       Result.bind('apiMembers', v =>
         Result.succeed(
           v.members.map(member =>
-            this.membersService.tabToApi({ member: member })
+            memberTabToApi({
+              member: member
+            })
           )
         )
       ),
       Result.bind('apiRoles', v =>
-        this.rolesService.getApiRoles({ projectId: v.projectId })
+        getApiRoles({
+          projectId: v.projectId,
+          db: this.db
+        })
       ),
       Result.map(v => {
         v.apiMembers.forEach(apiMember => {

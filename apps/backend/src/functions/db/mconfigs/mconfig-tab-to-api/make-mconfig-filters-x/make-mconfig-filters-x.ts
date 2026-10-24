@@ -1,0 +1,42 @@
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { FilterX } from '#common/types/backend/parts/filter/filter-x';
+import type { Filter } from '#common/types/blockml/parts/filter/filter';
+import type { FractionOperator } from '#common/types/blockml/parts/fraction/fraction-operator';
+import type { ModelField } from '#common/types/blockml/parts/model/model-field';
+
+export function makeMconfigFiltersX(item: {
+  modelFields: ModelField[];
+  mconfigFilters: Filter[];
+}): FilterX[] {
+  let { modelFields, mconfigFilters } = item;
+
+  let filtersX: FilterX[] = [];
+
+  if (isDefined(modelFields) && isDefined(mconfigFilters)) {
+    filtersX = mconfigFilters.map(x => {
+      let filterX: FilterX = {
+        fieldId: x.fieldId,
+        fractions: x.fractions.sort((a, b) => {
+          let getPriority = (op: FractionOperator): number => {
+            if (op === 'Or') return 0;
+
+            if (op === 'And') return 1;
+
+            return 2;
+          };
+
+          return getPriority(a.operator) - getPriority(b.operator);
+        }),
+        field: modelFields.find(field => field.id === x.fieldId)
+      };
+
+      return filterX;
+    });
+  }
+
+  let sortedFiltersX: FilterX[] = filtersX.sort((a, b) =>
+    a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+  );
+
+  return sortedFiltersX;
+}

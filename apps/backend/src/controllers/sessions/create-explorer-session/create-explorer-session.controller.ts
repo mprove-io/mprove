@@ -9,7 +9,7 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendCreateExplorerSessionRequestDto,
+  type ToBackendCreateExplorerSessionRequestDto,
   ToBackendCreateExplorerSessionResponseDto
 } from '#backend/controllers/sessions/create-explorer-session/create-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
@@ -23,17 +23,19 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { prewarmCodexAuth } from '#backend/functions/codex/prewarm-codex-auth/prewarm-codex-auth';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { makeOcEvent } from '#backend/functions/db/oc-events/make-oc-event/make-oc-event';
+import { getModelSelection } from '#backend/functions/db/providers/get-model-selection/get-model-selection';
+import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
+import { makeOcSession } from '#backend/functions/db/sessions/make-oc-session/make-oc-session';
+import { makeSession } from '#backend/functions/db/sessions/make-session/make-session';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { makeSessionId } from '#backend/functions/make-session-id/make-session-id';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
-import { CodexService } from '#backend/services/codex/codex.service';
 import { DbService } from '#backend/services/db/db.service';
-import { OcEventsService } from '#backend/services/db/oc-events/oc-events.service';
-import { ProvidersService } from '#backend/services/db/providers/providers.service';
-import { SessionsService } from '#backend/services/db/sessions/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream/explorer-stream.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -48,10 +50,6 @@ import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend
 @Controller()
 export class CreateExplorerSessionController {
   constructor(
-    private sessionsService: SessionsService,
-    private ocEventsService: OcEventsService,
-    private providersService: ProvidersService,
-    private codexService: CodexService,
     private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -103,11 +101,12 @@ export class CreateExplorerSessionController {
           : Result.succeed()
       ),
       Result.andThrough(v =>
-        this.sessionsService.checkRepoId({
+        checkRepoId({
           repoId: v.repoId,
           userId: v.user.userId,
           projectId: v.projectId,
-          allowProdRepo: true
+          allowProdRepo: true,
+          db: this.db
         })
       ),
       Result.bind('branch', v =>
@@ -138,19 +137,23 @@ export class CreateExplorerSessionController {
         })
       ),
       Result.bind('modelSelection', v =>
-        this.providersService.getModelSelection({
+        getModelSelection({
           projectId: v.projectId,
           providerId: v.providerId,
           modelId: v.modelId,
           variant: v.variant,
           isUserCodexAuthSet: isDefined(v.user.codexAuth),
-          isBuilder: false
+          isBuilder: false,
+          db: this.db
         })
       ),
       // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
       Result.andThrough(async v =>
         v.modelSelection.provider.type === 'OpenAICodex'
-          ? this.codexService.prewarmCodexAuth({ userId: v.user.userId })
+          ? prewarmCodexAuth({
+              userId: v.user.userId,
+              db: this.db
+            })
           : Result.succeed()
       ),
       Result.bind('session', async v => {
@@ -165,7 +168,7 @@ export class CreateExplorerSessionController {
                 async () => {
                   let sessionId: string = makeSessionId();
 
-                  session = this.sessionsService.makeSession({
+                  session = makeSession({
                     sessionId: sessionId,
                     type: 'Explorer',
                     repoId: v.repoId,
@@ -190,10 +193,9 @@ export class CreateExplorerSessionController {
                     createdTs: now
                   });
 
-                  let ocSession: OcSessionTab =
-                    this.sessionsService.makeOcSession({
-                      sessionId: sessionId
-                    });
+                  let ocSession: OcSessionTab = makeOcSession({
+                    sessionId: sessionId
+                  });
 
                   if (v.firstMessage) {
                     let busyEvent: EventSessionStatus = {
@@ -209,12 +211,11 @@ export class CreateExplorerSessionController {
 
                     ocSession = { ...ocSession, ocSessionStatus: busyStatus };
 
-                    let busyEventTab: OcEventTab =
-                      this.ocEventsService.makeOcEvent({
-                        sessionId: sessionId,
-                        event: busyEvent,
-                        eventIndex: 0
-                      });
+                    let busyEventTab: OcEventTab = makeOcEvent({
+                      sessionId: sessionId,
+                      event: busyEvent,
+                      eventIndex: 0
+                    });
 
                     await this.db.writeUnwrap({
                       insert: {

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -6,7 +6,7 @@ import { Result } from '@praha/byethrow';
 import { inArray } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
-  ToBackendSpecialRebuildStructsRequestDto,
+  type ToBackendSpecialRebuildStructsRequestDto,
   ToBackendSpecialRebuildStructsResponseDto
 } from '#backend/controllers/special/special-rebuild-structs/special-rebuild-structs.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check/skip-jwt-check.decorator';
@@ -17,12 +17,12 @@ import type {
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import {
+  type RebuildStructOutput,
+  rebuildStruct
+} from '#backend/functions/blockml/rebuild-struct/rebuild-struct';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip/throttler-ip.guard';
-import {
-  BlockmlService,
-  type RebuildStructOutput
-} from '#backend/services/blockml/blockml.service';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
@@ -69,9 +69,9 @@ export class SpecialRebuildStructsController {
   constructor(
     private tabService: TabService,
     private rpcService: RpcService,
-    private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
-    private db: DbService
+    private db: DbService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendSpecialRebuildStructs' satisfies ToBackendRoute)
@@ -207,7 +207,7 @@ export class SpecialRebuildStructsController {
               let rebuildResult: Result.Result<
                 RebuildStructOutput,
                 RebuildStructError
-              > = await this.blockmlService.rebuildStruct({
+              > = await rebuildStruct({
                 traceId: v.traceId,
                 orgId: project.orgId,
                 projectId: project.projectId,
@@ -217,7 +217,12 @@ export class SpecialRebuildStructsController {
                 mproveDir: diskResult.value.mproveDir,
                 envId: bridge.envId,
                 selectedGivens: [],
-                overrideTimezone: v.overrideTimezone
+                overrideTimezone: v.overrideTimezone,
+                db: this.db,
+                tabService: this.tabService,
+                rpcService: this.rpcService,
+                cs: this.cs,
+                logger: this.logger
               });
 
               if (Result.isFailure(rebuildResult)) {

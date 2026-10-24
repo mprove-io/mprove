@@ -1,20 +1,19 @@
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cleanInternalFields } from '#backend/functions/db/connections/clean-internal-fields/clean-internal-fields';
-import type { HashService } from '#backend/services/hash/hash.service';
+import { makeConnectionFullId } from '#backend/functions/hash/make-connection-full-id/make-connection-full-id';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
 import type { ConnectionType } from '#common/types/backend/parts/connection-parts/connection-type';
 
 export function makeConnection(item: {
-  hashService: HashService;
   projectId: string;
   connectionId: string;
   envId: string;
   type: ConnectionType;
   options: ConnectionOptions;
 }): ConnectionTab {
-  let { hashService, projectId, connectionId, envId, type, options } = item;
+  let { projectId, connectionId, envId, type, options } = item;
 
   cleanInternalFields({ options: options });
 
@@ -40,7 +39,7 @@ export function makeConnection(item: {
   }
 
   let connection: ConnectionTab = {
-    connectionFullId: hashService.makeConnectionFullId({
+    connectionFullId: makeConnectionFullId({
       projectId: projectId,
       envId: envId,
       connectionId: connectionId

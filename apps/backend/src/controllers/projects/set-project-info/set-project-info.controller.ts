@@ -4,16 +4,16 @@ import { Throttle } from '@nestjs/throttler';
 import { Result } from '@praha/byethrow';
 import { eq } from 'drizzle-orm';
 import {
-  ToBackendSetProjectInfoRequestDto,
+  type ToBackendSetProjectInfoRequestDto,
   ToBackendSetProjectInfoResponseDto
 } from '#backend/controllers/projects/set-project-info/set-project-info.dto';
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { tabToApiProject } from '#backend/functions/db/projects/tab-to-api-project/tab-to-api-project';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
-import { ProjectsService } from '#backend/services/db/projects/projects.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -25,11 +25,7 @@ import type { ToBackendSetProjectInfoOutput } from '#common/types/backend/routes
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetProjectInfoController {
-  constructor(
-    private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   @Post('api/ToBackendSetProjectInfo' satisfies ToBackendRoute)
   @ApiOperation({
@@ -55,9 +51,10 @@ export class SetProjectInfoController {
         })
       ),
       Result.bind('userMember', v =>
-        this.membersService.getMemberCheckIsAdmin({
+        getMemberCheckIsAdmin({
           projectId: v.projectId,
-          memberId: v.userId
+          memberId: v.userId,
+          db: this.db
         })
       ),
       Result.map(v => {
@@ -71,7 +68,7 @@ export class SetProjectInfoController {
       ),
       Result.map(
         (v): ToBackendSetProjectInfoOutput => ({
-          project: this.projectsService.tabToApiProject({
+          project: tabToApiProject({
             project: v.project,
             isAddPublicKey: v.userMember.isAdmin,
             isAddGitUrl: v.userMember.isAdmin

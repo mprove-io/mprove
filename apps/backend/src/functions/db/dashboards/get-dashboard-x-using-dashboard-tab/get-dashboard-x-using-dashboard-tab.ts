@@ -6,10 +6,10 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access/check-model-access';
 import { dashboardTabToApi } from '#backend/functions/db/dashboards/get-dashboard-x-using-dashboard-tab/dashboard-tab-to-api/dashboard-tab-to-api';
+import { mconfigTabToApi } from '#backend/functions/db/mconfigs/mconfig-tab-to-api/mconfig-tab-to-api';
+import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
+import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import type { DbService } from '#backend/services/db/db.service';
-import type { MconfigsService } from '#backend/services/db/mconfigs/mconfigs.service';
-import type { ModelsService } from '#backend/services/db/models/models.service';
-import type { QueriesService } from '#backend/services/db/queries/queries.service';
 import type { GetDashboardXUsingDashboardTabError } from '#common/types/backend/function-errors/get-dashboard-x-using-dashboard-tab-error';
 import type { DashboardX } from '#common/types/backend/parts/dashboard/dashboard-x';
 import type { Member } from '#common/types/backend/parts/member';
@@ -22,9 +22,6 @@ type AssembleDashboardProjectionPayload = {
 
 export async function getDashboardXUsingDashboardTab(item: {
   db: DbService;
-  modelsService: ModelsService;
-  mconfigsService: MconfigsService;
-  queriesService: QueriesService;
   dashboard: DashboardTab;
   structId: string;
   projectId: string;
@@ -62,7 +59,7 @@ export async function getDashboardXUsingDashboardTab(item: {
     ),
     Result.bind('assembleDashboardProjectionPayload', v => {
       let apiModels: ModelX[] = v.models.map(model =>
-        v.modelsService.tabToApi({
+        modelTabToApi({
           model: model,
           hasAccess: checkModelAccess({
             member: v.apiUserMember,
@@ -74,12 +71,16 @@ export async function getDashboardXUsingDashboardTab(item: {
       let dashboardX: DashboardX = dashboardTabToApi({
         dashboard: v.dashboard,
         mconfigs: v.mconfigs.map(x =>
-          v.mconfigsService.tabToApi({
+          mconfigTabToApi({
             mconfig: x,
             modelFields: apiModels.find(m => m.modelId === x.modelId).fields
           })
         ),
-        queries: v.queries.map(x => v.queriesService.tabToApi({ query: x })),
+        queries: v.queries.map(x =>
+          queryTabToApi({
+            query: x
+          })
+        ),
         member: v.apiUserMember,
         models: apiModels,
         isAddMconfigAndQuery: true

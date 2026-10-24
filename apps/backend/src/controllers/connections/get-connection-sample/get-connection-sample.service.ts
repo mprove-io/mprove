@@ -5,8 +5,8 @@ import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
 import { DbService } from '#backend/services/db/db.service';
-import { MembersService } from '#backend/services/db/members/members.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -26,7 +26,6 @@ import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/r
 @Injectable()
 export class GetConnectionSampleService {
   constructor(
-    private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private snowFlakeService: SnowFlakeService,
@@ -64,9 +63,10 @@ export class GetConnectionSampleService {
         })
       ),
       Result.andThrough(v =>
-        this.membersService.getMemberCheckIsEditorOrAdmin({
+        getMemberCheckIsEditorOrAdmin({
           memberId: v.userId,
-          projectId: v.projectId
+          projectId: v.projectId,
+          db: this.db
         })
       ),
       Result.bind('apiEnvs', v =>
