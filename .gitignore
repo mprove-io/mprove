@@ -14,6 +14,7 @@ _nogit/
 !.vscode/tasks.json
 !.vscode/launch.json
 external/
+extra/
 mcli/.bun
 dist/
 dist-e2e/
