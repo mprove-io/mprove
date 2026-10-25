@@ -9,15 +9,15 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getQueryInfoReportData } from '#backend/functions/db/reports/get-query-info-report-data/get-query-info-report-data';
+import { getReportUrl } from '#backend/functions/db/reports/get-report-url/get-report-url';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
-import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { getChartData } from '#backend/functions/query-info-chart/get-chart-data/get-chart-data';
 import { getDashboardData } from '#backend/functions/query-info-dashboard/get-dashboard-data/get-dashboard-data';
-import { getQueryInfoReportData } from '#backend/functions/query-info-report/get-query-info-report-data/get-query-info-report-data';
+import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DocService } from '#backend/services/doc/doc.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -44,7 +44,7 @@ export class GetQueryInfoService {
     private logger: Logger,
     private tabService: TabService,
     private rpcService: RpcService,
-    private docService: DocService
+    private calcDbService: CalcDbService
   ) {}
 
   async getQueryInfo(item: {
@@ -293,7 +293,7 @@ export class GetQueryInfoService {
               skipUi: true,
               db: this.db,
               cs: this.cs,
-              docService: this.docService,
+              calcDb: this.calcDbService.calcDb,
               logger: this.logger
             })
       ),

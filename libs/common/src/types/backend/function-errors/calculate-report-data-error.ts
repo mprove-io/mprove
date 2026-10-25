@@ -9,13 +9,16 @@ import {
   zWriteError
 } from '#common/types/backend/function-errors/write-error';
 
-export type CalculateDataError = MakeReportDataColumnsError | WriteError;
+export type CalculateReportDataError = MakeReportDataColumnsError | WriteError;
 
-export const zCalculateDataError = z.union([
+export const zCalculateReportDataError = z.union([
   zMakeReportDataColumnsError,
   zWriteError
 ]);
 
-assertTypesEqual<CalculateDataError, z.infer<typeof zCalculateDataError>>({
+assertTypesEqual<
+  CalculateReportDataError,
+  z.infer<typeof zCalculateReportDataError>
+>({
   value: true
 });

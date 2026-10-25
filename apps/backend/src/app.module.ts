@@ -911,9 +911,9 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     return connections;
   }
 
-  async onModuleDestroy() {
+  async onModuleDestroy(): Promise<void> {
     if (throttlerRedisClient) {
-      throttlerRedisClient.disconnect();
+      await throttlerRedisClient.quit();
     }
   }
 }

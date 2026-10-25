@@ -18,10 +18,10 @@ import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs
 import { mconfigApiToTab } from '#backend/functions/db/mconfigs/mconfig-api-to-tab/mconfig-api-to-tab';
 import { modelApiToTab } from '#backend/functions/db/models/model-api-to-tab/model-api-to-tab';
 import { queryApiToTab } from '#backend/functions/db/queries/query-api-to-tab/query-api-to-tab';
+import { processReportRowIds } from '#backend/functions/db/reports/process-report-row-ids/process-report-row-ids';
 import { reportApiToTab } from '#backend/functions/db/reports/report-api-to-tab/report-api-to-tab';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files/disk-files-to-blockml-files';
-import { processRowIds } from '#backend/functions/process-row-ids/process-row-ids';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import type { DbService } from '#backend/services/db/db.service';
 import type { RpcService } from '#backend/services/rpc/rpc.service';
@@ -210,7 +210,7 @@ export async function rebuildStruct(item: {
   };
 
   rs.reports.forEach(report => {
-    let newRows: Row[] = processRowIds({
+    let newRows: Row[] = processReportRowIds({
       rows: report.rows,
       targetRowIds: report.rows.map(r => r.rowId)
     });

@@ -19,15 +19,15 @@ import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-c
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getModelCheckExistsAndAccess } from '#backend/functions/db/models/get-model-check-exists-and-access/get-model-check-exists-and-access';
 import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
+import { getProcessedReportRows } from '#backend/functions/db/reports/get-processed-report-rows/get-processed-report-rows';
 import { getReportCheckExistsAndAccess } from '#backend/functions/db/reports/get-report-check-exists-and-access/get-report-check-exists-and-access';
+import { getReportData } from '#backend/functions/db/reports/get-report-data/get-report-data';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
-import { getReportData } from '#backend/functions/report-data/get-report-data/get-report-data';
-import { getProcessedRows } from '#backend/functions/report-row/get-processed-rows/get-processed-rows';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DocService } from '#backend/services/doc/doc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -52,7 +52,7 @@ export class EditDraftReportController {
   constructor(
     private db: DbService,
     private cs: ConfigService<BackendConfig>,
-    private docService: DocService,
+    private calcDbService: CalcDbService,
     private logger: Logger
   ) {}
 
@@ -195,7 +195,7 @@ export class EditDraftReportController {
             });
         }
 
-        let processedRows: Row[] = getProcessedRows({
+        let processedRows: Row[] = getProcessedReportRows({
           rows: v.report.rows,
           rowChange: v.rowChange,
           rowIds: v.rowIds,
@@ -253,7 +253,7 @@ export class EditDraftReportController {
           timeRangeFractionBrick: v.timeRangeFractionBrick,
           isSaveToDb: true,
           db: this.db,
-          docService: this.docService,
+          calcDb: this.calcDbService.calcDb,
           logger: this.logger,
           cs: this.cs
         })

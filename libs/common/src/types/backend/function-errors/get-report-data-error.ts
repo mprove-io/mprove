@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type CalculateDataError,
-  zCalculateDataError
-} from '#common/types/backend/function-errors/calculate-data-error';
+  type CalculateReportDataError,
+  zCalculateReportDataError
+} from '#common/types/backend/function-errors/calculate-report-data-error';
 import {
   type DbKitsFindManyError,
   zDbKitsFindManyError
@@ -42,7 +42,7 @@ import {
 } from '#common/types/backend/function-errors/write-error';
 
 export type GetReportDataError =
-  | CalculateDataError
+  | CalculateReportDataError
   | MakeReportDataColumnsError
   | GetTimeColumnsError
   | PrepStoreMconfigQueryError
@@ -54,7 +54,7 @@ export type GetReportDataError =
   | DbKitsFindManyError;
 
 export const zGetReportDataError = z.union([
-  zCalculateDataError,
+  zCalculateReportDataError,
   zMakeReportDataColumnsError,
   zGetTimeColumnsError,
   zPrepStoreMconfigQueryError,

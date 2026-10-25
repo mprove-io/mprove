@@ -70,10 +70,11 @@ export class ConsumerService {
     }
   }
 
-  async onModuleDestroy() {
+  async onModuleDestroy(): Promise<void> {
     if (this.worker) {
       await this.worker.close();
     }
-    this.redisClient.disconnect();
+
+    await this.redisClient.quit();
   }
 }

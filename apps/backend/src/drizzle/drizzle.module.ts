@@ -96,7 +96,7 @@ export interface DbExtra {
 export class DrizzleModule implements OnModuleDestroy {
   constructor(@Inject(DRIZZLE) private dbExtra: DbExtra) {}
 
-  async onModuleDestroy() {
+  async onModuleDestroy(): Promise<void> {
     const pool = this.dbExtra.pool;
 
     // Wait up to 5 seconds for active queries to complete

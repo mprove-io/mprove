@@ -1291,8 +1291,7 @@ export class EditorStreamService implements OnModuleDestroy {
     }
   }
 
-  onModuleDestroy() {
-    this.redisSubscriber.disconnect();
-    this.redisClient.disconnect();
+  async onModuleDestroy(): Promise<void> {
+    await Promise.all([this.redisSubscriber.quit(), this.redisClient.quit()]);
   }
 }

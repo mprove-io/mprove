@@ -17,11 +17,11 @@ import { checkModelAccess } from '#backend/functions/check-model-access/check-mo
 import { getDashboardParts } from '#backend/functions/db/dashboards/get-dashboard-parts/get-dashboard-parts';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
+import { getReportUrl } from '#backend/functions/db/reports/get-report-url/get-report-url';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { getChartUrl } from '#backend/functions/get-chart-url/get-chart-url';
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url/get-dashboard-url';
-import { getReportUrl } from '#backend/functions/get-report-url/get-report-url';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
 import { DbService } from '#backend/services/db/db.service';
 import { RpcService } from '#backend/services/rpc/rpc.service';

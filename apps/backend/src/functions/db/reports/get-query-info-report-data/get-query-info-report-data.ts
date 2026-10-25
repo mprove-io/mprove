@@ -1,6 +1,7 @@
 import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
+import type pgPromise from 'pg-promise';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   BridgeTab,
@@ -11,11 +12,10 @@ import type {
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getModelPartXs } from '#backend/functions/db/models/get-model-part-xs/get-model-part-xs';
 import { getReportCheckExistsAndAccess } from '#backend/functions/db/reports/get-report-check-exists-and-access/get-report-check-exists-and-access';
+import { getReportData } from '#backend/functions/db/reports/get-report-data/get-report-data';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { structTabToApi } from '#backend/functions/db/structs/struct-tab-to-api/struct-tab-to-api';
-import { getReportData } from '#backend/functions/report-data/get-report-data/get-report-data';
 import type { DbService } from '#backend/services/db/db.service';
-import type { DocService } from '#backend/services/doc/doc.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { GetQueryInfoReportDataError } from '#common/types/backend/function-errors/get-query-info-report-data-error';
@@ -38,7 +38,7 @@ export async function getQueryInfoReportData(item: {
   skipUi: boolean;
   db: DbService;
   cs: ConfigService<BackendConfig>;
-  docService: DocService;
+  calcDb: pgPromise.IDatabase<unknown>;
   logger: Logger;
 }): Result.ResultAsync<ToBackendGetReportOutput, GetQueryInfoReportDataError> {
   return Result.pipe(
@@ -83,7 +83,7 @@ export async function getQueryInfoReportData(item: {
         timeRangeFractionBrick: v.timeRangeFractionBrick,
         timezone: v.timezone,
         db: v.db,
-        docService: v.docService,
+        calcDb: v.calcDb,
         logger: v.logger,
         cs: v.cs
       })

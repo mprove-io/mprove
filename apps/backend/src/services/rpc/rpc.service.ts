@@ -410,7 +410,7 @@ export class RpcService implements OnModuleDestroy {
     return Result.succeed(response.output);
   }
 
-  onModuleDestroy() {
-    this.redisClient.disconnect();
+  async onModuleDestroy(): Promise<void> {
+    await this.redisClient.quit();
   }
 }

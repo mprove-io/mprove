@@ -96,7 +96,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
     }, 2000);
   }
 
-  onModuleDestroy() {
+  onModuleDestroy(): void {
     clearInterval(this.drainTimer);
     clearInterval(this.lockTimer);
   }

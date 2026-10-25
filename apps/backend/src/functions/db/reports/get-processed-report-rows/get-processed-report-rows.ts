@@ -1,8 +1,8 @@
 import type { StructTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { processRowIds } from '#backend/functions/process-row-ids/process-row-ids';
-import { clearRowsCache } from '#backend/functions/report-row/get-processed-rows/clear-rows-cache/clear-rows-cache';
-import { rowIdLetterToNumber } from '#backend/functions/row-id-letter-to-number/row-id-letter-to-number';
-import { rowIdNumberToLetter } from '#backend/functions/row-id-number-to-letter/row-id-number-to-letter';
+import { clearRowsCache } from '#backend/functions/db/reports/get-processed-report-rows/clear-rows-cache/clear-rows-cache';
+import { processReportRowIds } from '#backend/functions/db/reports/process-report-row-ids/process-report-row-ids';
+import { reportRowIdLetterToNumber } from '#backend/functions/db/reports/report-row-id-letter-to-number/report-row-id-letter-to-number';
+import { reportRowIdNumberToLetter } from '#backend/functions/db/reports/report-row-id-number-to-letter/report-row-id-number-to-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelMetric } from '#common/types/blockml/parts/model/model-metric';
@@ -14,7 +14,7 @@ import type { Row } from '#common/types/blockml/parts/report/row/row';
 import type { RowChange } from '#common/types/blockml/parts/report/row/row-change';
 import type { TimeSpec } from '#common/types/shared/time/timespec';
 
-export function getProcessedRows(item: {
+export function getProcessedReportRows(item: {
   rowChange: RowChange;
   rowIds: string[];
   metrics: ModelMetric[];
@@ -53,7 +53,7 @@ export function getProcessedRows(item: {
     }
 
     let rowIdsNumbers: number[] = processedRows.map(y =>
-      rowIdLetterToNumber(y.rowId)
+      reportRowIdLetterToNumber({ rowId: y.rowId })
     );
 
     let maxRowIdNumber =
@@ -61,7 +61,7 @@ export function getProcessedRows(item: {
 
     let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-    let rowId: string = rowIdNumberToLetter(rowIdNumber);
+    let rowId: string = reportRowIdNumberToLetter({ rowIdNumber: rowIdNumber });
 
     let newRow: Row = {
       rowId: rowId,
@@ -106,7 +106,7 @@ export function getProcessedRows(item: {
       targetRows.pop();
     }
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: isDefined(targetIndex) ? targetRows : processedRows,
       targetRowIds: isDefined(targetIndex)
         ? targetRows.map(pRow => pRow.rowId)
@@ -122,7 +122,7 @@ export function getProcessedRows(item: {
     }
 
     let rowIdsNumbers: number[] = processedRows.map(y =>
-      rowIdLetterToNumber(y.rowId)
+      reportRowIdLetterToNumber({ rowId: y.rowId })
     );
 
     let maxRowIdNumber =
@@ -130,7 +130,7 @@ export function getProcessedRows(item: {
 
     let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-    let rowId: string = rowIdNumberToLetter(rowIdNumber);
+    let rowId: string = reportRowIdNumberToLetter({ rowIdNumber: rowIdNumber });
 
     let newRow: Row = {
       rowId: rowId,
@@ -175,7 +175,7 @@ export function getProcessedRows(item: {
       targetRows.pop();
     }
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: isDefined(targetIndex) ? targetRows : processedRows,
       targetRowIds: isDefined(targetIndex)
         ? targetRows.map(pRow => pRow.rowId)
@@ -191,7 +191,7 @@ export function getProcessedRows(item: {
     }
 
     let rowIdsNumbers: number[] = processedRows.map(y =>
-      rowIdLetterToNumber(y.rowId)
+      reportRowIdLetterToNumber({ rowId: y.rowId })
     );
 
     let maxRowIdNumber =
@@ -199,7 +199,7 @@ export function getProcessedRows(item: {
 
     let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-    let rowId: string = rowIdNumberToLetter(rowIdNumber);
+    let rowId: string = reportRowIdNumberToLetter({ rowIdNumber: rowIdNumber });
 
     let newRow: Row = {
       rowId: rowId,
@@ -244,7 +244,7 @@ export function getProcessedRows(item: {
       targetRows.pop();
     }
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: isDefined(targetIndex) ? targetRows : processedRows,
       targetRowIds: isDefined(targetIndex)
         ? targetRows.map(pRow => pRow.rowId)
@@ -260,7 +260,7 @@ export function getProcessedRows(item: {
     }
 
     let rowIdsNumbers: number[] = processedRows.map(y =>
-      rowIdLetterToNumber(y.rowId)
+      reportRowIdLetterToNumber({ rowId: y.rowId })
     );
 
     let maxRowIdNumber =
@@ -268,7 +268,7 @@ export function getProcessedRows(item: {
 
     let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-    let rowId: string = rowIdNumberToLetter(rowIdNumber);
+    let rowId: string = reportRowIdNumberToLetter({ rowIdNumber: rowIdNumber });
 
     let metric: ModelMetric = metrics.find(
       m => m.metricId === rowChange.metricId
@@ -317,7 +317,7 @@ export function getProcessedRows(item: {
       targetRows.pop();
     }
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: isDefined(targetIndex) ? targetRows : processedRows,
       targetRowIds: isDefined(targetIndex)
         ? targetRows.map(pRow => pRow.rowId)
@@ -366,7 +366,7 @@ export function getProcessedRows(item: {
       row.rowId === editRow.rowId ? editRow : row
     );
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: processedRows,
       targetRowIds: processedRows.map(pr => pr.rowId)
     });
@@ -395,7 +395,7 @@ export function getProcessedRows(item: {
       );
     }
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: processedRows,
       targetRowIds: processedRows.map(pr => pr.rowId)
     });
@@ -475,7 +475,7 @@ export function getProcessedRows(item: {
       return editRow;
     });
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: processedRows,
       targetRowIds: processedRows.map(pr => pr.rowId)
     });
@@ -490,13 +490,13 @@ export function getProcessedRows(item: {
 
     processedRows = processedRows.filter(row => rowIds.indexOf(row.rowId) < 0);
 
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: processedRows,
       targetRowIds: processedRows.map(pRow => pRow.rowId),
       replaceWithUndef: rowIds
     });
   } else if (changeType === 'Move') {
-    processedRows = processRowIds({
+    processedRows = processReportRowIds({
       rows: processedRows,
       targetRowIds: rowIds
     });

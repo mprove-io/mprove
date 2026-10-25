@@ -2,6 +2,7 @@ import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray } from 'drizzle-orm';
+import type pgPromise from 'pg-promise';
 import type { BackendConfig } from '#backend/config/backend-config';
 import type {
   MconfigTab,
@@ -25,15 +26,16 @@ import {
 } from '#backend/functions/db/mconfigs/prep-store-mconfig-query/prep-store-mconfig-query';
 import { modelTabToApi } from '#backend/functions/db/models/model-tab-to-api/model-tab-to-api';
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
+import { calculateReportData } from '#backend/functions/db/reports/get-report-data/calculate-report-data/calculate-report-data';
+import { getTimeColumns } from '#backend/functions/db/reports/get-report-data/get-time-columns/get-time-columns';
+import { reportTabToApi } from '#backend/functions/db/reports/get-report-data/report-tab-to-api/report-tab-to-api';
+import { makeReportDataColumns } from '#backend/functions/db/reports/make-report-data-columns/make-report-data-columns';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#backend/functions/get-yyyymmdd-from-epoch-utc-by-timezone/get-yyyymmdd-from-epoch-utc-by-timezone';
 import {
   type EditMalloyQueryOutput,
   editMalloyQuery
 } from '#backend/functions/malloy/edit-malloy-query/edit-malloy-query';
-import { getTimeColumns } from '#backend/functions/report-data/get-report-data/get-time-columns/get-time-columns';
-import { reportTabToApi } from '#backend/functions/report-data/get-report-data/report-tab-to-api/report-tab-to-api';
 import type { DbService } from '#backend/services/db/db.service';
-import type { DocService } from '#backend/services/doc/doc.service';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail/get-timespec-detail';
@@ -44,7 +46,7 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type { CalculateDataError } from '#common/types/backend/function-errors/calculate-data-error';
+import type { CalculateReportDataError } from '#common/types/backend/function-errors/calculate-report-data-error';
 import type { DbMconfigsFindManyError } from '#common/types/backend/function-errors/db/mconfigs/db-mconfigs-find-many-error';
 import type { DbQueriesFindManyError } from '#common/types/backend/function-errors/db/queries/db-queries-find-many-error';
 import type { EditMalloyQueryError } from '#common/types/backend/function-errors/edit-malloy-query-error';
@@ -117,7 +119,7 @@ export async function getReportData(item: {
   user: UserTab;
   isSaveToDb?: boolean;
   db: DbService;
-  docService: DocService;
+  calcDb: pgPromise.IDatabase<unknown>;
   logger: Logger;
   cs: ConfigService<BackendConfig>;
 }): Result.ResultAsync<ReportX, GetReportDataError> {
@@ -859,14 +861,17 @@ export async function getReportData(item: {
     }),
     Result.andThrough(async v => {
       if (v.prepareReportCalculationPayload.isCalculateData === true) {
-        let calculatedReportResult: Result.Result<ReportX, CalculateDataError> =
-          await v.docService.calculateData({
-            report: v.prepareReportCalculationPayload.reportApi,
-            timezone: v.timezone,
-            timeSpec: v.timeSpec,
-            timeRangeFraction: v.getTimeColumnsOutput.timeRangeFraction,
-            traceId: v.traceId
-          });
+        let calculatedReportResult: Result.Result<
+          ReportX,
+          CalculateReportDataError
+        > = await calculateReportData({
+          report: v.prepareReportCalculationPayload.reportApi,
+          timezone: v.timezone,
+          timeSpec: v.timeSpec,
+          timeRangeFraction: v.getTimeColumnsOutput.timeRangeFraction,
+          db: v.db,
+          calcDb: v.calcDb
+        });
 
         if (Result.isFailure(calculatedReportResult)) {
           return calculatedReportResult;
@@ -878,7 +883,7 @@ export async function getReportData(item: {
         let reportDataColumnsResult: Result.Result<
           ReportDataColumn[],
           MakeReportDataColumnsError
-        > = v.docService.makeReportDataColumns({
+        > = makeReportDataColumns({
           report: v.prepareReportCalculationPayload.reportApi,
           timeSpec: v.timeSpec
         });

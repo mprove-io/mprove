@@ -16,11 +16,11 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-check-exists-and-access/get-env-check-exists-and-access';
+import { getQueryInfoReportData } from '#backend/functions/db/reports/get-query-info-report-data/get-query-info-report-data';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
-import { getQueryInfoReportData } from '#backend/functions/query-info-report/get-query-info-report-data/get-query-info-report-data';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
+import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DocService } from '#backend/services/doc/doc.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import type { GetEnvCheckExistsAndAccessError } from '#common/types/backend/function-errors/get-env-check-exists-and-access-error';
@@ -49,7 +49,7 @@ export class GetReportController {
   constructor(
     private db: DbService,
     private cs: ConfigService<BackendConfig>,
-    private docService: DocService,
+    private calcDbService: CalcDbService,
     private logger: Logger
   ) {}
 
@@ -152,7 +152,7 @@ export class GetReportController {
           skipUi: false,
           db: this.db,
           cs: this.cs,
-          docService: this.docService,
+          calcDb: this.calcDbService.calcDb,
           logger: this.logger
         })
       )

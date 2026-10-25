@@ -100,9 +100,10 @@ export class EditorSessionLockService implements OnModuleDestroy {
     );
   }
 
-  onModuleDestroy(): void {
+  async onModuleDestroy(): Promise<void> {
     this.lockIntervals.forEach(interval => clearInterval(interval));
     this.lockIntervals.clear();
-    this.redisClient.disconnect();
+
+    await this.redisClient.quit();
   }
 }

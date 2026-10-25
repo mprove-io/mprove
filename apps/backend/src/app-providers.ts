@@ -4,8 +4,8 @@ import { JwtStrategy } from '#backend/auth-strategies/jwt/jwt.strategy';
 import { LocalStrategy } from '#backend/auth-strategies/local-strategy/local-strategy.strategy';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
+import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
 import { DbService } from '#backend/services/db/db.service';
-import { DocService } from '#backend/services/doc/doc.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
@@ -81,7 +81,7 @@ export const appProviders = [
   //
   AscendingIdService,
   DbService,
-  DocService,
+  CalcDbService,
   EmailService,
   RpcService,
   RedisService,

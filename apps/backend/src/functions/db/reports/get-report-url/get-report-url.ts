@@ -9,7 +9,7 @@ export function getReportUrl(item: {
   timezone: string;
   timeSpec: string;
   timeRange: string;
-}) {
+}): string {
   let {
     host,
     orgId,
@@ -23,8 +23,11 @@ export function getReportUrl(item: {
     timeRange
   } = item;
 
-  let tzEncoded = encodeURIComponent(timezone);
-  let timeRangeEncoded = encodeURIComponent(timeRange);
+  let tzEncoded: string = encodeURIComponent(timezone);
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/reports/report/${reportId}?timezone=${tzEncoded}&timeSpec=${timeSpec}&timeRange=${timeRangeEncoded}`;
+  let timeRangeEncoded: string = encodeURIComponent(timeRange);
+
+  let reportUrl = `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/reports/report/${reportId}?timezone=${tzEncoded}&timeSpec=${timeSpec}&timeRange=${timeRangeEncoded}`;
+
+  return reportUrl;
 }

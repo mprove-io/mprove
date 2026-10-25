@@ -38,10 +38,10 @@ import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
 import { checkUserIsNotRestricted } from '#backend/functions/db/users/check-user-is-not-restricted/check-user-is-not-restricted';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
-import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path/get-report-space-from-file-path';
 import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id/get-target-parent-node-id';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text/make-dashboard-file-text';
 import { projectTabToBaseProject } from '#backend/functions/project-tab-to-base-project/project-tab-to-base-project';
+import { getSpaceFromFilePath } from '#backend/functions/space/get-space-from-file-path/get-space-from-file-path';
 import { getRetryOption } from '#backend/functions/top/get-retry-option/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
@@ -262,7 +262,7 @@ export class SaveModifyDashboardController {
         })
       ),
       Result.bind('prepareDashboardFileUpdatePayload', async v => {
-        let currentDashboardSpace: string = getReportSpaceFromFilePath({
+        let currentDashboardSpace: string = getSpaceFromFilePath({
           filePath: v.toDashboard.filePath,
           spaces: v.currentStruct.spaces
         });
