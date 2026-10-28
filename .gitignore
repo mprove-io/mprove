@@ -6,6 +6,8 @@ _nogit/
 .devcontainer/.zshrc
 .pnpm-store/
 .turbo/
+/.s-viewer/cache/
+/.s-viewer/
 .vscode/*
 !.vscode/keybindings-example.json
 !.vscode/settings-example.json

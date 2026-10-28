@@ -23,6 +23,8 @@
 - rules/do-not-run-tests-unless-asked.md
 - rules/do-not-write-tests-unless-asked.md
 - rules/typecheck-and-lint.md
+- rules/s-viewer-releases.md
+- rules/s-viewer-manifest.md
 - rules/one-function-per-file.md
 - rules/function-and-method-args.md
 - rules/function-return-types.md

@@ -174,19 +174,21 @@ Run `pnpm catalog-write` to sync catalog versions to `libs/common`,
 
 ## Main package json scripts
 
-| Script     | Command                                                                 |
-| ---------- | ----------------------------------------------------------------------- |
-| check      | `pnpm typecheck && pnpm lint`                                           |
-| typecheck  | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
-| lint       | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
-| circular   | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
-| build      | `pnpm build:turbo && pnpm build:mcli`                                   |
-| node-serve | `turbo run node-serve`                                                  |
-| start      | `turbo run start`                                                       |
-| debug      | `turbo run debug`                                                       |
-| test       | `turbo run test`                                                        |
-| e2e        | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
-| inst       | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
+| Script          | Command                                                                 |
+| --------------- | ----------------------------------------------------------------------- |
+| check           | `pnpm typecheck && pnpm lint && pnpm check-s-viewer`                    |
+| check-s-viewer  | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts check`                  |
+| repair-s-viewer | `pnpm exec tsx scripts/dev/s-viewer-manifest.ts repair`                 |
+| typecheck       | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
+| lint            | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
+| circular        | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
+| build           | `pnpm build:turbo && pnpm build:mcli`                                   |
+| node-serve      | `turbo run node-serve`                                                  |
+| start           | `turbo run start`                                                       |
+| debug           | `turbo run debug`                                                       |
+| test            | `turbo run test`                                                        |
+| e2e             | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
+| inst            | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
 
 Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>`
 for specific package.
@@ -255,6 +257,55 @@ Use read-only operations if needed (like status, diff, etc)
 ## Typecheck and lint
 
 Always use top `pnpm check` for typecheck or lint.
+
+## S Viewer releases
+
+For every delivered update that changes `extra/s-viewer/`, bump the extension
+version. Increment the patch version unless another version is requested. Do not
+distribute changed extension code under a previously delivered version.
+
+Keep `package.json`, `package-lock.json`, and versioned installation references
+consistent with the new version. Build and package the updated VSIX before
+handoff so the user only needs to run the installer.
+
+Provide the following repository-root command in the session chat, replacing
+`<version>` with the actual new packaged version, not a placeholder:
+
+```sh
+node extra/s-viewer/scripts/install.mjs \
+  --vsix extra/s-viewer/dist/s-viewer-<version>.vsix \
+  --require-remote
+```
+
+Tell the user to reload the VS Code window and reopen comparisons after
+installation.
+
+## S Viewer manifest
+
+Whenever changing repository files, maintain `.s-viewer/manifest.json` for the
+complete HEAD → saved working-tree change set, not session history. Preserve
+still-valid entries and provenance mappings; remove stale ones.
+
+Follow [the S Viewer manifest guide](extra/s-viewer/docs/manifest.md) for the
+schema, range/source mappings, repair behavior, and snapshot limitations.
+
+From the repository root:
+
+```sh
+pnpm check-s-viewer
+pnpm repair-s-viewer
+```
+
+`check-s-viewer` is read-only and previews automatic fixes under `repairPlan`.
+Edit the manifest manually or use `repair-s-viewer`, then restore/add
+intentional provenance mappings as described in the guide.
+
+After all edits, formatting, and generated files, finish with `check-s-viewer`
+reporting no errors. `pnpm check` also runs it after typecheck and lint; neither
+command repairs automatically.
+
+If `extra/s-viewer` is absent, check prints a warning and succeeds; repair
+fails. When present, validation errors or a missing CLI/bundle fail the command.
 
 ## One function per file
 
