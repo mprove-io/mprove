@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -27,20 +27,20 @@ import { getEnvCheckExistsAndAccess } from '#backend/functions/db/envs/get-env-c
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
 import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
 import { dbErrorToResult } from '#backend/functions/db-error-to-result/db-error-to-result';
+import { fetchBigqueryCachedParts } from '#backend/functions/dwh/bigquery/fetch-bigquery-cached-parts/fetch-bigquery-cached-parts';
+import { fetchDatabricksCachedParts } from '#backend/functions/dwh/databricks/fetch-databricks-cached-parts/fetch-databricks-cached-parts';
+import { fetchDuckdbCachedParts } from '#backend/functions/dwh/duckdb/fetch-duckdb-cached-parts/fetch-duckdb-cached-parts';
+import { fetchMysqlCachedParts } from '#backend/functions/dwh/mysql/fetch-mysql-cached-parts/fetch-mysql-cached-parts';
+import { fetchPgCachedParts } from '#backend/functions/dwh/pg/fetch-pg-cached-parts/fetch-pg-cached-parts';
+import { fetchPrestoCachedParts } from '#backend/functions/dwh/presto/fetch-presto-cached-parts/fetch-presto-cached-parts';
+import { fetchSnowflakeCachedParts } from '#backend/functions/dwh/snowflake/fetch-snowflake-cached-parts/fetch-snowflake-cached-parts';
+import { fetchTrinoCachedParts } from '#backend/functions/dwh/trino/fetch-trino-cached-parts/fetch-trino-cached-parts';
 import { makeCachedColumnFullId } from '#backend/functions/hash/make-cached-column-full-id/make-cached-column-full-id';
 import { makeCachedPartFullId } from '#backend/functions/hash/make-cached-part-full-id/make-cached-part-full-id';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
-import { PgService } from '#backend/services/dwh/pg/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -69,15 +69,8 @@ const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 export class RefreshCachedColumnController {
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private pgService: PgService,
-    private mysqlService: MysqlService,
-    private snowFlakeService: SnowFlakeService,
-    private databricksService: DatabricksService,
-    private bigQueryService: BigQueryService,
-    private duckDbService: DuckDbService,
-    private prestoService: PrestoService,
-    private trinoService: TrinoService,
-    private db: DbService
+    private db: DbService,
+    private logger: Logger
   ) {}
 
   @Post('api/ToBackendRefreshCachedColumn' satisfies ToBackendRoute)
@@ -572,93 +565,83 @@ export class RefreshCachedColumnController {
     } = item;
 
     if (connection.type === 'PostgreSQL') {
-      return this.pgService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchPgCachedParts({
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     } else if (connection.type === 'MySQL') {
-      return this.mysqlService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchMysqlCachedParts({
+        cs: this.cs,
+        logger: this.logger,
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     } else if (connection.type === 'SnowFlake') {
-      return this.snowFlakeService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchSnowflakeCachedParts({
+        cs: this.cs,
+        logger: this.logger,
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     } else if (connection.type === 'Databricks') {
-      return this.databricksService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchDatabricksCachedParts({
+        cs: this.cs,
+        logger: this.logger,
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     } else if (connection.type === 'BigQuery') {
-      return this.bigQueryService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchBigqueryCachedParts({
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     } else if (connection.type === 'MotherDuck') {
-      return this.duckDbService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchDuckdbCachedParts({
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     } else if (connection.type === 'Presto') {
-      return this.prestoService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchPrestoCachedParts({
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     } else if (connection.type === 'Trino') {
-      return this.trinoService
-        .fetchCachedParts({
-          connection: connection,
-          schemaName: schemaName,
-          tableName: tableName,
-          columnName: columnName,
-          sampleSize: sampleSize,
-          cacheLimit: cacheLimit
-        })
-        .then(output => Result.succeed(output));
+      return fetchTrinoCachedParts({
+        connection: connection,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        sampleSize: sampleSize,
+        cacheLimit: cacheLimit
+      }).then(output => Result.succeed(output));
     }
 
     return Result.fail({

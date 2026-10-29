@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
@@ -15,20 +15,20 @@ import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs
 import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
 import { memberTabToApi } from '#backend/functions/db/members/member-tab-to-api/member-tab-to-api';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { fetchBigquerySchema } from '#backend/functions/dwh/bigquery/fetch-bigquery-schema/fetch-bigquery-schema';
+import { fetchDatabricksSchema } from '#backend/functions/dwh/databricks/fetch-databricks-schema/fetch-databricks-schema';
+import { fetchDuckdbSchema } from '#backend/functions/dwh/duckdb/fetch-duckdb-schema/fetch-duckdb-schema';
+import { fetchMysqlSchema } from '#backend/functions/dwh/mysql/fetch-mysql-schema/fetch-mysql-schema';
+import { fetchPgSchema } from '#backend/functions/dwh/pg/fetch-pg-schema/fetch-pg-schema';
+import { fetchPrestoSchema } from '#backend/functions/dwh/presto/fetch-presto-schema/fetch-presto-schema';
+import { fetchSnowflakeSchema } from '#backend/functions/dwh/snowflake/fetch-snowflake-schema/fetch-snowflake-schema';
+import { fetchTrinoSchema } from '#backend/functions/dwh/trino/fetch-trino-schema/fetch-trino-schema';
 import {
   type GetEntPropsOutput,
   getEntProps
 } from '#backend/functions/get-ent-props/get-ent-props';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
-import { PgService } from '#backend/services/dwh/pg/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { TabService } from '#backend/services/tab/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -60,15 +60,8 @@ export class GetConnectionSchemasService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private tabService: TabService,
-    private pgService: PgService,
-    private mysqlService: MysqlService,
-    private snowFlakeService: SnowFlakeService,
-    private databricksService: DatabricksService,
-    private bigQueryService: BigQueryService,
-    private duckDbService: DuckDbService,
-    private prestoService: PrestoService,
-    private trinoService: TrinoService,
-    private db: DbService
+    private db: DbService,
+    private logger: Logger
   ) {}
 
   async getConnectionSchemasUnwrap(item: {
@@ -273,35 +266,51 @@ export class GetConnectionSchemasService {
         let schema: ConnectionRawSchema;
 
         if (connection.type === 'PostgreSQL') {
-          schema = await this.pgService.fetchSchema({
+          schema = await fetchPgSchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         } else if (connection.type === 'MySQL') {
-          schema = await this.mysqlService.fetchSchema({
+          schema = await fetchMysqlSchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         } else if (connection.type === 'SnowFlake') {
-          schema = await this.snowFlakeService.fetchSchema({
+          schema = await fetchSnowflakeSchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         } else if (connection.type === 'Databricks') {
-          schema = await this.databricksService.fetchSchema({
+          schema = await fetchDatabricksSchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         } else if (connection.type === 'BigQuery') {
-          schema = await this.bigQueryService.fetchSchema({
+          schema = await fetchBigquerySchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         } else if (connection.type === 'MotherDuck') {
-          schema = await this.duckDbService.fetchSchema({
+          schema = await fetchDuckdbSchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         } else if (connection.type === 'Presto') {
-          schema = await this.prestoService.fetchSchema({
+          schema = await fetchPrestoSchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         } else if (connection.type === 'Trino') {
-          schema = await this.trinoService.fetchSchema({
+          schema = await fetchTrinoSchema({
+            cs: this.cs,
+            logger: this.logger,
             connection: connection
           });
         }

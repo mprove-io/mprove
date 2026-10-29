@@ -6,14 +6,6 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { AscendingIdService } from '#backend/services/ascending-id/ascending-id.service';
 import { CalcDbService } from '#backend/services/calc-db/calc-db.service';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
-import { PgService } from '#backend/services/dwh/pg/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex/editor-codex.service';
 import { EditorConnectionsService } from '#backend/services/editor/editor-connections/editor-connections.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode/editor-opencode.service';
@@ -69,16 +61,7 @@ export const appProviders = [
   LocalStrategy,
   JwtStrategy,
   //
-  BigQueryService,
   // ClickHouseService,
-  DatabricksService,
-  DuckDbService,
-  MysqlService,
-  PgService,
-  PrestoService,
-  SnowFlakeService,
-  TrinoService,
-  //
   AscendingIdService,
   DbService,
   CalcDbService,

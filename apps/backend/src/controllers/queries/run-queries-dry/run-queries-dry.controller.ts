@@ -12,7 +12,6 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user/attach-user.decorator';
 import type {
   MconfigTab,
-  QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
@@ -26,25 +25,22 @@ import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-q
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import {
+  type RunBigqueryQueryDryOutput,
+  runBigqueryQueryDry
+} from '#backend/functions/dwh/bigquery/run-bigquery-query-dry/run-bigquery-query-dry';
 import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { RunQueryDryError } from '#common/types/backend/function-errors/run-query-dry-error';
 import type { Env } from '#common/types/backend/parts/env';
-import type { QueryEstimate } from '#common/types/backend/parts/query-estimate';
 import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRunQueriesDryOutput } from '#common/types/backend/routes/queries/run-queries-dry/run-queries-dry-output';
 import { customAsyncPool } from '#node-common/functions/custom-async-pool/custom-async-pool';
-
-type RunQueryDryOutput = {
-  validEstimate?: QueryEstimate;
-  errorQuery?: QueryTab;
-};
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -52,7 +48,6 @@ type RunQueryDryOutput = {
 @Controller()
 export class RunQueriesDryController {
   constructor(
-    private bigqueryService: BigQueryService,
     private db: DbService,
     private cs: ConfigService<BackendConfig>
   ) {}
@@ -203,7 +198,7 @@ export class RunQueriesDryController {
   private async runQueryDry(item: {
     projectId: string;
     queryId: string;
-  }): Result.ResultAsync<RunQueryDryOutput, RunQueryDryError> {
+  }): Result.ResultAsync<RunBigqueryQueryDryOutput, RunQueryDryError> {
     return Result.pipe(
       Result.succeed(item),
       Result.bind('query', v =>
@@ -235,9 +230,9 @@ export class RunQueriesDryController {
         });
       }),
       Result.andThen(v =>
-        this.bigqueryService
-          .runQueryDry({ query: v.query, connection: v.connection })
-          .then(x => Result.succeed(x))
+        runBigqueryQueryDry({ query: v.query, connection: v.connection }).then(
+          x => Result.succeed(x)
+        )
       )
     );
   }

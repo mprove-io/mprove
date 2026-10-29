@@ -5,15 +5,15 @@ import { and, eq, inArray, or } from 'drizzle-orm';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
+import { makeBigqueryMalloyConfigPart } from '#backend/functions/dwh/bigquery/make-bigquery-malloy-config-part/make-bigquery-malloy-config-part';
+import { makeDatabricksMalloyConfigPart } from '#backend/functions/dwh/databricks/make-databricks-malloy-config-part/make-databricks-malloy-config-part';
+import { makeDuckdbMalloyConfigPart } from '#backend/functions/dwh/duckdb/make-duckdb-malloy-config-part/make-duckdb-malloy-config-part';
+import { makeMysqlMalloyConfigPart } from '#backend/functions/dwh/mysql/make-mysql-malloy-config-part/make-mysql-malloy-config-part';
+import { makePgMalloyConfigPart } from '#backend/functions/dwh/pg/make-pg-malloy-config-part/make-pg-malloy-config-part';
+import { makePrestoMalloyConfigPart } from '#backend/functions/dwh/presto/make-presto-malloy-config-part/make-presto-malloy-config-part';
+import { makeSnowflakeMalloyConfigPart } from '#backend/functions/dwh/snowflake/make-snowflake-malloy-config-part/make-snowflake-malloy-config-part';
+import { makeTrinoMalloyConfigPart } from '#backend/functions/dwh/trino/make-trino-malloy-config-part/make-trino-malloy-config-part';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
-import { PgService } from '#backend/services/dwh/pg/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { DbConnectionsFindManyError } from '#common/types/backend/function-errors/db/connections/db-connections-find-many-error';
@@ -29,17 +29,7 @@ export type GetMalloySandboxEnvsAndFilesOutput = {
 
 @Injectable()
 export class EditorConnectionsService {
-  constructor(
-    private pgService: PgService,
-    private mysqlService: MysqlService,
-    private bigQueryService: BigQueryService,
-    private snowFlakeService: SnowFlakeService,
-    private duckDbService: DuckDbService,
-    private databricksService: DatabricksService,
-    private trinoService: TrinoService,
-    private prestoService: PrestoService,
-    private db: DbService
-  ) {}
+  constructor(private db: DbService) {}
 
   async getMalloySandboxEnvsAndFiles(item: {
     projectId: string;
@@ -113,7 +103,7 @@ export class EditorConnectionsService {
       switch (connection.type) {
         case 'PostgreSQL': {
           if (isDefined(connection.options.postgres)) {
-            config = this.pgService.makeMalloyConfigPart({
+            config = makePgMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });
@@ -122,7 +112,7 @@ export class EditorConnectionsService {
         }
         case 'MySQL': {
           if (isDefined(connection.options.mysql)) {
-            config = this.mysqlService.makeMalloyConfigPart({
+            config = makeMysqlMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });
@@ -131,7 +121,7 @@ export class EditorConnectionsService {
         }
         case 'BigQuery': {
           if (isDefined(connection.options.bigquery)) {
-            config = this.bigQueryService.makeMalloyConfigPart({
+            config = makeBigqueryMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });
@@ -140,7 +130,7 @@ export class EditorConnectionsService {
         }
         case 'SnowFlake': {
           if (isDefined(connection.options.snowflake)) {
-            config = this.snowFlakeService.makeMalloyConfigPart({
+            config = makeSnowflakeMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });
@@ -149,7 +139,7 @@ export class EditorConnectionsService {
         }
         case 'MotherDuck': {
           if (isDefined(connection.options.motherduck)) {
-            config = this.duckDbService.makeMalloyConfigPart({
+            config = makeDuckdbMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });
@@ -158,7 +148,7 @@ export class EditorConnectionsService {
         }
         case 'Databricks': {
           if (isDefined(connection.options.databricks)) {
-            config = this.databricksService.makeMalloyConfigPart({
+            config = makeDatabricksMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });
@@ -167,7 +157,7 @@ export class EditorConnectionsService {
         }
         case 'Trino': {
           if (isDefined(connection.options.trino)) {
-            config = this.trinoService.makeMalloyConfigPart({
+            config = makeTrinoMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });
@@ -176,7 +166,7 @@ export class EditorConnectionsService {
         }
         case 'Presto': {
           if (isDefined(connection.options.presto)) {
-            config = this.prestoService.makeMalloyConfigPart({
+            config = makePrestoMalloyConfigPart({
               connection: connection,
               envPrefix: prefix
             });

@@ -15,16 +15,16 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { makeConnection } from '#backend/functions/db/connections/make-connection/make-connection';
 import { getMemberCheckIsAdmin } from '#backend/functions/db/members/get-member-check-is-admin/get-member-check-is-admin';
+import { testBigqueryConnection } from '#backend/functions/dwh/bigquery/test-bigquery-connection/test-bigquery-connection';
+import { testDatabricksConnection } from '#backend/functions/dwh/databricks/test-databricks-connection/test-databricks-connection';
+import { testDuckdbConnection } from '#backend/functions/dwh/duckdb/test-duckdb-connection/test-duckdb-connection';
+import { testMysqlConnection } from '#backend/functions/dwh/mysql/test-mysql-connection/test-mysql-connection';
+import { testPgConnection } from '#backend/functions/dwh/pg/test-pg-connection/test-pg-connection';
+import { testPrestoConnection } from '#backend/functions/dwh/presto/test-presto-connection/test-presto-connection';
+import { testSnowflakeConnection } from '#backend/functions/dwh/snowflake/test-snowflake-connection/test-snowflake-connection';
+import { testTrinoConnection } from '#backend/functions/dwh/trino/test-trino-connection/test-trino-connection';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id/throttler-user-id.guard';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
-import { PgService } from '#backend/services/dwh/pg/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import type { BackendResultForOperation } from '#backend/types/backend-result-for-operation';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
@@ -39,14 +39,6 @@ import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes
 @Controller()
 export class TestConnectionController {
   constructor(
-    private mysqlService: MysqlService,
-    private pgService: PgService,
-    private databricksService: DatabricksService,
-    private duckDbService: DuckDbService,
-    private trinoService: TrinoService,
-    private prestoService: PrestoService,
-    private bigQueryService: BigQueryService,
-    private snowFlakeService: SnowFlakeService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private db: DbService
@@ -122,35 +114,37 @@ export class TestConnectionController {
       Result.bind('testConnectionResult', async v => {
         let testConnectionResult: TestConnectionResult =
           v.connection.type === 'MySQL'
-            ? await this.mysqlService.testConnection({
+            ? await testMysqlConnection({
                 connection: v.connection
               })
             : v.connection.type === 'PostgreSQL'
-              ? await this.pgService.testConnection({
+              ? await testPgConnection({
                   connection: v.connection
                 })
               : v.connection.type === 'MotherDuck'
-                ? await this.duckDbService.testConnection({
+                ? await testDuckdbConnection({
                     connection: v.connection
                   })
                 : v.connection.type === 'Trino'
-                  ? await this.trinoService.testConnection({
+                  ? await testTrinoConnection({
                       connection: v.connection
                     })
                   : v.connection.type === 'Presto'
-                    ? await this.prestoService.testConnection({
+                    ? await testPrestoConnection({
                         connection: v.connection
                       })
                     : v.connection.type === 'BigQuery'
-                      ? await this.bigQueryService.testConnection({
+                      ? await testBigqueryConnection({
                           connection: v.connection
                         })
                       : v.connection.type === 'SnowFlake'
-                        ? await this.snowFlakeService.testConnection({
+                        ? await testSnowflakeConnection({
                             connection: v.connection
                           })
                         : v.connection.type === 'Databricks'
-                          ? await this.databricksService.testConnection({
+                          ? await testDatabricksConnection({
+                              cs: this.cs,
+                              logger: this.logger,
                               connection: v.connection
                             })
                           : undefined;

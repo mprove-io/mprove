@@ -25,19 +25,19 @@ import { getQueryCheckExistsSkipData } from '#backend/functions/db/queries/get-q
 import { queryTabToApi } from '#backend/functions/db/queries/query-tab-to-api/query-tab-to-api';
 import { checkRepoId } from '#backend/functions/db/sessions/check-repo-id/check-repo-id';
 import { getStructCheckExists } from '#backend/functions/db/structs/get-struct-check-exists/get-struct-check-exists';
+import { runBigqueryQuery } from '#backend/functions/dwh/bigquery/run-bigquery-query/run-bigquery-query';
+import { runDatabricksQuery } from '#backend/functions/dwh/databricks/run-databricks-query/run-databricks-query';
+import { runDuckdbQuery } from '#backend/functions/dwh/duckdb/run-duckdb-query/run-duckdb-query';
+import { runMysqlQuery } from '#backend/functions/dwh/mysql/run-mysql-query/run-mysql-query';
+import { runPgQuery } from '#backend/functions/dwh/pg/run-pg-query/run-pg-query';
+import { runPrestoQuery } from '#backend/functions/dwh/presto/run-presto-query/run-presto-query';
+import { runSnowflakeQuery } from '#backend/functions/dwh/snowflake/run-snowflake-query/run-snowflake-query';
+import { runTrinoQuery } from '#backend/functions/dwh/trino/run-trino-query/run-trino-query';
 import { makeTsNumber } from '#backend/functions/make-ts-number/make-ts-number';
 import { checkParentAccess } from '#backend/functions/parent/check-parent-access/check-parent-access';
 import { runQuery } from '#backend/functions/store/run-query/run-query';
 import { logToConsoleBackend } from '#backend/functions/top/log-to-console-backend/log-to-console-backend';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
-import { PgService } from '#backend/services/dwh/pg/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { UrlService } from '#backend/services/url/url.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -74,14 +74,6 @@ const apiConnectionTypes = ['Api', 'GoogleApi'] satisfies ConnectionType[];
 export class RunQueriesService {
   constructor(
     private db: DbService,
-    private pgService: PgService,
-    private mysqlService: MysqlService,
-    private databricksService: DatabricksService,
-    private duckdbService: DuckDbService,
-    private prestoService: PrestoService,
-    private trinoService: TrinoService,
-    private bigqueryService: BigQueryService,
-    private snowflakeService: SnowFlakeService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private urlService: UrlService
@@ -169,7 +161,7 @@ export class RunQueriesService {
     let { query, connection } = getQueryExecutionContextOutput.value;
 
     if (connection.type === 'BigQuery') {
-      query = await this.bigqueryService.runQuery({
+      query = await runBigqueryQuery({
         userId: userId,
         query: query,
         connection: connection
@@ -202,7 +194,10 @@ export class RunQueriesService {
       }
 
       if (connection.type === 'SnowFlake') {
-        await this.snowflakeService.runQuery({
+        await runSnowflakeQuery({
+          cs: this.cs,
+          logger: this.logger,
+          db: this.db,
           connection: connection,
           queryId: query.queryId,
           queryJobId: query.queryJobId,
@@ -210,7 +205,8 @@ export class RunQueriesService {
           projectId: projectId
         });
       } else if (connection.type === 'PostgreSQL') {
-        await this.pgService.runQuery({
+        await runPgQuery({
+          db: this.db,
           connection: connection,
           queryId: query.queryId,
           queryJobId: query.queryJobId,
@@ -218,7 +214,10 @@ export class RunQueriesService {
           projectId: projectId
         });
       } else if (connection.type === 'MySQL') {
-        await this.mysqlService.runQuery({
+        await runMysqlQuery({
+          cs: this.cs,
+          logger: this.logger,
+          db: this.db,
           connection: connection,
           queryId: query.queryId,
           queryJobId: query.queryJobId,
@@ -226,7 +225,8 @@ export class RunQueriesService {
           projectId: projectId
         });
       } else if (connection.type === 'MotherDuck') {
-        await this.duckdbService.runQuery({
+        await runDuckdbQuery({
+          db: this.db,
           connection: connection,
           queryId: query.queryId,
           queryJobId: query.queryJobId,
@@ -234,7 +234,8 @@ export class RunQueriesService {
           projectId: projectId
         });
       } else if (connection.type === 'Presto') {
-        await this.prestoService.runQuery({
+        await runPrestoQuery({
+          db: this.db,
           connection: connection,
           queryId: query.queryId,
           queryJobId: query.queryJobId,
@@ -242,7 +243,8 @@ export class RunQueriesService {
           projectId: projectId
         });
       } else if (connection.type === 'Trino') {
-        await this.trinoService.runQuery({
+        await runTrinoQuery({
+          db: this.db,
           connection: connection,
           queryId: query.queryId,
           queryJobId: query.queryJobId,
@@ -250,7 +252,10 @@ export class RunQueriesService {
           projectId: projectId
         });
       } else if (connection.type === 'Databricks') {
-        await this.databricksService.runQuery({
+        await runDatabricksQuery({
+          cs: this.cs,
+          logger: this.logger,
+          db: this.db,
           connection: connection,
           queryId: query.queryId,
           queryJobId: query.queryJobId,
@@ -307,7 +312,7 @@ export class RunQueriesService {
     let { query, connection } = getQueryExecutionContextOutput.value;
 
     if (connection.type === 'BigQuery') {
-      query = await this.bigqueryService.runQuery({
+      query = await runBigqueryQuery({
         userId: userId,
         query: query,
         connection: connection
@@ -344,145 +349,144 @@ export class RunQueriesService {
       runningQueries.push(query);
 
       if (connection.type === 'SnowFlake') {
-        void this.snowflakeService
-          .runQuery({
-            connection: connection,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId,
-            querySql: query.sql,
-            projectId: projectId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_SNOWFLAKE_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runSnowflakeQuery({
+          cs: this.cs,
+          logger: this.logger,
+          db: this.db,
+          connection: connection,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          querySql: query.sql,
+          projectId: projectId
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_SNOWFLAKE_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       } else if (connection.type === 'PostgreSQL') {
-        void this.pgService
-          .runQuery({
-            connection: connection,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId,
-            querySql: query.sql,
-            projectId: projectId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_POSTGRES_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runPgQuery({
+          db: this.db,
+          connection: connection,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          querySql: query.sql,
+          projectId: projectId
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_POSTGRES_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       } else if (connection.type === 'MySQL') {
-        void this.mysqlService
-          .runQuery({
-            connection: connection,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId,
-            querySql: query.sql,
-            projectId: projectId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_MYSQL_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runMysqlQuery({
+          cs: this.cs,
+          logger: this.logger,
+          db: this.db,
+          connection: connection,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          querySql: query.sql,
+          projectId: projectId
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_MYSQL_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       } else if (connection.type === 'Presto') {
-        void this.prestoService
-          .runQuery({
-            connection: connection,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId,
-            querySql: query.sql,
-            projectId: projectId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_PRESTO_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runPrestoQuery({
+          db: this.db,
+          connection: connection,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          querySql: query.sql,
+          projectId: projectId
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_PRESTO_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       } else if (connection.type === 'Trino') {
-        void this.trinoService
-          .runQuery({
-            connection: connection,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId,
-            querySql: query.sql,
-            projectId: projectId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_TRINO_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runTrinoQuery({
+          db: this.db,
+          connection: connection,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          querySql: query.sql,
+          projectId: projectId
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_TRINO_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       } else if (connection.type === 'MotherDuck') {
-        void this.duckdbService
-          .runQuery({
-            connection: connection,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId,
-            querySql: query.sql,
-            projectId: projectId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_DUCKDB_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runDuckdbQuery({
+          db: this.db,
+          connection: connection,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          querySql: query.sql,
+          projectId: projectId
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_DUCKDB_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       } else if (connection.type === 'Databricks') {
-        void this.databricksService
-          .runQuery({
-            connection: connection,
-            queryId: query.queryId,
-            queryJobId: query.queryJobId,
-            querySql: query.sql,
-            projectId: projectId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: 'BACKEND_RUN_QUERY_DATABRICKS_ERROR',
-                originalError: e
-              }),
-              logLevel: 'Error',
-              logger: this.logger,
-              cs: this.cs
-            });
+        void runDatabricksQuery({
+          cs: this.cs,
+          logger: this.logger,
+          db: this.db,
+          connection: connection,
+          queryId: query.queryId,
+          queryJobId: query.queryJobId,
+          querySql: query.sql,
+          projectId: projectId
+        }).catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: 'BACKEND_RUN_QUERY_DATABRICKS_ERROR',
+              originalError: e
+            }),
+            logLevel: 'Error',
+            logger: this.logger,
+            cs: this.cs
           });
+        });
       } else if (
         apiConnectionTypes.some(candidate => candidate === connection.type)
       ) {

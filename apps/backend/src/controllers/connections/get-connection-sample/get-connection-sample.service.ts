@@ -1,20 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { and, eq, inArray, or } from 'drizzle-orm';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getApiEnvs } from '#backend/functions/db/envs/get-api-envs/get-api-envs';
 import { getMemberCheckIsEditorOrAdmin } from '#backend/functions/db/members/get-member-check-is-editor-or-admin/get-member-check-is-editor-or-admin';
+import { fetchBigquerySample } from '#backend/functions/dwh/bigquery/fetch-bigquery-sample/fetch-bigquery-sample';
+import { fetchDatabricksSample } from '#backend/functions/dwh/databricks/fetch-databricks-sample/fetch-databricks-sample';
+import { fetchDuckdbSample } from '#backend/functions/dwh/duckdb/fetch-duckdb-sample/fetch-duckdb-sample';
+import { fetchMysqlSample } from '#backend/functions/dwh/mysql/fetch-mysql-sample/fetch-mysql-sample';
+import { fetchPgSample } from '#backend/functions/dwh/pg/fetch-pg-sample/fetch-pg-sample';
+import { fetchPrestoSample } from '#backend/functions/dwh/presto/fetch-presto-sample/fetch-presto-sample';
+import { fetchSnowflakeSample } from '#backend/functions/dwh/snowflake/fetch-snowflake-sample/fetch-snowflake-sample';
+import { fetchTrinoSample } from '#backend/functions/dwh/trino/fetch-trino-sample/fetch-trino-sample';
 import { DbService } from '#backend/services/db/db.service';
-import { BigQueryService } from '#backend/services/dwh/bigquery/bigquery.service';
-import { DatabricksService } from '#backend/services/dwh/databricks/databricks.service';
-import { DuckDbService } from '#backend/services/dwh/duckdb/duckdb.service';
-import { MysqlService } from '#backend/services/dwh/mysql/mysql.service';
-import { PgService } from '#backend/services/dwh/pg/pg.service';
-import { PrestoService } from '#backend/services/dwh/presto/presto.service';
-import { SnowFlakeService } from '#backend/services/dwh/snowflake/snowflake.service';
-import { TrinoService } from '#backend/services/dwh/trino/trino.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
@@ -26,15 +28,9 @@ import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/r
 @Injectable()
 export class GetConnectionSampleService {
   constructor(
-    private pgService: PgService,
-    private mysqlService: MysqlService,
-    private snowFlakeService: SnowFlakeService,
-    private databricksService: DatabricksService,
-    private bigQueryService: BigQueryService,
-    private duckDbService: DuckDbService,
-    private prestoService: PrestoService,
-    private trinoService: TrinoService,
-    private db: DbService
+    private db: DbService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {}
 
   async getConnectionSample(item: {
@@ -158,7 +154,7 @@ export class GetConnectionSampleService {
         let sampleResult: FetchSampleResult;
 
         if (v.connection.type === 'PostgreSQL') {
-          sampleResult = await this.pgService.fetchSample({
+          sampleResult = await fetchPgSample({
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -166,7 +162,9 @@ export class GetConnectionSampleService {
             offset: v.offset
           });
         } else if (v.connection.type === 'MySQL') {
-          sampleResult = await this.mysqlService.fetchSample({
+          sampleResult = await fetchMysqlSample({
+            cs: this.cs,
+            logger: this.logger,
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -174,7 +172,9 @@ export class GetConnectionSampleService {
             offset: v.offset
           });
         } else if (v.connection.type === 'SnowFlake') {
-          sampleResult = await this.snowFlakeService.fetchSample({
+          sampleResult = await fetchSnowflakeSample({
+            cs: this.cs,
+            logger: this.logger,
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -182,7 +182,9 @@ export class GetConnectionSampleService {
             offset: v.offset
           });
         } else if (v.connection.type === 'Databricks') {
-          sampleResult = await this.databricksService.fetchSample({
+          sampleResult = await fetchDatabricksSample({
+            cs: this.cs,
+            logger: this.logger,
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -190,7 +192,7 @@ export class GetConnectionSampleService {
             offset: v.offset
           });
         } else if (v.connection.type === 'BigQuery') {
-          sampleResult = await this.bigQueryService.fetchSample({
+          sampleResult = await fetchBigquerySample({
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -198,7 +200,7 @@ export class GetConnectionSampleService {
             offset: v.offset
           });
         } else if (v.connection.type === 'MotherDuck') {
-          sampleResult = await this.duckDbService.fetchSample({
+          sampleResult = await fetchDuckdbSample({
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -206,7 +208,7 @@ export class GetConnectionSampleService {
             offset: v.offset
           });
         } else if (v.connection.type === 'Presto') {
-          sampleResult = await this.prestoService.fetchSample({
+          sampleResult = await fetchPrestoSample({
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
@@ -214,7 +216,7 @@ export class GetConnectionSampleService {
             offset: v.offset
           });
         } else if (v.connection.type === 'Trino') {
-          sampleResult = await this.trinoService.fetchSample({
+          sampleResult = await fetchTrinoSample({
             connection: v.connection,
             schemaName: v.schemaName,
             tableName: v.tableName,
